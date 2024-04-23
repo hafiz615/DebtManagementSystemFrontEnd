@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Typography, TextField, Grid } from "@mui/material";
+import { Typography, TextField, Grid, FormHelperText } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
@@ -10,29 +10,67 @@ import Input from "@mui/material/Input";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
+import { Colors } from "../config/default";
 import Button from "./button";
 
-function Login({ setAuthForm }) {
+function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
-  const handleLogin = () => {
-    setAuthForm(false);
-  };
-
-  const isFormEmpty = () => {
-    return !email || !password;
-  };
 
   const navigate = useNavigate();
   const handleLoginForm = () => {
-    console.log({ email, password });
-    navigate("/dashboard");
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      navigate("/dashboard");
+    }, 1000);
+  };
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    if (!e.target.value.trim()) {
+      setEmailError("Email is required");
+    } else if (
+      !e.target.value.includes("@") ||
+      !e.target.value.includes(".co")
+    ) {
+      setEmailError("Invalid email format");
+    } else {
+      setEmailError("");
+    }
+  };
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+    if (e.target.value.length < 7) {
+      setPasswordError(
+        "Password must be at least 7 characters long and include special characters"
+      );
+    } else if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/.test(e.target.value)) {
+      setPasswordError("Password must contain at least one special character");
+    } else {
+      setPasswordError("");
+    }
+  };
+
+  const isButtonDisabled =
+    !email.trim() ||
+    !email.includes("@") ||
+    !email.includes(".co") ||
+    password.length < 7 ||
+    !/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/.test(password);
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleLoginForm();
+    }
   };
 
   return (
@@ -46,9 +84,11 @@ function Login({ setAuthForm }) {
     >
       <Typography
         sx={{
-          fontSize: "40px",
-          fontWeight: "500",
+          fontSize: "2.5rem",
+          fontWeight: "700",
           marginBottom: "2rem",
+          color: Colors.NAVY_BLUE,
+          fontFamily: "Nunito",
         }}
       >
         Login
@@ -59,8 +99,9 @@ function Login({ setAuthForm }) {
         variant="standard"
         sx={{ marginBottom: "1rem" }}
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={handleEmailChange}
       />
+      {emailError && <FormHelperText error>{emailError}</FormHelperText>}
 
       <FormControl variant="standard">
         <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
@@ -68,9 +109,8 @@ function Login({ setAuthForm }) {
           id="standard-adornment-password"
           type={showPassword ? "text" : "password"}
           value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-          }}
+          onChange={handlePasswordChange}
+          onKeyPress={handleKeyPress}
           endAdornment={
             <InputAdornment position="end">
               <IconButton
@@ -83,48 +123,31 @@ function Login({ setAuthForm }) {
             </InputAdornment>
           }
         />
+        {passwordError && (
+          <FormHelperText error>{passwordError}</FormHelperText>
+        )}
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <Typography
             sx={{
               fontWeight: "200",
               fontSize: "15px",
-              color: "#555555",
               marginTop: "0.8rem",
               marginBottom: "1.5rem",
+              cursor: "pointer",
             }}
+            onClick={() => alert("Forgot Password clicked")}
           >
             Forgot Password?
           </Typography>
         </div>
       </FormControl>
+
       <Button
         buttonText="Login"
-        disabled={isFormEmpty()}
+        disabled={isButtonDisabled}
         onClick={handleLoginForm}
+        loading={loading}
       />
-
-      <Typography
-        sx={{
-          textAlign: "center",
-          marginTop: "1rem",
-          fontWeight: "400",
-          fontSize: { xs: "15px", lg: "20px" },
-          color: "#555555",
-        }}
-      >
-        don’t have an account?
-        <span
-          style={{
-            fontWeight: "700",
-            color: "#000000",
-            cursor: "pointer",
-          }}
-          onClick={() => handleLogin()}
-        >
-          {" "}
-          Sign Up
-        </span>
-      </Typography>
     </Grid>
   );
 }

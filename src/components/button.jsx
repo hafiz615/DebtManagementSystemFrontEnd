@@ -1,6 +1,8 @@
 import React from "react";
 import Button from "@mui/material/Button";
-function TextButton({ buttonText, onClick, disabled }) {
+import CircularProgress from "@mui/material/CircularProgress";
+import { Colors } from "../config/default";
+function TextButton({ buttonText, onClick, disabled, loading }) {
   return (
     <Button
       variant="contained"
@@ -8,18 +10,22 @@ function TextButton({ buttonText, onClick, disabled }) {
         mt: "2em",
         height: "3rem",
         borderRadius: "10px",
-        color: "white",
+        color: Colors.WHITE,
+        backgroundColor: Colors.SKY_BLUE,
         textTransform: "none",
-        backgroundColor: "#323232",
         "&:hover": {
-          background: "#323232",
+          background: Colors.SKY_BLUE,
           border: "none",
         },
       }}
       onClick={onClick}
       disabled={disabled}
     >
-      {buttonText}
+      {loading ? (
+        <CircularProgress size={24} sx={{ color: Colors.WHITE }} />
+      ) : (
+        buttonText
+      )}
     </Button>
   );
 }
