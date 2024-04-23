@@ -121,7 +121,6 @@ function Login({ setAuthForm }) {
           }}
           onClick={() => handleLogin()}
         >
-          {" "}
           Sign Up
         </span>
       </Typography>
