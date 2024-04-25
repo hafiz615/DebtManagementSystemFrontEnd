@@ -1,65 +1,23 @@
 import * as React from "react";
-import { styled, alpha } from "@mui/material/styles";
+
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
-import InputBase from "@mui/material/InputBase";
 import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
-import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(3),
-    width: "auto",
-  },
-}));
+import { Colors } from "../config/default";
 
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 1.5),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch",
-    },
-  },
-}));
-
-export default function NavBar() {
+export default function NavBar({ onClick }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -123,7 +81,7 @@ export default function NavBar() {
       onClose={handleMobileMenuClose}
     >
       <MenuItem>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+        <IconButton size="large" aria-label="show 4 new info" color="inherit">
           <Badge badgeContent={4} color="error">
             <MailIcon />
           </Badge>
@@ -158,90 +116,50 @@ export default function NavBar() {
   );
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box>
       <AppBar
-        position="static"
+        position="fixed"
         elevation={0}
         sx={{
-          backgroundColor: "#FFFFFF",
-          height: "4",
+          backgroundColor: Colors.NAVY_BLUE,
+          height: "4rem",
         }}
       >
         <Toolbar>
           <IconButton
             size="large"
             edge="start"
-            color="inherit"
             aria-label="open drawer"
+            onClick={onClick}
+            sx={{ color: Colors.SKY_BLUE }}
           >
             <MenuIcon
               sx={{
-                color: "#181A1B",
-                fontSize: "2rem",
-              }}
-            />
-          </IconButton>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-          >
-            <HomeOutlinedIcon
-              sx={{
-                color: "#181A1B",
-                fontSize: "2rem",
-              }}
-            />
-          </IconButton>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-          >
-            <AddCircleIcon
-              sx={{
-                color: "#B5B6B7",
-                fontSize: "2rem",
+                color: Colors.WHITE,
+                backgroundColor: Colors.SKY_BLUE,
+                padding: "0.3rem",
+                borderRadius: "50%",
+                fontSize: "2.5rem",
               }}
             />
           </IconButton>
 
           <Box sx={{ flexGrow: 1 }} />
-          <Search
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              borderRadius: "2.5rem",
-              backgroundColor: "#F7F7F8",
-              color: "#9EA3A9",
-              "&:hover": {
-                background: "#F7F7F8",
-                color: "#9EA3A9",
-              },
-            }}
-          >
-            <SearchIconWrapper>
-              <SearchIcon sx={{ color: "#181A1B", fontSize: "2rem" }} />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ "aria-label": "search" }}
-              sx={{ color: "#9EA3A9" }}
-            />
-          </Search>
+
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             <IconButton
               size="large"
-              aria-label="show 4 new mails"
-              color="inherit"
+              aria-label="show 4 new info"
+              sx={{ color: Colors.SKY_BLUE }}
             >
               <Badge badgeContent={4} color="error">
                 <InfoOutlinedIcon
                   sx={{
-                    color: "#181A1B",
-                    fontSize: "2rem",
+                    color: Colors.WHITE,
+                    backgroundColor: Colors.SKY_BLUE,
+                    padding: "0.3rem",
+                    borderRadius: "50%",
+                    fontSize: "2.5rem",
                   }}
                 />
               </Badge>
@@ -249,13 +167,16 @@ export default function NavBar() {
             <IconButton
               size="large"
               aria-label="show 17 new notifications"
-              color="inherit"
+              sx={{ color: Colors.SKY_BLUE }}
             >
               <Badge badgeContent={17} color="error">
                 <NotificationsNoneOutlinedIcon
                   sx={{
-                    color: "#181A1B",
-                    fontSize: "2rem",
+                    color: Colors.WHITE,
+                    backgroundColor: Colors.SKY_BLUE,
+                    padding: "0.3rem",
+                    borderRadius: "50%",
+                    fontSize: "2.5rem",
                   }}
                 />
               </Badge>
@@ -267,12 +188,15 @@ export default function NavBar() {
               aria-controls={menuId}
               aria-haspopup="true"
               onClick={handleProfileMenuOpen}
-              color="inherit"
+              sx={{ color: Colors.SKY_BLUE }}
             >
               <AccountCircle
                 sx={{
-                  color: "#181A1B",
-                  fontSize: "2rem",
+                  color: Colors.WHITE,
+                  backgroundColor: Colors.SKY_BLUE,
+                  padding: "0.3rem",
+                  borderRadius: "50%",
+                  fontSize: "2.5rem",
                 }}
               />
             </IconButton>
@@ -284,9 +208,17 @@ export default function NavBar() {
               aria-controls={mobileMenuId}
               aria-haspopup="true"
               onClick={handleMobileMenuOpen}
-              color="inherit"
+              sx={{ color: Colors.SKY_BLUE }}
             >
-              <MoreIcon sx={{ color: "#181A1B", fontSize: "2rem" }} />
+              <MoreIcon
+                sx={{
+                  color: Colors.WHITE,
+                  backgroundColor: Colors.SKY_BLUE,
+                  padding: "0.3rem",
+                  borderRadius: "50%",
+                  fontSize: "2.5rem",
+                }}
+              />
             </IconButton>
           </Box>
         </Toolbar>

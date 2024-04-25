@@ -6,33 +6,41 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import { Colors } from "../config/default";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     // backgroundColor: theme.palette.common.black,
 
-    color: "BLACK",
+    color: Colors.BLACK,
     border: "none",
-    paddingInlineStart: "0", // Setting left padding to 0
-    paddingInlineEnd: "0", // Setting right padding to 0
-    paddingTop: "16px", // Adjusting vertical padding
+    paddingInlineStart: "0",
+    paddingInlineEnd: "0",
+    paddingTop: "16px",
     paddingBottom: "16px",
+    paddingLeft: "1rem",
+    fontFamily: "Nunito",
+    borderTop: "1px solid #EAEBEB",
   },
   [`&.${tableCellClasses.body}`]: {
+    color: Colors.BLACK,
     fontSize: 14,
     border: "none",
-    paddingInlineStart: "0", // Setting left padding to 0
-    paddingInlineEnd: "0", // Setting right padding to 0
-    paddingTop: "16px", // Adjusting vertical padding
+    paddingInlineStart: "0",
+    paddingInlineEnd: "0",
+    paddingTop: "16px",
     paddingBottom: "16px",
+    paddingLeft: "1rem",
+    fontFamily: "Nunito",
   },
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
-    // backgroundColor: theme.palette.action.hover,
+    backgroundColor: Colors.LIGHT_BLUE_COLOR,
+    paddingLeft: "1rem",
   },
-  // hide last border
+  padding: "0.5rem",
   "&:last-child td, &:last-child th": {
     border: "none",
   },
@@ -84,9 +92,14 @@ export default function CustomizedTables() {
   return (
     <TableContainer>
       <Table sx={{ border: "none" }} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell align="left" sx={{ fontWeight: "700" }}>
+        <TableHead sx={{ fontFamily: "Nunito" }}>
+          <TableRow sx={{ fontFamily: "Nunito" }}>
+            <StyledTableCell
+              align="left"
+              sx={{
+                fontWeight: "700",
+              }}
+            >
               Name{" "}
             </StyledTableCell>
             <StyledTableCell align="left" sx={{ fontWeight: "700" }}>

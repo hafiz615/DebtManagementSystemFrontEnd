@@ -1,9 +1,12 @@
 import React from "react";
+
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import IconButton from "@mui/material/IconButton";
 import { styled, alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
+
+import { Colors } from "../config/default";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -12,6 +15,7 @@ const Search = styled("div")(({ theme }) => ({
   "&:hover": {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
+
   // marginRight: theme.spacing(2),
   // marginLeft: 0,
   width: "100%",
@@ -29,9 +33,9 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  color: Colors.DARK_GRAY,
 }));
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 1),
     // vertical padding + font size from searchIcon
@@ -39,7 +43,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     transition: theme.transitions.create("width"),
     width: "100%",
     [theme.breakpoints.up("md")]: {
-      width: "30ch",
+      width: "18rem",
     },
   },
 }));
@@ -50,29 +54,31 @@ function SearchBar() {
         display: "flex",
         alignItems: "center",
         borderRadius: "1rem",
-        backgroundColor: "#FFFFFF",
-        color: "#9EA3A9",
+        backgroundColor: Colors.WHITE,
         height: "3.5rem",
 
         "&:hover": {
-          background: "#FFFFFF",
-          color: "#9EA3A9",
+          backgroundColor: Colors.WHITE,
         },
       }}
     >
       <SearchIconWrapper>
-        <SearchIcon sx={{ color: "#D5D6D7", fontSize: "2rem" }} />
+        <SearchIcon
+          sx={{
+            fontSize: "2rem",
+          }}
+        />
       </SearchIconWrapper>
       <StyledInputBase
         placeholder="Search…"
         inputProps={{ "aria-label": "search" }}
-        sx={{ color: "#D5D6D7" }}
+        sx={{ color: Colors.DARK_GRAY, fontFamily: "Nunito" }}
       />
 
-      <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+      <IconButton size="large" aria-label="show filter data" color="inherit">
         <FilterListIcon
           sx={{
-            color: "#181A1B",
+            color: Colors.BLACK,
             fontSize: "2rem",
           }}
         />

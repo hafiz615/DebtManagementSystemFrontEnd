@@ -1,35 +1,41 @@
 import * as React from "react";
+
 import Accordion from "@mui/material/Accordion";
-
 import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+// import AccordionDetails from "@mui/material/AccordionDetails";
+import { styled } from "@mui/material/styles";
+import MuiAccordionDetails from "@mui/material/AccordionDetails";
+import { ExpandMore, Launch } from "@mui/icons-material";
 import { Grid, Typography, Box } from "@mui/material";
-import LaunchIcon from "@mui/icons-material/Launch";
-import CustomizedTables from "./table";
 
-export default function AccordionUsage({ tableHeading, paymentNumber }) {
-  const [expanded, setExpanded] = React.useState(false);
+import CustomizedTables from "./table";
+import { Colors } from "../config/default";
+
+export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
+  const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
+    padding: theme.spacing(0),
+  }));
+  const [expanded, setExpanded] = React.useState(index < 2);
 
   const handleChange = () => {
     setExpanded((prevExpanded) => !prevExpanded);
   };
   return (
     <Accordion
+      defaultExpanded={index < 2}
       expanded={expanded}
       onChange={handleChange}
       sx={{
         borderRadius: "1rem !important",
-        backgroundColor: expanded ? "#FFFFFF" : "#F0F0F0",
+        backgroundColor: expanded ? Colors.WHITE : Colors.GRAY_COLOR,
       }}
     >
       <AccordionSummary
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          borderBottom: "1px solid #EAEBEB",
         }}
-        expandIcon={<ExpandMoreIcon />}
+        expandIcon={<ExpandMore />}
         aria-controls="panel1-content"
         id="panel1-header"
       >
@@ -44,7 +50,9 @@ export default function AccordionUsage({ tableHeading, paymentNumber }) {
           onClick={(event) => event.stopPropagation()}
         >
           <Grid item xs={6}>
-            <Typography>{tableHeading}</Typography>
+            <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
+              {tableHeading}
+            </Typography>
           </Grid>
 
           <Grid
@@ -58,7 +66,7 @@ export default function AccordionUsage({ tableHeading, paymentNumber }) {
           >
             <Box
               sx={{
-                backgroundColor: "#C4C4C4",
+                backgroundColor: Colors.GRAY_SHADE,
                 borderRadius: "10px",
                 height: "2.5rem",
                 width: "2.5rem",
@@ -72,14 +80,16 @@ export default function AccordionUsage({ tableHeading, paymentNumber }) {
                 sx={{
                   fontWeight: "500",
                   fontSize: "1rem",
+                  fontFamily: "Nunito",
+                  color: Colors.BLACK,
                 }}
               >
                 {paymentNumber}
               </Typography>
             </Box>
-            <LaunchIcon
+            <Launch
               sx={{
-                color: "#9F9F9F",
+                color: Colors.DARK_GRAY,
                 marginLeft: "0.5rem",
                 marginRight: "0.5rem",
               }}

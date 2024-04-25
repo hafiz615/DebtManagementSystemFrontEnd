@@ -1,122 +1,141 @@
 import React from "react";
-import { Grid, Typography } from "@mui/material";
 
-import NavBar from "../components/navBar";
-import SearchBar from "../components/searchBar";
+import { Grid, Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import AccordionUsage from "../components/accordian";
+
+import { Colors } from "../config/default";
+import { DashBoardPage } from "../constants/appConstants";
+import BasicMenu from "../components/dropdown";
+import SearchBar from "../components/searchBar";
+import AccordionUsage from "../components/accordion";
 
 function Dashboard() {
-  const largeScreen = useMediaQuery("(min-width:320px) and (max-width:760px)");
+  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
+
+  const accordionData = [
+    { tableHeading: "Failed Authorizations", paymentNumber: "5" },
+    { tableHeading: "Failed Payments", paymentNumber: "5" },
+    { tableHeading: "Successful Authorizations", paymentNumber: "4" },
+    { tableHeading: "Successful Payments", paymentNumber: "4" },
+    { tableHeading: "Upcoming Payments", paymentNumber: "4" },
+  ];
+
+  const {
+    DASHBOARD_HEADING,
+    AUTHORITY_TEXT,
+    AUTHORITY_VALUE,
+    HOME_HEADING,
+    VIEW_DAYS,
+    DAYS_TEXT,
+  } = DashBoardPage;
   return (
-    <>
+    <Grid container sx={{ backgroundColor: Colors.LIGHT_GRAY }}>
       <Grid
-        container
+        item
+        xs={12}
         sx={{
-          height: "100vh",
-          backgroundColor: "#F5F5F5",
+          display: "flex",
+          justifyContent: "space-between",
+          flexDirection: smallScreen ? "column" : "",
+          marginTop: "1.5rem",
+          paddingLeft: "2rem",
+          paddingRight: "2rem",
         }}
       >
-        <NavBar />
-        <Grid container>
-          <Grid
-            item
-            xs={2.5}
-            sx={{
-              border: "1px solid red",
-              backgroundColor: "#FFFFFF",
-              height: "90vh",
-            }}
-          >
-            Side Bar
-          </Grid>
-          <Grid item xs={9.5}>
-            <Grid
-              item
-              xs={12}
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                flexDirection: largeScreen ? "column" : "",
-                paddingLeft: "2rem",
-                paddingRight: "2rem",
-                marginTop: "1.5rem",
-              }}
-            >
-              <Typography>DashBoard</Typography>
-              <Typography>
-                Authority level: <span>Negotiator</span>
-              </Typography>
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                flexDirection: largeScreen ? "column" : "",
-                paddingLeft: "2rem",
-                paddingRight: "1.7rem",
-                marginTop: "1.5rem",
-              }}
-            >
-              <Typography sx={{ fontWeight: "500", fontSize: "2rem" }}>
-                DashBoard
-              </Typography>
-              <SearchBar />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sx={{
-                marginTop: "3rem",
-                paddingLeft: "2rem",
-                paddingRight: "2rem",
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <Grid item xs={5.9}>
-                <AccordionUsage
-                  tableHeading="Failed Authorizations"
-                  paymentNumber="5"
-                />
-              </Grid>
-              <Grid item xs={5.9}>
-                <AccordionUsage
-                  tableHeading="Failed Payments"
-                  paymentNumber="5"
-                />
-              </Grid>
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sx={{
-                marginTop: "3rem",
-                paddingLeft: "2rem",
-                paddingRight: "2rem",
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <Grid item xs={5.9}>
-                <AccordionUsage
-                  tableHeading="Successful Authorizations"
-                  paymentNumber="4"
-                />
-              </Grid>
-              <Grid item xs={5.9}>
-                <AccordionUsage
-                  tableHeading="Successful Payments"
-                  paymentNumber="4"
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
+        <Typography
+          sx={{
+            fontFamily: "Nunito",
+            fontWeight: "500",
+            color: Colors.BLACK,
+          }}
+        >
+          {DASHBOARD_HEADING}
+        </Typography>
+        <Typography
+          sx={{
+            fontFamily: "Nunito",
+            fontWeight: "500",
+            color: Colors.BLACK,
+          }}
+        >
+          {AUTHORITY_TEXT} <span>{AUTHORITY_VALUE}</span>
+        </Typography>
       </Grid>
-    </>
+      <Grid
+        item
+        xs={12}
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          flexDirection: smallScreen ? "column" : "row",
+          paddingLeft: "2rem",
+          paddingRight: "2rem",
+          marginTop: "1.5rem",
+        }}
+      >
+        <Typography
+          sx={{
+            fontWeight: "600",
+            fontSize: "2rem",
+            fontFamily: "Nunito",
+            color: Colors.BLACK,
+          }}
+        >
+          {HOME_HEADING}
+        </Typography>
+        <SearchBar />
+      </Grid>
+      <Grid
+        item
+        xs={11.6}
+        sx={{
+          display: "flex",
+          justifyContent: smallScreen ? "flex-start" : "flex-end",
+          flexDirection: smallScreen ? "column" : "row",
+          paddingLeft: "2rem",
+          paddingRight: "2rem",
+          marginTop: "1.5rem",
+        }}
+      >
+        <Typography
+          sx={{
+            fontWeight: "500",
+            fontFamily: "Nunito",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: smallScreen ? "flex-start" : "center",
+            color: Colors.BLACK,
+          }}
+        >
+          <span style={{ marginRight: ".5rem" }}>{VIEW_DAYS}</span>
+          <BasicMenu />
+          <span style={{ marginLeft: ".5rem" }}>{DAYS_TEXT}</span>
+        </Typography>
+      </Grid>
+
+      <Grid
+        container
+        item
+        xs={12}
+        lg={11.6}
+        sx={{
+          marginTop: "1rem",
+          paddingLeft: "2rem",
+          paddingRight: "2rem",
+        }}
+        spacing={smallScreen ? 0 : 2}
+      >
+        {accordionData?.map((data, index) => (
+          <Grid item xs={12} lg={6} key={index} sx={{ marginBottom: "0.5rem" }}>
+            <AccordionUsage
+              tableHeading={data?.tableHeading}
+              paymentNumber={data?.paymentNumber}
+              index={index}
+            />
+          </Grid>
+        ))}
+      </Grid>
+    </Grid>
   );
 }
 

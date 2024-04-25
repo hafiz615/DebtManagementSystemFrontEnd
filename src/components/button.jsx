@@ -1,12 +1,15 @@
 import React from "react";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
+
 import { Colors } from "../config/default";
 function TextButton({ buttonText, onClick, disabled, loading }) {
   return (
     <Button
       variant="contained"
       sx={{
+        fontFamily: "Nunito",
+        fontWeight: "500",
         mt: "2em",
         height: "3rem",
         borderRadius: "10px",
