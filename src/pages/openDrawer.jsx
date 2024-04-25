@@ -3,7 +3,6 @@ import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
-// import MuiAppBar from "@mui/material/AppBar";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
@@ -21,13 +20,11 @@ import {
   ChevronRight,
 } from "@mui/icons-material";
 import ListItemText from "@mui/material/ListItemText";
-import useMediaQuery from "@mui/material/useMediaQuery";
 
 import NavBar from "../components/navBar";
 import Dashboard from "./dashboard";
 import { Colors } from "../config/default";
 import DropDown from "../components/menuSimple";
-import AnchorTemporaryDrawer from "../components/rightDrawer";
 
 const drawerWidth = 240;
 
@@ -51,23 +48,6 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
   })
 );
 
-// const AppBar = styled(MuiAppBar, {
-//   shouldForwardProp: (prop) => prop !== "open",
-// })(({ theme, open }) => ({
-//   transition: theme.transitions.create(["margin", "width"], {
-//     easing: theme.transitions.easing.sharp,
-//     duration: theme.transitions.duration.leavingScreen,
-//   }),
-//   ...(open && {
-//     width: `calc(100% - ${drawerWidth}px)`,
-//     marginLeft: `${drawerWidth}px`,
-//     transition: theme.transitions.create(["margin", "width"], {
-//       easing: theme.transitions.easing.easeOut,
-//       duration: theme.transitions.duration.enteringScreen,
-//     }),
-//   }),
-// }));
-
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
@@ -89,8 +69,6 @@ export default function PersistentDrawerLeft() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
   const [selectedItem, setSelectedItem] = React.useState("");
-  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
-  const largeScreen = useMediaQuery("(min-width:1550px)");
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -108,22 +86,6 @@ export default function PersistentDrawerLeft() {
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <NavBar onClick={handleDrawerOpen} />
-      {/* <AppBar position="fixed" open={open}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{ mr: 2, ...(open && { display: "none" }) }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Persistent drawer
-          </Typography>
-        </Toolbar>
-      </AppBar> */}
       <Drawer
         sx={{
           width: drawerWidth,
@@ -228,27 +190,13 @@ export default function PersistentDrawerLeft() {
       <Main
         open={open}
         sx={{
-          backgroundColor: Colors.LIGHT_GRAY,
+          backgroundColor: Colors.BG_LIGHT_GRAY,
           height: "100vh",
           position: "relative",
         }}
       >
         <DrawerHeader />
-        <Box
-          sx={{
-            transform: "rotate(270deg)",
-            position: "absolute",
-            top: smallScreen || largeScreen ? "17%" : "35%",
-            right: -40,
-            zIndex: "999",
-            backgroundColor: Colors.WHITE,
-            color: Colors.BLACK,
-            borderTopLeftRadius: "10px",
-            borderTopRightRadius: "10px",
-          }}
-        >
-          <AnchorTemporaryDrawer />
-        </Box>
+
         <Dashboard />
       </Main>
     </Box>

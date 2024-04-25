@@ -10,9 +10,7 @@ import { Colors } from "../config/default";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    // backgroundColor: theme.palette.common.black,
-
-    color: Colors.BLACK,
+    color: Colors.NAVY_BLUE,
     border: "none",
     paddingInlineStart: "0",
     paddingInlineEnd: "0",
@@ -23,7 +21,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     borderTop: "1px solid #EAEBEB",
   },
   [`&.${tableCellClasses.body}`]: {
-    color: Colors.BLACK,
+    color: Colors.DIM_LIGHT_GRAY,
     fontSize: 14,
     border: "none",
     paddingInlineStart: "0",

@@ -15,7 +15,7 @@ const Search = styled("div")(({ theme }) => ({
   "&:hover": {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
-
+  // This may need in future
   // marginRight: theme.spacing(2),
   // marginLeft: 0,
   width: "100%",
@@ -33,12 +33,11 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  color: Colors.DARK_GRAY,
+  color: Colors.LIGHT_GRAY,
 }));
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 1),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
     width: "100%",
@@ -72,13 +71,13 @@ function SearchBar() {
       <StyledInputBase
         placeholder="Search…"
         inputProps={{ "aria-label": "search" }}
-        sx={{ color: Colors.DARK_GRAY, fontFamily: "Nunito" }}
+        sx={{ color: Colors.LIGHT_GRAY, fontFamily: "Nunito" }}
       />
 
       <IconButton size="large" aria-label="show filter data" color="inherit">
         <FilterListIcon
           sx={{
-            color: Colors.BLACK,
+            color: Colors.DIM_LIGHT_GRAY,
             fontSize: "2rem",
           }}
         />

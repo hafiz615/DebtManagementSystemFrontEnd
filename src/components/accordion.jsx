@@ -2,7 +2,6 @@ import * as React from "react";
 
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
-// import AccordionDetails from "@mui/material/AccordionDetails";
 import { styled } from "@mui/material/styles";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import { ExpandMore, Launch } from "@mui/icons-material";
@@ -27,7 +26,7 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
       onChange={handleChange}
       sx={{
         borderRadius: "1rem !important",
-        backgroundColor: expanded ? Colors.WHITE : Colors.GRAY_COLOR,
+        backgroundColor: Colors.WHITE,
       }}
     >
       <AccordionSummary
@@ -50,7 +49,13 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
           onClick={(event) => event.stopPropagation()}
         >
           <Grid item xs={6}>
-            <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "600",
+                color: Colors.NAVY_BLUE,
+              }}
+            >
               {tableHeading}
             </Typography>
           </Grid>
@@ -66,7 +71,7 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
           >
             <Box
               sx={{
-                backgroundColor: Colors.GRAY_SHADE,
+                backgroundColor: Colors.BG_LIGHT_GRAY,
                 borderRadius: "10px",
                 height: "2.5rem",
                 width: "2.5rem",
@@ -81,7 +86,7 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
                   fontWeight: "500",
                   fontSize: "1rem",
                   fontFamily: "Nunito",
-                  color: Colors.BLACK,
+                  color: Colors.NAVY_BLUE,
                 }}
               >
                 {paymentNumber}

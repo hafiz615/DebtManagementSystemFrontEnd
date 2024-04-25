@@ -34,7 +34,8 @@ export default function BasicMenu() {
           backgroundColor: Colors.SKY_BLUE,
           color: Colors.WHITE,
           fontFamily: "Nunito",
-          borderRadius: "5px",
+          height: "3rem",
+          borderRadius: "10px",
           textTransform: "none",
           ":hover": {
             backgroundColor: Colors.SKY_BLUE,

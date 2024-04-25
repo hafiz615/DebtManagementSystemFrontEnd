@@ -29,7 +29,7 @@ function Dashboard() {
     DAYS_TEXT,
   } = DashBoardPage;
   return (
-    <Grid container sx={{ backgroundColor: Colors.LIGHT_GRAY }}>
+    <Grid container sx={{ backgroundColor: Colors.BG_LIGHT_GRAY }}>
       <Grid
         item
         xs={12}
@@ -46,7 +46,7 @@ function Dashboard() {
           sx={{
             fontFamily: "Nunito",
             fontWeight: "500",
-            color: Colors.BLACK,
+            color: Colors.DARK_GRAY,
           }}
         >
           {DASHBOARD_HEADING}
@@ -55,7 +55,7 @@ function Dashboard() {
           sx={{
             fontFamily: "Nunito",
             fontWeight: "500",
-            color: Colors.BLACK,
+            color: Colors.DARK_GRAY,
           }}
         >
           {AUTHORITY_TEXT} <span>{AUTHORITY_VALUE}</span>
@@ -78,7 +78,7 @@ function Dashboard() {
             fontWeight: "600",
             fontSize: "2rem",
             fontFamily: "Nunito",
-            color: Colors.BLACK,
+            color: Colors.NAVY_BLUE,
           }}
         >
           {HOME_HEADING}
@@ -104,7 +104,7 @@ function Dashboard() {
             display: "flex",
             alignItems: "center",
             justifyContent: smallScreen ? "flex-start" : "center",
-            color: Colors.BLACK,
+            color: Colors.DARK_GRAY,
           }}
         >
           <span style={{ marginRight: ".5rem" }}>{VIEW_DAYS}</span>

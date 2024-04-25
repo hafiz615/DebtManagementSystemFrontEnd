@@ -52,10 +52,18 @@ export default function BasicMenu() {
           "aria-labelledby": "basic-button",
         }}
       >
-        <MenuItem sx={{ width: "4rem" }} onClick={() => handleMenuItemClick(5)}>
+        <MenuItem
+          sx={{ width: "4rem", color: Colors.DARK_GRAY }}
+          onClick={() => handleMenuItemClick(5)}
+        >
           5
         </MenuItem>
-        <MenuItem onClick={() => handleMenuItemClick(7)}>7</MenuItem>
+        <MenuItem
+          sx={{ color: Colors.DARK_GRAY }}
+          onClick={() => handleMenuItemClick(7)}
+        >
+          7
+        </MenuItem>
       </Menu>
     </div>
   );
