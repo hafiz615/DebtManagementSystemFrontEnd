@@ -2,13 +2,15 @@ import "./App.css";
 
 import { Route, Routes } from "react-router-dom";
 import Auth from "./pages/auth";
-import PersistentDrawerLeft from "./pages/openDrawer";
+import UserListPage from "./pages/userListPage";
+import DashboardPage from "./pages/dashboardPage";
 
 function App() {
   return (
     <Routes>
       <Route exact path="/" element={<Auth />} />
-      <Route exact path="/dashboard" element={<PersistentDrawerLeft />} />
+      <Route exact path="/user-listing" element={<UserListPage />} />
+      <Route exact path="/dashboard" element={<DashboardPage />} />
     </Routes>
   );
 }

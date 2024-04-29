@@ -7,10 +7,21 @@ import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import { ExpandMore, Launch } from "@mui/icons-material";
 import { Grid, Typography, Box } from "@mui/material";
 
-import CustomizedTables from "./table";
+import CustomizedTables from "./paymentTable";
 import { Colors } from "../config/default";
 
 export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
+  const headers = ["Name", "Due Date", "Amount", "SSID", "Failure Reason"];
+  const tableData = [
+    "User Name",
+    "4/2/2024",
+    "$3,254.00",
+    "721-07-4426",
+    "Lorium Ipsum",
+
+    // Add more rows as needed
+  ];
+
   const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
     padding: theme.spacing(0),
   }));
@@ -19,6 +30,15 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
   const handleChange = () => {
     setExpanded((prevExpanded) => !prevExpanded);
   };
+  let backgroundColor;
+  if (paymentNumber === "5") {
+    backgroundColor = "#EA6A47"; // Reddish color
+  } else if (paymentNumber === "4") {
+    backgroundColor = "#A5D8DD"; // Bluish color
+  } else {
+    backgroundColor = "#7E909A"; // Grayish color
+  }
+
   return (
     <Accordion
       defaultExpanded={index < 2}
@@ -53,7 +73,7 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
               sx={{
                 fontFamily: "Nunito",
                 fontWeight: "600",
-                color: Colors.NAVY_BLUE,
+                color: Colors.BLACK,
               }}
             >
               {tableHeading}
@@ -71,7 +91,7 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
           >
             <Box
               sx={{
-                backgroundColor: Colors.BG_LIGHT_GRAY,
+                backgroundColor,
                 borderRadius: "10px",
                 height: "2.5rem",
                 width: "2.5rem",
@@ -83,10 +103,10 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
             >
               <Typography
                 sx={{
-                  fontWeight: "500",
+                  fontWeight: "600",
                   fontSize: "1rem",
                   fontFamily: "Nunito",
-                  color: Colors.NAVY_BLUE,
+                  color: Colors.BLACK,
                 }}
               >
                 {paymentNumber}
@@ -94,7 +114,7 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
             </Box>
             <Launch
               sx={{
-                color: Colors.DARK_GRAY,
+                color: Colors.DIM_LIGHT_GRAY,
                 marginLeft: "0.5rem",
                 marginRight: "0.5rem",
               }}
@@ -104,7 +124,7 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
       </AccordionSummary>
 
       <AccordionDetails>
-        <CustomizedTables />
+        <CustomizedTables data={tableData} headerData={headers} />
       </AccordionDetails>
     </Accordion>
   );

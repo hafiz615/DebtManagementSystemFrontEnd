@@ -1,4 +1,7 @@
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -21,10 +24,9 @@ import {
 } from "@mui/icons-material";
 import ListItemText from "@mui/material/ListItemText";
 
-import NavBar from "../components/navBar";
-import Dashboard from "./dashboard";
+import NavBar from "./navBar";
 import { Colors } from "../config/default";
-import DropDown from "../components/menuSimple";
+import DropDown from "./menuSimple";
 
 const drawerWidth = 240;
 
@@ -65,10 +67,11 @@ const icons = [
   <Group />,
   <Assessment />,
 ];
-export default function PersistentDrawerLeft() {
+export default function PersistentDrawerLeft({ children }) {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(true);
-  const [selectedItem, setSelectedItem] = React.useState("");
+  const [open, setOpen] = useState(true);
+  const [selectedItem, setSelectedItem] = useState("Dashboard");
+  console.log(selectedItem);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -78,12 +81,29 @@ export default function PersistentDrawerLeft() {
     setOpen(false);
   };
 
+  const navigate = useNavigate();
   const handleItemClick = (text) => {
+    switch (text) {
+      case "Dashboard":
+        navigate("/dashboard");
+        break;
+
+      case "User Listing":
+        navigate("/user-listing");
+        break;
+
+      default:
+        break;
+    }
     setSelectedItem(text);
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box
+      sx={{
+        display: "flex",
+      }}
+    >
       <CssBaseline />
       <NavBar onClick={handleDrawerOpen} />
       <Drawer
@@ -187,17 +207,9 @@ export default function PersistentDrawerLeft() {
           ))}
         </List>
       </Drawer>
-      <Main
-        open={open}
-        sx={{
-          backgroundColor: Colors.BG_LIGHT_GRAY,
-          height: "100vh",
-          position: "relative",
-        }}
-      >
+      <Main open={open}>
         <DrawerHeader />
-
-        <Dashboard />
+        {children}
       </Main>
     </Box>
   );
