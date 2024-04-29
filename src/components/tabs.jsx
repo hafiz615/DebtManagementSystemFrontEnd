@@ -3,11 +3,10 @@ import { styled } from "@mui/material/styles";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { Box } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
 
 import CustomizedTables from "./paymentTable";
-import TextButton from "./button";
 import { Colors } from "../config/default";
+import BasicModal from "./customPopup";
 
 const AntTabs = styled(Tabs)({
   border: "none",
@@ -86,11 +85,8 @@ export default function CustomizedTabs() {
             />
           </AntTabs>
         </Box>
-        <TextButton
-          buttonText="ADD USERS"
-          marginBottom="1rem"
-          startIcon={<AddIcon />}
-        />
+
+        <BasicModal modelButton="ADD USERS" show={false} />
       </Box>
       <Box
         sx={{

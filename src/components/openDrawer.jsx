@@ -71,7 +71,6 @@ export default function PersistentDrawerLeft({ children }) {
   const theme = useTheme();
   const [open, setOpen] = useState(true);
   const [selectedItem, setSelectedItem] = useState("Dashboard");
-  console.log(selectedItem);
 
   const handleDrawerOpen = () => {
     setOpen(true);
