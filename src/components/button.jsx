@@ -1,14 +1,30 @@
 import React from "react";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
+
 import { Colors } from "../config/default";
-function TextButton({ buttonText, onClick, disabled, loading }) {
+function TextButton({
+  buttonText,
+  onClick,
+  disabled,
+  loading,
+  marginTop,
+  height,
+  startIcon,
+  marginBottom,
+}) {
   return (
     <Button
       variant="contained"
+      startIcon={startIcon}
       sx={{
-        mt: "2em",
-        height: "3rem",
+        fontFamily: "Nunito",
+        fontWeight: "500",
+        height: { height },
+        marginTop: { marginTop },
+        marginBottom: {
+          marginBottom,
+        },
         borderRadius: "10px",
         color: Colors.WHITE,
         backgroundColor: Colors.SKY_BLUE,

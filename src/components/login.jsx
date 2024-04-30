@@ -11,6 +11,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import { Colors } from "../config/default";
+import { LoginPage } from "../constants/appConstants";
 import Button from "./button";
 
 function Login() {
@@ -73,6 +74,13 @@ function Login() {
     }
   };
 
+  const {
+    LOGIN_HEADING,
+    FORGOT_PASSWORD,
+    LOGIN_BUTTON_TEXT,
+    INPUT_PASSWORD_LABEL,
+  } = LoginPage;
+
   return (
     <Grid
       item
@@ -91,20 +99,24 @@ function Login() {
           fontFamily: "Nunito",
         }}
       >
-        Login
+        {LOGIN_HEADING}
       </Typography>
       <TextField
         id="standard-basic"
         label="Email"
         variant="standard"
-        sx={{ marginBottom: "1rem" }}
+        sx={{
+          marginBottom: "1rem",
+        }}
         value={email}
         onChange={handleEmailChange}
       />
       {emailError && <FormHelperText error>{emailError}</FormHelperText>}
 
       <FormControl variant="standard">
-        <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
+        <InputLabel htmlFor="standard-adornment-password">
+          {INPUT_PASSWORD_LABEL}
+        </InputLabel>
         <Input
           id="standard-adornment-password"
           type={showPassword ? "text" : "password"}
@@ -134,19 +146,23 @@ function Login() {
               marginTop: "0.8rem",
               marginBottom: "1.5rem",
               cursor: "pointer",
+              fontFamily: "Nunito",
+              color: Colors.DARK_GRAY,
             }}
             onClick={() => alert("Forgot Password clicked")}
           >
-            Forgot Password?
+            {FORGOT_PASSWORD}
           </Typography>
         </div>
       </FormControl>
 
       <Button
-        buttonText="Login"
+        buttonText={LOGIN_BUTTON_TEXT}
         disabled={isButtonDisabled}
         onClick={handleLoginForm}
         loading={loading}
+        marginTop="2rem"
+        height="3rem"
       />
     </Grid>
   );
