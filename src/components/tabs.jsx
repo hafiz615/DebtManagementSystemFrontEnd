@@ -7,6 +7,7 @@ import { Box } from "@mui/material";
 import CustomizedTables from "./paymentTable";
 import { Colors } from "../config/default";
 import BasicModal from "./customPopup";
+import { UserListPage } from "../constants/appConstants";
 
 const AntTabs = styled(Tabs)({
   border: "none",
@@ -31,7 +32,7 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
     },
     "&.Mui-selected": {
       color: Colors.BLACK,
-      fontWeight: theme.typography.fontWeightMedium,
+      // fontWeight: theme.typography.fontWeightMedium,
     },
     "&.Mui-focusVisible": {
       backgroundColor: "red",
@@ -41,17 +42,73 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
 
 export default function CustomizedTabs() {
   const [value, setValue] = React.useState(0);
-  const headers = ["Name", "DOB", "Gender", "Email", "SSID"];
-  const tableData = [
-    "User Name",
-    "4/2/2024",
-    "Male",
-    "user@email.com",
-    "721-07-4426",
-    "Negotiator",
-    "+18143008957",
+  const headers = [
+    "Name",
+    "DOB",
+    "Gender",
+    "Email",
+    "SSID",
+    "Role",
+    "Phone #",
+    "Address",
+  ];
 
-    // Add more rows as needed
+  const { ANT_TAB_LABEL } = UserListPage;
+  function createData(name, dob, gender, email, ssid, role, phone, address) {
+    return { name, dob, gender, email, ssid, role, phone, address };
+  }
+  const tableData = [
+    createData(
+      "User Name",
+      "4/2/2024",
+      "Male",
+      "user@email.com",
+      "721-07-4426",
+      "Negotiator",
+      "+18143008957",
+      "Loriem Ipsum"
+    ),
+    createData(
+      "User Name",
+      "4/2/2024",
+      "Male",
+      "user@email.com",
+      "721-07-4426",
+      "Negotiator",
+      "+18143008957",
+      "Loriem Ipsum"
+    ),
+
+    createData(
+      "User Name",
+      "4/2/2024",
+      "Male",
+      "user@email.com",
+      "721-07-4426",
+      "Negotiator",
+      "+18143008957",
+      "Loriem Ipsum"
+    ),
+    createData(
+      "User Name",
+      "4/2/2024",
+      "Male",
+      "user@email.com",
+      "721-07-4426",
+      "Negotiator",
+      "+18143008957",
+      "Loriem Ipsum"
+    ),
+    createData(
+      "User Name",
+      "4/2/2024",
+      "Male",
+      "user@email.com",
+      "721-07-4426",
+      "Negotiator",
+      "+18143008957",
+      "Loriem Ipsum"
+    ),
   ];
 
   const handleChange = (event, newValue) => {
@@ -73,12 +130,13 @@ export default function CustomizedTabs() {
             aria-label="ant example"
           >
             <AntTab
-              label="User Listing"
+              label={ANT_TAB_LABEL}
               sx={{
                 bgcolor: Colors.WHITE,
                 width: "max-content",
                 borderTopLeftRadius: "10px",
                 borderTopRightRadius: "10px",
+                fontWeight: "600",
                 marginLeft: "1rem",
                 height: "3.5rem",
               }}

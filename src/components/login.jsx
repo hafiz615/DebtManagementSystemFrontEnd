@@ -79,6 +79,7 @@ function Login() {
     FORGOT_PASSWORD,
     LOGIN_BUTTON_TEXT,
     INPUT_PASSWORD_LABEL,
+    INPUT_EMAIL_LABEL,
   } = LoginPage;
 
   return (
@@ -103,7 +104,7 @@ function Login() {
       </Typography>
       <TextField
         id="standard-basic"
-        label="Email"
+        label={INPUT_EMAIL_LABEL}
         variant="standard"
         sx={{
           marginBottom: "1rem",

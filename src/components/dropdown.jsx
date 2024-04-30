@@ -7,7 +7,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Colors } from "../config/default";
 export default function BasicMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [selectedValue, setSelectedValue] = React.useState(3); // State to hold the selected value
+  const [selectedValue, setSelectedValue] = React.useState(3);
   const open = Boolean(anchorEl);
 
   const handleClick = (event) => {

@@ -10,17 +10,50 @@ import { Grid, Typography, Box } from "@mui/material";
 
 import CustomizedTables from "./paymentTable";
 import { Colors } from "../config/default";
+import { DashboardTableHeaders } from "../constants/appConstants";
 
 export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
-  const headers = ["Name", "Due Date", "Amount", "SSID", "Failure Reason"];
+  const headers = DashboardTableHeaders;
+  function createData(name, dueDate, amount, ssid, failureReason) {
+    return { name, dueDate, amount, ssid, failureReason };
+  }
   const tableData = [
-    "User Name",
-    "4/2/2024",
-    "$3,254.00",
-    "721-07-4426",
-    "Lorium Ipsum",
+    createData(
+      "User Name",
+      "4/2/2024",
+      "$3,254.00",
+      "721-07-4426",
+      "Lorium Ipsum"
+    ),
+    createData(
+      "User Name",
+      "4/2/2024",
+      "$3,254.00",
+      "721-07-4426",
+      "Lorium Ipsum"
+    ),
 
-    // Add more rows as needed
+    createData(
+      "User Name",
+      "4/2/2024",
+      "$3,254.00",
+      "721-07-4426",
+      "Lorium Ipsum"
+    ),
+    createData(
+      "User Name",
+      "4/2/2024",
+      "$3,254.00",
+      "721-07-4426",
+      "Lorium Ipsum"
+    ),
+    createData(
+      "User Name",
+      "4/2/2024",
+      "$3,254.00",
+      "721-07-4426",
+      "Lorium Ipsum"
+    ),
   ];
 
   const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
@@ -131,7 +164,11 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
       </AccordionSummary>
 
       <AccordionDetails>
-        <CustomizedTables data={tableData} headerData={headers} />
+        <CustomizedTables
+          data={tableData}
+          headerData={headers}
+          showTableData={true}
+        />
       </AccordionDetails>
     </Accordion>
   );

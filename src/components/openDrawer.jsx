@@ -70,7 +70,7 @@ const icons = [
 export default function PersistentDrawerLeft({ children }) {
   const theme = useTheme();
   const [open, setOpen] = useState(true);
-  const [selectedItem, setSelectedItem] = useState("Dashboard");
+  const [selectedItem, setSelectedItem] = useState("");
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -83,8 +83,8 @@ export default function PersistentDrawerLeft({ children }) {
   const navigate = useNavigate();
   const handleItemClick = (text) => {
     switch (text) {
-      case "Dashboard":
-        navigate("/dashboard");
+      case "Home":
+        navigate("/home");
         break;
 
       case "User Listing":

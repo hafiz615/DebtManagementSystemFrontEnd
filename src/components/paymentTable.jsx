@@ -44,11 +44,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-// function createData(name, calories, fat, carbs, protein) {
-//   return { name, calories, fat, carbs, protein };
-// }
-
-export default function CustomizedTables({ data, headerData }) {
+export default function CustomizedTables({ data, headerData, showTableData }) {
   return (
     <TableContainer>
       <Table sx={{ border: "none" }} aria-label="customized table">
@@ -70,21 +66,52 @@ export default function CustomizedTables({ data, headerData }) {
         <TableBody>
           {data?.map((row, index) => (
             <StyledTableRow key={index}>
-              <StyledTableCell component="th" scope="row">
-                {row}
-              </StyledTableCell>
-              <StyledTableCell component="th" scope="row">
-                {row}
-              </StyledTableCell>
-              <StyledTableCell component="th" scope="row">
-                {row}
-              </StyledTableCell>
-              <StyledTableCell component="th" scope="row">
-                {row}
-              </StyledTableCell>
-              <StyledTableCell component="th" scope="row">
-                {row}
-              </StyledTableCell>
+              {showTableData ? (
+                <>
+                  <StyledTableCell component="th" scope="row">
+                    {row?.name}
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    {row?.dueDate}
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    {row?.amount}
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    {row?.ssid}
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    {row?.failureReason}
+                  </StyledTableCell>
+                </>
+              ) : (
+                <>
+                  <StyledTableCell component="th" scope="row">
+                    {row?.name}
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    {row?.dob}
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    {row?.gender}
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    {row?.email}
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    {row?.ssid}
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    {row?.role}
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    {row?.phone}
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    {row?.address}
+                  </StyledTableCell>
+                </>
+              )}
             </StyledTableRow>
           ))}
         </TableBody>
