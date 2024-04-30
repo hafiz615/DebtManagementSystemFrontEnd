@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { Grid } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
+
+import { Colors } from "../config/default";
+import Login from "../components/login";
 import Laptop from "../../src/assets/Laptop.png";
 
-import Login from "../components/login";
-import SignUp from "../components/signUp";
-
-import useMediaQuery from "@mui/material/useMediaQuery";
 function Auth() {
-  const [authForm, setAuthForm] = useState(true);
   const largeScreen = useMediaQuery("(min-width:320px) and (max-width:760px)");
   return (
     <Grid
@@ -22,19 +21,19 @@ function Auth() {
         item
         xs={12}
         sm={6}
-        sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
       >
-        {authForm ? (
-          <Login setAuthForm={setAuthForm} />
-        ) : (
-          <SignUp setAuthForm={setAuthForm} />
-        )}
+        <Login />
       </Grid>
       <Grid
         item
         xs={6}
         sx={{
-          backgroundColor: "#888888",
+          backgroundColor: Colors.NAVY_BLUE,
           height: "100vh",
           display: largeScreen ? "none" : "flex",
           justifyContent: "center",

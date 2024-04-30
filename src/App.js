@@ -2,13 +2,13 @@ import "./App.css";
 
 import { Route, Routes } from "react-router-dom";
 import Auth from "./pages/auth";
-import Dashboard from "./pages/dashboard";
+import PersistentDrawerLeft from "./pages/openDrawer";
 
 function App() {
   return (
     <Routes>
       <Route exact path="/" element={<Auth />} />
-      <Route exact path="/dashboard" element={<Dashboard />} />
+      <Route exact path="/dashboard" element={<PersistentDrawerLeft />} />
     </Routes>
   );
 }

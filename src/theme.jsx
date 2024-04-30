@@ -14,21 +14,21 @@ const theme = createTheme({
   palette: {
     mode: "dark",
     primary: {
-      main: Colors.DARKBLUE,
-      light: Colors.BG_BLACK,
+      main: Colors.SKYBLUE,
+      light: Colors.SKYBLUE,
     },
     secondary: {
-      main: Colors.DEEPBLUE,
-      light: Colors.TOURQUISE,
+      main: Colors.SKYBLUE,
+      light: Colors.SKYBLUE,
     },
     Supportive: {
-      main: Colors.LIGHTGREY,
-      light: Colors.MUSTARD,
+      main: Colors.SKYBLUE,
+      light: Colors.SKYBLUE,
     },
   },
   text: {
-    fontFamily: "Outfit Variable",
-    color: Colors.WHITE,
+    fontFamily: "Nunito",
+    color: Colors.SKYBLUE,
   },
   typography: {
     h1: {

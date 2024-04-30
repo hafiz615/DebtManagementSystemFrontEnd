@@ -13,7 +13,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import Button from "./button";
 
-function SignUp({ setAuthForm }) {
+function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -22,9 +22,6 @@ function SignUp({ setAuthForm }) {
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
-  };
-  const handleSignUp = () => {
-    setAuthForm(true);
   };
 
   const isFormEmpty = () => {
@@ -120,7 +117,6 @@ function SignUp({ setAuthForm }) {
             color: "#000000",
             cursor: "pointer",
           }}
-          onClick={() => handleSignUp()}
         >
           {" "}
           Login
