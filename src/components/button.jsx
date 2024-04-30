@@ -12,6 +12,9 @@ function TextButton({
   height,
   startIcon,
   marginBottom,
+  marginRight,
+  paddingLeft,
+  paddingRight,
 }) {
   return (
     <Button
@@ -25,6 +28,9 @@ function TextButton({
         marginBottom: {
           marginBottom,
         },
+        marginRight: { marginRight },
+        paddingLeft: { paddingLeft },
+        paddingRight: { paddingRight },
         borderRadius: "10px",
         color: Colors.WHITE,
         backgroundColor: Colors.SKY_BLUE,

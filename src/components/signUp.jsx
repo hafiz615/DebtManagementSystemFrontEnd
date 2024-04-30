@@ -30,7 +30,6 @@ function SignUp() {
 
   const navigate = useNavigate();
   const handleSignUpForm = () => {
-    console.log({ name, email, password });
     navigate("/dashboard");
   };
 

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -32,12 +33,14 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
   };
   let backgroundColor;
   if (paymentNumber === "5") {
-    backgroundColor = "#EA6A47"; // Reddish color
+    backgroundColor = "#FBE1DA"; // Reddish color
   } else if (paymentNumber === "4") {
     backgroundColor = "#A5D8DD"; // Bluish color
   } else {
     backgroundColor = "#7E909A"; // Grayish color
   }
+
+  const navigate = useNavigate();
 
   return (
     <Accordion
@@ -117,6 +120,10 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
                 color: Colors.DIM_LIGHT_GRAY,
                 marginLeft: "0.5rem",
                 marginRight: "0.5rem",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                navigate("/authorization-details");
               }}
             />
           </Grid>

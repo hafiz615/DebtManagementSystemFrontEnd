@@ -33,7 +33,7 @@ export default function BasicMenu() {
         onClick={handleClick}
         sx={{
           backgroundColor: Colors.WHITE,
-          color: Colors.LIGHT_GRAY,
+          color: Colors.DARK_GRAY,
           fontFamily: "Nunito",
           borderRadius: "5px",
           ":hover": {
