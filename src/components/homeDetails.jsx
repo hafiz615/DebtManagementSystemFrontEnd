@@ -4,11 +4,11 @@ import { Grid, Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Colors } from "../config/default";
-import { DashBoardPage } from "../constants/appConstants";
+import { HomePageDetails } from "../constants/appConstants";
 import BasicMenu from "./dropdown";
 import AccordionUsage from "./accordion";
 
-function Dashboard() {
+function HomeDetails() {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
 
   const accordionData = [
@@ -25,7 +25,7 @@ function Dashboard() {
     HOME_HEADING,
     VIEW_DAYS,
     DAYS_TEXT,
-  } = DashBoardPage;
+  } = HomePageDetails;
   return (
     <Grid
       container
@@ -120,4 +120,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default HomeDetails;

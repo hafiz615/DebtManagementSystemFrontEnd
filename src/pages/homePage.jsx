@@ -1,12 +1,12 @@
 import React from "react";
 import PersistentDrawerLeft from "../components/openDrawer";
-import Dashboard from "../components/dashboard";
-function DashboardPage() {
+import HomeDetails from "../components/homeDetails";
+function HomePage() {
   return (
     <PersistentDrawerLeft>
-      <Dashboard />
+      <HomeDetails />
     </PersistentDrawerLeft>
   );
 }
 
-export default DashboardPage;
+export default HomePage;

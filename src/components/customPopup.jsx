@@ -5,25 +5,27 @@ import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Colors } from "../config/default";
 import ModelInfo from "./modelInfo";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "55%",
-  bgcolor: Colors.WHITE,
-  borderRadius: "10px",
-  boxShadow: 24,
-  p: 1.5,
-};
+// const style = {
+//   position: "absolute",
+//   top: "50%",
+//   left: "50%",
+//   transform: "translate(-50%, -50%)",
+//   width: smallScreen ? "65%" : "55%",
+//   bgcolor: Colors.WHITE,
+//   borderRadius: "10px",
+//   boxShadow: 24,
+//   p: 1.5,
+// };
 export default function BasicModal({ modelButton, show }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const smallScreen = useMediaQuery("(min-width:300px) and (max-width:768px)");
 
   return (
     <div>
@@ -52,7 +54,20 @@ export default function BasicModal({ modelButton, show }) {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Grid container sx={style}>
+        <Grid
+          container
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: smallScreen ? "65%" : "55%",
+            bgcolor: Colors.WHITE,
+            borderRadius: "10px",
+            boxShadow: 24,
+            p: 1.5,
+          }}
+        >
           <Grid
             item
             xs={12}

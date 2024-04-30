@@ -10,7 +10,6 @@ export default function AuthorizationDetails() {
         marginTop: "2rem",
       }}
     >
-      {" "}
       AuthorizationDetails
     </div>
   );
