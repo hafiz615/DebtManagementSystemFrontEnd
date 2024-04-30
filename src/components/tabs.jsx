@@ -11,7 +11,6 @@ import { UserListPage } from "../constants/appConstants";
 
 const AntTabs = styled(Tabs)({
   border: "none",
-
   "& .MuiTabs-indicator": {
     backgroundColor: "white",
   },

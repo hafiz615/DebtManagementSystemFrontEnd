@@ -1,8 +1,8 @@
 import React from "react";
 import { Grid, Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { UserListPage } from "../constants/appConstants";
 
+import { UserListPage } from "../constants/appConstants";
 import { Colors } from "../config/default";
 import CustomizedTabs from "./tabs";
 
