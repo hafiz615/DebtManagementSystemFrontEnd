@@ -1,5 +1,6 @@
 import React from "react";
 import { Grid, Typography } from "@mui/material";
+
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { UserListPage } from "../constants/appConstants";
@@ -56,6 +57,7 @@ export default function AuthorizationDetails() {
         </Typography>
       </Grid>
       <Grid
+        // container
         item
         xs={12}
         sx={{

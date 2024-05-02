@@ -22,7 +22,6 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
       minWidth: 0,
     },
     fontWeight: "500",
-    // marginRight: theme.spacing(1),
     color: Colors.DARK_GRAY,
     fontFamily: ["Nunito"].join(","),
     "&:hover": {
