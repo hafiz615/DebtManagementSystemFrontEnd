@@ -5,7 +5,7 @@ import { isEqual } from "lodash";
 import { styled } from "@mui/material/styles";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { Box } from "@mui/material";
+import { Grid, Box } from "@mui/material";
 
 import { Colors } from "../config/default";
 import BasicModal from "./customPopup";
@@ -135,49 +135,49 @@ const columns = [
     field: "name",
     headerName: <span style={{ fontWeight: "600" }}>Name</span>,
     flex: 1,
-    minWidth: 90,
+    minWidth: 70,
   },
   {
     field: "dob",
     headerName: <span style={{ fontWeight: "600" }}>DOB</span>,
     flex: 1,
-    minWidth: 90,
+    minWidth: 70,
   },
   {
     field: "gender",
     headerName: <span style={{ fontWeight: "600" }}>Gender</span>,
     flex: 1,
-    minWidth: 90,
+    minWidth: 70,
   },
   {
     field: "email",
     headerName: <span style={{ fontWeight: "600" }}>Email</span>,
     flex: 1,
-    minWidth: 90,
+    minWidth: 70,
   },
   {
     field: "ssid",
     headerName: <span style={{ fontWeight: "600" }}>SSID</span>,
     flex: 1,
-    minWidth: 90,
+    minWidth: 70,
   },
   {
     field: "role",
     headerName: <span style={{ fontWeight: "600" }}>Role</span>,
     flex: 1,
-    minWidth: 90,
+    minWidth: 70,
   },
   {
     field: "phone",
     headerName: <span style={{ fontWeight: "600" }}>Phone #</span>,
     flex: 1,
-    minWidth: 90,
+    minWidth: 70,
   },
   {
     field: "address",
     headerName: <span style={{ fontWeight: "600" }}>Address</span>,
     flex: 1,
-    minWidth: 90,
+    minWidth: 70,
   },
 ];
 export default function CustomizedTabs() {
@@ -205,7 +205,9 @@ export default function CustomizedTabs() {
   }, []);
   return (
     <>
-      <Box
+      <Grid
+        item
+        xs={11.9}
         sx={{
           display: "flex",
           justifyContent: "space-between",
@@ -233,15 +235,17 @@ export default function CustomizedTabs() {
         </Box>
 
         <BasicModal modelButton="ADD USERS" show={false} />
-      </Box>
-      <Box
+      </Grid>
+      <Grid
+        item
+        xs={11.9}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px ",
         }}
       >
         <DataTable rows={rows} columns={columns} />
-      </Box>
+      </Grid>
     </>
   );
 }

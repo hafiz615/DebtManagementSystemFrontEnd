@@ -8,6 +8,7 @@ export const Colors = {
   NAVY_BLUE: "#19335A",
   WHITE: "#FFFFFF",
   BLACK: "#040404",
+  ORANGE_COLOR: "#EA6A47",
 
   LIGHT_BLUE_COLOR: "#F5F9FE",
 };
