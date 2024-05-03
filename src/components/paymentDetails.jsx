@@ -11,8 +11,8 @@ import SearchBar from "./searchBar";
 import BasicCard from "./card";
 import TextButton from "./button";
 
-function DebtorDetails() {
-  const { AUTHORITY_TEXT, AUTHORITY_VALUE, DEBTOR_HEADING } = DebtorDetailsPage;
+function PaymentDetails() {
+  const { AUTHORITY_TEXT, AUTHORITY_VALUE } = DebtorDetailsPage;
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const navigate = useNavigate();
   return (
@@ -58,7 +58,7 @@ function DebtorDetails() {
             color: Colors.BLACK,
           }}
         >
-          {DEBTOR_HEADING}
+          Case Details
         </Typography>
       </Grid>
       <Grid
@@ -95,12 +95,12 @@ function DebtorDetails() {
           marginTop: "1rem",
         }}
       >
-        <Grid item xs={12} lg={5.9}>
+        {/* <Grid item xs={12} lg={5.9}>
           <BasicCard cardHeading="Business Information" toShowBusiness={true} />
-        </Grid>
-        <Grid item xs={12} lg={5.9}>
+        </Grid> */}
+        {/* <Grid item xs={12} lg={5.9}>
           <BasicCard cardHeading="Debtor Details" toShowDebtor={true} />
-        </Grid>
+        </Grid> */}
       </Grid>
       <Grid
         item
@@ -113,10 +113,7 @@ function DebtorDetails() {
         }}
       >
         <Grid item xs={12}>
-          <BasicCard
-            cardHeading="Contact Details"
-            toShowContactDetails={true}
-          />
+          <BasicCard cardHeading="Debt Details" toShowContactDetails={true} />
         </Grid>
       </Grid>
       <Grid
@@ -170,4 +167,5 @@ function DebtorDetails() {
     </Grid>
   );
 }
-export default DebtorDetails;
+
+export default PaymentDetails;

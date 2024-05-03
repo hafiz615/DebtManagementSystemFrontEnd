@@ -11,7 +11,7 @@ import SearchBar from "./searchBar";
 import BasicCard from "./card";
 import TextButton from "./button";
 
-function DebtorDetails() {
+export default function CreditorDetails() {
   const { AUTHORITY_TEXT, AUTHORITY_VALUE, DEBTOR_HEADING } = DebtorDetailsPage;
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const navigate = useNavigate();
@@ -96,10 +96,13 @@ function DebtorDetails() {
         }}
       >
         <Grid item xs={12} lg={5.9}>
-          <BasicCard cardHeading="Business Information" toShowBusiness={true} />
+          <BasicCard
+            cardHeading="Business Information"
+            toShowCreditorBusiness={true}
+          />
         </Grid>
         <Grid item xs={12} lg={5.9}>
-          <BasicCard cardHeading="Debtor Details" toShowDebtor={true} />
+          <BasicCard cardHeading="Funded" toShowCreditorFunded={true} />
         </Grid>
       </Grid>
       <Grid
@@ -161,8 +164,8 @@ function DebtorDetails() {
             paddingRight="2rem"
             height="2rem"
             onClick={() => {
-              localStorage.setItem("route", "creditor-details");
-              navigate("/creditor-details");
+              localStorage.setItem("route", "payment-details");
+              navigate("/payment-details");
             }}
           />
         </Grid>
@@ -170,4 +173,3 @@ function DebtorDetails() {
     </Grid>
   );
 }
-export default DebtorDetails;
