@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -70,7 +70,12 @@ const icons = [
 export default function PersistentDrawerLeft({ children }) {
   const theme = useTheme();
   const [open, setOpen] = useState(true);
-  const [selectedItem, setSelectedItem] = useState("");
+  const routeFound = localStorage.getItem("route");
+  const [selectedItem, setSelectedItem] = useState(routeFound || "Home");
+
+  // const currentPath = window.location.pathname;
+  // const [selectedItem, setSelectedItem] = useState(currentPath);
+  // console.log(currentPath, selectedItem, "path");
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -81,21 +86,23 @@ export default function PersistentDrawerLeft({ children }) {
   };
 
   const navigate = useNavigate();
-  const handleItemClick = (text) => {
-    switch (text) {
-      case "Home":
-        navigate("/home");
-        break;
+  useEffect(() => {
+    const handleItemClick = (text) => {
+      localStorage.setItem("route", text);
+      switch (text) {
+        case "Home":
+          navigate("/home");
+          break;
+        case "User Listing":
+          navigate("/user-listing");
+          break;
+        default:
+          break;
+      }
+    };
 
-      case "User Listing":
-        navigate("/user-listing");
-        break;
-
-      default:
-        break;
-    }
-    setSelectedItem(text);
-  };
+    handleItemClick(selectedItem);
+  }, [selectedItem, navigate]);
 
   return (
     <Box
@@ -171,7 +178,7 @@ export default function PersistentDrawerLeft({ children }) {
           ]?.map((text, index) => (
             <ListItem key={text} disablePadding>
               <ListItemButton
-                onClick={() => handleItemClick(text)}
+                onClick={() => setSelectedItem(text)}
                 sx={{
                   color: selectedItem === text ? Colors.SKY_BLUE : "inherit",
                   ":hover": {

@@ -32,7 +32,7 @@ function Login() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      navigate("/dashboard");
+      navigate("/home");
     }, 1000);
   };
 
@@ -51,14 +51,20 @@ function Login() {
   };
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
-    if (e.target.value.length < 7) {
+    if (e.target.value.length < 8) {
       setPasswordError(
-        "Password must be at least 7 characters long and include special characters"
+        "Password must be at least 8 characters long and include special characters"
       );
-    } else if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/.test(e.target.value)) {
-      setPasswordError("Password must contain at least one special character");
-    } else {
+    } else if (
+      /(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/.test(
+        e.target.value
+      )
+    ) {
       setPasswordError("");
+    } else {
+      setPasswordError(
+        "Password must contain at least one special character, one lowercase letter, and one uppercase letter"
+      );
     }
   };
 
@@ -66,8 +72,10 @@ function Login() {
     !email.trim() ||
     !email.includes("@") ||
     !email.includes(".co") ||
-    password.length < 7 ||
-    !/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/.test(password);
+    password.length < 8 ||
+    !/(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/.test(
+      password
+    );
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       handleLoginForm();
