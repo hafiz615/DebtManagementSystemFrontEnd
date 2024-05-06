@@ -110,11 +110,17 @@ export default function PaymentsTabs() {
     <Box>
       <Box
         sx={{
-          width: "max-content",
           marginLeft: "2.5rem",
         }}
       >
-        <AntTabs value={value} onChange={handleChange} aria-label="ant example">
+        <AntTabs
+          value={value}
+          onChange={handleChange}
+          aria-label="ant example"
+          variant="scrollable"
+          scrollButtons="auto"
+          sx={{ width: { xs: "22rem", md: "50rem" } }}
+        >
           <AntTab
             sx={{
               bgcolor: Colors.WHITE,
@@ -125,6 +131,7 @@ export default function PaymentsTabs() {
             }}
             label="Failed Authorizations"
           />
+
           <AntTab
             sx={{
               bgcolor: Colors.WHITE,

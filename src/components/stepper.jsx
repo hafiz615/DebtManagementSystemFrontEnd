@@ -1,92 +1,192 @@
 import * as React from "react";
-import { Box } from "@mui/material";
+
+import { Grid } from "@mui/material";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
-import StepButton from "@mui/material/StepButton";
-// import Button from "@mui/material/Button";
+import StepLabel from "@mui/material/StepLabel";
+
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
-const steps = ["Debtor", "Creditor", "Payment", "File Upload", "Preview"];
+import { Colors } from "../config/default";
+import DebtorDetails from "./debtorDetails";
+import { DebtorDetailsPage } from "../constants/appConstants";
+import TextButton from "./button";
+import CreditorDetails from "./creditorDetails";
+import PaymentDetails from "./paymentDetails";
 
-export default function HorizontalNonLinearStepper() {
+const steps = ["Debtor", "Creditor", "Payment", "File upload", "Preview"];
+
+export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = React.useState(0);
-  // const [completed, setCompleted] = React.useState({});
+  const [skipped, setSkipped] = React.useState(new Set());
+  const { AUTHORITY_TEXT, AUTHORITY_VALUE, DEBTOR_HEADING } = DebtorDetailsPage;
+  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
 
-  // const totalSteps = () => steps.length;
+  const isStepSkipped = (step) => {
+    return skipped.has(step);
+  };
 
-  // const completedSteps = () => Object.keys(completed).length;
+  const handleNext = () => {
+    let newSkipped = skipped;
+    if (isStepSkipped(activeStep)) {
+      newSkipped = new Set(newSkipped.values());
+      newSkipped.delete(activeStep);
+    }
 
-  // const isLastStep = () => activeStep === totalSteps() - 1;
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setSkipped(newSkipped);
+  };
 
-  // const allStepsCompleted = () => completedSteps() === totalSteps();
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
 
-  // const handleNext = () => {
-  //   const newActiveStep =
-  //     isLastStep() && !allStepsCompleted()
-  //       ? steps.findIndex((step, i) => !(i in completed))
-  //       : activeStep + 1;
-  //   setActiveStep(newActiveStep);
-  // };
-
-  // const handleBack = () =>
-  //   setActiveStep((prevActiveStep) => prevActiveStep - 1);
-
-  const handleStep = (step) => () => setActiveStep(step);
-
-  // const handleComplete = () => {
-  //   const newCompleted = { ...completed };
-  //   newCompleted[activeStep] = true;
-  //   setCompleted(newCompleted);
-  //   handleNext();
-  // };
-
-  // const handleReset = () => {
-  //   setActiveStep(0);
-  //   setCompleted({});
-  // };
+  const handleReset = () => {
+    setActiveStep(0);
+  };
 
   return (
-    <Box sx={{ width: "50%" }}>
-      <Stepper nonLinear activeStep={activeStep}>
-        {steps.map((label, index) => (
-          <Step
-            key={label}
-            //  completed={completed[index]}
+    <Grid
+      container
+      sx={{
+        backgroundColor: Colors.BG_LIGHT_GRAY,
+        paddingLeft: "2rem",
+        paddingRight: "2rem",
+      }}
+    >
+      <Grid
+        item
+        xs={12}
+        sx={{
+          display: "flex",
+          justifyContent: smallScreen ? "flex-start" : "flex-end",
+          marginTop: "1.5rem",
+        }}
+      >
+        <Typography
+          sx={{
+            fontFamily: "Nunito",
+            fontWeight: "500",
+            color: Colors.DARK_GRAY,
+          }}
+        >
+          {AUTHORITY_TEXT} <span>{AUTHORITY_VALUE}</span>
+        </Typography>
+      </Grid>
+      <Grid
+        item
+        xs={12}
+        sx={{
+          marginTop: "1.5rem",
+        }}
+      >
+        <Typography
+          sx={{
+            fontWeight: "600",
+            fontSize: "2rem",
+            fontFamily: "Nunito",
+            color: Colors.BLACK,
+          }}
+        >
+          {DEBTOR_HEADING}
+        </Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <Grid
+          item
+          xs={12}
+          sx={{
+            marginTop: "0.5rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Stepper
+            activeStep={activeStep}
+            alternativeLabel
+            sx={{ width: { xs: "100%", md: "50%" } }}
           >
-            <StepButton
-              color="inherit"
-              onClick={handleStep(index)}
+            {steps.map((label, index) => {
+              const stepProps = {};
+              const labelProps = {};
+
+              if (isStepSkipped(index)) {
+                stepProps.completed = false;
+              }
+              return (
+                <Step key={label} {...stepProps}>
+                  <StepLabel {...labelProps}>{label}</StepLabel>
+                </Step>
+              );
+            })}
+          </Stepper>
+        </Grid>
+
+        <React.Fragment>
+          {activeStep === 0 ? (
+            <DebtorDetails />
+          ) : activeStep === 1 ? (
+            <CreditorDetails />
+          ) : activeStep === 2 ? (
+            <PaymentDetails />
+          ) : (
+            ""
+          )}
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              justifyContent: { xs: "flex-start", md: "flex-end" },
+              marginTop: "1rem",
+              marginBottom: "1.5rem",
+            }}
+          >
+            <Grid
+              item
+              xs={12}
               sx={{
                 display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                textAlign: "center",
+                justifyContent: { xs: "space-between", sm: "flex-end" },
               }}
             >
-              <Typography sx={{ fontFamily: "Nunito" }}>{label}</Typography>
-              {/* {completed[index] && (
-                <Typography variant="caption" sx={{ mt: 1 }}>
-                  Completed
-                </Typography>
-              )} */}
-            </StepButton>
-          </Step>
-        ))}
-      </Stepper>
-      {/* <div>
-        {allStepsCompleted() ? (
-          <React.Fragment>
-            <Typography sx={{ mt: 2, mb: 1 }}>
-              All steps completed - you&apos;re finished
-            </Typography>
-            <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-              <Box sx={{ flex: "1 1 auto" }} />
-              <Button onClick={handleReset}>Reset</Button>
-            </Box>
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+              <TextButton
+                buttonText="EXIT"
+                disabled={activeStep === 0}
+                onClick={handleBack}
+                backgroundColor={Colors.ORANGE_COLOR}
+                hoverColor={Colors.ORANGE_COLOR}
+                paddingLeft="2rem"
+                paddingRight="2rem"
+                height="2rem"
+                marginRight="1rem"
+              />
+              <TextButton
+                buttonText="RESET"
+                onClick={handleReset}
+                backgroundColor={Colors.DARK_GRAY}
+                hoverColor={Colors.DARK_GRAY}
+                paddingLeft="2rem"
+                paddingRight="2rem"
+                height="2rem"
+                marginRight="1rem"
+              />
+              <TextButton
+                buttonText={activeStep === steps.length - 1 ? "SAVE" : "NEXT"}
+                backgroundColor={Colors.SKY_BLUE}
+                hoverColor={Colors.SKY_BLUE}
+                paddingLeft="2rem"
+                paddingRight="2rem"
+                height="2rem"
+                onClick={handleNext}
+                marginRight="1rem"
+              />
+            </Grid>
+          </Grid>
+
+          {/* <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
               <Button
                 color="inherit"
                 disabled={activeStep === 0}
@@ -96,28 +196,18 @@ export default function HorizontalNonLinearStepper() {
                 Back
               </Button>
               <Box sx={{ flex: "1 1 auto" }} />
-              <Button onClick={handleNext} sx={{ mr: 1 }}>
-                Next
+              {isStepOptional(activeStep) && (
+                <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
+                  Skip
+                </Button>
+              )}
+
+              <Button onClick={handleNext}>
+                {activeStep === steps.length - 1 ? "Finish" : "Next"}
               </Button>
-              {activeStep !== steps.length &&
-                (completed[activeStep] ? (
-                  <Typography
-                    variant="caption"
-                    sx={{ display: "inline-block" }}
-                  >
-                    Step {activeStep + 1} already completed
-                  </Typography>
-                ) : (
-                  <Button onClick={handleComplete}>
-                    {completedSteps() === totalSteps() - 1
-                      ? "Finish"
-                      : "Complete Step"}
-                  </Button>
-                ))}
-            </Box>
-          </React.Fragment>
-        )}
-      </div> */}
-    </Box>
+            </Box> */}
+        </React.Fragment>
+      </Grid>
+    </Grid>
   );
 }

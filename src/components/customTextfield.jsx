@@ -4,7 +4,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Colors } from "../config/default";
 
-export default function CustomTextField({ label, placeHolderValue }) {
+export default function CustomTextField({ label, placeHolderValue, width }) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
 
   const largeScreen = useMediaQuery(
@@ -34,7 +34,13 @@ export default function CustomTextField({ label, placeHolderValue }) {
           border: "none",
           outline: "none",
           borderRadius: "5px",
-          width: smallScreen ? "22rem " : largeScreen ? "20rem" : "",
+          width: width
+            ? width
+            : smallScreen
+            ? "22rem "
+            : largeScreen
+            ? "20rem"
+            : "",
           marginBottom: smallScreen ? "0.5rem" : "0.7rem",
         }}
       />
