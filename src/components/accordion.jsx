@@ -1,4 +1,6 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { isEqual } from "lodash";
 
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -7,10 +9,115 @@ import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import { ExpandMore, Launch } from "@mui/icons-material";
 import { Grid, Typography, Box } from "@mui/material";
 
-import CustomizedTables from "./table";
 import { Colors } from "../config/default";
 
+import DataTable from "./table";
+const rowArray = [
+  {
+    name: "User Name",
+    dueDate: "4/2/2024",
+    amount: "$3,254.00",
+    ssid: "721-07-4426",
+    failureReason: "Lorium Ipsum",
+  },
+  {
+    name: "User Name",
+    dueDate: "4/2/2024",
+    amount: "$3,254.00",
+    ssid: "721-07-4426",
+    failureReason: "Lorium Ipsum",
+  },
+  {
+    name: "User Name",
+    dueDate: "4/2/2024",
+    amount: "$3,254.00",
+    ssid: "721-07-4426",
+    failureReason: "Lorium Ipsum",
+  },
+  {
+    name: "User Name",
+    dueDate: "4/2/2024",
+    amount: "$3,254.00",
+    ssid: "721-07-4426",
+    failureReason: "Lorium Ipsum",
+  },
+  {
+    name: "User Name",
+    dueDate: "4/2/2024",
+    amount: "$3,254.00",
+    ssid: "721-07-4426",
+    failureReason: "Lorium Ipsum",
+  },
+  {
+    name: "User Name",
+    dueDate: "4/2/2024",
+    amount: "$3,254.00",
+    ssid: "721-07-4426",
+    failureReason: "Lorium Ipsum",
+  },
+  {
+    name: "User Name",
+    dueDate: "4/2/2024",
+    amount: "$3,254.00",
+    ssid: "721-07-4426",
+    failureReason: "Lorium Ipsum",
+  },
+  {
+    name: "User Name",
+    dueDate: "4/2/2024",
+    amount: "$3,254.00",
+    ssid: "721-07-4426",
+    failureReason: "Lorium Ipsum",
+  },
+];
+const columns = [
+  {
+    field: "name",
+    headerName: <span style={{ fontWeight: "600" }}>Name</span>,
+
+    flex: 1,
+    minWidth: 90,
+  },
+  {
+    field: "dueDate",
+    headerName: <span style={{ fontWeight: "600" }}>Due Date</span>,
+    flex: 1,
+    minWidth: 90,
+  },
+  {
+    field: "amount",
+    headerName: <span style={{ fontWeight: "600" }}>Amount</span>,
+    flex: 1,
+    minWidth: 90,
+  },
+  {
+    field: "ssid",
+    headerName: <span style={{ fontWeight: "600" }}>SSID</span>,
+    flex: 1,
+    minWidth: 90,
+  },
+  {
+    field: "failureReason",
+    headerName: <span style={{ fontWeight: "600" }}>Failure Reason</span>,
+    flex: 1,
+    minWidth: 90,
+  },
+];
 export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
+  const [rows, setRows] = useState([]);
+  useEffect(() => {
+    const generatedData = rowArray?.map((item, index) => ({
+      id: index,
+      name: item?.name,
+      dueDate: item?.dueDate,
+      amount: item?.amount,
+      ssid: item?.ssid,
+      failureReason: item?.failureReason,
+    }));
+    if (!isEqual(generatedData, rowArray)) {
+      setRows(generatedData);
+    }
+  }, []);
   const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
     padding: theme.spacing(0),
   }));
@@ -19,6 +126,17 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
   const handleChange = () => {
     setExpanded((prevExpanded) => !prevExpanded);
   };
+  let backgroundColor;
+  if (paymentNumber === "5") {
+    backgroundColor = "rgba(234, 106, 71, 0.5)"; // Reddish color
+  } else if (paymentNumber === "4") {
+    backgroundColor = "rgba(165, 216, 221, 0.5)"; // Bluish color
+  } else {
+    backgroundColor = "#7E909A"; // Grayish color
+  }
+
+  const navigate = useNavigate();
+
   return (
     <Accordion
       defaultExpanded={index < 2}
@@ -53,7 +171,7 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
               sx={{
                 fontFamily: "Nunito",
                 fontWeight: "600",
-                color: Colors.NAVY_BLUE,
+                color: Colors.BLACK,
               }}
             >
               {tableHeading}
@@ -71,7 +189,7 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
           >
             <Box
               sx={{
-                backgroundColor: Colors.BG_LIGHT_GRAY,
+                backgroundColor,
                 borderRadius: "10px",
                 height: "2.5rem",
                 width: "2.5rem",
@@ -80,13 +198,17 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
                 justifyContent: "center",
                 marginRight: "0.5rem",
               }}
+              onClick={() => {
+                localStorage.setItem("route", "debtor-details");
+                navigate("/debtor-details");
+              }}
             >
               <Typography
                 sx={{
-                  fontWeight: "500",
+                  fontWeight: "600",
                   fontSize: "1rem",
                   fontFamily: "Nunito",
-                  color: Colors.NAVY_BLUE,
+                  color: Colors.BLACK,
                 }}
               >
                 {paymentNumber}
@@ -94,9 +216,14 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
             </Box>
             <Launch
               sx={{
-                color: Colors.DARK_GRAY,
+                color: Colors.DIM_LIGHT_GRAY,
                 marginLeft: "0.5rem",
                 marginRight: "0.5rem",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                localStorage.setItem("route", "authorization-details");
+                navigate("/authorization-details");
               }}
             />
           </Grid>
@@ -104,7 +231,7 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
       </AccordionSummary>
 
       <AccordionDetails>
-        <CustomizedTables />
+        <DataTable rows={rows} columns={columns} />
       </AccordionDetails>
     </Accordion>
   );

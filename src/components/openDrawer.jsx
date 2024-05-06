@@ -1,4 +1,7 @@
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -21,10 +24,9 @@ import {
 } from "@mui/icons-material";
 import ListItemText from "@mui/material/ListItemText";
 
-import NavBar from "../components/navBar";
-import Dashboard from "./dashboard";
+import NavBar from "./navBar";
 import { Colors } from "../config/default";
-import DropDown from "../components/menuSimple";
+import DropDown from "./menuSimple";
 
 const drawerWidth = 240;
 
@@ -65,10 +67,15 @@ const icons = [
   <Group />,
   <Assessment />,
 ];
-export default function PersistentDrawerLeft() {
+export default function PersistentDrawerLeft({ children }) {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(true);
-  const [selectedItem, setSelectedItem] = React.useState("");
+  const [open, setOpen] = useState(true);
+  const routeFound = localStorage.getItem("route");
+  const [selectedItem, setSelectedItem] = useState(routeFound || "Home");
+
+  // const currentPath = window.location.pathname;
+  // const [selectedItem, setSelectedItem] = useState(currentPath);
+  // console.log(currentPath, selectedItem, "path");
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -78,12 +85,31 @@ export default function PersistentDrawerLeft() {
     setOpen(false);
   };
 
-  const handleItemClick = (text) => {
-    setSelectedItem(text);
-  };
+  const navigate = useNavigate();
+  useEffect(() => {
+    const handleItemClick = (text) => {
+      localStorage.setItem("route", text);
+      switch (text) {
+        case "Home":
+          navigate("/home");
+          break;
+        case "User Listing":
+          navigate("/user-listing");
+          break;
+        default:
+          break;
+      }
+    };
+
+    handleItemClick(selectedItem);
+  }, [selectedItem, navigate]);
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box
+      sx={{
+        display: "flex",
+      }}
+    >
       <CssBaseline />
       <NavBar onClick={handleDrawerOpen} />
       <Drawer
@@ -138,7 +164,13 @@ export default function PersistentDrawerLeft() {
             justifyContent: "center",
           }}
         >
-          <DropDown />
+          <DropDown
+            heading="Create New Case"
+            menuItem1=" Create New"
+            menuItem2="Import"
+            backgroundColor={Colors.SKY_BLUE}
+            toShowDrawer={true}
+          />
         </Box>
 
         <List sx={{ marginLeft: "0.5rem" }}>
@@ -152,7 +184,7 @@ export default function PersistentDrawerLeft() {
           ]?.map((text, index) => (
             <ListItem key={text} disablePadding>
               <ListItemButton
-                onClick={() => handleItemClick(text)}
+                onClick={() => setSelectedItem(text)}
                 sx={{
                   color: selectedItem === text ? Colors.SKY_BLUE : "inherit",
                   ":hover": {
@@ -187,17 +219,9 @@ export default function PersistentDrawerLeft() {
           ))}
         </List>
       </Drawer>
-      <Main
-        open={open}
-        sx={{
-          backgroundColor: Colors.BG_LIGHT_GRAY,
-          height: "100vh",
-          position: "relative",
-        }}
-      >
+      <Main open={open}>
         <DrawerHeader />
-
-        <Dashboard />
+        {children}
       </Main>
     </Box>
   );

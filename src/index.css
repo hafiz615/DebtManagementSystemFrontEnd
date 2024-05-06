@@ -2,6 +2,7 @@ body {
   margin: 0 !important;
   padding: 0 !important;
   /* font-family: "Outfit Variable", sans-serif; */
+  background-color: #f5f5f5 !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -12,4 +13,13 @@ code {
 }
 .css-10hburv-MuiTypography-root {
   font-family: Nunito !important;
+}
+
+.css-z0q5kf-MuiButtonBase-root-MuiTab-root.Mui-selected {
+  font-family: Nunito !important;
+  font-weight: 600;
+  color: black !important;
+}
+.css-12z24o5-MuiButtonBase-root-MuiAccordionSummary-root.Mui-expanded {
+  padding-left: 1.6% !important;
 }

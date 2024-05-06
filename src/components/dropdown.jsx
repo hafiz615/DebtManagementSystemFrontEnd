@@ -7,7 +7,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Colors } from "../config/default";
 export default function BasicMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [selectedValue, setSelectedValue] = React.useState(3); // State to hold the selected value
+  const [selectedValue, setSelectedValue] = React.useState(3);
   const open = Boolean(anchorEl);
 
   const handleClick = (event) => {
@@ -24,7 +24,7 @@ export default function BasicMenu() {
   };
 
   return (
-    <div>
+    <>
       <Button
         id="basic-button"
         aria-controls={open ? "basic-menu" : undefined}
@@ -53,18 +53,18 @@ export default function BasicMenu() {
         }}
       >
         <MenuItem
-          sx={{ width: "4rem", color: Colors.DARK_GRAY }}
+          sx={{ width: "4rem", color: Colors.LIGHT_GRAY }}
           onClick={() => handleMenuItemClick(5)}
         >
           5
         </MenuItem>
         <MenuItem
-          sx={{ color: Colors.DARK_GRAY }}
+          sx={{ color: Colors.LIGHT_GRAY }}
           onClick={() => handleMenuItemClick(7)}
         >
           7
         </MenuItem>
       </Menu>
-    </div>
+    </>
   );
 }

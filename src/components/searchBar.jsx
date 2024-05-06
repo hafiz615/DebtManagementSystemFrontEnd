@@ -1,8 +1,8 @@
 import React from "react";
 
 import SearchIcon from "@mui/icons-material/Search";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import IconButton from "@mui/material/IconButton";
+// import FilterListIcon from "@mui/icons-material/FilterList";
+// import IconButton from "@mui/material/IconButton";
 import { styled, alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 
@@ -20,7 +20,7 @@ const Search = styled("div")(({ theme }) => ({
   // marginLeft: 0,
   width: "100%",
   [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(3),
+    // marginLeft: theme.spacing(3),
     width: "auto",
   },
 }));
@@ -33,7 +33,7 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  color: Colors.LIGHT_GRAY,
+  color: Colors.DIM_LIGHT_GRAY,
 }));
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   "& .MuiInputBase-input": {
@@ -69,19 +69,19 @@ function SearchBar() {
         />
       </SearchIconWrapper>
       <StyledInputBase
-        placeholder="Search…"
+        placeholder="Search existing debtor..."
         inputProps={{ "aria-label": "search" }}
         sx={{ color: Colors.LIGHT_GRAY, fontFamily: "Nunito" }}
       />
 
-      <IconButton size="large" aria-label="show filter data" color="inherit">
+      {/* <IconButton size="large" aria-label="show filter data" color="inherit">
         <FilterListIcon
           sx={{
             color: Colors.DIM_LIGHT_GRAY,
             fontSize: "2rem",
           }}
         />
-      </IconButton>
+      </IconButton> */}
     </Search>
   );
 }

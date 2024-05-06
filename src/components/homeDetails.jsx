@@ -4,12 +4,11 @@ import { Grid, Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Colors } from "../config/default";
-import { DashBoardPage } from "../constants/appConstants";
-import BasicMenu from "../components/dropdown";
-import SearchBar from "../components/searchBar";
-import AccordionUsage from "../components/accordion";
+import { HomePageDetails } from "../constants/appConstants";
+import BasicMenu from "./dropdown";
+import AccordionUsage from "./accordion";
 
-function Dashboard() {
+function HomeDetails() {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
 
   const accordionData = [
@@ -21,36 +20,30 @@ function Dashboard() {
   ];
 
   const {
-    DASHBOARD_HEADING,
     AUTHORITY_TEXT,
     AUTHORITY_VALUE,
     HOME_HEADING,
     VIEW_DAYS,
     DAYS_TEXT,
-  } = DashBoardPage;
+  } = HomePageDetails;
   return (
-    <Grid container sx={{ backgroundColor: Colors.BG_LIGHT_GRAY }}>
+    <Grid
+      container
+      sx={{
+        backgroundColor: Colors.BG_LIGHT_GRAY,
+        paddingLeft: "2rem",
+        paddingRight: "2rem",
+      }}
+    >
       <Grid
         item
         xs={12}
         sx={{
           display: "flex",
-          justifyContent: "space-between",
-          flexDirection: smallScreen ? "column" : "",
+          justifyContent: smallScreen ? "flex-start" : "flex-end",
           marginTop: "1.5rem",
-          paddingLeft: "2rem",
-          paddingRight: "2rem",
         }}
       >
-        <Typography
-          sx={{
-            fontFamily: "Nunito",
-            fontWeight: "500",
-            color: Colors.DARK_GRAY,
-          }}
-        >
-          {DASHBOARD_HEADING}
-        </Typography>
         <Typography
           sx={{
             fontFamily: "Nunito",
@@ -65,11 +58,6 @@ function Dashboard() {
         item
         xs={12}
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          flexDirection: smallScreen ? "column" : "row",
-          paddingLeft: "2rem",
-          paddingRight: "2rem",
           marginTop: "1.5rem",
         }}
       >
@@ -78,22 +66,18 @@ function Dashboard() {
             fontWeight: "600",
             fontSize: "2rem",
             fontFamily: "Nunito",
-            color: Colors.NAVY_BLUE,
+            color: Colors.BLACK,
           }}
         >
           {HOME_HEADING}
         </Typography>
-        <SearchBar />
       </Grid>
       <Grid
         item
-        xs={11.6}
+        xs={12}
         sx={{
           display: "flex",
           justifyContent: smallScreen ? "flex-start" : "flex-end",
-          flexDirection: smallScreen ? "column" : "row",
-          paddingLeft: "2rem",
-          paddingRight: "2rem",
           marginTop: "1.5rem",
         }}
       >
@@ -104,7 +88,7 @@ function Dashboard() {
             display: "flex",
             alignItems: "center",
             justifyContent: smallScreen ? "flex-start" : "center",
-            color: Colors.DARK_GRAY,
+            color: Colors.BLACK,
           }}
         >
           <span style={{ marginRight: ".5rem" }}>{VIEW_DAYS}</span>
@@ -117,11 +101,8 @@ function Dashboard() {
         container
         item
         xs={12}
-        lg={11.6}
         sx={{
           marginTop: "1rem",
-          paddingLeft: "2rem",
-          paddingRight: "2rem",
         }}
         spacing={smallScreen ? 0 : 2}
       >
@@ -139,4 +120,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default HomeDetails;
