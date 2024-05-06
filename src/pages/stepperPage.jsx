@@ -1,15 +1,13 @@
 import React from "react";
 import PersistentDrawerLeft from "../components/openDrawer";
-// import DebtorDetails from "../components/debtorDetails";
 import HorizontalLinearStepper from "../components/stepper";
 
-function DebtorDetailsPage() {
+function HorizontalLinearStepperPage() {
   return (
     <PersistentDrawerLeft>
-      {/* <DebtorDetails /> */}
       <HorizontalLinearStepper />
     </PersistentDrawerLeft>
   );
 }
 
-export default DebtorDetailsPage;
+export default HorizontalLinearStepperPage;

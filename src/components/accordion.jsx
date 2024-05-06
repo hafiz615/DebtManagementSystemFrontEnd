@@ -199,8 +199,8 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
                 marginRight: "0.5rem",
               }}
               onClick={() => {
-                localStorage.setItem("route", "debtor-details");
-                navigate("/debtor-details");
+                localStorage.setItem("route", "case-details");
+                navigate("/case-details");
               }}
             >
               <Typography

@@ -1,10 +1,9 @@
 import React from "react";
-
 import { Grid } from "@mui/material";
 
 import BasicCard from "./card";
 
-function PaymentDetails() {
+export default function PreviewDetails() {
   return (
     <Grid
       container
@@ -17,16 +16,20 @@ function PaymentDetails() {
       }}
     >
       <Grid item xs={12} sx={{ marginBottom: "0.5rem" }}>
-        <BasicCard cardHeading="Debt Details" toShowDebtDetails={true} />
+        <BasicCard cardHeading="Debtor Details" previewDebtorDetails={true} />
       </Grid>
       <Grid item xs={12}>
         <BasicCard
-          cardHeading="Settlement Plan Automation"
-          toShowSettlementPlan={true}
+          cardHeading="Creditor Details"
+          previewCreditorDetails={true}
+        />
+      </Grid>
+      <Grid item xs={12} sx={{ marginTop: "0.5rem" }}>
+        <BasicCard
+          cardHeading="Payment Plan Automation"
+          previewSettlementPlan={true}
         />
       </Grid>
     </Grid>
   );
 }
-
-export default PaymentDetails;

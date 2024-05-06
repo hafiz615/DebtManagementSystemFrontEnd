@@ -14,6 +14,7 @@ import { DebtorDetailsPage } from "../constants/appConstants";
 import TextButton from "./button";
 import CreditorDetails from "./creditorDetails";
 import PaymentDetails from "./paymentDetails";
+import PreviewDetails from "./previewDetails";
 
 const steps = ["Debtor", "Creditor", "Payment", "File upload", "Preview"];
 
@@ -131,6 +132,8 @@ export default function HorizontalLinearStepper() {
             <CreditorDetails />
           ) : activeStep === 2 ? (
             <PaymentDetails />
+          ) : activeStep === 4 ? (
+            <PreviewDetails />
           ) : (
             ""
           )}
