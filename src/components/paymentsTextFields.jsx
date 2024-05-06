@@ -1,17 +1,24 @@
 import * as React from "react";
-import { Typography, Box } from "@mui/material";
+import { Typography, Grid } from "@mui/material";
 // import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Colors } from "../config/default";
 
-function PaymentsTextFields({ label, placeHolderValue, width, marginBottom }) {
+function PaymentsTextFields({
+  label,
+  placeHolderValue,
+  width,
+  marginBottom,
+  marginRight,
+  marginLeft,
+}) {
   //   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
 
   //   const largeScreen = useMediaQuery(
   //     "(min-width:1600px) and (max-width:3000px)"
   //   );
   return (
-    <Box>
+    <Grid item xs={12} md={3.9}>
       <Typography
         sx={{
           fontWeight: "500",
@@ -35,9 +42,11 @@ function PaymentsTextFields({ label, placeHolderValue, width, marginBottom }) {
           borderRadius: "5px",
           marginBottom: marginBottom,
           width: width,
+          marginRight: marginRight,
+          marginLeft: marginLeft,
         }}
       />
-    </Box>
+    </Grid>
   );
 }
 

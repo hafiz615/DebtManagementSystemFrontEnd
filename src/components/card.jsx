@@ -7,6 +7,8 @@ import CardContent from "@mui/material/CardContent";
 // import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import AddIcon from "@mui/icons-material/Add";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 
 import PaymentsTextFields from "./paymentsTextFields";
 
@@ -20,11 +22,16 @@ export default function BasicCard({
   toShowContactDetails,
   toShowCreditorBusiness,
   toShowCreditorFunded,
+  toShowDebtDetails,
+  toShowSettlementPlan,
+  height,
 }) {
   return (
     <Card
       sx={{
         borderRadius: "10px",
+        height: height,
+        marginTop: { xs: ".5rem", xl: "0rem" },
       }}
     >
       <CardContent>
@@ -38,6 +45,7 @@ export default function BasicCard({
             </Typography>
 
             <Grid
+              container
               item
               xs={12}
               sx={{
@@ -49,24 +57,47 @@ export default function BasicCard({
               <PaymentsTextFields
                 label="Company Name"
                 placeHolderValue="Company"
+                width="100%"
               />
               <PaymentsTextFields
                 label="EIN Number"
                 placeHolderValue="32-2124444"
+                width="100%"
               />
               <PaymentsTextFields
                 label="Business Category"
                 placeHolderValue="Loriem Ipsum"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <PaymentsTextFields
-                label="Description"
-                placeHolderValue="Loriem Ipsum"
                 width="100%"
               />
             </Grid>
+            <Grid item xs={12}>
+              <Typography
+                sx={{
+                  fontWeight: "500",
+                  fontFamily: "Nunito",
+                  marginLeft: "1rem",
+                  color: Colors.DARK_GRAY,
+                }}
+              >
+                Description
+              </Typography>
+              <input
+                type="text"
+                placeholder="Loriem Ipsum"
+                style={{
+                  backgroundColor: Colors.BG_LIGHT_GRAY,
+                  height: "2.5rem",
+                  color: Colors.DIM_LIGHT_GRAY,
+                  paddingLeft: "1rem",
+                  border: "none",
+                  outline: "none",
+                  borderRadius: "5px",
+                  width: "100%",
+                }}
+              />
+            </Grid>
             <Grid
+              container
               item
               xs={12}
               sx={{
@@ -78,14 +109,21 @@ export default function BasicCard({
               <PaymentsTextFields
                 label="Country"
                 placeHolderValue="721-07-4426"
+                width="100%"
               />
               <PaymentsTextFields
                 label="State"
                 placeHolderValue="Loriem Ipsumame"
+                width="100%"
               />
-              <PaymentsTextFields label="City" placeHolderValue="Name" />
+              <PaymentsTextFields
+                label="City"
+                placeHolderValue="Name"
+                width="100%"
+              />
             </Grid>
             <Grid
+              container
               item
               xs={12}
               sx={{
@@ -94,14 +132,20 @@ export default function BasicCard({
                 marginTop: "0.5rem",
               }}
             >
-              <PaymentsTextFields label="Zip Code" placeHolderValue="+1" />
+              <PaymentsTextFields
+                label="Zip Code"
+                placeHolderValue="+1"
+                width="100%"
+              />
               <PaymentsTextFields
                 label="Phone #"
                 placeHolderValue="8143008957"
+                width="100%"
               />
               <PaymentsTextFields
                 label="Address"
                 placeHolderValue="Loriem Ipsum"
+                width="100%"
               />
             </Grid>
           </>
@@ -118,6 +162,7 @@ export default function BasicCard({
             </Typography>
 
             <Grid
+              container
               item
               xs={12}
               sx={{
@@ -129,24 +174,47 @@ export default function BasicCard({
               <PaymentsTextFields
                 label="Full Name"
                 placeHolderValue="John Deo"
+                width="100%"
               />
               <PaymentsTextFields
                 label="Email Address"
                 placeHolderValue="user@email.com"
+                width="100%"
               />
               <PaymentsTextFields
                 label="Business Category"
                 placeHolderValue="Loriem Ipsum"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <PaymentsTextFields
-                label="Description"
-                placeHolderValue="Loriem Ipsum"
                 width="100%"
               />
             </Grid>
+            <Grid item xs={12}>
+              <Typography
+                sx={{
+                  fontWeight: "500",
+                  fontFamily: "Nunito",
+                  marginLeft: "1rem",
+                  color: Colors.DARK_GRAY,
+                }}
+              >
+                Description
+              </Typography>
+              <input
+                type="text"
+                placeholder="Loriem Ipsum"
+                style={{
+                  backgroundColor: Colors.BG_LIGHT_GRAY,
+                  height: "2.5rem",
+                  color: Colors.DIM_LIGHT_GRAY,
+                  paddingLeft: "1rem",
+                  border: "none",
+                  outline: "none",
+                  borderRadius: "5px",
+                  width: "100%",
+                }}
+              />
+            </Grid>
             <Grid
+              container
               item
               xs={12}
               sx={{
@@ -158,14 +226,21 @@ export default function BasicCard({
               <PaymentsTextFields
                 label="Country"
                 placeHolderValue="721-07-4426"
+                width="100%"
               />
               <PaymentsTextFields
                 label="State"
                 placeHolderValue="Loriem Ipsumame"
+                width="100%"
               />
-              <PaymentsTextFields label="City" placeHolderValue="Name" />
+              <PaymentsTextFields
+                label="City"
+                placeHolderValue="Name"
+                width="100%"
+              />
             </Grid>
             <Grid
+              container
               item
               xs={12}
               sx={{
@@ -174,14 +249,20 @@ export default function BasicCard({
                 marginTop: "0.5rem",
               }}
             >
-              <PaymentsTextFields label="Zip Code" placeHolderValue="+1" />
+              <PaymentsTextFields
+                label="Zip Code"
+                placeHolderValue="+1"
+                width="100%"
+              />
               <PaymentsTextFields
                 label="Phone #"
                 placeHolderValue="8143008957"
+                width="100%"
               />
               <PaymentsTextFields
                 label="Address"
                 placeHolderValue="Loriem Ipsum"
+                width="100%"
               />
             </Grid>
           </>
@@ -191,6 +272,7 @@ export default function BasicCard({
         {toShowContactDetails ? (
           <>
             <Grid
+              container
               item
               xs={12}
               sx={{ display: "flex", justifyContent: "space-between" }}
@@ -208,65 +290,82 @@ export default function BasicCard({
                 hoverColor={Colors.SKY_BLUE}
               />
             </Grid>
-            <Grid item xs={12} sx={{ display: "flex" }}>
+            <Grid container item xs={12}>
+              <Grid container item xs={12} md={8}>
+                <PaymentsTextFields
+                  label="Country"
+                  placeHolderValue="721-07-4426"
+                  width="97%"
+                />
+                <PaymentsTextFields
+                  label="Country"
+                  placeHolderValue="721-07-4426"
+                  width="97%"
+                />
+                <PaymentsTextFields
+                  label="Country"
+                  placeHolderValue="721-07-4426"
+                  width="97%"
+                />
+                <PaymentsTextFields
+                  label="Country"
+                  placeHolderValue="721-07-4426"
+                  width="97%"
+                />
+
+                <PaymentsTextFields
+                  label="Country"
+                  placeHolderValue="721-07-4426"
+                  width="97%"
+                />
+                <PaymentsTextFields
+                  label="Country"
+                  placeHolderValue="721-07-4426"
+                  width="97%"
+                />
+                <PaymentsTextFields
+                  label="Country"
+                  placeHolderValue="721-07-4426"
+                  width="97%"
+                />
+                <PaymentsTextFields
+                  label="Country"
+                  placeHolderValue="721-07-4426"
+                  width="97%"
+                />
+              </Grid>
               <Grid
+                container
                 item
-                xs={8}
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                }}
+                xs={12}
+                md={4}
+                sx={{ flexDirection: "column" }}
               >
-                <PaymentsTextFields
-                  label="Country"
-                  placeHolderValue="721-07-4426"
-                />
-                <PaymentsTextFields
-                  label="Country"
-                  placeHolderValue="721-07-4426"
-                />
-                <PaymentsTextFields
-                  label="Country"
-                  placeHolderValue="721-07-4426"
-                />
-                <PaymentsTextFields
-                  label="Country"
-                  placeHolderValue="721-07-4426"
+                <Typography
+                  sx={{
+                    fontWeight: "500",
+                    fontFamily: "Nunito",
+                    marginLeft: "1rem",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Country
+                </Typography>
+                <input
+                  type="text"
+                  placeholder="721-07-4426"
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "80%",
+                  }}
                 />
               </Grid>
-              <Grid item xs={4} sx={{ marginLeft: "0.5rem" }}>
-                <PaymentsTextFields
-                  label="Country"
-                  placeHolderValue="721-07-4426"
-                  width="17rem"
-                />
-              </Grid>
-            </Grid>
-            <Grid
-              item
-              xs={8}
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginTop: "0.5rem",
-              }}
-            >
-              <PaymentsTextFields
-                label="Country"
-                placeHolderValue="721-07-4426"
-              />
-              <PaymentsTextFields
-                label="Country"
-                placeHolderValue="721-07-4426"
-              />
-              <PaymentsTextFields
-                label="Country"
-                placeHolderValue="721-07-4426"
-              />
-              <PaymentsTextFields
-                label="Country"
-                placeHolderValue="721-07-4426"
-              />
             </Grid>
           </>
         ) : (
@@ -280,21 +379,16 @@ export default function BasicCard({
             >
               {cardHeading}
             </Typography>
-            <Grid
-              item
-              xs={8}
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
+            <Grid container item xs={12}>
               <PaymentsTextFields
                 label="Country"
                 placeHolderValue="721-07-4426"
+                width="97%"
               />
               <PaymentsTextFields
                 label="Country"
                 placeHolderValue="721-07-4426"
+                width="97%"
               />
             </Grid>
             <Typography
@@ -308,24 +402,27 @@ export default function BasicCard({
               Creditor Details
             </Typography>
             <Grid
+              container
               item
               xs={12}
               sx={{
                 display: "flex",
-                justifyContent: "space-between",
               }}
             >
               <PaymentsTextFields
                 label="Country"
                 placeHolderValue="721-07-4426"
+                width="97%"
               />
               <PaymentsTextFields
                 label="Country"
                 placeHolderValue="721-07-4426"
+                width="97%"
               />
               <PaymentsTextFields
                 label="Country"
                 placeHolderValue="721-07-4426"
+                width="97%"
               />
             </Grid>
             <Typography
@@ -338,9 +435,20 @@ export default function BasicCard({
             >
               Notes
             </Typography>
-            <Grid item xs={12}>
-              <PaymentsTextFields placeHolderValue="721-07-4426" width="100%" />
-            </Grid>
+            <input
+              type="text"
+              placeholder="721-07-4426"
+              style={{
+                backgroundColor: Colors.BG_LIGHT_GRAY,
+                height: "2.5rem",
+                color: Colors.DIM_LIGHT_GRAY,
+                paddingLeft: "1rem",
+                border: "none",
+                outline: "none",
+                borderRadius: "5px",
+                width: "97%",
+              }}
+            />
           </>
         ) : (
           ""
@@ -358,10 +466,9 @@ export default function BasicCard({
             </Typography>
             <Grid
               item
-              xs={9}
+              xs={12}
               sx={{
                 display: "flex",
-                justifyContent: "space-between",
                 alignItems: "center",
               }}
             >
@@ -370,17 +477,19 @@ export default function BasicCard({
                   fontFamily: "Nunito",
                   fontWeight: "500",
                   color: Colors.DARK_GRAY,
+                  marginRight: "1rem",
                 }}
                 gutterBottom
               >
                 Last Funded Date
               </Typography>
-              <PaymentsTextFields placeHolderValue="00/00/00" />
+              <PaymentsTextFields placeHolderValue="00/00/00" width="100%" />
               <Typography
                 sx={{
                   fontFamily: "Nunito",
                   fontWeight: "500",
                   color: Colors.DARK_GRAY,
+                  marginLeft: "0.5rem",
                 }}
                 gutterBottom
               >
@@ -389,52 +498,693 @@ export default function BasicCard({
             </Grid>
             <Grid
               item
-              xs={10}
+              xs={12}
               sx={{
                 display: "flex",
                 marginTop: "1rem",
               }}
             >
-              <Grid item xs={3.5}>
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontWeight: "500",
+                  color: Colors.DARK_GRAY,
+                  marginRight: "1rem",
+                }}
+                gutterBottom
+              >
+                Historical Range
+              </Typography>
+
+              <Grid
+                container
+                item
+                xs={8}
+                sx={{
+                  marginLeft: "2rem",
+                }}
+              >
+                <Grid item xs={12} sx={{ display: "flex" }}>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontWeight: "600",
+                      marginRight: ".7rem",
+                    }}
+                    gutterBottom
+                  >
+                    Minimum
+                  </Typography>
+                  <PaymentsTextFields placeHolderValue="$" width="97%" />
+                </Grid>
+                <Grid item xs={12} sx={{ display: "flex", marginTop: "1rem" }}>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontWeight: "600",
+                      marginRight: ".5rem",
+                    }}
+                    gutterBottom
+                  >
+                    Maximum
+                  </Typography>
+                  <PaymentsTextFields placeHolderValue="$" width="97%" />
+                </Grid>
+              </Grid>
+            </Grid>
+          </>
+        ) : (
+          ""
+        )}
+        {toShowDebtDetails ? (
+          <>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "600",
+              }}
+              gutterBottom
+            >
+              {cardHeading}
+            </Typography>
+
+            <Grid
+              container
+              item
+              xs={12}
+              sx={{
+                justifyContent: "space-between",
+              }}
+            >
+              <Grid
+                item
+                xs={12}
+                lg={3.9}
+                sx={{ display: "flex", alignItems: "center" }}
+              >
                 <Typography
                   sx={{
                     fontFamily: "Nunito",
                     fontWeight: "500",
                     color: Colors.DARK_GRAY,
+                    marginRight: "2rem",
                   }}
-                  gutterBottom
                 >
-                  Historical Range
+                  Total Receivable
                 </Typography>
+
+                <input
+                  type="text"
+                  placeholder="$$10,000"
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "60%",
+                  }}
+                />
               </Grid>
               <Grid
-                xs={6.5}
+                item
+                xs={12}
+                lg={3.9}
+                sx={{ display: "flex", alignItems: "center" }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    color: Colors.DARK_GRAY,
+                    marginRight: "1rem",
+                    marginLeft: "2rem",
+                  }}
+                >
+                  Paid
+                </Typography>
+                <input
+                  type="text"
+                  placeholder="$$10,000"
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "60%",
+                  }}
+                />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                lg={3.9}
+                sx={{ display: "flex", alignItems: "center" }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    color: Colors.DARK_GRAY,
+                    marginRight: "1rem",
+                  }}
+                >
+                  Remaining
+                </Typography>
+                <input
+                  type="text"
+                  placeholder="$$10,000"
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "60%",
+                  }}
+                />
+              </Grid>
+            </Grid>
+            <Grid
+              container
+              sx={{
+                marginTop: "1rem",
+              }}
+            >
+              <Grid
+                item
+                xs={12}
+                lg={3.9}
+                sx={{ display: "flex", alignItems: "center" }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    color: Colors.DARK_GRAY,
+                    marginRight: "1rem",
+                  }}
+                >
+                  Last Payment Date
+                </Typography>
+
+                <input
+                  type="text"
+                  placeholder="$$10,000"
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "60%",
+                  }}
+                />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                lg={3.9}
+                sx={{ display: "flex", alignItems: "center" }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    color: Colors.DARK_GRAY,
+                    marginRight: "1rem",
+                    marginLeft: "2rem",
+                  }}
+                >
+                  Status
+                </Typography>
+                <input
+                  type="text"
+                  placeholder="$$10,000"
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "60%",
+                  }}
+                />
+              </Grid>
+            </Grid>
+          </>
+        ) : toShowSettlementPlan ? (
+          <>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "600",
+              }}
+              gutterBottom
+            >
+              {cardHeading}
+            </Typography>
+            <Grid container item>
+              <Grid
+                container
+                item
+                xs={12}
+                lg={3}
                 sx={{
                   display: "flex",
-                  flexDirection: "column",
-                  marginLeft: "0.5rem",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
                 <Typography
                   sx={{
                     fontFamily: "Nunito",
-                    fontWeight: "600",
+                    fontWeight: "500",
+                    marginRight: ".5rem",
+                    color: Colors.DARK_GRAY,
                   }}
                   gutterBottom
                 >
-                  Minimum
+                  Debt
                 </Typography>
-                <PaymentsTextFields placeHolderValue="$" />
+                <input
+                  type="text"
+                  placeholder="$2000"
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "60%",
+                  }}
+                />
+              </Grid>
+              <Grid
+                container
+                item
+                xs={12}
+                lg={3}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
                 <Typography
                   sx={{
                     fontFamily: "Nunito",
-                    fontWeight: "600",
+                    fontWeight: "500",
+                    marginRight: ".5rem",
+                    color: Colors.DARK_GRAY,
                   }}
                   gutterBottom
                 >
-                  Maximum
+                  Time Period
                 </Typography>
-                <PaymentsTextFields placeHolderValue="$" />
+                <input
+                  type="text"
+                  placeholder="Custom"
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "60%",
+                  }}
+                />
+              </Grid>
+              <Grid
+                container
+                item
+                xs={12}
+                lg={3}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    marginRight: ".5rem",
+                    color: Colors.DARK_GRAY,
+                  }}
+                  gutterBottom
+                >
+                  Date
+                </Typography>
+                <input
+                  type="text"
+                  placeholder="4/1/2024"
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "60%",
+                  }}
+                />
+              </Grid>
+              <Grid
+                container
+                item
+                xs={12}
+                lg={3}
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
+                <AddCircleIcon sx={{ color: Colors.SKY_BLUE }} />
+              </Grid>
+            </Grid>
+            <Grid container item sx={{ marginTop: "1rem" }}>
+              <Grid
+                container
+                item
+                xs={12}
+                lg={3}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    marginRight: ".5rem",
+                    color: Colors.DARK_GRAY,
+                  }}
+                  gutterBottom
+                >
+                  Debt
+                </Typography>
+                <input
+                  type="text"
+                  placeholder="$2000"
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "60%",
+                  }}
+                />
+              </Grid>
+              <Grid
+                container
+                item
+                xs={12}
+                lg={3}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    marginRight: ".5rem",
+                    color: Colors.DARK_GRAY,
+                  }}
+                  gutterBottom
+                >
+                  Time Period
+                </Typography>
+                <input
+                  type="text"
+                  placeholder="Custom"
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "60%",
+                  }}
+                />
+              </Grid>
+              <Grid
+                container
+                item
+                xs={12}
+                lg={3}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    marginRight: ".5rem",
+                    color: Colors.DARK_GRAY,
+                  }}
+                  gutterBottom
+                >
+                  Date
+                </Typography>
+                <input
+                  type="text"
+                  placeholder="4/1/2024"
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "60%",
+                  }}
+                />
+              </Grid>
+              <Grid
+                container
+                item
+                xs={12}
+                lg={3}
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    marginRight: ".5rem",
+                    color: Colors.DARK_GRAY,
+                  }}
+                  gutterBottom
+                >
+                  Frequency
+                </Typography>
+                <input
+                  type="text"
+                  placeholder="5"
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "20%",
+                    marginRight: "0.5rem",
+                  }}
+                />
+                <AddCircleIcon sx={{ color: Colors.SKY_BLUE }} />
+                <RemoveCircleIcon sx={{ color: Colors.ORANGE_COLOR }} />
+              </Grid>
+            </Grid>
+            <Grid container item sx={{ marginTop: "1rem" }}>
+              <Grid
+                container
+                item
+                xs={12}
+                lg={3}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    marginRight: ".5rem",
+                    color: Colors.DARK_GRAY,
+                  }}
+                  gutterBottom
+                >
+                  Debt
+                </Typography>
+                <input
+                  type="text"
+                  placeholder="$2000"
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "60%",
+                  }}
+                />
+              </Grid>
+              <Grid
+                container
+                item
+                xs={12}
+                lg={3}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    marginRight: ".5rem",
+                    color: Colors.DARK_GRAY,
+                  }}
+                  gutterBottom
+                >
+                  Time Period
+                </Typography>
+                <input
+                  type="text"
+                  placeholder="Custom"
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "60%",
+                  }}
+                />
+              </Grid>
+              <Grid
+                container
+                item
+                xs={12}
+                lg={3}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    marginRight: ".5rem",
+                    color: Colors.DARK_GRAY,
+                  }}
+                  gutterBottom
+                >
+                  Date
+                </Typography>
+                <input
+                  type="text"
+                  placeholder="4/1/2024"
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "60%",
+                  }}
+                />
+              </Grid>
+              <Grid
+                container
+                item
+                xs={12}
+                lg={3}
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    marginRight: ".5rem",
+                    color: Colors.DARK_GRAY,
+                  }}
+                  gutterBottom
+                >
+                  Frequency
+                </Typography>
+                <input
+                  type="text"
+                  placeholder="5"
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "20%",
+                    marginRight: "0.5rem",
+                  }}
+                />
+                <AddCircleIcon sx={{ color: Colors.SKY_BLUE }} />
+                <RemoveCircleIcon sx={{ color: Colors.ORANGE_COLOR }} />
               </Grid>
             </Grid>
           </>

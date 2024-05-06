@@ -44,7 +44,6 @@ const theme = createTheme({
       styleOverrides: {
         tooltip: {
           backgroundColor: "white",
-          border: "1px solid black",
           color: "black",
         },
       },
