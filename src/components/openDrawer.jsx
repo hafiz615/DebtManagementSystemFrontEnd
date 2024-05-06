@@ -164,7 +164,13 @@ export default function PersistentDrawerLeft({ children }) {
             justifyContent: "center",
           }}
         >
-          <DropDown />
+          <DropDown
+            heading="Create New Case"
+            menuItem1=" Create New"
+            menuItem2="Import"
+            backgroundColor={Colors.SKY_BLUE}
+            toShowDrawer={true}
+          />
         </Box>
 
         <List sx={{ marginLeft: "0.5rem" }}>

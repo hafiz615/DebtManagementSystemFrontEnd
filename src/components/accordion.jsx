@@ -9,9 +9,8 @@ import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import { ExpandMore, Launch } from "@mui/icons-material";
 import { Grid, Typography, Box } from "@mui/material";
 
-// import CustomizedTables from "./paymentTable";
 import { Colors } from "../config/default";
-// import { DashboardTableHeaders } from "../constants/appConstants";
+
 import DataTable from "./table";
 const rowArray = [
   {
@@ -199,6 +198,10 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
                 justifyContent: "center",
                 marginRight: "0.5rem",
               }}
+              onClick={() => {
+                localStorage.setItem("route", "debtor-details");
+                navigate("/debtor-details");
+              }}
             >
               <Typography
                 sx={{
@@ -228,11 +231,6 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
       </AccordionSummary>
 
       <AccordionDetails>
-        {/* <CustomizedTables
-          data={tableData}
-          headerData={headers}
-          showTableData={true}
-        /> */}
         <DataTable rows={rows} columns={columns} />
       </AccordionDetails>
     </Accordion>

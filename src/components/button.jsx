@@ -15,6 +15,8 @@ function TextButton({
   marginRight,
   paddingLeft,
   paddingRight,
+  backgroundColor,
+  hoverColor,
 }) {
   return (
     <Button
@@ -33,10 +35,10 @@ function TextButton({
         paddingRight: { paddingRight },
         borderRadius: "10px",
         color: Colors.WHITE,
-        backgroundColor: Colors.SKY_BLUE,
+        backgroundColor: backgroundColor,
         textTransform: "none",
         "&:hover": {
-          background: Colors.SKY_BLUE,
+          background: hoverColor || Colors.SKY_BLUE,
           border: "none",
         },
       }}
