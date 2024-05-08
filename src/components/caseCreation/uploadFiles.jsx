@@ -4,10 +4,10 @@ import { Grid, Box } from "@mui/material/";
 import Typography from "@mui/material/Typography";
 import { Colors } from "../../config/default";
 import UploadIcon from "@mui/icons-material/Upload";
-import CreateIcon from "@mui/icons-material/Create";
 import CloseIcon from "@mui/icons-material/Close";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import JSZip from "jszip";
+import AlertDialog from "./editFileNamePopUp";
 
 const FileUploadComponent = () => {
   const [files, setFiles] = useState([]);
@@ -44,6 +44,28 @@ const FileUploadComponent = () => {
     });
 
     return filesArray;
+  };
+
+  const handleEditFileName = (index, newName) => {
+    const file = files[index];
+    const fileExtension = file.name.split(".").pop();
+    const newFileName = `${newName}.${fileExtension}`;
+    const newPath = file.path.replace(file.name, newFileName); // Update the path with the new file name
+    setFiles((prevFiles) =>
+      prevFiles.map((f, i) =>
+        i === index
+          ? { ...f, name: newFileName, path: newPath } // Update both name and path for the edited file
+          : f
+      )
+    );
+  };
+  const handleDeleteFile = (index) => {
+    setFiles((prevFiles) => prevFiles.filter((file, i) => i !== index));
+  };
+
+  const handleViewDocument = (path) => {
+    // Open the document in a new tab/window
+    window.open(path, "_blank");
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
@@ -98,7 +120,7 @@ const FileUploadComponent = () => {
             marginTop: "0.5rem",
             paddingLeft: "1rem",
             paddingRight: "1rem",
-            borderRadius: "10px ",
+            borderRadius: "10px",
           }}
         >
           <Typography
@@ -190,7 +212,11 @@ const FileUploadComponent = () => {
                   color: Colors.DARK_GRAY,
                 }}
               >
-                {getTruncatedText(file.name, 20)}
+                <Typography
+                  sx={{ textTransform: "none", color: Colors.BLUE_COLOR }}
+                >
+                  {getTruncatedText(file.name, 20)}
+                </Typography>
               </Typography>
             ))}
           </Box>
@@ -257,14 +283,27 @@ const FileUploadComponent = () => {
             </Typography>
             {files.map((file, index) => (
               <Box key={index} sx={{ display: "flex", gap: "0.5rem" }}>
-                <CreateIcon
-                  sx={{ color: Colors.DARK_GRAY, marginTop: "0.5rem" }}
+                <AlertDialog
+                  initialFileName={file.name}
+                  handleEditFileName={(newName) =>
+                    handleEditFileName(index, newName)
+                  }
                 />
                 <CloseIcon
-                  sx={{ color: Colors.ORANGE_COLOR, marginTop: "0.5rem" }}
+                  onClick={() => handleDeleteFile(index)}
+                  sx={{
+                    color: Colors.ORANGE_COLOR,
+                    marginTop: "0.5rem",
+                    cursor: "pointer",
+                  }}
                 />
                 <VisibilityIcon
-                  sx={{ color: Colors.DARK_GRAY, marginTop: "0.5rem" }}
+                  onClick={() => handleViewDocument(file.path)}
+                  sx={{
+                    color: Colors.DARK_GRAY,
+                    marginTop: "0.5rem",
+                    cursor: "pointer",
+                  }}
                 />
               </Box>
             ))}
