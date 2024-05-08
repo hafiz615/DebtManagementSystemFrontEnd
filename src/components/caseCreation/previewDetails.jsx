@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid } from "@mui/material";
 
-import BasicCard from "./card";
+import BasicCard from "../caseCreationFields/previewFields";
 
 export default function PreviewDetails() {
   return (

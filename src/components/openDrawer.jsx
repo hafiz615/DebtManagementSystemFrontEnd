@@ -26,7 +26,7 @@ import ListItemText from "@mui/material/ListItemText";
 
 import NavBar from "./navBar";
 import { Colors } from "../config/default";
-import DropDown from "./menuSimple";
+import BasicMenu from "./menuSimple";
 
 const drawerWidth = 240;
 
@@ -164,12 +164,16 @@ export default function PersistentDrawerLeft({ children }) {
             justifyContent: "center",
           }}
         >
-          <DropDown
+          <BasicMenu
             heading="Create New Case"
             menuItem1=" Create New"
             menuItem2="Import"
             backgroundColor={Colors.SKY_BLUE}
             toShowDrawer={true}
+            onClick={() => {
+              localStorage.setItem("route", "case-details");
+              navigate("/case-details");
+            }}
           />
         </Box>
 

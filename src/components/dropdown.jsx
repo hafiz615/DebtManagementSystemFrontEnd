@@ -5,7 +5,7 @@ import MenuItem from "@mui/material/MenuItem";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { Colors } from "../config/default";
-export default function BasicMenu() {
+export default function Dropdown() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [selectedValue, setSelectedValue] = React.useState(3);
   const open = Boolean(anchorEl);
