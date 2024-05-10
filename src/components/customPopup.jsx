@@ -21,7 +21,7 @@ import ModelInfo from "./modelInfo";
 //   boxShadow: 24,
 //   p: 1.5,
 // };
-export default function BasicModal({ modelButton, show }) {
+export default function BasicModal({ modelButton, show ,GetUsers}) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -84,7 +84,7 @@ export default function BasicModal({ modelButton, show }) {
               }}
             />
           </Grid>
-          <ModelInfo show={show} />
+          <ModelInfo show={show} setOpen={setOpen} GetUsers={GetUsers} />
         </Grid>
       </Modal>
     </div>

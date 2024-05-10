@@ -198,10 +198,6 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
                 justifyContent: "center",
                 marginRight: "0.5rem",
               }}
-              onClick={() => {
-                localStorage.setItem("route", "case-details");
-                navigate("/case-details");
-              }}
             >
               <Typography
                 sx={{

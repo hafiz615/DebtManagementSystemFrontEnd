@@ -1,4 +1,5 @@
 import * as React from "react";
+
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -15,6 +16,7 @@ export default function BasicMenu({
   toShowDrawer,
   backgroundColor,
   toShowDebtor,
+  onClick,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -68,10 +70,7 @@ export default function BasicMenu({
               "aria-labelledby": "drawer-basic-button", // Changed aria-labelledby to match the updated id
             }}
           >
-            <MenuItem
-              sx={{ width: "11.3rem" }}
-              onClick={() => handleMenuItemClick(5)}
-            >
+            <MenuItem sx={{ width: "11.3rem" }} onClick={onClick}>
               {menuItem1}
             </MenuItem>
             <MenuItem onClick={() => handleMenuItemClick(7)}>

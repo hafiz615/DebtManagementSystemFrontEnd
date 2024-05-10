@@ -6,6 +6,7 @@ import UserListPage from "./pages/userListPage";
 import HomePage from "./pages/homePage";
 import AuthorizationPage from "./pages/authorizationPage";
 import HorizontalLinearStepperPage from "./pages/stepperPage";
+import VerifyProfilePage from "./pages/verifyProfilePage";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         path="/case-details"
         element={<HorizontalLinearStepperPage />}
       />
+      <Route exact path="/set-password" element={<VerifyProfilePage />} />
     </Routes>
   );
 }
