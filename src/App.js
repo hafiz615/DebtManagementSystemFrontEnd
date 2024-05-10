@@ -5,7 +5,7 @@ import Auth from "./pages/auth";
 import UserListPage from "./pages/userListPage";
 import HomePage from "./pages/homePage";
 import AuthorizationPage from "./pages/authorizationPage";
-import DebtorDetailsPage from "./pages/debtorDetailsPage";
+import HorizontalLinearStepperPage from "./pages/stepperPage";
 
 function App() {
   return (
@@ -18,7 +18,11 @@ function App() {
         path="/authorization-details"
         element={<AuthorizationPage />}
       />
-      <Route exact path="/debtor-details" element={<DebtorDetailsPage />} />
+      <Route
+        exact
+        path="/case-details"
+        element={<HorizontalLinearStepperPage />}
+      />
     </Routes>
   );
 }
