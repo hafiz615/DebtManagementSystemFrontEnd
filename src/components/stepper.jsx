@@ -9,11 +9,13 @@ import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Colors } from "../config/default";
-import DebtorDetails from "./debtorDetails";
+import DebtorDetails from "./caseCreation/debtorDetails";
 import { DebtorDetailsPage } from "../constants/appConstants";
 import TextButton from "./button";
-import CreditorDetails from "./creditorDetails";
-import PaymentDetails from "./paymentDetails";
+import CreditorDetails from "./caseCreation/creditorDetails";
+import PaymentDetails from "./caseCreation/paymentDetails";
+import PreviewDetails from "./caseCreation/previewDetails";
+import FileUploadComponent from "./caseCreation/uploadFiles";
 
 const steps = ["Debtor", "Creditor", "Payment", "File upload", "Preview"];
 
@@ -28,6 +30,22 @@ export default function HorizontalLinearStepper() {
   };
 
   const handleNext = () => {
+    // If on the last step (Preview) and clicking "SAVE"
+    if (activeStep === steps.length - 1) {
+      // Display an alert indicating case creation
+
+      // Mark the current active step as completed (show tick icon)
+      let newSkipped = skipped;
+      if (isStepSkipped(activeStep)) {
+        newSkipped = new Set(newSkipped.values());
+        newSkipped.delete(activeStep);
+      }
+
+      setSkipped(newSkipped);
+      return;
+    }
+
+    // Regular behavior for going to the next step
     let newSkipped = skipped;
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
@@ -131,6 +149,10 @@ export default function HorizontalLinearStepper() {
             <CreditorDetails />
           ) : activeStep === 2 ? (
             <PaymentDetails />
+          ) : activeStep === 3 ? (
+            <FileUploadComponent />
+          ) : activeStep === 4 ? (
+            <PreviewDetails />
           ) : (
             ""
           )}

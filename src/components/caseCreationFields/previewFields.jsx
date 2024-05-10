@@ -1,0 +1,682 @@
+import * as React from "react";
+
+import { Grid } from "@mui/material/";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import CreateIcon from "@mui/icons-material/Create";
+
+import { Colors } from "../../config/default";
+
+export default function BasicCard({
+  cardHeading,
+  height,
+  previewDebtorDetails,
+  previewCreditorDetails,
+  previewSettlementPlan,
+}) {
+  return (
+    <Card
+      sx={{
+        borderRadius: "10px",
+        height: height,
+        marginTop: { xs: ".5rem", xl: "0rem" },
+      }}
+    >
+      <CardContent>
+        {previewDebtorDetails ? (
+          <>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "600",
+              }}
+            >
+              {cardHeading}
+              <CreateIcon sx={{ fontSize: "1rem", marginLeft: "0.5rem" }} />
+            </Typography>
+
+            <Grid container item sx={{ marginTop: "1rem" }}>
+              <Grid container item xs={12} lg={3}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    color: Colors.DARK_GRAY,
+                    width: "40%",
+                  }}
+                >
+                  Full Name
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    color: Colors.DARK_GRAY,
+                    width: "50%",
+                  }}
+                >
+                  John Deo
+                </Typography>
+              </Grid>
+              <Grid container item xs={12} lg={3}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    width: "40%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Email
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "50%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  user@gmail.com
+                </Typography>
+              </Grid>
+              <Grid container item xs={12} lg={3}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    width: "40%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  SSID
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "50%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  721-07-4426
+                </Typography>
+              </Grid>
+              <Grid container item xs={12} lg={3}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    width: "40%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Status
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "50%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Customer
+                </Typography>
+              </Grid>
+              <Grid container item xs={12} lg={3}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    width: "40%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Country
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "50%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Lorem Ipsum
+                </Typography>
+              </Grid>
+              <Grid container item xs={12} lg={3}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    width: "40%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  State
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "50%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Lorem Ipsum
+                </Typography>
+              </Grid>
+              <Grid container item xs={12} lg={3}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    width: "40%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  City
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "50%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Lorem Ipsum
+                </Typography>
+              </Grid>
+              <Grid container item xs={12} lg={3}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    width: "40%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Zip Code
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "50%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  6677788
+                </Typography>
+              </Grid>
+              <Grid container item xs={12} lg={3}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    width: "40%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Phone #.
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "50%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  +18143008957
+                </Typography>
+              </Grid>
+              <Grid container item xs={12} lg={3}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    width: "40%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Address
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "50%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Lorem Ipsum
+                </Typography>
+              </Grid>
+            </Grid>
+          </>
+        ) : previewCreditorDetails ? (
+          <>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "600",
+              }}
+            >
+              {cardHeading}
+              <CreateIcon sx={{ fontSize: "1rem", marginLeft: "0.5rem" }} />
+            </Typography>
+            <Grid container item sx={{ marginTop: "1rem" }}>
+              <Grid container item xs={12} lg={4}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    color: Colors.DARK_GRAY,
+                    width: "40%",
+                  }}
+                >
+                  Full Name
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    color: Colors.DARK_GRAY,
+                    width: "50%",
+                  }}
+                >
+                  John Deo
+                </Typography>
+              </Grid>
+              <Grid container item xs={12} lg={4}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    width: "40%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Email
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "50%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  user@email.com
+                </Typography>
+              </Grid>
+              <Grid container item xs={12} lg={4}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    width: "40%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Address
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "50%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Lorem Ipsum
+                </Typography>
+              </Grid>
+              <Grid container item xs={12} lg={4}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    width: "40%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Funded
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "50%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  4/4/2024
+                </Typography>
+              </Grid>
+              <Grid container item xs={12} lg={4}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    width: "40%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Phone #.
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "50%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  +18143008957
+                </Typography>
+              </Grid>
+              <Grid container item xs={12} lg={4}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    width: "40%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Notes
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "50%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Lorem Ipsum
+                </Typography>
+              </Grid>
+              <Grid container item xs={12} lg={4}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    width: "40%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Company Name
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "50%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Lorem Ipsum
+                </Typography>
+              </Grid>
+
+              <Grid container item xs={12} lg={4}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    width: "40%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Business Category
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "50%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Lorem Ipsum
+                </Typography>
+              </Grid>
+            </Grid>
+          </>
+        ) : previewSettlementPlan ? (
+          <>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "600",
+              }}
+              gutterBottom
+            >
+              {cardHeading}
+            </Typography>
+
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "600",
+                marginLeft: "2rem",
+              }}
+            >
+              Total Receivable
+              <span style={{ marginLeft: "1rem" }}>$10,000</span>
+            </Typography>
+            <Grid
+              container
+              item
+              xs={12}
+              sx={{
+                borderRadius: "10px",
+                border: "1px  solid #D9D9D9",
+                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                paddingRight: "1rem",
+                paddingLeft: "1rem",
+                paddingTop: "0.5rem",
+                paddingBottom: "0.5rem",
+                overflowY: "auto",
+                maxHeight: "15rem",
+              }}
+            >
+              <Grid container item>
+                <Grid container item xs={12} lg={2.5}>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontWeight: "600",
+                      color: Colors.DARK_GRAY,
+                      width: "40%",
+                    }}
+                  >
+                    Debt
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontWeight: "500",
+                      color: Colors.DARK_GRAY,
+                      width: "50%",
+                    }}
+                  >
+                    $2000
+                  </Typography>
+                </Grid>
+                <Grid container item xs={12} lg={2.5}>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontWeight: "600",
+                      width: "40%",
+                      color: Colors.DARK_GRAY,
+                    }}
+                  >
+                    Time Period
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontWeight: "500",
+                      width: "50%",
+                      color: Colors.DARK_GRAY,
+                    }}
+                  >
+                    Custom
+                  </Typography>
+                </Grid>
+                <Grid container item xs={12} lg={4}>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontWeight: "600",
+                      width: "40%",
+                      color: Colors.DARK_GRAY,
+                    }}
+                  >
+                    Authorization Date
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontWeight: "500",
+                      width: "50%",
+                      color: Colors.DARK_GRAY,
+                    }}
+                  >
+                    2/2/2024
+                  </Typography>
+                </Grid>
+                <Grid container item xs={12} lg={3}>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontWeight: "600",
+                      width: "40%",
+                      color: Colors.DARK_GRAY,
+                    }}
+                  >
+                    Captured Date
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontWeight: "500",
+                      width: "50%",
+                      color: Colors.DARK_GRAY,
+                    }}
+                  >
+                    4/2/2024
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Grid container item sx={{ marginTop: "1rem" }}>
+                <Grid container item xs={12} lg={2.5}>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontWeight: "600",
+                      color: Colors.DARK_GRAY,
+                      width: "40%",
+                    }}
+                  >
+                    Debt
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontWeight: "500",
+                      color: Colors.DARK_GRAY,
+                      width: "50%",
+                    }}
+                  >
+                    $2000
+                  </Typography>
+                </Grid>
+                <Grid container item xs={12} lg={2.5}>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontWeight: "600",
+                      width: "40%",
+                      color: Colors.DARK_GRAY,
+                    }}
+                  >
+                    Time Period
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontWeight: "500",
+                      width: "50%",
+                      color: Colors.DARK_GRAY,
+                    }}
+                  >
+                    Custom
+                  </Typography>
+                </Grid>
+                <Grid container item xs={12} lg={4}>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontWeight: "600",
+                      width: "40%",
+                      color: Colors.DARK_GRAY,
+                    }}
+                  >
+                    Authorization Date
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontWeight: "500",
+                      width: "50%",
+                      color: Colors.DARK_GRAY,
+                    }}
+                  >
+                    2/2/2024
+                  </Typography>
+                </Grid>
+                <Grid container item xs={12} lg={3}>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontWeight: "600",
+                      width: "40%",
+                      color: Colors.DARK_GRAY,
+                    }}
+                  >
+                    Captured Date
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontWeight: "500",
+                      width: "50%",
+                      color: Colors.DARK_GRAY,
+                    }}
+                  >
+                    4/2/2024
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+          </>
+        ) : (
+          ""
+        )}
+      </CardContent>
+      {/* <CardActions>
+        <Button size="small">Learn More</Button>
+      </CardActions> */}
+    </Card>
+  );
+}
