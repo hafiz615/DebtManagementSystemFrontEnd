@@ -4,7 +4,13 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Colors } from "../config/default";
 
-export default function CustomTextField({ label, placeHolderValue, width }) {
+export default function CustomTextField({
+  label,
+  placeHolderValue,
+  width,
+  onChange,
+  type,
+}) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
 
   const largeScreen = useMediaQuery(
@@ -24,8 +30,9 @@ export default function CustomTextField({ label, placeHolderValue, width }) {
         {label}
       </Typography>
       <input
-        type="text"
+        type={type}
         placeholder={placeHolderValue}
+        onChange={onChange}
         style={{
           backgroundColor: Colors.BG_LIGHT_GRAY,
           height: "2.5rem",

@@ -73,10 +73,6 @@ export default function PersistentDrawerLeft({ children }) {
   const routeFound = localStorage.getItem("route");
   const [selectedItem, setSelectedItem] = useState(routeFound || "Home");
 
-  // const currentPath = window.location.pathname;
-  // const [selectedItem, setSelectedItem] = useState(currentPath);
-  // console.log(currentPath, selectedItem, "path");
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };

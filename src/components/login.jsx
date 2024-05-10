@@ -12,14 +12,17 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import { Colors } from "../config/default";
 import { LoginPage } from "../constants/appConstants";
+import { SignIn } from "../services/services";
+import { useToast } from "../toast/toastContext";
 import Button from "./button";
 
 function Login() {
+  const { showToast } = useToast();
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [loading, setLoading] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -28,12 +31,22 @@ function Login() {
   };
 
   const navigate = useNavigate();
-  const handleLoginForm = () => {
+
+  const handleLoginForm = async () => {
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    const params = { email: email, password: password };
+    const login = await SignIn(params);
+
+    if (login?.status === 200) {
+      // showToast(login?.data?.message, "success");
+      const token = login?.data?.data?.token;
+      localStorage.setItem("token", token);
       navigate("/home");
-    }, 1000);
+    } else {
+      const errorMessage = login?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setLoading(false);
   };
 
   const handleEmailChange = (e) => {

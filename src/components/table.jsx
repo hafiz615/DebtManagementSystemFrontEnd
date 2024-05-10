@@ -32,11 +32,12 @@ const datagridSx = {
     fontWeight: "bold !important",
   },
 };
-export default function DataTable({ rows, columns }) {
+export default function DataTable({ rows, columns, height }) {
   return (
     <div
       style={{
         width: "100%",
+        height: height,
         borderTop: Colors.DARK_GRAY,
         borderBottomRightRadius: "10px",
         borderBottomLeftRadius: "10px",
@@ -52,7 +53,7 @@ export default function DataTable({ rows, columns }) {
               paginationModel: { page: 0, pageSize: 5 },
             },
           }}
-          //   pageSizeOptions={[5, 10]}
+          pageSizeOptions={[5, 10]}
           // checkboxSelection
         />
       )}

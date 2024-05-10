@@ -5,10 +5,15 @@ import "@fontsource/nunito";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import { ToastProvider } from "./toast/toastContext";
+import CustomToaster from "./toast/customToaster";
 
 ReactDOM.render(
   <Router>
-    <App />
+    <ToastProvider>
+      <App />
+      <CustomToaster />
+    </ToastProvider>
   </Router>,
   document.getElementById("root")
 );
