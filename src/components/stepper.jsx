@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 
 import { Grid } from "@mui/material";
 import Stepper from "@mui/material/Stepper";
@@ -16,44 +16,192 @@ import CreditorDetails from "./caseCreation/creditorDetails";
 import PaymentDetails from "./caseCreation/paymentDetails";
 import PreviewDetails from "./caseCreation/previewDetails";
 import FileUploadComponent from "./caseCreation/uploadFiles";
+import { CreateCase } from "../services/services";
 
 const steps = ["Debtor", "Creditor", "Payment", "File upload", "Preview"];
 
 export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = React.useState(0);
-  const [skipped, setSkipped] = React.useState(new Set());
+
   const { AUTHORITY_TEXT, AUTHORITY_VALUE, DEBTOR_HEADING } = DebtorDetailsPage;
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
+  const [debtorOwnDetails, setDebtorOwnDetails] = useState({
+    BasicFullName: "",
+    BasicEmailAddress: "",
+    BasicSsid: "",
+    BasicCountry: "",
+    BasicState: "",
+    BasicCity: "",
+    BasicZipCode: "",
+    BasicPhoneNumber: "",
+    BasicAddress: "",
+  });
 
-  const isStepSkipped = (step) => {
-    return skipped.has(step);
-  };
+  const [debtorBusinessDetails, setDebtorBusinessDetails] = useState({
+    businessCompanyName: "",
+    businessEinNumber: "",
+    businessCategory: "",
+    businessDescription: "",
+    businessCountry: "",
+    businessState: "",
+    businessCity: "",
+    businessZipCode: "",
+    businessPhoneNumber: "",
+    businessAddress: "",
+  });
 
-  const handleNext = () => {
-    // If on the last step (Preview) and clicking "SAVE"
+  const [debtorContactDetails, setDebtorContactDetails] = useState({
+    debtorContactName: "",
+    debtorContactTitle: "",
+    debtorContactPhone: "",
+    debtorContactEmail: "",
+    debtorContactCountry: "",
+    debtorContactState: "",
+    debtorContactCity: "",
+    debtorContactZipCode: "",
+    debtorContactRelation: "",
+  });
+  const [status, setStatus] = useState("Custom");
+
+  // creditor state
+
+  const [creditorBasicsInfo, setCreditorBasicsInfo] = useState({
+    CreditorBasicFullName: "",
+    CreditorBasicEmailAddress: "",
+    CreditorBasicPhoneNumber: "",
+  });
+  const [creditorBusinessDetails, setCreditorBusinessDetails] = useState({
+    businessCompanyName: "",
+    businessCategory: "",
+  });
+  const [CreditorNotes, setCreditorNotes] = useState("");
+  const [fundedDate, setFundedDate] = useState("");
+  const [historicRange, setHistoricRange] = useState({
+    minimum: "",
+    maximum: "",
+  });
+  console.log(historicRange, "historic");
+  const [creditorContactDetails, setCreditorContactDetails] = useState({
+    name: "",
+    title: "",
+    phone: "",
+    email: "",
+    country: "",
+    state: "",
+    city: "",
+    zipCode: "",
+    relationWithCreditor: "",
+  });
+
+  // payment state
+  const [totalReceivable, setTotalReceivable] = useState("");
+  const [paidAmount, setPaidAmount] = useState("");
+  const [remainingAmount, setRemainingAmount] = useState("");
+  const [lastPaymentDate, setLastPaymentDate] = useState("");
+  const [debtorDetailsStatus, setDebtorDetailsStatus] = useState("Custom");
+  const [newDataList, setNewDataList] = useState([
+    {
+      amount: "",
+      startDate: "",
+      timePeriod: "",
+    },
+  ]);
+
+  //upload files
+  const [files, setFiles] = useState([]);
+  const handleNext = async (type) => {
     if (activeStep === steps.length - 1) {
-      // Display an alert indicating case creation
+      const params = {
+        debtor: {
+          basicInformation: {
+            fullName: debtorOwnDetails?.BasicFullName,
+            email: debtorOwnDetails?.BasicEmailAddress,
+            SSID: debtorOwnDetails?.BasicSsid,
+            // status:status,
+            country: debtorOwnDetails?.BasicCountry,
+            state: debtorOwnDetails?.BasicState,
+            city: debtorOwnDetails?.BasicCity,
+            zipCode: debtorOwnDetails?.BasicZipCode,
+            phone: debtorOwnDetails?.BasicPhoneNumber,
+            address: debtorOwnDetails?.BasicAddress,
+          },
+          businessInformation: {
+            companyName: debtorBusinessDetails?.businessCompanyName,
+            EIN: debtorBusinessDetails?.businessEinNumber,
+            businessCategory: debtorBusinessDetails?.businessCategory,
+            description: debtorBusinessDetails?.businessDescription,
+            country: debtorBusinessDetails?.businessCountry,
+            state: debtorBusinessDetails?.businessState,
+            city: debtorBusinessDetails?.businessCity,
+            zipCode: debtorBusinessDetails?.businessZipCode,
+            phone: debtorBusinessDetails?.businessPhoneNumber,
+            address: debtorBusinessDetails?.businessAddress,
+          },
+          contacts: [
+            {
+              name: debtorContactDetails?.debtorContactName,
+              title: debtorContactDetails?.debtorContactTitle,
+              phone: debtorContactDetails?.debtorContactPhone,
+              email: debtorContactDetails?.debtorContactEmail,
+              relationWithDebtor: debtorContactDetails?.debtorContactRelation,
+              country: debtorContactDetails?.debtorContactCountry,
+              state: debtorContactDetails?.debtorContactState,
+              city: debtorContactDetails?.debtorContactCity,
+              zipCode: debtorContactDetails?.debtorContactZipCode,
+            },
+          ],
+        },
+        creditor: {
+          basicInformation: {
+            fullName: creditorBasicsInfo?.CreditorBasicFullName,
+            email: creditorBasicsInfo?.CreditorBasicEmailAddress,
+            phone: creditorBasicsInfo?.CreditorBasicPhoneNumber,
+          },
+          businessInformation: {
+            companyName: creditorBusinessDetails?.businessCompanyName,
+            businessCategory: creditorBusinessDetails?.businessCategory,
+          },
+          notes: CreditorNotes,
+          lastFundedDate: fundedDate,
+          historicalRange: historicRange,
+          contacts: [
+            {
+              name: creditorContactDetails?.name,
+              title: creditorContactDetails?.title,
+              phone: creditorContactDetails?.phoneNumber,
+              email: creditorContactDetails?.email,
+              relationWithDebtor: creditorContactDetails?.relationWithCreditor,
+              country: creditorContactDetails?.country,
+              state: creditorContactDetails?.state,
+              city: creditorContactDetails?.city,
+              zipCode: creditorContactDetails?.zipCode,
+            },
+          ],
+        },
+        totalDebt: totalReceivable,
+        lastPaymentDate: lastPaymentDate,
+        paidAmount: paidAmount,
+        remaining: remainingAmount,
+        documents: [
+          {
+            key: "#2page0-1714377479280.pdf",
+            originalFileName: "#2page0.pdf",
+          },
+          {
+            key: "invoice-1714377479300.png",
+            originalFileName: "invoice.png",
+          },
+        ],
+        paymentPlanStartDate: "2022-05-01",
+        intervals: newDataList,
+      };
+      console.log(params, "params");
 
-      // Mark the current active step as completed (show tick icon)
-      let newSkipped = skipped;
-      if (isStepSkipped(activeStep)) {
-        newSkipped = new Set(newSkipped.values());
-        newSkipped.delete(activeStep);
-      }
-
-      setSkipped(newSkipped);
-      return;
-    }
-
-    // Regular behavior for going to the next step
-    let newSkipped = skipped;
-    if (isStepSkipped(activeStep)) {
-      newSkipped = new Set(newSkipped.values());
-      newSkipped.delete(activeStep);
+      const caseCreation = await CreateCase(params);
+      console.log(caseCreation, "caseCreation");
     }
 
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setSkipped(newSkipped);
   };
 
   const handleBack = () => {
@@ -130,9 +278,6 @@ export default function HorizontalLinearStepper() {
               const stepProps = {};
               const labelProps = {};
 
-              if (isStepSkipped(index)) {
-                stepProps.completed = false;
-              }
               return (
                 <Step key={label} {...stepProps}>
                   <StepLabel {...labelProps}>{label}</StepLabel>
@@ -144,13 +289,48 @@ export default function HorizontalLinearStepper() {
 
         <React.Fragment>
           {activeStep === 0 ? (
-            <DebtorDetails />
+            <DebtorDetails
+              debtorOwnDetails={debtorOwnDetails}
+              setDebtorOwnDetails={setDebtorOwnDetails}
+              debtorBusinessDetails={debtorBusinessDetails}
+              setDebtorBusinessDetails={setDebtorBusinessDetails}
+              debtorContactDetails={debtorContactDetails}
+              setDebtorContactDetails={setDebtorContactDetails}
+              selectedValue={status}
+              setSelectedValue={setStatus}
+            />
           ) : activeStep === 1 ? (
-            <CreditorDetails />
+            <CreditorDetails
+              creditorBasicsInfo={creditorBasicsInfo}
+              CreditorNotes={CreditorNotes}
+              setCreditorNotes={setCreditorNotes}
+              fundedDate={fundedDate}
+              setFundedDate={setFundedDate}
+              historicRange={historicRange}
+              setHistoricRange={setHistoricRange}
+              setCreditorBasicsInfo={setCreditorBasicsInfo}
+              creditorBusinessDetails={creditorBusinessDetails}
+              setCreditorBusinessDetails={setCreditorBusinessDetails}
+              creditorContactDetails={creditorContactDetails}
+              setCreditorContactDetails={setCreditorContactDetails}
+            />
           ) : activeStep === 2 ? (
-            <PaymentDetails />
+            <PaymentDetails
+              totalReceivable={totalReceivable}
+              setTotalReceivable={setTotalReceivable}
+              paidAmount={paidAmount}
+              setPaidAmount={setPaidAmount}
+              remainingAmount={remainingAmount}
+              setRemainingAmount={setRemainingAmount}
+              lastPaymentDate={lastPaymentDate}
+              setLastPaymentDate={setLastPaymentDate}
+              selectedValue={debtorDetailsStatus}
+              setSelectedValue={setDebtorDetailsStatus}
+              newDataList={newDataList}
+              setNewDataList={setNewDataList}
+            />
           ) : activeStep === 3 ? (
-            <FileUploadComponent />
+            <FileUploadComponent files={files} setFiles={setFiles} />
           ) : activeStep === 4 ? (
             <PreviewDetails />
           ) : (
@@ -202,32 +382,13 @@ export default function HorizontalLinearStepper() {
                 paddingLeft="2rem"
                 paddingRight="2rem"
                 height="2rem"
-                onClick={handleNext}
+                onClick={() => {
+                  handleNext(activeStep === steps.length - 1 ? "SAVE" : "NEXT");
+                }}
                 marginRight="1rem"
               />
             </Grid>
           </Grid>
-
-          {/* <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-              <Button
-                color="inherit"
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                sx={{ mr: 1 }}
-              >
-                Back
-              </Button>
-              <Box sx={{ flex: "1 1 auto" }} />
-              {isStepOptional(activeStep) && (
-                <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
-                  Skip
-                </Button>
-              )}
-
-              <Button onClick={handleNext}>
-                {activeStep === steps.length - 1 ? "Finish" : "Next"}
-              </Button>
-            </Box> */}
         </React.Fragment>
       </Grid>
     </Grid>

@@ -11,6 +11,9 @@ function PaymentsTextFields({
   marginBottom,
   marginRight,
   marginLeft,
+  onChange,
+  type,
+  value,
 }) {
   //   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
 
@@ -30,8 +33,10 @@ function PaymentsTextFields({
         {label}
       </Typography>
       <input
-        type="text"
+        type={type}
         placeholder={placeHolderValue}
+        onChange={onChange}
+        value={value}
         style={{
           backgroundColor: Colors.BG_LIGHT_GRAY,
           height: "2.5rem",

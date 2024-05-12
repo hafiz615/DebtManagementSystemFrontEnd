@@ -6,7 +6,20 @@ import PaymentFields from "../caseCreationFields/paymentFields";
 import { Colors } from "../../config/default";
 import PaymentSettlement from "../caseCreationFields/paymentSettlement";
 
-function PaymentDetails() {
+function PaymentDetails({
+  totalReceivable,
+  setTotalReceivable,
+  paidAmount,
+  setPaidAmount,
+  remainingAmount,
+  setRemainingAmount,
+  lastPaymentDate,
+  setLastPaymentDate,
+  selectedValue,
+  setSelectedValue,
+  newDataList,
+  setNewDataList,
+}) {
   return (
     <Grid
       container
@@ -28,7 +41,18 @@ function PaymentDetails() {
           padding: "1rem",
         }}
       >
-        <PaymentFields />
+        <PaymentFields
+          totalReceivable={totalReceivable}
+          setTotalReceivable={setTotalReceivable}
+          paidAmount={paidAmount}
+          setPaidAmount={setPaidAmount}
+          remainingAmount={remainingAmount}
+          setRemainingAmount={setRemainingAmount}
+          lastPaymentDate={lastPaymentDate}
+          setLastPaymentDate={setLastPaymentDate}
+          selectedValue={selectedValue}
+          setSelectedValue={setSelectedValue}
+        />
       </Grid>
       <Grid
         item
@@ -40,7 +64,10 @@ function PaymentDetails() {
           padding: "1rem",
         }}
       >
-        <PaymentSettlement />
+        <PaymentSettlement
+          newDataList={newDataList}
+          setNewDataList={setNewDataList}
+        />
       </Grid>
     </Grid>
   );

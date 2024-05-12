@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import AddIcon from "@mui/icons-material/Add";
@@ -7,7 +7,53 @@ import { Colors } from "../../config/default";
 import PaymentsTextFields from "../caseTextField";
 import TextButton from "../button";
 
-export default function CreditorFields() {
+export default function CreditorFields({
+  creditorBasicsInfo,
+  setCreditorBasicsInfo,
+  creditorBusinessDetails,
+  setCreditorBusinessDetails,
+  creditorContactDetails,
+  setCreditorContactDetails,
+  CreditorNotes,
+  setCreditorNotes,
+  fundedDate,
+  setFundedDate,
+  historicRange,
+  setHistoricRange,
+}) {
+  const basicInfoInputChange = (fieldName, value) => {
+    setCreditorBasicsInfo((prevState) => ({
+      ...prevState,
+      [fieldName]: value,
+    }));
+  };
+  const businessInfoInputChange = (fieldName, value) => {
+    setCreditorBusinessDetails((prevState) => ({
+      ...prevState,
+      [fieldName]: value,
+    }));
+  };
+  const notesInputChange = (value) => {
+    setCreditorNotes(value);
+  };
+  const fundedInputChange = (value) => {
+    setFundedDate(value);
+  };
+
+  const historicInputChange = (fieldName, value) => {
+    setHistoricRange((prevState) => ({
+      ...prevState,
+      [fieldName]: value,
+    }));
+  };
+
+  const CreditorContactInputChange = (fieldName, value) => {
+    setCreditorContactDetails((prevDetails) => ({
+      ...prevDetails,
+      [fieldName]: value,
+    }));
+  };
+
   return (
     <>
       <Grid
@@ -29,14 +75,24 @@ export default function CreditorFields() {
         </Typography>
         <Grid container item xs={12}>
           <PaymentsTextFields
-            label="Country"
-            placeHolderValue="721-07-4426"
+            type="text"
+            label="Company Name"
+            placeHolderValue="Company Name"
             width="97%"
+            value={creditorBusinessDetails?.businessCompanyName}
+            onChange={(e) =>
+              businessInfoInputChange("businessCompanyName", e.target.value)
+            }
           />
           <PaymentsTextFields
-            label="Country"
-            placeHolderValue="721-07-4426"
+            type="text"
+            label="Business Category"
+            placeHolderValue="Business Category"
             width="97%"
+            value={creditorBusinessDetails?.businessCategory}
+            onChange={(e) =>
+              businessInfoInputChange("businessCategory", e.target.value)
+            }
           />
         </Grid>
         <Typography
@@ -58,19 +114,34 @@ export default function CreditorFields() {
           }}
         >
           <PaymentsTextFields
-            label="Country"
-            placeHolderValue="721-07-4426"
+            type="text"
+            label="Full Name"
+            placeHolderValue="Full Name"
             width="97%"
+            value={creditorBasicsInfo?.CreditorBasicFullName}
+            onChange={(e) =>
+              basicInfoInputChange("CreditorBasicFullName", e.target.value)
+            }
           />
           <PaymentsTextFields
-            label="Country"
-            placeHolderValue="721-07-4426"
+            type="text"
+            label="Email Address"
+            placeHolderValue="Enter Email"
             width="97%"
+            value={creditorBasicsInfo?.CreditorBasicEmailAddress}
+            onChange={(e) =>
+              basicInfoInputChange("CreditorBasicEmailAddress", e.target.value)
+            }
           />
           <PaymentsTextFields
-            label="Country"
-            placeHolderValue="721-07-4426"
+            type="number"
+            label="Phone #."
+            placeHolderValue="Enter Phone Number"
             width="97%"
+            value={creditorBasicsInfo?.CreditorBasicPhoneNumber}
+            onChange={(e) =>
+              basicInfoInputChange("CreditorBasicPhoneNumber", e.target.value)
+            }
           />
         </Grid>
         <Typography
@@ -85,7 +156,9 @@ export default function CreditorFields() {
         </Typography>
         <input
           type="text"
-          placeholder="721-07-4426"
+          placeholder="Notes"
+          value={CreditorNotes}
+          onChange={(e) => notesInputChange(e.target.value)}
           style={{
             backgroundColor: Colors.BG_LIGHT_GRAY,
             height: "2.5rem",
@@ -98,6 +171,7 @@ export default function CreditorFields() {
           }}
         />
       </Grid>
+
       <Grid
         item
         xs={12}
@@ -110,10 +184,7 @@ export default function CreditorFields() {
           height: "320px",
         }}
       >
-        <Typography
-          sx={{ fontFamily: "Nunito", fontWeight: "600" }}
-          gutterBottom
-        >
+        <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
           Funded
         </Typography>
         <Grid
@@ -131,11 +202,16 @@ export default function CreditorFields() {
               color: Colors.DARK_GRAY,
               marginRight: "1rem",
             }}
-            gutterBottom
           >
             Last Funded Date
           </Typography>
-          <PaymentsTextFields placeHolderValue="00/00/00" width="100%" />
+          <PaymentsTextFields
+            type="date"
+            placeHolderValue="00/00/00"
+            width="100%"
+            value={fundedDate}
+            onChange={(e) => fundedInputChange(e.target.value)}
+          />
           <Typography
             sx={{
               fontFamily: "Nunito",
@@ -143,7 +219,6 @@ export default function CreditorFields() {
               color: Colors.DARK_GRAY,
               marginLeft: "0.5rem",
             }}
-            gutterBottom
           >
             25/12/2024
           </Typography>
@@ -163,7 +238,6 @@ export default function CreditorFields() {
               color: Colors.DARK_GRAY,
               marginRight: "1rem",
             }}
-            gutterBottom
           >
             Historical Range
           </Typography>
@@ -183,11 +257,16 @@ export default function CreditorFields() {
                   fontWeight: "600",
                   marginRight: ".7rem",
                 }}
-                gutterBottom
               >
                 Minimum
               </Typography>
-              <PaymentsTextFields placeHolderValue="$" width="97%" />
+              <PaymentsTextFields
+                type="number"
+                placeHolderValue="$"
+                width="97%"
+                value={historicRange?.minimum}
+                onChange={(e) => historicInputChange("minimum", e.target.value)}
+              />
             </Grid>
             <Grid item xs={12} sx={{ display: "flex", marginTop: "1rem" }}>
               <Typography
@@ -196,11 +275,16 @@ export default function CreditorFields() {
                   fontWeight: "600",
                   marginRight: ".5rem",
                 }}
-                gutterBottom
               >
                 Maximum
               </Typography>
-              <PaymentsTextFields placeHolderValue="$" width="97%" />
+              <PaymentsTextFields
+                type="number"
+                placeHolderValue="$"
+                width="97%"
+                value={historicRange?.maximum}
+                onChange={(e) => historicInputChange("maximum", e.target.value)}
+              />
             </Grid>
           </Grid>
         </Grid>
@@ -240,45 +324,84 @@ export default function CreditorFields() {
         <Grid container item xs={12}>
           <Grid container item xs={12} md={8}>
             <PaymentsTextFields
-              label="Country"
-              placeHolderValue="721-07-4426"
+              type="text"
+              label="Name"
+              placeHolderValue="Enter Name"
               width="97%"
+              value={creditorContactDetails.name}
+              onChange={(e) =>
+                CreditorContactInputChange("name", e.target.value)
+              }
             />
             <PaymentsTextFields
-              label="Country"
-              placeHolderValue="721-07-4426"
+              type="text"
+              label="Title"
+              placeHolderValue="Enter Title"
               width="97%"
+              value={creditorContactDetails.title}
+              onChange={(e) =>
+                CreditorContactInputChange("title", e.target.value)
+              }
             />
             <PaymentsTextFields
-              label="Country"
-              placeHolderValue="721-07-4426"
+              type="number"
+              label="Phone"
+              placeHolderValue="Enter Phone Number"
               width="97%"
+              value={creditorContactDetails.phoneNumber}
+              onChange={(e) =>
+                CreditorContactInputChange("phone", e.target.value)
+              }
             />
             <PaymentsTextFields
-              label="Country"
-              placeHolderValue="721-07-4426"
+              type="text"
+              label="Enter Email"
+              placeHolderValue="Enter Email"
               width="97%"
+              value={creditorContactDetails.email}
+              onChange={(e) =>
+                CreditorContactInputChange("email", e.target.value)
+              }
             />
 
             <PaymentsTextFields
-              label="Country"
-              placeHolderValue="721-07-4426"
+              type="text"
+              label="Country (Optional)"
+              placeHolderValue="Country Name"
               width="97%"
+              value={creditorContactDetails.country}
+              onChange={(e) =>
+                CreditorContactInputChange("country", e.target.value)
+              }
             />
             <PaymentsTextFields
-              label="Country"
-              placeHolderValue="721-07-4426"
+              type="text"
+              label="State (Optional)"
+              placeHolderValue="Enter State"
               width="97%"
+              value={creditorContactDetails.state}
+              onChange={(e) =>
+                CreditorContactInputChange("state", e.target.value)
+              }
             />
             <PaymentsTextFields
-              label="Country"
-              placeHolderValue="721-07-4426"
+              label="City (Optional)"
+              placeHolderValue="Enter City"
               width="97%"
+              value={creditorContactDetails.city}
+              onChange={(e) =>
+                CreditorContactInputChange("city", e.target.value)
+              }
             />
             <PaymentsTextFields
-              label="Country"
-              placeHolderValue="721-07-4426"
+              type="number"
+              label="Zip Code (Optional)"
+              placeHolderValue="Enter Zip Code"
               width="97%"
+              value={creditorContactDetails.zipCode}
+              onChange={(e) =>
+                CreditorContactInputChange("zipCode", e.target.value)
+              }
             />
           </Grid>
           <Grid container item xs={12} md={4} sx={{ flexDirection: "column" }}>
@@ -290,11 +413,18 @@ export default function CreditorFields() {
                 color: Colors.DARK_GRAY,
               }}
             >
-              Country
+              Relation with Debtor (Optional)
             </Typography>
             <input
               type="text"
-              placeholder="721-07-4426"
+              placeholder="Relation"
+              onChange={(e) =>
+                CreditorContactInputChange(
+                  "relationWithCreditor",
+                  e.target.value
+                )
+              }
+              value={creditorContactDetails.relationWithCreditor}
               style={{
                 backgroundColor: Colors.BG_LIGHT_GRAY,
                 height: "2.5rem",

@@ -67,7 +67,7 @@ export default function VerifyProfile() {
           fontFamily: "Nunito",
         }}
       >
-        Verify Profile
+        Verify User
       </Typography>
       <TextField
         id="password"

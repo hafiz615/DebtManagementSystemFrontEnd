@@ -179,7 +179,7 @@ export default function CustomizedTabs() {
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px ",
-          height: "60vh",
+          height: "58vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -198,7 +198,7 @@ export default function CustomizedTabs() {
             <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
           </Grid>
         ) : (
-          <DataTable rows={rows} columns={columns} height="60vh" />
+          <DataTable rows={rows} columns={columns} height="58vh" />
         )}
       </Grid>
     </>

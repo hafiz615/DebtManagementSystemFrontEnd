@@ -8,8 +8,9 @@ import CustomizedTabs from "./tabs";
 
 function UserLists() {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
+  const role = localStorage.getItem("role");
 
-  const { AUTHORITY_TEXT, AUTHORITY_VALUE, USER_LIST_HEADING } = UserListPage;
+  const { AUTHORITY_TEXT, USER_LIST_HEADING } = UserListPage;
   return (
     <Grid
       container
@@ -35,7 +36,7 @@ function UserLists() {
             color: Colors.DARK_GRAY,
           }}
         >
-          {AUTHORITY_TEXT} <span>{AUTHORITY_VALUE}</span>
+          {AUTHORITY_TEXT} <span>{role}</span>
         </Typography>
       </Grid>
       <Grid

@@ -40,7 +40,9 @@ function Login() {
     if (login?.status === 200) {
       // showToast(login?.data?.message, "success");
       const token = login?.data?.data?.token;
+      const role = login?.data?.data?.user?.role;
       localStorage.setItem("token", token);
+      localStorage.setItem("role", role);
       navigate("/home");
     } else {
       const errorMessage = login?.response?.data?.message;

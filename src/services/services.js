@@ -52,3 +52,15 @@ export const UpdateUserPassword = async (payload, token) => {
     return error;
   }
 };
+
+export const CreateCase = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + "/v1/case/createCase",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

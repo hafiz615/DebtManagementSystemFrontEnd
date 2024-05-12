@@ -92,6 +92,9 @@ export default function PersistentDrawerLeft({ children }) {
         case "User Listing":
           navigate("/user-listing");
           break;
+        case "Create New Case":
+          navigate("/case-details");
+          break;
         default:
           break;
       }
@@ -160,17 +163,7 @@ export default function PersistentDrawerLeft({ children }) {
             justifyContent: "center",
           }}
         >
-          <BasicMenu
-            heading="Create New Case"
-            menuItem1=" Create New"
-            menuItem2="Import"
-            backgroundColor={Colors.SKY_BLUE}
-            toShowDrawer={true}
-            onClick={() => {
-              localStorage.setItem("route", "case-details");
-              navigate("/case-details");
-            }}
-          />
+          <BasicMenu width="80%" backgroundColor={Colors.SKY_BLUE} />
         </Box>
 
         <List sx={{ marginLeft: "0.5rem" }}>

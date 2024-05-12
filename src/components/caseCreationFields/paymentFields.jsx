@@ -1,10 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 
 import { Colors } from "../../config/default";
+import Dropdown from "./../dropdown";
 
-export default function PaymentFields() {
+export default function PaymentFields({
+  totalReceivable,
+  setTotalReceivable,
+  paidAmount,
+  setPaidAmount,
+  remainingAmount,
+  setRemainingAmount,
+  lastPaymentDate,
+  setLastPaymentDate,
+  selectedValue,
+  setSelectedValue,
+}) {
+  const menuItems = [
+    { label: "On hold", value: "On hold" },
+    { label: "Canceled", value: "Canceled" },
+    { label: "Declared Bankrupcy", value: "Declared Bankrupcy" },
+  ];
+
   return (
     <>
       <Typography
@@ -43,8 +61,10 @@ export default function PaymentFields() {
           </Typography>
 
           <input
-            type="text"
-            placeholder="$$10,000"
+            type="number"
+            placeholder="$10,000"
+            value={totalReceivable}
+            onChange={(e) => setTotalReceivable(e.target.value)}
             style={{
               backgroundColor: Colors.BG_LIGHT_GRAY,
               height: "2.5rem",
@@ -75,8 +95,10 @@ export default function PaymentFields() {
             Paid
           </Typography>
           <input
-            type="text"
-            placeholder="$$10,000"
+            type="number"
+            placeholder="$10,000"
+            value={paidAmount}
+            onChange={(e) => setPaidAmount(e.target.value)}
             style={{
               backgroundColor: Colors.BG_LIGHT_GRAY,
               height: "2.5rem",
@@ -106,8 +128,10 @@ export default function PaymentFields() {
             Remaining
           </Typography>
           <input
-            type="text"
-            placeholder="$$10,000"
+            type="number"
+            placeholder="$10,000"
+            value={remainingAmount}
+            onChange={(e) => setRemainingAmount(e.target.value)}
             style={{
               backgroundColor: Colors.BG_LIGHT_GRAY,
               height: "2.5rem",
@@ -145,8 +169,10 @@ export default function PaymentFields() {
           </Typography>
 
           <input
-            type="text"
-            placeholder="$$10,000"
+            type="date"
+            placeholder="4/2/2024"
+            value={lastPaymentDate}
+            onChange={(e) => setLastPaymentDate(e.target.value)}
             style={{
               backgroundColor: Colors.BG_LIGHT_GRAY,
               height: "2.5rem",
@@ -176,19 +202,13 @@ export default function PaymentFields() {
           >
             Status
           </Typography>
-          <input
-            type="text"
-            placeholder="$$10,000"
-            style={{
-              backgroundColor: Colors.BG_LIGHT_GRAY,
-              height: "2.5rem",
-              color: Colors.DIM_LIGHT_GRAY,
-              paddingLeft: "1rem",
-              border: "none",
-              outline: "none",
-              borderRadius: "5px",
-              width: "60%",
-            }}
+          <Dropdown
+            selectedValue={selectedValue}
+            setSelectedValue={setSelectedValue}
+            menuItems={menuItems}
+            defaultSelectedItem={"Customer"}
+            backgroundColor={Colors.BG_LIGHT_GRAY}
+            width="60%"
           />
         </Grid>
       </Grid>
