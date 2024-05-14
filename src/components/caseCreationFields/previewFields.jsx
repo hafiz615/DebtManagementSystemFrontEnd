@@ -18,6 +18,9 @@ export default function BasicCard({
   creditorBasicsInfo,
   newDataList,
   status,
+  fundedDate,
+  CreditorNotes,
+  creditorBusinessDetails,
 }) {
   return (
     <Card
@@ -80,6 +83,10 @@ export default function BasicCard({
                     fontWeight: "500",
                     width: "50%",
                     color: Colors.DARK_GRAY,
+                    // textWrap: "wrap !important",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
                   }}
                 >
                   {debtorOwnDetails?.BasicEmailAddress || "-"}
@@ -256,6 +263,9 @@ export default function BasicCard({
                     fontWeight: "500",
                     width: "50%",
                     color: Colors.DARK_GRAY,
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
                   }}
                 >
                   {debtorOwnDetails?.BasicAddress || "-"}
@@ -294,7 +304,7 @@ export default function BasicCard({
                     width: "50%",
                   }}
                 >
-                  John Deo
+                  {creditorBasicsInfo?.CreditorBasicFullName || "-"}
                 </Typography>
               </Grid>
               <Grid container item xs={12} lg={4}>
@@ -316,7 +326,7 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  user@email.com
+                  {creditorBasicsInfo?.CreditorBasicEmailAddress || "-"}
                 </Typography>
               </Grid>
               <Grid container item xs={12} lg={4}>
@@ -326,9 +336,12 @@ export default function BasicCard({
                     fontWeight: "600",
                     width: "40%",
                     color: Colors.DARK_GRAY,
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
                   }}
                 >
-                  Address
+                  Phone #
                 </Typography>
                 <Typography
                   sx={{
@@ -338,7 +351,7 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  Lorem Ipsum
+                  {creditorBasicsInfo?.CreditorBasicPhoneNumber || "-"}
                 </Typography>
               </Grid>
               <Grid container item xs={12} lg={4}>
@@ -360,31 +373,10 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  4/4/2024
+                  {fundedDate || "-"}
                 </Typography>
               </Grid>
-              <Grid container item xs={12} lg={4}>
-                <Typography
-                  sx={{
-                    fontFamily: "Nunito",
-                    fontWeight: "600",
-                    width: "40%",
-                    color: Colors.DARK_GRAY,
-                  }}
-                >
-                  Phone #.
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: "Nunito",
-                    fontWeight: "500",
-                    width: "50%",
-                    color: Colors.DARK_GRAY,
-                  }}
-                >
-                  +18143008957
-                </Typography>
-              </Grid>
+
               <Grid container item xs={12} lg={4}>
                 <Typography
                   sx={{
@@ -404,7 +396,7 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  Lorem Ipsum
+                  {CreditorNotes || "-"}
                 </Typography>
               </Grid>
               <Grid container item xs={12} lg={4}>
@@ -426,7 +418,7 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  Lorem Ipsum
+                  {creditorBusinessDetails?.businessCompanyName || "-"}
                 </Typography>
               </Grid>
 
@@ -449,7 +441,7 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  Lorem Ipsum
+                  {creditorBusinessDetails?.businessCategory || "-"}
                 </Typography>
               </Grid>
             </Grid>

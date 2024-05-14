@@ -14,6 +14,8 @@ function DebtorDetails({
   setDebtorContactDetails,
   selectedValue,
   setSelectedValue,
+  checked,
+  setChecked,
 }) {
   return (
     <>
@@ -50,6 +52,8 @@ function DebtorDetails({
           setDebtorContactDetails={setDebtorContactDetails}
           selectedValue={selectedValue}
           setSelectedValue={setSelectedValue}
+          checked={checked}
+          setChecked={setChecked}
         />
       </Grid>
     </>

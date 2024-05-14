@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import AddIcon from "@mui/icons-material/Add";
+import { Add, RemoveCircle } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
 import PaymentsTextFields from "../caseTextField";
@@ -18,6 +18,8 @@ export default function DebtorFields({
   setDebtorContactDetails,
   selectedValue,
   setSelectedValue,
+  checked,
+  setChecked,
 }) {
   const menuItems = [
     { label: "On hold", value: "On hold" },
@@ -37,11 +39,44 @@ export default function DebtorFields({
       [fieldName]: value,
     }));
   };
-  const debtorContactInputChange = (fieldName, value) => {
-    setDebtorContactDetails((prevDetails) => ({
-      ...prevDetails,
-      [fieldName]: value,
-    }));
+
+  const handleCheckChange = (event) => {
+    setChecked(event.target.checked);
+    if (event.target.checked) {
+      setDebtorOwnDetails((prevDetails) => ({
+        ...prevDetails,
+        BasicCountry: debtorBusinessDetails?.businessCountry,
+        BasicState: debtorBusinessDetails?.businessState,
+        BasicCity: debtorBusinessDetails?.businessCity,
+        BasicZipCode: debtorBusinessDetails?.businessZipCode,
+        BasicPhoneNumber: debtorBusinessDetails?.businessPhoneNumber,
+        BasicAddress: debtorBusinessDetails?.businessAddress,
+      }));
+    }
+  };
+  const handleAddNewContact = () => {
+    const newContact = {
+      name: "",
+      title: "",
+      phone: "",
+      email: "",
+      country: "",
+      state: "",
+      city: "",
+      zipCode: "",
+      relationWithDebtor: "",
+    };
+    setDebtorContactDetails([...debtorContactDetails, newContact]);
+  };
+  const handleRemoveNewData = (index) => {
+    const updatedList = [...debtorContactDetails];
+    updatedList.splice(index, 1); // Remove item at the specified index in the copy
+    setDebtorContactDetails(updatedList); // Update state with the modified copy
+  };
+  const handleInputChange = (index, field, value) => {
+    const updatedList = [...debtorContactDetails];
+    updatedList[index][field] = value;
+    setDebtorContactDetails(updatedList);
   };
 
   return (
@@ -321,7 +356,10 @@ export default function DebtorFields({
               justifyContent: "center",
             }}
           >
-            <Checkboxes />
+            <Checkboxes
+              checked={checked}
+              handleCheckChange={handleCheckChange}
+            />
             <Typography
               sx={{
                 display: "flex",
@@ -443,128 +481,151 @@ export default function DebtorFields({
           </Typography>
           <TextButton
             buttonText="ADD CONTACT"
-            startIcon={<AddIcon />}
+            startIcon={<Add />}
             backgroundColor={Colors.SKY_BLUE}
             hoverColor={Colors.SKY_BLUE}
+            onClick={handleAddNewContact}
           />
         </Grid>
-        <Grid container item xs={12}>
-          <Grid container item xs={12} md={8}>
-            <PaymentsTextFields
-              type="text"
-              label="Name"
-              placeHolderValue="Enter Name"
-              width="97%"
-              value={debtorContactDetails?.debtorContactName}
-              onChange={(e) =>
-                debtorContactInputChange("debtorContactName", e.target.value)
-              }
-            />
-            <PaymentsTextFields
-              type="text"
-              label="Title"
-              placeHolderValue="Enter Title"
-              width="97%"
-              value={debtorContactDetails?.debtorContactTitle}
-              onChange={(e) =>
-                debtorContactInputChange("debtorContactTitle", e.target.value)
-              }
-            />
-            <PaymentsTextFields
-              type="number"
-              label="Phone"
-              placeHolderValue="Enter Phone Number"
-              width="97%"
-              value={debtorContactDetails?.debtorContactPhone}
-              onChange={(e) =>
-                debtorContactInputChange("debtorContactPhone", e.target.value)
-              }
-            />
-            <PaymentsTextFields
-              type="text"
-              label="Enter Email"
-              placeHolderValue="Enter Email"
-              width="97%"
-              value={debtorContactDetails?.debtorContactEmail}
-              onChange={(e) =>
-                debtorContactInputChange("debtorContactEmail", e.target.value)
-              }
-            />
+        {debtorContactDetails?.map((item, index) => {
+          return (
+            <>
+              <Grid key={index} container item xs={12}>
+                <Grid container item xs={12} md={8}>
+                  <PaymentsTextFields
+                    type="text"
+                    label="Name"
+                    placeHolderValue="Enter Name"
+                    width="97%"
+                    value={item?.name}
+                    onChange={(e) =>
+                      handleInputChange(index, "name", e.target.value)
+                    }
+                  />
+                  <PaymentsTextFields
+                    type="text"
+                    label="Title"
+                    placeHolderValue="Enter Title"
+                    width="97%"
+                    value={item?.title}
+                    onChange={(e) =>
+                      handleInputChange(index, "title", e.target.value)
+                    }
+                  />
+                  <PaymentsTextFields
+                    type="number"
+                    label="Phone"
+                    placeHolderValue="Enter Phone Number"
+                    width="97%"
+                    value={item?.phone}
+                    onChange={(e) =>
+                      handleInputChange(index, "phone", e.target.value)
+                    }
+                  />
+                  <PaymentsTextFields
+                    type="text"
+                    label="Enter Email"
+                    placeHolderValue="Enter Email"
+                    width="97%"
+                    value={item?.email}
+                    onChange={(e) =>
+                      handleInputChange(index, "email", e.target.value)
+                    }
+                  />
 
-            <PaymentsTextFields
-              type="text"
-              label="Country (Optional)"
-              placeHolderValue="Country Name"
-              width="97%"
-              value={debtorContactDetails?.debtorContactCountry}
-              onChange={(e) =>
-                debtorContactInputChange("debtorContactCountry", e.target.value)
-              }
-            />
-            <PaymentsTextFields
-              type="text"
-              label="State (Optional)"
-              placeHolderValue="Enter State"
-              width="97%"
-              value={debtorContactDetails?.debtorContactState}
-              onChange={(e) =>
-                debtorContactInputChange("debtorContactState", e.target.value)
-              }
-            />
-            <PaymentsTextFields
-              label="City (Optional)"
-              placeHolderValue="Enter City"
-              width="97%"
-              value={debtorContactDetails?.debtorContactCity}
-              onChange={(e) =>
-                debtorContactInputChange("debtorContactCity", e.target.value)
-              }
-            />
-            <PaymentsTextFields
-              type="number"
-              label="Zip Code (Optional)"
-              placeHolderValue="Enter Zip Code"
-              width="97%"
-              value={debtorContactDetails?.debtorContactZipCode}
-              onChange={(e) =>
-                debtorContactInputChange("debtorContactZipCode", e.target.value)
-              }
-            />
-          </Grid>
-          <Grid container item xs={12} md={4} sx={{ flexDirection: "column" }}>
-            <Typography
-              sx={{
-                fontWeight: "500",
-                fontFamily: "Nunito",
-                marginLeft: "1rem",
-                color: Colors.DARK_GRAY,
-              }}
-            >
-              Relation with Debtor (Optional)
-            </Typography>
-            <input
-              type="text"
-              placeholder="Relation"
-              value={debtorContactDetails?.debtorContactRelation}
-              onChange={(e) =>
-                debtorContactInputChange(
-                  "debtorContactRelation",
-                  e.target.value
-                )
-              }
-              style={{
-                backgroundColor: Colors.BG_LIGHT_GRAY,
-                height: "2.5rem",
-                color: Colors.DIM_LIGHT_GRAY,
-                paddingLeft: "1rem",
-                border: "none",
-                outline: "none",
-                borderRadius: "5px",
-                width: "80%",
-              }}
-            />
-          </Grid>
-        </Grid>
+                  <PaymentsTextFields
+                    type="text"
+                    label="Country (Optional)"
+                    placeHolderValue="Country Name"
+                    width="97%"
+                    value={item?.country}
+                    onChange={(e) =>
+                      handleInputChange(index, "country", e.target.value)
+                    }
+                  />
+                  <PaymentsTextFields
+                    type="text"
+                    label="State (Optional)"
+                    placeHolderValue="Enter State"
+                    width="97%"
+                    value={item?.state}
+                    onChange={(e) =>
+                      handleInputChange(index, "state", e.target.value)
+                    }
+                  />
+                  <PaymentsTextFields
+                    label="City (Optional)"
+                    placeHolderValue="Enter City"
+                    width="97%"
+                    value={item?.city}
+                    onChange={(e) =>
+                      handleInputChange(index, "city", e.target.value)
+                    }
+                  />
+                  <PaymentsTextFields
+                    type="number"
+                    label="Zip Code (Optional)"
+                    placeHolderValue="Enter Zip Code"
+                    width="97%"
+                    value={item?.zipCode}
+                    onChange={(e) =>
+                      handleInputChange(index, "zipCode", e.target.value)
+                    }
+                  />
+                </Grid>
+                <Grid
+                  container
+                  item
+                  xs={12}
+                  md={4}
+                  sx={{ flexDirection: "column" }}
+                >
+                  <Typography
+                    sx={{
+                      fontWeight: "500",
+                      fontFamily: "Nunito",
+                      marginLeft: "1rem",
+                      color: Colors.DARK_GRAY,
+                    }}
+                  >
+                    Relation with Debtor (Optional)
+                  </Typography>
+                  <input
+                    type="text"
+                    placeholder="Relation"
+                    value={item?.relationWithDebtor}
+                    onChange={(e) =>
+                      handleInputChange(
+                        index,
+                        "relationWithDebtor",
+                        e.target.value
+                      )
+                    }
+                    style={{
+                      backgroundColor: Colors.BG_LIGHT_GRAY,
+                      height: "2.5rem",
+                      color: Colors.DIM_LIGHT_GRAY,
+                      paddingLeft: "1rem",
+                      border: "none",
+                      outline: "none",
+                      borderRadius: "5px",
+                      width: "80%",
+                    }}
+                  />
+                  {index !== 0 && (
+                    <>
+                      <RemoveCircle
+                        sx={{ color: Colors.ORANGE_COLOR, marginTop: "2rem" }}
+                        onClick={() => handleRemoveNewData(index)}
+                      />
+                    </>
+                  )}
+                </Grid>
+              </Grid>
+              <hr></hr>
+            </>
+          );
+        })}
       </Grid>
     </>
   );

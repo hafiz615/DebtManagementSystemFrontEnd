@@ -18,11 +18,13 @@ import PreviewDetails from "./caseCreation/previewDetails";
 import FileUploadComponent from "./caseCreation/uploadFiles";
 import { CreateCase, UploadFiles } from "../services/services";
 import { useToast } from "../toast/toastContext";
+import { isEmpty } from "lodash";
 
 const steps = ["Debtor", "Creditor", "Payment", "File upload", "Preview"];
 
 export default function HorizontalLinearStepper() {
   const { showToast } = useToast();
+  const [loading, setLoading] = useState(false);
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
 
@@ -52,22 +54,22 @@ export default function HorizontalLinearStepper() {
     businessPhoneNumber: "",
     businessAddress: "",
   });
-
-  const [debtorContactDetails, setDebtorContactDetails] = useState({
-    debtorContactName: "",
-    debtorContactTitle: "",
-    debtorContactPhone: "",
-    debtorContactEmail: "",
-    debtorContactCountry: "",
-    debtorContactState: "",
-    debtorContactCity: "",
-    debtorContactZipCode: "",
-    debtorContactRelation: "",
-  });
+  const [debtorContactDetails, setDebtorContactDetails] = useState([
+    {
+      name: "",
+      title: "",
+      phone: "",
+      email: "",
+      country: "",
+      state: "",
+      city: "",
+      zipCode: "",
+      relationWithDebtor: "",
+    },
+  ]);
+  const [checked, setChecked] = React.useState(false);
   const [status, setStatus] = useState("Custom");
-
   // creditor state
-
   const [creditorBasicsInfo, setCreditorBasicsInfo] = useState({
     CreditorBasicFullName: "",
     CreditorBasicEmailAddress: "",
@@ -83,25 +85,25 @@ export default function HorizontalLinearStepper() {
     minimum: "",
     maximum: "",
   });
-
-  const [creditorContactDetails, setCreditorContactDetails] = useState({
-    name: "",
-    title: "",
-    phone: "",
-    email: "",
-    country: "",
-    state: "",
-    city: "",
-    zipCode: "",
-    relationWithCreditor: "",
-  });
-
+  const [creditorContactDetails, setCreditorContactDetails] = useState([
+    {
+      name: "",
+      title: "",
+      phone: "",
+      email: "",
+      country: "",
+      state: "",
+      city: "",
+      zipCode: "",
+      relationWithDebtor: "",
+    },
+  ]);
   // payment state
   const [totalReceivable, setTotalReceivable] = useState(null);
   const [paidAmount, setPaidAmount] = useState(null);
   const [remainingAmount, setRemainingAmount] = useState(null);
   const [lastPaymentDate, setLastPaymentDate] = useState("");
-  const [debtorDetailsStatus, setDebtorDetailsStatus] = useState("Customer");
+  const [debtorDetailsStatus, setDebtorDetailsStatus] = useState("Custom");
   const [newDataList, setNewDataList] = useState([
     {
       amount: "",
@@ -109,110 +111,191 @@ export default function HorizontalLinearStepper() {
       timePeriod: "",
     },
   ]);
-
   //upload files
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [files, setFiles] = useState([]);
+  //disable button
+  const disableButton =
+    (activeStep === 0 &&
+      (status === "" ||
+        Object.values(debtorOwnDetails)?.some((value) => value === "") ||
+        Object.values(debtorBusinessDetails)?.some((value) => value === "") ||
+        debtorContactDetails?.some((contact) =>
+          Object.values(contact)?.some((value) => value === "")
+        ))) ||
+    (activeStep === 1 &&
+      (CreditorNotes === "" ||
+        fundedDate === "" ||
+        Object.values(creditorBasicsInfo)?.some((value) => value === "") ||
+        Object.values(creditorBusinessDetails)?.some((value) => value === "") ||
+        creditorContactDetails?.some((contact) =>
+          Object.values(contact)?.some((value) => value === "")
+        ) ||
+        Object.values(historicRange).some((value) => value === ""))) ||
+    (activeStep === 2 &&
+      (totalReceivable === null ||
+        paidAmount === null ||
+        remainingAmount === null ||
+        lastPaymentDate === "" ||
+        debtorDetailsStatus === "" ||
+        newDataList?.some((newData) =>
+          Object.values(newData)?.some((value) => value === "")
+        ))) ||
+    (activeStep === 3 && isEmpty(uploadedFiles));
 
   const isStepSkipped = (step) => {
     return skipped.has(step);
   };
   const handleNext = async () => {
     if (activeStep === steps.length - 1) {
+      setLoading(true);
       const uploadFile = await UploadFiles(uploadedFiles);
-      console.log(uploadFile);
-      const params = {
-        debtor: {
-          basicInformation: {
-            fullName: debtorOwnDetails?.BasicFullName,
-            email: debtorOwnDetails?.BasicEmailAddress,
-            SSID: debtorOwnDetails?.BasicSsid,
-            status: status,
-            country: debtorOwnDetails?.BasicCountry,
-            state: debtorOwnDetails?.BasicState,
-            city: debtorOwnDetails?.BasicCity,
-            zipCode: debtorOwnDetails?.BasicZipCode,
-            phone: debtorOwnDetails?.BasicPhoneNumber,
-            address: debtorOwnDetails?.BasicAddress,
-          },
-          businessInformation: {
-            companyName: debtorBusinessDetails?.businessCompanyName,
-            EIN: debtorBusinessDetails?.businessEinNumber,
-            businessCategory: debtorBusinessDetails?.businessCategory,
-            description: debtorBusinessDetails?.businessDescription,
-            country: debtorBusinessDetails?.businessCountry,
-            state: debtorBusinessDetails?.businessState,
-            city: debtorBusinessDetails?.businessCity,
-            zipCode: debtorBusinessDetails?.businessZipCode,
-            phone: debtorBusinessDetails?.businessPhoneNumber,
-            address: debtorBusinessDetails?.businessAddress,
-          },
-          contacts: [
-            {
-              name: debtorContactDetails?.debtorContactName,
-              title: debtorContactDetails?.debtorContactTitle,
-              phone: debtorContactDetails?.debtorContactPhone,
-              email: debtorContactDetails?.debtorContactEmail,
-              relationWithDebtor: debtorContactDetails?.debtorContactRelation,
-              country: debtorContactDetails?.debtorContactCountry,
-              state: debtorContactDetails?.debtorContactState,
-              city: debtorContactDetails?.debtorContactCity,
-              zipCode: debtorContactDetails?.debtorContactZipCode,
+      if (uploadFile?.status === 200) {
+        const params = {
+          debtor: {
+            basicInformation: {
+              fullName: debtorOwnDetails?.BasicFullName,
+              email: debtorOwnDetails?.BasicEmailAddress,
+              SSID: debtorOwnDetails?.BasicSsid,
+              status: status,
+              country: debtorOwnDetails?.BasicCountry,
+              state: debtorOwnDetails?.BasicState,
+              city: debtorOwnDetails?.BasicCity,
+              zipCode: debtorOwnDetails?.BasicZipCode,
+              phone: debtorOwnDetails?.BasicPhoneNumber,
+              address: debtorOwnDetails?.BasicAddress,
             },
-          ],
-        },
-        creditor: {
-          basicInformation: {
-            fullName: creditorBasicsInfo?.CreditorBasicFullName,
-            email: creditorBasicsInfo?.CreditorBasicEmailAddress,
-            phone: creditorBasicsInfo?.CreditorBasicPhoneNumber,
-          },
-          businessInformation: {
-            companyName: creditorBusinessDetails?.businessCompanyName,
-            businessCategory: creditorBusinessDetails?.businessCategory,
-          },
-          notes: CreditorNotes,
-          lastFundedDate: fundedDate,
-          historicalRange: historicRange,
-          contacts: [
-            {
-              name: creditorContactDetails?.name,
-              title: creditorContactDetails?.title,
-              phone: creditorContactDetails?.phone,
-              email: creditorContactDetails?.email,
-              relationWithDebtor: creditorContactDetails?.relationWithCreditor,
-              country: creditorContactDetails?.country,
-              state: creditorContactDetails?.state,
-              city: creditorContactDetails?.city,
-              zipCode: creditorContactDetails?.zipCode,
+            businessInformation: {
+              companyName: debtorBusinessDetails?.businessCompanyName,
+              EIN: debtorBusinessDetails?.businessEinNumber,
+              businessCategory: debtorBusinessDetails?.businessCategory,
+              description: debtorBusinessDetails?.businessDescription,
+              country: debtorBusinessDetails?.businessCountry,
+              state: debtorBusinessDetails?.businessState,
+              city: debtorBusinessDetails?.businessCity,
+              zipCode: debtorBusinessDetails?.businessZipCode,
+              phone: debtorBusinessDetails?.businessPhoneNumber,
+              address: debtorBusinessDetails?.businessAddress,
             },
-          ],
-        },
-        status: debtorDetailsStatus,
-        totalDebt: parseInt(totalReceivable),
-        lastPaymentDate: lastPaymentDate,
-        paidAmount: parseInt(paidAmount),
-        remaining: parseInt(remainingAmount),
-        documents: [
-          {
-            key: "#2page0-1714377479280.pdf",
-            originalFileName: "#2page0.pdf",
+            contacts: debtorContactDetails,
           },
-          {
-            key: "invoice-1714377479300.png",
-            originalFileName: "invoice.png",
+          creditor: {
+            basicInformation: {
+              fullName: creditorBasicsInfo?.CreditorBasicFullName,
+              email: creditorBasicsInfo?.CreditorBasicEmailAddress,
+              phone: creditorBasicsInfo?.CreditorBasicPhoneNumber,
+            },
+            businessInformation: {
+              companyName: creditorBusinessDetails?.businessCompanyName,
+              businessCategory: creditorBusinessDetails?.businessCategory,
+            },
+            notes: CreditorNotes,
+            lastFundedDate: fundedDate,
+            historicalRange: historicRange,
+            contacts: creditorContactDetails,
           },
-        ],
-        intervals: newDataList,
-      };
+          status: debtorDetailsStatus,
+          totalDebt: parseInt(totalReceivable),
+          lastPaymentDate: lastPaymentDate,
+          paidAmount: parseInt(paidAmount),
+          remaining: parseInt(remainingAmount),
+          documents: uploadFile?.data?.data,
+          intervals: newDataList,
+        };
 
-      // const caseCreation = await CreateCase(params, false);
+        const caseCreation = await CreateCase(params, false);
 
-      // if (caseCreation?.status === 201) {
-      //   showToast(caseCreation?.data?.message, "success");
-      // } else {
-      //   const errorMessage = caseCreation?.response?.data?.message;
-      //   showToast(errorMessage, "error");
-      // }
+        if (caseCreation?.status === 201) {
+          showToast(caseCreation?.data?.message, "success");
+          setDebtorOwnDetails({
+            BasicFullName: "",
+            BasicEmailAddress: "",
+            BasicSsid: "",
+            BasicCountry: "",
+            BasicState: "",
+            BasicCity: "",
+            BasicZipCode: "",
+            BasicPhoneNumber: "",
+            BasicAddress: "",
+          });
+          setDebtorBusinessDetails({
+            businessCompanyName: "",
+            businessEinNumber: "",
+            businessCategory: "",
+            businessDescription: "",
+            businessCountry: "",
+            businessState: "",
+            businessCity: "",
+            businessZipCode: "",
+            businessPhoneNumber: "",
+            businessAddress: "",
+          });
+          setDebtorContactDetails([
+            {
+              name: "",
+              title: "",
+              phone: "",
+              email: "",
+              country: "",
+              state: "",
+              city: "",
+              zipCode: "",
+              relationWithDebtor: "",
+            },
+          ]);
+          setChecked(false);
+          setStatus("Custom");
+          setCreditorBasicsInfo({
+            CreditorBasicFullName: "",
+            CreditorBasicEmailAddress: "",
+            CreditorBasicPhoneNumber: "",
+          });
+          setCreditorBusinessDetails({
+            businessCompanyName: "",
+            businessCategory: "",
+          });
+          setFundedDate("");
+          setCreditorNotes("");
+          setHistoricRange({
+            minimum: "",
+            maximum: "",
+          });
+          setDebtorDetailsStatus("Custom");
+          setLastPaymentDate("");
+          setRemainingAmount(null);
+          setPaidAmount(null);
+          setTotalReceivable(null);
+          setFiles([]);
+          setNewDataList([
+            {
+              amount: "",
+              startDate: "",
+              timePeriod: "",
+            },
+          ]);
+          setCreditorContactDetails([
+            {
+              name: "",
+              title: "",
+              phone: "",
+              email: "",
+              country: "",
+              state: "",
+              city: "",
+              zipCode: "",
+              relationWithDebtor: "",
+            },
+          ]);
+          setUploadedFiles([]);
+          setActiveStep(0);
+        } else {
+          const errorMessage = caseCreation?.response?.data?.message;
+          showToast(errorMessage, "error");
+        }
+      } else {
+        const errorMessage = uploadFile?.response?.data?.message;
+        showToast(errorMessage, "error");
+      }
     } else {
       let newSkipped = skipped;
       if (isStepSkipped(activeStep)) {
@@ -222,6 +305,7 @@ export default function HorizontalLinearStepper() {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
       setSkipped(newSkipped);
     }
+    setLoading(false);
   };
 
   const handleBack = () => {
@@ -320,6 +404,8 @@ export default function HorizontalLinearStepper() {
               setDebtorContactDetails={setDebtorContactDetails}
               selectedValue={status}
               setSelectedValue={setStatus}
+              checked={checked}
+              setChecked={setChecked}
             />
           ) : activeStep === 1 ? (
             <CreditorDetails
@@ -355,13 +441,18 @@ export default function HorizontalLinearStepper() {
             <FileUploadComponent
               uploadedFiles={uploadedFiles}
               setUploadedFiles={setUploadedFiles}
+              files={files}
+              setFiles={setFiles}
             />
           ) : activeStep === 4 ? (
             <PreviewDetails
               debtorOwnDetails={debtorOwnDetails}
               creditorBasicsInfo={creditorBasicsInfo}
+              creditorBusinessDetails={creditorBusinessDetails}
               newDataList={newDataList}
               status={status}
+              fundedDate={fundedDate}
+              CreditorNotes={CreditorNotes}
             />
           ) : (
             ""
@@ -407,6 +498,7 @@ export default function HorizontalLinearStepper() {
               />
               <TextButton
                 buttonText={activeStep === steps.length - 1 ? "SAVE" : "NEXT"}
+                loading={loading}
                 backgroundColor={Colors.SKY_BLUE}
                 hoverColor={Colors.SKY_BLUE}
                 paddingLeft="2rem"
@@ -416,6 +508,7 @@ export default function HorizontalLinearStepper() {
                   handleNext();
                 }}
                 marginRight="1rem"
+                disabled={disableButton || loading}
               />
             </Grid>
           </Grid>

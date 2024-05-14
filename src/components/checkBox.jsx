@@ -4,13 +4,7 @@ import { Colors } from "../config/default";
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
-export default function Checkboxes() {
-  const [checked, setChecked] = React.useState(false);
-
-  const handleCheckChange = (event) => {
-    setChecked(event.target.checked);
-  };
-
+export default function Checkboxes({ checked, handleCheckChange }) {
   return (
     <div>
       <Checkbox

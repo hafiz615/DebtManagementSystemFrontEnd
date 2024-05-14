@@ -8,6 +8,9 @@ export default function PreviewDetails({
   creditorBasicsInfo,
   newDataList,
   status,
+  fundedDate,
+  CreditorNotes,
+  creditorBusinessDetails,
 }) {
   return (
     <Grid
@@ -28,6 +31,9 @@ export default function PreviewDetails({
           creditorBasicsInfo={creditorBasicsInfo}
           newDataList={newDataList}
           status={status}
+          fundedDate={fundedDate}
+          CreditorNotes={CreditorNotes}
+          creditorBusinessDetails={creditorBusinessDetails}
         />
       </Grid>
       <Grid item xs={12}>
@@ -38,6 +44,9 @@ export default function PreviewDetails({
           creditorBasicsInfo={creditorBasicsInfo}
           newDataList={newDataList}
           status={status}
+          fundedDate={fundedDate}
+          CreditorNotes={CreditorNotes}
+          creditorBusinessDetails={creditorBusinessDetails}
         />
       </Grid>
       <Grid item xs={12} sx={{ marginTop: "0.5rem" }}>
@@ -48,6 +57,9 @@ export default function PreviewDetails({
           creditorBasicsInfo={creditorBasicsInfo}
           newDataList={newDataList}
           status={status}
+          fundedDate={fundedDate}
+          CreditorNotes={CreditorNotes}
+          creditorBusinessDetails={creditorBusinessDetails}
         />
       </Grid>
     </Grid>
