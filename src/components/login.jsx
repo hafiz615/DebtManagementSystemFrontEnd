@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { sign_In } from "../redux/action/action";
 
 import { Typography, TextField, Grid, FormHelperText } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
@@ -18,6 +20,7 @@ import Button from "./button";
 
 function Login() {
   const { showToast } = useToast();
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -38,7 +41,7 @@ function Login() {
     const login = await SignIn(params);
 
     if (login?.status === 200) {
-      // showToast(login?.data?.message, "success");
+      dispatch(sign_In(login?.data?.data));
       const token = login?.data?.data?.token;
       localStorage.setItem("token", token);
       navigate("/home");

@@ -52,3 +52,30 @@ export const UpdateUserPassword = async (payload, token) => {
     return error;
   }
 };
+
+export const CreateCase = async (payload, bulk = false) => {
+  try {
+    const queryParams = `?bulk=${bulk}`;
+    const url = BASE_URL + "/v1/case/createCase" + queryParams;
+
+    return await axios.post(url, payload, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+
+export const UploadFiles = async (data) => {
+  const formData = new FormData();
+  for (let i = 0; i < data.length; i++) {
+    formData.append("files", data[i]);
+  }
+  try {
+    return await axios.post(
+      BASE_URL + "/v1/upload/files",
+      formData,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

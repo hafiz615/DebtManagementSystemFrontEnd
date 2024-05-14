@@ -5,7 +5,18 @@ import { Grid } from "@mui/material";
 import SearchBar from "../searchBar";
 import DebtorFields from "../caseCreationFields/debtorFields";
 
-function DebtorDetails() {
+function DebtorDetails({
+  debtorOwnDetails,
+  setDebtorOwnDetails,
+  debtorBusinessDetails,
+  setDebtorBusinessDetails,
+  debtorContactDetails,
+  setDebtorContactDetails,
+  selectedValue,
+  setSelectedValue,
+  checked,
+  setChecked,
+}) {
   return (
     <>
       <Grid
@@ -32,7 +43,18 @@ function DebtorDetails() {
           marginTop: "1rem",
         }}
       >
-        <DebtorFields />
+        <DebtorFields
+          debtorOwnDetails={debtorOwnDetails}
+          setDebtorOwnDetails={setDebtorOwnDetails}
+          debtorBusinessDetails={debtorBusinessDetails}
+          setDebtorBusinessDetails={setDebtorBusinessDetails}
+          debtorContactDetails={debtorContactDetails}
+          setDebtorContactDetails={setDebtorContactDetails}
+          selectedValue={selectedValue}
+          setSelectedValue={setSelectedValue}
+          checked={checked}
+          setChecked={setChecked}
+        />
       </Grid>
     </>
   );
