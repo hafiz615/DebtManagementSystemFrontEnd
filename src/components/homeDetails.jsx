@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 import { Grid, Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -10,7 +11,7 @@ import Dropdown from "./dropdown";
 
 function HomeDetails() {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
-  const role = localStorage.getItem("role");
+  const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
 
   const accordionData = [
     { tableHeading: "Failed Authorizations", paymentNumber: "5" },

@@ -43,7 +43,7 @@ export default function CreditorFields({
   const historicInputChange = (fieldName, value) => {
     setHistoricRange((prevState) => ({
       ...prevState,
-      [fieldName]: value,
+      [fieldName]: parseInt(value),
     }));
   };
 

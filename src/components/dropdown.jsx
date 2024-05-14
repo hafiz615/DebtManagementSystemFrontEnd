@@ -14,6 +14,7 @@ export default function Dropdown({
   selectedValue,
   setSelectedValue,
   onChange,
+  initialValue,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -28,10 +29,11 @@ export default function Dropdown({
   };
 
   const handleMenuItemClick = (value) => {
-    setSelectedValue(value);
     handleClose();
     if (onChange) {
       onChange(value);
+    } else {
+      setSelectedValue(value);
     }
   };
 
@@ -55,7 +57,8 @@ export default function Dropdown({
           width: width,
         }}
       >
-        {selectedValue || defaultSelectedItem} <ExpandMoreIcon />
+        {initialValue || selectedValue || defaultSelectedItem}{" "}
+        <ExpandMoreIcon />
       </Button>
       <Menu
         id="basic-menu"

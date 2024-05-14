@@ -1,4 +1,6 @@
 import React from "react";
+import { useSelector } from "react-redux";
+
 import { Grid, Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
@@ -8,8 +10,7 @@ import CustomizedTabs from "./tabs";
 
 function UserLists() {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
-  const role = localStorage.getItem("role");
-
+  const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { AUTHORITY_TEXT, USER_LIST_HEADING } = UserListPage;
   return (
     <Grid

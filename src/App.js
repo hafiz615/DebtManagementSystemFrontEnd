@@ -7,22 +7,46 @@ import HomePage from "./pages/homePage";
 import AuthorizationPage from "./pages/authorizationPage";
 import HorizontalLinearStepperPage from "./pages/stepperPage";
 import VerifyProfilePage from "./pages/verifyProfilePage";
-
+import Protected from "./components/protected";
 function App() {
   return (
     <Routes>
       <Route exact path="/" element={<Auth />} />
-      <Route exact path="/home" element={<HomePage />} />
-      <Route exact path="/user-listing" element={<UserListPage />} />
+      <Route
+        exact
+        path="/home"
+        element={
+          <Protected>
+            <HomePage />
+          </Protected>
+        }
+      />
+      <Route
+        exact
+        path="/user-listing"
+        element={
+          <Protected>
+            <UserListPage />
+          </Protected>
+        }
+      />
       <Route
         exact
         path="/authorization-details"
-        element={<AuthorizationPage />}
+        element={
+          <Protected>
+            <AuthorizationPage />
+          </Protected>
+        }
       />
       <Route
         exact
         path="/case-details"
-        element={<HorizontalLinearStepperPage />}
+        element={
+          <Protected>
+            <HorizontalLinearStepperPage />
+          </Protected>
+        }
       />
       <Route exact path="/set-password" element={<VerifyProfilePage />} />
     </Routes>

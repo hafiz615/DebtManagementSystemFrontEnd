@@ -227,7 +227,7 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
       </AccordionSummary>
 
       <AccordionDetails>
-        <DataTable rows={rows} columns={columns} height="56vh" />
+        <DataTable rows={rows} columns={columns} />
       </AccordionDetails>
     </Accordion>
   );

@@ -19,7 +19,6 @@ export default function BasicMenu({ backgroundColor, width }) {
   const [selectedValue, setSelectedValue] = React.useState(
     roteSelect || "Create"
   );
-  console.log(selectedValue, "jjjjj");
 
   const open = Boolean(anchorEl);
   const navigate = useNavigate();

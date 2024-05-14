@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -14,8 +14,6 @@ export default function PaymentSettlement({ newDataList, setNewDataList }) {
     { label: "Fortnightly", value: "Fortnightly" },
     { label: "Monthly", value: "Monthly" },
   ];
-  console.log(newDataList, "kkkk");
-  const [selectedValue, setSelectedValue] = useState("Custom");
 
   const handleAddNewData = () => {
     const newItem = {
@@ -46,137 +44,10 @@ export default function PaymentSettlement({ newDataList, setNewDataList }) {
           fontFamily: "Nunito",
           fontWeight: "600",
         }}
-        gutterBottom
       >
         Settlement Plan Automation
       </Typography>
-      {/* <Grid container item>
-        <Grid
-          container
-          item
-          xs={12}
-          lg={3}
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              marginRight: ".5rem",
-              color: Colors.DARK_GRAY,
-            }}
-            gutterBottom
-          >
-            Debt
-          </Typography>
-          <input
-            type="text"
-            placeholder="$2000"
-            value={debtValue}
-            onChange={(e) => setDebtValue(e.target.value)}
-            style={{
-              backgroundColor: Colors.BG_LIGHT_GRAY,
-              height: "2.5rem",
-              color: Colors.DIM_LIGHT_GRAY,
-              paddingLeft: "1rem",
-              border: "none",
-              outline: "none",
-              borderRadius: "5px",
-              width: "60%",
-            }}
-          />
-        </Grid>
-        <Grid
-          container
-          item
-          xs={12}
-          lg={3}
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              marginRight: ".5rem",
-              color: Colors.DARK_GRAY,
-            }}
-            gutterBottom
-          >
-            Time Period
-          </Typography>
-          <Dropdown
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-            menuItems={menuItems}
-            defaultSelectedItem={"Customer"}
-            backgroundColor={Colors.BG_LIGHT_GRAY}
-            width="60%"
-          />
-        </Grid>
-        <Grid
-          container
-          item
-          xs={12}
-          lg={3}
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              marginRight: ".5rem",
-              color: Colors.DARK_GRAY,
-            }}
-            gutterBottom
-          >
-            Date
-          </Typography>
-          <input
-            type="text"
-            placeholder="4/1/2024"
-            value={dateValue}
-            onChange={(e) => setDateValue(e.target.value)}
-            style={{
-              backgroundColor: Colors.BG_LIGHT_GRAY,
-              height: "2.5rem",
-              color: Colors.DIM_LIGHT_GRAY,
-              paddingLeft: "1rem",
-              border: "none",
-              outline: "none",
-              borderRadius: "5px",
-              width: "60%",
-            }}
-          />
-        </Grid>
-        <Grid
-          container
-          item
-          xs={12}
-          lg={3}
-          sx={{
-            display: "flex",
-            justifyContent: "flex-start",
-            alignItems: "center",
-          }}
-        >
-          <AddCircleIcon
-            sx={{ color: Colors.SKY_BLUE }}
-            onClick={handleAddNewData}
-          />
-        </Grid>
-      </Grid> */}
+
       <Grid container item sx={{ marginTop: "1rem" }}>
         {newDataList?.map((item, index) => (
           <>
@@ -199,16 +70,15 @@ export default function PaymentSettlement({ newDataList, setNewDataList }) {
                   marginRight: ".5rem",
                   color: Colors.DARK_GRAY,
                 }}
-                gutterBottom
               >
                 Debt
               </Typography>
               <input
-                type="text"
+                type="number"
                 placeholder="$2000"
-                value={item?.debt}
+                value={item?.amount}
                 onChange={(e) =>
-                  handleInputChange(index, "amount", e.target.value)
+                  handleInputChange(index, "amount", parseInt(e.target.value))
                 }
                 style={{
                   backgroundColor: Colors.BG_LIGHT_GRAY,
@@ -246,10 +116,9 @@ export default function PaymentSettlement({ newDataList, setNewDataList }) {
                 Time Period
               </Typography>
               <Dropdown
-                selectedValue={selectedValue}
-                setSelectedValue={setSelectedValue}
+                initialValue={item?.timePeriod}
                 menuItems={menuItems}
-                defaultSelectedItem={"Customer"}
+                defaultSelectedItem={"Custom"}
                 backgroundColor={Colors.BG_LIGHT_GRAY}
                 width="60%"
                 value={item?.timePeriod}
@@ -277,14 +146,13 @@ export default function PaymentSettlement({ newDataList, setNewDataList }) {
                   marginRight: ".5rem",
                   color: Colors.DARK_GRAY,
                 }}
-                gutterBottom
               >
                 Date
               </Typography>
               <input
                 type="date"
                 placeholder="4/1/2024"
-                value={item?.date}
+                value={item?.startDate}
                 onChange={(e) =>
                   handleInputChange(index, "startDate", e.target.value)
                 }
@@ -329,7 +197,11 @@ export default function PaymentSettlement({ newDataList, setNewDataList }) {
                     placeholder="5"
                     value={item.frequency}
                     onChange={(e) =>
-                      handleInputChange(index, "frequency", e.target.value)
+                      handleInputChange(
+                        index,
+                        "frequency",
+                        parseInt(e.target.value)
+                      )
                     }
                     style={{
                       backgroundColor: Colors.BG_LIGHT_GRAY,

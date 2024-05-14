@@ -1,5 +1,7 @@
 import * as React from "react";
+import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
+
 import { isEqual } from "lodash";
 
 import { styled } from "@mui/material/styles";
@@ -97,6 +99,7 @@ const columns = [
 export default function CustomizedTabs() {
   const { showToast } = useToast();
   const [value, setValue] = React.useState(0);
+  const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -170,7 +173,13 @@ export default function CustomizedTabs() {
           </AntTabs>
         </Box>
 
-        <BasicModal modelButton="ADD USERS" show={false} GetUsers={GetUsers} />
+        {role === "Admin" && (
+          <BasicModal
+            modelButton="ADD USERS"
+            show={false}
+            GetUsers={GetUsers}
+          />
+        )}
       </Grid>
 
       <Grid
@@ -179,7 +188,7 @@ export default function CustomizedTabs() {
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px ",
-          height: "58vh",
+          // height: "58vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -198,7 +207,7 @@ export default function CustomizedTabs() {
             <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
           </Grid>
         ) : (
-          <DataTable rows={rows} columns={columns} height="58vh" />
+          <DataTable rows={rows} columns={columns} />
         )}
       </Grid>
     </>

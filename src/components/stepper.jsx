@@ -16,12 +16,15 @@ import CreditorDetails from "./caseCreation/creditorDetails";
 import PaymentDetails from "./caseCreation/paymentDetails";
 import PreviewDetails from "./caseCreation/previewDetails";
 import FileUploadComponent from "./caseCreation/uploadFiles";
-import { CreateCase } from "../services/services";
+import { CreateCase, UploadFiles } from "../services/services";
+import { useToast } from "../toast/toastContext";
 
 const steps = ["Debtor", "Creditor", "Payment", "File upload", "Preview"];
 
 export default function HorizontalLinearStepper() {
+  const { showToast } = useToast();
   const [activeStep, setActiveStep] = React.useState(0);
+  const [skipped, setSkipped] = React.useState(new Set());
 
   const { AUTHORITY_TEXT, AUTHORITY_VALUE, DEBTOR_HEADING } = DebtorDetailsPage;
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
@@ -80,7 +83,7 @@ export default function HorizontalLinearStepper() {
     minimum: "",
     maximum: "",
   });
-  console.log(historicRange, "historic");
+
   const [creditorContactDetails, setCreditorContactDetails] = useState({
     name: "",
     title: "",
@@ -94,11 +97,11 @@ export default function HorizontalLinearStepper() {
   });
 
   // payment state
-  const [totalReceivable, setTotalReceivable] = useState("");
-  const [paidAmount, setPaidAmount] = useState("");
-  const [remainingAmount, setRemainingAmount] = useState("");
+  const [totalReceivable, setTotalReceivable] = useState(null);
+  const [paidAmount, setPaidAmount] = useState(null);
+  const [remainingAmount, setRemainingAmount] = useState(null);
   const [lastPaymentDate, setLastPaymentDate] = useState("");
-  const [debtorDetailsStatus, setDebtorDetailsStatus] = useState("Custom");
+  const [debtorDetailsStatus, setDebtorDetailsStatus] = useState("Customer");
   const [newDataList, setNewDataList] = useState([
     {
       amount: "",
@@ -108,16 +111,22 @@ export default function HorizontalLinearStepper() {
   ]);
 
   //upload files
-  const [files, setFiles] = useState([]);
-  const handleNext = async (type) => {
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+
+  const isStepSkipped = (step) => {
+    return skipped.has(step);
+  };
+  const handleNext = async () => {
     if (activeStep === steps.length - 1) {
+      const uploadFile = await UploadFiles(uploadedFiles);
+      console.log(uploadFile);
       const params = {
         debtor: {
           basicInformation: {
             fullName: debtorOwnDetails?.BasicFullName,
             email: debtorOwnDetails?.BasicEmailAddress,
             SSID: debtorOwnDetails?.BasicSsid,
-            // status:status,
+            status: status,
             country: debtorOwnDetails?.BasicCountry,
             state: debtorOwnDetails?.BasicState,
             city: debtorOwnDetails?.BasicCity,
@@ -168,7 +177,7 @@ export default function HorizontalLinearStepper() {
             {
               name: creditorContactDetails?.name,
               title: creditorContactDetails?.title,
-              phone: creditorContactDetails?.phoneNumber,
+              phone: creditorContactDetails?.phone,
               email: creditorContactDetails?.email,
               relationWithDebtor: creditorContactDetails?.relationWithCreditor,
               country: creditorContactDetails?.country,
@@ -178,10 +187,11 @@ export default function HorizontalLinearStepper() {
             },
           ],
         },
-        totalDebt: totalReceivable,
+        status: debtorDetailsStatus,
+        totalDebt: parseInt(totalReceivable),
         lastPaymentDate: lastPaymentDate,
-        paidAmount: paidAmount,
-        remaining: remainingAmount,
+        paidAmount: parseInt(paidAmount),
+        remaining: parseInt(remainingAmount),
         documents: [
           {
             key: "#2page0-1714377479280.pdf",
@@ -192,16 +202,26 @@ export default function HorizontalLinearStepper() {
             originalFileName: "invoice.png",
           },
         ],
-        paymentPlanStartDate: "2022-05-01",
         intervals: newDataList,
       };
-      console.log(params, "params");
 
-      const caseCreation = await CreateCase(params);
-      console.log(caseCreation, "caseCreation");
+      // const caseCreation = await CreateCase(params, false);
+
+      // if (caseCreation?.status === 201) {
+      //   showToast(caseCreation?.data?.message, "success");
+      // } else {
+      //   const errorMessage = caseCreation?.response?.data?.message;
+      //   showToast(errorMessage, "error");
+      // }
+    } else {
+      let newSkipped = skipped;
+      if (isStepSkipped(activeStep)) {
+        newSkipped = new Set(newSkipped.values());
+        newSkipped.delete(activeStep);
+      }
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      setSkipped(newSkipped);
     }
-
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
   const handleBack = () => {
@@ -277,7 +297,9 @@ export default function HorizontalLinearStepper() {
             {steps.map((label, index) => {
               const stepProps = {};
               const labelProps = {};
-
+              if (isStepSkipped(index)) {
+                stepProps.completed = false;
+              }
               return (
                 <Step key={label} {...stepProps}>
                   <StepLabel {...labelProps}>{label}</StepLabel>
@@ -330,9 +352,17 @@ export default function HorizontalLinearStepper() {
               setNewDataList={setNewDataList}
             />
           ) : activeStep === 3 ? (
-            <FileUploadComponent files={files} setFiles={setFiles} />
+            <FileUploadComponent
+              uploadedFiles={uploadedFiles}
+              setUploadedFiles={setUploadedFiles}
+            />
           ) : activeStep === 4 ? (
-            <PreviewDetails />
+            <PreviewDetails
+              debtorOwnDetails={debtorOwnDetails}
+              creditorBasicsInfo={creditorBasicsInfo}
+              newDataList={newDataList}
+              status={status}
+            />
           ) : (
             ""
           )}
@@ -383,7 +413,7 @@ export default function HorizontalLinearStepper() {
                 paddingRight="2rem"
                 height="2rem"
                 onClick={() => {
-                  handleNext(activeStep === steps.length - 1 ? "SAVE" : "NEXT");
+                  handleNext();
                 }}
                 marginRight="1rem"
               />

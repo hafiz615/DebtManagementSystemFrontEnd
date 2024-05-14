@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Grid, Box } from "@mui/material/";
 import Typography from "@mui/material/Typography";
@@ -9,12 +9,13 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import JSZip from "jszip";
 import AlertDialog from "./editFileNamePopUp";
 
-const FileUploadComponent = ({ files, setFiles }) => {
+const FileUploadComponent = ({ setUploadedFiles }) => {
+  const [files, setFiles] = useState([]);
   const onDrop = async (acceptedFiles) => {
+    setUploadedFiles(acceptedFiles);
     console.log(acceptedFiles, "acceptedFiles");
     await Promise.all(
       acceptedFiles.map(async (file) => {
-        console.log(file, "file");
         if (file.type === "application/zip") {
           const zipFiles = await getFilesFromZip(file);
           setFiles((prevFiles) => [...prevFiles, ...zipFiles]);
