@@ -1,7 +1,7 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import { Add, RemoveCircle } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
 import PaymentsTextFields from "../caseTextField";

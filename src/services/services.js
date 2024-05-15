@@ -79,3 +79,27 @@ export const UploadFiles = async (data) => {
     return error;
   }
 };
+
+export const GetDebtorSearch = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + "/v1/debtor/getDebtor",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+// export const GetDebtor = async (payload) => {
+//   try {
+//     return await axios.post(
+//       BASE_URL + "/v1/debtor/getDebtor",
+//       payload,
+//       setHeaders()
+//     );
+//   } catch (error) {
+//     return error;
+//   }
+// };

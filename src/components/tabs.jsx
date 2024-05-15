@@ -96,7 +96,7 @@ const columns = [
     minWidth: 70,
   },
 ];
-export default function CustomizedTabs() {
+export default function CustomizedTabs({ heading }) {
   const { showToast } = useToast();
   const [value, setValue] = React.useState(0);
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
@@ -159,7 +159,7 @@ export default function CustomizedTabs() {
             aria-label="User List Tabs"
           >
             <AntTab
-              label="User Lists"
+              label={heading}
               sx={{
                 bgcolor: Colors.WHITE,
                 width: "max-content",
@@ -202,6 +202,7 @@ export default function CustomizedTabs() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              height: "50vh",
             }}
           >
             <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />

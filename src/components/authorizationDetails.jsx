@@ -53,7 +53,7 @@ export default function AuthorizationDetails() {
             color: Colors.BLACK,
           }}
         >
-          Heading
+          Payments Authorization
         </Typography>
       </Grid>
       <Grid

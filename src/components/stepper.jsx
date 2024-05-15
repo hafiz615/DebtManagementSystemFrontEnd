@@ -16,7 +16,7 @@ import CreditorDetails from "./caseCreation/creditorDetails";
 import PaymentDetails from "./caseCreation/paymentDetails";
 import PreviewDetails from "./caseCreation/previewDetails";
 import FileUploadComponent from "./caseCreation/uploadFiles";
-import { CreateCase, UploadFiles } from "../services/services";
+import { CreateCase, GetDebtorSearch, UploadFiles } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import { isEmpty } from "lodash";
 
@@ -114,6 +114,9 @@ export default function HorizontalLinearStepper() {
   //upload files
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [files, setFiles] = useState([]);
+
+  //Search State
+  const [debtorSearchText, setDebtorSearchText] = useState("");
   //disable button On Empty Fields
   const disableButton =
     (activeStep === 0 &&
@@ -145,6 +148,11 @@ export default function HorizontalLinearStepper() {
 
   const isStepSkipped = (step) => {
     return skipped.has(step);
+  };
+  const SearchDebtorFields = async () => {
+    const params = { text: debtorSearchText };
+    const getDebtorDataInSearch = await GetDebtorSearch(params);
+    console.log(getDebtorDataInSearch);
   };
   const handleNext = async () => {
     if (activeStep === steps.length - 1) {
@@ -406,6 +414,9 @@ export default function HorizontalLinearStepper() {
               setSelectedValue={setStatus}
               checked={checked}
               setChecked={setChecked}
+              debtorSearchText={debtorSearchText}
+              setDebtorSearchText={setDebtorSearchText}
+              SearchDebtorFields={SearchDebtorFields}
             />
           ) : activeStep === 1 ? (
             <CreditorDetails

@@ -16,6 +16,9 @@ function DebtorDetails({
   setSelectedValue,
   checked,
   setChecked,
+  debtorSearchText,
+  setDebtorSearchText,
+  SearchDebtorFields,
 }) {
   return (
     <>
@@ -30,7 +33,11 @@ function DebtorDetails({
           marginTop: "1rem",
         }}
       >
-        <SearchBar />
+        <SearchBar
+          debtorSearchText={debtorSearchText}
+          setDebtorSearchText={setDebtorSearchText}
+          SearchDebtorFields={SearchDebtorFields}
+        />
       </Grid>
       <Grid
         container
