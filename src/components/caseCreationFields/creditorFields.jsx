@@ -21,7 +21,6 @@ export default function CreditorFields({
   historicRange,
   setHistoricRange,
 }) {
-  console.log(creditorContactDetails, "creditorContactDetails");
   const basicInfoInputChange = (fieldName, value) => {
     setCreditorBasicsInfo((prevState) => ({
       ...prevState,
@@ -467,9 +466,13 @@ export default function CreditorFields({
                   />
                   {index !== 0 && (
                     <>
-                      <RemoveCircle
-                        sx={{ color: Colors.ORANGE_COLOR, marginTop: "2rem" }}
+                      <TextButton
+                        buttonText="DELETE CONTACT"
+                        backgroundColor={Colors.ORANGE_COLOR}
+                        hoverColor={Colors.ORANGE_COLOR}
                         onClick={() => handleRemoveNewData(index)}
+                        width="40%"
+                        marginTop="1.5rem"
                       />
                     </>
                   )}

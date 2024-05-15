@@ -114,7 +114,7 @@ export default function HorizontalLinearStepper() {
   //upload files
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [files, setFiles] = useState([]);
-  //disable button
+  //disable button On Empty Fields
   const disableButton =
     (activeStep === 0 &&
       (status === "" ||

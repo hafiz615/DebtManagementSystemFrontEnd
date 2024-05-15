@@ -341,6 +341,7 @@ export default function DebtorFields({
               menuItems={menuItems}
               defaultSelectedItem={"Customer"}
               backgroundColor={Colors.BG_LIGHT_GRAY}
+              hoverColor={Colors.BG_LIGHT_GRAY}
               width="98%"
               selectedValue={selectedValue}
               setSelectedValue={setSelectedValue}
@@ -614,9 +615,13 @@ export default function DebtorFields({
                   />
                   {index !== 0 && (
                     <>
-                      <RemoveCircle
-                        sx={{ color: Colors.ORANGE_COLOR, marginTop: "2rem" }}
+                      <TextButton
+                        buttonText="DELETE CONTACT"
+                        backgroundColor={Colors.ORANGE_COLOR}
+                        hoverColor={Colors.ORANGE_COLOR}
                         onClick={() => handleRemoveNewData(index)}
+                        width="40%"
+                        marginTop="1.5rem"
                       />
                     </>
                   )}
