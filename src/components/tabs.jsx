@@ -1,5 +1,7 @@
 import * as React from "react";
+import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
+
 import { isEqual } from "lodash";
 
 import { styled } from "@mui/material/styles";
@@ -10,6 +12,9 @@ import { Grid, Box } from "@mui/material";
 import { Colors } from "../config/default";
 import BasicModal from "./customPopup";
 import DataTable from "./table";
+import { GetAllUsers } from "../services/services";
+import { useToast } from "../toast/toastContext";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const AntTabs = styled(Tabs)({
   border: "none",
@@ -40,96 +45,7 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
     },
   })
 );
-const rowArray = [
-  {
-    name: "User Name",
-    dob: "4/2/2024",
-    gender: "Male",
-    email: "user@email.com",
-    amount: "$3,254.00",
-    ssid: "721-07-4426",
-    role: "Negotiator",
-    phone: "+18143008957",
-    address: "Lorium Ipsum",
-  },
-  {
-    name: "User Name",
-    dob: "4/2/2024",
-    gender: "Male",
-    email: "user@email.com",
-    amount: "$3,254.00",
-    ssid: "721-07-4426",
-    role: "Negotiator",
-    phone: "+18143008957",
-    address: "Lorium Ipsum",
-  },
-  {
-    name: "User Name",
-    dob: "4/2/2024",
-    gender: "Male",
-    email: "user@email.com",
-    amount: "$3,254.00",
-    ssid: "721-07-4426",
-    role: "Negotiator",
-    phone: "+18143008957",
-    address: "Lorium Ipsum",
-  },
-  {
-    name: "User Name",
-    dob: "4/2/2024",
-    gender: "Male",
-    email: "user@email.com",
-    amount: "$3,254.00",
-    ssid: "721-07-4426",
-    role: "Negotiator",
-    phone: "+18143008957",
-    address: "Lorium Ipsum",
-  },
-  {
-    name: "User Name",
-    dob: "4/2/2024",
-    gender: "Male",
-    email: "user@email.com",
-    amount: "$3,254.00",
-    ssid: "721-07-4426",
-    role: "Negotiator",
-    phone: "+18143008957",
-    address: "Lorium Ipsum",
-  },
-  {
-    name: "User Name",
-    dob: "4/2/2024",
-    gender: "Male",
-    email: "user@email.com",
-    amount: "$3,254.00",
-    ssid: "721-07-4426",
-    role: "Negotiator",
-    phone: "+18143008957",
-    address: "Lorium Ipsum",
-  },
-  {
-    name: "User Name",
-    dob: "4/2/2024",
-    gender: "Male",
-    email: "user@email.com",
-    amount: "$3,254.00",
-    ssid: "721-07-4426",
-    role: "Negotiator",
-    phone: "+18143008957",
-    address: "Lorium Ipsum",
-  },
-  {
-    name: "User Name",
-    dob: "4/2/2024",
-    gender: "Male",
-    email: "user@email.com",
-    amount: "$3,254.00",
-    ssid: "721-07-4426",
-    role: "Negotiator",
-    phone: "+18143008957",
-    address: "Lorium Ipsum",
-  },
-];
+
 const columns = [
   {
     field: "name",
@@ -181,28 +97,51 @@ const columns = [
   },
 ];
 export default function CustomizedTabs() {
+  const { showToast } = useToast();
   const [value, setValue] = React.useState(0);
+  const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
   const [rows, setRows] = useState([]);
+  const [userArray, setUserArray] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const GetUsers = async () => {
+    setLoading(true);
+    const users = await GetAllUsers();
+    if (users?.status === 200) {
+      setUserArray(users?.data?.data);
+    } else {
+      const errorMessage = users?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setLoading(false);
+  };
   useEffect(() => {
-    const generatedData = rowArray?.map((item, index) => ({
-      id: index,
-      name: item?.name,
-      dob: item?.dob,
-      gender: item?.gender,
-      email: item?.email,
-      ssid: item?.ssid,
-      role: item?.role,
-      phone: item?.phone,
-      address: item?.address,
-    }));
-    if (!isEqual(generatedData, rowArray)) {
+    GetUsers();
+  }, []);
+  useEffect(() => {
+    const generatedData =
+      userArray &&
+      userArray?.map((item, index) => ({
+        id: index,
+        name: item?.name || "-",
+        dob: item?.dateOfBirth || "-",
+        gender: item?.gender || "-",
+        email: item?.email || "-",
+        ssid: item?.SSID || "-",
+        role: item?.role || "-",
+        phone: item?.phone || "-",
+        address: item?.address || "-",
+      }));
+
+    if (!isEqual(generatedData, userArray)) {
       setRows(generatedData);
     }
-  }, []);
+  }, [userArray]);
+
   return (
     <>
       <Grid
@@ -217,7 +156,7 @@ export default function CustomizedTabs() {
           <AntTabs
             value={value}
             onChange={handleChange}
-            aria-label="ant example"
+            aria-label="User List Tabs"
           >
             <AntTab
               label="User Lists"
@@ -234,17 +173,42 @@ export default function CustomizedTabs() {
           </AntTabs>
         </Box>
 
-        <BasicModal modelButton="ADD USERS" show={false} />
+        {role === "Admin" && (
+          <BasicModal
+            modelButton="ADD USERS"
+            show={false}
+            GetUsers={GetUsers}
+          />
+        )}
       </Grid>
+
       <Grid
         item
         xs={11.9}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px ",
+          // height: "58vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        <DataTable rows={rows} columns={columns} />
+        {loading ? (
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
+          </Grid>
+        ) : (
+          <DataTable rows={rows} columns={columns} />
+        )}
       </Grid>
     </>
   );

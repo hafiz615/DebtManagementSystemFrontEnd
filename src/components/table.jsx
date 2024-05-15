@@ -2,7 +2,7 @@ import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Colors } from "../config/default";
 
-const datagridSx = {
+const dataGridSTyle = {
   color: Colors.DARK_GRAY,
   border: "none",
   fontFamily: "Nunito",
@@ -32,11 +32,12 @@ const datagridSx = {
     fontWeight: "bold !important",
   },
 };
-export default function DataTable({ rows, columns }) {
+export default function DataTable({ rows, columns, height }) {
   return (
     <div
       style={{
         width: "100%",
+        height: height,
         borderTop: Colors.DARK_GRAY,
         borderBottomRightRadius: "10px",
         borderBottomLeftRadius: "10px",
@@ -44,15 +45,16 @@ export default function DataTable({ rows, columns }) {
     >
       {rows && (
         <DataGrid
-          sx={datagridSx}
+          sx={dataGridSTyle}
           rows={rows}
           columns={columns}
+          // autoPageSize
           initialState={{
             pagination: {
               paginationModel: { page: 0, pageSize: 5 },
             },
           }}
-          //   pageSizeOptions={[5, 10]}
+          // pageSizeOptions={[5, 10]}
           // checkboxSelection
         />
       )}

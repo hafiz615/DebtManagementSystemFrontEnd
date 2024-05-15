@@ -14,6 +14,13 @@ export default function BasicCard({
   previewDebtorDetails,
   previewCreditorDetails,
   previewSettlementPlan,
+  debtorOwnDetails,
+  creditorBasicsInfo,
+  newDataList,
+  status,
+  fundedDate,
+  CreditorNotes,
+  creditorBusinessDetails,
 }) {
   return (
     <Card
@@ -56,7 +63,7 @@ export default function BasicCard({
                     width: "50%",
                   }}
                 >
-                  John Deo
+                  {debtorOwnDetails?.BasicFullName || "-"}
                 </Typography>
               </Grid>
               <Grid container item xs={12} lg={3}>
@@ -76,9 +83,13 @@ export default function BasicCard({
                     fontWeight: "500",
                     width: "50%",
                     color: Colors.DARK_GRAY,
+                    // textWrap: "wrap !important",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
                   }}
                 >
-                  user@gmail.com
+                  {debtorOwnDetails?.BasicEmailAddress || "-"}
                 </Typography>
               </Grid>
               <Grid container item xs={12} lg={3}>
@@ -100,7 +111,7 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  721-07-4426
+                  {debtorOwnDetails?.BasicSsid || "-"}
                 </Typography>
               </Grid>
               <Grid container item xs={12} lg={3}>
@@ -122,7 +133,7 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  Customer
+                  {status || "-"}
                 </Typography>
               </Grid>
               <Grid container item xs={12} lg={3}>
@@ -144,7 +155,7 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  Lorem Ipsum
+                  {debtorOwnDetails?.BasicCountry || "-"}
                 </Typography>
               </Grid>
               <Grid container item xs={12} lg={3}>
@@ -166,7 +177,7 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  Lorem Ipsum
+                  {debtorOwnDetails?.BasicState || "-"}
                 </Typography>
               </Grid>
               <Grid container item xs={12} lg={3}>
@@ -188,7 +199,7 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  Lorem Ipsum
+                  {debtorOwnDetails?.BasicCity || "-"}
                 </Typography>
               </Grid>
               <Grid container item xs={12} lg={3}>
@@ -210,7 +221,7 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  6677788
+                  {debtorOwnDetails?.BasicZipCode || "-"}
                 </Typography>
               </Grid>
               <Grid container item xs={12} lg={3}>
@@ -232,7 +243,7 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  +18143008957
+                  {debtorOwnDetails?.BasicPhoneNumber || "-"}
                 </Typography>
               </Grid>
               <Grid container item xs={12} lg={3}>
@@ -252,9 +263,12 @@ export default function BasicCard({
                     fontWeight: "500",
                     width: "50%",
                     color: Colors.DARK_GRAY,
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
                   }}
                 >
-                  Lorem Ipsum
+                  {debtorOwnDetails?.BasicAddress || "-"}
                 </Typography>
               </Grid>
             </Grid>
@@ -290,7 +304,7 @@ export default function BasicCard({
                     width: "50%",
                   }}
                 >
-                  John Deo
+                  {creditorBasicsInfo?.CreditorBasicFullName || "-"}
                 </Typography>
               </Grid>
               <Grid container item xs={12} lg={4}>
@@ -312,7 +326,7 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  user@email.com
+                  {creditorBasicsInfo?.CreditorBasicEmailAddress || "-"}
                 </Typography>
               </Grid>
               <Grid container item xs={12} lg={4}>
@@ -322,9 +336,12 @@ export default function BasicCard({
                     fontWeight: "600",
                     width: "40%",
                     color: Colors.DARK_GRAY,
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
                   }}
                 >
-                  Address
+                  Phone #
                 </Typography>
                 <Typography
                   sx={{
@@ -334,7 +351,7 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  Lorem Ipsum
+                  {creditorBasicsInfo?.CreditorBasicPhoneNumber || "-"}
                 </Typography>
               </Grid>
               <Grid container item xs={12} lg={4}>
@@ -356,31 +373,10 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  4/4/2024
+                  {fundedDate || "-"}
                 </Typography>
               </Grid>
-              <Grid container item xs={12} lg={4}>
-                <Typography
-                  sx={{
-                    fontFamily: "Nunito",
-                    fontWeight: "600",
-                    width: "40%",
-                    color: Colors.DARK_GRAY,
-                  }}
-                >
-                  Phone #.
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: "Nunito",
-                    fontWeight: "500",
-                    width: "50%",
-                    color: Colors.DARK_GRAY,
-                  }}
-                >
-                  +18143008957
-                </Typography>
-              </Grid>
+
               <Grid container item xs={12} lg={4}>
                 <Typography
                   sx={{
@@ -400,7 +396,7 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  Lorem Ipsum
+                  {CreditorNotes || "-"}
                 </Typography>
               </Grid>
               <Grid container item xs={12} lg={4}>
@@ -422,7 +418,7 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  Lorem Ipsum
+                  {creditorBusinessDetails?.businessCompanyName || "-"}
                 </Typography>
               </Grid>
 
@@ -445,7 +441,7 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  Lorem Ipsum
+                  {creditorBusinessDetails?.businessCategory || "-"}
                 </Typography>
               </Grid>
             </Grid>
@@ -457,7 +453,6 @@ export default function BasicCard({
                 fontFamily: "Nunito",
                 fontWeight: "600",
               }}
-              gutterBottom
             >
               {cardHeading}
             </Typography>
@@ -472,6 +467,7 @@ export default function BasicCard({
               Total Receivable
               <span style={{ marginLeft: "1rem" }}>$10,000</span>
             </Typography>
+
             <Grid
               container
               item
@@ -488,186 +484,103 @@ export default function BasicCard({
                 maxHeight: "15rem",
               }}
             >
-              <Grid container item>
-                <Grid container item xs={12} lg={2.5}>
-                  <Typography
-                    sx={{
-                      fontFamily: "Nunito",
-                      fontWeight: "600",
-                      color: Colors.DARK_GRAY,
-                      width: "40%",
-                    }}
-                  >
-                    Debt
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: "Nunito",
-                      fontWeight: "500",
-                      color: Colors.DARK_GRAY,
-                      width: "50%",
-                    }}
-                  >
-                    $2000
-                  </Typography>
-                </Grid>
-                <Grid container item xs={12} lg={2.5}>
-                  <Typography
-                    sx={{
-                      fontFamily: "Nunito",
-                      fontWeight: "600",
-                      width: "40%",
-                      color: Colors.DARK_GRAY,
-                    }}
-                  >
-                    Time Period
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: "Nunito",
-                      fontWeight: "500",
-                      width: "50%",
-                      color: Colors.DARK_GRAY,
-                    }}
-                  >
-                    Custom
-                  </Typography>
-                </Grid>
-                <Grid container item xs={12} lg={4}>
-                  <Typography
-                    sx={{
-                      fontFamily: "Nunito",
-                      fontWeight: "600",
-                      width: "40%",
-                      color: Colors.DARK_GRAY,
-                    }}
-                  >
-                    Authorization Date
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: "Nunito",
-                      fontWeight: "500",
-                      width: "50%",
-                      color: Colors.DARK_GRAY,
-                    }}
-                  >
-                    2/2/2024
-                  </Typography>
-                </Grid>
-                <Grid container item xs={12} lg={3}>
-                  <Typography
-                    sx={{
-                      fontFamily: "Nunito",
-                      fontWeight: "600",
-                      width: "40%",
-                      color: Colors.DARK_GRAY,
-                    }}
-                  >
-                    Captured Date
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: "Nunito",
-                      fontWeight: "500",
-                      width: "50%",
-                      color: Colors.DARK_GRAY,
-                    }}
-                  >
-                    4/2/2024
-                  </Typography>
-                </Grid>
-              </Grid>
-              <Grid container item sx={{ marginTop: "1rem" }}>
-                <Grid container item xs={12} lg={2.5}>
-                  <Typography
-                    sx={{
-                      fontFamily: "Nunito",
-                      fontWeight: "600",
-                      color: Colors.DARK_GRAY,
-                      width: "40%",
-                    }}
-                  >
-                    Debt
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: "Nunito",
-                      fontWeight: "500",
-                      color: Colors.DARK_GRAY,
-                      width: "50%",
-                    }}
-                  >
-                    $2000
-                  </Typography>
-                </Grid>
-                <Grid container item xs={12} lg={2.5}>
-                  <Typography
-                    sx={{
-                      fontFamily: "Nunito",
-                      fontWeight: "600",
-                      width: "40%",
-                      color: Colors.DARK_GRAY,
-                    }}
-                  >
-                    Time Period
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: "Nunito",
-                      fontWeight: "500",
-                      width: "50%",
-                      color: Colors.DARK_GRAY,
-                    }}
-                  >
-                    Custom
-                  </Typography>
-                </Grid>
-                <Grid container item xs={12} lg={4}>
-                  <Typography
-                    sx={{
-                      fontFamily: "Nunito",
-                      fontWeight: "600",
-                      width: "40%",
-                      color: Colors.DARK_GRAY,
-                    }}
-                  >
-                    Authorization Date
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: "Nunito",
-                      fontWeight: "500",
-                      width: "50%",
-                      color: Colors.DARK_GRAY,
-                    }}
-                  >
-                    2/2/2024
-                  </Typography>
-                </Grid>
-                <Grid container item xs={12} lg={3}>
-                  <Typography
-                    sx={{
-                      fontFamily: "Nunito",
-                      fontWeight: "600",
-                      width: "40%",
-                      color: Colors.DARK_GRAY,
-                    }}
-                  >
-                    Captured Date
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontFamily: "Nunito",
-                      fontWeight: "500",
-                      width: "50%",
-                      color: Colors.DARK_GRAY,
-                    }}
-                  >
-                    4/2/2024
-                  </Typography>
-                </Grid>
-              </Grid>
+              {newDataList?.map((item, index) => {
+                return (
+                  <Grid container item>
+                    <Grid container item xs={12} lg={2.5}>
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontWeight: "600",
+                          color: Colors.DARK_GRAY,
+                          width: "40%",
+                        }}
+                      >
+                        Debt
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontWeight: "500",
+                          color: Colors.DARK_GRAY,
+                          width: "50%",
+                        }}
+                      >
+                        {item?.amount}
+                      </Typography>
+                    </Grid>
+                    <Grid container item xs={12} lg={2.5}>
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontWeight: "600",
+                          width: "40%",
+                          color: Colors.DARK_GRAY,
+                        }}
+                      >
+                        Time Period
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontWeight: "500",
+                          width: "50%",
+                          color: Colors.DARK_GRAY,
+                        }}
+                      >
+                        {item?.timePeriod}
+                      </Typography>
+                    </Grid>
+                    {index !== 0 && (
+                      <Grid container item xs={12} lg={4}>
+                        <Typography
+                          sx={{
+                            fontFamily: "Nunito",
+                            fontWeight: "600",
+                            width: "40%",
+                            color: Colors.DARK_GRAY,
+                          }}
+                        >
+                          Frequency
+                        </Typography>
+                        <Typography
+                          sx={{
+                            fontFamily: "Nunito",
+                            fontWeight: "500",
+                            width: "50%",
+                            color: Colors.DARK_GRAY,
+                          }}
+                        >
+                          {item?.frequency}
+                        </Typography>
+                      </Grid>
+                    )}
+
+                    <Grid container item xs={12} lg={3}>
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontWeight: "600",
+                          width: "40%",
+                          color: Colors.DARK_GRAY,
+                        }}
+                      >
+                        Start Date
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontWeight: "500",
+                          width: "50%",
+                          color: Colors.DARK_GRAY,
+                        }}
+                      >
+                        {item?.startDate}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                );
+              })}
             </Grid>
           </>
         ) : (

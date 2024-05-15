@@ -1,15 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 import { Grid, Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Colors } from "../config/default";
 import { HomePageDetails } from "../constants/appConstants";
-import BasicMenu from "./dropdown";
 import AccordionUsage from "./accordion";
+import Dropdown from "./dropdown";
 
 function HomeDetails() {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
+  const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
 
   const accordionData = [
     { tableHeading: "Failed Authorizations", paymentNumber: "5" },
@@ -18,14 +20,14 @@ function HomeDetails() {
     { tableHeading: "Successful Payments", paymentNumber: "4" },
     { tableHeading: "Upcoming Payments", paymentNumber: "4" },
   ];
+  const menuItems = [
+    { label: "5", value: 5 },
+    { label: "7", value: 7 },
+  ];
+  const [selectedValue, setSelectedValue] = useState("3");
 
-  const {
-    AUTHORITY_TEXT,
-    AUTHORITY_VALUE,
-    HOME_HEADING,
-    VIEW_DAYS,
-    DAYS_TEXT,
-  } = HomePageDetails;
+  const { AUTHORITY_TEXT, HOME_HEADING, VIEW_DAYS, DAYS_TEXT } =
+    HomePageDetails;
   return (
     <Grid
       container
@@ -51,7 +53,7 @@ function HomeDetails() {
             color: Colors.DARK_GRAY,
           }}
         >
-          {AUTHORITY_TEXT} <span>{AUTHORITY_VALUE}</span>
+          {AUTHORITY_TEXT} <span>{role}</span>
         </Typography>
       </Grid>
       <Grid
@@ -92,7 +94,13 @@ function HomeDetails() {
           }}
         >
           <span style={{ marginRight: ".5rem" }}>{VIEW_DAYS}</span>
-          <BasicMenu />
+          <Dropdown
+            menuItems={menuItems}
+            defaultSelectedItem={3}
+            backgroundColor={Colors.WHITE}
+            selectedValue={selectedValue}
+            setSelectedValue={setSelectedValue}
+          />
           <span style={{ marginLeft: ".5rem" }}>{DAYS_TEXT}</span>
         </Typography>
       </Grid>

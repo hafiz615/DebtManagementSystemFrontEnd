@@ -5,9 +5,20 @@ import MenuItem from "@mui/material/MenuItem";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { Colors } from "../config/default";
-export default function Dropdown() {
+
+export default function Dropdown({
+  menuItems,
+  defaultSelectedItem,
+  backgroundColor,
+  width,
+  selectedValue,
+  setSelectedValue,
+  onChange,
+  initialValue,
+  hoverColor,
+}) {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [selectedValue, setSelectedValue] = React.useState(3);
+
   const open = Boolean(anchorEl);
 
   const handleClick = (event) => {
@@ -19,8 +30,12 @@ export default function Dropdown() {
   };
 
   const handleMenuItemClick = (value) => {
-    setSelectedValue(value);
     handleClose();
+    if (onChange) {
+      onChange(value);
+    } else {
+      setSelectedValue(value);
+    }
   };
 
   return (
@@ -32,16 +47,22 @@ export default function Dropdown() {
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
         sx={{
-          backgroundColor: Colors.WHITE,
+          display: "flex",
+          justifyContent: "space-between",
+          paddingLeft: "1rem",
+          backgroundColor: backgroundColor,
           color: Colors.DARK_GRAY,
           fontFamily: "Nunito",
           borderRadius: "5px",
+          textTransform: "none",
           ":hover": {
-            backgroundColor: Colors.WHITE,
+            background: hoverColor || Colors.WHITE,
           },
+          width: width,
         }}
       >
-        {selectedValue || "3"} <ExpandMoreIcon />
+        {initialValue || selectedValue || defaultSelectedItem}{" "}
+        <ExpandMoreIcon />
       </Button>
       <Menu
         id="basic-menu"
@@ -52,18 +73,15 @@ export default function Dropdown() {
           "aria-labelledby": "basic-button",
         }}
       >
-        <MenuItem
-          sx={{ width: "4rem", color: Colors.LIGHT_GRAY }}
-          onClick={() => handleMenuItemClick(5)}
-        >
-          5
-        </MenuItem>
-        <MenuItem
-          sx={{ color: Colors.LIGHT_GRAY }}
-          onClick={() => handleMenuItemClick(7)}
-        >
-          7
-        </MenuItem>
+        {menuItems.map((item, index) => (
+          <MenuItem
+            key={index}
+            sx={{ color: Colors.LIGHT_GRAY }}
+            onClick={() => handleMenuItemClick(item.value)}
+          >
+            {item.label}
+          </MenuItem>
+        ))}
       </Menu>
     </>
   );
