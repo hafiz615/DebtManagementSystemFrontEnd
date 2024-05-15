@@ -15,6 +15,7 @@ export default function Dropdown({
   setSelectedValue,
   onChange,
   initialValue,
+  hoverColor,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -46,13 +47,16 @@ export default function Dropdown({
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
         sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          paddingLeft: "1rem",
           backgroundColor: backgroundColor,
           color: Colors.DARK_GRAY,
           fontFamily: "Nunito",
           borderRadius: "5px",
           textTransform: "none",
           ":hover": {
-            backgroundColor: Colors.WHITE,
+            background: hoverColor || Colors.WHITE,
           },
           width: width,
         }}

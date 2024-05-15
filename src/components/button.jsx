@@ -17,12 +17,14 @@ function TextButton({
   paddingRight,
   backgroundColor,
   hoverColor,
+  width,
 }) {
   return (
     <Button
       variant="contained"
       startIcon={startIcon}
       sx={{
+        width: width,
         fontFamily: "Nunito",
         fontWeight: "500",
         height: { height },
