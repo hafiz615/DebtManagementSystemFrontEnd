@@ -168,7 +168,7 @@ export default function ClientList() {
       <Grid
         container
         item
-        xs={12}
+        xs={11.9}
         sx={{
           marginTop: "1.5rem",
           display: "flex",
@@ -193,7 +193,7 @@ export default function ClientList() {
       </Grid>
       <Grid
         item
-        xs={12}
+        xs={11.9}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px ",
