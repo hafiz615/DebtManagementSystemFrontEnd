@@ -4,41 +4,100 @@ import { useSelector } from "react-redux";
 
 import { Grid, Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { isEqual } from "lodash";
 
 import { UserListPage } from "../constants/appConstants";
 import { Colors } from "../config/default";
-import CircularProgress from "@mui/material/CircularProgress";
 import DataTable from "./table";
+import SearchBar from "./searchBar";
 const columns = [
   {
     field: "name",
-    headerName: <span style={{ fontWeight: "600" }}>Name</span>,
+    headerName: "Name",
     flex: 1,
     minWidth: 70,
   },
   {
-    field: "Number of Cases",
-    headerName: <span style={{ fontWeight: "600" }}>Number of Cases</span>,
+    field: "numberOfCases",
+    headerName: "Number of Cases",
     flex: 1,
     minWidth: 70,
   },
   {
-    field: "Number of Creditors",
-    headerName: <span style={{ fontWeight: "600" }}>Number of Creditors</span>,
+    field: "numberOfCreditors",
+    headerName: "Number of Creditors",
     flex: 1,
     minWidth: 70,
   },
   {
-    field: "Client Status",
-    headerName: <span style={{ fontWeight: "600" }}>Client Status</span>,
+    field: "clientStatus",
+    headerName: "Client Status",
     flex: 1,
     minWidth: 70,
   },
   {
-    field: "Total Dept",
-    headerName: <span style={{ fontWeight: "600" }}>Total Dept</span>,
+    field: "totalDept",
+    headerName: "Total Dept",
     flex: 1,
     minWidth: 70,
+  },
+];
+const rowArray = [
+  {
+    name: "User Name",
+    numberOfCases: "03",
+    numberOfCreditors: "03",
+    clientStatus: "Lorem Ipsum",
+    totalDept: "$10,000",
+  },
+  {
+    name: "User Name",
+    numberOfCases: "03",
+    numberOfCreditors: "03",
+    clientStatus: "Lorem Ipsum",
+    totalDept: "$10,000",
+  },
+  {
+    name: "User Name",
+    numberOfCases: "03",
+    numberOfCreditors: "03",
+    clientStatus: "Lorem Ipsum",
+    totalDept: "$10,000",
+  },
+  {
+    name: "User Name",
+    numberOfCases: "03",
+    numberOfCreditors: "03",
+    clientStatus: "Lorem Ipsum",
+    totalDept: "$10,000",
+  },
+  {
+    name: "User Name",
+    numberOfCases: "03",
+    numberOfCreditors: "03",
+    clientStatus: "Lorem Ipsum",
+    totalDept: "$10,000",
+  },
+  {
+    name: "User Name",
+    numberOfCases: "03",
+    numberOfCreditors: "03",
+    clientStatus: "Lorem Ipsum",
+    totalDept: "$10,000",
+  },
+  {
+    name: "User Name",
+    numberOfCases: "03",
+    numberOfCreditors: "03",
+    clientStatus: "Lorem Ipsum",
+    totalDept: "$10,000",
+  },
+  {
+    name: "User Name",
+    numberOfCases: "03",
+    numberOfCreditors: "03",
+    clientStatus: "Lorem Ipsum",
+    totalDept: "$10,000",
   },
 ];
 export default function ClientList() {
@@ -46,7 +105,20 @@ export default function ClientList() {
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { AUTHORITY_TEXT } = UserListPage;
   const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const generatedData = rowArray?.map((item, index) => ({
+      id: index,
+      name: item?.name,
+      numberOfCases: item?.numberOfCases,
+      numberOfCreditors: item?.numberOfCreditors,
+      clientStatus: item?.clientStatus,
+      totalDept: item?.totalDept,
+    }));
+    if (!isEqual(generatedData, rowArray)) {
+      setRows(generatedData);
+    }
+  }, []);
   return (
     <Grid
       container
@@ -94,34 +166,34 @@ export default function ClientList() {
         </Typography>
       </Grid>
       <Grid
+        container
         item
         xs={12}
         sx={{
           marginTop: "1.5rem",
+          display: "flex",
+          justifyContent: "space-between",
         }}
       >
         <Typography
           sx={{
+            padding: "1rem",
             bgcolor: Colors.WHITE,
             width: "max-content",
             borderTopLeftRadius: "10px",
             borderTopRightRadius: "10px",
             fontWeight: "600",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            paddingLeft: "1rem",
-            paddingRight: "1rem",
             marginLeft: "2.5rem",
             height: "3.5rem",
           }}
         >
           Clients List
         </Typography>
+        <SearchBar />
       </Grid>
       <Grid
         item
-        xs={11.9}
+        xs={12}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px ",
@@ -131,22 +203,7 @@ export default function ClientList() {
           justifyContent: "center",
         }}
       >
-        {loading ? (
-          <Grid
-            item
-            xs={12}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              height: "50vh",
-            }}
-          >
-            <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
-          </Grid>
-        ) : (
-          <DataTable rows={rows} columns={columns} />
-        )}
+        <DataTable rows={rows} columns={columns} />
       </Grid>
     </Grid>
   );
