@@ -60,7 +60,7 @@ function SearchBar({ searchText, setSearchText, SearchFields }) {
         alignItems: "center",
         borderRadius: "1rem",
         backgroundColor: Colors.WHITE,
-        height: "3.5rem",
+        height: "3rem",
 
         "&:hover": {
           backgroundColor: Colors.WHITE,

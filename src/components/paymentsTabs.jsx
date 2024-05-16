@@ -50,8 +50,16 @@ export default function PaymentsTabs() {
     "Actions",
   ];
 
-  function createData(name, dob, gender, email, ssid, role, phone, address) {
-    return { name, dob, gender, email, ssid, role, phone, address };
+  function createData(
+    debtor,
+    dueDate,
+    tryDate,
+    totalDebt,
+    ssid,
+    caseOwner,
+    actions
+  ) {
+    return { debtor, dueDate, tryDate, totalDebt, ssid, caseOwner, actions };
   }
   const tableData = [
     createData(
