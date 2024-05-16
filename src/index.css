@@ -23,3 +23,6 @@ code {
 .css-12z24o5-MuiButtonBase-root-MuiAccordionSummary-root.Mui-expanded {
   padding-left: 1.6% !important;
 }
+.MuiDataGrid-columnHeaders {
+  font-weight: bold !important;
+}

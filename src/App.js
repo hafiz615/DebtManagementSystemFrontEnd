@@ -8,6 +8,7 @@ import AuthorizationPage from "./pages/authorizationPage";
 import HorizontalLinearStepperPage from "./pages/stepperPage";
 import VerifyProfilePage from "./pages/verifyProfilePage";
 import Protected from "./components/protected";
+import ClientListPage from "./pages/clientListPage";
 function App() {
   return (
     <Routes>
@@ -30,6 +31,7 @@ function App() {
           </Protected>
         }
       />
+
       <Route
         exact
         path="/authorization-details"
@@ -45,6 +47,15 @@ function App() {
         element={
           <Protected>
             <HorizontalLinearStepperPage />
+          </Protected>
+        }
+      />
+      <Route
+        exact
+        path="/client-details"
+        element={
+          <Protected>
+            <ClientListPage />
           </Protected>
         }
       />

@@ -16,7 +16,12 @@ import CreditorDetails from "./caseCreation/creditorDetails";
 import PaymentDetails from "./caseCreation/paymentDetails";
 import PreviewDetails from "./caseCreation/previewDetails";
 import FileUploadComponent from "./caseCreation/uploadFiles";
-import { CreateCase, UploadFiles } from "../services/services";
+import {
+  CreateCase,
+  GetCreditorSearch,
+  GetDebtorSearch,
+  UploadFiles,
+} from "../services/services";
 import { useToast } from "../toast/toastContext";
 import { isEmpty } from "lodash";
 
@@ -68,7 +73,7 @@ export default function HorizontalLinearStepper() {
     },
   ]);
   const [checked, setChecked] = React.useState(false);
-  const [status, setStatus] = useState("Custom");
+  const [status, setStatus] = useState("Customer");
   // creditor state
   const [creditorBasicsInfo, setCreditorBasicsInfo] = useState({
     CreditorBasicFullName: "",
@@ -114,6 +119,9 @@ export default function HorizontalLinearStepper() {
   //upload files
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [files, setFiles] = useState([]);
+  //Search Debtor and Creditor State
+  const [debtorSearchText, setDebtorSearchText] = useState("");
+  const [creditorSearchText, setCreditorSearchText] = useState("");
   //disable button On Empty Fields
   const disableButton =
     (activeStep === 0 &&
@@ -145,6 +153,109 @@ export default function HorizontalLinearStepper() {
 
   const isStepSkipped = (step) => {
     return skipped.has(step);
+  };
+
+  const SearchDebtorFields = async () => {
+    const params = { text: debtorSearchText };
+    setLoading(true);
+    const getDebtorDataInSearch = await GetDebtorSearch(params);
+    if (getDebtorDataInSearch?.status === 200) {
+      const debtorData = getDebtorDataInSearch?.data?.data;
+      showToast(getDebtorDataInSearch?.data?.message, "success");
+
+      setDebtorOwnDetails({
+        BasicFullName: debtorData?.basicInformation?.fullName || "",
+        BasicEmailAddress: debtorData?.basicInformation?.email || "",
+        BasicSsid: debtorData?.basicInformation["SSID"] || "",
+        BasicCountry: debtorData?.basicInformation?.country || "",
+        BasicState: debtorData?.basicInformation?.state || "",
+        BasicCity: debtorData?.basicInformation?.city || "",
+        BasicZipCode: debtorData?.basicInformation?.zipCode || "",
+        BasicPhoneNumber: debtorData?.basicInformation?.phone || "",
+        BasicAddress: debtorData?.basicInformation?.address || "",
+      });
+      setStatus(debtorData?.basicInformation?.status);
+
+      setDebtorBusinessDetails({
+        businessCompanyName: debtorData?.businessInformation?.companyName || "",
+        businessEinNumber: debtorData?.businessInformation?.EIN || "",
+        businessCategory:
+          debtorData?.businessInformation?.businessCategory || "",
+        businessDescription: debtorData?.businessInformation?.description || "",
+        businessCountry: debtorData?.businessInformation?.country || "",
+        businessState: debtorData?.businessInformation?.state || "",
+        businessCity: debtorData?.businessInformation?.city || "",
+        businessZipCode: debtorData?.businessInformation?.zipCode || "",
+        businessPhoneNumber: debtorData?.businessInformation?.phone || "",
+        businessAddress: debtorData?.businessInformation?.address || "",
+      });
+
+      setDebtorContactDetails(
+        debtorData?.contacts?.map((contact) => ({
+          name: contact?.name || "",
+          title: contact?.title || "",
+          phone: contact?.phone || "",
+          email: contact?.email || "",
+          country: contact?.country || "",
+          state: contact?.state || "",
+          city: contact?.city || "",
+          zipCode: contact?.zipCode || "",
+          relationWithDebtor: contact?.relationWithDebtor || "",
+        }))
+      );
+    } else {
+      showToast(getDebtorDataInSearch?.response?.data?.message, "error");
+    }
+    setLoading(false);
+  };
+
+  const SearchCreditorFields = async () => {
+    const params = { text: creditorSearchText };
+    setLoading(true);
+    const getCreditorDataInSearch = await GetCreditorSearch(params);
+    if (getCreditorDataInSearch?.status === 200) {
+      const creditorData = getCreditorDataInSearch?.data?.data;
+      showToast(getCreditorDataInSearch?.data?.message, "success");
+
+      setCreditorBasicsInfo({
+        CreditorBasicFullName: creditorData?.basicInformation?.fullName || "",
+        CreditorBasicEmailAddress: creditorData?.basicInformation?.email || "",
+        CreditorBasicPhoneNumber: creditorData?.basicInformation?.phone || "",
+      });
+
+      setCreditorBusinessDetails({
+        businessCompanyName:
+          creditorData?.businessInformation?.companyName || "",
+        businessCategory:
+          creditorData?.businessInformation?.businessCategory || "",
+      });
+      setCreditorNotes(creditorData?.notes || "");
+      const formattedFundedDate = creditorData?.lastFundedDate
+        ? new Date(creditorData.lastFundedDate).toISOString().split("T")[0]
+        : "";
+      setFundedDate(formattedFundedDate || "");
+      setHistoricRange({
+        minimum: creditorData?.historicalRange?.minimum || "",
+        maximum: creditorData?.historicalRange?.maximum || "",
+      });
+
+      setCreditorContactDetails(
+        creditorData?.contacts?.map((contact) => ({
+          name: contact?.name || "",
+          title: contact?.title || "",
+          phone: contact?.phone || "",
+          email: contact?.email || "",
+          country: contact?.country || "",
+          state: contact?.state || "",
+          city: contact?.city || "",
+          zipCode: contact?.zipCode || "",
+          relationWithDebtor: contact?.relationWithDebtor || "",
+        }))
+      );
+    } else {
+      showToast(getCreditorDataInSearch?.response?.data?.message, "error");
+    }
+    setLoading(false);
   };
   const handleNext = async () => {
     if (activeStep === steps.length - 1) {
@@ -406,6 +517,10 @@ export default function HorizontalLinearStepper() {
               setSelectedValue={setStatus}
               checked={checked}
               setChecked={setChecked}
+              searchText={debtorSearchText}
+              setSearchText={setDebtorSearchText}
+              SearchFields={SearchDebtorFields}
+              loading={loading}
             />
           ) : activeStep === 1 ? (
             <CreditorDetails
@@ -421,6 +536,10 @@ export default function HorizontalLinearStepper() {
               setCreditorBusinessDetails={setCreditorBusinessDetails}
               creditorContactDetails={creditorContactDetails}
               setCreditorContactDetails={setCreditorContactDetails}
+              searchText={creditorSearchText}
+              setSearchText={setCreditorSearchText}
+              SearchFields={SearchCreditorFields}
+              loading={loading}
             />
           ) : activeStep === 2 ? (
             <PaymentDetails

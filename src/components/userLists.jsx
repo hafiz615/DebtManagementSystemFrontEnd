@@ -65,7 +65,7 @@ function UserLists() {
           marginTop: "1.5rem",
         }}
       >
-        <CustomizedTabs />
+        <CustomizedTabs heading="User Lists" />
       </Grid>
     </Grid>
   );
