@@ -46,16 +46,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
   },
 }));
-function SearchBar({
-  debtorSearchText,
-  setDebtorSearchText,
-  SearchDebtorFields,
-}) {
+function SearchBar({ searchText, setSearchText, SearchFields }) {
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
-      SearchDebtorFields();
+      SearchFields();
     }
   };
+
   return (
     <Search
       sx={{
@@ -81,8 +78,8 @@ function SearchBar({
         placeholder="Search existing debtor..."
         inputProps={{ "aria-label": "search" }}
         sx={{ color: Colors.LIGHT_GRAY, fontFamily: "Nunito" }}
-        value={debtorSearchText}
-        onChange={(e) => setDebtorSearchText(e.target.value)}
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
         onKeyPress={handleKeyPress}
       />
 

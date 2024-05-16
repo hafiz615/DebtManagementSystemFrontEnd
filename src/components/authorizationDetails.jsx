@@ -57,7 +57,6 @@ export default function AuthorizationDetails() {
         </Typography>
       </Grid>
       <Grid
-        // container
         item
         xs={12}
         sx={{

@@ -25,11 +25,11 @@ const dataGridSTyle = {
     "& div": { border: "none" },
   },
 
-  "& .MuiDataGrid-columnHeaders": {
+  "& .MuiDataGrid-columnHeaderTitle": {
     borderTop: Colors.DIM_LIGHT_GRAY,
     color: Colors.BLACK,
     fontFamily: "Nunito",
-    fontWeight: "bold !important",
+    fontWeight: "bold !important ",
   },
 };
 export default function DataTable({ rows, columns, height }) {
@@ -49,6 +49,10 @@ export default function DataTable({ rows, columns, height }) {
           rows={rows}
           columns={columns}
           // autoPageSize
+          pageSizeOptions={[5]}
+          disableColumnMenu
+          disableSelectionOnClick
+          disableColumnSelector
           initialState={{
             pagination: {
               paginationModel: { page: 0, pageSize: 5 },

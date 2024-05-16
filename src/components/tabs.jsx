@@ -122,6 +122,7 @@ export default function CustomizedTabs({ heading }) {
   useEffect(() => {
     GetUsers();
   }, []);
+
   useEffect(() => {
     const generatedData =
       userArray &&
@@ -188,7 +189,6 @@ export default function CustomizedTabs({ heading }) {
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px ",
-          // height: "58vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
