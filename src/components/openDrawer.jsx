@@ -96,7 +96,7 @@ export default function PersistentDrawerLeft({ children }) {
           navigate("/case-details");
           break;
         case "Clients":
-          navigate("/client-details");
+          navigate("/client-listing");
           break;
         default:
           break;
