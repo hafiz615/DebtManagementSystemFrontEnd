@@ -8,9 +8,9 @@ import { Colors } from "../config/default";
 
 export default function Dropdown({
   menuItems,
-  defaultSelectedItem,
   backgroundColor,
   width,
+  defaultSelectedItem,
   selectedValue,
   setSelectedValue,
   onChange,
@@ -40,6 +40,39 @@ export default function Dropdown({
 
   return (
     <>
+      {/* <select
+        style={{
+          border: "none",
+          height: "2.5rem",
+          display: "flex",
+          justifyContent: "space-between",
+          paddingLeft: paddingLeft,
+          width: width,
+          backgroundColor: backgroundColor,
+          color: Colors.DARK_GRAY,
+          fontFamily: "Nunito",
+          borderRadius: "5px",
+          textTransform: "none",
+          ":active": {
+            border: "none",
+          },
+          ":hover": {
+            background: hoverColor || Colors.WHITE,
+          },
+        }}
+        onClick={handleClick}
+      >
+        {menuItems.map((item, index) => (
+          <option
+            key={index}
+            style={{ color: Colors.LIGHT_GRAY }}
+            onClick={() => handleMenuItemClick(item.value)}
+            value={item?.label}
+          >
+            {item?.label}
+          </option>
+        ))}
+      </select> */}
       <Button
         id="basic-button"
         aria-controls={open ? "basic-menu" : undefined}

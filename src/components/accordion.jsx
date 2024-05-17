@@ -73,32 +73,31 @@ const rowArray = [
 const columns = [
   {
     field: "name",
-    headerName: <span style={{ fontWeight: "600" }}>Name</span>,
-
+    headerName: "Name",
     flex: 1,
     minWidth: 90,
   },
   {
     field: "dueDate",
-    headerName: <span style={{ fontWeight: "600" }}>Due Date</span>,
+    headerName: "Due Date",
     flex: 1,
     minWidth: 90,
   },
   {
     field: "amount",
-    headerName: <span style={{ fontWeight: "600" }}>Amount</span>,
+    headerName: "Amount",
     flex: 1,
     minWidth: 90,
   },
   {
     field: "ssid",
-    headerName: <span style={{ fontWeight: "600" }}>SSID</span>,
+    headerName: "SSID",
     flex: 1,
     minWidth: 90,
   },
   {
     field: "failureReason",
-    headerName: <span style={{ fontWeight: "600" }}>Failure Reason</span>,
+    headerName: "Failure Reason",
     flex: 1,
     minWidth: 90,
   },

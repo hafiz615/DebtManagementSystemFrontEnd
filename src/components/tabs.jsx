@@ -49,54 +49,54 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
 const columns = [
   {
     field: "name",
-    headerName: <span style={{ fontWeight: "600" }}>Name</span>,
+    headerName: "Name",
     flex: 1,
     minWidth: 70,
   },
   {
     field: "dob",
-    headerName: <span style={{ fontWeight: "600" }}>DOB</span>,
+    headerName: "DOB",
     flex: 1,
     minWidth: 70,
   },
   {
     field: "gender",
-    headerName: <span style={{ fontWeight: "600" }}>Gender</span>,
+    headerName: "Gender",
     flex: 1,
     minWidth: 70,
   },
   {
     field: "email",
-    headerName: <span style={{ fontWeight: "600" }}>Email</span>,
+    headerName: "Email",
     flex: 1,
     minWidth: 70,
   },
   {
     field: "ssid",
-    headerName: <span style={{ fontWeight: "600" }}>SSID</span>,
+    headerName: "SSID",
     flex: 1,
     minWidth: 70,
   },
   {
     field: "role",
-    headerName: <span style={{ fontWeight: "600" }}>Role</span>,
+    headerName: "Role",
     flex: 1,
     minWidth: 70,
   },
   {
     field: "phone",
-    headerName: <span style={{ fontWeight: "600" }}>Phone #</span>,
+    headerName: "Phone #",
     flex: 1,
     minWidth: 70,
   },
   {
     field: "address",
-    headerName: <span style={{ fontWeight: "600" }}>Address</span>,
+    headerName: "Address",
     flex: 1,
     minWidth: 70,
   },
 ];
-export default function CustomizedTabs() {
+export default function CustomizedTabs({ heading }) {
   const { showToast } = useToast();
   const [value, setValue] = React.useState(0);
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
@@ -122,6 +122,7 @@ export default function CustomizedTabs() {
   useEffect(() => {
     GetUsers();
   }, []);
+
   useEffect(() => {
     const generatedData =
       userArray &&
@@ -159,7 +160,7 @@ export default function CustomizedTabs() {
             aria-label="User List Tabs"
           >
             <AntTab
-              label="User Lists"
+              label={heading}
               sx={{
                 bgcolor: Colors.WHITE,
                 width: "max-content",
@@ -188,7 +189,6 @@ export default function CustomizedTabs() {
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px ",
-          // height: "58vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -202,6 +202,7 @@ export default function CustomizedTabs() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              height: "50vh",
             }}
           >
             <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />

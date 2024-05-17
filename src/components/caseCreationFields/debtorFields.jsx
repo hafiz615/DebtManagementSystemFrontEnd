@@ -1,7 +1,7 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import { Add, RemoveCircle } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
 import PaymentsTextFields from "../caseTextField";
@@ -119,9 +119,9 @@ export default function DebtorFields({
             }
           />
           <PaymentsTextFields
-            type="number"
+            type="text"
             label="EIN Number"
-            placeHolderValue="32-2124444"
+            placeHolderValue="Enter Ein Number"
             width="100%"
             value={debtorBusinessDetails?.businessEinNumber}
             onChange={(e) =>
@@ -231,7 +231,7 @@ export default function DebtorFields({
             }
           />
           <PaymentsTextFields
-            type="number"
+            type="text"
             label="Phone #"
             placeHolderValue="Enter Phone Number"
             width="100%"
@@ -303,9 +303,9 @@ export default function DebtorFields({
             }
           />
           <PaymentsTextFields
-            type="number"
+            type="text"
             label="SSID"
-            placeHolderValue="721-07-4426"
+            placeHolderValue="Enter SSID"
             width="100%"
             value={debtorOwnDetails?.BasicSsid}
             onChange={(e) => basicInfoInputChange("BasicSsid", e.target.value)}
@@ -434,7 +434,7 @@ export default function DebtorFields({
             }
           />
           <PaymentsTextFields
-            type="number"
+            type="text"
             label="Phone #"
             placeHolderValue="Enter Phone Number"
             width="100%"
