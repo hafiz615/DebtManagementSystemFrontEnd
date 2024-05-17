@@ -73,11 +73,11 @@ export default function Dropdown({
           "aria-labelledby": "basic-button",
         }}
       >
-        {menuItems.map((item, index) => (
+        {menuItems?.map((item, index) => (
           <MenuItem
             key={index}
-            sx={{ color: Colors.LIGHT_GRAY }}
-            onClick={() => handleMenuItemClick(item.value)}
+            sx={{ color: Colors.LIGHT_GRAY, width: "100%" }}
+            onClick={() => handleMenuItemClick(item?.value)}
           >
             {item.label}
           </MenuItem>
