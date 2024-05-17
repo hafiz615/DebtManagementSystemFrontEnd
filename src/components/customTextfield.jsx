@@ -10,6 +10,8 @@ export default function CustomTextField({
   width,
   onChange,
   type,
+  error,
+  message,
 }) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
 
@@ -31,6 +33,7 @@ export default function CustomTextField({
       </Typography>
       <input
         type={type}
+        min={type === "number" ? 0 : undefined}
         placeholder={placeHolderValue}
         onChange={onChange}
         style={{
@@ -48,9 +51,14 @@ export default function CustomTextField({
             : largeScreen
             ? "20rem"
             : "",
-          marginBottom: smallScreen ? "0.5rem" : "0.7rem",
+          marginBottom: error ? "0rem" : smallScreen ? "0.5rem" : "0.7rem",
         }}
       />
+      {error && (
+        <Typography sx={{ color: "red", marginLeft: "1rem", fontSize: "11px" }}>
+          {message}
+        </Typography>
+      )}
     </Box>
   );
 }

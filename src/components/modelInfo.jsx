@@ -6,36 +6,82 @@ import TextButton from "./button";
 import CustomTextField from "./customTextfield";
 import { CreateUser } from "../services/services";
 import { useToast } from "../toast/toastContext";
+import Dropdown from "./dropdown";
+import { Colors } from "../config/default";
 
 function ModelInfo({ show, setOpen, GetUsers }) {
+  const menuItems = [
+    { label: "Manager", value: "Manager" },
+    { label: "Negotiator", value: "Negotiator" },
+  ];
+  const genderItems = [
+    { label: "Male", value: "Male" },
+    { label: "Female", value: "Female" },
+    { label: "Other", value: "Other" },
+  ];
+  const [selectedValue, setSelectedValue] = useState("Manager");
+  const [gender, setGender] = useState("Male");
   const { showToast } = useToast();
+
   const [formData, setFormData] = useState({
     userName: "",
     email: "",
-    gender: "",
     phone: "",
     dob: "",
     ssid: "",
-    role: "",
     address: "",
   });
+
+  const [errors, setErrors] = useState({
+    phone: "",
+    ssid: "",
+  });
+
   const [loading, setLoading] = useState(false);
+
   const handleInputChange = (field, value) => {
+    if (field === "phone" || field === "ssid") {
+      if (!/^\d*$/.test(value)) {
+        return;
+      }
+      if (value && parseInt(value, 10) <= 0) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          [field]: "Value must be greater than 0",
+        }));
+      } else if (value.length > 10) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          [field]: "Value must not exceed 10 digits",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          [field]: "",
+        }));
+      }
+    }
     setFormData({
       ...formData,
       [field]: value,
     });
   };
+
+  const isEmailValid = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
     const params = {
       name: formData?.userName,
       email: formData?.email,
-      role: formData?.role,
+      role: selectedValue,
       SSID: formData?.ssid,
       dateOfBirth: formData?.dob,
       phone: formData?.phone,
-      gender: formData?.gender,
+      gender: gender,
       address: formData?.address,
       createdBy: "Admin",
     };
@@ -48,11 +94,9 @@ function ModelInfo({ show, setOpen, GetUsers }) {
       setFormData({
         userName: "",
         email: "",
-        gender: "",
         phone: "",
         dob: "",
         ssid: "",
-        role: "",
         address: "",
       });
       setOpen(false);
@@ -62,6 +106,20 @@ function ModelInfo({ show, setOpen, GetUsers }) {
     }
     setLoading(false);
   };
+
+  const isFormValid = () => {
+    return (
+      formData.userName &&
+      isEmailValid(formData.email) &&
+      formData.phone &&
+      formData.dob &&
+      formData.ssid &&
+      formData.address &&
+      !errors.phone &&
+      !errors.ssid
+    );
+  };
+
   return (
     <Grid item xs={12} sx={{ paddingX: "1rem" }}>
       <Typography
@@ -91,12 +149,28 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           type="text"
           onChange={(e) => handleInputChange("userName", e.target.value)}
         />
-        <CustomTextField
-          label="Gender"
-          type="text"
-          placeHolderValue="Gender"
-          onChange={(e) => handleInputChange("gender", e.target.value)}
-        />
+        <Grid>
+          <Typography
+            sx={{
+              fontWeight: "500",
+              fontFamily: "Nunito",
+              marginLeft: "1rem",
+              color: Colors.DARK_GRAY,
+            }}
+          >
+            Gender
+          </Typography>
+          <Dropdown
+            menuItems={genderItems}
+            defaultSelectedItem={"Male"}
+            width="11.5rem"
+            height="2.5rem"
+            backgroundColor={Colors.BG_LIGHT_GRAY}
+            hoverColor={Colors.BG_LIGHT_GRAY}
+            selectedValue={gender}
+            setSelectedValue={setGender}
+          />
+        </Grid>
         <CustomTextField
           label="Email"
           type="text"
@@ -108,6 +182,8 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           type="number"
           placeHolderValue="Phone"
           onChange={(e) => handleInputChange("phone", e.target.value)}
+          message="must be less than 11 digits"
+          error={errors.phone}
         />
       </Grid>
       <Grid
@@ -136,13 +212,32 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           type="number"
           placeHolderValue="SSID"
           onChange={(e) => handleInputChange("ssid", e.target.value)}
+          message="must be greater than 0"
+          error={errors.ssid}
         />
-        <CustomTextField
-          label="Role"
-          type="text"
-          placeHolderValue="Role"
-          onChange={(e) => handleInputChange("role", e.target.value)}
-        />
+
+        <Grid>
+          <Typography
+            sx={{
+              fontWeight: "500",
+              fontFamily: "Nunito",
+              marginLeft: "1rem",
+              color: Colors.DARK_GRAY,
+            }}
+          >
+            Role
+          </Typography>
+          <Dropdown
+            menuItems={menuItems}
+            defaultSelectedItem={"Manager"}
+            width="11.5rem"
+            height="2.5rem"
+            backgroundColor={Colors.BG_LIGHT_GRAY}
+            hoverColor={Colors.BG_LIGHT_GRAY}
+            selectedValue={selectedValue}
+            setSelectedValue={setSelectedValue}
+          />
+        </Grid>
         <CustomTextField
           label="Address"
           type="text"
@@ -166,6 +261,7 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           height="2rem"
           marginBottom="2rem"
           onClick={handleSubmit}
+          disabled={!isFormValid()}
         />
       </Grid>
     </Grid>
