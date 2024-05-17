@@ -9,7 +9,7 @@ import Dropdown from "./../dropdown";
 
 export default function PaymentSettlement({ newDataList, setNewDataList }) {
   const menuItems = [
-    { label: "Daily", value: "Daily" },
+    // { label: "Daily", value: "Daily" },
     { label: "Weekly", value: "Weekly" },
     { label: "Fortnightly", value: "Fortnightly" },
     { label: "Monthly", value: "Monthly" },

@@ -101,7 +101,7 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  SSID
+                  SSN
                 </Typography>
                 <Typography
                   sx={{
