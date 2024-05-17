@@ -208,9 +208,9 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           />
         </div>
         <CustomTextField
-          label="SSID"
+          label="SSN"
           type="number"
-          placeHolderValue="SSID"
+          placeHolderValue="SSN"
           onChange={(e) => handleInputChange("ssid", e.target.value)}
           message="must be greater than 0"
           error={errors.ssid}

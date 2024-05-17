@@ -304,8 +304,8 @@ export default function DebtorFields({
           />
           <PaymentsTextFields
             type="text"
-            label="SSID"
-            placeHolderValue="Enter SSID"
+            label="SSN"
+            placeHolderValue="Enter SSN"
             width="100%"
             value={debtorOwnDetails?.BasicSsid}
             onChange={(e) => basicInfoInputChange("BasicSsid", e.target.value)}
