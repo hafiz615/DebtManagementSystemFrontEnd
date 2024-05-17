@@ -10,6 +10,7 @@ export default function Dropdown({
   menuItems,
   backgroundColor,
   width,
+  height,
   defaultSelectedItem,
   selectedValue,
   setSelectedValue,
@@ -92,6 +93,7 @@ export default function Dropdown({
             background: hoverColor || Colors.WHITE,
           },
           width: width,
+          height: height,
         }}
       >
         {initialValue || selectedValue || defaultSelectedItem}{" "}

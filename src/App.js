@@ -52,14 +52,20 @@ function App() {
       />
       <Route
         exact
-        path="/client-details"
+        path="/client-listing"
         element={
           <Protected>
             <ClientListPage />
           </Protected>
         }
       />
+
       <Route exact path="/set-password" element={<VerifyProfilePage />} />
+      <Route
+        exact
+        path="/client-list-details"
+        element={<VerifyProfilePage />}
+      />
     </Routes>
   );
 }
