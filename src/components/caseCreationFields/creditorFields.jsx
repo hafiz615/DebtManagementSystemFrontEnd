@@ -169,7 +169,7 @@ export default function CreditorFields({
           }}
           gutterBottom
         >
-          Notes
+          Notes (optional)
         </Typography>
         <input
           type="text"

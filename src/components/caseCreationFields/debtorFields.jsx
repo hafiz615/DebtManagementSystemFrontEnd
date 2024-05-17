@@ -148,7 +148,7 @@ export default function DebtorFields({
               color: Colors.DARK_GRAY,
             }}
           >
-            Description
+            Description (Optional)
           </Typography>
           <input
             type="text"
