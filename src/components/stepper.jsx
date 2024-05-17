@@ -127,17 +127,41 @@ export default function HorizontalLinearStepper() {
     (activeStep === 0 &&
       (status === "" ||
         Object.values(debtorOwnDetails)?.some((value) => value === "") ||
-        Object.values(debtorBusinessDetails)?.some((value) => value === "") ||
+        Object.entries(debtorBusinessDetails)
+          .filter(([key]) => key !== "businessDescription")
+          .some(([key, value]) => value === "") ||
+        !!debtorBusinessDetails?.businessDescription?.trim().length === 0 ||
         debtorContactDetails?.some((contact) =>
-          Object.values(contact)?.some((value) => value === "")
+          Object.entries(contact)
+            .filter(
+              ([key]) =>
+                ![
+                  "country",
+                  "state",
+                  "city",
+                  "zipCode",
+                  "relationWithDebtor",
+                ].includes(key)
+            )
+            .some(([_, value]) => value === "")
         ))) ||
     (activeStep === 1 &&
-      (CreditorNotes === "" ||
-        fundedDate === "" ||
+      (fundedDate === "" ||
         Object.values(creditorBasicsInfo)?.some((value) => value === "") ||
         Object.values(creditorBusinessDetails)?.some((value) => value === "") ||
         creditorContactDetails?.some((contact) =>
-          Object.values(contact)?.some((value) => value === "")
+          Object.entries(contact)
+            .filter(
+              ([key]) =>
+                ![
+                  "country",
+                  "state",
+                  "city",
+                  "zipCode",
+                  "relationWithDebtor",
+                ].includes(key)
+            )
+            .some(([_, value]) => value === "")
         ) ||
         Object.values(historicRange).some((value) => value === ""))) ||
     (activeStep === 2 &&

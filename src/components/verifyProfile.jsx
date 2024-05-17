@@ -1,18 +1,35 @@
 import React, { useState } from "react";
-import { Typography, TextField, Grid } from "@mui/material";
+import {
+  Typography,
+  TextField,
+  Grid,
+  InputAdornment,
+  IconButton,
+  FormHelperText,
+} from "@mui/material";
+
+import { useDispatch } from "react-redux";
+import { sign_In } from "../redux/action/action";
+
 import Button from "./button";
 import { Colors } from "../config/default";
 import { useNavigate } from "react-router-dom";
 import { VerifyLink, UpdateUserPassword } from "../services/services";
 import { useToast } from "../toast/toastContext";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import Visibility from "@mui/icons-material/Visibility";
 
 export default function VerifyProfile() {
   const navigate = useNavigate();
-  // State variables to hold text field values
+  const dispatch = useDispatch();
   const { showToast } = useToast();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
   const currentURL = window.location.href;
   const url = new URL(currentURL);
@@ -20,10 +37,40 @@ export default function VerifyProfile() {
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
+    if (e.target.value.length < 8) {
+      setPasswordError(
+        "Password must be at least 8 characters long and include special characters"
+      );
+    } else if (
+      /(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/.test(
+        e.target.value
+      )
+    ) {
+      setPasswordError("");
+    } else {
+      setPasswordError(
+        "Password must contain at least one special character, one lowercase letter, and one uppercase letter"
+      );
+    }
   };
 
   const handleConfirmPasswordChange = (e) => {
     setConfirmPassword(e.target.value);
+    if (e.target.value.length < 8) {
+      setConfirmPasswordError(
+        "Password must be at least 8 characters long and include special characters"
+      );
+    } else if (
+      /(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/.test(
+        e.target.value
+      )
+    ) {
+      setConfirmPasswordError("");
+    } else {
+      setConfirmPasswordError(
+        "Password must contain at least one special character, one lowercase letter, and one uppercase letter"
+      );
+    }
   };
 
   const handleFormSubmit = async () => {
@@ -37,8 +84,11 @@ export default function VerifyProfile() {
       };
       const updateUserPassword = await UpdateUserPassword(params, tokenValue);
       if (updateUserPassword?.status === 200) {
-        showToast(updateUserPassword?.data?.message, "success");
-        navigate("/");
+        localStorage.clear();
+        dispatch(sign_In(updateUserPassword?.data?.data));
+        const token = updateUserPassword?.data?.data?.token;
+        localStorage.setItem("token", token);
+        navigate("/home");
       } else {
         showToast(updateUserPassword?.response?.data?.message, "error");
       }
@@ -49,6 +99,18 @@ export default function VerifyProfile() {
     setLoading(false);
   };
 
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleClickShowConfirmPassword = () =>
+    setShowConfirmPassword((show) => !show);
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const isButtonDisabled =
+    password !== confirmPassword ||
+    password === "" ||
+    !!passwordError ||
+    !!confirmPasswordError;
   return (
     <Grid
       item
@@ -70,6 +132,7 @@ export default function VerifyProfile() {
         Verify User
       </Typography>
       <TextField
+        type={showPassword ? "text" : "password"}
         id="password"
         label="Password"
         variant="standard"
@@ -78,8 +141,23 @@ export default function VerifyProfile() {
         sx={{
           marginBottom: "1rem",
         }}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={handleClickShowPassword}
+                onMouseDown={handleMouseDownPassword}
+              >
+                {showPassword ? <Visibility /> : <VisibilityOff />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
       />
+      {passwordError && <FormHelperText error>{passwordError}</FormHelperText>}
       <TextField
+        type={showConfirmPassword ? "text" : "password"}
         id="confirmPassword"
         label="Confirm Password"
         variant="standard"
@@ -88,9 +166,26 @@ export default function VerifyProfile() {
         sx={{
           marginBottom: "1rem",
         }}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle confirm password visibility"
+                onClick={handleClickShowConfirmPassword}
+                onMouseDown={handleMouseDownPassword}
+              >
+                {showConfirmPassword ? <Visibility /> : <VisibilityOff />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
       />
+      {confirmPasswordError && (
+        <FormHelperText error>{confirmPasswordError}</FormHelperText>
+      )}
 
       <Button
+        disabled={isButtonDisabled}
         loading={loading}
         buttonText="Save"
         onClick={handleFormSubmit}
