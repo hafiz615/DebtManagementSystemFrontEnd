@@ -172,8 +172,7 @@ export default function HorizontalLinearStepper() {
         debtorDetailsStatus === "" ||
         newDataList?.some((newData) =>
           Object.values(newData)?.some((value) => value === "")
-        ))) ||
-    (activeStep === 3 && isEmpty(uploadedFiles));
+        )));
 
   const isStepSkipped = (step) => {
     return skipped.has(step);
@@ -284,153 +283,155 @@ export default function HorizontalLinearStepper() {
   const handleNext = async () => {
     if (activeStep === steps.length - 1) {
       setLoading(true);
-      const uploadFile = await UploadFiles(uploadedFiles);
-      if (uploadFile?.status === 200) {
-        const params = {
-          debtor: {
-            basicInformation: {
-              fullName: debtorOwnDetails?.BasicFullName,
-              email: debtorOwnDetails?.BasicEmailAddress,
-              SSID: debtorOwnDetails?.BasicSsid,
-              status: status,
-              country: debtorOwnDetails?.BasicCountry,
-              state: debtorOwnDetails?.BasicState,
-              city: debtorOwnDetails?.BasicCity,
-              zipCode: debtorOwnDetails?.BasicZipCode,
-              phone: debtorOwnDetails?.BasicPhoneNumber,
-              address: debtorOwnDetails?.BasicAddress,
-            },
-            businessInformation: {
-              companyName: debtorBusinessDetails?.businessCompanyName,
-              EIN: debtorBusinessDetails?.businessEinNumber,
-              businessCategory: debtorBusinessDetails?.businessCategory,
-              description: debtorBusinessDetails?.businessDescription,
-              country: debtorBusinessDetails?.businessCountry,
-              state: debtorBusinessDetails?.businessState,
-              city: debtorBusinessDetails?.businessCity,
-              zipCode: debtorBusinessDetails?.businessZipCode,
-              phone: debtorBusinessDetails?.businessPhoneNumber,
-              address: debtorBusinessDetails?.businessAddress,
-            },
-            contacts: debtorContactDetails,
+      // const uploadFile = await UploadFiles(uploadedFiles);
+      // if (uploadFile?.status === 200) {
+      const params = {
+        debtor: {
+          basicInformation: {
+            fullName: debtorOwnDetails?.BasicFullName,
+            email: debtorOwnDetails?.BasicEmailAddress,
+            SSID: debtorOwnDetails?.BasicSsid,
+            status: status,
+            country: debtorOwnDetails?.BasicCountry,
+            state: debtorOwnDetails?.BasicState,
+            city: debtorOwnDetails?.BasicCity,
+            zipCode: debtorOwnDetails?.BasicZipCode,
+            phone: debtorOwnDetails?.BasicPhoneNumber,
+            address: debtorOwnDetails?.BasicAddress,
           },
-          creditor: {
-            basicInformation: {
-              fullName: creditorBasicsInfo?.CreditorBasicFullName,
-              email: creditorBasicsInfo?.CreditorBasicEmailAddress,
-              phone: creditorBasicsInfo?.CreditorBasicPhoneNumber,
-            },
-            businessInformation: {
-              companyName: creditorBusinessDetails?.businessCompanyName,
-              businessCategory: creditorBusinessDetails?.businessCategory,
-            },
-            notes: CreditorNotes,
-            lastFundedDate: fundedDate,
-            historicalRange: historicRange,
-            contacts: creditorContactDetails,
+          businessInformation: {
+            companyName: debtorBusinessDetails?.businessCompanyName,
+            EIN: debtorBusinessDetails?.businessEinNumber,
+            businessCategory: debtorBusinessDetails?.businessCategory,
+            description: debtorBusinessDetails?.businessDescription,
+            country: debtorBusinessDetails?.businessCountry,
+            state: debtorBusinessDetails?.businessState,
+            city: debtorBusinessDetails?.businessCity,
+            zipCode: debtorBusinessDetails?.businessZipCode,
+            phone: debtorBusinessDetails?.businessPhoneNumber,
+            address: debtorBusinessDetails?.businessAddress,
           },
-          status: debtorDetailsStatus,
-          totalDebt: parseInt(totalReceivable),
-          lastPaymentDate: lastPaymentDate,
-          paidAmount: parseInt(paidAmount),
-          remaining: parseInt(remainingAmount),
-          documents: uploadFile?.data?.data,
-          intervals: newDataList,
-        };
+          contacts: debtorContactDetails,
+        },
+        creditor: {
+          basicInformation: {
+            fullName: creditorBasicsInfo?.CreditorBasicFullName,
+            email: creditorBasicsInfo?.CreditorBasicEmailAddress,
+            phone: creditorBasicsInfo?.CreditorBasicPhoneNumber,
+          },
+          businessInformation: {
+            companyName: creditorBusinessDetails?.businessCompanyName,
+            businessCategory: creditorBusinessDetails?.businessCategory,
+          },
+          notes: CreditorNotes,
+          lastFundedDate: fundedDate,
+          historicalRange: historicRange,
+          contacts: creditorContactDetails,
+        },
+        status: debtorDetailsStatus,
+        totalDebt: parseInt(totalReceivable),
+        lastPaymentDate: lastPaymentDate,
+        paidAmount: parseInt(paidAmount),
+        remaining: parseInt(remainingAmount),
+        documents: [],
+        intervals: newDataList,
+      };
 
-        const caseCreation = await CreateCase(params, false);
+      const caseCreation = await CreateCase(params, false);
 
-        if (caseCreation?.status === 201) {
-          showToast(caseCreation?.data?.message, "success");
-          setDebtorOwnDetails({
-            BasicFullName: "",
-            BasicEmailAddress: "",
-            BasicSsid: "",
-            BasicCountry: "",
-            BasicState: "",
-            BasicCity: "",
-            BasicZipCode: "",
-            BasicPhoneNumber: "",
-            BasicAddress: "",
-          });
-          setDebtorBusinessDetails({
-            businessCompanyName: "",
-            businessEinNumber: "",
-            businessCategory: "",
-            businessDescription: "",
-            businessCountry: "",
-            businessState: "",
-            businessCity: "",
-            businessZipCode: "",
-            businessPhoneNumber: "",
-            businessAddress: "",
-          });
-          setDebtorContactDetails([
-            {
-              name: "",
-              title: "",
-              phone: "",
-              email: "",
-              country: "",
-              state: "",
-              city: "",
-              zipCode: "",
-              relationWithDebtor: "",
-            },
-          ]);
-          setChecked(false);
-          setStatus("Custom");
-          setCreditorBasicsInfo({
-            CreditorBasicFullName: "",
-            CreditorBasicEmailAddress: "",
-            CreditorBasicPhoneNumber: "",
-          });
-          setCreditorBusinessDetails({
-            businessCompanyName: "",
-            businessCategory: "",
-          });
-          setFundedDate("");
-          setCreditorNotes("");
-          setHistoricRange({
-            minimum: "",
-            maximum: "",
-          });
-          setDebtorDetailsStatus("Custom");
-          setLastPaymentDate("");
-          setRemainingAmount(null);
-          setPaidAmount(null);
-          setTotalReceivable(null);
-          setFiles([]);
-          setNewDataList([
-            {
-              amount: "",
-              startDate: "",
-              timePeriod: "",
-            },
-          ]);
-          setCreditorContactDetails([
-            {
-              name: "",
-              title: "",
-              phone: "",
-              email: "",
-              country: "",
-              state: "",
-              city: "",
-              zipCode: "",
-              relationWithDebtor: "",
-            },
-          ]);
-          setUploadedFiles([]);
-          setActiveStep(0);
-        } else {
-          const errorMessage = caseCreation?.response?.data?.message;
-          showToast(errorMessage, "error");
-        }
+      if (caseCreation?.status === 201) {
+        showToast(caseCreation?.data?.message, "success");
+        setDebtorOwnDetails({
+          BasicFullName: "",
+          BasicEmailAddress: "",
+          BasicSsid: "",
+          BasicCountry: "",
+          BasicState: "",
+          BasicCity: "",
+          BasicZipCode: "",
+          BasicPhoneNumber: "",
+          BasicAddress: "",
+        });
+        setDebtorBusinessDetails({
+          businessCompanyName: "",
+          businessEinNumber: "",
+          businessCategory: "",
+          businessDescription: "",
+          businessCountry: "",
+          businessState: "",
+          businessCity: "",
+          businessZipCode: "",
+          businessPhoneNumber: "",
+          businessAddress: "",
+        });
+        setDebtorContactDetails([
+          {
+            name: "",
+            title: "",
+            phone: "",
+            email: "",
+            country: "",
+            state: "",
+            city: "",
+            zipCode: "",
+            relationWithDebtor: "",
+          },
+        ]);
+        setChecked(false);
+        setStatus("Custom");
+        setCreditorBasicsInfo({
+          CreditorBasicFullName: "",
+          CreditorBasicEmailAddress: "",
+          CreditorBasicPhoneNumber: "",
+        });
+        setCreditorBusinessDetails({
+          businessCompanyName: "",
+          businessCategory: "",
+        });
+        setFundedDate("");
+        setCreditorNotes("");
+        setHistoricRange({
+          minimum: "",
+          maximum: "",
+        });
+        setDebtorDetailsStatus("Custom");
+        setLastPaymentDate("");
+        setRemainingAmount(null);
+        setPaidAmount(null);
+        setTotalReceivable(null);
+        setFiles([]);
+        setNewDataList([
+          {
+            amount: "",
+            startDate: "",
+            timePeriod: "",
+          },
+        ]);
+        setCreditorContactDetails([
+          {
+            name: "",
+            title: "",
+            phone: "",
+            email: "",
+            country: "",
+            state: "",
+            city: "",
+            zipCode: "",
+            relationWithDebtor: "",
+          },
+        ]);
+        setUploadedFiles([]);
+        setDebtorSearchText("");
+        setCreditorSearchText("");
+        setActiveStep(0);
       } else {
-        const errorMessage = uploadFile?.response?.data?.message;
+        const errorMessage = caseCreation?.response?.data?.message;
         showToast(errorMessage, "error");
       }
+      // } else {
+      //   const errorMessage = uploadFile?.response?.data?.message;
+      //   showToast(errorMessage, "error");
+      // }
     } else {
       let newSkipped = skipped;
       if (isStepSkipped(activeStep)) {

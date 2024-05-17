@@ -229,7 +229,7 @@ export default function CreditorFields({
             value={fundedDate}
             onChange={(e) => fundedInputChange(e.target.value)}
           />
-          <Typography
+          {/* <Typography
             sx={{
               fontFamily: "Nunito",
               fontWeight: "500",
@@ -238,7 +238,7 @@ export default function CreditorFields({
             }}
           >
             25/12/2024
-          </Typography>
+          </Typography> */}
         </Grid>
         <Grid
           item
