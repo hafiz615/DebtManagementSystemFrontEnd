@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Typography, Grid } from "@mui/material";
-// import useMediaQuery from "@mui/material/useMediaQuery";
+import { Typography, Grid, Box } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Colors } from "../config/default";
 
@@ -13,9 +13,10 @@ function PaymentsTextFields({
   marginLeft,
   onChange,
   type,
+  error,
   value,
 }) {
-  //   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
+  const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
 
   //   const largeScreen = useMediaQuery(
   //     "(min-width:1600px) and (max-width:3000px)"
@@ -51,6 +52,24 @@ function PaymentsTextFields({
           marginLeft: marginLeft,
         }}
       />
+      {error ? (
+        <Box
+          sx={{
+            color: "red",
+            fontSize: "9.3px",
+            height: smallScreen ? "0.5rem" : "0.7rem",
+          }}
+        >
+          {error}
+        </Box>
+      ) : (
+        <Box
+          sx={{
+            color: "red",
+            height: smallScreen ? "0.5rem" : "0.7rem",
+          }}
+        ></Box>
+      )}
     </Grid>
   );
 }

@@ -39,32 +39,47 @@ function ModelInfo({ show, setOpen, GetUsers }) {
 
   const [loading, setLoading] = useState(false);
 
-  const handleInputChange = (field, value) => {
-    if (field === "phone" || field === "ssid") {
-      if (!/^\d*$/.test(value)) {
-        return;
-      }
-      if (value && parseInt(value, 10) <= 0) {
+  const handleInputChange = (field, value, event) => {
+    if (field === "phone") {
+      if (value.length > 11) {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          [field]: "Value must be greater than 0",
-        }));
-      } else if (value.length > 10) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          [field]: "Value must not exceed 10 digits",
+          phone: "Phone number must be less than 11 digits",
         }));
       } else {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          [field]: "",
+          phone: "",
         }));
       }
     }
-    setFormData({
-      ...formData,
-      [field]: value,
-    });
+    if (field === "ssid") {
+      if (value.length !== 9) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          ssid: "SSN must be 9 digits",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          ssid: "",
+        }));
+      }
+    }
+    if (field === "ssid" || field === "phone") {
+      const inputValue = value;
+      if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
+        setFormData({
+          ...formData,
+          [field]: value,
+        });
+      }
+    } else {
+      setFormData({
+        ...formData,
+        [field]: value,
+      });
+    }
   };
 
   const isEmailValid = (email) => {
@@ -147,7 +162,8 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           label="User Name"
           placeHolderValue="Name"
           type="text"
-          onChange={(e) => handleInputChange("userName", e.target.value)}
+          onChange={(e) => handleInputChange("userName", e.target.value, e)}
+          value={formData?.userName}
         />
         <Grid>
           <Typography
@@ -175,15 +191,16 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           label="Email"
           type="text"
           placeHolderValue="Email"
-          onChange={(e) => handleInputChange("email", e.target.value)}
+          onChange={(e) => handleInputChange("email", e.target.value, e)}
+          value={formData?.email}
         />
         <CustomTextField
           label="Phone #"
           type="number"
           placeHolderValue="Phone"
-          onChange={(e) => handleInputChange("phone", e.target.value)}
-          message="must be less than 11 digits"
-          error={errors.phone}
+          onChange={(e) => handleInputChange("phone", e.target.value, e)}
+          error={errors?.phone}
+          value={formData?.phone}
         />
       </Grid>
       <Grid
@@ -198,22 +215,23 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           marginTop: "1rem",
         }}
       >
-        <div style={{ width: "23%" }}>
+        <div style={{ width: "11.3rem" }}>
           <CustomTextField
             label="DOB"
             type="date"
             placeHolderValue="DOB"
             width="100%"
-            onChange={(e) => handleInputChange("dob", e.target.value)}
+            onChange={(e) => handleInputChange("dob", e.target.value, e)}
+            value={formData?.dob}
           />
         </div>
         <CustomTextField
           label="SSN"
           type="number"
           placeHolderValue="SSN"
-          onChange={(e) => handleInputChange("ssid", e.target.value)}
-          message="must be greater than 0"
-          error={errors.ssid}
+          onChange={(e) => handleInputChange("ssid", e.target.value, e)}
+          value={formData?.ssid}
+          error={errors?.ssid}
         />
 
         <Grid>
@@ -242,7 +260,8 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           label="Address"
           type="text"
           placeHolderValue="Address"
-          onChange={(e) => handleInputChange("address", e.target.value)}
+          onChange={(e) => handleInputChange("address", e.target.value, e)}
+          value={formData?.address}
         />
       </Grid>
 

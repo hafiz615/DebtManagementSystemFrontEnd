@@ -19,6 +19,7 @@ function PaymentDetails({
   setSelectedValue,
   newDataList,
   setNewDataList,
+  totalAmount,
 }) {
   return (
     <Grid
@@ -67,6 +68,8 @@ function PaymentDetails({
         <PaymentSettlement
           newDataList={newDataList}
           setNewDataList={setNewDataList}
+          totalAmount={totalAmount}
+          remainingAmount={remainingAmount}
         />
       </Grid>
     </Grid>

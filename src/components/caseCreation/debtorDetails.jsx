@@ -22,6 +22,12 @@ function DebtorDetails({
   setSearchText,
   SearchFields,
   loading,
+  errors,
+  setErrors,
+  setContactErrors,
+  contactError,
+  emailContactError,
+  setEmailContactError,
 }) {
   return (
     <>
@@ -79,6 +85,12 @@ function DebtorDetails({
             setSelectedValue={setSelectedValue}
             checked={checked}
             setChecked={setChecked}
+            errors={errors}
+            setErrors={setErrors}
+            setContactErrors={setContactErrors}
+            contactError={contactError}
+            emailContactError={emailContactError}
+            setEmailContactError={setEmailContactError}
           />
         </Grid>
       )}
