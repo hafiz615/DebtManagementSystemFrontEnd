@@ -20,24 +20,129 @@ export default function DebtorFields({
   setSelectedValue,
   checked,
   setChecked,
+  errors,
+  setErrors,
+  setContactErrors,
+  contactError,
+  emailContactError,
+  setEmailContactError,
 }) {
   const menuItems = [
+    { label: "Customer", value: "Customer" },
     { label: "On hold", value: "On hold" },
     { label: "Canceled", value: "Canceled" },
     { label: "Declared Bankrupcy", value: "Declared Bankrupcy" },
   ];
+  const isEmailValid = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const basicInfoInputChange = (fieldName, value) => {
-    setDebtorOwnDetails((prevDetails) => ({
-      ...prevDetails,
-      [fieldName]: value,
-    }));
+    if (fieldName === "BasicEmailAddress") {
+      if (!isEmailValid(value)) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          emailValid: "Email must be valid",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          emailValid: "",
+        }));
+      }
+    }
+    if (fieldName === "BasicSsid") {
+      if (value.length !== 9) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          ssn: "SSN must be 9 digits",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          ssn: "",
+        }));
+      }
+    }
+    if (fieldName === "BasicPhoneNumber") {
+      if (value.length > 11) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          basicPhone: "Phone number must be less than 11 digits",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          basicPhone: "",
+        }));
+      }
+    }
+    if (
+      fieldName === "BasicSsid" ||
+      fieldName === "BasicZipCode" ||
+      fieldName === "BasicPhoneNumber"
+    ) {
+      const inputValue = value;
+      if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
+        setDebtorOwnDetails((prevDetails) => ({
+          ...prevDetails,
+          [fieldName]: value,
+        }));
+      }
+    } else {
+      setDebtorOwnDetails((prevDetails) => ({
+        ...prevDetails,
+        [fieldName]: value,
+      }));
+    }
   };
   const businessInfoInputChange = (fieldName, value) => {
-    setDebtorBusinessDetails((prevDetails) => ({
-      ...prevDetails,
-      [fieldName]: value,
-    }));
+    if (fieldName === "businessPhoneNumber") {
+      if (value.length > 11) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          phone: "Phone number must be less than 11 digits",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          phone: "",
+        }));
+      }
+    }
+    if (fieldName === "businessEinNumber") {
+      if (value.length !== 9) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          einNumber: "EIN must be 9 digits",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          einNumber: "",
+        }));
+      }
+    }
+
+    if (
+      fieldName === "businessEinNumber" ||
+      fieldName === "businessPhoneNumber " ||
+      fieldName === "businessZipCode"
+    ) {
+      const inputValue = value;
+      if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
+        setDebtorBusinessDetails((prevDetails) => ({
+          ...prevDetails,
+          [fieldName]: value,
+        }));
+      }
+    } else {
+      setDebtorBusinessDetails((prevDetails) => ({
+        ...prevDetails,
+        [fieldName]: value,
+      }));
+    }
   };
 
   const handleCheckChange = (event) => {
@@ -73,10 +178,44 @@ export default function DebtorFields({
     updatedList.splice(index, 1); // Remove item at the specified index in the copy
     setDebtorContactDetails(updatedList); // Update state with the modified copy
   };
+
   const handleInputChange = (index, field, value) => {
     const updatedList = [...debtorContactDetails];
-    updatedList[index][field] = value;
-    setDebtorContactDetails(updatedList);
+    if (field === "email") {
+      if (!isEmailValid(value)) {
+        setEmailContactError((prevErrors) => ({
+          ...prevErrors,
+          [`email${index}`]: "Email must be Valid",
+        }));
+      } else {
+        setEmailContactError((prevErrors) => ({
+          ...prevErrors,
+          [`email${index}`]: "",
+        }));
+      }
+    }
+    if (field === "phone") {
+      if (value.length > 11) {
+        setContactErrors((prevErrors) => ({
+          ...prevErrors,
+          [`phone${index}`]: "Phone number must be less than 11 digits",
+        }));
+      } else {
+        setContactErrors((prevErrors) => ({
+          ...prevErrors,
+          [`phone${index}`]: "",
+        }));
+      }
+    }
+    if (field === "phone" || field === "zipCode") {
+      if (value === "" || /^\d*\.?\d*$/.test(value)) {
+        updatedList[index][field] = value;
+        setDebtorContactDetails(updatedList);
+      }
+    } else {
+      updatedList[index][field] = value;
+      setDebtorContactDetails(updatedList);
+    }
   };
 
   return (
@@ -119,7 +258,7 @@ export default function DebtorFields({
             }
           />
           <PaymentsTextFields
-            type="text"
+            type="number"
             label="EIN Number"
             placeHolderValue="Enter Ein Number"
             width="100%"
@@ -127,6 +266,7 @@ export default function DebtorFields({
             onChange={(e) =>
               businessInfoInputChange("businessEinNumber", e.target.value)
             }
+            error={errors?.einNumber}
           />
           <PaymentsTextFields
             type="text"
@@ -239,6 +379,7 @@ export default function DebtorFields({
             onChange={(e) =>
               businessInfoInputChange("businessPhoneNumber", e.target.value)
             }
+            error={errors?.phone}
           />
           <PaymentsTextFields
             type="text"
@@ -301,6 +442,7 @@ export default function DebtorFields({
             onChange={(e) =>
               basicInfoInputChange("BasicEmailAddress", e.target.value)
             }
+            error={errors?.emailValid}
           />
           <PaymentsTextFields
             type="text"
@@ -309,6 +451,7 @@ export default function DebtorFields({
             width="100%"
             value={debtorOwnDetails?.BasicSsid}
             onChange={(e) => basicInfoInputChange("BasicSsid", e.target.value)}
+            error={errors?.ssn}
           />
         </Grid>
         <Grid
@@ -442,6 +585,7 @@ export default function DebtorFields({
             onChange={(e) =>
               basicInfoInputChange("BasicPhoneNumber", e.target.value)
             }
+            error={errors?.basicPhone}
           />
           <PaymentsTextFields
             type="text"
@@ -522,6 +666,7 @@ export default function DebtorFields({
                     onChange={(e) =>
                       handleInputChange(index, "phone", e.target.value)
                     }
+                    error={contactError?.[`phone${index}`]}
                   />
                   <PaymentsTextFields
                     type="text"
@@ -532,6 +677,7 @@ export default function DebtorFields({
                     onChange={(e) =>
                       handleInputChange(index, "email", e.target.value)
                     }
+                    error={emailContactError?.[`phone${index}`]}
                   />
 
                   <PaymentsTextFields

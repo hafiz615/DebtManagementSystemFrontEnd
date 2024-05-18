@@ -531,7 +531,7 @@ export default function BasicCard({
                         {item?.timePeriod}
                       </Typography>
                     </Grid>
-                    {index !== 0 && (
+                    {item?.timePeriod !== "Custom" && (
                       <Grid container item xs={12} lg={4}>
                         <Typography
                           sx={{

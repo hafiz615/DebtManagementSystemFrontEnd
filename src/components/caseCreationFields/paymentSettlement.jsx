@@ -7,9 +7,15 @@ import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import { Colors } from "../../config/default";
 import Dropdown from "./../dropdown";
 
-export default function PaymentSettlement({ newDataList, setNewDataList }) {
+export default function PaymentSettlement({
+  newDataList,
+  setNewDataList,
+  remainingAmount,
+  totalAmount,
+}) {
   const menuItems = [
-    // { label: "Daily", value: "Daily" },
+    { label: "Custom", value: "Custom" },
+    { label: "Daily", value: "Daily" },
     { label: "Weekly", value: "Weekly" },
     { label: "Fortnightly", value: "Fortnightly" },
     { label: "Monthly", value: "Monthly" },
@@ -18,9 +24,9 @@ export default function PaymentSettlement({ newDataList, setNewDataList }) {
   const handleAddNewData = () => {
     const newItem = {
       amount: "",
-      timePeriod: "", // Default value for time period
+      timePeriod: "Custom", // Default value for time period
       startDate: "",
-      frequency: "",
+      frequency: 1,
     };
     setNewDataList([...newDataList, newItem]);
   };
@@ -33,6 +39,9 @@ export default function PaymentSettlement({ newDataList, setNewDataList }) {
 
   const handleInputChange = (index, field, value) => {
     const updatedList = [...newDataList];
+    if (field === "timePeriod" && value === "Custom") {
+      updatedList[index].frequency = 1;
+    }
     updatedList[index][field] = value;
     setNewDataList(updatedList);
   };
@@ -48,7 +57,14 @@ export default function PaymentSettlement({ newDataList, setNewDataList }) {
         Settlement Plan Automation
       </Typography>
 
-      <Grid container item sx={{ marginTop: "1rem" }}>
+      <Grid
+        container
+        item
+        sx={{
+          marginTop: "1rem",
+          alignItems: "center",
+        }}
+      >
         {newDataList?.map((item, index) => (
           <>
             <Grid
@@ -118,7 +134,6 @@ export default function PaymentSettlement({ newDataList, setNewDataList }) {
               <Dropdown
                 initialValue={item?.timePeriod}
                 menuItems={menuItems}
-                defaultSelectedItem={"Custom"}
                 backgroundColor={Colors.BG_LIGHT_GRAY}
                 width="60%"
                 value={item?.timePeriod}
@@ -180,7 +195,7 @@ export default function PaymentSettlement({ newDataList, setNewDataList }) {
                 alignItems: "center",
               }}
             >
-              {index !== 0 && (
+              {item?.timePeriod !== "Custom" && (
                 <>
                   <Typography
                     sx={{
@@ -200,7 +215,7 @@ export default function PaymentSettlement({ newDataList, setNewDataList }) {
                       handleInputChange(
                         index,
                         "frequency",
-                        parseInt(e.target.value)
+                        e.target.value ? parseInt(e.target.value) : ""
                       )
                     }
                     style={{
@@ -231,6 +246,14 @@ export default function PaymentSettlement({ newDataList, setNewDataList }) {
                 </>
               )}
             </Grid>
+            {index === newDataList?.length - 1 &&
+              remainingAmount !== totalAmount && (
+                <Typography
+                  sx={{ color: "red", marginLeft: "2rem", fontSize: "10px" }}
+                >
+                  Total debt must be equal to remaining amount
+                </Typography>
+              )}
           </>
         ))}
       </Grid>

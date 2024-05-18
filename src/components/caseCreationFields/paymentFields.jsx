@@ -18,6 +18,7 @@ export default function PaymentFields({
   setSelectedValue,
 }) {
   const menuItems = [
+    { label: "Customer", value: "Customer" },
     { label: "On hold", value: "On hold" },
     { label: "Canceled", value: "Canceled" },
     { label: "Declared Bankrupcy", value: "Declared Bankrupcy" },
@@ -128,6 +129,7 @@ export default function PaymentFields({
             Remaining
           </Typography>
           <input
+            disabled
             type="number"
             placeholder="$10,000"
             value={remainingAmount}

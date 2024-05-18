@@ -24,6 +24,12 @@ export default function CreditorDetails({
   setSearchText,
   SearchFields,
   loading,
+  creditorFieldsError,
+  setCreditorFieldsError,
+  creditorContactError,
+  setCreditorContactError,
+  creditorContactEmailError,
+  setCreditorContactEmailError,
 }) {
   return (
     <>
@@ -81,6 +87,12 @@ export default function CreditorDetails({
             setCreditorBusinessDetails={setCreditorBusinessDetails}
             creditorContactDetails={creditorContactDetails}
             setCreditorContactDetails={setCreditorContactDetails}
+            creditorFieldsError={creditorFieldsError}
+            setCreditorFieldsError={setCreditorFieldsError}
+            creditorContactError={creditorContactError}
+            setCreditorContactError={setCreditorContactError}
+            creditorContactEmailError={creditorContactEmailError}
+            setCreditorContactEmailError={setCreditorContactEmailError}
           />
         </Grid>
       )}
