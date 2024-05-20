@@ -79,7 +79,7 @@ const IconStyle = styled("div")({
   marginLeft: "0.5rem",
   marginRight: "1rem",
 });
-export default function CustomizedTables({ data, headerData, showTableData }) {
+export default function PaymentTabsTable({ data, headerData }) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selected, setSelected] = React.useState([]);

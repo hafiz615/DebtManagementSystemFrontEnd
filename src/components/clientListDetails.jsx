@@ -6,7 +6,6 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { UserListPage } from "../constants/appConstants";
 import { Colors } from "../config/default";
-import { BorderAll } from "@mui/icons-material";
 
 export default function ClientListDetails() {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
@@ -71,27 +70,112 @@ export default function ClientListDetails() {
         <Grid container item xs={12} lg={7}>
           <Grid item xs={12} lg={6} sx={{ border: "1px solid red" }}>
             <Typography>
-              SSN <span></span>
+              SSN <span>721-07-4426</span>
             </Typography>
-            <Typography>SSN</Typography>
-            <Typography>SSN</Typography>
-            <Typography>SSN</Typography>
+            <Typography>
+              Email <span>user@email.com</span>
+            </Typography>
+            <Typography>
+              Status <span>Lorem Ipsum</span>
+            </Typography>
+            <Typography>
+              Address <span>Lorem Ipsum</span>
+            </Typography>
           </Grid>
           <Grid item xs={12} lg={6} sx={{ border: "1px solid red" }}>
-            <Typography>SSN</Typography>
-            <Typography>SSN</Typography>
-            <Typography>SSN</Typography>
+            <Typography>
+              Company Name <span>Loriem Ipsum</span>
+            </Typography>
+            <Typography>
+              Email <span>user@email.com</span>
+            </Typography>
+            <Typography>
+              Status <span>Lorem Ipsum</span>
+            </Typography>
+            <Typography>
+              Address <span>Lorem Ipsum</span>
+            </Typography>
           </Grid>
         </Grid>
 
-        <Grid container item xs={12} lg={5}>
-          <Grid item xs={12} lg={6} sx={{ border: "1px solid red" }}>
-            <Typography>SSN</Typography>
-            <Typography>SSN</Typography>
-          </Grid>
-          <Grid item xs={12} lg={6} sx={{ border: "1px solid red" }}>
-            <Typography>SSN</Typography>
-            <Typography>SSN</Typography>
+        <Grid
+          container
+          item
+          xs={12}
+          lg={5}
+          sx={{ justifyContent: "space-between" }}
+        >
+          {/* <Grid
+            container
+            item
+            xs={12}
+            lg={5.8}
+            sx={{
+              backgroundColor: Colors?.WHITE,
+              justifyContent: "space-around",
+              alignItems: "center",
+              borderRadius: "10px",
+            }}
+          >
+            <Typography>Failed Payments</Typography>
+
+            <Typography
+              sx={{
+                color: Colors?.BLACK,
+                fontWeight: "700",
+                fontFamily: "Nunito",
+                fontSize: "4rem",
+              }}
+            >
+              05
+            </Typography>
+          </Grid> */}
+          <Grid container sx={{ justifyContent: "space-around" }}>
+            {[
+              { title: "Failed Payments", value: "05", color: Colors.BLACK },
+              {
+                title: "Failed Authorizations",
+                value: "05",
+                color: Colors.BLACK,
+              },
+              {
+                title: "Successful Payments",
+                value: "05",
+                color: Colors.SKY_BLUE,
+              },
+              {
+                title: "Successful Authorizations",
+                value: "05",
+                color: Colors.SKY_BLUE,
+              },
+            ].map((item, index) => (
+              <Grid
+                key={index}
+                container
+                item
+                xs={12}
+                lg={5.8}
+                sx={{
+                  backgroundColor: Colors?.WHITE,
+                  justifyContent: "space-around",
+                  alignItems: "center",
+                  borderRadius: "10px",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                <Typography>{item.title}</Typography>
+                <Typography
+                  sx={{
+                    color: item.color,
+                    fontWeight: "700",
+                    fontFamily: "Nunito",
+                    fontSize: "4rem",
+                  }}
+                >
+                  {item.value}
+                </Typography>
+              </Grid>
+            ))}
           </Grid>
         </Grid>
       </Grid>

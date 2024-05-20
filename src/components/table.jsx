@@ -50,9 +50,9 @@ export default function DataTable({ rows, columns, height }) {
           columns={columns}
           // autoPageSize
           pageSizeOptions={[5]}
-          disableColumnMenu
-          disableSelectionOnClick
-          disableColumnSelector
+          // disableColumnMenu
+          // disableSelectionOnClick
+          // disableColumnSelector
           initialState={{
             pagination: {
               paginationModel: { page: 0, pageSize: 5 },

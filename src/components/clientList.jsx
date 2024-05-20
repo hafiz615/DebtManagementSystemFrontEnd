@@ -1,124 +1,65 @@
 import React from "react";
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { Grid, Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { isEqual } from "lodash";
+// import { isEqual } from "lodash";
 
 import { UserListPage } from "../constants/appConstants";
 import { Colors } from "../config/default";
-import DataTable from "./table";
 import SearchBar from "./searchBar";
-const columns = [
-  {
-    field: "name",
-    headerName: "Name",
-    flex: 1,
-    minWidth: 70,
-  },
-  {
-    field: "numberOfCases",
-    headerName: "Number of Cases",
-    flex: 1,
-    minWidth: 70,
-  },
-  {
-    field: "numberOfCreditors",
-    headerName: "Number of Creditors",
-    flex: 1,
-    minWidth: 70,
-  },
-  {
-    field: "clientStatus",
-    headerName: "Client Status",
-    flex: 1,
-    minWidth: 70,
-  },
-  {
-    field: "totalDept",
-    headerName: "Total Dept",
-    flex: 1,
-    minWidth: 70,
-  },
+import ListTable from "./listTable";
+const headers = [
+  "Name",
+  "Number of Cases",
+  "Number of Creditors",
+  "Client Status",
+  "Total Dept",
 ];
-const rowArray = [
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
+function createData(
+  debtor,
+  dueDate,
+  tryDate,
+  totalDebt,
+  ssid,
+  caseOwner,
+  actions
+) {
+  return { debtor, dueDate, tryDate, totalDebt, ssid, caseOwner, actions };
+}
+const tableData = [
+  createData("User Name", "4/2/2024", "4/6/2024", "$3,254.00", "721-07-4426"),
+  createData("User Name", "4/2/2024", "4/6/2024", "$3,254.00", "721-07-4426"),
+  createData("User Name", "4/2/2024", "4/6/2024", "$3,254.00", "721-07-4426"),
+  createData("User Name", "4/2/2024", "4/6/2024", "$3,254.00", "721-07-4426"),
+  createData("User Name", "4/2/2024", "4/6/2024", "$3,254.00", "721-07-4426"),
+  createData("User Name", "4/2/2024", "4/6/2024", "$3,254.00", "721-07-4426"),
+  createData("User Name", "4/2/2024", "4/6/2024", "$3,254.00", "721-07-4426"),
+
+  createData("User Name", "4/2/2024", "4/6/2024", "$3,254.00", "721-07-4426"),
+  createData("User Name", "4/2/2024", "4/6/2024", "$3,254.00", "721-07-4426"),
+  createData("User khan", "4/2/2024", "4/6/2024", "$3,254.00", "721-07-4426"),
 ];
 export default function ClientList() {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { AUTHORITY_TEXT } = UserListPage;
-  const [rows, setRows] = useState([]);
+  // const [rows, setRows] = useState([]);
 
-  useEffect(() => {
-    const generatedData = rowArray?.map((item, index) => ({
-      id: index,
-      name: item?.name,
-      numberOfCases: item?.numberOfCases,
-      numberOfCreditors: item?.numberOfCreditors,
-      clientStatus: item?.clientStatus,
-      totalDept: item?.totalDept,
-    }));
-    if (!isEqual(generatedData, rowArray)) {
-      setRows(generatedData);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const generatedData = rowArray?.map((item, index) => ({
+  //     id: index,
+  //     name: item?.name,
+  //     numberOfCases: item?.numberOfCases,
+  //     numberOfCreditors: item?.numberOfCreditors,
+  //     clientStatus: item?.clientStatus,
+  //     totalDept: item?.totalDept,
+  //   }));
+  //   if (!isEqual(generatedData, rowArray)) {
+  //     setRows(generatedData);
+  //   }
+  // }, []);
   return (
     <Grid
       container
@@ -166,9 +107,8 @@ export default function ClientList() {
         </Typography>
       </Grid>
       <Grid
-        container
         item
-        xs={11.9}
+        xs={12}
         sx={{
           marginTop: "1.5rem",
           display: "flex",
@@ -177,14 +117,19 @@ export default function ClientList() {
       >
         <Typography
           sx={{
-            padding: "1rem",
+            paddingLeft: "0.8rem",
+            paddingRight: "0.8rem",
             bgcolor: Colors.WHITE,
             width: "max-content",
             borderTopLeftRadius: "10px",
             borderTopRightRadius: "10px",
             fontWeight: "600",
+            fontSize: "0.8rem",
             marginLeft: "2.5rem",
             height: "3.5rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
           Clients List
@@ -193,17 +138,16 @@ export default function ClientList() {
       </Grid>
       <Grid
         item
-        xs={11.9}
+        xs={12}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px ",
-          // height: "58vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
         }}
       >
-        <DataTable rows={rows} columns={columns} />
+        <ListTable headerData={headers} data={tableData} />
       </Grid>
     </Grid>
   );
