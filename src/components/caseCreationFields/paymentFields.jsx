@@ -42,13 +42,19 @@ export default function PaymentFields({
         xs={12}
         sx={{
           justifyContent: "space-between",
+          gap: { xs: "1rem", md: "0" },
         }}
       >
         <Grid
           item
           xs={12}
+          md={6}
           lg={3.9}
-          sx={{ display: "flex", alignItems: "center" }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: { xs: "space-between", lg: "unset" },
+          }}
         >
           <Typography
             sx={{
@@ -81,8 +87,13 @@ export default function PaymentFields({
         <Grid
           item
           xs={12}
+          md={6}
           lg={3.9}
-          sx={{ display: "flex", alignItems: "center" }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: { xs: "space-between", lg: "unset" },
+          }}
         >
           <Typography
             sx={{
@@ -115,8 +126,14 @@ export default function PaymentFields({
         <Grid
           item
           xs={12}
+          md={6}
           lg={3.9}
-          sx={{ display: "flex", alignItems: "center" }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: { xs: "space-between", lg: "unset" },
+            marginTop: { md: "1rem", lg: 0 },
+          }}
         >
           <Typography
             sx={{
@@ -147,17 +164,24 @@ export default function PaymentFields({
           />
         </Grid>
       </Grid>
+
       <Grid
         container
         sx={{
           marginTop: "1rem",
+          gap: { xs: "1rem", md: "0" },
         }}
       >
         <Grid
           item
           xs={12}
+          md={6}
           lg={3.9}
-          sx={{ display: "flex", alignItems: "center" }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: { xs: "space-between", lg: "unset" },
+          }}
         >
           <Typography
             sx={{
@@ -190,8 +214,13 @@ export default function PaymentFields({
         <Grid
           item
           xs={12}
+          md={6}
           lg={3.9}
-          sx={{ display: "flex", alignItems: "center" }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: { xs: "space-between", lg: "unset" },
+          }}
         >
           <Typography
             sx={{

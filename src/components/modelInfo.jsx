@@ -162,10 +162,11 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           label="User Name"
           placeHolderValue="Name"
           type="text"
+          width="10rem"
           onChange={(e) => handleInputChange("userName", e.target.value, e)}
           value={formData?.userName}
         />
-        <Grid>
+        <div style={{ width: "10rem" }}>
           <Typography
             sx={{
               fontWeight: "500",
@@ -179,17 +180,18 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           <Dropdown
             menuItems={genderItems}
             defaultSelectedItem={"Male"}
-            width="11.5rem"
+            width="100%"
             height="2.5rem"
             backgroundColor={Colors.BG_LIGHT_GRAY}
             hoverColor={Colors.BG_LIGHT_GRAY}
             selectedValue={gender}
             setSelectedValue={setGender}
           />
-        </Grid>
+        </div>
         <CustomTextField
           label="Email"
           type="text"
+          width="10rem"
           placeHolderValue="Email"
           onChange={(e) => handleInputChange("email", e.target.value, e)}
           value={formData?.email}
@@ -197,6 +199,7 @@ function ModelInfo({ show, setOpen, GetUsers }) {
         <CustomTextField
           label="Phone #"
           type="number"
+          width="10rem"
           placeHolderValue="Phone"
           onChange={(e) => handleInputChange("phone", e.target.value, e)}
           error={errors?.phone}
@@ -215,7 +218,7 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           marginTop: "1rem",
         }}
       >
-        <div style={{ width: "11.3rem" }}>
+        <div style={{ width: "10rem" }}>
           <CustomTextField
             label="DOB"
             type="date"
@@ -228,13 +231,14 @@ function ModelInfo({ show, setOpen, GetUsers }) {
         <CustomTextField
           label="SSN"
           type="number"
+          width="10rem"
           placeHolderValue="SSN"
           onChange={(e) => handleInputChange("ssid", e.target.value, e)}
           value={formData?.ssid}
           error={errors?.ssid}
         />
 
-        <Grid>
+        <div style={{ width: "10rem" }}>
           <Typography
             sx={{
               fontWeight: "500",
@@ -248,17 +252,18 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           <Dropdown
             menuItems={menuItems}
             defaultSelectedItem={"Manager"}
-            width="11.5rem"
             height="2.5rem"
+            width="100%"
             backgroundColor={Colors.BG_LIGHT_GRAY}
             hoverColor={Colors.BG_LIGHT_GRAY}
             selectedValue={selectedValue}
             setSelectedValue={setSelectedValue}
           />
-        </Grid>
+        </div>
         <CustomTextField
           label="Address"
           type="text"
+          width="10rem"
           placeHolderValue="Address"
           onChange={(e) => handleInputChange("address", e.target.value, e)}
           value={formData?.address}
