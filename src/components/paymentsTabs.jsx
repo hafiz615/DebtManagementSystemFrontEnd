@@ -80,6 +80,51 @@ export default function PaymentsTabs() {
       "Negotiator",
       "+18143008957"
     ),
+    createData(
+      "User Name",
+      "4/2/2024",
+      "4/6/2024",
+      "$3,254.00",
+      "721-07-4426",
+      "Negotiator",
+      "+18143008957"
+    ),
+    createData(
+      "User Name",
+      "4/2/2024",
+      "4/6/2024",
+      "$3,254.00",
+      "721-07-4426",
+      "Negotiator",
+      "+18143008957"
+    ),
+    createData(
+      "User Name",
+      "4/2/2024",
+      "4/6/2024",
+      "$3,254.00",
+      "721-07-4426",
+      "Negotiator",
+      "+18143008957"
+    ),
+    createData(
+      "User Name",
+      "4/2/2024",
+      "4/6/2024",
+      "$3,254.00",
+      "721-07-4426",
+      "Negotiator",
+      "+18143008957"
+    ),
+    createData(
+      "User Name",
+      "4/2/2024",
+      "4/6/2024",
+      "$3,254.00",
+      "721-07-4426",
+      "Negotiator",
+      "+18143008957"
+    ),
 
     createData(
       "User Name",
@@ -100,7 +145,7 @@ export default function PaymentsTabs() {
       "+18143008957"
     ),
     createData(
-      "User Name",
+      "User khan",
       "4/2/2024",
       "4/6/2024",
       "$3,254.00",

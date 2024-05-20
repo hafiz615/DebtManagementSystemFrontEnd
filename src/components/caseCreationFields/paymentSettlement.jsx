@@ -71,10 +71,11 @@ export default function PaymentSettlement({
               container
               item
               xs={12}
+              md={6}
               lg={3}
               sx={{
                 display: "flex",
-                justifyContent: "center",
+                justifyContent: { xs: "space-between", md: "center" },
                 alignItems: "center",
                 marginBottom: "0.5rem",
               }}
@@ -113,10 +114,11 @@ export default function PaymentSettlement({
               container
               item
               xs={12}
+              md={6}
               lg={3}
               sx={{
                 display: "flex",
-                justifyContent: "center",
+                justifyContent: { xs: "space-between", md: "center" },
                 alignItems: "center",
               }}
             >
@@ -147,11 +149,13 @@ export default function PaymentSettlement({
               container
               item
               xs={12}
+              md={6}
               lg={3}
               sx={{
                 display: "flex",
-                justifyContent: "center",
+                justifyContent: { xs: "space-between", md: "center" },
                 alignItems: "center",
+                mt: { xs: "0.5rem", md: "0" },
               }}
             >
               <Typography
@@ -188,10 +192,11 @@ export default function PaymentSettlement({
               container
               item
               xs={12}
+              md={6}
               lg={3}
               sx={{
                 display: "flex",
-                justifyContent: "flex-start",
+                justifyContent: { xs: "space-between", md: "flex-start" },
                 alignItems: "center",
               }}
             >
