@@ -21,6 +21,7 @@ export default function BasicCard({
   fundedDate,
   CreditorNotes,
   creditorBusinessDetails,
+  totalReceivable,
 }) {
   return (
     <Card
@@ -465,7 +466,7 @@ export default function BasicCard({
               }}
             >
               Total Receivable
-              <span style={{ marginLeft: "1rem" }}>$10,000</span>
+              <span style={{ marginLeft: "1rem" }}>${totalReceivable}</span>
             </Typography>
 
             <Grid

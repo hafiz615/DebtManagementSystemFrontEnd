@@ -17,6 +17,7 @@ export default function Dropdown({
   onChange,
   initialValue,
   hoverColor,
+  placeholder,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -41,39 +42,6 @@ export default function Dropdown({
 
   return (
     <>
-      {/* <select
-        style={{
-          border: "none",
-          height: "2.5rem",
-          display: "flex",
-          justifyContent: "space-between",
-          paddingLeft: paddingLeft,
-          width: width,
-          backgroundColor: backgroundColor,
-          color: Colors.DARK_GRAY,
-          fontFamily: "Nunito",
-          borderRadius: "5px",
-          textTransform: "none",
-          ":active": {
-            border: "none",
-          },
-          ":hover": {
-            background: hoverColor || Colors.WHITE,
-          },
-        }}
-        onClick={handleClick}
-      >
-        {menuItems.map((item, index) => (
-          <option
-            key={index}
-            style={{ color: Colors.LIGHT_GRAY }}
-            onClick={() => handleMenuItemClick(item.value)}
-            value={item?.label}
-          >
-            {item?.label}
-          </option>
-        ))}
-      </select> */}
       <Button
         id="basic-button"
         aria-controls={open ? "basic-menu" : undefined}
@@ -96,7 +64,7 @@ export default function Dropdown({
           height: height,
         }}
       >
-        {initialValue || selectedValue || defaultSelectedItem}{" "}
+        {initialValue || selectedValue || defaultSelectedItem || placeholder}
         <ExpandMoreIcon />
       </Button>
       <Menu
@@ -108,11 +76,11 @@ export default function Dropdown({
           "aria-labelledby": "basic-button",
         }}
       >
-        {menuItems.map((item, index) => (
+        {menuItems?.map((item, index) => (
           <MenuItem
             key={index}
-            sx={{ color: Colors.LIGHT_GRAY }}
-            onClick={() => handleMenuItemClick(item.value)}
+            sx={{ color: Colors.LIGHT_GRAY, width: "100%" }}
+            onClick={() => handleMenuItemClick(item?.value)}
           >
             {item.label}
           </MenuItem>
