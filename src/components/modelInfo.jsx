@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+
 import { Grid } from "@mui/material";
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import TextButton from "./button";
 import CustomTextField from "./customTextfield";
@@ -10,6 +12,9 @@ import Dropdown from "./dropdown";
 import { Colors } from "../config/default";
 
 function ModelInfo({ show, setOpen, GetUsers }) {
+  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
+  const largeScreen = useMediaQuery("(min-width:1850px)");
+
   const menuItems = [
     { label: "Manager", value: "Manager" },
     { label: "Negotiator", value: "Negotiator" },
@@ -167,10 +172,7 @@ function ModelInfo({ show, setOpen, GetUsers }) {
         item
         xs={12}
         sx={{
-          justifyContent: {
-            xs: "space-evenly",
-            sm: "space-between",
-          },
+          justifyContent: "space-between",
           marginTop: "2rem",
         }}
       >
@@ -178,11 +180,15 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           label="User Name*"
           placeHolderValue="Enter Name"
           type="text"
-          width="10rem"
+          width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
           onChange={(e) => handleInputChange("userName", e.target.value, e)}
           value={formData?.userName}
         />
-        <div style={{ width: "10rem" }}>
+        <div
+          style={{
+            width: smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem",
+          }}
+        >
           <Typography
             sx={{
               fontWeight: "500",
@@ -207,7 +213,7 @@ function ModelInfo({ show, setOpen, GetUsers }) {
         <CustomTextField
           label="Email*"
           type="text"
-          width="10rem"
+          width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
           placeHolderValue="Enter Valid Email"
           onChange={(e) => handleInputChange("email", e.target.value, e)}
           value={formData?.email}
@@ -215,7 +221,7 @@ function ModelInfo({ show, setOpen, GetUsers }) {
         <CustomTextField
           label="Phone #*"
           type="number"
-          width="10rem"
+          width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
           placeHolderValue="Enter Phone"
           onChange={(e) => handleInputChange("phone", e.target.value, e)}
           error={errors?.phone}
@@ -228,14 +234,15 @@ function ModelInfo({ show, setOpen, GetUsers }) {
         item
         xs={12}
         sx={{
-          justifyContent: {
-            xs: "space-evenly",
-            sm: "space-between",
-          },
+          justifyContent: "space-between",
           marginTop: "1rem",
         }}
       >
-        <div style={{ width: "10rem" }}>
+        <div
+          style={{
+            width: smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem",
+          }}
+        >
           <CustomTextField
             label="DOB*"
             type="date"
@@ -249,7 +256,7 @@ function ModelInfo({ show, setOpen, GetUsers }) {
         <CustomTextField
           label="SSN*"
           type="number"
-          width="10rem"
+          width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
           placeHolderValue="Enter SSN"
           onChange={(e) => handleInputChange("ssid", e.target.value, e)}
           value={formData?.ssid}
@@ -257,7 +264,11 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           onKeyDown={handleNumberInput}
         />
 
-        <div style={{ width: "10rem" }}>
+        <div
+          style={{
+            width: smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem",
+          }}
+        >
           <Typography
             sx={{
               fontWeight: "500",
@@ -282,7 +293,7 @@ function ModelInfo({ show, setOpen, GetUsers }) {
         <CustomTextField
           label="Address*"
           type="text"
-          width="10rem"
+          width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
           placeHolderValue="Enter Address"
           onChange={(e) => handleInputChange("address", e.target.value, e)}
           value={formData?.address}

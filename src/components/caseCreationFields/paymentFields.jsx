@@ -1,9 +1,12 @@
 import React from "react";
+
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import Grid from "@mui/material/Grid";
 
 import { Colors } from "../../config/default";
 import Dropdown from "./../dropdown";
+import { unset } from "lodash";
 
 export default function PaymentFields({
   totalReceivable,
@@ -17,6 +20,8 @@ export default function PaymentFields({
   selectedValue,
   setSelectedValue,
 }) {
+  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
+
   const menuItems = [
     { label: "Customer", value: "Customer" },
     { label: "On hold", value: "On hold" },
@@ -58,7 +63,8 @@ export default function PaymentFields({
           lg={3.9}
           sx={{
             display: "flex",
-            alignItems: "center",
+            flexDirection: smallScreen ? "column" : unset,
+            alignItems: smallScreen ? "flex-start" : "center",
             justifyContent: { xs: "space-between", lg: "unset" },
           }}
         >
@@ -88,7 +94,7 @@ export default function PaymentFields({
               border: "none",
               outline: "none",
               borderRadius: "5px",
-              width: "60%",
+              width: smallScreen ? "100%" : "60%",
             }}
           />
         </Grid>
@@ -99,7 +105,8 @@ export default function PaymentFields({
           lg={3.9}
           sx={{
             display: "flex",
-            alignItems: "center",
+            flexDirection: smallScreen ? "column" : unset,
+            alignItems: smallScreen ? "flex-start" : "center",
             justifyContent: { xs: "space-between", lg: "unset" },
           }}
         >
@@ -109,7 +116,7 @@ export default function PaymentFields({
               fontWeight: "500",
               color: Colors.DARK_GRAY,
               marginRight: "1rem",
-              marginLeft: "2rem",
+              marginLeft: smallScreen ? "0rem" : "2rem",
             }}
           >
             Paid
@@ -129,7 +136,7 @@ export default function PaymentFields({
               border: "none",
               outline: "none",
               borderRadius: "5px",
-              width: "60%",
+              width: smallScreen ? "100%" : "60%",
             }}
           />
         </Grid>
@@ -140,7 +147,8 @@ export default function PaymentFields({
           lg={3.9}
           sx={{
             display: "flex",
-            alignItems: "center",
+            alignItems: smallScreen ? "flex-start" : "center",
+            flexDirection: smallScreen ? "column" : unset,
             justifyContent: { xs: "space-between", lg: "unset" },
             marginTop: { md: "1rem", lg: 0 },
           }}
@@ -171,7 +179,7 @@ export default function PaymentFields({
               border: "none",
               outline: "none",
               borderRadius: "5px",
-              width: "60%",
+              width: smallScreen ? "100%" : "60%",
             }}
           />
         </Grid>
@@ -191,7 +199,8 @@ export default function PaymentFields({
           lg={3.9}
           sx={{
             display: "flex",
-            alignItems: "center",
+            flexDirection: smallScreen ? "column" : unset,
+            alignItems: smallScreen ? "flex-start" : "center",
             justifyContent: { xs: "space-between", lg: "unset" },
           }}
         >
@@ -220,7 +229,7 @@ export default function PaymentFields({
               border: "none",
               outline: "none",
               borderRadius: "5px",
-              width: "60%",
+              width: smallScreen ? "100%" : "60%",
             }}
           />
         </Grid>
@@ -231,7 +240,8 @@ export default function PaymentFields({
           lg={3.9}
           sx={{
             display: "flex",
-            alignItems: "center",
+            flexDirection: smallScreen ? "column" : unset,
+            alignItems: smallScreen ? "flex-start" : "center",
             justifyContent: { xs: "space-between", lg: "unset" },
           }}
         >
@@ -241,7 +251,7 @@ export default function PaymentFields({
               fontWeight: "500",
               color: Colors.DARK_GRAY,
               marginRight: "1rem",
-              marginLeft: "2rem",
+              marginLeft: smallScreen ? "0rem" : "2rem",
             }}
           >
             Status
@@ -252,7 +262,7 @@ export default function PaymentFields({
             menuItems={menuItems}
             placeholder="Choose Status"
             backgroundColor={Colors.BG_LIGHT_GRAY}
-            width="60%"
+            width={smallScreen ? "100%" : "60%"}
           />
         </Grid>
       </Grid>

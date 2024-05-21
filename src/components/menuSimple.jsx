@@ -6,11 +6,15 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddchartIcon from "@mui/icons-material/Addchart";
+import { Modal } from "@mui/material";
 
 import { Colors } from "../config/default";
+import UploadCsv from "./uploadCsv";
 
 export default function BasicMenu({ backgroundColor, width }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
   const routeFound = localStorage.getItem("route");
   const roteSelect =
     routeFound === "Create New Case" || routeFound === "Import"
@@ -36,6 +40,10 @@ export default function BasicMenu({ backgroundColor, width }) {
     handleClose();
     localStorage.setItem("route", value);
     navigate(path);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -80,9 +88,16 @@ export default function BasicMenu({ backgroundColor, width }) {
         >
           Create New Case
         </MenuItem>
-        <MenuItem onClick={() => handleMenuItemClick("Import")}>
+        <MenuItem
+          onClick={() => {
+            setIsModalOpen(true);
+          }}
+        >
           Import
         </MenuItem>
+        <Modal open={isModalOpen} onClose={handleModalClose}>
+          <UploadCsv handleModalClose={handleModalClose} />
+        </Modal>
       </Menu>
     </>
   );
