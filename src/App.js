@@ -8,6 +8,9 @@ import AuthorizationPage from "./pages/authorizationPage";
 import HorizontalLinearStepperPage from "./pages/stepperPage";
 import VerifyProfilePage from "./pages/verifyProfilePage";
 import Protected from "./components/protected";
+import Models from "./components/models";
+import ModelsPage from "./pages/modelsPage";
+import BulkCases from "./pages/bulkCases";
 import ClientListPage from "./pages/clientListPage";
 function App() {
   return (
@@ -47,6 +50,24 @@ function App() {
         element={
           <Protected>
             <HorizontalLinearStepperPage />
+          </Protected>
+        }
+      />
+      <Route
+        exact
+        path="/modelsPage"
+        element={
+          <Protected>
+            <ModelsPage />
+          </Protected>
+        }
+      />
+      <Route
+        exact
+        path="/bulk-cases"
+        element={
+          <Protected>
+            <BulkCases />
           </Protected>
         }
       />
