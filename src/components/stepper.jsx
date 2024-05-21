@@ -707,6 +707,7 @@ export default function HorizontalLinearStepper() {
               creditorBasicsInfo={creditorBasicsInfo}
               creditorBusinessDetails={creditorBusinessDetails}
               newDataList={newDataList}
+              totalReceivable={totalReceivable}
               status={status}
               fundedDate={fundedDate}
               CreditorNotes={CreditorNotes}
