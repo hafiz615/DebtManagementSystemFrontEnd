@@ -45,7 +45,13 @@ export default function PaymentSettlement({
     updatedList[index][field] = value;
     setNewDataList(updatedList);
   };
-
+  const handleNumberInput = (e) => {
+    const invalidChars = ["e", "E", ".", "+", "-"];
+    if (invalidChars.includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+  const today = new Date().toISOString().split("T")[0];
   return (
     <>
       <Typography
@@ -92,11 +98,13 @@ export default function PaymentSettlement({
               </Typography>
               <input
                 type="number"
-                placeholder="$2000"
+                placeholder="$ Debt Amount"
                 value={item?.amount}
                 onChange={(e) =>
                   handleInputChange(index, "amount", parseInt(e.target.value))
                 }
+                onKeyDown={handleNumberInput}
+                min="0"
                 style={{
                   backgroundColor: Colors.BG_LIGHT_GRAY,
                   height: "2.5rem",
@@ -134,6 +142,7 @@ export default function PaymentSettlement({
                 Time Period
               </Typography>
               <Dropdown
+                // placeholder="Choose Time Period"
                 initialValue={item?.timePeriod}
                 menuItems={menuItems}
                 backgroundColor={Colors.BG_LIGHT_GRAY}
@@ -175,6 +184,7 @@ export default function PaymentSettlement({
                 onChange={(e) =>
                   handleInputChange(index, "startDate", e.target.value)
                 }
+                max={today}
                 style={{
                   backgroundColor: Colors.BG_LIGHT_GRAY,
                   height: "2.5rem",
@@ -214,7 +224,6 @@ export default function PaymentSettlement({
                   </Typography>
                   <input
                     type="text"
-                    placeholder="5"
                     value={item.frequency}
                     onChange={(e) =>
                       handleInputChange(

@@ -23,7 +23,13 @@ export default function PaymentFields({
     { label: "Canceled", value: "Canceled" },
     { label: "Declared Bankrupcy", value: "Declared Bankrupcy" },
   ];
-
+  const handleNumberInput = (e) => {
+    const invalidChars = ["e", "E", ".", "+", "-"];
+    if (invalidChars.includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+  const today = new Date().toISOString().split("T")[0];
   return (
     <>
       <Typography
@@ -69,9 +75,11 @@ export default function PaymentFields({
 
           <input
             type="number"
-            placeholder="$10,000"
+            placeholder="$ Total Receivable Amount"
             value={totalReceivable}
             onChange={(e) => setTotalReceivable(e.target.value)}
+            onKeyDown={handleNumberInput}
+            min="0"
             style={{
               backgroundColor: Colors.BG_LIGHT_GRAY,
               height: "2.5rem",
@@ -108,9 +116,11 @@ export default function PaymentFields({
           </Typography>
           <input
             type="number"
-            placeholder="$10,000"
+            placeholder="$ Paid Amount"
             value={paidAmount}
             onChange={(e) => setPaidAmount(e.target.value)}
+            onKeyDown={handleNumberInput}
+            min="0"
             style={{
               backgroundColor: Colors.BG_LIGHT_GRAY,
               height: "2.5rem",
@@ -148,9 +158,11 @@ export default function PaymentFields({
           <input
             disabled
             type="number"
-            placeholder="$10,000"
+            placeholder="$ Remaining Amount"
             value={remainingAmount}
+            min="0"
             onChange={(e) => setRemainingAmount(e.target.value)}
+            onKeyDown={handleNumberInput}
             style={{
               backgroundColor: Colors.BG_LIGHT_GRAY,
               height: "2.5rem",
@@ -199,6 +211,7 @@ export default function PaymentFields({
             placeholder="4/2/2024"
             value={lastPaymentDate}
             onChange={(e) => setLastPaymentDate(e.target.value)}
+            max={today}
             style={{
               backgroundColor: Colors.BG_LIGHT_GRAY,
               height: "2.5rem",
@@ -237,7 +250,7 @@ export default function PaymentFields({
             selectedValue={selectedValue}
             setSelectedValue={setSelectedValue}
             menuItems={menuItems}
-            defaultSelectedItem={"Customer"}
+            placeholder="Choose Status"
             backgroundColor={Colors.BG_LIGHT_GRAY}
             width="60%"
           />

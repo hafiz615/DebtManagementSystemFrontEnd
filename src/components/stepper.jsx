@@ -62,7 +62,7 @@ export default function HorizontalLinearStepper() {
     businessAddress: "",
   });
   const [checked, setChecked] = React.useState(false);
-  const [status, setStatus] = useState("Customer");
+  const [status, setStatus] = useState("");
   //Debtor-Contact-State
   const [debtorContactDetails, setDebtorContactDetails] = useState([
     {
@@ -112,7 +112,7 @@ export default function HorizontalLinearStepper() {
   const [paidAmount, setPaidAmount] = useState(null);
   const [remainingAmount, setRemainingAmount] = useState(null);
   const [lastPaymentDate, setLastPaymentDate] = useState("");
-  const [debtorDetailsStatus, setDebtorDetailsStatus] = useState("Customer");
+  const [debtorDetailsStatus, setDebtorDetailsStatus] = useState("");
   const [newDataList, setNewDataList] = useState([
     {
       amount: "",
@@ -158,7 +158,7 @@ export default function HorizontalLinearStepper() {
 
   // error messages
   const [errors, setErrors] = useState({
-    phone: "",
+    businessPhone: "",
     einNumber: "",
     ssn: "",
     basicPhone: "",
@@ -184,7 +184,7 @@ export default function HorizontalLinearStepper() {
           .filter(([key]) => key !== "businessDescription")
           .some(([key, value]) => value === "") ||
         !!debtorBusinessDetails?.businessDescription?.trim()?.length === 0 ||
-        errors?.phone ||
+        errors?.businessPhone ||
         errors?.einNumber ||
         errors?.ssn ||
         errors?.emailValid ||
@@ -271,17 +271,19 @@ export default function HorizontalLinearStepper() {
           }))
         );
       } else {
-        setDebtorContactDetails({
-          name: "",
-          title: "",
-          phone: "",
-          email: "",
-          country: "",
-          state: "",
-          city: "",
-          zipCode: "",
-          relationWithDebtor: "",
-        });
+        setDebtorContactDetails([
+          {
+            name: "",
+            title: "",
+            phone: "",
+            email: "",
+            country: "",
+            state: "",
+            city: "",
+            zipCode: "",
+            relationWithDebtor: "",
+          },
+        ]);
       }
     } else {
       showToast(getDebtorDataInSearch?.response?.data?.message, "error");
@@ -338,17 +340,19 @@ export default function HorizontalLinearStepper() {
           }))
         );
       } else {
-        setCreditorContactDetails({
-          name: "",
-          title: "",
-          phone: "",
-          email: "",
-          country: "",
-          state: "",
-          city: "",
-          zipCode: "",
-          relationWithDebtor: "",
-        });
+        setCreditorContactDetails([
+          {
+            name: "",
+            title: "",
+            phone: "",
+            email: "",
+            country: "",
+            state: "",
+            city: "",
+            zipCode: "",
+            relationWithDebtor: "",
+          },
+        ]);
       }
     } else {
       showToast(getCreditorDataInSearch?.response?.data?.message, "error");
