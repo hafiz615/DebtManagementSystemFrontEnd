@@ -1,14 +1,11 @@
 import React from "react";
-
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
-import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Colors } from "../../config/default";
 import Dropdown from "./../dropdown";
-import { unset } from "lodash";
 
 export default function PaymentSettlement({
   newDataList,
@@ -16,9 +13,6 @@ export default function PaymentSettlement({
   remainingAmount,
   totalAmount,
 }) {
-  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
-  const mediumScreen = useMediaQuery("(min-width:760px) and (max-width:900px)");
-
   const menuItems = [
     { label: "Custom", value: "Custom" },
     { label: "Daily", value: "Daily" },
@@ -51,7 +45,13 @@ export default function PaymentSettlement({
     updatedList[index][field] = value;
     setNewDataList(updatedList);
   };
-
+  const handleNumberInput = (e) => {
+    const invalidChars = ["e", "E", ".", "+", "-"];
+    if (invalidChars.includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+  const today = new Date().toISOString().split("T")[0];
   return (
     <>
       <Typography
@@ -81,9 +81,8 @@ export default function PaymentSettlement({
               lg={3}
               sx={{
                 display: "flex",
-                flexDirection: smallScreen ? "column" : unset,
                 justifyContent: { xs: "space-between", md: "center" },
-                alignItems: smallScreen ? "flex-start" : "center",
+                alignItems: "center",
                 marginBottom: "0.5rem",
               }}
             >
@@ -99,11 +98,13 @@ export default function PaymentSettlement({
               </Typography>
               <input
                 type="number"
-                placeholder="$2000"
+                placeholder="$ Debt Amount"
                 value={item?.amount}
                 onChange={(e) =>
                   handleInputChange(index, "amount", parseInt(e.target.value))
                 }
+                onKeyDown={handleNumberInput}
+                min="0"
                 style={{
                   backgroundColor: Colors.BG_LIGHT_GRAY,
                   height: "2.5rem",
@@ -112,7 +113,7 @@ export default function PaymentSettlement({
                   border: "none",
                   outline: "none",
                   borderRadius: "5px",
-                  width: smallScreen ? "100%" : "60%",
+                  width: "60%",
                 }}
               />
             </Grid>
@@ -125,9 +126,8 @@ export default function PaymentSettlement({
               lg={3}
               sx={{
                 display: "flex",
-                flexDirection: smallScreen ? "column" : unset,
                 justifyContent: { xs: "space-between", md: "center" },
-                alignItems: smallScreen ? "flex-start" : "center",
+                alignItems: "center",
               }}
             >
               <Typography
@@ -142,10 +142,11 @@ export default function PaymentSettlement({
                 Time Period
               </Typography>
               <Dropdown
+                // placeholder="Choose Time Period"
                 initialValue={item?.timePeriod}
                 menuItems={menuItems}
                 backgroundColor={Colors.BG_LIGHT_GRAY}
-                width={smallScreen ? "100%" : "60%"}
+                width="60%"
                 value={item?.timePeriod}
                 onChange={(value) =>
                   handleInputChange(index, "timePeriod", value)
@@ -161,9 +162,8 @@ export default function PaymentSettlement({
               lg={3}
               sx={{
                 display: "flex",
-                flexDirection: smallScreen ? "column" : unset,
                 justifyContent: { xs: "space-between", md: "center" },
-                alignItems: smallScreen ? "flex-start" : "center",
+                alignItems: "center",
                 mt: { xs: "0.5rem", md: "0" },
               }}
             >
@@ -184,6 +184,7 @@ export default function PaymentSettlement({
                 onChange={(e) =>
                   handleInputChange(index, "startDate", e.target.value)
                 }
+                max={today}
                 style={{
                   backgroundColor: Colors.BG_LIGHT_GRAY,
                   height: "2.5rem",
@@ -192,7 +193,7 @@ export default function PaymentSettlement({
                   border: "none",
                   outline: "none",
                   borderRadius: "5px",
-                  width: smallScreen ? "100%" : "60%",
+                  width: "60%",
                 }}
               />
             </Grid>
@@ -205,9 +206,8 @@ export default function PaymentSettlement({
               lg={3}
               sx={{
                 display: "flex",
-                flexDirection: smallScreen ? "column" : unset,
-                justifyContent: { xs: "space-between", md: "center" },
-                alignItems: smallScreen ? "flex-start" : "center",
+                justifyContent: { xs: "space-between", md: "flex-start" },
+                alignItems: "center",
               }}
             >
               {item?.timePeriod !== "Custom" && (
@@ -224,7 +224,6 @@ export default function PaymentSettlement({
                   </Typography>
                   <input
                     type="text"
-                    placeholder="5"
                     value={item.frequency}
                     onChange={(e) =>
                       handleInputChange(
@@ -241,31 +240,23 @@ export default function PaymentSettlement({
                       border: "none",
                       outline: "none",
                       borderRadius: "5px",
-                      width: smallScreen
-                        ? "100%"
-                        : mediumScreen
-                        ? "31%"
-                        : "20%",
-                      marginTop: smallScreen
-                        ? ".5rem"
-                        : mediumScreen
-                        ? ".5rem"
-                        : "0",
+                      width: "20%",
                       marginRight: "0.5rem",
                     }}
                   />
-                  <AddCircleIcon
-                    sx={{ color: Colors.SKY_BLUE }}
-                    onClick={handleAddNewData}
+                </>
+              )}
+
+              <AddCircleIcon
+                sx={{ color: Colors.SKY_BLUE }}
+                onClick={handleAddNewData}
+              />
+              {index !== 0 && (
+                <>
+                  <RemoveCircleIcon
+                    sx={{ color: Colors.ORANGE_COLOR }}
+                    onClick={() => handleRemoveNewData(index)}
                   />
-                  {index !== 0 && (
-                    <>
-                      <RemoveCircleIcon
-                        sx={{ color: Colors.ORANGE_COLOR }}
-                        onClick={() => handleRemoveNewData(index)}
-                      />
-                    </>
-                  )}
                 </>
               )}
             </Grid>

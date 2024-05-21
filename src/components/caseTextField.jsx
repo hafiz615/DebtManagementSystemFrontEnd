@@ -15,6 +15,8 @@ function PaymentsTextFields({
   type,
   error,
   value,
+  onKeyDown,
+  max,
 }) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
 
@@ -38,6 +40,8 @@ function PaymentsTextFields({
         placeholder={placeHolderValue}
         onChange={onChange}
         value={value}
+        onKeyDown={onKeyDown}
+        max={max}
         style={{
           backgroundColor: Colors.BG_LIGHT_GRAY,
           height: "2.5rem",
@@ -51,6 +55,7 @@ function PaymentsTextFields({
           marginRight: marginRight,
           marginLeft: marginLeft,
         }}
+        min={type === "number" ? "0" : undefined}
       />
       {error ? (
         <Box

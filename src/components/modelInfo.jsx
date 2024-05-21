@@ -24,8 +24,8 @@ function ModelInfo({ show, setOpen, GetUsers }) {
     { label: "Female", value: "Female" },
     { label: "Other", value: "Other" },
   ];
-  const [selectedValue, setSelectedValue] = useState("Manager");
-  const [gender, setGender] = useState("Male");
+  const [selectedValue, setSelectedValue] = useState("");
+  const [gender, setGender] = useState("");
   const { showToast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -46,10 +46,10 @@ function ModelInfo({ show, setOpen, GetUsers }) {
 
   const handleInputChange = (field, value, event) => {
     if (field === "phone") {
-      if (value.length > 11) {
+      if (value.length !== 10) {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          phone: "Phone number must be less than 11 digits",
+          phone: "Phone number must be 10 digits",
         }));
       } else {
         setErrors((prevErrors) => ({
@@ -88,7 +88,8 @@ function ModelInfo({ show, setOpen, GetUsers }) {
   };
 
   const isEmailValid = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // Use a more robust email validation regular expression
+    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     return emailRegex.test(email);
   };
 
@@ -135,10 +136,25 @@ function ModelInfo({ show, setOpen, GetUsers }) {
       formData.dob &&
       formData.ssid &&
       formData.address &&
+      gender &&
+      selectedValue &&
       !errors.phone &&
       !errors.ssid
     );
   };
+  const handleNumberInputKeyDown = (e) => {
+    const invalidChars = ["e", "E", ".", "-"];
+    if (invalidChars.includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+  const handleNumberInput = (e) => {
+    const invalidChars = ["e", "E", ".", "+", "-"];
+    if (invalidChars.includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+  const today = new Date().toISOString().split("T")[0];
 
   return (
     <Grid item xs={12} sx={{ paddingX: "1rem" }}>
@@ -161,8 +177,8 @@ function ModelInfo({ show, setOpen, GetUsers }) {
         }}
       >
         <CustomTextField
-          label="User Name"
-          placeHolderValue="Name"
+          label="User Name*"
+          placeHolderValue="Enter Name"
           type="text"
           width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
           onChange={(e) => handleInputChange("userName", e.target.value, e)}
@@ -181,11 +197,11 @@ function ModelInfo({ show, setOpen, GetUsers }) {
               color: Colors.DARK_GRAY,
             }}
           >
-            Gender
+            Gender*
           </Typography>
           <Dropdown
             menuItems={genderItems}
-            defaultSelectedItem={"Male"}
+            placeholder="Enter Gender"
             width="100%"
             height="2.5rem"
             backgroundColor={Colors.BG_LIGHT_GRAY}
@@ -195,21 +211,22 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           />
         </div>
         <CustomTextField
-          label="Email"
+          label="Email*"
           type="text"
           width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
-          placeHolderValue="Email"
+          placeHolderValue="Enter Valid Email"
           onChange={(e) => handleInputChange("email", e.target.value, e)}
           value={formData?.email}
         />
         <CustomTextField
-          label="Phone #"
+          label="Phone #*"
           type="number"
           width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
-          placeHolderValue="Phone"
+          placeHolderValue="Enter Phone"
           onChange={(e) => handleInputChange("phone", e.target.value, e)}
           error={errors?.phone}
           value={formData?.phone}
+          onKeyDown={handleNumberInputKeyDown}
         />
       </Grid>
       <Grid
@@ -227,22 +244,24 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           }}
         >
           <CustomTextField
-            label="DOB"
+            label="DOB*"
             type="date"
-            placeHolderValue="DOB"
+            placeHolderValue="Enter DOB"
             width="100%"
             onChange={(e) => handleInputChange("dob", e.target.value, e)}
             value={formData?.dob}
+            max={today}
           />
         </div>
         <CustomTextField
-          label="SSN"
+          label="SSN*"
           type="number"
           width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
-          placeHolderValue="SSN"
+          placeHolderValue="Enter SSN"
           onChange={(e) => handleInputChange("ssid", e.target.value, e)}
           value={formData?.ssid}
           error={errors?.ssid}
+          onKeyDown={handleNumberInput}
         />
 
         <div
@@ -258,11 +277,11 @@ function ModelInfo({ show, setOpen, GetUsers }) {
               color: Colors.DARK_GRAY,
             }}
           >
-            Role
+            Role*
           </Typography>
           <Dropdown
             menuItems={menuItems}
-            defaultSelectedItem={"Manager"}
+            placeholder="Enter Role"
             height="2.5rem"
             width="100%"
             backgroundColor={Colors.BG_LIGHT_GRAY}
@@ -272,10 +291,10 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           />
         </div>
         <CustomTextField
-          label="Address"
+          label="Address*"
           type="text"
           width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
-          placeHolderValue="Address"
+          placeHolderValue="Enter Address"
           onChange={(e) => handleInputChange("address", e.target.value, e)}
           value={formData?.address}
         />
