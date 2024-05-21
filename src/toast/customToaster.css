@@ -1,6 +1,7 @@
 .custom-toaster.error {
   position: absolute;
-  height: 3em;
+  min-height: 3em;
+  height: max-content;
   width: 34vw;
   top: 0.75em;
   left: 50%;
@@ -16,12 +17,12 @@
 }
 .custom-toaster.success {
   position: absolute;
-  height: 3em;
+  min-height: 3em;
   width: 34vw;
   top: 0.75em;
   left: 50%;
   transform: translateX(-50%);
-  border-right: 3em solid #1aacac;
+  border-right: 3em solid #0091d5;
   background-color: white;
   padding: 10px;
   border-radius: 1.15em;
@@ -74,8 +75,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 1.75em;
-  height: 1.75em;
+  height: max-content;
+  width: max-content;
+  padding: 0.2rem;
   border-radius: 50%;
 }
 
@@ -84,7 +86,7 @@
 }
 
 .custom-toaster-content.success {
-  background-color: #1aacac;
+  background-color: #0091d5;
 }
 
 .custom-toaster-message {

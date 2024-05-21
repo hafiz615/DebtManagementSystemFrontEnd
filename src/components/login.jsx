@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { sign_In } from "../redux/action/action";
@@ -32,7 +32,12 @@ function Login() {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
-
+  useEffect(() => {
+    const auth = localStorage.getItem("token");
+    if (auth) {
+      navigate("/Home");
+    }
+  }, []);
   const navigate = useNavigate();
 
   const handleLoginForm = async () => {

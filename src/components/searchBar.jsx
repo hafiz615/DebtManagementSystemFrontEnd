@@ -46,7 +46,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
   },
 }));
-function SearchBar() {
+function SearchBar({ searchText, setSearchText, SearchFields }) {
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      SearchFields();
+    }
+  };
+
   return (
     <Search
       sx={{
@@ -54,7 +60,7 @@ function SearchBar() {
         alignItems: "center",
         borderRadius: "1rem",
         backgroundColor: Colors.WHITE,
-        height: "3.5rem",
+        height: "3rem",
 
         "&:hover": {
           backgroundColor: Colors.WHITE,
@@ -72,6 +78,9 @@ function SearchBar() {
         placeholder="Search existing debtor..."
         inputProps={{ "aria-label": "search" }}
         sx={{ color: Colors.LIGHT_GRAY, fontFamily: "Nunito" }}
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
+        onKeyPress={handleKeyPress}
       />
 
       {/* <IconButton size="large" aria-label="show filter data" color="inherit">

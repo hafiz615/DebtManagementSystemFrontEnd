@@ -1,24 +1,36 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
-import { Grid, Typography } from "@mui/material";
+import { Grid, Typography, Stepper, Step, StepLabel } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Colors } from "../../config/default";
 import { UserListPage } from "../../constants/appConstants";
-import Dropdown from "../dropdown";
+import TextButton from ".././button";
+import MappingDetails from "./mappingDetails";
 
 function BulkImportCase() {
-  const [selectedValue, setSelectedValue] = useState("3");
+  const [activeStep, setActiveStep] = useState(0);
 
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { AUTHORITY_TEXT } = UserListPage;
 
-  const menuItems = [
-    { label: "5", value: 5 },
-    { label: "7", value: 7 },
-  ];
+  const steps = ["Mapping", "Preview"];
+
+  const handleBack = () => {
+    setActiveStep(0);
+  };
+
+  const handleReset = () => {
+    setActiveStep(0);
+  };
+
+  const handleNext = () => {
+    if (activeStep === 0) {
+      setActiveStep(1);
+    }
+  };
 
   return (
     <Grid
@@ -35,7 +47,7 @@ function BulkImportCase() {
         sx={{
           display: "flex",
           justifyContent: smallScreen ? "flex-start" : "flex-end",
-          marginTop: "1.5rem",
+          marginTop: ".5rem",
         }}
       >
         <Typography
@@ -52,7 +64,7 @@ function BulkImportCase() {
         item
         xs={12}
         sx={{
-          marginTop: "1.5rem",
+          marginTop: ".5rem",
         }}
       >
         <Typography
@@ -70,247 +82,73 @@ function BulkImportCase() {
         item
         xs={12}
         sx={{
-          marginTop: "1.5rem",
+          marginTop: "0.5rem",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        <p style={{ fontWeight: "600" }}>Basic Details</p>
-        <div style={{ display: "flex", gap: "15px", padding: "0px 10px" }}>
-          <p>first Name</p>
-          <Dropdown
-            width="10%"
-            menuItems={menuItems}
-            defaultSelectedItem={"4/2/2024"}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-            backgroundColor={Colors.WHITE}
-            hoverColor={Colors.WHITE}
-          />
-          <p>Last Name</p>
-          <Dropdown
-            width="10%"
-            menuItems={menuItems}
-            defaultSelectedItem={"4/2/2024"}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-            backgroundColor={Colors.WHITE}
-            hoverColor={Colors.WHITE}
-          />
-          <p>Gender</p>
-          <Dropdown
-            width="10%"
-            menuItems={menuItems}
-            defaultSelectedItem={"4/2/2024"}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-            backgroundColor={Colors.WHITE}
-            hoverColor={Colors.WHITE}
-          />
-          <p>Age</p>
-          <Dropdown
-            width="10%"
-            menuItems={menuItems}
-            defaultSelectedItem={"4/2/2024"}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-            backgroundColor={Colors.WHITE}
-            hoverColor={Colors.WHITE}
-          />
-          <p>SSID Number</p>
-          <Dropdown
-            width="10%"
-            menuItems={menuItems}
-            defaultSelectedItem={"4/2/2024"}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-            backgroundColor={Colors.WHITE}
-            hoverColor={Colors.WHITE}
-          />
-        </div>
-        <p style={{ fontWeight: "600" }}>Contact Information</p>
-        <div style={{ display: "flex", gap: "15px", padding: "0px 10px" }}>
-          <p>Primary #</p>
-          <Dropdown
-            width="10%"
-            menuItems={menuItems}
-            defaultSelectedItem={"4/2/2024"}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-            backgroundColor={Colors.WHITE}
-            hoverColor={Colors.WHITE}
-          />
-          <p>Email</p>
-          <Dropdown
-            width="10%"
-            menuItems={menuItems}
-            defaultSelectedItem={"4/2/2024"}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-            backgroundColor={Colors.WHITE}
-            hoverColor={Colors.WHITE}
-          />
-          <p>Address 1</p>
-          <Dropdown
-            width="10%"
-            menuItems={menuItems}
-            defaultSelectedItem={"4/2/2024"}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-            backgroundColor={Colors.WHITE}
-            hoverColor={Colors.WHITE}
-          />
-        </div>
-        <p style={{ fontWeight: "600" }}>Buisness Information</p>
-        <div
-          style={{
-            display: "flex",
-            gap: "15px",
-            padding: "0px 10px",
-          }}
+        <Stepper
+          activeStep={activeStep}
+          alternativeLabel
+          sx={{ width: { xs: "100%", md: "50%" } }}
         >
-          <p>Buisness Name</p>
-          <Dropdown
-            width="10%"
-            menuItems={menuItems}
-            defaultSelectedItem={"4/2/2024"}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-            backgroundColor={Colors.WHITE}
-            hoverColor={Colors.WHITE}
-          />
-          <p>Buisness Type</p>
-          <Dropdown
-            width="10%"
-            menuItems={menuItems}
-            defaultSelectedItem={"4/2/2024"}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-            backgroundColor={Colors.WHITE}
-            hoverColor={Colors.WHITE}
-          />
-          <p>Work Email</p>
-          <Dropdown
-            width="10%"
-            menuItems={menuItems}
-            defaultSelectedItem={"4/2/2024"}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-            backgroundColor={Colors.WHITE}
-            hoverColor={Colors.WHITE}
-          />
-          <p>EIN Number</p>
-          <Dropdown
-            width="10%"
-            menuItems={menuItems}
-            defaultSelectedItem={"4/2/2024"}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-            backgroundColor={Colors.WHITE}
-            hoverColor={Colors.WHITE}
-          />
-          <p>Address 1</p>
-          <Dropdown
-            width="10%"
-            menuItems={menuItems}
-            defaultSelectedItem={"4/2/2024"}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-            backgroundColor={Colors.WHITE}
-            hoverColor={Colors.WHITE}
-          />
-        </div>
-        <Grid
-          sx={{
-            backgroundColor: Colors.WHITE,
-            padding: "10px",
-            m: "1em 0em",
-            borderRadius: "10px",
+          {steps.map((label, index) => {
+            const stepProps = {};
+            const labelProps = {};
+
+            return (
+              <Step key={label} {...stepProps}>
+                <StepLabel {...labelProps}>{label}</StepLabel>
+              </Step>
+            );
+          })}
+        </Stepper>
+      </Grid>
+      <MappingDetails fields={activeStep === 0 ? true : false} />
+
+      <Grid
+        item
+        xs={12}
+        sx={{
+          display: "flex",
+          justifyContent: { xs: "space-between", sm: "flex-end" },
+          margin: "1rem 0rem",
+        }}
+      >
+        <TextButton
+          buttonText="EXIT"
+          disabled={activeStep === 0}
+          onClick={handleBack}
+          backgroundColor={Colors.ORANGE_COLOR}
+          hoverColor={Colors.ORANGE_COLOR}
+          paddingLeft="2rem"
+          paddingRight="2rem"
+          height="2rem"
+          marginRight="1rem"
+        />
+        <TextButton
+          buttonText="RESET"
+          onClick={handleReset}
+          backgroundColor={Colors.DARK_GRAY}
+          hoverColor={Colors.DARK_GRAY}
+          paddingLeft="2rem"
+          paddingRight="2rem"
+          height="2rem"
+          marginRight="1rem"
+        />
+        <TextButton
+          buttonText={activeStep === steps.length - 1 ? "SAVE" : "NEXT"}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+          paddingLeft="2rem"
+          paddingRight="2rem"
+          height="2rem"
+          onClick={() => {
+            handleNext();
           }}
-        >
-          <p style={{ fontWeight: "600" }}>Payment Plan Automation</p>
-          <div style={{ display: "flex", marginLeft: "25px" }}>
-            <p>Total Receivable</p>
-            <Dropdown
-              width="10%"
-              menuItems={menuItems}
-              defaultSelectedItem={"4/2/2024"}
-              selectedValue={selectedValue}
-              setSelectedValue={setSelectedValue}
-              backgroundColor={Colors.WHITE}
-              hoverColor={Colors.WHITE}
-            />
-          </div>
-          <Grid
-            sx={{
-              border: "1px solid grey",
-              height: "30vh",
-              margin: "0px 25px",
-              borderRadius: "10px",
-              overflowY: "auto",
-              "&::-webkit-scrollbar": {
-                width: "10px",
-              },
-              "&::-webkit-scrollbar-thumb": {
-                backgroundColor: "#E5E5E5",
-                borderRadius: "8px",
-              },
-              "&::-webkit-scrollbar-track": {
-                backgroundColor: Colors.WHITE,
-                borderRadius: "8px",
-              },
-            }}
-          >
-            {Array.from({ length: 20 }, (_, index) => (
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  padding: "0px 10px",
-                }}
-              >
-                <p>Debt</p>
-                <Dropdown
-                  width="10%"
-                  menuItems={menuItems}
-                  defaultSelectedItem={"4/2/2024"}
-                  selectedValue={selectedValue}
-                  setSelectedValue={setSelectedValue}
-                  backgroundColor={Colors.WHITE}
-                  hoverColor={Colors.WHITE}
-                />
-                <p>Time Period</p>
-                <Dropdown
-                  width="10%"
-                  menuItems={menuItems}
-                  defaultSelectedItem={"4/2/2024"}
-                  selectedValue={selectedValue}
-                  setSelectedValue={setSelectedValue}
-                  backgroundColor={Colors.WHITE}
-                  hoverColor={Colors.WHITE}
-                />
-                <p>Authorization Date</p>
-                <Dropdown
-                  width="10%"
-                  menuItems={menuItems}
-                  defaultSelectedItem={"4/2/2024"}
-                  selectedValue={selectedValue}
-                  setSelectedValue={setSelectedValue}
-                  backgroundColor={Colors.WHITE}
-                  hoverColor={Colors.WHITE}
-                />
-                <p>Captured Date</p>
-                <Dropdown
-                  width="10%"
-                  menuItems={menuItems}
-                  defaultSelectedItem={"4/2/2024"}
-                  selectedValue={selectedValue}
-                  setSelectedValue={setSelectedValue}
-                  backgroundColor={Colors.WHITE}
-                  hoverColor={Colors.WHITE}
-                />
-              </div>
-            ))}
-          </Grid>
-        </Grid>
+          marginRight="1rem"
+        />
       </Grid>
     </Grid>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 
@@ -18,6 +18,7 @@ export default function PaymentFields({
   setSelectedValue,
 }) {
   const menuItems = [
+    { label: "Customer", value: "Customer" },
     { label: "On hold", value: "On hold" },
     { label: "Canceled", value: "Canceled" },
     { label: "Declared Bankrupcy", value: "Declared Bankrupcy" },
@@ -41,13 +42,19 @@ export default function PaymentFields({
         xs={12}
         sx={{
           justifyContent: "space-between",
+          gap: { xs: "1rem", md: "0" },
         }}
       >
         <Grid
           item
           xs={12}
+          md={6}
           lg={3.9}
-          sx={{ display: "flex", alignItems: "center" }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: { xs: "space-between", lg: "unset" },
+          }}
         >
           <Typography
             sx={{
@@ -80,8 +87,13 @@ export default function PaymentFields({
         <Grid
           item
           xs={12}
+          md={6}
           lg={3.9}
-          sx={{ display: "flex", alignItems: "center" }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: { xs: "space-between", lg: "unset" },
+          }}
         >
           <Typography
             sx={{
@@ -114,8 +126,14 @@ export default function PaymentFields({
         <Grid
           item
           xs={12}
+          md={6}
           lg={3.9}
-          sx={{ display: "flex", alignItems: "center" }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: { xs: "space-between", lg: "unset" },
+            marginTop: { md: "1rem", lg: 0 },
+          }}
         >
           <Typography
             sx={{
@@ -128,6 +146,7 @@ export default function PaymentFields({
             Remaining
           </Typography>
           <input
+            disabled
             type="number"
             placeholder="$10,000"
             value={remainingAmount}
@@ -145,17 +164,24 @@ export default function PaymentFields({
           />
         </Grid>
       </Grid>
+
       <Grid
         container
         sx={{
           marginTop: "1rem",
+          gap: { xs: "1rem", md: "0" },
         }}
       >
         <Grid
           item
           xs={12}
+          md={6}
           lg={3.9}
-          sx={{ display: "flex", alignItems: "center" }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: { xs: "space-between", lg: "unset" },
+          }}
         >
           <Typography
             sx={{
@@ -188,8 +214,13 @@ export default function PaymentFields({
         <Grid
           item
           xs={12}
+          md={6}
           lg={3.9}
-          sx={{ display: "flex", alignItems: "center" }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: { xs: "space-between", lg: "unset" },
+          }}
         >
           <Typography
             sx={{

@@ -10,18 +10,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { Colors } from "../config/default";
 import ModelInfo from "./modelInfo";
 
-// const style = {
-//   position: "absolute",
-//   top: "50%",
-//   left: "50%",
-//   transform: "translate(-50%, -50%)",
-//   width: smallScreen ? "65%" : "55%",
-//   bgcolor: Colors.WHITE,
-//   borderRadius: "10px",
-//   boxShadow: 24,
-//   p: 1.5,
-// };
-export default function BasicModal({ modelButton, show ,GetUsers}) {
+export default function BasicModal({ modelButton, show, GetUsers }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);

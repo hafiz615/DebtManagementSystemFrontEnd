@@ -1,17 +1,17 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
-import { Grid, Typography } from "@mui/material";
+import { Grid, Typography, Box } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { UserListPage } from "../constants/appConstants";
 import { Colors } from "../config/default";
-import CustomizedTabs from "./tabs";
+import { BorderAll } from "@mui/icons-material";
 
-function UserLists() {
+export default function ClientListDetails() {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
-  const { AUTHORITY_TEXT, USER_LIST_HEADING } = UserListPage;
+  const { AUTHORITY_TEXT } = UserListPage;
   return (
     <Grid
       container
@@ -22,6 +22,7 @@ function UserLists() {
       }}
     >
       <Grid
+        container
         item
         xs={12}
         sx={{
@@ -41,6 +42,7 @@ function UserLists() {
         </Typography>
       </Grid>
       <Grid
+        container
         item
         xs={12}
         sx={{
@@ -55,20 +57,44 @@ function UserLists() {
             color: Colors.BLACK,
           }}
         >
-          {USER_LIST_HEADING}
+          Client Name
         </Typography>
       </Grid>
       <Grid
+        container
         item
         xs={12}
         sx={{
           marginTop: "1.5rem",
         }}
       >
-        <CustomizedTabs heading="User Lists" />
+        <Grid container item xs={12} lg={7}>
+          <Grid item xs={12} lg={6} sx={{ border: "1px solid red" }}>
+            <Typography>
+              SSN <span></span>
+            </Typography>
+            <Typography>SSN</Typography>
+            <Typography>SSN</Typography>
+            <Typography>SSN</Typography>
+          </Grid>
+          <Grid item xs={12} lg={6} sx={{ border: "1px solid red" }}>
+            <Typography>SSN</Typography>
+            <Typography>SSN</Typography>
+            <Typography>SSN</Typography>
+          </Grid>
+        </Grid>
+
+        <Grid container item xs={12} lg={5}>
+          <Grid item xs={12} lg={6} sx={{ border: "1px solid red" }}>
+            <Typography>SSN</Typography>
+            <Typography>SSN</Typography>
+          </Grid>
+          <Grid item xs={12} lg={6} sx={{ border: "1px solid red" }}>
+            <Typography>SSN</Typography>
+            <Typography>SSN</Typography>
+          </Grid>
+        </Grid>
       </Grid>
     </Grid>
   );
 }
-
-export default UserLists;

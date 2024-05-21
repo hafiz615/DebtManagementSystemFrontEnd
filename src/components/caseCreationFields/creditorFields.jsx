@@ -1,7 +1,7 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import { Add, RemoveCircle } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
 import PaymentsTextFields from "../caseTextField";
@@ -20,12 +20,58 @@ export default function CreditorFields({
   setFundedDate,
   historicRange,
   setHistoricRange,
+  creditorFieldsError,
+  setCreditorFieldsError,
+  creditorContactError,
+  setCreditorContactError,
+  creditorContactEmailError,
+  setCreditorContactEmailError,
 }) {
+  const isEmailValid = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
   const basicInfoInputChange = (fieldName, value) => {
-    setCreditorBasicsInfo((prevState) => ({
-      ...prevState,
-      [fieldName]: value,
-    }));
+    if (fieldName === "CreditorBasicEmailAddress") {
+      if (!isEmailValid(value)) {
+        setCreditorFieldsError((prevErrors) => ({
+          ...prevErrors,
+          emailValidError: "Email must be valid",
+        }));
+      } else {
+        setCreditorFieldsError((prevErrors) => ({
+          ...prevErrors,
+          emailValidError: "",
+        }));
+      }
+    }
+    if (fieldName === "CreditorBasicPhoneNumber") {
+      if (value.length > 11) {
+        setCreditorFieldsError((prevErrors) => ({
+          ...prevErrors,
+          creditorPhoneError: "Phone number must be less than 11 digits",
+        }));
+      } else {
+        setCreditorFieldsError((prevErrors) => ({
+          ...prevErrors,
+          creditorPhoneError: "",
+        }));
+      }
+    }
+    if (fieldName === "CreditorBasicPhoneNumber") {
+      const inputValue = value;
+      if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
+        setCreditorBasicsInfo((prevState) => ({
+          ...prevState,
+          [fieldName]: value,
+        }));
+      }
+    } else {
+      setCreditorBasicsInfo((prevState) => ({
+        ...prevState,
+        [fieldName]: value,
+      }));
+    }
   };
   const businessInfoInputChange = (fieldName, value) => {
     setCreditorBusinessDetails((prevState) => ({
@@ -41,10 +87,19 @@ export default function CreditorFields({
   };
 
   const historicInputChange = (fieldName, value) => {
-    setHistoricRange((prevState) => ({
-      ...prevState,
-      [fieldName]: parseInt(value),
-    }));
+    if (fieldName === "minimum" || fieldName === "maximum") {
+      if (value === "" || /^\d*\.?\d*$/.test(value)) {
+        setHistoricRange((prevState) => ({
+          ...prevState,
+          [fieldName]: parseInt(value),
+        }));
+      }
+    } else {
+      setHistoricRange((prevState) => ({
+        ...prevState,
+        [fieldName]: parseInt(value),
+      }));
+    }
   };
 
   const handleAddNewContact = () => {
@@ -68,8 +123,41 @@ export default function CreditorFields({
   };
   const handleInputChange = (index, field, value) => {
     const updatedList = [...creditorContactDetails];
-    updatedList[index][field] = value;
-    setCreditorContactDetails(updatedList);
+    if (field === "email") {
+      if (!isEmailValid(value)) {
+        setCreditorContactEmailError((prevErrors) => ({
+          ...prevErrors,
+          [`email${index}`]: "Email must be Valid",
+        }));
+      } else {
+        setCreditorContactEmailError((prevErrors) => ({
+          ...prevErrors,
+          [`email${index}`]: "",
+        }));
+      }
+    }
+    if (field === "phone") {
+      if (value.length > 11) {
+        setCreditorContactError((prevErrors) => ({
+          ...prevErrors,
+          [`phone${index}`]: "Phone number must be less than 11 digits",
+        }));
+      } else {
+        setCreditorContactError((prevErrors) => ({
+          ...prevErrors,
+          [`phone${index}`]: "",
+        }));
+      }
+    }
+    if (field === "phone" || field === "zipCode") {
+      if (value === "" || /^\d*\.?\d*$/.test(value)) {
+        updatedList[index][field] = value;
+        setCreditorContactDetails(updatedList);
+      }
+    } else {
+      updatedList[index][field] = value;
+      setCreditorContactDetails(updatedList);
+    }
   };
   return (
     <>
@@ -149,6 +237,7 @@ export default function CreditorFields({
             onChange={(e) =>
               basicInfoInputChange("CreditorBasicEmailAddress", e.target.value)
             }
+            error={creditorFieldsError?.emailValidError}
           />
           <PaymentsTextFields
             type="number"
@@ -159,6 +248,7 @@ export default function CreditorFields({
             onChange={(e) =>
               basicInfoInputChange("CreditorBasicPhoneNumber", e.target.value)
             }
+            error={creditorFieldsError?.creditorPhoneError}
           />
         </Grid>
         <Typography
@@ -169,7 +259,7 @@ export default function CreditorFields({
           }}
           gutterBottom
         >
-          Notes
+          Notes (optional)
         </Typography>
         <input
           type="text"
@@ -229,7 +319,7 @@ export default function CreditorFields({
             value={fundedDate}
             onChange={(e) => fundedInputChange(e.target.value)}
           />
-          <Typography
+          {/* <Typography
             sx={{
               fontFamily: "Nunito",
               fontWeight: "500",
@@ -238,7 +328,7 @@ export default function CreditorFields({
             }}
           >
             25/12/2024
-          </Typography>
+          </Typography> */}
         </Grid>
         <Grid
           item
@@ -369,10 +459,11 @@ export default function CreditorFields({
                     label="Phone"
                     placeHolderValue="Enter Phone Number"
                     width="97%"
-                    value={item?.phoneNumber}
+                    value={item?.phone}
                     onChange={(e) =>
                       handleInputChange(index, "phone", e.target.value)
                     }
+                    error={creditorContactError?.[`phone${index}`]}
                   />
                   <PaymentsTextFields
                     type="text"
@@ -383,6 +474,7 @@ export default function CreditorFields({
                     onChange={(e) =>
                       handleInputChange(index, "email", e.target.value)
                     }
+                    error={creditorContactEmailError?.[`email${index}`]}
                   />
 
                   <PaymentsTextFields

@@ -6,36 +6,97 @@ import TextButton from "./button";
 import CustomTextField from "./customTextfield";
 import { CreateUser } from "../services/services";
 import { useToast } from "../toast/toastContext";
+import Dropdown from "./dropdown";
+import { Colors } from "../config/default";
 
 function ModelInfo({ show, setOpen, GetUsers }) {
+  const menuItems = [
+    { label: "Manager", value: "Manager" },
+    { label: "Negotiator", value: "Negotiator" },
+  ];
+  const genderItems = [
+    { label: "Male", value: "Male" },
+    { label: "Female", value: "Female" },
+    { label: "Other", value: "Other" },
+  ];
+  const [selectedValue, setSelectedValue] = useState("Manager");
+  const [gender, setGender] = useState("Male");
   const { showToast } = useToast();
+
   const [formData, setFormData] = useState({
     userName: "",
     email: "",
-    gender: "",
     phone: "",
     dob: "",
     ssid: "",
-    role: "",
     address: "",
   });
+
+  const [errors, setErrors] = useState({
+    phone: "",
+    ssid: "",
+  });
+
   const [loading, setLoading] = useState(false);
-  const handleInputChange = (field, value) => {
-    setFormData({
-      ...formData,
-      [field]: value,
-    });
+
+  const handleInputChange = (field, value, event) => {
+    if (field === "phone") {
+      if (value.length > 11) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          phone: "Phone number must be less than 11 digits",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          phone: "",
+        }));
+      }
+    }
+    if (field === "ssid") {
+      if (value.length !== 9) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          ssid: "SSN must be 9 digits",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          ssid: "",
+        }));
+      }
+    }
+    if (field === "ssid" || field === "phone") {
+      const inputValue = value;
+      if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
+        setFormData({
+          ...formData,
+          [field]: value,
+        });
+      }
+    } else {
+      setFormData({
+        ...formData,
+        [field]: value,
+      });
+    }
   };
+
+  const isEmailValid = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
     const params = {
       name: formData?.userName,
       email: formData?.email,
-      role: formData?.role,
+      role: selectedValue,
       SSID: formData?.ssid,
       dateOfBirth: formData?.dob,
       phone: formData?.phone,
-      gender: formData?.gender,
+      gender: gender,
       address: formData?.address,
       createdBy: "Admin",
     };
@@ -48,11 +109,9 @@ function ModelInfo({ show, setOpen, GetUsers }) {
       setFormData({
         userName: "",
         email: "",
-        gender: "",
         phone: "",
         dob: "",
         ssid: "",
-        role: "",
         address: "",
       });
       setOpen(false);
@@ -62,6 +121,20 @@ function ModelInfo({ show, setOpen, GetUsers }) {
     }
     setLoading(false);
   };
+
+  const isFormValid = () => {
+    return (
+      formData.userName &&
+      isEmailValid(formData.email) &&
+      formData.phone &&
+      formData.dob &&
+      formData.ssid &&
+      formData.address &&
+      !errors.phone &&
+      !errors.ssid
+    );
+  };
+
   return (
     <Grid item xs={12} sx={{ paddingX: "1rem" }}>
       <Typography
@@ -89,25 +162,48 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           label="User Name"
           placeHolderValue="Name"
           type="text"
-          onChange={(e) => handleInputChange("userName", e.target.value)}
+          width="10rem"
+          onChange={(e) => handleInputChange("userName", e.target.value, e)}
+          value={formData?.userName}
         />
-        <CustomTextField
-          label="Gender"
-          type="text"
-          placeHolderValue="Gender"
-          onChange={(e) => handleInputChange("gender", e.target.value)}
-        />
+        <div style={{ width: "10rem" }}>
+          <Typography
+            sx={{
+              fontWeight: "500",
+              fontFamily: "Nunito",
+              marginLeft: "1rem",
+              color: Colors.DARK_GRAY,
+            }}
+          >
+            Gender
+          </Typography>
+          <Dropdown
+            menuItems={genderItems}
+            defaultSelectedItem={"Male"}
+            width="100%"
+            height="2.5rem"
+            backgroundColor={Colors.BG_LIGHT_GRAY}
+            hoverColor={Colors.BG_LIGHT_GRAY}
+            selectedValue={gender}
+            setSelectedValue={setGender}
+          />
+        </div>
         <CustomTextField
           label="Email"
           type="text"
+          width="10rem"
           placeHolderValue="Email"
-          onChange={(e) => handleInputChange("email", e.target.value)}
+          onChange={(e) => handleInputChange("email", e.target.value, e)}
+          value={formData?.email}
         />
         <CustomTextField
           label="Phone #"
           type="number"
+          width="10rem"
           placeHolderValue="Phone"
-          onChange={(e) => handleInputChange("phone", e.target.value)}
+          onChange={(e) => handleInputChange("phone", e.target.value, e)}
+          error={errors?.phone}
+          value={formData?.phone}
         />
       </Grid>
       <Grid
@@ -122,32 +218,55 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           marginTop: "1rem",
         }}
       >
-        <div style={{ width: "23%" }}>
+        <div style={{ width: "10rem" }}>
           <CustomTextField
             label="DOB"
             type="date"
             placeHolderValue="DOB"
             width="100%"
-            onChange={(e) => handleInputChange("dob", e.target.value)}
+            onChange={(e) => handleInputChange("dob", e.target.value, e)}
+            value={formData?.dob}
           />
         </div>
         <CustomTextField
-          label="SSID"
+          label="SSN"
           type="number"
-          placeHolderValue="SSID"
-          onChange={(e) => handleInputChange("ssid", e.target.value)}
+          width="10rem"
+          placeHolderValue="SSN"
+          onChange={(e) => handleInputChange("ssid", e.target.value, e)}
+          value={formData?.ssid}
+          error={errors?.ssid}
         />
-        <CustomTextField
-          label="Role"
-          type="text"
-          placeHolderValue="Role"
-          onChange={(e) => handleInputChange("role", e.target.value)}
-        />
+
+        <div style={{ width: "10rem" }}>
+          <Typography
+            sx={{
+              fontWeight: "500",
+              fontFamily: "Nunito",
+              marginLeft: "1rem",
+              color: Colors.DARK_GRAY,
+            }}
+          >
+            Role
+          </Typography>
+          <Dropdown
+            menuItems={menuItems}
+            defaultSelectedItem={"Manager"}
+            height="2.5rem"
+            width="100%"
+            backgroundColor={Colors.BG_LIGHT_GRAY}
+            hoverColor={Colors.BG_LIGHT_GRAY}
+            selectedValue={selectedValue}
+            setSelectedValue={setSelectedValue}
+          />
+        </div>
         <CustomTextField
           label="Address"
           type="text"
+          width="10rem"
           placeHolderValue="Address"
-          onChange={(e) => handleInputChange("address", e.target.value)}
+          onChange={(e) => handleInputChange("address", e.target.value, e)}
+          value={formData?.address}
         />
       </Grid>
 
@@ -166,6 +285,7 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           height="2rem"
           marginBottom="2rem"
           onClick={handleSubmit}
+          disabled={!isFormValid()}
         />
       </Grid>
     </Grid>

@@ -50,10 +50,63 @@ export default function PaymentsTabs() {
     "Actions",
   ];
 
-  function createData(name, dob, gender, email, ssid, role, phone, address) {
-    return { name, dob, gender, email, ssid, role, phone, address };
+  function createData(
+    debtor,
+    dueDate,
+    tryDate,
+    totalDebt,
+    ssid,
+    caseOwner,
+    actions
+  ) {
+    return { debtor, dueDate, tryDate, totalDebt, ssid, caseOwner, actions };
   }
   const tableData = [
+    createData(
+      "User Name",
+      "4/2/2024",
+      "4/6/2024",
+      "$3,254.00",
+      "721-07-4426",
+      "Negotiator",
+      "+18143008957"
+    ),
+    createData(
+      "User Name",
+      "4/2/2024",
+      "4/6/2024",
+      "$3,254.00",
+      "721-07-4426",
+      "Negotiator",
+      "+18143008957"
+    ),
+    createData(
+      "User Name",
+      "4/2/2024",
+      "4/6/2024",
+      "$3,254.00",
+      "721-07-4426",
+      "Negotiator",
+      "+18143008957"
+    ),
+    createData(
+      "User Name",
+      "4/2/2024",
+      "4/6/2024",
+      "$3,254.00",
+      "721-07-4426",
+      "Negotiator",
+      "+18143008957"
+    ),
+    createData(
+      "User Name",
+      "4/2/2024",
+      "4/6/2024",
+      "$3,254.00",
+      "721-07-4426",
+      "Negotiator",
+      "+18143008957"
+    ),
     createData(
       "User Name",
       "4/2/2024",
@@ -92,7 +145,7 @@ export default function PaymentsTabs() {
       "+18143008957"
     ),
     createData(
-      "User Name",
+      "User khan",
       "4/2/2024",
       "4/6/2024",
       "$3,254.00",

@@ -11,6 +11,7 @@ import Protected from "./components/protected";
 import Models from "./components/models";
 import ModelsPage from "./pages/modelsPage";
 import BulkCases from "./pages/bulkCases";
+import ClientListPage from "./pages/clientListPage";
 function App() {
   return (
     <Routes>
@@ -33,6 +34,7 @@ function App() {
           </Protected>
         }
       />
+
       <Route
         exact
         path="/authorization-details"
@@ -69,7 +71,22 @@ function App() {
           </Protected>
         }
       />
+      <Route
+        exact
+        path="/client-listing"
+        element={
+          <Protected>
+            <ClientListPage />
+          </Protected>
+        }
+      />
+
       <Route exact path="/set-password" element={<VerifyProfilePage />} />
+      <Route
+        exact
+        path="/client-list-details"
+        element={<VerifyProfilePage />}
+      />
     </Routes>
   );
 }
