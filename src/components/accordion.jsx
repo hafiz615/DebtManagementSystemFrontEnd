@@ -91,7 +91,7 @@ const columns = [
   },
   {
     field: "ssid",
-    headerName: "SSID",
+    headerName: "SSN",
     flex: 1,
     minWidth: 90,
   },
