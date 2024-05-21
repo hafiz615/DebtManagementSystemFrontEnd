@@ -73,7 +73,7 @@ const columns = [
   },
   {
     field: "ssid",
-    headerName: "SSID",
+    headerName: "SSN",
     flex: 1,
     minWidth: 70,
   },
@@ -129,7 +129,7 @@ export default function CustomizedTabs({ heading }) {
       userArray?.map((item, index) => ({
         id: index,
         name: item?.name || "-",
-        dob: item?.dateOfBirth || "-",
+        dob: new Date(item?.dateOfBirth).toLocaleDateString() || "-",
         gender: item?.gender || "-",
         email: item?.email || "-",
         ssid: item?.SSID || "-",

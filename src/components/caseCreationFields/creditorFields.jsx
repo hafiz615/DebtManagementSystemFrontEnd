@@ -28,7 +28,8 @@ export default function CreditorFields({
   setCreditorContactEmailError,
 }) {
   const isEmailValid = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // Use a more robust email validation regular expression
+    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     return emailRegex.test(email);
   };
   const basicInfoInputChange = (fieldName, value) => {
@@ -46,10 +47,10 @@ export default function CreditorFields({
       }
     }
     if (fieldName === "CreditorBasicPhoneNumber") {
-      if (value.length > 11) {
+      if (value.length !== 10) {
         setCreditorFieldsError((prevErrors) => ({
           ...prevErrors,
-          creditorPhoneError: "Phone number must be less than 11 digits",
+          creditorPhoneError: "Phone number must be 10 digits",
         }));
       } else {
         setCreditorFieldsError((prevErrors) => ({
@@ -137,10 +138,10 @@ export default function CreditorFields({
       }
     }
     if (field === "phone") {
-      if (value.length > 11) {
+      if (value.length !== 10) {
         setCreditorContactError((prevErrors) => ({
           ...prevErrors,
-          [`phone${index}`]: "Phone number must be less than 11 digits",
+          [`phone${index}`]: "Phone number must be 10 digits",
         }));
       } else {
         setCreditorContactError((prevErrors) => ({
@@ -159,6 +160,19 @@ export default function CreditorFields({
       setCreditorContactDetails(updatedList);
     }
   };
+  const handleNumberInputKeyDown = (e) => {
+    const invalidChars = ["e", "E", ".", "-"];
+    if (invalidChars.includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+  const handleNumberInput = (e) => {
+    const invalidChars = ["e", "E", ".", "+", "-"];
+    if (invalidChars.includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+  const today = new Date().toISOString().split("T")[0];
   return (
     <>
       <Grid
@@ -170,6 +184,7 @@ export default function CreditorFields({
           marginTop: { xs: ".5rem", xl: "0rem" },
           backgroundColor: Colors.WHITE,
           padding: "1rem",
+          height: "350px",
         }}
       >
         <Typography
@@ -181,8 +196,8 @@ export default function CreditorFields({
         <Grid container item xs={12}>
           <PaymentsTextFields
             type="text"
-            label="Company Name"
-            placeHolderValue="Company Name"
+            label="Company Name*"
+            placeHolderValue="Enter Company Name"
             width="97%"
             value={creditorBusinessDetails?.businessCompanyName}
             onChange={(e) =>
@@ -191,8 +206,8 @@ export default function CreditorFields({
           />
           <PaymentsTextFields
             type="text"
-            label="Business Category"
-            placeHolderValue="Business Category"
+            label="Business Category*"
+            placeHolderValue="Enter Business Category"
             width="97%"
             value={creditorBusinessDetails?.businessCategory}
             onChange={(e) =>
@@ -220,8 +235,8 @@ export default function CreditorFields({
         >
           <PaymentsTextFields
             type="text"
-            label="Full Name"
-            placeHolderValue="Full Name"
+            label="Full Name*"
+            placeHolderValue="Enter Full Name"
             width="97%"
             value={creditorBasicsInfo?.CreditorBasicFullName}
             onChange={(e) =>
@@ -230,8 +245,8 @@ export default function CreditorFields({
           />
           <PaymentsTextFields
             type="text"
-            label="Email Address"
-            placeHolderValue="Enter Email"
+            label="Email Address*"
+            placeHolderValue="Enter Valid Email"
             width="97%"
             value={creditorBasicsInfo?.CreditorBasicEmailAddress}
             onChange={(e) =>
@@ -241,7 +256,7 @@ export default function CreditorFields({
           />
           <PaymentsTextFields
             type="number"
-            label="Phone #."
+            label="Phone #*"
             placeHolderValue="Enter Phone Number"
             width="97%"
             value={creditorBasicsInfo?.CreditorBasicPhoneNumber}
@@ -249,6 +264,7 @@ export default function CreditorFields({
               basicInfoInputChange("CreditorBasicPhoneNumber", e.target.value)
             }
             error={creditorFieldsError?.creditorPhoneError}
+            onKeyDown={handleNumberInputKeyDown}
           />
         </Grid>
         <Typography
@@ -288,7 +304,7 @@ export default function CreditorFields({
           marginTop: { xs: ".5rem", xl: "0rem" },
           backgroundColor: Colors.WHITE,
           padding: "1rem",
-          height: "320px",
+          height: "350px",
         }}
       >
         <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
@@ -310,7 +326,7 @@ export default function CreditorFields({
               marginRight: "1rem",
             }}
           >
-            Last Funded Date
+            Last Funded Date*
           </Typography>
           <PaymentsTextFields
             type="date"
@@ -318,17 +334,8 @@ export default function CreditorFields({
             width="100%"
             value={fundedDate}
             onChange={(e) => fundedInputChange(e.target.value)}
+            max={today}
           />
-          {/* <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              color: Colors.DARK_GRAY,
-              marginLeft: "0.5rem",
-            }}
-          >
-            25/12/2024
-          </Typography> */}
         </Grid>
         <Grid
           item
@@ -365,7 +372,7 @@ export default function CreditorFields({
                   marginRight: ".7rem",
                 }}
               >
-                Minimum
+                Minimum*
               </Typography>
               <PaymentsTextFields
                 type="number"
@@ -373,6 +380,7 @@ export default function CreditorFields({
                 width="97%"
                 value={historicRange?.minimum}
                 onChange={(e) => historicInputChange("minimum", e.target.value)}
+                onKeyDown={handleNumberInput}
               />
             </Grid>
             <Grid item xs={12} sx={{ display: "flex", marginTop: "1rem" }}>
@@ -383,7 +391,7 @@ export default function CreditorFields({
                   marginRight: ".5rem",
                 }}
               >
-                Maximum
+                Maximum*
               </Typography>
               <PaymentsTextFields
                 type="number"
@@ -391,6 +399,7 @@ export default function CreditorFields({
                 width="97%"
                 value={historicRange?.maximum}
                 onChange={(e) => historicInputChange("maximum", e.target.value)}
+                onKeyDown={handleNumberInput}
               />
             </Grid>
           </Grid>
@@ -464,6 +473,7 @@ export default function CreditorFields({
                       handleInputChange(index, "phone", e.target.value)
                     }
                     error={creditorContactError?.[`phone${index}`]}
+                    onKeyDown={handleNumberInputKeyDown}
                   />
                   <PaymentsTextFields
                     type="text"
@@ -515,6 +525,7 @@ export default function CreditorFields({
                     onChange={(e) =>
                       handleInputChange(index, "zipCode", e.target.value)
                     }
+                    onKeyDown={handleNumberInput}
                   />
                 </Grid>
                 <Grid
