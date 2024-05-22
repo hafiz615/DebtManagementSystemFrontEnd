@@ -5,7 +5,7 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 
 import { Colors } from "../config/default";
-import CustomizedTables from "./paymentTable";
+import PaymentTabsTable from "./paymentsTabTable";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -222,16 +222,16 @@ export default function PaymentsTabs() {
         }}
       >
         {value === 0 && (
-          <CustomizedTables data={tableData} headerData={headers} />
+          <PaymentTabsTable data={tableData} headerData={headers} />
         )}
         {value === 1 && (
-          <CustomizedTables data={tableData} headerData={headers} />
+          <PaymentTabsTable data={tableData} headerData={headers} />
         )}
         {value === 2 && (
-          <CustomizedTables data={tableData} headerData={headers} />
+          <PaymentTabsTable data={tableData} headerData={headers} />
         )}
         {value === 3 && (
-          <CustomizedTables data={tableData} headerData={headers} />
+          <PaymentTabsTable data={tableData} headerData={headers} />
         )}
       </Box>
     </Box>

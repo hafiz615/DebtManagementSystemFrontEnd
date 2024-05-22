@@ -46,7 +46,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
   },
 }));
-function SearchBar({ searchText, setSearchText, SearchFields }) {
+function SearchBar({ searchText, setSearchText, SearchFields, placeholder }) {
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       SearchFields();
@@ -75,7 +75,7 @@ function SearchBar({ searchText, setSearchText, SearchFields }) {
         />
       </SearchIconWrapper>
       <StyledInputBase
-        placeholder="Search existing debtor..."
+        placeholder={placeholder}
         inputProps={{ "aria-label": "search" }}
         sx={{ color: Colors.LIGHT_GRAY, fontFamily: "Nunito" }}
         value={searchText}
