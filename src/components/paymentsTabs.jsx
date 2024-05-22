@@ -45,7 +45,7 @@ export default function PaymentsTabs() {
     "Due Date",
     "Try Date",
     "Total Debt",
-    "SSID",
+    "SSN",
     "Case Owner",
     "Actions",
   ];

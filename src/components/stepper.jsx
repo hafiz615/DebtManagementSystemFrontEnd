@@ -767,7 +767,7 @@ export default function HorizontalLinearStepper() {
                   handleNext();
                 }}
                 marginRight="1rem"
-                // disabled={disableButton || loading}
+                disabled={disableButton || loading}
               />
             </Grid>
           </Grid>
