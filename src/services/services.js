@@ -102,3 +102,13 @@ export const GetCreditorSearch = async (payload) => {
     return error;
   }
 };
+export const GetAllClients = async () => {
+  try {
+    return await axios.get(
+      BASE_URL + "/v1/debtor/listing/search",
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

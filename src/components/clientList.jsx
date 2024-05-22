@@ -4,12 +4,15 @@ import { useSelector } from "react-redux";
 
 import { Grid, Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-// import { isEqual } from "lodash";
+import { isEqual } from "lodash";
 import { useNavigate } from "react-router-dom";
 import { UserListPage } from "../constants/appConstants";
 import { Colors } from "../config/default";
 import SearchBar from "./searchBar";
 import ListTable from "./listTable";
+import { GetAllClients } from "../services/services";
+import { useToast } from "../toast/toastContext";
+import CircularProgress from "@mui/material/CircularProgress";
 const headers = [
   // "Index",
   "Name",
@@ -18,51 +21,51 @@ const headers = [
   "Client Status",
   "Total Dept",
 ];
-function createData(
-  debtor,
-  dueDate,
-  tryDate,
-  totalDebt,
-  ssid,
-  caseOwner,
-  actions
-) {
-  return { debtor, dueDate, tryDate, totalDebt, ssid, caseOwner, actions };
-}
-const tableData = [
-  createData("User Name", "03", "03", "Lorem Ipsum", "$10,000"),
-  createData("User Name", "03", "03", "Lorem Ipsum", "$10,000"),
-  createData("User Name", "03", "03", "Lorem Ipsum", "$10,000"),
-  createData("User Name", "03", "03", "Lorem Ipsum", "$10,000"),
-  createData("User Name", "03", "03", "Lorem Ipsum", "$10,000"),
-  createData("User Name", "03", "03", "Lorem Ipsum", "$10,000"),
-  createData("User Name", "03", "03", "Lorem Ipsum", "$10,000"),
-];
+
 export default function ClientList() {
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { AUTHORITY_TEXT } = UserListPage;
+
   const [rows, setRows] = useState([]);
 
-  useEffect(() => {
-    // Simulate fetching data from an API
-    const fetchData = () => {
-      const generatedData = tableData.map((item, index) => ({
-        // id: index,
-        debtor: item.debtor,
-        dueDate: item.dueDate,
-        tryDate: item.tryDate,
-        totalDebt: item.totalDebt,
-        ssid: item.ssid,
-        caseOwner: item.caseOwner,
-        actions: item.actions,
-      }));
-      setRows(generatedData);
-    };
+  const [userArray, setUserArray] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-    fetchData();
+  const GetClients = async () => {
+    setLoading(true);
+    const getClients = await GetAllClients();
+    if (getClients?.status === 200) {
+      setUserArray(getClients?.data?.data);
+    } else {
+      const errorMessage = getClients?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    GetClients();
   }, []);
+  useEffect(() => {
+    const generatedData =
+      userArray &&
+      userArray?.map((item, index) => ({
+        // id: index,
+        name: item?.debtorName || "-",
+        totalCases: item?.totalCases || "-",
+        totalCreditors: item?.totalCreditors || "-",
+        status: item?.status || "-",
+        totalDebt: item?.totalDebt || "-",
+      }));
+
+    if (!isEqual(generatedData, userArray)) {
+      setRows(generatedData);
+    }
+  }, [userArray, rows]);
+
   const handleRowClick = (id) => {
     localStorage.setItem("route", "client-list-details");
     navigate(`/client-list-details/${id}`);
@@ -143,6 +146,7 @@ export default function ClientList() {
         </Typography>
         <SearchBar placeholder="Search Creditor..." />
       </Grid>
+
       <Grid
         item
         xs={12}
@@ -154,11 +158,28 @@ export default function ClientList() {
           justifyContent: "center",
         }}
       >
-        <ListTable
-          headerData={headers}
-          data={rows}
-          onRowClick={handleRowClick}
-        />
+        {loading ? (
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "50vh",
+            }}
+          >
+            <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
+          </Grid>
+        ) : (
+          <>
+            <ListTable
+              headerData={headers}
+              data={rows}
+              onRowClick={handleRowClick}
+            />
+          </>
+        )}
       </Grid>
     </Grid>
   );
