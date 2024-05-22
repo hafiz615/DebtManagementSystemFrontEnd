@@ -48,6 +48,7 @@ export default function CreditorDetails({
           searchText={searchText}
           setSearchText={setSearchText}
           SearchFields={SearchFields}
+          placeholder="Search by Email and Phone..."
         />
       </Grid>
       {loading ? (

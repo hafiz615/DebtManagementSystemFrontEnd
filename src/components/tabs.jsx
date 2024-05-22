@@ -15,6 +15,7 @@ import DataTable from "./table";
 import { GetAllUsers } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import CircularProgress from "@mui/material/CircularProgress";
+// import ListTable from "./listTable";
 
 const AntTabs = styled(Tabs)({
   border: "none",
@@ -92,6 +93,12 @@ const columns = [
   {
     field: "address",
     headerName: "Address",
+    flex: 1,
+    minWidth: 70,
+  },
+  {
+    field: "actions",
+    headerName: "Actions",
     flex: 1,
     minWidth: 70,
   },
@@ -208,7 +215,10 @@ export default function CustomizedTabs({ heading }) {
             <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
           </Grid>
         ) : (
-          <DataTable rows={rows} columns={columns} />
+          <>
+            {/* <ListTable rows={rows} columns={columns} /> */}
+            <DataTable rows={rows} columns={columns} />
+          </>
         )}
       </Grid>
     </>

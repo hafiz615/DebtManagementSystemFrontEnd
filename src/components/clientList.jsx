@@ -4,121 +4,68 @@ import { useSelector } from "react-redux";
 
 import { Grid, Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { isEqual } from "lodash";
-
+// import { isEqual } from "lodash";
+import { useNavigate } from "react-router-dom";
 import { UserListPage } from "../constants/appConstants";
 import { Colors } from "../config/default";
-import DataTable from "./table";
 import SearchBar from "./searchBar";
-const columns = [
-  {
-    field: "name",
-    headerName: "Name",
-    flex: 1,
-    minWidth: 70,
-  },
-  {
-    field: "numberOfCases",
-    headerName: "Number of Cases",
-    flex: 1,
-    minWidth: 70,
-  },
-  {
-    field: "numberOfCreditors",
-    headerName: "Number of Creditors",
-    flex: 1,
-    minWidth: 70,
-  },
-  {
-    field: "clientStatus",
-    headerName: "Client Status",
-    flex: 1,
-    minWidth: 70,
-  },
-  {
-    field: "totalDept",
-    headerName: "Total Dept",
-    flex: 1,
-    minWidth: 70,
-  },
+import ListTable from "./listTable";
+const headers = [
+  "Index",
+  "Name",
+  "Number of Cases",
+  "Number of Creditors",
+  "Client Status",
+  "Total Dept",
 ];
-const rowArray = [
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
+function createData(
+  debtor,
+  dueDate,
+  tryDate,
+  totalDebt,
+  ssid,
+  caseOwner,
+  actions
+) {
+  return { debtor, dueDate, tryDate, totalDebt, ssid, caseOwner, actions };
+}
+const tableData = [
+  createData("User Name", "03", "03", "Lorem Ipsum", "$10,000"),
+  createData("User Name", "03", "03", "Lorem Ipsum", "$10,000"),
+  createData("User Name", "03", "03", "Lorem Ipsum", "$10,000"),
+  createData("User Name", "03", "03", "Lorem Ipsum", "$10,000"),
+  createData("User Name", "03", "03", "Lorem Ipsum", "$10,000"),
+  createData("User Name", "03", "03", "Lorem Ipsum", "$10,000"),
+  createData("User Name", "03", "03", "Lorem Ipsum", "$10,000"),
 ];
 export default function ClientList() {
+  const navigate = useNavigate();
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { AUTHORITY_TEXT } = UserListPage;
   const [rows, setRows] = useState([]);
-
   useEffect(() => {
-    const generatedData = rowArray?.map((item, index) => ({
-      id: index,
-      name: item?.name,
-      numberOfCases: item?.numberOfCases,
-      numberOfCreditors: item?.numberOfCreditors,
-      clientStatus: item?.clientStatus,
-      totalDept: item?.totalDept,
-    }));
-    if (!isEqual(generatedData, rowArray)) {
+    // Simulate fetching data from an API
+    const fetchData = () => {
+      const generatedData = tableData.map((item, index) => ({
+        id: index,
+        debtor: item.debtor,
+        dueDate: item.dueDate,
+        tryDate: item.tryDate,
+        totalDebt: item.totalDebt,
+        ssid: item.ssid,
+        caseOwner: item.caseOwner,
+        actions: item.actions,
+      }));
       setRows(generatedData);
-    }
+    };
+
+    fetchData();
   }, []);
+  const handleRowClick = (id) => {
+    localStorage.setItem("route", "client-list-details");
+    navigate(`/client-list-details/${id}`);
+  };
   return (
     <Grid
       container
@@ -166,9 +113,8 @@ export default function ClientList() {
         </Typography>
       </Grid>
       <Grid
-        container
         item
-        xs={11.9}
+        xs={12}
         sx={{
           marginTop: "1.5rem",
           display: "flex",
@@ -177,33 +123,41 @@ export default function ClientList() {
       >
         <Typography
           sx={{
-            padding: "1rem",
+            paddingLeft: "0.8rem",
+            paddingRight: "0.8rem",
             bgcolor: Colors.WHITE,
             width: "max-content",
             borderTopLeftRadius: "10px",
             borderTopRightRadius: "10px",
             fontWeight: "600",
+            fontSize: "0.8rem",
             marginLeft: "2.5rem",
             height: "3.5rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
           Clients List
         </Typography>
-        <SearchBar />
+        <SearchBar placeholder="Search Creditor..." />
       </Grid>
       <Grid
         item
-        xs={11.9}
+        xs={12}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px ",
-          // height: "58vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
         }}
       >
-        <DataTable rows={rows} columns={columns} />
+        <ListTable
+          headerData={headers}
+          data={rows}
+          onRowClick={handleRowClick}
+        />
       </Grid>
     </Grid>
   );
