@@ -8,10 +8,11 @@ import AuthorizationPage from "./pages/authorizationPage";
 import HorizontalLinearStepperPage from "./pages/stepperPage";
 import VerifyProfilePage from "./pages/verifyProfilePage";
 import Protected from "./components/protected";
-import Models from "./components/models";
 import ModelsPage from "./pages/modelsPage";
 import BulkCases from "./pages/bulkCases";
 import ClientListPage from "./pages/clientListPage";
+
+import ClientListDetailsPage from "./pages/clientListDetails";
 function App() {
   return (
     <Routes>
@@ -71,6 +72,8 @@ function App() {
           </Protected>
         }
       />
+
+      {/* Client List Routes */}
       <Route
         exact
         path="/client-listing"
@@ -80,13 +83,18 @@ function App() {
           </Protected>
         }
       />
-
-      <Route exact path="/set-password" element={<VerifyProfilePage />} />
       <Route
         exact
-        path="/client-list-details"
-        element={<VerifyProfilePage />}
+        path="/client-list-details/:id"
+        element={
+          <Protected>
+            <ClientListDetailsPage />
+          </Protected>
+        }
       />
+
+      {/* update and verify user password  */}
+      <Route exact path="/set-password" element={<VerifyProfilePage />} />
     </Routes>
   );
 }

@@ -46,6 +46,7 @@ function DebtorDetails({
           searchText={searchText}
           setSearchText={setSearchText}
           SearchFields={SearchFields}
+          placeholder="Search by Email,Phone and SSN..."
         />
       </Grid>
       {loading ? (

@@ -383,6 +383,7 @@ export default function HorizontalLinearStepper() {
         }
         return obj;
       });
+
       const uploadFile = await UploadFiles(uploadedFiles);
       if (uploadFile?.status === 200) {
         const params = {
@@ -433,7 +434,7 @@ export default function HorizontalLinearStepper() {
           lastPaymentDate: lastPaymentDate,
           paidAmount: parseInt(paidAmount),
           remaining: parseInt(remainingAmount),
-          documents: uploadFile?.data?.data,
+          documents: uploadFile?.data?.data || [],
           intervals: modifiedArray,
         };
 

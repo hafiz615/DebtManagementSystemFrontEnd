@@ -57,7 +57,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export default function ListTable({ data, headerData, showTableData }) {
+export default function ListTable({ data, headerData, onRowClick }) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -98,11 +98,17 @@ export default function ListTable({ data, headerData, showTableData }) {
           </TableHead>
           <TableBody>
             {(rowsPerPage > 0
-              ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              ? data?.slice(
+                  page * rowsPerPage,
+                  page * rowsPerPage + rowsPerPage
+                )
               : data
             ).map((row, index) => (
-              <StyledTableRow key={index}>
-                {Object.values(row).map((value, i) => (
+              <StyledTableRow
+                key={index}
+                onClick={() => (onRowClick ? onRowClick(row.id) : undefined)}
+              >
+                {Object?.values(row)?.map((value, i) => (
                   <StyledTableCell key={i}>{value}</StyledTableCell>
                 ))}
               </StyledTableRow>

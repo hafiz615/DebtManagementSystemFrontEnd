@@ -1,16 +1,17 @@
 import React from "react";
-// import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { Grid, Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 // import { isEqual } from "lodash";
-
+import { useNavigate } from "react-router-dom";
 import { UserListPage } from "../constants/appConstants";
 import { Colors } from "../config/default";
 import SearchBar from "./searchBar";
 import ListTable from "./listTable";
 const headers = [
+  "Index",
   "Name",
   "Number of Cases",
   "Number of Creditors",
@@ -29,37 +30,42 @@ function createData(
   return { debtor, dueDate, tryDate, totalDebt, ssid, caseOwner, actions };
 }
 const tableData = [
-  createData("User Name", "4/2/2024", "4/6/2024", "$3,254.00", "721-07-4426"),
-  createData("User Name", "4/2/2024", "4/6/2024", "$3,254.00", "721-07-4426"),
-  createData("User Name", "4/2/2024", "4/6/2024", "$3,254.00", "721-07-4426"),
-  createData("User Name", "4/2/2024", "4/6/2024", "$3,254.00", "721-07-4426"),
-  createData("User Name", "4/2/2024", "4/6/2024", "$3,254.00", "721-07-4426"),
-  createData("User Name", "4/2/2024", "4/6/2024", "$3,254.00", "721-07-4426"),
-  createData("User Name", "4/2/2024", "4/6/2024", "$3,254.00", "721-07-4426"),
-
-  createData("User Name", "4/2/2024", "4/6/2024", "$3,254.00", "721-07-4426"),
-  createData("User Name", "4/2/2024", "4/6/2024", "$3,254.00", "721-07-4426"),
-  createData("User khan", "4/2/2024", "4/6/2024", "$3,254.00", "721-07-4426"),
+  createData("User Name", "03", "03", "Lorem Ipsum", "$10,000"),
+  createData("User Name", "03", "03", "Lorem Ipsum", "$10,000"),
+  createData("User Name", "03", "03", "Lorem Ipsum", "$10,000"),
+  createData("User Name", "03", "03", "Lorem Ipsum", "$10,000"),
+  createData("User Name", "03", "03", "Lorem Ipsum", "$10,000"),
+  createData("User Name", "03", "03", "Lorem Ipsum", "$10,000"),
+  createData("User Name", "03", "03", "Lorem Ipsum", "$10,000"),
 ];
 export default function ClientList() {
+  const navigate = useNavigate();
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { AUTHORITY_TEXT } = UserListPage;
-  // const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState([]);
+  useEffect(() => {
+    // Simulate fetching data from an API
+    const fetchData = () => {
+      const generatedData = tableData.map((item, index) => ({
+        id: index,
+        debtor: item.debtor,
+        dueDate: item.dueDate,
+        tryDate: item.tryDate,
+        totalDebt: item.totalDebt,
+        ssid: item.ssid,
+        caseOwner: item.caseOwner,
+        actions: item.actions,
+      }));
+      setRows(generatedData);
+    };
 
-  // useEffect(() => {
-  //   const generatedData = rowArray?.map((item, index) => ({
-  //     id: index,
-  //     name: item?.name,
-  //     numberOfCases: item?.numberOfCases,
-  //     numberOfCreditors: item?.numberOfCreditors,
-  //     clientStatus: item?.clientStatus,
-  //     totalDept: item?.totalDept,
-  //   }));
-  //   if (!isEqual(generatedData, rowArray)) {
-  //     setRows(generatedData);
-  //   }
-  // }, []);
+    fetchData();
+  }, []);
+  const handleRowClick = (id) => {
+    localStorage.setItem("route", "client-list-details");
+    navigate(`/client-list-details/${id}`);
+  };
   return (
     <Grid
       container
@@ -134,7 +140,7 @@ export default function ClientList() {
         >
           Clients List
         </Typography>
-        <SearchBar />
+        <SearchBar placeholder="Search Creditor..." />
       </Grid>
       <Grid
         item
@@ -147,7 +153,11 @@ export default function ClientList() {
           justifyContent: "center",
         }}
       >
-        <ListTable headerData={headers} data={tableData} />
+        <ListTable
+          headerData={headers}
+          data={rows}
+          onRowClick={handleRowClick}
+        />
       </Grid>
     </Grid>
   );
