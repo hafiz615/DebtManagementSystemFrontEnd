@@ -11,10 +11,11 @@ import { Grid, Box } from "@mui/material";
 
 import { Colors } from "../config/default";
 import BasicModal from "./customPopup";
-import DataTable from "./table";
+// import DataTable from "./table";
 import { GetAllUsers } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import CircularProgress from "@mui/material/CircularProgress";
+import UserListTable from "./userListTable";
 
 const AntTabs = styled(Tabs)({
   border: "none",
@@ -50,50 +51,38 @@ const columns = [
   {
     field: "name",
     headerName: "Name",
-    flex: 1,
-    minWidth: 70,
   },
   {
     field: "dob",
     headerName: "DOB",
-    flex: 1,
-    minWidth: 70,
   },
   {
     field: "gender",
     headerName: "Gender",
-    flex: 1,
-    minWidth: 70,
   },
   {
     field: "email",
     headerName: "Email",
-    flex: 1,
-    minWidth: 70,
   },
   {
     field: "ssid",
-    headerName: "SSID",
-    flex: 1,
-    minWidth: 70,
+    headerName: "SSN",
   },
   {
     field: "role",
     headerName: "Role",
-    flex: 1,
-    minWidth: 70,
   },
   {
     field: "phone",
     headerName: "Phone #",
-    flex: 1,
-    minWidth: 70,
   },
   {
     field: "address",
     headerName: "Address",
-    flex: 1,
-    minWidth: 70,
+  },
+  {
+    field: "actions",
+    headerName: "Actions",
   },
 ];
 export default function CustomizedTabs({ heading }) {
@@ -129,7 +118,7 @@ export default function CustomizedTabs({ heading }) {
       userArray?.map((item, index) => ({
         id: index,
         name: item?.name || "-",
-        dob: item?.dateOfBirth || "-",
+        dob: new Date(item?.dateOfBirth).toLocaleDateString() || "-",
         gender: item?.gender || "-",
         email: item?.email || "-",
         ssid: item?.SSID || "-",
@@ -141,7 +130,7 @@ export default function CustomizedTabs({ heading }) {
     if (!isEqual(generatedData, userArray)) {
       setRows(generatedData);
     }
-  }, [userArray]);
+  }, [userArray, rows]);
 
   return (
     <>
@@ -208,7 +197,10 @@ export default function CustomizedTabs({ heading }) {
             <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
           </Grid>
         ) : (
-          <DataTable rows={rows} columns={columns} />
+          <>
+            <UserListTable rows={rows} columns={columns} />
+            {/* <DataTable rows={rows} columns={columns} /> */}
+          </>
         )}
       </Grid>
     </>

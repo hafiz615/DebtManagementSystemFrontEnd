@@ -1,10 +1,11 @@
 import React from "react";
 import PersistentDrawerLeft from "../components/openDrawer";
-import ClientList from "../components/clientList";
-export default function ClientListPage() {
+
+import ClientListDetails from "../components/clientListDetails";
+export default function ClientListDetailsPage() {
   return (
     <PersistentDrawerLeft>
-      <ClientList />
+      <ClientListDetails />
     </PersistentDrawerLeft>
   );
 }

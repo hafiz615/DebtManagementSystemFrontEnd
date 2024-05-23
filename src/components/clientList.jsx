@@ -5,120 +5,71 @@ import { useSelector } from "react-redux";
 import { Grid, Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { isEqual } from "lodash";
-
+import { useNavigate } from "react-router-dom";
 import { UserListPage } from "../constants/appConstants";
 import { Colors } from "../config/default";
-import DataTable from "./table";
 import SearchBar from "./searchBar";
-const columns = [
-  {
-    field: "name",
-    headerName: "Name",
-    flex: 1,
-    minWidth: 70,
-  },
-  {
-    field: "numberOfCases",
-    headerName: "Number of Cases",
-    flex: 1,
-    minWidth: 70,
-  },
-  {
-    field: "numberOfCreditors",
-    headerName: "Number of Creditors",
-    flex: 1,
-    minWidth: 70,
-  },
-  {
-    field: "clientStatus",
-    headerName: "Client Status",
-    flex: 1,
-    minWidth: 70,
-  },
-  {
-    field: "totalDept",
-    headerName: "Total Dept",
-    flex: 1,
-    minWidth: 70,
-  },
+import ListTable from "./listTable";
+import { GetAllClients } from "../services/services";
+import { useToast } from "../toast/toastContext";
+import CircularProgress from "@mui/material/CircularProgress";
+const headers = [
+  // "Index",
+  "Name",
+  "Number of Cases",
+  "Number of Creditors",
+  "Client Status",
+  "Total Dept",
 ];
-const rowArray = [
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-  {
-    name: "User Name",
-    numberOfCases: "03",
-    numberOfCreditors: "03",
-    clientStatus: "Lorem Ipsum",
-    totalDept: "$10,000",
-  },
-];
+
 export default function ClientList() {
+  const { showToast } = useToast();
+  const navigate = useNavigate();
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { AUTHORITY_TEXT } = UserListPage;
+
   const [rows, setRows] = useState([]);
 
+  const [userArray, setUserArray] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const GetClients = async () => {
+    setLoading(true);
+    const getClients = await GetAllClients();
+    if (getClients?.status === 200) {
+      setUserArray(getClients?.data?.data);
+    } else {
+      const errorMessage = getClients?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const generatedData = rowArray?.map((item, index) => ({
-      id: index,
-      name: item?.name,
-      numberOfCases: item?.numberOfCases,
-      numberOfCreditors: item?.numberOfCreditors,
-      clientStatus: item?.clientStatus,
-      totalDept: item?.totalDept,
-    }));
-    if (!isEqual(generatedData, rowArray)) {
+    GetClients();
+  }, []);
+  useEffect(() => {
+    const generatedData =
+      userArray &&
+      userArray?.map((item, index) => ({
+        // id: index,
+        name: item?.debtorName || "-",
+        totalCases: item?.totalCases || "-",
+        totalCreditors: item?.totalCreditors || "-",
+        status: item?.status || "-",
+        totalDebt: item?.totalDebt || "-",
+      }));
+
+    if (!isEqual(generatedData, userArray)) {
       setRows(generatedData);
     }
-  }, []);
+  }, [userArray, rows]);
+
+  const handleRowClick = (id) => {
+    localStorage.setItem("route", "client-list-details");
+    navigate(`/client-list-details/${id}`);
+  };
   return (
     <Grid
       container
@@ -166,9 +117,8 @@ export default function ClientList() {
         </Typography>
       </Grid>
       <Grid
-        container
         item
-        xs={11.9}
+        xs={12}
         sx={{
           marginTop: "1.5rem",
           display: "flex",
@@ -177,33 +127,59 @@ export default function ClientList() {
       >
         <Typography
           sx={{
-            padding: "1rem",
+            paddingLeft: "0.8rem",
+            paddingRight: "0.8rem",
             bgcolor: Colors.WHITE,
             width: "max-content",
             borderTopLeftRadius: "10px",
             borderTopRightRadius: "10px",
             fontWeight: "600",
+            fontSize: "0.8rem",
             marginLeft: "2.5rem",
             height: "3.5rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
           Clients List
         </Typography>
-        <SearchBar />
+        <SearchBar placeholder="Search Creditor..." />
       </Grid>
+
       <Grid
         item
-        xs={11.9}
+        xs={12}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px ",
-          // height: "58vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
         }}
       >
-        <DataTable rows={rows} columns={columns} />
+        {loading ? (
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "50vh",
+            }}
+          >
+            <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
+          </Grid>
+        ) : (
+          <>
+            <ListTable
+              headerData={headers}
+              data={rows}
+              onRowClick={handleRowClick}
+            />
+          </>
+        )}
       </Grid>
     </Grid>
   );

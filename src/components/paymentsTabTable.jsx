@@ -79,7 +79,7 @@ const IconStyle = styled("div")({
   marginLeft: "0.5rem",
   marginRight: "1rem",
 });
-export default function CustomizedTables({ data, headerData, showTableData }) {
+export default function PaymentTabsTable({ data, headerData }) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selected, setSelected] = React.useState([]);
@@ -90,14 +90,7 @@ export default function CustomizedTables({ data, headerData, showTableData }) {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelected = data.map((row) => row.id); // Assuming each row has a unique identifier 'id'
-      setSelected(newSelected);
-      return;
-    }
-    setSelected([]);
-  };
+
   const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];

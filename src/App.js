@@ -12,6 +12,8 @@ import ModelsPage from "./pages/modelsPage";
 import BulkCases from "./pages/bulkCases";
 import ClientListPage from "./pages/clientListPage";
 import CaseCodeDetail from "./pages/caseCodeDetail";
+
+import ClientListDetailsPage from "./pages/clientListDetails";
 function App() {
   return (
     <Routes>
@@ -71,6 +73,8 @@ function App() {
           </Protected>
         }
       />
+
+      {/* Client List Routes */}
       <Route
         exact
         path="/client-listing"
@@ -80,13 +84,18 @@ function App() {
           </Protected>
         }
       />
-
-      <Route exact path="/set-password" element={<VerifyProfilePage />} />
       <Route
         exact
-        path="/client-list-details"
-        element={<VerifyProfilePage />}
+        path="/client-list-details/:id"
+        element={
+          <Protected>
+            <ClientListDetailsPage />
+          </Protected>
+        }
       />
+
+      {/* update and verify user password  */}
+      <Route exact path="/set-password" element={<VerifyProfilePage />} />
       <Route exact path="/all-cases" element={<CaseCodeDetail />} />
     </Routes>
   );
