@@ -51,56 +51,38 @@ const columns = [
   {
     field: "name",
     headerName: "Name",
-    // flex: 1,
-    // minWidth: 70,
   },
   {
     field: "dob",
     headerName: "DOB",
-    // flex: 1,
-    // minWidth: 70,
   },
   {
     field: "gender",
     headerName: "Gender",
-    // flex: 1,
-    // minWidth: 70,
   },
   {
     field: "email",
     headerName: "Email",
-    // flex: 1,
-    // minWidth: 70,
   },
   {
     field: "ssid",
     headerName: "SSN",
-    // flex: 1,
-    // minWidth: 70,
   },
   {
     field: "role",
     headerName: "Role",
-    // flex: 1,
-    // minWidth: 70,
   },
   {
     field: "phone",
     headerName: "Phone #",
-    // flex: 1,
-    // minWidth: 70,
   },
   {
     field: "address",
     headerName: "Address",
-    // flex: 1,
-    // minWidth: 70,
   },
   {
     field: "actions",
     headerName: "Actions",
-    // flex: 1,
-    // minWidth: 70,
   },
 ];
 export default function CustomizedTabs({ heading }) {
@@ -148,7 +130,7 @@ export default function CustomizedTabs({ heading }) {
     if (!isEqual(generatedData, userArray)) {
       setRows(generatedData);
     }
-  }, [userArray]);
+  }, [userArray, rows]);
 
   return (
     <>
