@@ -8,10 +8,10 @@ import AuthorizationPage from "./pages/authorizationPage";
 import HorizontalLinearStepperPage from "./pages/stepperPage";
 import VerifyProfilePage from "./pages/verifyProfilePage";
 import Protected from "./components/protected";
-import Models from "./components/models";
 import ModelsPage from "./pages/modelsPage";
 import BulkCases from "./pages/bulkCases";
 import ClientListPage from "./pages/clientListPage";
+import CaseCodeDetail from "./pages/caseCodeDetail";
 function App() {
   return (
     <Routes>
@@ -87,6 +87,7 @@ function App() {
         path="/client-list-details"
         element={<VerifyProfilePage />}
       />
+      <Route exact path="/all-cases" element={<CaseCodeDetail />} />
     </Routes>
   );
 }

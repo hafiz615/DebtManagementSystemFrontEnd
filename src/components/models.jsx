@@ -1,9 +1,12 @@
 import * as React from "react";
 
-import { Box, Button, Modal } from "@mui/material";
+import { Box, Button, Modal, IconButton } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+
 import AddTask from "./addTask";
 import EditField from "./editField";
 import AddCustomField from "./addCustomField";
+import { Colors } from "../config/default";
 
 export default function MuiModels({ buttonName, show }) {
   const [open, setOpen] = React.useState(false);
@@ -23,7 +26,17 @@ export default function MuiModels({ buttonName, show }) {
 
   return (
     <div>
-      <Button onClick={handleOpen}>{buttonName}</Button>
+      {show === "addCustomField" || show === "addTask" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <AddIcon sx={{ color: Colors.WHITE, fontSize: "16px" }} />
+        </IconButton>
+      ) : (
+        <Button onClick={handleOpen}>{buttonName}</Button>
+      )}
       <Modal
         open={open}
         onClose={handleClose}
