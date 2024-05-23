@@ -79,7 +79,13 @@ export default function ListTable({ data, headerData, onRowClick }) {
         height: "55vh",
       }}
     >
-      <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+        }}
+      >
         <TableContainer style={{ flexGrow: 1 }}>
           <Table aria-label="customized table">
             <TableHead sx={{ fontFamily: "Nunito" }}>
@@ -102,7 +108,7 @@ export default function ListTable({ data, headerData, onRowClick }) {
                     page * rowsPerPage + rowsPerPage
                   )
                 : data
-              ).map((row, index) => (
+              )?.map((row, index) => (
                 <StyledTableRow
                   key={index}
                   onClick={() => (onRowClick ? onRowClick(index) : undefined)}
@@ -118,12 +124,12 @@ export default function ListTable({ data, headerData, onRowClick }) {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={data.length}
+          count={data?.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          style={{ alignSelf: "flex-end" }}
+          style={{ alignSelf: "flex-end", marginBottom: "1rem" }}
         />
       </div>
     </Paper>

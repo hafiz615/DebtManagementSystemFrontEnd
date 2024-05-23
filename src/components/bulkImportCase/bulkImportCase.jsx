@@ -8,6 +8,7 @@ import { Colors } from "../../config/default";
 import { UserListPage } from "../../constants/appConstants";
 import TextButton from ".././button";
 import MappingDetails from "./mappingDetails";
+import ClientImport from "./clientImport";
 
 function BulkImportCase() {
   const [activeStep, setActiveStep] = useState(0);
@@ -75,7 +76,7 @@ function BulkImportCase() {
             color: Colors.BLACK,
           }}
         >
-          Mapping
+          {activeStep === 0 ? "Mapping" : "New Client Import File"}
         </Typography>
       </Grid>
       <Grid
@@ -105,7 +106,7 @@ function BulkImportCase() {
           })}
         </Stepper>
       </Grid>
-      <MappingDetails fields={activeStep === 0 ? true : false} />
+      {activeStep === 0 ? <MappingDetails /> : <ClientImport />}
 
       <Grid
         item
