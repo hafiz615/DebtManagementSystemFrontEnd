@@ -11,7 +11,7 @@ import { Colors } from "../config/default";
 import SearchBar from "./searchBar";
 import ListTable from "./listTable";
 const headers = [
-  "Index",
+  // "Index",
   "Name",
   "Number of Cases",
   "Number of Creditors",
@@ -44,11 +44,12 @@ export default function ClientList() {
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { AUTHORITY_TEXT } = UserListPage;
   const [rows, setRows] = useState([]);
+
   useEffect(() => {
     // Simulate fetching data from an API
     const fetchData = () => {
       const generatedData = tableData.map((item, index) => ({
-        id: index,
+        // id: index,
         debtor: item.debtor,
         dueDate: item.dueDate,
         tryDate: item.tryDate,

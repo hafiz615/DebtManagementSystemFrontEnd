@@ -90,14 +90,7 @@ export default function PaymentTabsTable({ data, headerData }) {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelected = data.map((row) => row.id); // Assuming each row has a unique identifier 'id'
-      setSelected(newSelected);
-      return;
-    }
-    setSelected([]);
-  };
+
   const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];

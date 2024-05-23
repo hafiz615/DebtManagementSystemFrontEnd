@@ -10,7 +10,7 @@ import Paper from "@mui/material/Paper";
 import TablePagination from "@mui/material/TablePagination";
 import { Colors } from "../config/default";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
+const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
     color: Colors.BLACK,
     border: "none",
@@ -21,6 +21,19 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     paddingLeft: "1rem",
     fontFamily: "Nunito",
     borderTop: "1px solid #EAEBEB",
+    width: "200px",
+  },
+  "&.emailCell": {
+    maxWidth: 200, // Adjust as needed
+    overflow: "hidden",
+    whiteSpace: "nowrap",
+    textOverflow: "ellipsis",
+  },
+  "&.addressCell": {
+    maxWidth: 200, // Adjust as needed
+    overflow: "hidden",
+    whiteSpace: "nowrap",
+    textOverflow: "ellipsis",
   },
   [`&.${tableCellClasses.body}`]: {
     color: Colors.DARK_GRAY,
@@ -48,16 +61,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:hover": {
     backgroundColor: "#DADADA",
     cursor: "pointer",
-    ".icons": {
-      display: "flex",
-    },
   },
   "&:last-child td, &:last-child th": {
     border: "none",
   },
 }));
 
-export default function ListTable({ data, headerData, onRowClick }) {
+export default function UserListTable({ rows, columns }) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -84,31 +94,42 @@ export default function ListTable({ data, headerData, onRowClick }) {
           <Table aria-label="customized table">
             <TableHead sx={{ fontFamily: "Nunito" }}>
               <TableRow sx={{ fontFamily: "Nunito" }}>
-                {headerData?.map((header, index) => (
+                {columns?.map((column, index) => (
                   <StyledTableCell
                     align="left"
                     sx={{ fontWeight: "700" }}
                     key={index}
+                    className={
+                      column.field === "email"
+                        ? "emailCell"
+                        : column.field === "address"
+                        ? "addressCell"
+                        : ""
+                    }
                   >
-                    {header}
+                    {column?.headerName}
                   </StyledTableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
               {(rowsPerPage > 0
-                ? data?.slice(
+                ? rows?.slice(
                     page * rowsPerPage,
                     page * rowsPerPage + rowsPerPage
                   )
-                : data
+                : rows
               ).map((row, index) => (
-                <StyledTableRow
-                  key={index}
-                  onClick={() => (onRowClick ? onRowClick(index) : undefined)}
-                >
-                  {Object?.values(row)?.map((value, i) => (
-                    <StyledTableCell key={i}>{value}</StyledTableCell>
+                <StyledTableRow key={row.id}>
+                  {columns?.map((column, colIndex) => (
+                    <StyledTableCell key={colIndex}>
+                      {column.field === "email" && row[column.field].length > 10
+                        ? row[column.field].substring(0, 15) + "..."
+                        : column.field === "address" &&
+                          row[column.field].length > 15
+                        ? row[column.field].substring(0, 10) + "..."
+                        : row[column.field]}
+                    </StyledTableCell>
                   ))}
                 </StyledTableRow>
               ))}
@@ -118,7 +139,7 @@ export default function ListTable({ data, headerData, onRowClick }) {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={data.length}
+          count={rows.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
