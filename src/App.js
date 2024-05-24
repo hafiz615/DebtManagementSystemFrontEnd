@@ -14,6 +14,7 @@ import ClientListPage from "./pages/clientListPage";
 import CaseCodeDetail from "./pages/caseCodeDetail";
 
 import ClientListDetailsPage from "./pages/clientListDetails";
+import DashboardPage from "./pages/dashboardPage";
 function App() {
   return (
     <Routes>
@@ -90,6 +91,15 @@ function App() {
         element={
           <Protected>
             <ClientListDetailsPage />
+          </Protected>
+        }
+      />
+      <Route
+        exact
+        path="/dashboard"
+        element={
+          <Protected>
+            <DashboardPage />
           </Protected>
         }
       />
