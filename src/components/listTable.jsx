@@ -186,37 +186,30 @@ export default function ListTable({
                       sx={{
                         display: "flex",
                         alignItems: "center",
+                        height: "3rem",
                       }}
                     >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <MuiModels show="editField" />
-                        <IconButton>
-                          <DeleteForeverOutlinedIcon
-                            sx={{
-                              color: Colors.DARK_GRAY,
-                              cursor: "pointer",
-                              fontSize: "20px",
-                              marginLeft: "0.5rem",
-                            }}
-                          />
-                        </IconButton>
-                        <IconButton>
-                          <MoreHorizOutlinedIcon
-                            sx={{
-                              color: Colors.DARK_GRAY,
-                              cursor: "pointer",
-                              fontSize: "20px",
-                              marginLeft: "0.5rem",
-                            }}
-                          />
-                        </IconButton>
-                      </Box>
+                      <MuiModels show="editField" />
+                      <IconButton>
+                        <DeleteForeverOutlinedIcon
+                          sx={{
+                            color: Colors.DARK_GRAY,
+                            cursor: "pointer",
+                            fontSize: "16px",
+                            marginLeft: "0.5rem",
+                          }}
+                        />
+                      </IconButton>
+                      <IconButton>
+                        <MoreHorizOutlinedIcon
+                          sx={{
+                            color: Colors.DARK_GRAY,
+                            cursor: "pointer",
+                            fontSize: "16px",
+                            marginLeft: "0.5rem",
+                          }}
+                        />
+                      </IconButton>
                     </StyledTableCell>
                   )}
                 </StyledTableRow>

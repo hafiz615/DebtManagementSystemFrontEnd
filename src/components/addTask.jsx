@@ -22,7 +22,9 @@ export default function AddTask({ handleClose, show }) {
   return (
     <Grid>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography sx={{ fontWeight: "700" }}>Add Task</Typography>
+        <Typography sx={{ fontWeight: "700", fontFamily: "Nunito" }}>
+          Add Task
+        </Typography>
         <IconButton onClick={handleClose}>
           <Close />
         </IconButton>
@@ -33,6 +35,7 @@ export default function AddTask({ handleClose, show }) {
             display: "flex",
             width: "50%",
             justifyContent: "space-between",
+            fontFamily: "Nunito",
           }}
         >
           Due Date
@@ -51,6 +54,7 @@ export default function AddTask({ handleClose, show }) {
             display: "flex",
             width: "50%",
             justifyContent: "space-between",
+            fontFamily: "Nunito",
           }}
         >
           Time
@@ -72,6 +76,7 @@ export default function AddTask({ handleClose, show }) {
               display: "flex",
               width: "50%",
               justifyContent: "space-between",
+              fontFamily: "Nunito",
             }}
           >
             Title
@@ -96,6 +101,7 @@ export default function AddTask({ handleClose, show }) {
               display: "flex",
               width: "50%",
               justifyContent: "space-between",
+              fontFamily: "Nunito",
             }}
           >
             Status
@@ -116,6 +122,7 @@ export default function AddTask({ handleClose, show }) {
             display: "flex",
             width: "50%",
             justifyContent: "space-between",
+            fontFamily: "Nunito",
           }}
         >
           Assignee
@@ -130,7 +137,7 @@ export default function AddTask({ handleClose, show }) {
           />
         </div>
       </div>
-      <div style={{ marginTop: "1.5em" }}>
+      <div style={{ marginTop: "1.5em", fontFamily: "Nunito" }}>
         Notes
         <textarea
           rows="6"
@@ -144,7 +151,10 @@ export default function AddTask({ handleClose, show }) {
         />
       </div>
       <div style={{ marginTop: "1.5em", float: "right" }}>
-        <Button variant="contained" style={{ width: "8rem" }}>
+        <Button
+          variant="contained"
+          style={{ width: "8rem", fontFamily: "Nunito" }}
+        >
           SAVE
         </Button>
       </div>

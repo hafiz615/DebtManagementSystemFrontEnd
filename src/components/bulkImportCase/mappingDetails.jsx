@@ -58,7 +58,9 @@ export default function MappingDetails() {
             padding: "1rem",
           }}
         >
-          <p style={{ fontWeight: "600" }}>Debtor Details</p>
+          <p style={{ fontWeight: "600", fontFamily: "Nunito" }}>
+            Debtor Details
+          </p>
           <Grid container sx={{ gap: "1em" }}>
             {debtorDetails?.map((debtDetails) => (
               <Grid
@@ -72,7 +74,7 @@ export default function MappingDetails() {
                   mb: "10px",
                 }}
               >
-                <Typography style={{ fontSize: "14px" }}>
+                <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
                   {debtDetails?.name}
                 </Typography>
                 <Dropdown
@@ -97,7 +99,9 @@ export default function MappingDetails() {
             borderRadius: "1rem",
           }}
         >
-          <p style={{ fontWeight: "600" }}>Creditors Details</p>
+          <p style={{ fontWeight: "600", fontFamily: "Nunito" }}>
+            Creditors Details
+          </p>
           <Grid container sx={{ gap: "1em" }}>
             {creditorDetail?.map((creditDetails) => (
               <Grid
@@ -111,7 +115,7 @@ export default function MappingDetails() {
                   mb: "10px",
                 }}
               >
-                <Typography sx={{ fontSize: "14px" }}>
+                <Typography sx={{ fontSize: "14px", fontFamily: "Nunito" }}>
                   {creditDetails?.name}
                 </Typography>
                 <Dropdown
@@ -137,7 +141,9 @@ export default function MappingDetails() {
             borderRadius: "10px",
           }}
         >
-          <p style={{ fontWeight: "600" }}>Payment Plan Automation</p>
+          <p style={{ fontWeight: "600", fontFamily: "Nunito" }}>
+            Payment Plan Automation
+          </p>
           <div
             style={{
               display: "flex",
@@ -146,7 +152,7 @@ export default function MappingDetails() {
               gap: "10px",
             }}
           >
-            <p>Total Receivable</p>
+            <p style={{ fontFamily: "Nunito" }}>Total Receivable</p>
             <Dropdown
               width="6rem"
               height="2rem"
@@ -198,7 +204,9 @@ export default function MappingDetails() {
                     container
                     sx={{ justifyContent: "space-between" }}
                   >
-                    <Typography>{item?.name}</Typography>
+                    <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
+                      {item?.name}
+                    </Typography>
                     <Dropdown
                       width="6rem"
                       height="2rem"

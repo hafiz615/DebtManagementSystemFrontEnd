@@ -91,7 +91,11 @@ export default function DebtorDetailsCards() {
           height: "13rem",
         }}
       >
-        <p style={{ fontWeight: "600", fontSize: "13px" }}>Person Details</p>
+        <p
+          style={{ fontWeight: "600", fontSize: "13px", fontFamily: "Nunito" }}
+        >
+          Person Details
+        </p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "10%" }}>
           {Object.entries(personDetail)?.map(([key, value]) => (
             <div
@@ -103,9 +107,15 @@ export default function DebtorDetailsCards() {
                 marginBottom: "8px",
               }}
             >
-              <Typography style={{ fontSize: "11px" }}>{key}</Typography>
+              <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+                {key}
+              </Typography>
               <Typography
-                style={{ fontSize: "11px", color: Colors.DIM_LIGHT_GRAY }}
+                style={{
+                  fontSize: "11px",
+                  color: Colors.DIM_LIGHT_GRAY,
+                  fontFamily: "Nunito",
+                }}
               >
                 {value}
               </Typography>
@@ -123,7 +133,11 @@ export default function DebtorDetailsCards() {
           height: "13rem",
         }}
       >
-        <p style={{ fontWeight: "600", fontSize: "13px" }}>Business Details</p>
+        <p
+          style={{ fontWeight: "600", fontSize: "13px", fontFamily: "Nunito" }}
+        >
+          Business Details
+        </p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "10%" }}>
           {Object.entries(businessDetail)?.map(([key, value]) => (
             <div
@@ -135,9 +149,15 @@ export default function DebtorDetailsCards() {
                 marginBottom: "8px",
               }}
             >
-              <Typography style={{ fontSize: "11px" }}>{key}</Typography>
+              <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+                {key}
+              </Typography>
               <Typography
-                style={{ fontSize: "11px", color: Colors.DIM_LIGHT_GRAY }}
+                style={{
+                  fontSize: "11px",
+                  color: Colors.DIM_LIGHT_GRAY,
+                  fontFamily: "Nunito",
+                }}
               >
                 {value}
               </Typography>
@@ -162,7 +182,15 @@ export default function DebtorDetailsCards() {
             justifyContent: "space-between",
           }}
         >
-          <p style={{ fontWeight: "600", fontSize: "13px" }}>Contacts</p>
+          <p
+            style={{
+              fontWeight: "600",
+              fontSize: "13px",
+              fontFamily: "Nunito",
+            }}
+          >
+            Contacts
+          </p>
           <SearchContainer>
             <SearchIconWrapper>
               <Search sx={{ fontSize: "16px", color: Colors.DIM_LIGHT_GRAY }} />
@@ -173,7 +201,12 @@ export default function DebtorDetailsCards() {
             />
           </SearchContainer>
           <div
-            style={{ display: "flex", fontSize: "11px", alignItems: "center" }}
+            style={{
+              display: "flex",
+              fontSize: "11px",
+              alignItems: "center",
+              fontFamily: "Nunito",
+            }}
           >
             <IconButton>
               <KeyboardArrowLeft sx={{ fontSize: "16px" }} />
@@ -219,16 +252,24 @@ export default function DebtorDetailsCards() {
                 justifyContent: "center",
               }}
             >
-              <Typography style={{ fontSize: "11px" }}>
+              <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
                 {personDetail?.name}
               </Typography>
               <Typography
-                style={{ fontSize: "11px", color: Colors.DIM_LIGHT_GRAY }}
+                style={{
+                  fontSize: "11px",
+                  color: Colors.DIM_LIGHT_GRAY,
+                  fontFamily: "Nunito",
+                }}
               >
                 {personDetail?.email}
               </Typography>
               <Typography
-                style={{ fontSize: "11px", color: Colors.DIM_LIGHT_GRAY }}
+                style={{
+                  fontSize: "11px",
+                  color: Colors.DIM_LIGHT_GRAY,
+                  fontFamily: "Nunito",
+                }}
               >
                 {personDetail?.phone}
               </Typography>
