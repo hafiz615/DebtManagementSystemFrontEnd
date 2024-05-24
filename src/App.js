@@ -11,6 +11,7 @@ import Protected from "./components/protected";
 import ModelsPage from "./pages/modelsPage";
 import BulkCases from "./pages/bulkCases";
 import ClientListPage from "./pages/clientListPage";
+import CaseCodeDetail from "./pages/caseCodeDetail";
 import ClientListDetailsPage from "./pages/clientListDetails";
 import SettingsPage from "./pages/settingsPage";
 function App() {
@@ -106,6 +107,7 @@ function App() {
 
       {/* update and verify user password  */}
       <Route exact path="/set-password" element={<VerifyProfilePage />} />
+      <Route exact path="/all-cases" element={<CaseCodeDetail />} />
     </Routes>
   );
 }
