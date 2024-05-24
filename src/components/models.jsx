@@ -53,7 +53,7 @@ export default function MuiModels({ buttonName, show, button }) {
             sx={{
               color: Colors.DARK_GRAY,
               cursor: "pointer",
-              fontSize: "20px",
+              fontSize: "16px",
             }}
           />
         </IconButton>

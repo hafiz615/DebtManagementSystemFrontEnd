@@ -1,6 +1,6 @@
 import * as React from "react";
 import { styled } from "@mui/material/styles";
-import Table from "@mui/material/Table";
+import { Table, IconButton } from "@mui/material";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
@@ -8,6 +8,9 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TablePagination from "@mui/material/TablePagination";
+import CloseIcon from "@mui/icons-material/Close";
+import CreateIcon from "@mui/icons-material/Create";
+
 import { Colors } from "../config/default";
 
 const StyledTableCell = styled(TableCell)(() => ({
@@ -67,7 +70,11 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export default function UserListTable({ rows, columns }) {
+export default function UserListTable({
+  rows,
+  columns,
+  requiredCustomFieldIcons,
+}) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -110,6 +117,11 @@ export default function UserListTable({ rows, columns }) {
                     {column?.headerName}
                   </StyledTableCell>
                 ))}
+                {requiredCustomFieldIcons && (
+                  <StyledTableCell align="left" sx={{ fontWeight: "700" }}>
+                    Actions
+                  </StyledTableCell>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -131,6 +143,34 @@ export default function UserListTable({ rows, columns }) {
                         : row[column.field]}
                     </StyledTableCell>
                   ))}
+                  {requiredCustomFieldIcons && (
+                    <StyledTableCell
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <IconButton>
+                        <CreateIcon
+                          sx={{
+                            color: Colors.BLACK,
+                            cursor: "pointer",
+                            fontSize: "16px",
+                          }}
+                        />
+                      </IconButton>
+                      <IconButton>
+                        <CloseIcon
+                          sx={{
+                            color: Colors.ORANGE_COLOR,
+                            cursor: "pointer",
+                            fontSize: "16px",
+                            marginLeft: "0.5rem",
+                          }}
+                        />
+                      </IconButton>
+                    </StyledTableCell>
+                  )}
                 </StyledTableRow>
               ))}
             </TableBody>

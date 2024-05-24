@@ -28,7 +28,9 @@ export default function TransactionAccordion() {
           borderRadius: "10px",
         }}
       >
-        <Typography sx={{ color: Colors.WHITE }}>Transactions</Typography>
+        <Typography sx={{ color: Colors.WHITE, fontFamily: "Nunito" }}>
+          Transactions
+        </Typography>
       </AccordionSummary>
       <AccordionDetails
         sx={{

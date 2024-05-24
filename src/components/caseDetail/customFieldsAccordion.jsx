@@ -39,7 +39,9 @@ export default function CustomFieldsAccordion() {
             width: "100%",
           }}
         >
-          <Typography sx={{ color: Colors.WHITE }}>Custom Fields</Typography>
+          <Typography sx={{ color: Colors.WHITE, fontFamily: "Nunito" }}>
+            Custom Fields
+          </Typography>
           <div style={{ display: "flex" }} onClick={(e) => e.stopPropagation()}>
             <IconButton>
               <EditIcon sx={{ color: Colors.WHITE, fontSize: "16px" }} />

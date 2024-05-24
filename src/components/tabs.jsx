@@ -80,10 +80,6 @@ const columns = [
     field: "address",
     headerName: "Address",
   },
-  {
-    field: "actions",
-    headerName: "Actions",
-  },
 ];
 export default function CustomizedTabs({ heading }) {
   const { showToast } = useToast();
@@ -198,7 +194,11 @@ export default function CustomizedTabs({ heading }) {
           </Grid>
         ) : (
           <>
-            <UserListTable rows={rows} columns={columns} />
+            <UserListTable
+              requiredCustomFieldIcons={true}
+              rows={rows}
+              columns={columns}
+            />
             {/* <DataTable rows={rows} columns={columns} /> */}
           </>
         )}
