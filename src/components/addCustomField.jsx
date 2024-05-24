@@ -95,7 +95,7 @@ export default function AddCustomField({ handleClose }) {
             backgroundColor: Colors.BG_LIGHT_GRAY,
             border: "none",
             outline: "none",
-            width: "calc( 100% - 2em )",
+            width: "100%",
             padding: "1em",
           }}
         />

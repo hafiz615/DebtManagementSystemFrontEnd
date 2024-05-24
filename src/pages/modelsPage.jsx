@@ -5,7 +5,6 @@ export default function ModelsPage() {
   return (
     <div>
       <MuiModels buttonName="Tasks" show="task" />
-      <MuiModels buttonName="Edit Fields" show="editField" />
     </div>
   );
 }

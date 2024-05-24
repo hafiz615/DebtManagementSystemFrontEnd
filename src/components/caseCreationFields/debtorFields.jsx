@@ -558,6 +558,7 @@ export default function DebtorFields({
             <Checkboxes
               checked={checked}
               handleCheckChange={handleCheckChange}
+              fontSize="28"
             />
             <Typography
               sx={{

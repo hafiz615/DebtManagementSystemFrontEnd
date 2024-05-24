@@ -1,6 +1,7 @@
 import * as React from "react";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
+import IconButton from "@mui/material/IconButton";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
@@ -8,7 +9,14 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TablePagination from "@mui/material/TablePagination";
+import CreateIcon from "@mui/icons-material/Create";
+import CloseIcon from "@mui/icons-material/Close";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
+import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import { Colors } from "../config/default";
+import { Box } from "@mui/material";
+import MuiModels from "./models";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -57,7 +65,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export default function ListTable({ data, headerData, onRowClick }) {
+export default function ListTable({
+  data,
+  headerData,
+  onRowClick,
+  requiredIcons,
+  requiredCustomFieldIcons,
+}) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -99,6 +113,16 @@ export default function ListTable({ data, headerData, onRowClick }) {
                     {header}
                   </StyledTableCell>
                 ))}
+                {requiredIcons && (
+                  <StyledTableCell align="left" sx={{ fontWeight: "700" }}>
+                    Actions
+                  </StyledTableCell>
+                )}
+                {requiredCustomFieldIcons && (
+                  <StyledTableCell align="left" sx={{ fontWeight: "700" }}>
+                    Actions
+                  </StyledTableCell>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -116,6 +140,85 @@ export default function ListTable({ data, headerData, onRowClick }) {
                   {Object?.values(row)?.map((value, i) => (
                     <StyledTableCell key={i}>{value}</StyledTableCell>
                   ))}
+                  {requiredIcons && (
+                    <StyledTableCell
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <CreateIcon
+                          sx={{
+                            color: Colors.DARK_GRAY,
+                            cursor: "pointer",
+                            fontSize: "20px",
+                          }}
+                        />
+
+                        <CloseIcon
+                          sx={{
+                            color: Colors.ORANGE_COLOR,
+                            cursor: "pointer",
+                            fontSize: "20px",
+                            marginLeft: "0.5rem",
+                          }}
+                        />
+                        <VisibilityIcon
+                          sx={{
+                            color: Colors.DARK_GRAY,
+                            cursor: "pointer",
+                            fontSize: "20px",
+                            marginLeft: "0.5rem",
+                          }}
+                        />
+                      </Box>
+                    </StyledTableCell>
+                  )}
+                  {requiredCustomFieldIcons && (
+                    <StyledTableCell
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <MuiModels show="editField" />
+                        <IconButton>
+                          <DeleteForeverOutlinedIcon
+                            sx={{
+                              color: Colors.DARK_GRAY,
+                              cursor: "pointer",
+                              fontSize: "20px",
+                              marginLeft: "0.5rem",
+                            }}
+                          />
+                        </IconButton>
+                        <IconButton>
+                          <MoreHorizOutlinedIcon
+                            sx={{
+                              color: Colors.DARK_GRAY,
+                              cursor: "pointer",
+                              fontSize: "20px",
+                              marginLeft: "0.5rem",
+                            }}
+                          />
+                        </IconButton>
+                      </Box>
+                    </StyledTableCell>
+                  )}
                 </StyledTableRow>
               ))}
             </TableBody>

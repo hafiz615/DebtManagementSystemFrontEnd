@@ -7,11 +7,12 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 function SpinnerWithPercentage({ value, color }) {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:1200px)");
+  const extraLargeScreen = useMediaQuery("(min-width:1800px)");
 
   return (
     <Box sx={{ position: "relative", display: "inline-flex" }}>
       <CircularProgress
-        size={smallScreen ? "16vw" : "11vw"}
+        size={smallScreen ? "16vw" : extraLargeScreen ? "13rem" : "11vw"}
         variant="determinate"
         value={value}
         sx={{ color: color }}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
 import { Grid, Typography, Card } from "@mui/material";
@@ -9,6 +9,7 @@ import SearchBar from "../searchBar";
 import SpinnerWithPercentage from "../spinnerWithPercentage";
 
 function DashboardContent() {
+  const [searchText, setSearchText] = useState("");
   const userName = useSelector((state) => state?.signIn?.signIn?.user?.name);
 
   //   const paymentsAuthorizations = [
@@ -67,7 +68,11 @@ function DashboardContent() {
           </div>
         </Grid>
         <Grid xs={4}>
-          <SearchBar placeholder="Search..." />
+          <SearchBar
+            searchText={searchText}
+            setSearchText={setSearchText}
+            placeholder="Search..."
+          />
         </Grid>
       </Grid>
 
@@ -99,7 +104,7 @@ function DashboardContent() {
             <div
               style={{
                 display: "flex",
-                justifyContent: { xs: "space-around", lg: "space-between" },
+                justifyContent: "space-between",
                 alignItems: "center",
                 padding: "10px 16px",
                 height: "13rem",

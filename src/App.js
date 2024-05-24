@@ -12,9 +12,9 @@ import ModelsPage from "./pages/modelsPage";
 import BulkCases from "./pages/bulkCases";
 import ClientListPage from "./pages/clientListPage";
 import CaseCodeDetail from "./pages/caseCodeDetail";
-
 import ClientListDetailsPage from "./pages/clientListDetails";
 import DashboardPage from "./pages/dashboardPage";
+import SettingsPage from "./pages/settingsPage";
 function App() {
   return (
     <Routes>
@@ -100,6 +100,17 @@ function App() {
         element={
           <Protected>
             <DashboardPage />
+          </Protected>
+        }
+      />
+
+      {/* Settings Screen  */}
+      <Route
+        exact
+        path="/settings"
+        element={
+          <Protected>
+            <SettingsPage />
           </Protected>
         }
       />
