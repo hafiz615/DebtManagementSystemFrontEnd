@@ -2,13 +2,15 @@ import * as React from "react";
 
 import { Box, Button, Modal, IconButton } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import CreateIcon from "@mui/icons-material/Create";
 
 import AddTask from "./addTask";
 import EditField from "./editField";
 import AddCustomField from "./addCustomField";
 import { Colors } from "../config/default";
+import TextButton from "./button";
 
-export default function MuiModels({ buttonName, show }) {
+export default function MuiModels({ buttonName, show, button }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -17,7 +19,7 @@ export default function MuiModels({ buttonName, show }) {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: show === "editField" ? "40vw" : "50vw",
+    width: "50vw",
     bgcolor: "background.paper",
     borderRadius: 5,
     boxShadow: 24,
@@ -26,13 +28,34 @@ export default function MuiModels({ buttonName, show }) {
 
   return (
     <div>
-      {show === "addCustomField" || show === "addTask" ? (
+      {button === "icon" ? (
         <IconButton
           onClick={() => {
             handleOpen();
           }}
         >
           <AddIcon sx={{ color: Colors.WHITE, fontSize: "16px" }} />
+        </IconButton>
+      ) : button === "customField" ? (
+        <TextButton
+          onClick={() => {
+            handleOpen();
+          }}
+          buttonText="New Custom Field"
+        />
+      ) : show === "editField" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <CreateIcon
+            sx={{
+              color: Colors.DARK_GRAY,
+              cursor: "pointer",
+              fontSize: "20px",
+            }}
+          />
         </IconButton>
       ) : (
         <Button onClick={handleOpen}>{buttonName}</Button>

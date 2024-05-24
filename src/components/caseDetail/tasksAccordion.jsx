@@ -39,7 +39,7 @@ export default function TaskAccordion() {
         >
           <Typography sx={{ color: Colors.WHITE }}>Tasks</Typography>
           <div onClick={(e) => e.stopPropagation()}>
-            <MuiModels buttonName="Add Task" show="addTask" />
+            <MuiModels buttonName="Add Task" show="addTask" button="icon" />
           </div>
         </div>
       </AccordionSummary>

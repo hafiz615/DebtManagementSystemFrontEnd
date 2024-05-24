@@ -44,7 +44,11 @@ export default function CustomFieldsAccordion() {
             <IconButton>
               <EditIcon sx={{ color: Colors.WHITE, fontSize: "16px" }} />
             </IconButton>
-            <MuiModels buttonName="Add Custom Fields" show="addCustomField" />
+            <MuiModels
+              buttonName="Add Custom Fields"
+              show="addCustomField"
+              button="icon"
+            />
           </div>
         </div>
       </AccordionSummary>
