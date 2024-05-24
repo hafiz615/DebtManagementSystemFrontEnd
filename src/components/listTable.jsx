@@ -1,6 +1,7 @@
 import * as React from "react";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
+import IconButton from "@mui/material/IconButton";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
@@ -15,6 +16,7 @@ import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import { Colors } from "../config/default";
 import { Box } from "@mui/material";
+import MuiModels from "./models";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -193,30 +195,27 @@ export default function ListTable({
                           justifyContent: "center",
                         }}
                       >
-                        <CreateIcon
-                          sx={{
-                            color: Colors.DARK_GRAY,
-                            cursor: "pointer",
-                            fontSize: "20px",
-                          }}
-                        />
-
-                        <DeleteForeverOutlinedIcon
-                          sx={{
-                            color: Colors.DARK_GRAY,
-                            cursor: "pointer",
-                            fontSize: "20px",
-                            marginLeft: "0.5rem",
-                          }}
-                        />
-                        <MoreHorizOutlinedIcon
-                          sx={{
-                            color: Colors.DARK_GRAY,
-                            cursor: "pointer",
-                            fontSize: "20px",
-                            marginLeft: "0.5rem",
-                          }}
-                        />
+                        <MuiModels show="editField" />
+                        <IconButton>
+                          <DeleteForeverOutlinedIcon
+                            sx={{
+                              color: Colors.DARK_GRAY,
+                              cursor: "pointer",
+                              fontSize: "20px",
+                              marginLeft: "0.5rem",
+                            }}
+                          />
+                        </IconButton>
+                        <IconButton>
+                          <MoreHorizOutlinedIcon
+                            sx={{
+                              color: Colors.DARK_GRAY,
+                              cursor: "pointer",
+                              fontSize: "20px",
+                              marginLeft: "0.5rem",
+                            }}
+                          />
+                        </IconButton>
                       </Box>
                     </StyledTableCell>
                   )}

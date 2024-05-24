@@ -7,8 +7,8 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { Grid } from "@mui/material";
 import { Colors } from "../../config/default";
-import TextButton from "../button";
 import ListTable from "../listTable";
+import MuiModels from "../models";
 const headers = ["Name", "Types"];
 function createData(name, types) {
   return {
@@ -66,7 +66,11 @@ export default function CustomFieldsAccordion() {
           item
           sx={{ justifyContent: "flex-end", marginTop: "1rem" }}
         >
-          <TextButton buttonText="New Custom Field" />
+          <MuiModels
+            buttonName="Add Custom Fields"
+            show="addCustomField"
+            button="customField"
+          />
         </Grid>
 
         <Grid

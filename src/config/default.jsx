@@ -11,4 +11,5 @@ export const Colors = {
   ORANGE_COLOR: "#EA6A47",
 
   LIGHT_BLUE_COLOR: "#F5F9FE",
+  YELLOW: "#EEAC2C",
 };

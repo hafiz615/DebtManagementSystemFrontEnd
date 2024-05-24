@@ -87,6 +87,7 @@ function CaseDetail() {
               boxShadow: "none",
               marginBottom: "10px",
             }}
+            defaultExpanded
           >
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}

@@ -13,6 +13,7 @@ import BulkCases from "./pages/bulkCases";
 import ClientListPage from "./pages/clientListPage";
 import CaseCodeDetail from "./pages/caseCodeDetail";
 import ClientListDetailsPage from "./pages/clientListDetails";
+import DashboardPage from "./pages/dashboardPage";
 import SettingsPage from "./pages/settingsPage";
 function App() {
   return (
@@ -90,6 +91,15 @@ function App() {
         element={
           <Protected>
             <ClientListDetailsPage />
+          </Protected>
+        }
+      />
+      <Route
+        exact
+        path="/dashboard"
+        element={
+          <Protected>
+            <DashboardPage />
           </Protected>
         }
       />
