@@ -4,7 +4,7 @@ import { Colors } from "../config/default";
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
-export default function Checkboxes({ checked, handleCheckChange }) {
+export default function Checkboxes({ checked, handleCheckChange, fontSize }) {
   return (
     <div>
       <Checkbox
@@ -12,7 +12,7 @@ export default function Checkboxes({ checked, handleCheckChange }) {
         checked={checked}
         onChange={handleCheckChange}
         sx={{
-          "& .MuiSvgIcon-root": { fontSize: 28 },
+          "& .MuiSvgIcon-root": { fontSize: fontSize },
           color: Colors.DARK_GRAY,
           "&.Mui-checked": {
             color: Colors.SKY_BLUE, // Change this to the color you want for checked state
