@@ -28,7 +28,9 @@ export default function AnalyticsAccordion() {
           borderRadius: "10px",
         }}
       >
-        <Typography sx={{ color: Colors.WHITE }}>Analytics</Typography>
+        <Typography sx={{ color: Colors.WHITE, fontFamily: "Nunito" }}>
+          Analytics
+        </Typography>
       </AccordionSummary>
       <AccordionDetails
         sx={{

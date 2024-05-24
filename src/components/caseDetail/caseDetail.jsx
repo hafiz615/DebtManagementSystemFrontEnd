@@ -101,12 +101,20 @@ function CaseDetail() {
               >
                 <Tabs value={value} onChange={handleChange}>
                   <Tab
-                    sx={{ fontWeight: "600", textTransform: "none" }}
+                    sx={{
+                      fontWeight: "600",
+                      textTransform: "none",
+                      fontFamily: "Nunito",
+                    }}
                     label="Debtor"
                     value="Debtor"
                   />
                   <Tab
-                    sx={{ fontWeight: "600", textTransform: "none" }}
+                    sx={{
+                      fontWeight: "600",
+                      textTransform: "none",
+                      fontFamily: "Nunito",
+                    }}
                     label="Creditor"
                     value="Creditor"
                   />

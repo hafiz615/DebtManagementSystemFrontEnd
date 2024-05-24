@@ -38,7 +38,9 @@ export default function AboutAccordion() {
             width: "100%",
           }}
         >
-          <Typography sx={{ color: Colors.WHITE }}>About</Typography>
+          <Typography sx={{ color: Colors.WHITE, fontFamily: "Nunito" }}>
+            About
+          </Typography>
           <IconButton>
             <EditIcon sx={{ color: Colors.WHITE, fontSize: "16px" }} />
           </IconButton>

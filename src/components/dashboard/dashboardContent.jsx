@@ -12,13 +12,6 @@ function DashboardContent() {
   const [searchText, setSearchText] = useState("");
   const userName = useSelector((state) => state?.signIn?.signIn?.user?.name);
 
-  //   const paymentsAuthorizations = [
-  //     { name: "Failed Authorizations" },
-  //     { name: "Failed Payments" },
-  //     { name: "Successful Payments" },
-  //     { name: "Successful Authorizations" },
-  //   ];
-
   return (
     <Grid
       container
@@ -56,13 +49,16 @@ function DashboardContent() {
                 fontSize: "2rem",
                 ml: "10px",
                 fontWeight: "600",
+                fontFamily: "Nunito",
               }}
             >
               {userName},
             </Typography>
           </div>
           <div>
-            <Typography style={{ color: Colors.DIM_LIGHT_GRAY }}>
+            <Typography
+              style={{ color: Colors.DIM_LIGHT_GRAY, fontFamily: "Nunito" }}
+            >
               You can manage your whole team from here.
             </Typography>
           </div>
@@ -94,44 +90,46 @@ function DashboardContent() {
                 padding: "10px 16px",
               }}
             >
-              <Typography sx={{ fontSize: "14px", fontWeight: "600" }}>
+              <Typography
+                sx={{
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  fontFamily: "Nunito",
+                }}
+              >
                 Payments & Authorizations
               </Typography>
-              <Typography sx={{ fontSize: "14px" }}>Year 2024</Typography>
+              <Typography sx={{ fontSize: "14px", fontFamily: "Nunito" }}>
+                Year 2024
+              </Typography>
             </div>
             <hr style={{ background: "lightgrey" }} />
-
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "10px 16px",
-                height: "13rem",
-              }}
-            >
-              <SpinnerWithPercentage value={100} color={Colors.NAVY_BLUE} />
-              <SpinnerWithPercentage value={100} />
-              <SpinnerWithPercentage color={Colors.YELLOW} value={100} />
-              <SpinnerWithPercentage
-                color={Colors.DIM_LIGHT_GRAY}
-                value={100}
-              />
-            </div>
-            {/* <div>
-              <Grid
-                container
-                sx={{ justifyContent: "space-between", padding: "10px 16px" }}
-              >
-                {paymentsAuthorizations?.map((item) => (
-                  <Grid>
-                    <Typography style={{ fontSize: "14px" }}>
-                      {item?.name}
-                    </Typography>
-                  </Grid>
-                ))}
+            <Grid container xs={12} sx={{ padding: "10px 16px" }}>
+              <Grid xs={6} md={3}>
+                <SpinnerWithPercentage value={30} color={Colors.ORANGE_COLOR} />
+                <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
+                  Failed Authorizations
+                </Typography>
               </Grid>
-            </div> */}
+              <Grid xs={6} md={3}>
+                <SpinnerWithPercentage value={40} color={Colors.YELLOW} />
+                <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
+                  Failed Payments
+                </Typography>
+              </Grid>
+              <Grid xs={6} md={3}>
+                <SpinnerWithPercentage color={Colors.SKY_BLUE} value={70} />
+                <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
+                  Successful Authorizations
+                </Typography>
+              </Grid>
+              <Grid xs={6} md={3}>
+                <SpinnerWithPercentage value={60} color={Colors.NAVY_BLUE} />
+                <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
+                  Successful Payments
+                </Typography>
+              </Grid>
+            </Grid>
           </Card>
         </Grid>
         <Grid xs={12} lg={4} sx={{ mt: { xs: "1rem", lg: "0" } }}>
@@ -144,7 +142,12 @@ function DashboardContent() {
             }}
           >
             <Typography
-              sx={{ fontSize: "14px", fontWeight: "600", padding: "10px 16px" }}
+              sx={{
+                fontSize: "14px",
+                fontWeight: "600",
+                padding: "10px 16px",
+                fontFamily: "Nunito",
+              }}
             >
               Case Status
             </Typography>
@@ -208,10 +211,18 @@ function DashboardContent() {
                 padding: "10px 16px",
               }}
             >
-              <Typography sx={{ fontSize: "14px", fontWeight: "600" }}>
+              <Typography
+                sx={{
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  fontFamily: "Nunito",
+                }}
+              >
                 Case By Agents
               </Typography>
-              <Typography sx={{ fontSize: "14px" }}>Year 2024</Typography>
+              <Typography sx={{ fontSize: "14px", fontFamily: "Nunito" }}>
+                Year 2024
+              </Typography>
             </div>
             <hr style={{ background: "lightgrey" }} />
             <div style={{ height: "9rem" }}>
@@ -239,7 +250,12 @@ function DashboardContent() {
             }}
           >
             <Typography
-              sx={{ fontSize: "14px", fontWeight: "600", padding: "10px 16px" }}
+              sx={{
+                fontSize: "14px",
+                fontWeight: "600",
+                padding: "10px 16px",
+                fontFamily: "Nunito",
+              }}
             >
               Case Trend
             </Typography>

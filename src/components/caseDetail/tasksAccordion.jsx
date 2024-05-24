@@ -20,7 +20,9 @@ export default function TaskAccordion() {
       }}
     >
       <AccordionSummary
-        expandIcon={<ExpandMoreIcon sx={{ color: Colors.WHITE }} />}
+        expandIcon={
+          <ExpandMoreIcon sx={{ color: Colors.WHITE, fontFamily: "Nunito" }} />
+        }
         aria-controls="panel1-content"
         id="panel1-header"
         sx={{

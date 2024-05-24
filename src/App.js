@@ -8,7 +8,6 @@ import AuthorizationPage from "./pages/authorizationPage";
 import HorizontalLinearStepperPage from "./pages/stepperPage";
 import VerifyProfilePage from "./pages/verifyProfilePage";
 import Protected from "./components/protected";
-import ModelsPage from "./pages/modelsPage";
 import BulkCases from "./pages/bulkCases";
 import ClientListPage from "./pages/clientListPage";
 import CaseCodeDetail from "./pages/caseCodeDetail";
@@ -56,15 +55,7 @@ function App() {
           </Protected>
         }
       />
-      <Route
-        exact
-        path="/modelsPage"
-        element={
-          <Protected>
-            <ModelsPage />
-          </Protected>
-        }
-      />
+
       <Route
         exact
         path="/bulk-cases"

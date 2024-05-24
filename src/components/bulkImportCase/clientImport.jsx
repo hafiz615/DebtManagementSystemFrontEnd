@@ -36,7 +36,7 @@ export default function ClientImport() {
 
   return (
     <Grid xs={12}>
-      <p style={{ fontWeight: "600" }}>Basic Details</p>
+      <p style={{ fontWeight: "600", fontFamily: "Nunito" }}>Basic Details</p>
       <Grid container sx={{ gap: "1em" }}>
         {basicDetails?.map((item) => (
           <Grid
@@ -49,9 +49,15 @@ export default function ClientImport() {
               gap: "1em",
             }}
           >
-            <Typography style={{ fontSize: "14px" }}>{item?.name}</Typography>
+            <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
+              {item?.name}
+            </Typography>
             <Typography
-              style={{ fontSize: "14px", color: Colors.DIM_LIGHT_GRAY }}
+              style={{
+                fontSize: "14px",
+                color: Colors.DIM_LIGHT_GRAY,
+                fontFamily: "Nunito",
+              }}
             >
               {item?.value}
             </Typography>
@@ -59,7 +65,9 @@ export default function ClientImport() {
         ))}
       </Grid>
 
-      <p style={{ fontWeight: "600" }}>Contact Information</p>
+      <p style={{ fontWeight: "600", fontFamily: "Nunito" }}>
+        Contact Information
+      </p>
       <Grid container sx={{ gap: "1em" }}>
         {contactInformation?.map((item) => (
           <Grid
@@ -72,9 +80,15 @@ export default function ClientImport() {
               gap: "1em",
             }}
           >
-            <Typography style={{ fontSize: "14px" }}>{item?.name}</Typography>
+            <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
+              {item?.name}
+            </Typography>
             <Typography
-              style={{ fontSize: "14px", color: Colors.DIM_LIGHT_GRAY }}
+              style={{
+                fontSize: "14px",
+                color: Colors.DIM_LIGHT_GRAY,
+                fontFamily: "Nunito",
+              }}
             >
               {item?.value}
             </Typography>
@@ -82,7 +96,9 @@ export default function ClientImport() {
         ))}
       </Grid>
 
-      <p style={{ fontWeight: "600" }}>Buisness Information</p>
+      <p style={{ fontWeight: "600", fontFamily: "Nunito" }}>
+        Buisness Information
+      </p>
       <Grid container sx={{ gap: "1em" }}>
         {businessInformation?.map((item) => (
           <Grid
@@ -95,9 +111,15 @@ export default function ClientImport() {
               gap: "1em",
             }}
           >
-            <Typography style={{ fontSize: "14px" }}>{item?.name}</Typography>
+            <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
+              {item?.name}
+            </Typography>
             <Typography
-              style={{ fontSize: "14px", color: Colors.DIM_LIGHT_GRAY }}
+              style={{
+                fontSize: "14px",
+                color: Colors.DIM_LIGHT_GRAY,
+                fontFamily: "Nunito",
+              }}
             >
               {item?.value}
             </Typography>
@@ -112,7 +134,9 @@ export default function ClientImport() {
           borderRadius: "10px",
         }}
       >
-        <p style={{ fontWeight: "600" }}>Payment Plan Automation</p>
+        <p style={{ fontWeight: "600", fontFamily: "Nunito" }}>
+          Payment Plan Automation
+        </p>
         <div
           style={{
             display: "flex",
@@ -121,8 +145,8 @@ export default function ClientImport() {
             gap: "10px",
           }}
         >
-          <p>Total Receivable</p>
-          <Typography>$10,000</Typography>
+          <p style={{ fontFamily: "Nunito" }}>Total Receivable</p>
+          <Typography sx={{ fontFamily: "Nunito" }}>$10,000</Typography>
         </div>
         <Grid
           sx={{
@@ -164,8 +188,12 @@ export default function ClientImport() {
                   container
                   sx={{ justifyContent: "space-between" }}
                 >
-                  <Typography>{item?.name}</Typography>
-                  <Typography sx={{ color: Colors.DIM_LIGHT_GRAY }}>
+                  <Typography sx={{ fontFamily: "Nunito" }}>
+                    {item?.name}
+                  </Typography>
+                  <Typography
+                    sx={{ color: Colors.DIM_LIGHT_GRAY, fontFamily: "Nunito" }}
+                  >
                     {item?.value}
                   </Typography>
                 </Grid>

@@ -38,7 +38,9 @@ export default function CreditorsAccordion() {
             width: "100%",
           }}
         >
-          <Typography sx={{ color: Colors.WHITE }}>Creditors</Typography>
+          <Typography sx={{ color: Colors.WHITE, fontFamily: "Nunito" }}>
+            Creditors
+          </Typography>
           <IconButton>
             <AddIcon sx={{ color: Colors.WHITE, fontSize: "16px" }} />
           </IconButton>

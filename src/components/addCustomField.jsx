@@ -28,15 +28,17 @@ export default function AddCustomField({ handleClose }) {
   return (
     <Grid>
       <div>
-        <Typography sx={{ fontWeight: "700", marginBottom: "1em" }}>
+        <Typography
+          sx={{ fontWeight: "700", marginBottom: "1em", fontFamily: "Nunito" }}
+        >
           Add Custom Field
         </Typography>
       </div>
 
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={value} onChange={handleChange}>
-          <Tab label="New" />
-          <Tab label="Shared" />
+          <Tab sx={{ fontFamily: "Nunito" }} label="New" />
+          <Tab sx={{ fontFamily: "Nunito" }} label="Shared" />
         </Tabs>
       </Box>
       <Divider />
@@ -100,7 +102,7 @@ export default function AddCustomField({ handleClose }) {
           }}
         />
       </div>
-      <div>
+      <div style={{ fontFamily: "Nunito" }}>
         <Radio />
         Share
       </div>
@@ -117,19 +119,28 @@ export default function AddCustomField({ handleClose }) {
           sx={{
             borderTop: `1px solid ${Colors.LIGHT_GRAY}`,
             borderBottom: `1px solid ${Colors.LIGHT_GRAY}`,
+            fontFamily: "Nunito",
           }}
         >
           Field Options
         </AccordionSummary>
-        <AccordionDetails>
-          <Typography sx={{ fontWeight: "600", margin: ".5em 0em" }}>
+        <AccordionDetails sx={{ fontFamily: "Nunito" }}>
+          <Typography
+            sx={{ fontWeight: "600", margin: ".5em 0em", fontFamily: "Nunito" }}
+          >
             Permission
           </Typography>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
           malesuada lacus ex, sit amet blandit leo lobortis eget.
           <div style={{ display: "flex" }}>
             <Switch />
-            <Typography sx={{ fontWeight: "500", margin: ".5em 0em" }}>
+            <Typography
+              sx={{
+                fontWeight: "500",
+                margin: ".5em 0em",
+                fontFamily: "Nunito",
+              }}
+            >
               Restrict
             </Typography>
           </div>
@@ -143,6 +154,7 @@ export default function AddCustomField({ handleClose }) {
             width: "8rem",
             backgroundColor: Colors.BG_LIGHT_GRAY,
             color: Colors.BLACK,
+            fontFamily: "Nunito",
           }}
           onClick={handleClose}
         >
@@ -150,7 +162,7 @@ export default function AddCustomField({ handleClose }) {
         </Button>
         <Button
           variant="contained"
-          style={{ width: "8rem", marginLeft: "1em" }}
+          style={{ width: "8rem", marginLeft: "1em", fontFamily: "Nunito" }}
         >
           SAVE
         </Button>

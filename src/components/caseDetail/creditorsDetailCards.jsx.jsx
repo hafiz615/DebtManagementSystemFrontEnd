@@ -77,7 +77,11 @@ export default function CreditorsDetailCards() {
           height: "13rem",
         }}
       >
-        <p style={{ fontWeight: "600", fontSize: "13px" }}>Person Details</p>
+        <p
+          style={{ fontWeight: "600", fontSize: "13px", fontFamily: "Nunito" }}
+        >
+          Person Details
+        </p>
         <div
           style={{
             display: "flex",
@@ -85,9 +89,15 @@ export default function CreditorsDetailCards() {
             marginBottom: "8px",
           }}
         >
-          <Typography style={{ fontSize: "11px" }}>Full Name</Typography>
+          <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+            Full Name
+          </Typography>
           <Typography
-            style={{ fontSize: "11px", color: Colors.DIM_LIGHT_GRAY }}
+            style={{
+              fontSize: "11px",
+              color: Colors.DIM_LIGHT_GRAY,
+              fontFamily: "Nunito",
+            }}
           >
             {personDetail?.name}
           </Typography>
@@ -99,17 +109,29 @@ export default function CreditorsDetailCards() {
             marginBottom: "8px",
           }}
         >
-          <Typography style={{ fontSize: "11px" }}>Email</Typography>
+          <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+            Email
+          </Typography>
           <Typography
-            style={{ fontSize: "11px", color: Colors.DIM_LIGHT_GRAY }}
+            style={{
+              fontSize: "11px",
+              color: Colors.DIM_LIGHT_GRAY,
+              fontFamily: "Nunito",
+            }}
           >
             {personDetail?.email}
           </Typography>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography style={{ fontSize: "11px" }}>Phone #</Typography>
+          <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+            Phone #
+          </Typography>
           <Typography
-            style={{ fontSize: "11px", color: Colors.DIM_LIGHT_GRAY }}
+            style={{
+              fontSize: "11px",
+              color: Colors.DIM_LIGHT_GRAY,
+              fontFamily: "Nunito",
+            }}
           >
             {personDetail?.phone}
           </Typography>
@@ -125,7 +147,11 @@ export default function CreditorsDetailCards() {
           height: "13rem",
         }}
       >
-        <p style={{ fontWeight: "600", fontSize: "13px" }}>Business Details</p>
+        <p
+          style={{ fontWeight: "600", fontSize: "13px", fontFamily: "Nunito" }}
+        >
+          Business Details
+        </p>
         <div
           style={{
             display: "flex",
@@ -133,24 +159,42 @@ export default function CreditorsDetailCards() {
             marginBottom: "8px",
           }}
         >
-          <Typography style={{ fontSize: "11px" }}>Company</Typography>
+          <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+            Company
+          </Typography>
           <Typography
-            style={{ fontSize: "11px", color: Colors.DIM_LIGHT_GRAY }}
+            style={{
+              fontSize: "11px",
+              color: Colors.DIM_LIGHT_GRAY,
+              fontFamily: "Nunito",
+            }}
           >
             {businessDetail?.company}
           </Typography>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography style={{ fontSize: "11px" }}>Category</Typography>
+          <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+            Category
+          </Typography>
           <Typography
-            style={{ fontSize: "11px", color: Colors.DIM_LIGHT_GRAY }}
+            style={{
+              fontSize: "11px",
+              color: Colors.DIM_LIGHT_GRAY,
+              fontFamily: "Nunito",
+            }}
           >
             {businessDetail?.category}
           </Typography>
         </div>
         <div>
-          <p style={{ fontSize: "11px" }}>Notes</p>
-          <p style={{ fontSize: "11px", color: Colors.DIM_LIGHT_GRAY }}>
+          <p style={{ fontSize: "11px", fontFamily: "Nunito" }}>Notes</p>
+          <p
+            style={{
+              fontSize: "11px",
+              color: Colors.DIM_LIGHT_GRAYm,
+              fontFamily: "Nunito",
+            }}
+          >
             {businessDetail?.notes}
           </p>
         </div>
@@ -165,12 +209,20 @@ export default function CreditorsDetailCards() {
           height: "13rem",
         }}
       >
-        <p style={{ fontWeight: "600", fontSize: "13px" }}>Funded</p>
-        <p style={{ fontSize: "11px" }}>Last Funded Date</p>
+        <p
+          style={{ fontWeight: "600", fontSize: "13px", fontFamily: "Nunito" }}
+        >
+          Funded
+        </p>
+        <p style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+          Last Funded Date
+        </p>
         <p style={{ fontSize: "11px", color: Colors.DIM_LIGHT_GRAY }}>
           25/12/2024
         </p>
-        <p style={{ fontSize: "11px" }}>Historical Range</p>
+        <p style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+          Historical Range
+        </p>
         <div
           style={{
             display: "flex",
@@ -178,8 +230,12 @@ export default function CreditorsDetailCards() {
             color: Colors.DIM_LIGHT_GRAY,
           }}
         >
-          <Typography style={{ fontSize: "11px" }}>Min</Typography>
-          <Typography style={{ fontSize: "11px" }}>$2000</Typography>
+          <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+            Min
+          </Typography>
+          <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+            $2000
+          </Typography>
         </div>
         <div
           style={{
@@ -188,8 +244,12 @@ export default function CreditorsDetailCards() {
             color: Colors.DIM_LIGHT_GRAY,
           }}
         >
-          <Typography style={{ fontSize: "11px" }}>Max</Typography>
-          <Typography style={{ fontSize: "11px" }}>$2500</Typography>
+          <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+            Max
+          </Typography>
+          <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+            $2500
+          </Typography>
         </div>
       </Grid>
       <Grid
@@ -209,7 +269,15 @@ export default function CreditorsDetailCards() {
             justifyContent: "space-between",
           }}
         >
-          <p style={{ fontWeight: "600", fontSize: "13px" }}>Contacts</p>
+          <p
+            style={{
+              fontWeight: "600",
+              fontSize: "13px",
+              fontFamily: "Nunito",
+            }}
+          >
+            Contacts
+          </p>
           <SearchContainer>
             <SearchIconWrapper>
               <Search sx={{ fontSize: "16px", color: Colors.DIM_LIGHT_GRAY }} />
@@ -223,7 +291,9 @@ export default function CreditorsDetailCards() {
             style={{ display: "flex", fontSize: "11px", alignItems: "center" }}
           >
             <IconButton>
-              <KeyboardArrowLeft sx={{ fontSize: "16px" }} />
+              <KeyboardArrowLeft
+                sx={{ fontSize: "16px", fontFamily: "Nunito" }}
+              />
             </IconButton>
             1 of 4
             <IconButton>
@@ -266,16 +336,24 @@ export default function CreditorsDetailCards() {
                 justifyContent: "center",
               }}
             >
-              <Typography style={{ fontSize: "11px" }}>
+              <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
                 {personDetail?.name}
               </Typography>
               <Typography
-                style={{ fontSize: "11px", color: Colors.DIM_LIGHT_GRAY }}
+                style={{
+                  fontSize: "11px",
+                  color: Colors.DIM_LIGHT_GRAY,
+                  fontFamily: "Nunito",
+                }}
               >
                 {personDetail?.email}
               </Typography>
               <Typography
-                style={{ fontSize: "11px", color: Colors.DIM_LIGHT_GRAY }}
+                style={{
+                  fontSize: "11px",
+                  color: Colors.DIM_LIGHT_GRAY,
+                  fontFamily: "Nunito",
+                }}
               >
                 {personDetail?.phone}
               </Typography>
@@ -306,21 +384,43 @@ export default function CreditorsDetailCards() {
           },
         }}
       >
-        <p style={{ fontWeight: "600", fontSize: "13px" }}>Other Creditors</p>
+        <p
+          style={{ fontWeight: "600", fontSize: "13px", fontFamily: "Nunito" }}
+        >
+          Other Creditors
+        </p>
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
           }}
         >
-          <p style={{ fontSize: "11px" }}>Name</p>
-          <p style={{ fontSize: "11px", color: Colors.DIM_LIGHT_GRAY }}>
+          <p style={{ fontSize: "11px", fontFamily: "Nunito" }}>Name</p>
+          <p
+            style={{
+              fontSize: "11px",
+              color: Colors.DIM_LIGHT_GRAY,
+              fontFamily: "Nunito",
+            }}
+          >
             $10000
           </p>
-          <p style={{ fontSize: "11px", color: Colors.DIM_LIGHT_GRAY }}>
+          <p
+            style={{
+              fontSize: "11px",
+              color: Colors.DIM_LIGHT_GRAY,
+              fontFamily: "Nunito",
+            }}
+          >
             Case Code
           </p>
-          <p style={{ fontSize: "11px", color: Colors.DIM_LIGHT_GRAY }}>
+          <p
+            style={{
+              fontSize: "11px",
+              color: Colors.DIM_LIGHT_GRAY,
+              fontFamily: "Nunito",
+            }}
+          >
             On Hold
           </p>
         </div>

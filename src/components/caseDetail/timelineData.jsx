@@ -29,10 +29,16 @@ export default function TimelineData() {
               borderRadius: "10px",
             }}
           >
-            <p style={{ fontSize: "13px", fontWeight: "600" }}>
+            <p
+              style={{
+                fontSize: "13px",
+                fontWeight: "600",
+                fontFamily: "Nunito",
+              }}
+            >
               Success! You sent a payment to umair
             </p>
-            <Typography sx={{ fontSize: "13px" }}>
+            <Typography sx={{ fontSize: "13px", fontFamily: "Nunito" }}>
               Lorem ipsum dolor sit amet consectetur. Lorem ipsum dolor sit amet
               consectetur. Lorem ipsum dolor sit amet consectetur.
             </Typography>
@@ -46,10 +52,16 @@ export default function TimelineData() {
               mt: "10px",
             }}
           >
-            <p style={{ fontSize: "13px", fontWeight: "600" }}>
+            <p
+              style={{
+                fontSize: "13px",
+                fontWeight: "600",
+                fontFamily: "Nunito",
+              }}
+            >
               Chase Payments
             </p>
-            <Typography sx={{ fontSize: "13px" }}>
+            <Typography sx={{ fontSize: "13px", fontFamily: "Nunito" }}>
               Lorem ipsum dolor sit amet consectetur. Lorem ipsum dolor sit amet
               consectetur. Lorem ipsum dolor sit amet consectetur.
             </Typography>
