@@ -4,6 +4,7 @@ import { Grid, Button, IconButton, Typography } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { Colors } from "../config/default";
 import Dropdown from "./dropdown";
+import TextButton from "./button";
 
 export default function AddTask({ handleClose, show }) {
   const [selectedValue, setSelectedValue] = useState("3");
@@ -81,7 +82,7 @@ export default function AddTask({ handleClose, show }) {
           >
             Title
             <input
-              type="number"
+              type="email"
               placeholder="Title 5"
               style={{
                 backgroundColor: Colors.BG_LIGHT_GRAY,
@@ -91,7 +92,7 @@ export default function AddTask({ handleClose, show }) {
                 border: "none",
                 outline: "none",
                 borderRadius: "5px",
-                width: "calc(65% - 1rem)",
+                width: "65%",
               }}
             />
           </div>
@@ -146,17 +147,20 @@ export default function AddTask({ handleClose, show }) {
             border: "none",
             outline: "none",
             marginTop: "1em",
-            width: "100%",
+            minWidth: "100%",
+            maxWidth: "100%",
           }}
         />
       </div>
       <div style={{ marginTop: "1.5em", float: "right" }}>
-        <Button
-          variant="contained"
-          style={{ width: "8rem", fontFamily: "Nunito" }}
-        >
-          SAVE
-        </Button>
+        <TextButton
+          buttonText="Save"
+          height="2rem"
+          width="8rem"
+          onClick={handleClose}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
       </div>
     </Grid>
   );

@@ -86,6 +86,7 @@ function CaseDetail() {
             sx={{
               boxShadow: "none",
               marginBottom: "10px",
+              backgroundColor: Colors.BG_LIGHT_GRAY,
             }}
             defaultExpanded
           >

@@ -18,6 +18,7 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { Colors } from "../config/default";
+import TextButton from "./button";
 
 export default function AddCustomField({ handleClose }) {
   const [value, setValue] = React.useState(0);
@@ -54,13 +55,13 @@ export default function AddCustomField({ handleClose }) {
           outline: "none",
           borderRadius: "5px",
           marginTop: "1em",
-          width: "calc(48% - 1rem)",
+          width: "calc(50% - .5rem)",
         }}
       />
 
-      <div style={{ display: "flex", gap: "1em", marginTop: "1em" }}>
+      <div style={{ display: "flex", gap: "1rem", marginTop: "1em" }}>
         <input
-          type="number"
+          type="email"
           placeholder="Type"
           style={{
             backgroundColor: Colors.BG_LIGHT_GRAY,
@@ -70,12 +71,12 @@ export default function AddCustomField({ handleClose }) {
             border: "none",
             outline: "none",
             borderRadius: "5px",
-            width: "calc(100% - 1rem)",
+            width: "50%",
           }}
         />
 
         <input
-          type="number"
+          type="email"
           placeholder="Target"
           style={{
             backgroundColor: Colors.BG_LIGHT_GRAY,
@@ -85,7 +86,7 @@ export default function AddCustomField({ handleClose }) {
             border: "none",
             outline: "none",
             borderRadius: "5px",
-            width: "calc(100% - 1rem)",
+            width: "50%",
           }}
         />
       </div>
@@ -97,7 +98,8 @@ export default function AddCustomField({ handleClose }) {
             backgroundColor: Colors.BG_LIGHT_GRAY,
             border: "none",
             outline: "none",
-            width: "100%",
+            minWidth: "100%",
+            maxWidth: "100%",
             padding: "1em",
           }}
         />
@@ -147,25 +149,30 @@ export default function AddCustomField({ handleClose }) {
         </AccordionDetails>
       </Accordion>
 
-      <div style={{ marginTop: "1em", float: "right" }}>
-        <Button
-          variant="contained"
-          style={{
-            width: "8rem",
-            backgroundColor: Colors.BG_LIGHT_GRAY,
-            color: Colors.BLACK,
-            fontFamily: "Nunito",
-          }}
+      <div
+        style={{
+          marginTop: "1em",
+          gap: "1em",
+          display: "flex",
+          justifyContent: "right",
+        }}
+      >
+        <TextButton
+          buttonText="Cancel"
+          height="2rem"
+          width="8rem"
           onClick={handleClose}
-        >
-          CANCEL
-        </Button>
-        <Button
-          variant="contained"
-          style={{ width: "8rem", marginLeft: "1em", fontFamily: "Nunito" }}
-        >
-          SAVE
-        </Button>
+          backgroundColor={Colors.ORANGE_COLOR}
+          hoverColor={Colors.ORANGE_COLOR}
+        />
+        <TextButton
+          buttonText="Save"
+          height="2rem"
+          width="8rem"
+          onClick={handleClose}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
       </div>
     </Grid>
   );
