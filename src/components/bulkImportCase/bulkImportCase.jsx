@@ -118,7 +118,7 @@ function BulkImportCase() {
         }}
       >
         <TextButton
-          buttonText="EXIT"
+          buttonText="BACK"
           disabled={activeStep === 0}
           onClick={handleBack}
           backgroundColor={Colors.ORANGE_COLOR}

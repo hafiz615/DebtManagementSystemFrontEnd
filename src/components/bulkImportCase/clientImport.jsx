@@ -1,30 +1,32 @@
 import React from "react";
 
-import { Grid, Typography } from "@mui/material";
+import { Grid, Typography, Card } from "@mui/material";
 
 import { Colors } from "../../config/default";
 
 export default function ClientImport() {
-  const basicDetails = [
-    { name: "First Name", value: "Rummaz" },
-    { name: "Last Name", value: "khan" },
-    { name: "Gender", value: "Male" },
-    { name: "Age", value: "24" },
-    { name: "SSN", value: "3123948424" },
+  const debtorDetails = [
+    { name: "Full Name" },
+    { name: "Email" },
+    { name: "SSN" },
+    { name: "Status" },
+    { name: "Country" },
+    { name: "State" },
+    { name: "City" },
+    { name: "Zip Code" },
+    { name: "Phone #" },
+    { name: "Address" },
   ];
 
-  const contactInformation = [
-    { name: "Primary #", value: "03211017632" },
-    { name: "Email", value: "rummaz@gmail.com" },
-    { name: "Address", value: "ghazi road" },
-  ];
-
-  const businessInformation = [
-    { name: "Business Name", value: "The Pathans" },
-    { name: "Business Type", value: "tech support" },
-    { name: "Work Email", value: "Rummaz@luminogics.com" },
-    { name: "EIN Number", value: "13231123" },
-    { name: "Address", value: "ghazi chowl" },
+  const creditorDetails = [
+    { name: "Full Name" },
+    { name: "Company Name" },
+    { name: "Address" },
+    { name: "Email" },
+    { name: "Business Category" },
+    { name: "Notes" },
+    { name: "Funded" },
+    { name: "Phone #" },
   ];
 
   const automationPlan = [
@@ -35,97 +37,94 @@ export default function ClientImport() {
   ];
 
   return (
-    <Grid xs={12}>
-      <p style={{ fontWeight: "600", fontFamily: "Nunito" }}>Basic Details</p>
-      <Grid container sx={{ gap: "1em" }}>
-        {basicDetails?.map((item) => (
-          <Grid
-            xs={12}
-            md={4}
-            lg={2.5}
-            sx={{
-              display: "flex",
-              mb: "10px",
-              gap: "1em",
-            }}
-          >
-            <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
-              {item?.name}
-            </Typography>
-            <Typography
-              style={{
-                fontSize: "14px",
-                color: Colors.DIM_LIGHT_GRAY,
-                fontFamily: "Nunito",
+    <Grid
+      xs={12}
+      sx={{
+        marginTop: ".5rem",
+      }}
+    >
+      <Card
+        sx={{
+          boxShadow: "none",
+          borderRadius: "1rem",
+          padding: "1rem",
+        }}
+      >
+        <Typography sx={{ fontWeight: "600", fontFamily: "Nunito" }}>
+          Debtor Details
+        </Typography>
+        <Grid container sx={{ gap: "1em", mt: "1em" }}>
+          {debtorDetails.map((debtDetail) => (
+            <Grid
+              key={debtDetail.name}
+              xs={6}
+              md={4}
+              lg={2.5}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                mb: "10px",
               }}
             >
-              {item?.value}
-            </Typography>
-          </Grid>
-        ))}
-      </Grid>
+              <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
+                {debtDetail.name}
+              </Typography>
+              <Typography
+                style={{
+                  fontSize: "14px",
+                  fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
+                }}
+              >
+                ----
+              </Typography>
+            </Grid>
+          ))}
+        </Grid>
+      </Card>
+      <Card
+        sx={{
+          boxShadow: "none",
+          padding: "1rem",
+          mt: "1em",
+          borderRadius: "1rem",
+        }}
+      >
+        <Typography sx={{ fontWeight: "600", fontFamily: "Nunito" }}>
+          Creditors Details
+        </Typography>
+        <Grid container sx={{ gap: "1em", mt: "1em" }}>
+          {creditorDetails.map((creditDetail) => (
+            <Grid
+              key={creditDetail.name}
+              xs={6}
+              md={4}
+              lg={2.5}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                mb: "10px",
+              }}
+            >
+              <Typography sx={{ fontSize: "14px", fontFamily: "Nunito" }}>
+                {creditDetail.name}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "14px",
+                  fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
+                }}
+              >
+                ----
+              </Typography>
+            </Grid>
+          ))}
+        </Grid>
+      </Card>
 
-      <p style={{ fontWeight: "600", fontFamily: "Nunito" }}>
-        Contact Information
-      </p>
-      <Grid container sx={{ gap: "1em" }}>
-        {contactInformation?.map((item) => (
-          <Grid
-            xs={12}
-            md={4}
-            lg={2.5}
-            sx={{
-              display: "flex",
-              mb: "10px",
-              gap: "1em",
-            }}
-          >
-            <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
-              {item?.name}
-            </Typography>
-            <Typography
-              style={{
-                fontSize: "14px",
-                color: Colors.DIM_LIGHT_GRAY,
-                fontFamily: "Nunito",
-              }}
-            >
-              {item?.value}
-            </Typography>
-          </Grid>
-        ))}
-      </Grid>
-
-      <p style={{ fontWeight: "600", fontFamily: "Nunito" }}>
-        Buisness Information
-      </p>
-      <Grid container sx={{ gap: "1em" }}>
-        {businessInformation?.map((item) => (
-          <Grid
-            xs={12}
-            md={4}
-            lg={2.5}
-            sx={{
-              display: "flex",
-              mb: "10px",
-              gap: "1em",
-            }}
-          >
-            <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
-              {item?.name}
-            </Typography>
-            <Typography
-              style={{
-                fontSize: "14px",
-                color: Colors.DIM_LIGHT_GRAY,
-                fontFamily: "Nunito",
-              }}
-            >
-              {item?.value}
-            </Typography>
-          </Grid>
-        ))}
-      </Grid>
       <Grid
         sx={{
           backgroundColor: Colors.WHITE,
@@ -134,9 +133,9 @@ export default function ClientImport() {
           borderRadius: "10px",
         }}
       >
-        <p style={{ fontWeight: "600", fontFamily: "Nunito" }}>
+        <Typography sx={{ fontWeight: "600", fontFamily: "Nunito" }}>
           Payment Plan Automation
-        </p>
+        </Typography>
         <div
           style={{
             display: "flex",
@@ -146,7 +145,7 @@ export default function ClientImport() {
           }}
         >
           <p style={{ fontFamily: "Nunito" }}>Total Receivable</p>
-          <Typography sx={{ fontFamily: "Nunito" }}>$10,000</Typography>
+          <Typography sx={{ fontFamily: "Nunito" }}>----</Typography>
         </div>
         <Grid
           sx={{
@@ -168,38 +167,36 @@ export default function ClientImport() {
             },
           }}
         >
-          {Array.from({ length: 20 }, (_, index) => (
-            <Grid
-              container
-              xs={12}
-              sx={{
-                padding: "0px 10px",
-                alignItems: "center",
-                gap: "1.5em",
-                mt: "25px",
-              }}
-            >
-              {automationPlan?.map((item) => (
-                <Grid
-                  item
-                  xs={12}
-                  md={5}
-                  lg={2.5}
-                  container
-                  sx={{ justifyContent: "space-between" }}
+          <Grid
+            container
+            xs={12}
+            sx={{
+              padding: "0px 10px",
+              alignItems: "center",
+              gap: "1.5em",
+              mt: "25px",
+            }}
+          >
+            {automationPlan?.map((item) => (
+              <Grid
+                item
+                xs={12}
+                md={5}
+                lg={2.5}
+                container
+                sx={{ justifyContent: "space-between" }}
+              >
+                <Typography sx={{ fontFamily: "Nunito" }}>
+                  {item?.name}
+                </Typography>
+                <Typography
+                  sx={{ color: Colors.DIM_LIGHT_GRAY, fontFamily: "Nunito" }}
                 >
-                  <Typography sx={{ fontFamily: "Nunito" }}>
-                    {item?.name}
-                  </Typography>
-                  <Typography
-                    sx={{ color: Colors.DIM_LIGHT_GRAY, fontFamily: "Nunito" }}
-                  >
-                    {item?.value}
-                  </Typography>
-                </Grid>
-              ))}
-            </Grid>
-          ))}
+                  ----
+                </Typography>
+              </Grid>
+            ))}
+          </Grid>
         </Grid>
       </Grid>
     </Grid>

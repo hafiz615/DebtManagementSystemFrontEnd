@@ -52,3 +52,25 @@ export const fillMissingPermissions = (permissionsArray) => {
 
   return updatedPermissionsArray;
 };
+export const getExcelColumnName = (n) => {
+  let columnName = "";
+  while (n > 0) {
+    let remainder = (n - 1) % 26;
+    columnName = String?.fromCharCode(65 + remainder) + columnName;
+    n = Math?.floor((n - 1) / 26);
+  }
+  return columnName;
+};
+
+export const generateColumnNames = (numColumns) => {
+  const columnNames = [];
+  for (let i = 1; i <= numColumns; i++) {
+    const colName = getExcelColumnName(i);
+    columnNames.push({
+      label: `Col ${colName}`,
+      value: `Col ${colName}`,
+      index: i,
+    });
+  }
+  return columnNames;
+};
