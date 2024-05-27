@@ -40,7 +40,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     paddingBottom: "16px",
     paddingLeft: "1rem",
     fontFamily: "Nunito",
-    "&:not(:first-child)": {
+    "&:not(:first-of-type)": {
       opacity: 0.7,
     },
   },
@@ -132,14 +132,16 @@ export default function ListTable({
                     page * rowsPerPage + rowsPerPage
                   )
                 : data
-              )?.map((row, index) => (
+              )?.map((row) => (
                 <StyledTableRow
-                  key={index}
-                  onClick={() => (onRowClick ? onRowClick(index) : undefined)}
+                  key={row?.id}
+                  onClick={() => (onRowClick ? onRowClick(row?.id) : undefined)}
                 >
-                  {Object?.values(row)?.map((value, i) => (
-                    <StyledTableCell key={i}>{value}</StyledTableCell>
-                  ))}
+                  {Object?.entries(row)
+                    ?.filter(([key]) => key !== "id") // Filter out the id field
+                    ?.map(([key, value], i) => (
+                      <StyledTableCell key={i}>{value}</StyledTableCell>
+                    ))}
                   {requiredIcons && (
                     <StyledTableCell
                       sx={{
@@ -147,38 +149,30 @@ export default function ListTable({
                         alignItems: "center",
                       }}
                     >
-                      <Box
+                      <CreateIcon
                         sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
+                          color: Colors.DARK_GRAY,
+                          cursor: "pointer",
+                          fontSize: "20px",
                         }}
-                      >
-                        <CreateIcon
-                          sx={{
-                            color: Colors.DARK_GRAY,
-                            cursor: "pointer",
-                            fontSize: "20px",
-                          }}
-                        />
+                      />
 
-                        <CloseIcon
-                          sx={{
-                            color: Colors.ORANGE_COLOR,
-                            cursor: "pointer",
-                            fontSize: "20px",
-                            marginLeft: "0.5rem",
-                          }}
-                        />
-                        <VisibilityIcon
-                          sx={{
-                            color: Colors.DARK_GRAY,
-                            cursor: "pointer",
-                            fontSize: "20px",
-                            marginLeft: "0.5rem",
-                          }}
-                        />
-                      </Box>
+                      <CloseIcon
+                        sx={{
+                          color: Colors.ORANGE_COLOR,
+                          cursor: "pointer",
+                          fontSize: "20px",
+                          marginLeft: "0.5rem",
+                        }}
+                      />
+                      <VisibilityIcon
+                        sx={{
+                          color: Colors.DARK_GRAY,
+                          cursor: "pointer",
+                          fontSize: "20px",
+                          marginLeft: "0.5rem",
+                        }}
+                      />
                     </StyledTableCell>
                   )}
                   {requiredCustomFieldIcons && (
@@ -190,26 +184,24 @@ export default function ListTable({
                       }}
                     >
                       <MuiModels show="editField" />
-                      <IconButton>
-                        <DeleteForeverOutlinedIcon
-                          sx={{
-                            color: Colors.DARK_GRAY,
-                            cursor: "pointer",
-                            fontSize: "16px",
-                            marginLeft: "0.5rem",
-                          }}
-                        />
-                      </IconButton>
-                      <IconButton>
-                        <MoreHorizOutlinedIcon
-                          sx={{
-                            color: Colors.DARK_GRAY,
-                            cursor: "pointer",
-                            fontSize: "16px",
-                            marginLeft: "0.5rem",
-                          }}
-                        />
-                      </IconButton>
+
+                      <DeleteForeverOutlinedIcon
+                        sx={{
+                          color: Colors.DARK_GRAY,
+                          cursor: "pointer",
+                          fontSize: "20px",
+                          marginLeft: "0.5rem",
+                        }}
+                      />
+
+                      <MoreHorizOutlinedIcon
+                        sx={{
+                          color: Colors.DARK_GRAY,
+                          cursor: "pointer",
+                          fontSize: "20px",
+                          marginLeft: "0.5rem",
+                        }}
+                      />
                     </StyledTableCell>
                   )}
                 </StyledTableRow>

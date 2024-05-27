@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -46,6 +45,7 @@ export default function CustomFieldsAccordion() {
         borderRadius: "1rem !important",
         backgroundColor: Colors.WHITE,
         marginBottom: "1rem",
+        boxShadow: "none",
       }}
     >
       <AccordionSummary

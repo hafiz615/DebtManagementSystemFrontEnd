@@ -14,6 +14,7 @@ export default function CustomTextField({
   value,
   onKeyDown,
   max,
+  disabled,
 }) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
 
@@ -34,6 +35,7 @@ export default function CustomTextField({
         {label}
       </Typography>
       <input
+        disabled={disabled}
         type={type}
         placeholder={placeHolderValue}
         onChange={onChange}
