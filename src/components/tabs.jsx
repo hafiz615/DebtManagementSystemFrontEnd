@@ -1,8 +1,6 @@
 import * as React from "react";
 import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
-
-import { isEqual } from "lodash";
+import { useEffect, useState, useMemo } from "react";
 
 import { styled } from "@mui/material/styles";
 import Tabs from "@mui/material/Tabs";
@@ -108,25 +106,23 @@ export default function CustomizedTabs({ heading }) {
     GetUsers();
   }, []);
 
-  useEffect(() => {
-    const generatedData =
-      userArray &&
-      userArray?.map((item, index) => ({
-        id: index,
-        name: item?.name || "-",
-        dob: new Date(item?.dateOfBirth).toLocaleDateString() || "-",
-        gender: item?.gender || "-",
-        email: item?.email || "-",
-        ssid: item?.SSID || "-",
-        role: item?.role || "-",
-        phone: item?.phone || "-",
-        address: item?.address || "-",
-      }));
+  const generatedData = useMemo(() => {
+    return userArray?.map((item, index) => ({
+      id: item?._id,
+      name: item?.name || "-",
+      dob: new Date(item?.dateOfBirth).toLocaleDateString() || "-",
+      gender: item?.gender || "-",
+      email: item?.email || "-",
+      ssid: item?.SSID || "-",
+      role: item?.role || "-",
+      phone: item?.phone || "-",
+      address: item?.address || "-",
+    }));
+  }, [userArray]);
 
-    if (!isEqual(generatedData, userArray)) {
-      setRows(generatedData);
-    }
-  }, [userArray, rows]);
+  useEffect(() => {
+    setRows(generatedData);
+  }, [generatedData]);
 
   return (
     <>
@@ -162,7 +158,7 @@ export default function CustomizedTabs({ heading }) {
         {role === "Admin" && (
           <BasicModal
             modelButton="ADD USERS"
-            show={false}
+            modalType="add"
             GetUsers={GetUsers}
           />
         )}
@@ -198,6 +194,7 @@ export default function CustomizedTabs({ heading }) {
               requiredCustomFieldIcons={true}
               rows={rows}
               columns={columns}
+              GetUsers={GetUsers}
             />
             {/* <DataTable rows={rows} columns={columns} /> */}
           </>

@@ -1,6 +1,7 @@
 import * as React from "react";
+import { useSelector } from "react-redux";
 import { styled } from "@mui/material/styles";
-import { Table, IconButton } from "@mui/material";
+import { Table } from "@mui/material";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
@@ -8,10 +9,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TablePagination from "@mui/material/TablePagination";
-import CloseIcon from "@mui/icons-material/Close";
-import CreateIcon from "@mui/icons-material/Create";
+import BasicModal from "./customPopup";
 
 import { Colors } from "../config/default";
+import Prompt from "./prompt";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -48,7 +49,7 @@ const StyledTableCell = styled(TableCell)(() => ({
     paddingBottom: "16px",
     paddingLeft: "1rem",
     fontFamily: "Nunito",
-    "&:not(:first-child)": {
+    "&:not(:first-of-type)": {
       opacity: 0.7,
     },
   },
@@ -74,7 +75,9 @@ export default function UserListTable({
   rows,
   columns,
   requiredCustomFieldIcons,
+  GetUsers,
 }) {
+  const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -117,7 +120,7 @@ export default function UserListTable({
                     {column?.headerName}
                   </StyledTableCell>
                 ))}
-                {requiredCustomFieldIcons && (
+                {requiredCustomFieldIcons && role === "Admin" && (
                   <StyledTableCell align="left" sx={{ fontWeight: "700" }}>
                     Actions
                   </StyledTableCell>
@@ -131,7 +134,7 @@ export default function UserListTable({
                     page * rowsPerPage + rowsPerPage
                   )
                 : rows
-              ).map((row, index) => (
+              ).map((row) => (
                 <StyledTableRow key={row.id}>
                   {columns?.map((column, colIndex) => (
                     <StyledTableCell key={colIndex}>
@@ -143,32 +146,26 @@ export default function UserListTable({
                         : row[column.field]}
                     </StyledTableCell>
                   ))}
-                  {requiredCustomFieldIcons && (
+                  {requiredCustomFieldIcons && role === "Admin" && (
                     <StyledTableCell
                       sx={{
                         display: "flex",
                         alignItems: "center",
+                        height: "3rem",
                       }}
                     >
-                      <IconButton>
-                        <CreateIcon
-                          sx={{
-                            color: Colors.BLACK,
-                            cursor: "pointer",
-                            fontSize: "16px",
-                          }}
-                        />
-                      </IconButton>
-                      <IconButton>
-                        <CloseIcon
-                          sx={{
-                            color: Colors.ORANGE_COLOR,
-                            cursor: "pointer",
-                            fontSize: "16px",
-                            marginLeft: "0.5rem",
-                          }}
-                        />
-                      </IconButton>
+                      <BasicModal
+                        modelButton="ADD USERS"
+                        modalType="edit"
+                        GetUsers={GetUsers}
+                        id={row?.id}
+                      />
+                      <Prompt
+                        heading="Delete User"
+                        text={`Are you sure you want to delete ${row?.email} ?`}
+                        id={row?.id}
+                        GetUsers={GetUsers}
+                      />
                     </StyledTableCell>
                   )}
                 </StyledTableRow>

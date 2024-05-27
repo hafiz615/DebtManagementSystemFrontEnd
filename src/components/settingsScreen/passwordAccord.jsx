@@ -13,6 +13,7 @@ export default function PasswordAccordion() {
         borderRadius: "1rem !important",
         backgroundColor: Colors.WHITE,
         marginBottom: "1rem",
+        boxShadow: "none",
       }}
     >
       <AccordionSummary

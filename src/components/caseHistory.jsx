@@ -1,188 +1,54 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import { Grid, Typography } from "@mui/material";
-
-// import { isEqual } from "lodash";
 
 import { Colors } from "../config/default";
 import SearchBar from "./searchBar";
 import ListTable from "./listTable";
 const headers = [
-  "Creditor",
-  "Total Debt",
-  "Last Payment Amount",
-  "Last Date",
-  "Upcoming Date",
-  "Upcoming Debt",
   "Case Owner",
+  "Creditor",
+  "Last Payment Date",
   "Outstanding Debt",
-];
-function createData(
-  Creditor,
-  totalDebt,
-  lastPaymentAmount,
-  lastDate,
-  upcomingDate,
-  UpcomingDebt,
-  caseOwner,
-  OutstandingDebt
-) {
-  return {
-    Creditor,
-    totalDebt,
-    lastPaymentAmount,
-    lastDate,
-    upcomingDate,
-    UpcomingDebt,
-    caseOwner,
-    OutstandingDebt,
-  };
-}
-const tableData = [
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
+  "Total Debt",
+  "Upcoming Debt",
+  "Upcoming Date",
+  "Last Payment Amount",
 ];
 
-function CaseHistory() {
+function CaseHistory({ data }) {
   const [rows, setRows] = useState([]);
-
+  const navigate = useNavigate();
+  const formatDate = (dateString) => {
+    if (!dateString) return "-";
+    const options = { year: "numeric", month: "numeric", day: "numeric" };
+    return new Intl.DateTimeFormat("en-US", options).format(
+      new Date(dateString)
+    );
+  };
   useEffect(() => {
     // Simulate fetching data from an API
     const fetchData = () => {
-      const generatedData = tableData.map((item) => ({
-        Creditor: item.Creditor,
-        totalDebt: item.totalDebt,
-        lastPaymentAmount: item.lastPaymentAmount,
-        lastDate: item.lastDate,
-        upcomingDate: item.upcomingDate,
-        UpcomingDebt: item.UpcomingDebt,
-        caseOwner: item.caseOwner,
-        OutstandingDebt: item.OutstandingDebt,
-      }));
+      const generatedData =
+        data &&
+        data?.map((item) => ({
+          caseOwner: item?.caseOwner || "-",
+          Creditor: item?.creditorName || "-",
+          lastDate: formatDate(item?.lastPaymentDate) || "-",
+          OutstandingDebt: item?.outstandingDebt || "-",
+          totalDebt: item?.totalDebt || "-",
+          UpcomingDebt: item?.upcomingPayment || "-",
+          upcomingDate: formatDate(item?.upcomingPaymentDate) || "-",
+          lastPaymentAmount: item?.lastPayment || "-",
+        }));
       setRows(generatedData);
     };
 
     fetchData();
   }, []);
+
   return (
     <>
       <Grid
@@ -226,7 +92,11 @@ function CaseHistory() {
           justifyContent: "center",
         }}
       >
-        <ListTable headerData={headers} data={rows} />
+        <ListTable
+          headerData={headers}
+          data={rows}
+          onRowClick={() => navigate("/all-cases")}
+        />
       </Grid>
     </>
   );

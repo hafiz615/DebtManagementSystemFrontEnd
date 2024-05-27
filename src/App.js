@@ -108,7 +108,15 @@ function App() {
 
       {/* update and verify user password  */}
       <Route exact path="/set-password" element={<VerifyProfilePage />} />
-      <Route exact path="/all-cases" element={<CaseCodeDetail />} />
+      <Route
+        exact
+        path="/all-cases"
+        element={
+          <Protected>
+            <CaseCodeDetail />
+          </Protected>
+        }
+      />
     </Routes>
   );
 }
