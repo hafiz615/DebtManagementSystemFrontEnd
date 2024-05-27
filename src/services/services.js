@@ -31,6 +31,41 @@ export const CreateUser = async (payload) => {
     return error;
   }
 };
+
+export const GetUserById = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/user/getUserById/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const UpdateUser = async (payload) => {
+  try {
+    return await axios.put(
+      BASE_URL + "/v1/user/updateUser",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const DeleteUserById = async (id) => {
+  try {
+    return await axios.delete(
+      BASE_URL + `/v1/user/deleteUserById/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
 export const VerifyLink = async (token) => {
   try {
     return await axios.post(
@@ -106,6 +141,16 @@ export const GetAllClients = async () => {
   try {
     return await axios.get(
       BASE_URL + "/v1/debtor/listing/search",
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetClientById = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/debtor/listing/details/${id}`,
       setHeaders()
     );
   } catch (error) {

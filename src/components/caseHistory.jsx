@@ -1,9 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import { Grid, Typography } from "@mui/material";
-
-// import { isEqual } from "lodash";
 
 import { Colors } from "../config/default";
 import SearchBar from "./searchBar";
@@ -18,166 +17,26 @@ const headers = [
   "Case Owner",
   "Outstanding Debt",
 ];
-function createData(
-  Creditor,
-  totalDebt,
-  lastPaymentAmount,
-  lastDate,
-  upcomingDate,
-  UpcomingDebt,
-  caseOwner,
-  OutstandingDebt
-) {
-  return {
-    Creditor,
-    totalDebt,
-    lastPaymentAmount,
-    lastDate,
-    upcomingDate,
-    UpcomingDebt,
-    caseOwner,
-    OutstandingDebt,
-  };
-}
-const tableData = [
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-  createData(
-    "User Name",
-    "$10,000",
-    "$1,500",
-    "2/4/2024",
-    "3/4/2024",
-    "$10,000",
-    "User Name",
-    "User Name"
-  ),
-];
 
-function CaseHistory() {
+function CaseHistory({ data }) {
   const [rows, setRows] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Simulate fetching data from an API
     const fetchData = () => {
-      const generatedData = tableData.map((item) => ({
-        Creditor: item.Creditor,
-        totalDebt: item.totalDebt,
-        lastPaymentAmount: item.lastPaymentAmount,
-        lastDate: item.lastDate,
-        upcomingDate: item.upcomingDate,
-        UpcomingDebt: item.UpcomingDebt,
-        caseOwner: item.caseOwner,
-        OutstandingDebt: item.OutstandingDebt,
-      }));
+      const generatedData =
+        data &&
+        data?.map((item) => ({
+          Creditor: item?.creditor || "-",
+          totalDebt: item?.totalDebt || "-",
+          lastPaymentAmount: item?.lastPayment || 0,
+          lastDate: item?.lastPaymentDate || "-",
+          upcomingDate: item?.upcomingAuthDate || "-",
+          UpcomingDebt: item?.upcomingDebt || "-",
+          caseOwner: item?.caseOwner || "-",
+          OutstandingDebt: item?.outstandingDebt || "-",
+        }));
       setRows(generatedData);
     };
 
@@ -226,7 +85,11 @@ function CaseHistory() {
           justifyContent: "center",
         }}
       >
-        <ListTable headerData={headers} data={rows} />
+        <ListTable
+          headerData={headers}
+          data={rows}
+          onRowClick={() => navigate("/all-cases")}
+        />
       </Grid>
     </>
   );

@@ -39,7 +39,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     paddingBottom: "16px",
     paddingLeft: "1rem",
     fontFamily: "Nunito",
-    "&:not(:first-child)": {
+    "&:not(:first-of-type)": {
       opacity: 0.7,
     },
   },

@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { Box, Button, Modal, IconButton } from "@mui/material";
+
 import AddIcon from "@mui/icons-material/Add";
 import CreateIcon from "@mui/icons-material/Create";
 
@@ -41,22 +42,22 @@ export default function MuiModels({ buttonName, show, button }) {
           onClick={() => {
             handleOpen();
           }}
+          startIcon={<AddIcon />}
           buttonText="New Custom Field"
         />
       ) : show === "editField" ? (
-        <IconButton
-          onClick={() => {
-            handleOpen();
-          }}
-        >
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <CreateIcon
+            onClick={() => {
+              handleOpen();
+            }}
             sx={{
               color: Colors.DARK_GRAY,
               cursor: "pointer",
-              fontSize: "16px",
+              fontSize: "20px",
             }}
           />
-        </IconButton>
+        </Box>
       ) : (
         <Button onClick={handleOpen}>{buttonName}</Button>
       )}

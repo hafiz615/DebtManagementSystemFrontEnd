@@ -1,10 +1,9 @@
 import React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useSelector } from "react-redux";
 
 import { Grid, Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { isEqual } from "lodash";
 import { useNavigate } from "react-router-dom";
 import { UserListPage } from "../constants/appConstants";
 import { Colors } from "../config/default";
@@ -49,22 +48,23 @@ export default function ClientList() {
   useEffect(() => {
     GetClients();
   }, []);
-  useEffect(() => {
-    const generatedData =
+
+  const generatedData = useMemo(() => {
+    return (
       userArray &&
-      userArray?.map((item, index) => ({
-        // id: index,
+      userArray?.map((item) => ({
+        id: item?.id,
         name: item?.debtorName || "-",
         totalCases: item?.totalCases || "-",
         totalCreditors: item?.totalCreditors || "-",
         status: item?.status || "-",
         totalDebt: item?.totalDebt || "-",
-      }));
-
-    if (!isEqual(generatedData, userArray)) {
-      setRows(generatedData);
-    }
-  }, [userArray, rows]);
+      }))
+    );
+  }, [userArray]);
+  useEffect(() => {
+    setRows(generatedData);
+  }, [generatedData]);
 
   const handleRowClick = (id) => {
     localStorage.setItem("route", "client-list-details");
