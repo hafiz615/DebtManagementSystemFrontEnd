@@ -10,8 +10,16 @@ import EditField from "./editField";
 import AddCustomField from "./addCustomField";
 import { Colors } from "../config/default";
 import TextButton from "./button";
+import FroalaEditor from "./froalaEditor";
 
-export default function MuiModels({ buttonName, show, button }) {
+export default function MuiModels({
+  buttonName,
+  show,
+  button,
+  froalaEditorButton,
+  froalaEditor,
+  setFroalaEditor,
+}) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -59,7 +67,22 @@ export default function MuiModels({ buttonName, show, button }) {
           />
         </Box>
       ) : (
-        <Button onClick={handleOpen}>{buttonName}</Button>
+        <>
+          <Button onClick={handleOpen}>{buttonName}</Button>
+          <Button
+            onClick={handleOpen}
+            sx={{
+              border: `2px solid ${Colors.SKY_BLUE}`,
+              height: "2rem",
+              borderRadius: "10px",
+              color: Colors.SKY_BLUE,
+              fontWeight: "600",
+            }}
+          >
+            <AddIcon />
+            {froalaEditorButton}
+          </Button>
+        </>
       )}
       <Modal
         open={open}
@@ -76,6 +99,11 @@ export default function MuiModels({ buttonName, show, button }) {
             <EditField show={show} handleClose={handleClose} />
           ) : show === "addCustomField" ? (
             <AddCustomField show={show} handleClose={handleClose} />
+          ) : show === "froalaEditor" ? (
+            <FroalaEditor
+              froalaEditor={froalaEditor}
+              setFroalaEditor={setFroalaEditor}
+            />
           ) : (
             ""
           )}
