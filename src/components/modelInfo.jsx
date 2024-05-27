@@ -1,32 +1,59 @@
-import React, { useState } from "react";
-
-import { Grid } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { CircularProgress, Grid } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import TextButton from "./button";
 import CustomTextField from "./customTextfield";
-import { CreateUser } from "../services/services";
+import { CreateUser, GetUserById, UpdateUser } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import Dropdown from "./dropdown";
 import { Colors } from "../config/default";
 
-function ModelInfo({ show, setOpen, GetUsers }) {
+function ModelInfo({ modalType, setOpen, GetUsers, id }) {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const largeScreen = useMediaQuery("(min-width:1850px)");
-
+  const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
+  const [selectedValue, setSelectedValue] = useState("");
+  const [gender, setGender] = useState("");
+  const [gettingUser, setGettingUser] = useState(false);
+  const { showToast } = useToast();
+  const getUser = async () => {
+    setGettingUser(true);
+    const res = await GetUserById(id);
+    if (res?.status === 200) {
+      const formattedDate = res?.data?.data?.dateOfBirth
+        ? new Date(res?.data?.data?.dateOfBirth).toISOString().split("T")[0]
+        : "";
+      setFormData({
+        userName: res?.data?.data?.name,
+        email: res?.data?.data?.email,
+        phone: res?.data?.data?.phone,
+        dob: formattedDate,
+        ssid: res?.data?.data?.SSID,
+        address: res?.data?.data?.address,
+      });
+      setGender(res?.data?.data?.gender);
+      setSelectedValue(res?.data?.data?.role);
+    }
+    setGettingUser(false);
+  };
+  useEffect(() => {
+    if (id) {
+      getUser();
+    }
+  }, [id]);
   const menuItems = [
     { label: "Manager", value: "Manager" },
     { label: "Negotiator", value: "Negotiator" },
+    { label: "Admin", value: "Admin" },
   ];
   const genderItems = [
     { label: "Male", value: "Male" },
     { label: "Female", value: "Female" },
     { label: "Other", value: "Other" },
   ];
-  const [selectedValue, setSelectedValue] = useState("");
-  const [gender, setGender] = useState("");
-  const { showToast } = useToast();
 
   const [formData, setFormData] = useState({
     userName: "",
@@ -104,13 +131,11 @@ function ModelInfo({ show, setOpen, GetUsers }) {
       phone: formData?.phone,
       gender: gender,
       address: formData?.address,
-      createdBy: "Admin",
+      createdBy: role,
     };
     const userAdded = await CreateUser(params);
-
     if (userAdded?.status === 201) {
       showToast(userAdded?.data?.message, "success");
-
       GetUsers();
       setFormData({
         userName: "",
@@ -127,7 +152,39 @@ function ModelInfo({ show, setOpen, GetUsers }) {
     }
     setLoading(false);
   };
-
+  const handleEdit = async () => {
+    setLoading(true);
+    const params = {
+      name: formData?.userName,
+      email: formData?.email,
+      role: selectedValue,
+      SSID: formData?.ssid,
+      dateOfBirth: formData?.dob,
+      phone: formData?.phone,
+      gender: gender,
+      address: formData?.address,
+    };
+    const editUser = await UpdateUser(params);
+    if (editUser?.status === 200) {
+      showToast(editUser?.data?.message, "success");
+      GetUsers();
+      setFormData({
+        userName: "",
+        email: "",
+        phone: "",
+        dob: "",
+        ssid: "",
+        address: "",
+      });
+      setOpen(false);
+    } else {
+      showToast(
+        editUser?.response?.data?.message || editUser?.data?.message,
+        "error"
+      );
+    }
+    setLoading(false);
+  };
   const isFormValid = () => {
     return (
       formData.userName &&
@@ -164,7 +221,7 @@ function ModelInfo({ show, setOpen, GetUsers }) {
           fontFamily: "Nunito",
         }}
       >
-        {show ? "Edit User" : "Add User"}
+        {modalType === "edit" ? "Edit User" : "Add User"}
       </Typography>
 
       <Grid
@@ -174,149 +231,181 @@ function ModelInfo({ show, setOpen, GetUsers }) {
         sx={{
           justifyContent: "space-between",
           marginTop: "2rem",
+          height: "40vh",
         }}
       >
-        <CustomTextField
-          label="User Name*"
-          placeHolderValue="Enter Name"
-          type="text"
-          width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
-          onChange={(e) => handleInputChange("userName", e.target.value, e)}
-          value={formData?.userName}
-        />
-        <div
-          style={{
-            width: smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem",
-          }}
-        >
-          <Typography
+        {gettingUser ? (
+          <Grid
+            item
+            xs={12}
             sx={{
-              fontWeight: "500",
-              fontFamily: "Nunito",
-              marginLeft: "1rem",
-              color: Colors.DARK_GRAY,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "40vh",
             }}
           >
-            Gender*
-          </Typography>
-          <Dropdown
-            menuItems={genderItems}
-            placeholder="Enter Gender"
-            width="100%"
-            height="2.5rem"
-            backgroundColor={Colors.BG_LIGHT_GRAY}
-            hoverColor={Colors.BG_LIGHT_GRAY}
-            selectedValue={gender}
-            setSelectedValue={setGender}
-          />
-        </div>
-        <CustomTextField
-          label="Email*"
-          type="text"
-          width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
-          placeHolderValue="Enter Valid Email"
-          onChange={(e) => handleInputChange("email", e.target.value, e)}
-          value={formData?.email}
-        />
-        <CustomTextField
-          label="Phone #*"
-          type="number"
-          width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
-          placeHolderValue="Enter Phone"
-          onChange={(e) => handleInputChange("phone", e.target.value, e)}
-          error={errors?.phone}
-          value={formData?.phone}
-          onKeyDown={handleNumberInputKeyDown}
-        />
-      </Grid>
-      <Grid
-        container
-        item
-        xs={12}
-        sx={{
-          justifyContent: "space-between",
-          marginTop: "1rem",
-        }}
-      >
-        <div
-          style={{
-            width: smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem",
-          }}
-        >
-          <CustomTextField
-            label="DOB*"
-            type="date"
-            placeHolderValue="Enter DOB"
-            width="100%"
-            onChange={(e) => handleInputChange("dob", e.target.value, e)}
-            value={formData?.dob}
-            max={today}
-          />
-        </div>
-        <CustomTextField
-          label="SSN*"
-          type="number"
-          width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
-          placeHolderValue="Enter SSN"
-          onChange={(e) => handleInputChange("ssid", e.target.value, e)}
-          value={formData?.ssid}
-          error={errors?.ssid}
-          onKeyDown={handleNumberInput}
-        />
+            <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
+          </Grid>
+        ) : (
+          <>
+            <CustomTextField
+              label="User Name*"
+              placeHolderValue="Enter Name"
+              type="text"
+              width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
+              onChange={(e) => handleInputChange("userName", e.target.value, e)}
+              value={formData?.userName}
+            />
+            <div
+              style={{
+                width: smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontWeight: "500",
+                  fontFamily: "Nunito",
+                  marginLeft: "1rem",
+                  color: Colors.DARK_GRAY,
+                }}
+              >
+                Gender*
+              </Typography>
+              <Dropdown
+                menuItems={genderItems}
+                placeholder="Enter Gender"
+                width="100%"
+                height="2.5rem"
+                backgroundColor={Colors.BG_LIGHT_GRAY}
+                hoverColor={Colors.BG_LIGHT_GRAY}
+                selectedValue={gender}
+                setSelectedValue={setGender}
+              />
+            </div>
+            <CustomTextField
+              disabled={modalType === "edit"}
+              label="Email*"
+              type="text"
+              width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
+              placeHolderValue="Enter Valid Email"
+              onChange={(e) => handleInputChange("email", e.target.value, e)}
+              value={formData?.email}
+            />
+            <CustomTextField
+              label="Phone #*"
+              type="number"
+              width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
+              placeHolderValue="Enter Phone"
+              onChange={(e) => handleInputChange("phone", e.target.value, e)}
+              error={errors?.phone}
+              value={formData?.phone}
+              onKeyDown={handleNumberInputKeyDown}
+            />
 
-        <div
-          style={{
-            width: smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem",
-          }}
-        >
-          <Typography
-            sx={{
-              fontWeight: "500",
-              fontFamily: "Nunito",
-              marginLeft: "1rem",
-              color: Colors.DARK_GRAY,
-            }}
-          >
-            Role*
-          </Typography>
-          <Dropdown
-            menuItems={menuItems}
-            placeholder="Enter Role"
-            height="2.5rem"
-            width="100%"
-            backgroundColor={Colors.BG_LIGHT_GRAY}
-            hoverColor={Colors.BG_LIGHT_GRAY}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-          />
-        </div>
-        <CustomTextField
-          label="Address*"
-          type="text"
-          width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
-          placeHolderValue="Enter Address"
-          onChange={(e) => handleInputChange("address", e.target.value, e)}
-          value={formData?.address}
-        />
-      </Grid>
+            <Grid
+              container
+              item
+              xs={12}
+              sx={{
+                justifyContent: "space-between",
+                marginTop: "1rem",
+              }}
+            >
+              <div
+                style={{
+                  width: smallScreen
+                    ? "15rem"
+                    : largeScreen
+                    ? "20rem"
+                    : "10rem",
+                }}
+              >
+                <CustomTextField
+                  label="DOB*"
+                  type="date"
+                  placeHolderValue="Enter DOB"
+                  width="100%"
+                  onChange={(e) => handleInputChange("dob", e.target.value, e)}
+                  value={formData?.dob}
+                  max={today}
+                />
+              </div>
+              <CustomTextField
+                disabled={modalType === "edit"}
+                label="SSN*"
+                type="number"
+                width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
+                placeHolderValue="Enter SSN"
+                onChange={(e) => handleInputChange("ssid", e.target.value, e)}
+                value={formData?.ssid}
+                error={errors?.ssid}
+                onKeyDown={handleNumberInput}
+              />
 
-      <Grid
-        item
-        xs={12}
-        sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginTop: "2rem",
-        }}
-      >
-        <TextButton
-          loading={loading}
-          buttonText={show ? "EDIT" : "ADD"}
-          height="2rem"
-          marginBottom="2rem"
-          onClick={handleSubmit}
-          disabled={!isFormValid()}
-        />
+              <div
+                style={{
+                  width: smallScreen
+                    ? "15rem"
+                    : largeScreen
+                    ? "20rem"
+                    : "10rem",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontWeight: "500",
+                    fontFamily: "Nunito",
+                    marginLeft: "1rem",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Role*
+                </Typography>
+                <Dropdown
+                  menuItems={menuItems}
+                  placeholder="Enter Role"
+                  height="2.5rem"
+                  width="100%"
+                  backgroundColor={Colors.BG_LIGHT_GRAY}
+                  hoverColor={Colors.BG_LIGHT_GRAY}
+                  selectedValue={selectedValue}
+                  setSelectedValue={setSelectedValue}
+                />
+              </div>
+              <CustomTextField
+                label="Address*"
+                type="text"
+                width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
+                placeHolderValue="Enter Address"
+                onChange={(e) =>
+                  handleInputChange("address", e.target.value, e)
+                }
+                value={formData?.address}
+              />
+            </Grid>
+
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginTop: "2rem",
+              }}
+            >
+              <TextButton
+                loading={loading}
+                buttonText={modalType === "edit" ? "UPDATE" : "ADD"}
+                height="2rem"
+                marginBottom="2rem"
+                width="4.5rem"
+                onClick={modalType === "edit" ? handleEdit : handleSubmit}
+                disabled={!isFormValid()}
+              />
+            </Grid>
+          </>
+        )}
       </Grid>
     </Grid>
   );

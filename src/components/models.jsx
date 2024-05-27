@@ -1,8 +1,10 @@
 import * as React from "react";
 
 import { Box, Button, Modal, IconButton } from "@mui/material";
+
 import AddIcon from "@mui/icons-material/Add";
 import CreateIcon from "@mui/icons-material/Create";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import AddTask from "./addTask";
 import EditField from "./editField";
@@ -14,12 +16,16 @@ export default function MuiModels({ buttonName, show, button }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const smallScreen = useMediaQuery("(min-width:900px) and (max-width:1200px)");
+  const extraSmallScreen = useMediaQuery(
+    "(min-width:300px) and (max-width:900px)"
+  );
   const style = {
     position: "absolute",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: "50vw",
+    width: extraSmallScreen ? "90%" : smallScreen ? "70vw" : "50vw",
     bgcolor: "background.paper",
     borderRadius: 5,
     boxShadow: 24,
@@ -41,22 +47,22 @@ export default function MuiModels({ buttonName, show, button }) {
           onClick={() => {
             handleOpen();
           }}
+          startIcon={<AddIcon />}
           buttonText="New Custom Field"
         />
       ) : show === "editField" ? (
-        <IconButton
-          onClick={() => {
-            handleOpen();
-          }}
-        >
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <CreateIcon
+            onClick={() => {
+              handleOpen();
+            }}
             sx={{
               color: Colors.DARK_GRAY,
               cursor: "pointer",
-              fontSize: "16px",
+              fontSize: "20px",
             }}
           />
-        </IconButton>
+        </Box>
       ) : (
         <Button onClick={handleOpen}>{buttonName}</Button>
       )}

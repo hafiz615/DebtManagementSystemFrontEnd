@@ -86,7 +86,7 @@ export default function NotificationTemplatesTabs() {
         backgroundColor: Colors.WHITE,
         marginTop: "1rem",
         marginBottom: "1rem",
-        borderTop: "none !important",
+        boxShadow: "none",
       }}
     >
       <AccordionSummary

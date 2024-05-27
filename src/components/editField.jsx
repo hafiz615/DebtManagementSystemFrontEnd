@@ -81,7 +81,8 @@ export default function EditField({ handleClose }) {
             backgroundColor: Colors.BG_LIGHT_GRAY,
             border: "none",
             outline: "none",
-            width: "100%",
+            minWidth: "100%",
+            maxWidth: "100%",
             padding: "1em",
           }}
         />
