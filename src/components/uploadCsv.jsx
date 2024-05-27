@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
+
 import { Box, Typography, IconButton, Button } from "@mui/material";
 import { Close } from "@mui/icons-material";
+import useMediaQuery from "@mui/material/useMediaQuery";
+
 import Papa from "papaparse";
 import { Colors } from "../config/default";
 import { useToast } from "../toast/toastContext";
@@ -12,6 +15,11 @@ export default function UploadCsv({ handleModalClose }) {
   const [filename, setFilename] = useState(null);
   const [data, setData] = useState(null);
   const { showToast } = useToast();
+
+  const smallScreen = useMediaQuery("(min-width:900px) and (max-width:1200px)");
+  const extraSmallScreen = useMediaQuery(
+    "(min-width:300px) and (max-width:900px)"
+  );
 
   const onDrop = (acceptedFiles, fileRejections) => {
     if (acceptedFiles.length > 0) {
@@ -58,7 +66,7 @@ export default function UploadCsv({ handleModalClose }) {
   return (
     <Box
       sx={{
-        width: "45vw",
+        width: extraSmallScreen ? "90%" : smallScreen ? "70vw" : "45vw",
         borderRadius: "10px",
         backgroundColor: Colors.WHITE,
         position: "absolute",

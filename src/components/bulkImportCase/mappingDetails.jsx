@@ -69,7 +69,7 @@ export default function MappingDetails() {
   const getColumnData = (columnIndex) => {
     return csvData.map((row) => {
       const keys = Object.keys(row);
-      return row[keys[0]];
+      return row[keys[columnIndex]];
     });
   };
 
@@ -94,7 +94,7 @@ export default function MappingDetails() {
       const columnIndex = columnNames.findIndex(
         (col) => col.value === selectedColumn
       );
-      console.log(`Selected Column Index: ${columnIndex}`);
+      console.log(` ${itemName} have this${columnIndex} column index `);
 
       if (columnIndex !== -1) {
         const data = getColumnData(columnIndex);
