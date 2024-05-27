@@ -12,10 +12,12 @@ import {
   Search,
   KeyboardArrowLeft,
   KeyboardArrowRight,
+  Add,
 } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
 import avatar from "../../assets/Ellipse 12.png";
+import MuiModels from "../models";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -77,11 +79,28 @@ export default function CreditorsDetailCards() {
           height: "13rem",
         }}
       >
-        <p
-          style={{ fontWeight: "600", fontSize: "13px", fontFamily: "Nunito" }}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
         >
-          Person Details
-        </p>
+          <p
+            style={{
+              fontWeight: "600",
+              fontSize: "13px",
+              fontFamily: "Nunito",
+            }}
+          >
+            Person Details
+          </p>
+          <MuiModels
+            show="creditorDetail"
+            button="create"
+            iconColor={Colors.BLACK}
+          />
+        </div>
         <div
           style={{
             display: "flex",
@@ -361,7 +380,6 @@ export default function CreditorsDetailCards() {
           </Card>
         </div>
       </Grid>
-
       <Grid
         item
         xs={2.5}
@@ -384,11 +402,20 @@ export default function CreditorsDetailCards() {
           },
         }}
       >
-        <p
-          style={{ fontWeight: "600", fontSize: "13px", fontFamily: "Nunito" }}
-        >
-          Other Creditors
-        </p>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <p
+            style={{
+              fontWeight: "600",
+              fontSize: "13px",
+              fontFamily: "Nunito",
+            }}
+          >
+            Other Creditors
+          </p>
+          <IconButton>
+            <Add sx={{ fontSize: "16px", color: Colors.BLACK }} />
+          </IconButton>
+        </div>
         <div
           style={{
             display: "flex",

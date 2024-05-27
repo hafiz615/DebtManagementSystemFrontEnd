@@ -5,12 +5,21 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Grid,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { Colors } from "../../config/default";
 
 export default function AnalyticsAccordion() {
+  const analyticsData = [
+    { name: "Successful Authorizations", value: "05" },
+    { name: "Successful Payments", value: "05" },
+    { name: "Failed Authorizations", value: "05" },
+    { name: "Successful Payments", value: "05" },
+    { name: "Remaining Debt", value: "$2000" },
+    { name: "Paid Debt", value: "$8000" },
+  ];
   return (
     <Accordion
       sx={{
@@ -18,6 +27,7 @@ export default function AnalyticsAccordion() {
         marginBottom: "10px",
         backgroundColor: Colors.BG_LIGHT_GRAY,
       }}
+      defaultExpanded
     >
       <AccordionSummary
         expandIcon={<ExpandMoreIcon sx={{ color: Colors.WHITE }} />}
@@ -41,7 +51,36 @@ export default function AnalyticsAccordion() {
           borderBottomLeftRadius: "10px",
           borderBottomRightRadius: "10px",
         }}
-      ></AccordionDetails>
+      >
+        <Grid>
+          {analyticsData?.map((item) => (
+            <Grid
+              container
+              xs={12}
+              sx={{ justifyContent: "space-between", mb: "10px" }}
+            >
+              <Grid
+                sx={{
+                  fontSize: "11px",
+                  fontFamily: "Nunito",
+                  color: Colors.BLACK,
+                }}
+              >
+                {item?.name}
+              </Grid>
+              <Grid
+                sx={{
+                  fontSize: "11px",
+                  fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
+                }}
+              >
+                {item?.value}
+              </Grid>
+            </Grid>
+          ))}
+        </Grid>
+      </AccordionDetails>
     </Accordion>
   );
 }

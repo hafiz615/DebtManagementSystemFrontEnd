@@ -12,10 +12,12 @@ import {
   Search,
   KeyboardArrowLeft,
   KeyboardArrowRight,
+  Add,
 } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
 import avatar from "../../assets/Ellipse 12.png";
+import MuiModels from "../models";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -63,14 +65,9 @@ export default function DebtorDetailsCards() {
   };
   const businessDetail = {
     Company: "pathan",
-    EIN: "32132312",
     Category: "tech",
-    Country: "Pakistan",
-    State: "Punjab",
-    City: "lahore",
-    ZipCode: "50000",
+    EIN: "32132312",
     Phone: "03211017632",
-    Address: "ghazi road lahore",
     Description: "none",
   };
   return (
@@ -83,7 +80,7 @@ export default function DebtorDetailsCards() {
     >
       <Grid
         item
-        xs={3.9}
+        xs={3.6}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",
@@ -91,11 +88,28 @@ export default function DebtorDetailsCards() {
           height: "13rem",
         }}
       >
-        <p
-          style={{ fontWeight: "600", fontSize: "13px", fontFamily: "Nunito" }}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
         >
-          Person Details
-        </p>
+          <p
+            style={{
+              fontWeight: "600",
+              fontSize: "13px",
+              fontFamily: "Nunito",
+            }}
+          >
+            Person Details
+          </p>
+          <MuiModels
+            show="debtorDetail"
+            button="create"
+            iconColor={Colors.BLACK}
+          />
+        </div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "10%" }}>
           {Object.entries(personDetail)?.map(([key, value]) => (
             <div
@@ -125,7 +139,7 @@ export default function DebtorDetailsCards() {
       </Grid>
       <Grid
         item
-        xs={3.9}
+        xs={2}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",
@@ -138,14 +152,14 @@ export default function DebtorDetailsCards() {
         >
           Business Details
         </p>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "10%" }}>
+        <div style={{ gap: "10%" }}>
           {Object.entries(businessDetail)?.map(([key, value]) => (
             <div
               key={key}
               style={{
                 display: "flex",
                 justifyContent: "space-between",
-                width: "45%",
+                width: "100%",
                 marginBottom: "8px",
               }}
             >
@@ -167,7 +181,7 @@ export default function DebtorDetailsCards() {
       </Grid>
       <Grid
         item
-        xs={3.9}
+        xs={3.5}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",
@@ -275,6 +289,78 @@ export default function DebtorDetailsCards() {
               </Typography>
             </div>
           </Card>
+        </div>
+      </Grid>
+      <Grid
+        item
+        xs={2.5}
+        sx={{
+          backgroundColor: Colors.WHITE,
+          borderRadius: "10px",
+          padding: "0px 10px",
+          height: "13rem",
+          overflowY: "auto",
+          "&::-webkit-scrollbar": {
+            width: "5px",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "#E5E5E5",
+            borderRadius: "8px",
+          },
+          "&::-webkit-scrollbar-track": {
+            backgroundColor: Colors.WHITE,
+            borderRadius: "8px",
+          },
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <p
+            style={{
+              fontWeight: "600",
+              fontSize: "13px",
+              fontFamily: "Nunito",
+            }}
+          >
+            Other Creditors
+          </p>
+          <IconButton>
+            <Add sx={{ fontSize: "16px", color: Colors.BLACK }} />
+          </IconButton>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <p style={{ fontSize: "11px", fontFamily: "Nunito" }}>Name</p>
+          <p
+            style={{
+              fontSize: "11px",
+              color: Colors.DIM_LIGHT_GRAY,
+              fontFamily: "Nunito",
+            }}
+          >
+            $10000
+          </p>
+          <p
+            style={{
+              fontSize: "11px",
+              color: Colors.DIM_LIGHT_GRAY,
+              fontFamily: "Nunito",
+            }}
+          >
+            Case Code
+          </p>
+          <p
+            style={{
+              fontSize: "11px",
+              color: Colors.DIM_LIGHT_GRAY,
+              fontFamily: "Nunito",
+            }}
+          >
+            On Hold
+          </p>
         </div>
       </Grid>
     </Grid>
