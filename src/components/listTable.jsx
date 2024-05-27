@@ -1,7 +1,6 @@
 import * as React from "react";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
-import IconButton from "@mui/material/IconButton";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
@@ -15,7 +14,6 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import { Colors } from "../config/default";
-import { Box } from "@mui/material";
 import MuiModels from "./models";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
