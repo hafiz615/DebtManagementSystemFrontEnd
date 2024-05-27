@@ -50,27 +50,27 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function DebtorDetailsCards() {
   const personDetail = {
-    name: "rummaz",
-    email: "ruma@gmail.com",
-    country: "Pakistan",
-    state: "Punjab",
-    phone: "03211017632",
-    address: "ghazi road lahore",
-    ssn: "99921291",
-    status: "customer",
-    city: "lahore",
-    zipCode: "50000",
+    Name: "rummaz",
+    Email: "ruma@gmail.com",
+    Country: "Pakistan",
+    State: "Punjab",
+    Phone: "03211017632",
+    Address: "ghazi road lahore",
+    SSN: "99921291",
+    Status: "customer",
+    City: "lahore",
+    ZipCode: "50000",
   };
   const businessDetail = {
-    company: "pathan",
-    ein: "32132312",
-    category: "tech",
-    country: "Pakistan",
-    state: "Punjab",
-    city: "lahore",
-    zipCode: "50000",
-    phone: "03211017632",
-    address: "ghazi road lahore",
+    Company: "pathan",
+    EIN: "32132312",
+    Category: "tech",
+    Country: "Pakistan",
+    State: "Punjab",
+    City: "lahore",
+    ZipCode: "50000",
+    Phone: "03211017632",
+    Address: "ghazi road lahore",
     Description: "none",
   };
   return (
@@ -253,7 +253,7 @@ export default function DebtorDetailsCards() {
               }}
             >
               <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
-                {personDetail?.name}
+                {personDetail?.Name}
               </Typography>
               <Typography
                 style={{
@@ -262,7 +262,7 @@ export default function DebtorDetailsCards() {
                   fontFamily: "Nunito",
                 }}
               >
-                {personDetail?.email}
+                {personDetail?.Email}
               </Typography>
               <Typography
                 style={{
@@ -271,7 +271,7 @@ export default function DebtorDetailsCards() {
                   fontFamily: "Nunito",
                 }}
               >
-                {personDetail?.phone}
+                {personDetail?.Phone}
               </Typography>
             </div>
           </Card>

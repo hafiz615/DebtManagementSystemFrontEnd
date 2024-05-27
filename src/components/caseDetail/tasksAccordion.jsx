@@ -17,6 +17,7 @@ export default function TaskAccordion() {
       sx={{
         boxShadow: "none",
         marginBottom: "10px",
+        backgroundColor: Colors.BG_LIGHT_GRAY,
       }}
     >
       <AccordionSummary

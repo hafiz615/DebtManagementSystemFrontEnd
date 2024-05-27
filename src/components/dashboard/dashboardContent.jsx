@@ -31,7 +31,7 @@ function DashboardContent() {
           mt: "2em",
         }}
       >
-        <Grid xs={8}>
+        <Grid item xs={8}>
           <div style={{ display: "flex" }}>
             <Typography
               sx={{
@@ -63,7 +63,7 @@ function DashboardContent() {
             </Typography>
           </div>
         </Grid>
-        <Grid xs={4}>
+        <Grid item xs={4}>
           <SearchBar
             searchText={searchText}
             setSearchText={setSearchText}
@@ -72,8 +72,8 @@ function DashboardContent() {
         </Grid>
       </Grid>
 
-      <Grid xs={12} container sx={{ mt: "1rem" }}>
-        <Grid xs={12} lg={8}>
+      <Grid container xs={12} sx={{ mt: "1rem" }}>
+        <Grid item xs={12} lg={8}>
           <Card
             sx={{
               width: { xs: "100%", lg: "95%" },
@@ -104,26 +104,86 @@ function DashboardContent() {
               </Typography>
             </div>
             <hr style={{ background: "lightgrey" }} />
-            <Grid container xs={12} sx={{ padding: "10px 16px" }}>
-              <Grid xs={6} md={3}>
+            <Grid
+              container
+              xs={12}
+              sx={{
+                padding: "10px 16px",
+                height: "16rem",
+                gap: { xs: "1em", md: "0" },
+                overflowY: "auto",
+                "&::-webkit-scrollbar": {
+                  width: "10px",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  backgroundColor: "#E5E5E5",
+                  borderRadius: "8px",
+                },
+                "&::-webkit-scrollbar-track": {
+                  backgroundColor: Colors.WHITE,
+                  borderRadius: "8px",
+                },
+              }}
+            >
+              <Grid
+                item
+                xs={12}
+                md={3}
+                sx={{
+                  display: { xs: "flex", md: "unset" },
+                  flexDirection: { xs: "column", md: "unset" },
+                  alignItems: { xs: "center", md: "unset" },
+                  justifyContent: { xs: "center", md: "unset" },
+                }}
+              >
                 <SpinnerWithPercentage value={30} color={Colors.ORANGE_COLOR} />
                 <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
                   Failed Authorizations
                 </Typography>
               </Grid>
-              <Grid xs={6} md={3}>
+              <Grid
+                item
+                xs={12}
+                md={3}
+                sx={{
+                  display: { xs: "flex", md: "unset" },
+                  flexDirection: { xs: "column", md: "unset" },
+                  alignItems: { xs: "center", md: "unset" },
+                  justifyContent: { xs: "center", md: "unset" },
+                }}
+              >
                 <SpinnerWithPercentage value={40} color={Colors.YELLOW} />
                 <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
                   Failed Payments
                 </Typography>
               </Grid>
-              <Grid xs={6} md={3}>
+              <Grid
+                item
+                xs={12}
+                md={3}
+                sx={{
+                  display: { xs: "flex", md: "unset" },
+                  flexDirection: { xs: "column", md: "unset" },
+                  alignItems: { xs: "center", md: "unset" },
+                  justifyContent: { xs: "center", md: "unset" },
+                }}
+              >
                 <SpinnerWithPercentage color={Colors.SKY_BLUE} value={70} />
                 <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
                   Successful Authorizations
                 </Typography>
               </Grid>
-              <Grid xs={6} md={3}>
+              <Grid
+                item
+                xs={12}
+                md={3}
+                sx={{
+                  display: { xs: "flex", md: "unset" },
+                  flexDirection: { xs: "column", md: "unset" },
+                  alignItems: { xs: "center", md: "unset" },
+                  justifyContent: { xs: "center", md: "unset" },
+                }}
+              >
                 <SpinnerWithPercentage value={60} color={Colors.NAVY_BLUE} />
                 <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
                   Successful Payments
@@ -132,7 +192,7 @@ function DashboardContent() {
             </Grid>
           </Card>
         </Grid>
-        <Grid xs={12} lg={4} sx={{ mt: { xs: "1rem", lg: "0" } }}>
+        <Grid item xs={12} lg={4} sx={{ mt: { xs: "1rem", lg: "0" } }}>
           <Card
             sx={{
               backgroundColor: Colors.WHITE,
@@ -193,8 +253,8 @@ function DashboardContent() {
         </Grid>
       </Grid>
 
-      <Grid xs={12} container sx={{ m: "1rem 0rem" }}>
-        <Grid xs={12} lg={8} sx={{ mt: { xs: "1rem", lg: "0" } }}>
+      <Grid container xs={12} sx={{ m: "1rem 0rem" }}>
+        <Grid item xs={12} lg={8} sx={{ mt: { xs: "1rem", lg: "0" } }}>
           <Card
             sx={{
               width: { xs: "100%", lg: "95%" },
@@ -240,7 +300,7 @@ function DashboardContent() {
             </div>
           </Card>
         </Grid>
-        <Grid xs={12} lg={4} sx={{ mt: { xs: "1rem", lg: "0" } }}>
+        <Grid item xs={12} lg={4} sx={{ mt: { xs: "1rem", lg: "0" } }}>
           <Card
             sx={{
               backgroundColor: Colors.WHITE,

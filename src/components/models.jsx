@@ -4,6 +4,7 @@ import { Box, Button, Modal, IconButton } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
 import CreateIcon from "@mui/icons-material/Create";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import AddTask from "./addTask";
 import EditField from "./editField";
@@ -23,12 +24,16 @@ export default function MuiModels({
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const smallScreen = useMediaQuery("(min-width:900px) and (max-width:1200px)");
+  const extraSmallScreen = useMediaQuery(
+    "(min-width:300px) and (max-width:900px)"
+  );
   const style = {
     position: "absolute",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: "50vw",
+    width: extraSmallScreen ? "90%" : smallScreen ? "70vw" : "50vw",
     bgcolor: "background.paper",
     borderRadius: 5,
     boxShadow: 24,
