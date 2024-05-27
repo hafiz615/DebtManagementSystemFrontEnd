@@ -8,40 +8,47 @@ import { Colors } from "../config/default";
 import SearchBar from "./searchBar";
 import ListTable from "./listTable";
 const headers = [
-  "Creditor",
-  "Total Debt",
-  "Last Payment Amount",
-  "Last Date",
-  "Upcoming Date",
-  "Upcoming Debt",
   "Case Owner",
+  "Creditor",
+  "Last Payment Date",
   "Outstanding Debt",
+  "Total Debt",
+  "Upcoming Debt",
+  "Upcoming Date",
+  "Last Payment Amount",
 ];
 
 function CaseHistory({ data }) {
   const [rows, setRows] = useState([]);
   const navigate = useNavigate();
-
+  const formatDate = (dateString) => {
+    if (!dateString) return "-";
+    const options = { year: "numeric", month: "numeric", day: "numeric" };
+    return new Intl.DateTimeFormat("en-US", options).format(
+      new Date(dateString)
+    );
+  };
   useEffect(() => {
     // Simulate fetching data from an API
     const fetchData = () => {
       const generatedData =
         data &&
         data?.map((item) => ({
-          Creditor: item?.creditor || "-",
-          totalDebt: item?.totalDebt || "-",
-          lastPaymentAmount: item?.lastPayment || 0,
-          lastDate: item?.lastPaymentDate || "-",
-          upcomingDate: item?.upcomingAuthDate || "-",
-          UpcomingDebt: item?.upcomingDebt || "-",
           caseOwner: item?.caseOwner || "-",
+          Creditor: item?.creditorName || "-",
+          lastDate: formatDate(item?.lastPaymentDate) || "-",
           OutstandingDebt: item?.outstandingDebt || "-",
+          totalDebt: item?.totalDebt || "-",
+          UpcomingDebt: item?.upcomingPayment || "-",
+          upcomingDate: formatDate(item?.upcomingPaymentDate) || "-",
+          lastPaymentAmount: item?.lastPayment || "-",
         }));
       setRows(generatedData);
     };
 
     fetchData();
   }, []);
+
   return (
     <>
       <Grid

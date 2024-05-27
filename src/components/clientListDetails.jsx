@@ -29,6 +29,12 @@ export default function ClientListDetails() {
   useEffect(() => {
     GetClientDetails();
   }, []);
+  const truncateText = (text, length) => {
+    if (text?.length > length) {
+      return text.substring(0, length) + "...";
+    }
+    return text;
+  };
   const { AUTHORITY_TEXT } = UserListPage;
   return (
     <Grid
@@ -130,7 +136,7 @@ export default function ClientListDetails() {
                       color: Colors.DIM_LIGHT_GRAY,
                     }}
                   >
-                    {clientData?.debtor?.SSID}
+                    {clientData?.debtor?.SSN}
                   </span>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -153,7 +159,7 @@ export default function ClientListDetails() {
                       color: Colors.DIM_LIGHT_GRAY,
                     }}
                   >
-                    {clientData?.debtor?.email}
+                    {truncateText(clientData?.debtor?.email, 10)}
                   </span>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -179,29 +185,7 @@ export default function ClientListDetails() {
                     {clientData?.debtor?.status}
                   </span>
                 </Box>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <div
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "600",
-                      color: Colors.DARK_GRAY,
-                      width: "6rem",
-                    }}
-                  >
-                    Phone No
-                  </div>
 
-                  <span
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "300",
-                      fontSize: "0.9rem",
-                      color: Colors.DIM_LIGHT_GRAY,
-                    }}
-                  >
-                    {clientData?.debtor?.phone}
-                  </span>
-                </Box>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <div
                     style={{
@@ -222,7 +206,7 @@ export default function ClientListDetails() {
                       color: Colors.DIM_LIGHT_GRAY,
                     }}
                   >
-                    {clientData?.debtor?.address}
+                    {truncateText(clientData?.debtor?.address, 10)}
                   </span>
                 </Box>
               </Grid>
@@ -236,7 +220,7 @@ export default function ClientListDetails() {
                       width: "10rem",
                     }}
                   >
-                    Country
+                    Company Name
                   </div>
 
                   <span
@@ -247,7 +231,7 @@ export default function ClientListDetails() {
                       color: Colors.DIM_LIGHT_GRAY,
                     }}
                   >
-                    {clientData?.debtor?.country}
+                    {clientData?.debtor?.companyName}
                   </span>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -259,7 +243,7 @@ export default function ClientListDetails() {
                       width: "10rem",
                     }}
                   >
-                    City
+                    Outstanding Debt
                   </div>
 
                   <span
@@ -270,7 +254,7 @@ export default function ClientListDetails() {
                       color: Colors.DIM_LIGHT_GRAY,
                     }}
                   >
-                    {clientData?.debtor?.city}
+                    {clientData?.debtor?.outstandingDebt}
                   </span>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -282,7 +266,7 @@ export default function ClientListDetails() {
                       width: "10rem",
                     }}
                   >
-                    State
+                    Total Debt
                   </div>
 
                   <span
@@ -293,30 +277,7 @@ export default function ClientListDetails() {
                       color: Colors.DIM_LIGHT_GRAY,
                     }}
                   >
-                    {clientData?.debtor?.state}
-                  </span>
-                </Box>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <div
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "600",
-                      color: Colors.DARK_GRAY,
-                      width: "10rem",
-                    }}
-                  >
-                    Zip Code
-                  </div>
-
-                  <span
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "300",
-                      fontSize: "0.9rem",
-                      color: Colors.DIM_LIGHT_GRAY,
-                    }}
-                  >
-                    {clientData?.debtor?.zipCode}
+                    {clientData?.debtor?.totalDebt}
                   </span>
                 </Box>
               </Grid>
@@ -333,22 +294,22 @@ export default function ClientListDetails() {
                 {[
                   {
                     title: "Failed Payments",
-                    value: clientData?.paymentsCount?.failedPayments,
+                    value: clientData?.paymentCounts?.failedPayments,
                     color: Colors.BLACK,
                   },
                   {
                     title: "Failed Authorizations",
-                    value: clientData?.paymentsCount?.failedAuthorizations,
+                    value: clientData?.paymentCounts?.failedAuthorizations,
                     color: Colors.BLACK,
                   },
                   {
                     title: "Successful Payments",
-                    value: clientData?.paymentsCount?.successPayments,
+                    value: clientData?.paymentCounts?.successfulPayments,
                     color: Colors.SKY_BLUE,
                   },
                   {
                     title: "Successful Authorizations",
-                    value: clientData?.paymentsCount?.successAuthorizations,
+                    value: clientData?.paymentCounts?.successfulAuthorizations,
                     color: Colors.SKY_BLUE,
                   },
                 ].map((item, index) => (
@@ -366,7 +327,9 @@ export default function ClientListDetails() {
                       marginBottom: "0.5rem",
                     }}
                   >
-                    <Typography>{item.title}</Typography>
+                    <Typography sx={{ width: "12rem" }}>
+                      {item.title}
+                    </Typography>
                     <Typography
                       sx={{
                         color: item.color,
@@ -381,7 +344,7 @@ export default function ClientListDetails() {
                 ))}
               </Grid>
             </Grid>
-            <CaseHistory data={clientData?.columns} />
+            <CaseHistory data={clientData?.caseHistory} />
           </Grid>
         </>
       )}
