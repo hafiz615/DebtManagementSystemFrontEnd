@@ -14,11 +14,15 @@ import { Colors } from "../config/default";
 import TextButton from "./button";
 import EditCreditorDetail from "./editCreditorDetail";
 import EditDebtorDetails from "./editDebtorDetails";
+import FroalaEditor from "./froalaEditor";
 
 export default function MuiModels({
   buttonName,
   show,
   button,
+  froalaEditorButton,
+  froalaEditor,
+  setFroalaEditor,
   iconSize,
   field,
   data,
@@ -84,7 +88,22 @@ export default function MuiModels({
           />
         </IconButton>
       ) : (
-        <Button onClick={handleOpen}>{buttonName}</Button>
+        <>
+          <Button onClick={handleOpen}>{buttonName}</Button>
+          <Button
+            onClick={handleOpen}
+            sx={{
+              border: `2px solid ${Colors.SKY_BLUE}`,
+              height: "2rem",
+              borderRadius: "10px",
+              color: Colors.SKY_BLUE,
+              fontWeight: "600",
+            }}
+          >
+            <AddIcon />
+            {froalaEditorButton}
+          </Button>
+        </>
       )}
       <Modal
         open={open}
@@ -110,6 +129,11 @@ export default function MuiModels({
             <EditCreditorDetail show={show} handleClose={handleClose} />
           ) : show === "debtorDetail" ? (
             <EditDebtorDetails show={show} handleClose={handleClose} />
+          ) : show === "froalaEditor" ? (
+            <FroalaEditor
+              froalaEditor={froalaEditor}
+              setFroalaEditor={setFroalaEditor}
+            />
           ) : (
             ""
           )}
