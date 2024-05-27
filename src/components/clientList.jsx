@@ -37,7 +37,7 @@ export default function ClientList() {
     setLoading(true);
     const getClients = await GetAllClients();
     if (getClients?.status === 200) {
-      setUserArray(getClients?.data?.data);
+      setUserArray(getClients?.data?.data?.clientDetails);
     } else {
       const errorMessage = getClients?.response?.data?.message;
       showToast(errorMessage, "error");

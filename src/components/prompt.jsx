@@ -68,8 +68,8 @@ export default function Prompt({ heading, text, id, GetUsers }) {
           <TextButton
             buttonText="Cancel"
             onClick={handleClose}
-            backgroundColor={Colors.SKY_BLUE}
-            hoverColor={Colors.SKY_BLUE}
+            backgroundColor={Colors.ORANGE_COLOR}
+            hoverColor={Colors.ORANGE_COLOR}
             paddingLeft="2rem"
             paddingRight="2rem"
             height="2rem"
@@ -80,8 +80,8 @@ export default function Prompt({ heading, text, id, GetUsers }) {
             loading={loading}
             buttonText="Confirm"
             onClick={deleteUserById}
-            backgroundColor={Colors.ORANGE_COLOR}
-            hoverColor={Colors.ORANGE_COLOR}
+            backgroundColor={Colors.SKY_BLUE}
+            hoverColor={Colors.SKY_BLUE}
             paddingLeft="2rem"
             paddingRight="2rem"
             height="2rem"
