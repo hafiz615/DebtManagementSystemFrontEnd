@@ -18,6 +18,7 @@ export default function AboutAccordion() {
       sx={{
         boxShadow: "none",
         marginBottom: "10px",
+        backgroundColor: Colors.BG_LIGHT_GRAY,
       }}
     >
       <AccordionSummary
