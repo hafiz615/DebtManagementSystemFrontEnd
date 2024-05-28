@@ -6,7 +6,7 @@ import { Colors } from "../config/default";
 import Dropdown from "./dropdown";
 import TextButton from "./button";
 
-export default function AddTask({ handleClose, show }) {
+export default function AddTask({ handleClose, field, data }) {
   const [selectedValue, setSelectedValue] = useState("3");
 
   const menuItems = [
@@ -24,7 +24,7 @@ export default function AddTask({ handleClose, show }) {
     <Grid>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <Typography sx={{ fontWeight: "700", fontFamily: "Nunito" }}>
-          Add Task
+          {data ? data?.taskName : "Add Task"}
         </Typography>
         <IconButton onClick={handleClose}>
           <Close />
@@ -71,7 +71,7 @@ export default function AddTask({ handleClose, show }) {
         </div>
       </div>
       <div style={{ display: "flex", gap: "1em", marginTop: "1.5em" }}>
-        {show === "addTask" ? (
+        {field === "addTask" ? (
           <div
             style={{
               display: "flex",

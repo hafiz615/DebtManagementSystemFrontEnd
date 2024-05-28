@@ -21,7 +21,6 @@ import AnalyticsAccordion from "./analyticsAccordion";
 import AboutAccordion from "./aboutAccordion";
 import TaskAccordion from "./tasksAccordion";
 import CustomFieldsAccordion from "./customFieldsAccordion";
-import CreditorsAccordion from "./creditorsAccordion";
 import TransactionAccordion from "./transactionAccordion";
 import CreditorsDetailCards from "./creditorsDetailCards.jsx";
 import DebtorDetailsCards from "./debtorDetailCards.jsx";
@@ -96,7 +95,12 @@ function CaseDetail() {
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1-content"
               id="panel1-header"
-              sx={{ height: "20px" }}
+              sx={{
+                height: "20px",
+                backgroundColor: Colors.WHITE,
+                borderTopLeftRadius: "10px",
+                borderTopRightRadius: "10px",
+              }}
             >
               <Box
                 sx={{ borderBottom: 1, borderColor: "divider" }}
@@ -144,7 +148,6 @@ function CaseDetail() {
             <Grid xs={12} md={3}>
               <AnalyticsAccordion />
               <AboutAccordion />
-              {value === "Debtor" && <CreditorsAccordion />}
               <TaskAccordion />
               <CustomFieldsAccordion />
               <TransactionAccordion />

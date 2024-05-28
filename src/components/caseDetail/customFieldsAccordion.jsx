@@ -6,6 +6,7 @@ import {
   AccordionSummary,
   AccordionDetails,
   IconButton,
+  Grid,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import EditIcon from "@mui/icons-material/Edit";
@@ -14,6 +15,13 @@ import { Colors } from "../../config/default";
 import MuiModels from "../models";
 
 export default function CustomFieldsAccordion() {
+  const customFieldData = [
+    { name: "Name", value: "Ruma" },
+    { name: "Title", value: "khan" },
+    { name: "Phone", value: "03211017632" },
+    { name: "Email", value: "rumakhan@gmail.com" },
+    { name: "Relation With Debtor", value: "brother" },
+  ];
   return (
     <Accordion
       sx={{
@@ -21,6 +29,7 @@ export default function CustomFieldsAccordion() {
         marginBottom: "10px",
         backgroundColor: Colors.BG_LIGHT_GRAY,
       }}
+      defaultExpanded
     >
       <AccordionSummary
         expandIcon={<ExpandMoreIcon sx={{ color: Colors.WHITE }} />}
@@ -63,7 +72,36 @@ export default function CustomFieldsAccordion() {
           borderBottomLeftRadius: "10px",
           borderBottomRightRadius: "10px",
         }}
-      ></AccordionDetails>
+      >
+        <Grid>
+          {customFieldData?.map((item) => (
+            <Grid
+              container
+              xs={12}
+              sx={{ justifyContent: "space-between", mb: "10px" }}
+            >
+              <Grid
+                sx={{
+                  fontSize: "11px",
+                  fontFamily: "Nunito",
+                  color: Colors.BLACK,
+                }}
+              >
+                {item?.name}
+              </Grid>
+              <Grid
+                sx={{
+                  fontSize: "11px",
+                  fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
+                }}
+              >
+                {item?.value}
+              </Grid>
+            </Grid>
+          ))}
+        </Grid>
+      </AccordionDetails>
     </Accordion>
   );
 }
