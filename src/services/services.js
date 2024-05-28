@@ -157,3 +157,11 @@ export const GetClientById = async (id) => {
     return error;
   }
 };
+
+export const GetAllSettings = async () => {
+  try {
+    return await axios.get(BASE_URL + "/v1/settings/getSettings", setHeaders());
+  } catch (error) {
+    return error;
+  }
+};

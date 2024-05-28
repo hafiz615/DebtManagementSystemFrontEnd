@@ -110,7 +110,7 @@ function App() {
       <Route exact path="/set-password" element={<VerifyProfilePage />} />
       <Route
         exact
-        path="/all-cases"
+        path="/all-cases/:id"
         element={
           <Protected>
             <CaseCodeDetail />

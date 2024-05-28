@@ -21,6 +21,7 @@ export default function ClientListDetails() {
   const GetClientDetails = async () => {
     setLoading(true);
     const getClientData = await GetClientById(id);
+
     if (getClientData?.status === 200) {
       setClientData(getClientData?.data?.data);
     }

@@ -62,7 +62,6 @@ export default function NotificationTemplatesTabs() {
   const [value, setValue] = React.useState(0);
   const [rows, setRows] = useState([]);
   const [froalaEditor, setFroalaEditor] = useState("");
-  console.log(froalaEditor);
 
   useEffect(() => {
     // Simulate fetching data from an API

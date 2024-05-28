@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
+// import { useParams } from "react-router-dom";
 
 import {
   Grid,
@@ -28,6 +29,7 @@ import TimelineData from "./timelineData.jsx";
 
 function CaseDetail() {
   const [value, setValue] = React.useState("Debtor");
+  // const { id } = useParams();
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { AUTHORITY_TEXT } = UserListPage;
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");

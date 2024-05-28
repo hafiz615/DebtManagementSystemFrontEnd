@@ -34,6 +34,7 @@ function CaseHistory({ data }) {
       const generatedData =
         data &&
         data?.map((item) => ({
+          id: item?._id,
           caseOwner: item?.caseOwner || "-",
           Creditor: item?.creditorName || "-",
           lastDate: formatDate(item?.lastPaymentDate) || "-",
@@ -95,7 +96,7 @@ function CaseHistory({ data }) {
         <ListTable
           headerData={headers}
           data={rows}
-          onRowClick={() => navigate("/all-cases")}
+          onRowClick={(id) => navigate(`/all-cases/${id}`)}
         />
       </Grid>
     </>

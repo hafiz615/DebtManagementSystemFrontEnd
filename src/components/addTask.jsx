@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Grid, Button, IconButton, Typography } from "@mui/material";
+import { Grid, IconButton, Typography } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { Colors } from "../config/default";
 import Dropdown from "./dropdown";
