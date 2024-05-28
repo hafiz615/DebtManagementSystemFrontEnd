@@ -10,8 +10,8 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { Colors } from "../../config/default";
-import TextButton from "../button";
 import ListTable from "../listTable";
+import MuiModels from "../models";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -61,6 +61,8 @@ const tableData = [
 export default function NotificationTemplatesTabs() {
   const [value, setValue] = React.useState(0);
   const [rows, setRows] = useState([]);
+  const [froalaEditor, setFroalaEditor] = useState("");
+  console.log(froalaEditor);
 
   useEffect(() => {
     // Simulate fetching data from an API
@@ -158,7 +160,12 @@ export default function NotificationTemplatesTabs() {
                     Templates
                   </Typography>
 
-                  <TextButton buttonText="ADD NEW" />
+                  <MuiModels
+                    show="froalaEditor"
+                    froalaEditorButton="Add New"
+                    froalaEditor={froalaEditor}
+                    setFroalaEditor={setFroalaEditor}
+                  />
                   <Grid
                     item
                     xs={12}
@@ -188,9 +195,30 @@ export default function NotificationTemplatesTabs() {
                     justifyContent: "space-between",
                   }}
                 >
-                  <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
-                    Templates
-                  </Typography>
+                  <Box
+                    sx={{
+                      backgroundColor: Colors.BG_LIGHT_GRAY,
+                      padding: "1rem",
+                      borderRadius: "10px",
+                      marginTop: "3rem",
+                      height: "55vh",
+                      width: "100%",
+                      overflowY: "auto",
+                      "&::-webkit-scrollbar": {
+                        width: "10px",
+                      },
+                      "&::-webkit-scrollbar-thumb": {
+                        backgroundColor: "#E5E5E5",
+                        borderRadius: "8px",
+                      },
+                      "&::-webkit-scrollbar-track": {
+                        backgroundColor: Colors.WHITE,
+                        borderRadius: "8px",
+                      },
+                    }}
+                  >
+                    <div dangerouslySetInnerHTML={{ __html: froalaEditor }} />
+                  </Box>
                 </Grid>
               </Grid>
             )}
