@@ -4,6 +4,7 @@ import { Box, Button, Modal, IconButton } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
 import CreateIcon from "@mui/icons-material/Create";
+import EditIcon from "@mui/icons-material/Edit";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import AddTask from "./addTask";
@@ -11,6 +12,8 @@ import EditField from "./editField";
 import AddCustomField from "./addCustomField";
 import { Colors } from "../config/default";
 import TextButton from "./button";
+import EditCreditorDetail from "./editCreditorDetail";
+import EditDebtorDetails from "./editDebtorDetails";
 import FroalaEditor from "./froalaEditor";
 
 export default function MuiModels({
@@ -20,6 +23,9 @@ export default function MuiModels({
   froalaEditorButton,
   froalaEditor,
   setFroalaEditor,
+  iconSize,
+  field,
+  data,
 }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -67,10 +73,20 @@ export default function MuiModels({
             sx={{
               color: Colors.DARK_GRAY,
               cursor: "pointer",
-              fontSize: "20px",
+              fontSize: "16px",
             }}
           />
         </Box>
+      ) : button === "create" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <EditIcon
+            sx={{ color: Colors.BLACK, fontSize: iconSize || "16px" }}
+          />
+        </IconButton>
       ) : (
         <>
           <Button onClick={handleOpen}>{buttonName}</Button>
@@ -97,13 +113,22 @@ export default function MuiModels({
       >
         <Box sx={style}>
           {show === "addTask" ? (
-            <AddTask show={show} handleClose={handleClose} />
+            <AddTask
+              data={data}
+              show={show}
+              field={field}
+              handleClose={handleClose}
+            />
           ) : show === "task" ? (
             <AddTask show={show} handleClose={handleClose} />
           ) : show === "editField" ? (
             <EditField show={show} handleClose={handleClose} />
           ) : show === "addCustomField" ? (
             <AddCustomField show={show} handleClose={handleClose} />
+          ) : show === "creditorDetail" ? (
+            <EditCreditorDetail show={show} handleClose={handleClose} />
+          ) : show === "debtorDetail" ? (
+            <EditDebtorDetails show={show} handleClose={handleClose} />
           ) : show === "froalaEditor" ? (
             <FroalaEditor
               froalaEditor={froalaEditor}
