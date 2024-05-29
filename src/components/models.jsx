@@ -29,6 +29,7 @@ export default function MuiModels({
   data,
   width,
   height,
+  caseData,
 }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -151,7 +152,11 @@ export default function MuiModels({
           ) : show === "creditorDetail" ? (
             <EditCreditorDetail show={show} handleClose={handleClose} />
           ) : show === "addCase" ? (
-            <CaseModel show={show} handleClose={handleClose} />
+            <CaseModel
+              show={show}
+              handleClose={handleClose}
+              caseData={caseData}
+            />
           ) : show === "debtorDetail" ? (
             <EditDebtorDetails show={show} handleClose={handleClose} />
           ) : show === "froalaEditor" ? (

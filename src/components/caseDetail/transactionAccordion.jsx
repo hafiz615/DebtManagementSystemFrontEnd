@@ -14,6 +14,14 @@ import { Colors } from "../../config/default";
 import { isEmpty } from "lodash";
 
 export default function TransactionAccordion({ paymentDetails, loading }) {
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Months are zero-indexed
+    const year = date.getFullYear();
+
+    return `${month}/${day}/${year}`;
+  };
   return (
     <Accordion
       sx={{
@@ -79,7 +87,7 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
                         color: Colors.DIM_LIGHT_GRAY,
                       }}
                     >
-                      {item?.dueDate}
+                      {formatDate(item?.dueDate)}
                     </p>
                     <p
                       style={{
@@ -123,7 +131,7 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
                         color: Colors.DIM_LIGHT_GRAY,
                       }}
                     >
-                      {item?.dueDate}
+                      {formatDate(item?.dueDate)}
                     </p>
                     <p
                       style={{
@@ -167,7 +175,7 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
                         color: Colors.DIM_LIGHT_GRAY,
                       }}
                     >
-                      {item?.dueDate}
+                      {formatDate(item?.dueDate)}
                     </p>
                     <p
                       style={{
@@ -211,7 +219,7 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
                         color: Colors.DIM_LIGHT_GRAY,
                       }}
                     >
-                      {item?.dueDate}
+                      {formatDate(item?.dueDate)}
                     </p>
                     <p
                       style={{
@@ -255,7 +263,7 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
                         color: Colors.DIM_LIGHT_GRAY,
                       }}
                     >
-                      {item?.dueDate}
+                      {formatDate(item?.dueDate)}
                     </p>
                     <p
                       style={{

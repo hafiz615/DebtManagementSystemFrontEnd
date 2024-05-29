@@ -7,12 +7,12 @@ import {
   IconButton,
   styled,
   InputBase,
+  Box,
 } from "@mui/material";
 import {
   Search,
   KeyboardArrowLeft,
   KeyboardArrowRight,
-  Add,
 } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
@@ -51,6 +51,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function CreditorsDetailCards({ caseData }) {
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Months are zero-indexed
+    const year = date.getFullYear();
+
+    return `${month}/${day}/${year}`;
+  };
   return (
     <Grid
       container
@@ -89,6 +97,9 @@ export default function CreditorsDetailCards({ caseData }) {
             show="creditorDetail"
             button="create"
             iconColor={Colors.BLACK}
+            width="80vw"
+            height="90vh"
+            caseData={caseData}
           />
         </div>
         <div
@@ -157,7 +168,11 @@ export default function CreditorsDetailCards({ caseData }) {
         }}
       >
         <p
-          style={{ fontWeight: "600", fontSize: "13px", fontFamily: "Nunito" }}
+          style={{
+            fontWeight: "600",
+            fontSize: "13px",
+            fontFamily: "Nunito",
+          }}
         >
           Business Details
         </p>
@@ -227,7 +242,7 @@ export default function CreditorsDetailCards({ caseData }) {
           Last Funded Date
         </p>
         <p style={{ fontSize: "11px", color: Colors.DIM_LIGHT_GRAY }}>
-          {caseData?.creditor?.lastFundedDate}
+          {formatDate(caseData?.creditor?.lastFundedDate)}
         </p>
         <p style={{ fontSize: "11px", fontFamily: "Nunito" }}>
           Historical Range
@@ -409,9 +424,9 @@ export default function CreditorsDetailCards({ caseData }) {
           >
             Other Creditors
           </p>
-          <IconButton>
-            <Add sx={{ fontSize: "16px", color: Colors.BLACK }} />
-          </IconButton>
+          <Box sx={{ marginTop: "0.5rem" }}>
+            <MuiModels show="addCase" width="80vw" height="90vh" />
+          </Box>
         </div>
         {caseData?.creditors?.map((item, index) => {
           return (
