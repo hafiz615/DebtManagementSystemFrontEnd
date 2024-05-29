@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 
 import {
   Grid,
@@ -10,6 +11,7 @@ import {
   Tabs,
   Tab,
   Box,
+  CircularProgress,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -24,17 +26,48 @@ import TransactionAccordion from "./transactionAccordion";
 import CreditorsDetailCards from "./creditorsDetailCards.jsx";
 import DebtorDetailsCards from "./debtorDetailCards.jsx";
 import TimelineData from "./timelineData.jsx";
+import { GetCaseById, GetCasePaymentById } from "../../services/services.js";
+import { isEmpty } from "lodash";
 
 function CaseDetail() {
   const [value, setValue] = React.useState("Debtor");
+
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { AUTHORITY_TEXT } = UserListPage;
+  const [loading, setLoading] = useState(false);
+  const [isPaymentLoading, setIsPaymentLoading] = useState(false);
+  const [caseData, setCaseData] = useState({});
+  const [paymentDetails, setPaymentDetails] = useState({});
+  const { id } = useParams();
+
+  const GetCaseDetails = async () => {
+    setLoading(true);
+    const caseDetails = await GetCaseById(id);
+    if (caseDetails?.status === 200) {
+      setCaseData(caseDetails?.data?.data);
+    }
+    setLoading(false);
+  };
+  useEffect(() => {
+    GetCaseDetails();
+  }, []);
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
+  const GetCasePaymentDetails = async () => {
+    setIsPaymentLoading(true);
+    const casePayment = await GetCasePaymentById(id);
+    if (casePayment?.status === 200) {
+      setPaymentDetails(casePayment?.data?.data);
+    }
+    setIsPaymentLoading(false);
+  };
+  useEffect(() => {
+    GetCasePaymentDetails();
+  }, []);
   return (
     <Grid
       container
@@ -63,102 +96,123 @@ function CaseDetail() {
           {AUTHORITY_TEXT} <span>{role}</span>
         </Typography>
       </Grid>
-      <Grid
-        item
-        xs={12}
-        sx={{
-          marginTop: ".5rem",
-        }}
-      >
-        <Typography
+      {loading || isEmpty(caseData) ? (
+        <Grid
+          item
+          xs={12}
           sx={{
-            fontWeight: "600",
-            fontSize: "2rem",
-            fontFamily: "Nunito",
-            color: Colors.BLACK,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "90vh",
           }}
         >
-          Case Code
-        </Typography>
-        <Grid>
-          <Accordion
+          <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
+        </Grid>
+      ) : (
+        <Grid
+          item
+          xs={12}
+          sx={{
+            marginTop: ".5rem",
+          }}
+        >
+          <Typography
             sx={{
-              boxShadow: "none",
-              marginBottom: "10px",
-              backgroundColor: Colors.BG_LIGHT_GRAY,
+              fontWeight: "600",
+              fontSize: "2rem",
+              fontFamily: "Nunito",
+              color: Colors.BLACK,
             }}
-            defaultExpanded
           >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1-content"
-              id="panel1-header"
+            {caseData?.caseCode}
+          </Typography>
+          <Grid>
+            <Accordion
               sx={{
-                height: "20px",
-                backgroundColor: Colors.WHITE,
-                borderTopLeftRadius: "10px",
-                borderTopRightRadius: "10px",
-              }}
-            >
-              <Box
-                sx={{ borderBottom: 1, borderColor: "divider" }}
-                onClick={(event) => event.stopPropagation()}
-              >
-                <Tabs value={value} onChange={handleChange}>
-                  <Tab
-                    sx={{
-                      fontWeight: "600",
-                      textTransform: "none",
-                      fontFamily: "Nunito",
-                    }}
-                    label="Debtor"
-                    value="Debtor"
-                  />
-                  <Tab
-                    sx={{
-                      fontWeight: "600",
-                      textTransform: "none",
-                      fontFamily: "Nunito",
-                    }}
-                    label="Creditor"
-                    value="Creditor"
-                  />
-                </Tabs>
-              </Box>
-            </AccordionSummary>
-            <AccordionDetails
-              sx={{
+                boxShadow: "none",
+                marginBottom: "10px",
                 backgroundColor: Colors.BG_LIGHT_GRAY,
-                boxShadow: " 0 2px 5px -3px rgba(0, 0, 0, 0.5)",
-
-                borderBottomLeftRadius: "10px",
-                borderBottomRightRadius: "10px",
               }}
+              defaultExpanded
             >
-              {value === "Debtor" ? (
-                <DebtorDetailsCards />
-              ) : (
-                <CreditorsDetailCards />
-              )}
-            </AccordionDetails>
-          </Accordion>
-          <Grid container>
-            <Grid xs={12} md={3}>
-              <AnalyticsAccordion />
-              <AboutAccordion />
-              <TaskAccordion />
-              <CustomFieldsAccordion />
-              <TransactionAccordion />
-            </Grid>
-            <Grid xs={12} md={9}>
-              <TimelineData />
-              <TimelineData />
-              <TimelineData />
-              <TimelineData />
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1-content"
+                id="panel1-header"
+                sx={{
+                  height: "20px",
+                  backgroundColor: Colors.WHITE,
+                  borderTopLeftRadius: "10px",
+                  borderTopRightRadius: "10px",
+                }}
+              >
+                <Box
+                  sx={{ borderBottom: 1, borderColor: "divider" }}
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  <Tabs value={value} onChange={handleChange}>
+                    <Tab
+                      sx={{
+                        fontWeight: "600",
+                        textTransform: "none",
+                        fontFamily: "Nunito",
+                      }}
+                      label="Debtor"
+                      value="Debtor"
+                    />
+                    <Tab
+                      sx={{
+                        fontWeight: "600",
+                        textTransform: "none",
+                        fontFamily: "Nunito",
+                      }}
+                      label="Creditor"
+                      value="Creditor"
+                    />
+                  </Tabs>
+                </Box>
+              </AccordionSummary>
+              <AccordionDetails
+                sx={{
+                  backgroundColor: Colors.BG_LIGHT_GRAY,
+                  boxShadow: " 0 2px 5px -3px rgba(0, 0, 0, 0.5)",
+
+                  borderBottomLeftRadius: "10px",
+                  borderBottomRightRadius: "10px",
+                }}
+              >
+                {value === "Debtor" ? (
+                  <DebtorDetailsCards caseData={caseData} />
+                ) : (
+                  <CreditorsDetailCards caseData={caseData} />
+                )}
+              </AccordionDetails>
+            </Accordion>
+            <Grid container>
+              <Grid xs={12} md={3}>
+                <AnalyticsAccordion
+                  loading={isPaymentLoading}
+                  paymentDetails={paymentDetails}
+                />
+                <AboutAccordion caseDetails={caseData} />
+                <TaskAccordion />
+                <CustomFieldsAccordion />
+                <TransactionAccordion
+                  loading={isPaymentLoading}
+                  paymentDetails={paymentDetails}
+                />
+              </Grid>
+              <Grid xs={12} md={9}>
+                <TimelineData />
+                <TimelineData />
+                <TimelineData />
+                <TimelineData />
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
-      </Grid>
+      )}
     </Grid>
   );
 }

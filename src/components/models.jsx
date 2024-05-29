@@ -15,6 +15,7 @@ import TextButton from "./button";
 import EditCreditorDetail from "./editCreditorDetail";
 import EditDebtorDetails from "./editDebtorDetails";
 import FroalaEditor from "./froalaEditor";
+import CaseModel from "./caseModel";
 
 export default function MuiModels({
   buttonName,
@@ -26,6 +27,8 @@ export default function MuiModels({
   iconSize,
   field,
   data,
+  width,
+  height,
 }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -39,11 +42,26 @@ export default function MuiModels({
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: extraSmallScreen ? "90%" : smallScreen ? "70vw" : "50vw",
+    width: extraSmallScreen ? "90%" : smallScreen ? "70vw" : width || "50vw",
     bgcolor: "background.paper",
     borderRadius: 5,
     boxShadow: 24,
     p: 3,
+    height: height || "auto",
+    overflowY: "auto",
+    "&::-webkit-scrollbar": {
+      width: "10px",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      backgroundColor: "#E5E5E5",
+      borderRadius: "8px",
+    },
+    "&::-webkit-scrollbar-track": {
+      backgroundColor: Colors.WHITE,
+      borderRadius: "8px",
+      marginTop: ".5rem",
+      marginBottom: ".5rem",
+    },
   };
 
   return (
@@ -87,6 +105,11 @@ export default function MuiModels({
             sx={{ color: Colors.BLACK, fontSize: iconSize || "16px" }}
           />
         </IconButton>
+      ) : show === "addCase" ? (
+        <AddIcon
+          sx={{ fontSize: "16px", color: Colors.BLACK, cursor: "pointer" }}
+          onClick={handleOpen}
+        />
       ) : (
         <>
           <Button onClick={handleOpen}>{buttonName}</Button>
@@ -127,6 +150,8 @@ export default function MuiModels({
             <AddCustomField show={show} handleClose={handleClose} />
           ) : show === "creditorDetail" ? (
             <EditCreditorDetail show={show} handleClose={handleClose} />
+          ) : show === "addCase" ? (
+            <CaseModel show={show} handleClose={handleClose} />
           ) : show === "debtorDetail" ? (
             <EditDebtorDetails show={show} handleClose={handleClose} />
           ) : show === "froalaEditor" ? (

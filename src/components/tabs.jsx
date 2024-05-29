@@ -11,7 +11,6 @@ import { Colors } from "../config/default";
 import BasicModal from "./customPopup";
 // import DataTable from "./table";
 import { GetAllUsers } from "../services/services";
-import { useToast } from "../toast/toastContext";
 import CircularProgress from "@mui/material/CircularProgress";
 import UserListTable from "./userListTable";
 
@@ -80,7 +79,6 @@ const columns = [
   },
 ];
 export default function CustomizedTabs({ heading }) {
-  const { showToast } = useToast();
   const [value, setValue] = React.useState(0);
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
 
@@ -96,9 +94,6 @@ export default function CustomizedTabs({ heading }) {
     const users = await GetAllUsers();
     if (users?.status === 200) {
       setUserArray(users?.data?.data);
-    } else {
-      const errorMessage = users?.response?.data?.message;
-      showToast(errorMessage, "error");
     }
     setLoading(false);
   };

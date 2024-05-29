@@ -4,6 +4,8 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Colors } from "../../config/default";
+import { Typography, Grid } from "@mui/material";
+import PasswordField from "./passwordField";
 
 export default function PasswordAccordion() {
   return (
@@ -29,7 +31,71 @@ export default function PasswordAccordion() {
         Password
       </AccordionSummary>
       <AccordionDetails>
-        <div>Hello</div>
+        <Grid
+          container
+          sx={{
+            paddingLeft: "2rem",
+            paddingRight: "2rem",
+          }}
+        >
+          <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
+            Reset Password
+          </Typography>
+          <Grid
+            container
+            item
+            xs={12}
+            sx={{ display: "flex", alignItems: "center" }}
+          >
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "600",
+                width: "15%",
+                color: Colors.DARK_GRAY,
+              }}
+            >
+              Current Password
+            </Typography>
+            <PasswordField />
+          </Grid>
+          <Grid
+            container
+            item
+            xs={12}
+            sx={{ display: "flex", alignItems: "center" }}
+          >
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "600",
+                width: "15%",
+                color: Colors.DARK_GRAY,
+              }}
+            >
+              New Password
+            </Typography>
+            <PasswordField />
+          </Grid>
+          <Grid
+            container
+            item
+            xs={12}
+            sx={{ display: "flex", alignItems: "center" }}
+          >
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "600",
+                width: "15%",
+                color: Colors.DARK_GRAY,
+              }}
+            >
+              Confirm Password
+            </Typography>
+            <PasswordField />
+          </Grid>
+        </Grid>
       </AccordionDetails>
     </Accordion>
   );

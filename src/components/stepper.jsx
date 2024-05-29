@@ -27,7 +27,7 @@ import { isEmpty } from "lodash";
 
 const steps = ["Debtor", "Creditor", "Payment", "File upload", "Preview"];
 
-export default function HorizontalLinearStepper() {
+export default function HorizontalLinearStepper({ hide }) {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [activeStep, setActiveStep] = React.useState(0);
@@ -562,25 +562,28 @@ export default function HorizontalLinearStepper() {
         paddingRight: "2rem",
       }}
     >
-      <Grid
-        item
-        xs={12}
-        sx={{
-          display: "flex",
-          justifyContent: smallScreen ? "flex-start" : "flex-end",
-          marginTop: "1.5rem",
-        }}
-      >
-        <Typography
+      {!hide && (
+        <Grid
+          item
+          xs={12}
           sx={{
-            fontFamily: "Nunito",
-            fontWeight: "500",
-            color: Colors.DARK_GRAY,
+            display: "flex",
+            justifyContent: smallScreen ? "flex-start" : "flex-end",
+            marginTop: "1.5rem",
           }}
         >
-          {AUTHORITY_TEXT} <span>{AUTHORITY_VALUE}</span>
-        </Typography>
-      </Grid>
+          <Typography
+            sx={{
+              fontFamily: "Nunito",
+              fontWeight: "500",
+              color: Colors.DARK_GRAY,
+            }}
+          >
+            {AUTHORITY_TEXT} <span>{AUTHORITY_VALUE}</span>
+          </Typography>
+        </Grid>
+      )}
+
       <Grid
         item
         xs={12}

@@ -5,7 +5,7 @@ import HorizontalLinearStepper from "../components/stepper";
 function HorizontalLinearStepperPage() {
   return (
     <PersistentDrawerLeft>
-      <HorizontalLinearStepper />
+      <HorizontalLinearStepper hide={false} />
     </PersistentDrawerLeft>
   );
 }

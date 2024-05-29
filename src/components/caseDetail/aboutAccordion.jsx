@@ -13,18 +13,16 @@ import EditIcon from "@mui/icons-material/Edit";
 
 import { Colors } from "../../config/default";
 
-export default function AboutAccordion() {
+export default function AboutAccordion({ caseDetails }) {
   const aboutData = [
-    { name: "Case Code", value: "5" },
-    { name: "Status", value: "5" },
-    { name: "Case Owner", value: "5" },
-    { name: "Negotiator", value: "5" },
-    { name: "Manager", value: "6" },
-    { name: "Debtor", value: "5" },
-    { name: "Creditor", value: "4" },
-    { name: "Total Debt", value: "$10,000" },
-    { name: "Remaining Debt", value: "$8000" },
-    { name: "Paid Debt", value: "$8000" },
+    { name: "Case Code", value: caseDetails?.caseCode || "-" },
+    { name: "Status", value: caseDetails?.status || "-" },
+    { name: "Case Owner", value: caseDetails?.caseOwner || "-" },
+    // { name: "Negotiator", value: "5" },
+    // { name: "Manager", value: "6" },
+    { name: "Total Debt", value: caseDetails?.totalDebt || "-" },
+    { name: "Remaining Debt", value: caseDetails?.remaining || "-" },
+    { name: "Paid Debt", value: caseDetails?.paidAmount || "-" },
   ];
   return (
     <Accordion
