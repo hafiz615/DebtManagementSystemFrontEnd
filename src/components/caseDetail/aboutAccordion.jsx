@@ -6,13 +6,24 @@ import {
   AccordionSummary,
   AccordionDetails,
   IconButton,
+  Grid,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import EditIcon from "@mui/icons-material/Edit";
 
 import { Colors } from "../../config/default";
 
-export default function AboutAccordion() {
+export default function AboutAccordion({ caseDetails }) {
+  const aboutData = [
+    { name: "Case Code", value: caseDetails?.caseCode || "-" },
+    { name: "Status", value: caseDetails?.status || "-" },
+    { name: "Case Owner", value: caseDetails?.caseOwner || "-" },
+    // { name: "Negotiator", value: "5" },
+    // { name: "Manager", value: "6" },
+    { name: "Total Debt", value: caseDetails?.totalDebt || "-" },
+    { name: "Remaining Debt", value: caseDetails?.remaining || "-" },
+    { name: "Paid Debt", value: caseDetails?.paidAmount || "-" },
+  ];
   return (
     <Accordion
       sx={{
@@ -20,6 +31,7 @@ export default function AboutAccordion() {
         marginBottom: "10px",
         backgroundColor: Colors.BG_LIGHT_GRAY,
       }}
+      defaultExpanded
     >
       <AccordionSummary
         expandIcon={<ExpandMoreIcon sx={{ color: Colors.WHITE }} />}
@@ -55,7 +67,36 @@ export default function AboutAccordion() {
           borderBottomLeftRadius: "10px",
           borderBottomRightRadius: "10px",
         }}
-      ></AccordionDetails>
+      >
+        <Grid>
+          {aboutData?.map((item) => (
+            <Grid
+              container
+              xs={12}
+              sx={{ justifyContent: "space-between", mb: "10px" }}
+            >
+              <Grid
+                sx={{
+                  fontSize: "11px",
+                  fontFamily: "Nunito",
+                  color: Colors.BLACK,
+                }}
+              >
+                {item?.name}
+              </Grid>
+              <Grid
+                sx={{
+                  fontSize: "11px",
+                  fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
+                }}
+              >
+                {item?.value}
+              </Grid>
+            </Grid>
+          ))}
+        </Grid>
+      </AccordionDetails>
     </Accordion>
   );
 }

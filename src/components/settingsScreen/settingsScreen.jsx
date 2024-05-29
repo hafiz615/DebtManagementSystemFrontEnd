@@ -1,4 +1,4 @@
-import React from "react";
+// import React, { useEffect } from "react";
 
 import { Grid, Typography } from "@mui/material";
 import { Colors } from "../../config/default";
@@ -6,8 +6,17 @@ import SettingsAccordion from "./payments&Auth";
 import NotificationTemplatesTabs from "./notifications";
 import CustomFieldsAccordion from "./customFields";
 import PasswordAccordion from "./passwordAccord";
+// import { GetAllSettings } from "../../services/services";
 
 export default function SettingsScreen() {
+  // const getSettings = async () => {
+  //   const allSettings = await GetAllSettings();
+  //   console.log(allSettings, "allSettings");
+
+  // };
+  // useEffect(() => {
+  //   getSettings();
+  // });
   return (
     <Grid
       container

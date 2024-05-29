@@ -48,7 +48,7 @@ function DashboardContent() {
                 color: Colors.SKY_BLUE,
                 fontSize: "2rem",
                 ml: "10px",
-                fontWeight: "600",
+                fontWeight: "800",
                 fontFamily: "Nunito",
               }}
             >
@@ -92,15 +92,24 @@ function DashboardContent() {
             >
               <Typography
                 sx={{
-                  fontSize: "14px",
+                  fontSize: "16px",
                   fontWeight: "600",
                   fontFamily: "Nunito",
                 }}
               >
                 Payments & Authorizations
               </Typography>
-              <Typography sx={{ fontSize: "14px", fontFamily: "Nunito" }}>
-                Year 2024
+              <Typography
+                sx={{
+                  fontSize: "14px",
+                  fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
+                }}
+              >
+                Year{" "}
+                <span style={{ color: Colors.BLACK, fontSize: "16px" }}>
+                  2024
+                </span>
               </Typography>
             </div>
             <hr style={{ background: "lightgrey" }} />
@@ -206,7 +215,7 @@ function DashboardContent() {
           >
             <Typography
               sx={{
-                fontSize: "14px",
+                fontSize: "16px",
                 fontWeight: "600",
                 padding: "10px 16px",
                 fontFamily: "Nunito",
@@ -276,15 +285,24 @@ function DashboardContent() {
             >
               <Typography
                 sx={{
-                  fontSize: "14px",
+                  fontSize: "16px",
                   fontWeight: "600",
                   fontFamily: "Nunito",
                 }}
               >
                 Case By Agents
               </Typography>
-              <Typography sx={{ fontSize: "14px", fontFamily: "Nunito" }}>
-                Year 2024
+              <Typography
+                sx={{
+                  fontSize: "14px",
+                  fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
+                }}
+              >
+                Year{" "}
+                <span style={{ color: Colors.BLACK, fontSize: "16px" }}>
+                  2024
+                </span>
               </Typography>
             </div>
             <hr style={{ background: "lightgrey" }} />
@@ -314,7 +332,7 @@ function DashboardContent() {
           >
             <Typography
               sx={{
-                fontSize: "14px",
+                fontSize: "16px",
                 fontWeight: "600",
                 padding: "10px 16px",
                 fontFamily: "Nunito",

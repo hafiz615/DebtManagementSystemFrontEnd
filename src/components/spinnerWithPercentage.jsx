@@ -57,7 +57,7 @@ function SpinnerWithPercentage({ value, color }) {
           variant="caption"
           component="div"
           color="text.secondary"
-          sx={{ fontSize: "16px", fontFamily: "Nunito" }}
+          sx={{ fontSize: "26px", fontWeight: "600", fontFamily: "Nunito" }}
         >
           {`${Math.round(value)}%`}
         </Typography>

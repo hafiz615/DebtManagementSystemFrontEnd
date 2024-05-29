@@ -20,6 +20,7 @@ const headers = [
 
 function CaseHistory({ data }) {
   const [rows, setRows] = useState([]);
+  const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
   const formatDate = (dateString) => {
     if (!dateString) return "-";
@@ -34,6 +35,7 @@ function CaseHistory({ data }) {
       const generatedData =
         data &&
         data?.map((item) => ({
+          id: item?._id,
           caseOwner: item?.caseOwner || "-",
           Creditor: item?.creditorName || "-",
           lastDate: formatDate(item?.lastPaymentDate) || "-",
@@ -79,7 +81,11 @@ function CaseHistory({ data }) {
         >
           Case History
         </Typography>
-        <SearchBar placeholder="Search Creditor..." />
+        <SearchBar
+          searchText={searchText}
+          setSearchText={setSearchText}
+          placeholder="Search Creditor..."
+        />
       </Grid>
       <Grid
         item
@@ -95,7 +101,7 @@ function CaseHistory({ data }) {
         <ListTable
           headerData={headers}
           data={rows}
-          onRowClick={() => navigate("/all-cases")}
+          onRowClick={(id) => navigate(`/all-cases/${id}`)}
         />
       </Grid>
     </>

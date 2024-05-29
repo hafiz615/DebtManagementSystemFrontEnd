@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-
 import { Grid, Typography, Box, CircularProgress } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-
 import { UserListPage } from "../constants/appConstants";
 import { Colors } from "../config/default";
 import CaseHistory from "./caseHistory";
@@ -21,6 +19,7 @@ export default function ClientListDetails() {
   const GetClientDetails = async () => {
     setLoading(true);
     const getClientData = await GetClientById(id);
+
     if (getClientData?.status === 200) {
       setClientData(getClientData?.data?.data);
     }

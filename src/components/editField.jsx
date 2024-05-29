@@ -1,19 +1,13 @@
 import React from "react";
 
-import {
-  Grid,
-  Button,
-  Typography,
-  Radio,
-  Divider,
-  Switch,
-} from "@mui/material";
+import { Grid, Typography, Radio, Divider, Switch } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { Colors } from "../config/default";
+import TextButton from "./button";
 
 export default function EditField({ handleClose }) {
   return (
@@ -132,25 +126,30 @@ export default function EditField({ handleClose }) {
         </AccordionDetails>
       </Accordion>
 
-      <div style={{ marginTop: "1em", float: "right" }}>
-        <Button
-          variant="contained"
-          style={{
-            width: "8rem",
-            backgroundColor: Colors.BG_LIGHT_GRAY,
-            color: Colors.BLACK,
-            fontFamily: "Nunito",
-          }}
+      <div
+        style={{
+          marginTop: "1em",
+          gap: "1em",
+          display: "flex",
+          justifyContent: "right",
+        }}
+      >
+        <TextButton
+          buttonText="Cancel"
+          height="2rem"
+          width="8rem"
           onClick={handleClose}
-        >
-          CANCEL
-        </Button>
-        <Button
-          variant="contained"
-          style={{ width: "8rem", marginLeft: "1em", fontFamily: "Nunito" }}
-        >
-          SAVE
-        </Button>
+          backgroundColor={Colors.ORANGE_COLOR}
+          hoverColor={Colors.ORANGE_COLOR}
+        />
+        <TextButton
+          buttonText="Save"
+          height="2rem"
+          width="8rem"
+          onClick={handleClose}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
       </div>
     </Grid>
   );
