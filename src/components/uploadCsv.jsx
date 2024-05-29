@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 
-import { Box, Typography, IconButton, Button } from "@mui/material";
+import { Box, Typography, IconButton } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import Papa from "papaparse";
 import { Colors } from "../config/default";
 import { useToast } from "../toast/toastContext";
+import TextButton from "./button";
 
 export default function UploadCsv({ handleModalClose }) {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ export default function UploadCsv({ handleModalClose }) {
       Papa.parse(file, {
         header: true,
         complete: (results) => {
-          const csvData = results.data;
+          const csvData = results;
           setData(csvData);
           const numColumns = results.meta.fields.length;
           localStorage.setItem("Columns", numColumns);
@@ -57,11 +58,13 @@ export default function UploadCsv({ handleModalClose }) {
   const handleUpload = () => {
     if (data) {
       navigate("/bulk-cases");
+
       handleModalClose();
     } else {
       showToast("Please upload a CSV file first.", "error");
     }
   };
+  const isDisabled = !data;
 
   return (
     <Box
@@ -126,17 +129,15 @@ export default function UploadCsv({ handleModalClose }) {
           marginTop: "1em",
         }}
       >
-        <Button
-          variant="contained"
-          sx={{
-            borderRadius: "10px",
-            padding: "10px 20px",
-            textTransform: "none",
-          }}
+        <TextButton
+          disabled={isDisabled}
+          buttonText="Upload"
+          height="2rem"
+          width="8rem"
           onClick={handleUpload}
-        >
-          Upload File
-        </Button>
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
       </div>
     </Box>
   );

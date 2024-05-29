@@ -9,9 +9,13 @@ import { UserListPage } from "../../constants/appConstants";
 import TextButton from ".././button";
 import MappingDetails from "./mappingDetails";
 import ClientImport from "./clientImport";
+import { CreateCase } from "../../services/services";
+import { useToast } from "../../toast/toastContext";
 
 function BulkImportCase() {
   const [activeStep, setActiveStep] = useState(0);
+  const [apiData, setApiData] = useState({});
+  const { showToast } = useToast();
 
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
@@ -30,6 +34,18 @@ function BulkImportCase() {
   const handleNext = () => {
     if (activeStep === 0) {
       setActiveStep(1);
+    }
+  };
+
+  const handleSave = async () => {
+    if (activeStep === 1) {
+      const caseCreation = await CreateCase(apiData, true);
+      if (caseCreation?.status === 200) {
+        localStorage.removeItem("Columns");
+        localStorage.removeItem("dropdownState");
+        localStorage.removeItem("csvData");
+        showToast(caseCreation?.data?.message, "success");
+      }
     }
   };
 
@@ -106,7 +122,11 @@ function BulkImportCase() {
           })}
         </Stepper>
       </Grid>
-      {activeStep === 0 ? <MappingDetails /> : <ClientImport />}
+      {activeStep === 0 ? (
+        <MappingDetails />
+      ) : (
+        <ClientImport setApiData={setApiData} />
+      )}
 
       <Grid
         item
@@ -146,7 +166,7 @@ function BulkImportCase() {
           paddingRight="2rem"
           height="2rem"
           onClick={() => {
-            handleNext();
+            activeStep === 0 ? handleNext() : handleSave();
           }}
           marginRight="1rem"
         />

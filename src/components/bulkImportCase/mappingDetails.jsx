@@ -2,24 +2,34 @@ import React, { useState, useEffect } from "react";
 import { Grid, Card, Typography } from "@mui/material";
 import Dropdown from "../dropdown";
 import { Colors } from "../../config/default";
-import { generateColumnNames } from "../../common";
+import {
+  findColumnName,
+  generateColumnNames,
+  getColumnFieldIndex,
+} from "../../common";
 
 export default function MappingDetails() {
   const [dropdownStates, setDropdownStates] = useState({});
   const [columnNames, setColumnNames] = useState([]);
-  const [csvData, setCsvData] = useState([]);
+  const csvDataFromLocal = localStorage.getItem("csvData");
+
+  const csvData = JSON.parse(csvDataFromLocal);
+  var csvHeaders;
 
   const debtorDetails = [
     { name: "Full Name" },
     { name: "Email" },
     { name: "SSN" },
     { name: "Status" },
+    { name: "Address" },
+    { name: "Company" },
+    { name: "EIN" },
+    { name: "Business Category" },
     { name: "Country" },
     { name: "State" },
     { name: "City" },
     { name: "Zip Code" },
     { name: "Phone #" },
-    { name: "Address" },
   ];
 
   const creditorDetails = [
@@ -34,42 +44,108 @@ export default function MappingDetails() {
   ];
 
   const automationPlan = [
-    { name: "Debt", value: "$2000" },
-    { name: "Time Period", value: "Monthly" },
-    { name: "Authorization Date", value: "5/2/2024" },
-    { name: "Captured Date", value: "8/2/2024" },
+    { name: "Debt" },
+    { name: "Time Period" },
+    { name: "Start Date" },
+    { name: "Frequency" },
   ];
+
+  const getFieldIndex = (headerName) => {
+    let columnFieldIndex = getColumnFieldIndex(headerName, csvHeaders);
+    let mainIndex = findColumnName(columnFieldIndex);
+    return mainIndex;
+  };
+
+  const getColumnDataByName = (columnName) => {
+    return csvData?.data[0][columnName];
+  };
+
+  const paymentPlansCount = parseInt(
+    getColumnDataByName("payment_plans_count")
+  );
 
   useEffect(() => {
     const numColumns = parseInt(localStorage.getItem("Columns"), 10) || 0;
-    const csvDataFromLocal = localStorage.getItem("csvData");
-    if (csvDataFromLocal) {
-      setCsvData(JSON.parse(csvDataFromLocal));
-    }
     setColumnNames(generateColumnNames(numColumns));
-    const initialDropdownStates = {};
-    [...debtorDetails, ...creditorDetails, ...automationPlan].forEach(
-      (detail) => {
-        initialDropdownStates[`debtor-${detail.name}`] = "Col A";
-        initialDropdownStates[`creditor-${detail.name}`] = "Col A";
-        initialDropdownStates[`automation-${detail.name}`] = "Col A";
-      }
-    );
-    setDropdownStates(initialDropdownStates);
+    let csvData = JSON.parse(localStorage.getItem("csvData"));
+    let dropdownLocalState = JSON.parse(localStorage.getItem("dropdownState"));
+    csvHeaders = csvData?.meta?.fields;
+
+    if (dropdownLocalState) {
+      setDropdownStates(dropdownLocalState);
+    } else {
+      const initialDropdownStates = {};
+      initialDropdownStates[`debtor-Full Name`] = getFieldIndex("debtor_name");
+      initialDropdownStates[`debtor-Email`] = getFieldIndex("debtor_email");
+      initialDropdownStates[`debtor-SSN`] = getFieldIndex("debtor_ssn");
+      initialDropdownStates[`debtor-Status`] = getFieldIndex("debtor_status");
+      initialDropdownStates[`debtor-Address`] = getFieldIndex("debtor_address");
+      initialDropdownStates[`debtor-Company`] = getFieldIndex("debtor_name");
+      initialDropdownStates[`debtor-EIN`] = getFieldIndex(
+        "debtor_business_ein"
+      );
+      initialDropdownStates[`debtor-Business Category`] = getFieldIndex(
+        "debtor_business_category"
+      );
+      initialDropdownStates[`debtor-Country`] = getFieldIndex(
+        "debtor_business_country"
+      );
+      initialDropdownStates[`debtor-State`] = getFieldIndex(
+        "debtor_business_state"
+      );
+      initialDropdownStates[`debtor-City`] = getFieldIndex(
+        "debtor_business_city"
+      );
+      initialDropdownStates[`debtor-Zip Code`] = getFieldIndex(
+        "debtor_business_zipcode"
+      );
+      initialDropdownStates[`debtor-Phone #`] = getFieldIndex(
+        "debtor_business_phone"
+      );
+      initialDropdownStates[`creditor-Full Name`] =
+        getFieldIndex("creditor_name");
+      initialDropdownStates[`creditor-Company Name`] =
+        getFieldIndex("creditor_name");
+      initialDropdownStates[`creditor-Address`] = getFieldIndex(
+        "debtor_business_phone"
+      );
+      initialDropdownStates[`creditor-Email`] = getFieldIndex("creditor_email");
+      initialDropdownStates[`creditor-Business Category`] = getFieldIndex(
+        "creditor_business_category"
+      );
+      initialDropdownStates[`creditor-Notes`] = getFieldIndex("creditor_notes");
+      initialDropdownStates[`creditor-Funded`] = getFieldIndex("date_funded");
+      initialDropdownStates[`creditor-Phone #`] =
+        getFieldIndex("creditor_phone");
+      initialDropdownStates[`automation-Total Receivable`] = getFieldIndex(
+        "total_remaining_amount"
+      );
+      initialDropdownStates[`automation-Debt`] =
+        getFieldIndex("payment_1_amount");
+      initialDropdownStates[`automation-Time Period`] =
+        getFieldIndex("payment_1_interval");
+      initialDropdownStates[`automation-Start Date`] = getFieldIndex(
+        "payment_1_start_date"
+      );
+      initialDropdownStates[`automation-Frequency`] = getFieldIndex(
+        "payment_1_frequency"
+      );
+      setDropdownStates(initialDropdownStates);
+      localStorage.setItem(
+        "dropdownState",
+        JSON.stringify(initialDropdownStates)
+      );
+    }
   }, []);
 
   const handleDropdownChange = (category, itemName, selectedValue) => {
-    setDropdownStates((prevStates) => ({
-      ...prevStates,
-      [`${category}-${itemName}`]: selectedValue,
-    }));
-  };
-  console.log(dropdownStates, "dropdownstate");
-
-  const getColumnData = (columnIndex) => {
-    return csvData.map((row) => {
-      const keys = Object.keys(row);
-      return row[keys[columnIndex]];
+    setDropdownStates((prevStates) => {
+      const newState = {
+        ...prevStates,
+        [`${category}-${itemName}`]: selectedValue,
+      };
+      localStorage.setItem("dropdownState", JSON.stringify(newState));
+      return newState;
     });
   };
 
@@ -87,21 +163,6 @@ export default function MappingDetails() {
     />
   );
 
-  const renderData = (category, itemName) => {
-    const selectedColumn = dropdownStates[`${category}-${itemName}`];
-
-    if (selectedColumn) {
-      const columnIndex = columnNames.findIndex(
-        (col) => col.value === selectedColumn
-      );
-      console.log(` ${itemName} have this${columnIndex} column index `);
-
-      if (columnIndex !== -1) {
-        const data = getColumnData(columnIndex);
-      }
-    }
-    return null;
-  };
   return (
     <Grid xs={12}>
       <Grid
@@ -139,7 +200,6 @@ export default function MappingDetails() {
                   {debtDetail.name}
                 </Typography>
                 {renderDropdown("debtor", debtDetail.name)}
-                {renderData("debtor", debtDetail.name)}
               </Grid>
             ))}
           </Grid>
@@ -173,7 +233,6 @@ export default function MappingDetails() {
                   {creditDetail.name}
                 </Typography>
                 {renderDropdown("creditor", creditDetail.name)}
-                {renderData("creditor", creditDetail.name)}
               </Grid>
             ))}
           </Grid>
@@ -200,7 +259,6 @@ export default function MappingDetails() {
           >
             <p style={{ fontFamily: "Nunito" }}>Total Receivable</p>
             {renderDropdown("automation", "Total Receivable")}
-            {renderData("automation", "Total Receivable")}
           </div>
           <Grid
             sx={{
@@ -222,34 +280,35 @@ export default function MappingDetails() {
               },
             }}
           >
-            <Grid
-              container
-              xs={12}
-              sx={{
-                padding: "0px 10px",
-                alignItems: "center",
-                mt: "25px",
-                gap: "1em",
-              }}
-            >
-              {automationPlan.map((item) => (
-                <Grid
-                  key={item.name}
-                  item
-                  xs={12}
-                  md={5.5}
-                  lg={2.75}
-                  container
-                  sx={{ justifyContent: "space-between" }}
-                >
-                  <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
-                    {item.name}
-                  </Typography>
-                  {renderDropdown("automation", item.name)}
-                  {renderData("automation", item.name)}
-                </Grid>
-              ))}
-            </Grid>
+            {[...Array(paymentPlansCount)]?.map((_, index) => (
+              <Grid
+                container
+                xs={12}
+                sx={{
+                  padding: "0px 10px",
+                  alignItems: "center",
+                  mt: "25px",
+                  gap: "1em",
+                }}
+              >
+                {automationPlan.map((item) => (
+                  <Grid
+                    key={item.name}
+                    item
+                    xs={12}
+                    md={5.5}
+                    lg={2.75}
+                    container
+                    sx={{ justifyContent: "space-between" }}
+                  >
+                    <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
+                      {item.name}
+                    </Typography>
+                    {renderDropdown("automation", item.name)}
+                  </Grid>
+                ))}
+              </Grid>
+            ))}
           </Grid>
         </Grid>
       </Grid>
