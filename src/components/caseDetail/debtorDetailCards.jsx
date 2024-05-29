@@ -7,12 +7,12 @@ import {
   IconButton,
   styled,
   InputBase,
+  Box,
 } from "@mui/material";
 import {
   Search,
   KeyboardArrowLeft,
   KeyboardArrowRight,
-  Add,
 } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
@@ -50,25 +50,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function DebtorDetailsCards() {
-  const personDetail = {
-    Name: "rummaz",
-    Email: "ruma@gmail.com",
-    Country: "Pakistan",
-    State: "Punjab",
-    Phone: "03211017632",
-    Address: "ghazi road lahore",
-    SSN: "99921291",
-    Status: "customer",
-    City: "lahore",
-    ZipCode: "50000",
-  };
-  const businessDetail = {
-    Company: "pathan",
-    Category: "tech",
-    EIN: "32132312",
-    Phone: "03211017632",
-    Description: "none",
+export default function DebtorDetailsCards({ caseData }) {
+  const formatKeys = (keys) => {
+    const formattedKeys = keys
+      ?.replace(/([A-Z])/g, " $1") // Add a space before each uppercase letter
+      ?.replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
+    return formattedKeys;
   };
   return (
     <Grid
@@ -102,7 +89,7 @@ export default function DebtorDetailsCards() {
               fontFamily: "Nunito",
             }}
           >
-            Person Details
+            Personal Details
           </p>
           <MuiModels
             show="debtorDetail"
@@ -111,30 +98,32 @@ export default function DebtorDetailsCards() {
           />
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "10%" }}>
-          {Object.entries(personDetail)?.map(([key, value]) => (
-            <div
-              key={key}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                width: "45%",
-                marginBottom: "8px",
-              }}
-            >
-              <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
-                {key}
-              </Typography>
-              <Typography
+          {Object.entries(caseData?.debtor?.basicInformation)?.map(
+            ([key, value]) => (
+              <div
+                key={key}
                 style={{
-                  fontSize: "11px",
-                  color: Colors.DIM_LIGHT_GRAY,
-                  fontFamily: "Nunito",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  width: "45%",
+                  marginBottom: "8px",
                 }}
               >
-                {value}
-              </Typography>
-            </div>
-          ))}
+                <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+                  {key === "SSID" ? "SSN" : formatKeys(key)}
+                </Typography>
+                <Typography
+                  style={{
+                    fontSize: "11px",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    fontFamily: "Nunito",
+                  }}
+                >
+                  {value}
+                </Typography>
+              </div>
+            )
+          )}
         </div>
       </Grid>
       <Grid
@@ -152,31 +141,39 @@ export default function DebtorDetailsCards() {
         >
           Business Details
         </p>
-        <div style={{ gap: "10%" }}>
-          {Object.entries(businessDetail)?.map(([key, value]) => (
-            <div
-              key={key}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                width: "100%",
-                marginBottom: "8px",
-              }}
-            >
-              <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
-                {key}
-              </Typography>
-              <Typography
+        <div
+          style={{
+            gap: "10%",
+            overflowY: "auto",
+            height: "10rem",
+          }}
+        >
+          {Object.entries(caseData?.debtor?.businessInformation)?.map(
+            ([key, value]) => (
+              <div
+                key={key}
                 style={{
-                  fontSize: "11px",
-                  color: Colors.DIM_LIGHT_GRAY,
-                  fontFamily: "Nunito",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  width: "100%",
+                  marginBottom: "8px",
                 }}
               >
-                {value}
-              </Typography>
-            </div>
-          ))}
+                <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+                  {key === "EIN" ? key : formatKeys(key)}
+                </Typography>
+                <Typography
+                  style={{
+                    fontSize: "11px",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    fontFamily: "Nunito",
+                  }}
+                >
+                  {value}
+                </Typography>
+              </div>
+            )
+          )}
         </div>
       </Grid>
       <Grid
@@ -231,64 +228,79 @@ export default function DebtorDetailsCards() {
             </IconButton>
           </div>
         </div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "4%" }}>
-          <Card
-            sx={{
-              height: "5rem",
-              display: "flex",
-              boxShadow: "none",
-              border: "1px solid lightgrey",
-              borderRadius: "10px",
-              width: "48%",
-              padding: "0px 8px",
-              marginBottom: "4%",
-            }}
-          >
-            <div
-              style={{
-                width: "30%",
-                marginTop: "10%",
-              }}
-            >
-              <img
-                style={{ borderRadius: "50%" }}
-                width={25}
-                height={25}
-                src={avatar}
-                alt=""
-              />
-            </div>
-            <div
-              style={{
-                width: "70%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}
-            >
-              <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
-                {personDetail?.Name}
-              </Typography>
-              <Typography
-                style={{
-                  fontSize: "11px",
-                  color: Colors.DIM_LIGHT_GRAY,
-                  fontFamily: "Nunito",
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "4%",
+            overflowY: "auto",
+          }}
+        >
+          {caseData?.debtor?.contacts?.map((item, index) => {
+            return (
+              <Card
+                key={index}
+                sx={{
+                  height: "5rem",
+                  display: "flex",
+                  boxShadow: "none",
+                  border: "1px solid lightgrey",
+                  borderRadius: "10px",
+                  width: "48%",
+                  padding: "0px 8px",
+                  marginBottom: "4%",
                 }}
               >
-                {personDetail?.Email}
-              </Typography>
-              <Typography
-                style={{
-                  fontSize: "11px",
-                  color: Colors.DIM_LIGHT_GRAY,
-                  fontFamily: "Nunito",
-                }}
-              >
-                {personDetail?.Phone}
-              </Typography>
-            </div>
-          </Card>
+                <div
+                  style={{
+                    width: "30%",
+                    marginTop: "10%",
+                  }}
+                >
+                  <img
+                    style={{ borderRadius: "50%" }}
+                    width={25}
+                    height={25}
+                    src={avatar}
+                    alt=""
+                  />
+                </div>
+                <div
+                  style={{
+                    width: "70%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Typography
+                    style={{ fontSize: "11px", fontFamily: "Nunito" }}
+                  >
+                    {item?.name}
+                  </Typography>
+                  <Typography
+                    style={{
+                      fontSize: "11px",
+                      color: Colors.DIM_LIGHT_GRAY,
+                      fontFamily: "Nunito",
+                      overflowWrap: "break-word",
+                    }}
+                  >
+                    {item?.email}
+                  </Typography>
+                  <Typography
+                    style={{
+                      fontSize: "11px",
+                      color: Colors.DIM_LIGHT_GRAY,
+                      fontFamily: "Nunito",
+                    }}
+                  >
+                    {item?.phone}
+                  </Typography>
+                </div>
+              </Card>
+            );
+          })}
         </div>
       </Grid>
       <Grid
@@ -323,45 +335,52 @@ export default function DebtorDetailsCards() {
           >
             Other Creditors
           </p>
-          <IconButton>
-            <Add sx={{ fontSize: "16px", color: Colors.BLACK }} />
-          </IconButton>
+          <Box sx={{ marginTop: "0.5rem" }}>
+            <MuiModels show="addCase" width="80vw" height="90vh" />
+          </Box>
         </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          <p style={{ fontSize: "11px", fontFamily: "Nunito" }}>Name</p>
-          <p
-            style={{
-              fontSize: "11px",
-              color: Colors.DIM_LIGHT_GRAY,
-              fontFamily: "Nunito",
-            }}
-          >
-            $10000
-          </p>
-          <p
-            style={{
-              fontSize: "11px",
-              color: Colors.DIM_LIGHT_GRAY,
-              fontFamily: "Nunito",
-            }}
-          >
-            Case Code
-          </p>
-          <p
-            style={{
-              fontSize: "11px",
-              color: Colors.DIM_LIGHT_GRAY,
-              fontFamily: "Nunito",
-            }}
-          >
-            On Hold
-          </p>
-        </div>
+        {caseData?.creditors?.map((item, index) => {
+          return (
+            <div
+              key={index}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <p style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+                {item?.name}
+              </p>
+              <p
+                style={{
+                  fontSize: "11px",
+                  color: Colors.DIM_LIGHT_GRAY,
+                  fontFamily: "Nunito",
+                }}
+              >
+                {item?.totalDebt}
+              </p>
+              <p
+                style={{
+                  fontSize: "11px",
+                  color: Colors.DIM_LIGHT_GRAY,
+                  fontFamily: "Nunito",
+                }}
+              >
+                {item?.caseCode}
+              </p>
+              <p
+                style={{
+                  fontSize: "11px",
+                  color: Colors.DIM_LIGHT_GRAY,
+                  fontFamily: "Nunito",
+                }}
+              >
+                {item?.status}
+              </p>
+            </div>
+          );
+        })}
       </Grid>
     </Grid>
   );

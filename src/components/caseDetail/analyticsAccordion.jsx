@@ -6,19 +6,38 @@ import {
   AccordionSummary,
   AccordionDetails,
   Grid,
+  CircularProgress,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { Colors } from "../../config/default";
 
-export default function AnalyticsAccordion() {
+export default function AnalyticsAccordion({ loading, paymentDetails }) {
   const analyticsData = [
-    { name: "Successful Authorizations", value: "05" },
-    { name: "Successful Payments", value: "05" },
-    { name: "Failed Authorizations", value: "05" },
-    { name: "Successful Payments", value: "05" },
-    { name: "Remaining Debt", value: "$2000" },
-    { name: "Paid Debt", value: "$8000" },
+    {
+      name: "Successful Authorizations",
+      value: paymentDetails?.paymentCounts?.successAuthorizations || 0,
+    },
+    {
+      name: "Successful Payments",
+      value: paymentDetails?.paymentCounts?.successPayments || 0,
+    },
+    {
+      name: "Failed Authorizations",
+      value: paymentDetails?.paymentCounts?.failedAuthorizations || 0,
+    },
+    {
+      name: "Failed Payments",
+      value: paymentDetails?.paymentCounts?.failedPayments || 0,
+    },
+    {
+      name: "Remaining Debt",
+      value: paymentDetails?.paymentCounts?.remainingAmount || 0,
+    },
+    {
+      name: "Paid Debt",
+      value: paymentDetails?.paymentCounts?.paidAmount || 0,
+    },
   ];
   return (
     <Accordion
@@ -53,32 +72,50 @@ export default function AnalyticsAccordion() {
         }}
       >
         <Grid>
-          {analyticsData?.map((item) => (
+          {loading ? (
             <Grid
-              container
+              item
               xs={12}
-              sx={{ justifyContent: "space-between", mb: "10px" }}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "90vh",
+              }}
             >
-              <Grid
-                sx={{
-                  fontSize: "11px",
-                  fontFamily: "Nunito",
-                  color: Colors.BLACK,
-                }}
-              >
-                {item?.name}
-              </Grid>
-              <Grid
-                sx={{
-                  fontSize: "11px",
-                  fontFamily: "Nunito",
-                  color: Colors.DIM_LIGHT_GRAY,
-                }}
-              >
-                {item?.value}
-              </Grid>
+              <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
             </Grid>
-          ))}
+          ) : (
+            <>
+              {" "}
+              {analyticsData?.map((item) => (
+                <Grid
+                  container
+                  xs={12}
+                  sx={{ justifyContent: "space-between", mb: "10px" }}
+                >
+                  <Grid
+                    sx={{
+                      fontSize: "11px",
+                      fontFamily: "Nunito",
+                      color: Colors.BLACK,
+                    }}
+                  >
+                    {item?.name}
+                  </Grid>
+                  <Grid
+                    sx={{
+                      fontSize: "11px",
+                      fontFamily: "Nunito",
+                      color: Colors.DIM_LIGHT_GRAY,
+                    }}
+                  >
+                    {item?.value}
+                  </Grid>
+                </Grid>
+              ))}
+            </>
+          )}
         </Grid>
       </AccordionDetails>
     </Accordion>
