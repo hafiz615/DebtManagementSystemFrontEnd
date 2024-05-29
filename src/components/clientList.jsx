@@ -24,6 +24,7 @@ const headers = [
 export default function ClientList() {
   const { showToast } = useToast();
   const navigate = useNavigate();
+  const [searchText, setSearchText] = useState("");
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { AUTHORITY_TEXT } = UserListPage;
@@ -144,7 +145,11 @@ export default function ClientList() {
         >
           Clients List
         </Typography>
-        <SearchBar placeholder="Search Creditor..." />
+        <SearchBar
+          searchText={searchText}
+          setSearchText={setSearchText}
+          placeholder="Search Creditor..."
+        />
       </Grid>
 
       <Grid

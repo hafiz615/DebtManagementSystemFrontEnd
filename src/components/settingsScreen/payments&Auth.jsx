@@ -17,11 +17,8 @@ export default function SettingsAccordion() {
     { label: "On hold", value: "On hold" },
   ];
   const retry = [
-    { label: "Custom", value: "Custom" },
-    { label: "Daily", value: "Daily" },
-    { label: "Weekly", value: "Weekly" },
-    { label: "Fortnightly", value: "Fortnightly" },
-    { label: "Monthly", value: "Monthly" },
+    { label: "Days", value: "Days" },
+    { label: "Hours", value: "Hours" },
   ];
   const roles = ["Admin", "Manager", "Negotiator", "Debtor", "Creditor"];
   const [template, setTemplate] = useState("");
@@ -436,8 +433,8 @@ export default function SettingsAccordion() {
                 Custom
               </Typography>
               <input
-                type="date"
-                placeholder="2/12/2024"
+                type="text"
+                placeholder="Hours"
                 style={{
                   backgroundColor: Colors.BG_LIGHT_GRAY,
                   height: "2.5rem",
@@ -460,7 +457,7 @@ export default function SettingsAccordion() {
                   width: "15%",
                 }}
               >
-                Date
+                Hours
               </Typography>
               <Typography
                 sx={{
@@ -471,7 +468,7 @@ export default function SettingsAccordion() {
                   width: "15%",
                 }}
               >
-                Frequency
+                Fortnightly
               </Typography>
               <input
                 type="text"

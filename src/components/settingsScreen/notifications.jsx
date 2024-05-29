@@ -221,7 +221,87 @@ export default function NotificationTemplatesTabs() {
                 </Grid>
               </Grid>
             )}
-            {value === 1 && <div>hi</div>}
+            {value === 1 && (
+              <Grid
+                container
+                sx={{ justifyContent: "space-between", marginTop: "1rem" }}
+              >
+                <Grid
+                  container
+                  item
+                  xs={12}
+                  lg={6}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
+                    Templates
+                  </Typography>
+
+                  <MuiModels
+                    show="froalaEditor"
+                    froalaEditorButton="Add New"
+                    froalaEditor={froalaEditor}
+                    setFroalaEditor={setFroalaEditor}
+                  />
+                  <Grid
+                    item
+                    xs={12}
+                    sx={{
+                      backgroundColor: Colors.WHITE,
+                      borderRadius: "10px ",
+                      marginTop: "1rem",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <ListTable
+                      headerData={headers}
+                      data={rows}
+                      requiredIcons={true}
+                    />
+                  </Grid>
+                </Grid>
+                <Grid
+                  container
+                  item
+                  xs={12}
+                  lg={5.8}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      backgroundColor: Colors.BG_LIGHT_GRAY,
+                      padding: "1rem",
+                      borderRadius: "10px",
+                      marginTop: "3rem",
+                      height: "55vh",
+                      width: "100%",
+                      overflowY: "auto",
+                      "&::-webkit-scrollbar": {
+                        width: "10px",
+                      },
+                      "&::-webkit-scrollbar-thumb": {
+                        backgroundColor: "#E5E5E5",
+                        borderRadius: "8px",
+                      },
+                      "&::-webkit-scrollbar-track": {
+                        backgroundColor: Colors.WHITE,
+                        borderRadius: "8px",
+                      },
+                    }}
+                  >
+                    <div dangerouslySetInnerHTML={{ __html: froalaEditor }} />
+                  </Box>
+                </Grid>
+              </Grid>
+            )}
           </Box>
         </Box>
       </AccordionDetails>

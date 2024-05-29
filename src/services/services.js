@@ -137,6 +137,28 @@ export const GetCreditorSearch = async (payload) => {
     return error;
   }
 };
+export const GetCaseById = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/case/getCaseById/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetCasePaymentById = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/payment/getCasePayments/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
 export const GetAllClients = async () => {
   try {
     return await axios.get(
@@ -158,10 +180,10 @@ export const GetClientById = async (id) => {
   }
 };
 
-export const GetAllSettings = async () => {
-  try {
-    return await axios.get(BASE_URL + "/v1/settings/getSettings", setHeaders());
-  } catch (error) {
-    return error;
-  }
-};
+// export const GetAllSettings = async () => {
+//   try {
+//     return await axios.get(BASE_URL + "/v1/settings/getSettings", setHeaders());
+//   } catch (error) {
+//     return error;
+//   }
+// };

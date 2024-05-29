@@ -47,7 +47,7 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
   const menuItems = [
     { label: "Manager", value: "Manager" },
     { label: "Negotiator", value: "Negotiator" },
-    { label: "Admin", value: "Admin" },
+    // { label: "Admin", value: "Admin" },
   ];
   const genderItems = [
     { label: "Male", value: "Male" },

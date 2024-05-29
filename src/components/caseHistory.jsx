@@ -20,6 +20,7 @@ const headers = [
 
 function CaseHistory({ data }) {
   const [rows, setRows] = useState([]);
+  const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
   const formatDate = (dateString) => {
     if (!dateString) return "-";
@@ -80,7 +81,11 @@ function CaseHistory({ data }) {
         >
           Case History
         </Typography>
-        <SearchBar placeholder="Search Creditor..." />
+        <SearchBar
+          searchText={searchText}
+          setSearchText={setSearchText}
+          placeholder="Search Creditor..."
+        />
       </Grid>
       <Grid
         item
