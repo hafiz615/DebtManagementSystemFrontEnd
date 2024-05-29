@@ -27,7 +27,7 @@ import { isEmpty } from "lodash";
 
 const steps = ["Debtor", "Creditor", "Payment", "File upload", "Preview"];
 
-export default function HorizontalLinearStepper({ hide }) {
+export default function HorizontalLinearStepper({ hide, caseData }) {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [activeStep, setActiveStep] = React.useState(0);
@@ -35,48 +35,63 @@ export default function HorizontalLinearStepper({ hide }) {
 
   const { AUTHORITY_TEXT, AUTHORITY_VALUE, DEBTOR_HEADING } = DebtorDetailsPage;
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
-
+  const debtorBasicInfo = caseData?.debtor?.basicInformation;
+  const debtorBusinessInfo = caseData?.debtor?.businessInformation;
   //Debtor-Basic-Details-State
   const [debtorOwnDetails, setDebtorOwnDetails] = useState({
-    BasicFullName: "",
-    BasicEmailAddress: "",
-    BasicSsid: "",
-    BasicCountry: "",
-    BasicState: "",
-    BasicCity: "",
-    BasicZipCode: "",
-    BasicPhoneNumber: "",
-    BasicAddress: "",
+    BasicFullName: debtorBasicInfo?.fullName || "",
+    BasicEmailAddress: debtorBasicInfo?.email || "",
+    BasicSsid: debtorBasicInfo?.SSID || "",
+    BasicCountry: debtorBasicInfo?.country || "",
+    BasicState: debtorBasicInfo?.state || "",
+    BasicCity: debtorBasicInfo?.city || "",
+    BasicZipCode: debtorBasicInfo?.zipCode || "",
+    BasicPhoneNumber: debtorBasicInfo?.phone || "",
+    BasicAddress: debtorBasicInfo?.address || "",
   });
   //Debtor-Business-Details-State
   const [debtorBusinessDetails, setDebtorBusinessDetails] = useState({
-    businessCompanyName: "",
-    businessEinNumber: "",
-    businessCategory: "",
-    businessDescription: "",
-    businessCountry: "",
-    businessState: "",
-    businessCity: "",
-    businessZipCode: "",
-    businessPhoneNumber: "",
-    businessAddress: "",
+    businessCompanyName: debtorBusinessInfo?.companyName || "",
+    businessEinNumber: debtorBusinessInfo?.EIN || "",
+    businessCategory: debtorBusinessInfo?.businessCategory || "",
+    businessDescription: debtorBusinessInfo?.description || "",
+    businessCountry: debtorBusinessInfo?.country || "",
+    businessState: debtorBusinessInfo?.state || "",
+    businessCity: debtorBusinessInfo?.city || "",
+    businessZipCode: debtorBusinessInfo?.zipCode || "",
+    businessPhoneNumber: debtorBusinessInfo?.phone || "",
+    businessAddress: debtorBusinessInfo?.address || "",
   });
   const [checked, setChecked] = React.useState(false);
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState(debtorBasicInfo?.status || "");
   //Debtor-Contact-State
-  const [debtorContactDetails, setDebtorContactDetails] = useState([
-    {
-      name: "",
-      title: "",
-      phone: "",
-      email: "",
-      country: "",
-      state: "",
-      city: "",
-      zipCode: "",
-      relationWithDebtor: "",
-    },
-  ]);
+  const contacts = !isEmpty(caseData?.debtor?.contacts)
+    ? caseData?.debtor?.contacts?.map((contact) => ({
+        name: contact?.name || "",
+        title: contact?.title || "",
+        phone: contact?.phone || "",
+        email: contact?.email || "",
+        country: contact?.country || "",
+        state: contact?.state || "",
+        city: contact?.city || "",
+        zipCode: contact?.zipCode || "",
+        relationWithDebtor: contact?.relationWithDebtor || "",
+      }))
+    : [
+        {
+          name: "",
+          title: "",
+          phone: "",
+          email: "",
+          country: "",
+          state: "",
+          city: "",
+          zipCode: "",
+          relationWithDebtor: "",
+        },
+      ];
+
+  const [debtorContactDetails, setDebtorContactDetails] = useState(contacts);
 
   // creditor state
   const [creditorBasicsInfo, setCreditorBasicsInfo] = useState({
@@ -89,11 +104,14 @@ export default function HorizontalLinearStepper({ hide }) {
     businessCategory: "",
   });
   const [CreditorNotes, setCreditorNotes] = useState("");
+
   const [fundedDate, setFundedDate] = useState("");
+
   const [historicRange, setHistoricRange] = useState({
     minimum: "",
     maximum: "",
   });
+
   const [creditorContactDetails, setCreditorContactDetails] = useState([
     {
       name: "",
@@ -113,6 +131,7 @@ export default function HorizontalLinearStepper({ hide }) {
   const [remainingAmount, setRemainingAmount] = useState(null);
   const [lastPaymentDate, setLastPaymentDate] = useState("");
   const [debtorDetailsStatus, setDebtorDetailsStatus] = useState("");
+
   const [newDataList, setNewDataList] = useState([
     {
       amount: "",
@@ -233,7 +252,7 @@ export default function HorizontalLinearStepper({ hide }) {
       setDebtorOwnDetails({
         BasicFullName: debtorData?.basicInformation?.fullName || "",
         BasicEmailAddress: debtorData?.basicInformation?.email || "",
-        BasicSsid: debtorData?.basicInformation["SSID"] || "",
+        BasicSsid: debtorData?.basicInformation?.SSID || "",
         BasicCountry: debtorData?.basicInformation?.country || "",
         BasicState: debtorData?.basicInformation?.state || "",
         BasicCity: debtorData?.basicInformation?.city || "",

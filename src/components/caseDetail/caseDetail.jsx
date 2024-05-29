@@ -177,7 +177,6 @@ function CaseDetail() {
                 sx={{
                   backgroundColor: Colors.BG_LIGHT_GRAY,
                   boxShadow: " 0 2px 5px -3px rgba(0, 0, 0, 0.5)",
-
                   borderBottomLeftRadius: "10px",
                   borderBottomRightRadius: "10px",
                 }}

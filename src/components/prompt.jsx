@@ -20,8 +20,8 @@ export default function Prompt({ heading, text, id, GetUsers }) {
     const deleteUser = await DeleteUserById(id);
     if (deleteUser?.status === 200) {
       setOpen(false);
-      GetUsers();
       showToast(deleteUser?.data?.message, "success");
+      GetUsers();
     } else {
       showToast(
         deleteUser?.response?.data?.message || deleteUser?.data?.message,
