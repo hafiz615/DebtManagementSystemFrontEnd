@@ -322,7 +322,7 @@ export default function DebtorFields({
           <PaymentsTextFields
             type="text"
             label="Business Category*"
-            placeHolderValue="Enter Business Category"
+            placeHolderValue="Enter Category"
             width="100%"
             value={debtorBusinessDetails?.businessCategory}
             onChange={(e) =>

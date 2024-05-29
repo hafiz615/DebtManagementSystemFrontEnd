@@ -17,7 +17,6 @@ import {
   Window,
   Settings,
   Group,
-  Assessment,
   Home,
   ChevronLeft,
   ChevronRight,
@@ -60,12 +59,11 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   backgroundColor: Colors.NAVY_BLUE,
 }));
 const icons = [
-  <Window />,
   <Home />,
   <AccountCircle />,
   <Settings />,
   <Group />,
-  <Assessment />,
+  <Window />,
 ];
 export default function PersistentDrawerLeft({ children }) {
   const theme = useTheme();
@@ -101,8 +99,8 @@ export default function PersistentDrawerLeft({ children }) {
         case "Clients":
           navigate("/client-listing");
           break;
-        case "Dashboard":
-          navigate("/dashboard");
+        case "Analytics":
+          navigate("/analytics");
           break;
         default:
           break;
@@ -176,49 +174,44 @@ export default function PersistentDrawerLeft({ children }) {
         </Box>
 
         <List sx={{ marginLeft: "0.5rem" }}>
-          {[
-            "Dashboard",
-            "Home",
-            "Clients",
-            "Settings",
-            "User Listing",
-            "Reports",
-          ]?.map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton
-                onClick={() => setSelectedItem(text)}
-                sx={{
-                  color: selectedItem === text ? Colors.SKY_BLUE : "inherit",
-                  ":hover": {
-                    backgroundColor: Colors.WHITE,
-                    color: Colors.SKY_BLUE,
-                  },
-                }}
-              >
-                <ListItemIcon
+          {["Home", "Clients", "Settings", "User Listing", "Analytics"]?.map(
+            (text, index) => (
+              <ListItem key={text} disablePadding>
+                <ListItemButton
+                  onClick={() => setSelectedItem(text)}
                   sx={{
-                    color:
-                      selectedItem === text
-                        ? Colors.SKY_BLUE
-                        : Colors.DIM_LIGHT_GRAY,
+                    color: selectedItem === text ? Colors.SKY_BLUE : "inherit",
+                    ":hover": {
+                      backgroundColor: Colors.WHITE,
+                      color: Colors.SKY_BLUE,
+                    },
                   }}
                 >
-                  {icons[index]}
-                </ListItemIcon>
+                  <ListItemIcon
+                    sx={{
+                      color:
+                        selectedItem === text
+                          ? Colors.SKY_BLUE
+                          : Colors.DIM_LIGHT_GRAY,
+                    }}
+                  >
+                    {icons[index]}
+                  </ListItemIcon>
 
-                <ListItemText
-                  primary={text}
-                  sx={{
-                    fontFamily: "Nunito !important",
-                    color:
-                      selectedItem === text
-                        ? Colors.SKY_BLUE
-                        : Colors.DARK_GRAY,
-                  }}
-                />
-              </ListItemButton>
-            </ListItem>
-          ))}
+                  <ListItemText
+                    primary={text}
+                    sx={{
+                      fontFamily: "Nunito !important",
+                      color:
+                        selectedItem === text
+                          ? Colors.SKY_BLUE
+                          : Colors.DARK_GRAY,
+                    }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            )
+          )}
         </List>
       </Drawer>
       <Main open={open}>

@@ -95,6 +95,8 @@ export default function DebtorDetailsCards({ caseData }) {
             show="debtorDetail"
             button="create"
             iconColor={Colors.BLACK}
+            width="80vw"
+            height="90vh"
           />
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "10%" }}>
@@ -141,11 +143,22 @@ export default function DebtorDetailsCards({ caseData }) {
         >
           Business Details
         </p>
-        <div
-          style={{
+        <Box
+          sx={{
             gap: "10%",
-            overflowY: "auto",
             height: "10rem",
+            overflowY: "auto",
+            "&::-webkit-scrollbar": {
+              width: "5px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "#E5E5E5",
+              borderRadius: "8px",
+            },
+            "&::-webkit-scrollbar-track": {
+              backgroundColor: Colors.WHITE,
+              borderRadius: "8px",
+            },
           }}
         >
           {Object.entries(caseData?.debtor?.businessInformation)?.map(
@@ -174,7 +187,7 @@ export default function DebtorDetailsCards({ caseData }) {
               </div>
             )
           )}
-        </div>
+        </Box>
       </Grid>
       <Grid
         item
@@ -336,7 +349,12 @@ export default function DebtorDetailsCards({ caseData }) {
             Other Creditors
           </p>
           <Box sx={{ marginTop: "0.5rem" }}>
-            <MuiModels show="addCase" width="80vw" height="90vh" />
+            <MuiModels
+              show="addCase"
+              width="80vw"
+              height="90vh"
+              caseData={caseData}
+            />
           </Box>
         </div>
         {caseData?.creditors?.map((item, index) => {

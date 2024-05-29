@@ -87,7 +87,7 @@ function App() {
       />
       <Route
         exact
-        path="/dashboard"
+        path="/analytics"
         element={
           <Protected>
             <DashboardPage />
