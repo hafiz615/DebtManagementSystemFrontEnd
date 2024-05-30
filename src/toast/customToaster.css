@@ -1,5 +1,5 @@
 .custom-toaster.error {
-  position: absolute;
+  position: fixed;
   min-height: 3em;
   height: max-content;
   width: 34vw;
@@ -16,7 +16,7 @@
   z-index: 9999;
 }
 .custom-toaster.success {
-  position: absolute;
+  position: fixed;
   min-height: 3em;
   width: 34vw;
   top: 0.75em;

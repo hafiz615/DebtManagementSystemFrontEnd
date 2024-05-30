@@ -145,7 +145,10 @@ function DashboardContent() {
                   justifyContent: { xs: "center", md: "unset" },
                 }}
               >
-                <SpinnerWithPercentage value={30} color={Colors.ORANGE_COLOR} />
+                <SpinnerWithPercentage
+                  value={100}
+                  color={Colors.ORANGE_COLOR}
+                />
                 <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
                   Failed Authorizations
                 </Typography>
