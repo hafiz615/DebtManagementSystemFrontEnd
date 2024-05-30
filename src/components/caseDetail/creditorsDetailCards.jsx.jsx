@@ -50,7 +50,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function CreditorsDetailCards({ caseData }) {
+export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = date.getDate();
@@ -100,6 +100,7 @@ export default function CreditorsDetailCards({ caseData }) {
             width="80vw"
             height="90vh"
             caseData={caseData}
+            GetCaseDetails={GetCaseDetails}
           />
         </div>
         <div
