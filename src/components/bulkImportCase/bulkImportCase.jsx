@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import { Grid, Typography, Stepper, Step, StepLabel } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -14,8 +15,9 @@ import { useToast } from "../../toast/toastContext";
 
 function BulkImportCase() {
   const [activeStep, setActiveStep] = useState(0);
-  const [apiData, setApiData] = useState({});
+  const [apiData, setApiData] = useState([]);
   const { showToast } = useToast();
+  const navigate = useNavigate();
 
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
@@ -38,14 +40,16 @@ function BulkImportCase() {
   };
 
   const handleSave = async () => {
-    if (activeStep === 1) {
-      const caseCreation = await CreateCase(apiData, true);
-      if (caseCreation?.status === 200) {
-        localStorage.removeItem("Columns");
-        localStorage.removeItem("dropdownState");
-        localStorage.removeItem("csvData");
-        showToast(caseCreation?.data?.message, "success");
-      }
+    const caseCreation = await CreateCase(apiData, true);
+    if (caseCreation?.status === 201) {
+      localStorage.removeItem("Columns");
+      localStorage.removeItem("dropdownState");
+      localStorage.removeItem("csvData");
+      navigate("/home");
+      showToast(caseCreation?.data?.message, "success");
+    } else if (caseCreation?.response?.status === 400) {
+      const errorMessage = caseCreation?.response?.data?.message;
+      showToast(errorMessage, "error");
     }
   };
 

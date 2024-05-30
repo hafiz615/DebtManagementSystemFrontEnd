@@ -11,9 +11,9 @@ import {
 export default function MappingDetails() {
   const [dropdownStates, setDropdownStates] = useState({});
   const [columnNames, setColumnNames] = useState([]);
-  const csvDataFromLocal = localStorage.getItem("csvData");
+  const csvDataFromLocal = localStorage?.getItem("csvData");
 
-  const csvData = JSON.parse(csvDataFromLocal);
+  const csvData = JSON?.parse(csvDataFromLocal);
   var csvHeaders;
 
   const debtorDetails = [
@@ -80,7 +80,9 @@ export default function MappingDetails() {
       initialDropdownStates[`debtor-SSN`] = getFieldIndex("debtor_ssn");
       initialDropdownStates[`debtor-Status`] = getFieldIndex("debtor_status");
       initialDropdownStates[`debtor-Address`] = getFieldIndex("debtor_address");
-      initialDropdownStates[`debtor-Company`] = getFieldIndex("debtor_name");
+      initialDropdownStates[`debtor-Company`] = getFieldIndex(
+        "debtor_business_name"
+      );
       initialDropdownStates[`debtor-EIN`] = getFieldIndex(
         "debtor_business_ein"
       );
@@ -104,8 +106,9 @@ export default function MappingDetails() {
       );
       initialDropdownStates[`creditor-Full Name`] =
         getFieldIndex("creditor_name");
-      initialDropdownStates[`creditor-Company Name`] =
-        getFieldIndex("creditor_name");
+      initialDropdownStates[`creditor-Company Name`] = getFieldIndex(
+        "creditor_business_name"
+      );
       initialDropdownStates[`creditor-Address`] = getFieldIndex(
         "debtor_business_phone"
       );

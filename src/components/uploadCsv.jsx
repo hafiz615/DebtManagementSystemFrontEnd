@@ -23,26 +23,31 @@ export default function UploadCsv({ handleModalClose }) {
   );
 
   const onDrop = (acceptedFiles, fileRejections) => {
-    if (acceptedFiles.length > 0) {
+    if (acceptedFiles?.length > 0) {
       const file = acceptedFiles[0];
-      setFilename(file.name);
       Papa.parse(file, {
         header: true,
         complete: (results) => {
           const csvData = results;
+          if (results.meta.fields[0] !== "debtor_name") {
+            showToast("CSV format is not correct.", "error");
+            setData(null);
+            setFilename(null);
+            return;
+          }
+          setFilename(file.name);
           setData(csvData);
           const numColumns = results.meta.fields.length;
           localStorage.setItem("Columns", numColumns);
           localStorage.setItem("csvData", JSON.stringify(csvData));
-          console.log(csvData);
-          console.log(numColumns);
         },
         error: (err) => {
           showToast("Error parsing CSV file.", "error");
+          setFilename(null);
         },
       });
     }
-    if (fileRejections.length > 0) {
+    if (fileRejections?.length > 0) {
       setFilename(null);
       showToast("Please upload a valid CSV file.", "error");
     }
@@ -58,7 +63,6 @@ export default function UploadCsv({ handleModalClose }) {
   const handleUpload = () => {
     if (data) {
       navigate("/bulk-cases");
-
       handleModalClose();
     } else {
       showToast("Please upload a CSV file first.", "error");

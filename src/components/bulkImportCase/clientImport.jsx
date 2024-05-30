@@ -10,7 +10,7 @@ import { generateColumnNames } from "../../common";
 export default function ClientImport({ setApiData }) {
   const [columnNames, setColumnNames] = useState([]);
   const [csvData, setCsvData] = useState([]);
-  const [currentCase, setCurrentCase] = useState(1);
+  const [currentCase, setCurrentCase] = useState(0);
 
   const debtorDetails = [
     { name: "Full Name" },
@@ -46,71 +46,22 @@ export default function ClientImport({ setApiData }) {
     { name: "Frequency" },
   ];
 
-  useEffect(() => {
-    const numColumns = parseInt(localStorage.getItem("Columns"), 10) || 0;
-    const csvDataFromLocal = localStorage.getItem("csvData");
-    setCsvData(JSON.parse(csvDataFromLocal));
-    const columnNaming = generateColumnNames(numColumns);
-    setColumnNames(columnNaming);
-    setApiData([
-      {
-        debtor: {
-          basicInformation: {
-            fullName: debtorOwnDetails?.BasicFullName,
-            email: debtorOwnDetails?.BasicEmailAddress,
-            SSID: debtorOwnDetails?.BasicSsid,
-            status: status,
-            country: debtorOwnDetails?.BasicCountry,
-            state: debtorOwnDetails?.BasicState,
-            city: debtorOwnDetails?.BasicCity,
-            zipCode: debtorOwnDetails?.BasicZipCode,
-            phone: debtorOwnDetails?.BasicPhoneNumber,
-            address: debtorOwnDetails?.BasicAddress,
-          },
-          businessInformation: {
-            companyName: debtorBusinessDetails?.businessCompanyName,
-            EIN: debtorBusinessDetails?.businessEinNumber,
-            businessCategory: debtorBusinessDetails?.businessCategory,
-            description: debtorBusinessDetails?.businessDescription,
-            country: debtorBusinessDetails?.businessCountry,
-            state: debtorBusinessDetails?.businessState,
-            city: debtorBusinessDetails?.businessCity,
-            zipCode: debtorBusinessDetails?.businessZipCode,
-            phone: debtorBusinessDetails?.businessPhoneNumber,
-            address: debtorBusinessDetails?.businessAddress,
-          },
-          contacts: debtorContacts,
-        },
-        creditor: {
-          basicInformation: {
-            fullName: creditorBasicsInfo?.CreditorBasicFullName,
-            email: creditorBasicsInfo?.CreditorBasicEmailAddress,
-            phone: creditorBasicsInfo?.CreditorBasicPhoneNumber,
-          },
-          businessInformation: {
-            companyName: creditorBusinessDetails?.businessCompanyName,
-            businessCategory: creditorBusinessDetails?.businessCategory,
-          },
-          notes: CreditorNotes,
-          lastFundedDate: fundedDate,
-          historicalRange: historicRange,
-          contacts: creditorContacts,
-        },
-        status: debtorDetailsStatus,
-        totalDebt: parseInt(totalReceivable),
-        lastPaymentDate: lastPaymentDate,
-        paidAmount: parseInt(paidAmount),
-        remaining: parseInt(remainingAmount),
-        documents: uploadFile?.data?.data || [],
-        intervals: modifiedArray,
-      },
-    ]);
-  }, []);
-
-  const getColumnDataByName = (columnName) => {
-    const csvDataFromLocal = JSON.parse(localStorage.getItem("csvData"));
-    return csvDataFromLocal?.data[0][columnName];
+  const getColumnData = (columnIndex) => {
+    if (!csvData?.data || csvData.data.length === 0) {
+      return null;
+    }
+    const keys = Object?.keys(csvData?.data[currentCase]);
+    return csvData?.data[currentCase][keys[columnIndex]];
   };
+
+  const getColumnDataByName = (columnName, index) => {
+    const csvDataFromLocal = JSON.parse(localStorage.getItem("csvData"));
+    return csvDataFromLocal?.data[index][columnName];
+  };
+
+  const paymentPlansCount = parseInt(
+    getColumnDataByName("payment_plans_count", 0)
+  );
 
   const getRowsLength = (columnName) => {
     const csvDataFromLocal = JSON.parse(localStorage.getItem("csvData"));
@@ -123,17 +74,82 @@ export default function ClientImport({ setApiData }) {
 
   const rowsInCsv = getRowsLength("debtor_name");
 
-  const paymentPlansCount = parseInt(
-    getColumnDataByName("payment_plans_count")
-  );
+  const apiDataSet = { cases: [] };
 
-  const getColumnData = (columnIndex) => {
-    if (!csvData?.data || csvData.data.length === 0) {
-      return null;
-    }
-    const keys = Object?.keys(csvData?.data[0]);
-    return csvData?.data[0][keys[columnIndex]];
-  };
+  for (let index = 0; index < rowsInCsv; index++) {
+    apiDataSet.cases.push({
+      debtor: {
+        basicInformation: {
+          fullName: getColumnDataByName("debtor_name", index),
+          email: getColumnDataByName("debtor_email", index),
+          SSID: getColumnDataByName("debtor_ssn", index),
+          status: getColumnDataByName("debtor_status", index),
+          country: getColumnDataByName("debtor_business_country", index),
+          state: getColumnDataByName("debtor_business_state", index),
+          city: getColumnDataByName("debtor_business_city", index),
+          zipCode: getColumnDataByName("debtor_business_zipcode", index),
+          phone: getColumnDataByName("debtor_business_phone", index),
+          address: getColumnDataByName("debtor_business_address", index),
+        },
+        businessInformation: {
+          companyName: getColumnDataByName("debtor_business_name", index),
+          EIN: getColumnDataByName("debtor_business_ein", index),
+          businessCategory: getColumnDataByName(
+            "debtor_business_category",
+            index
+          ),
+          description: getColumnDataByName(
+            "debtor_business_description",
+            index
+          ),
+          country: getColumnDataByName("debtor_business_country", index),
+          state: getColumnDataByName("debtor_business_state", index),
+          city: getColumnDataByName("debtor_business_city", index),
+          zipCode: getColumnDataByName("debtor_business_zipcode", index),
+          phone: getColumnDataByName("debtor_business_phone", index),
+          address: getColumnDataByName("debtor_business_address", index),
+        },
+        contacts: [],
+      },
+      creditor: {
+        basicInformation: {
+          fullName: getColumnDataByName("creditor_name", index),
+          email: getColumnDataByName("creditor_email", index),
+          phone: getColumnDataByName("creditor_phone", index),
+        },
+        businessInformation: {
+          companyName: getColumnDataByName("creditor_business_name", index),
+          businessCategory: getColumnDataByName(
+            "creditor_business_category",
+            index
+          ),
+        },
+        notes: getColumnDataByName("creditor_notes", index),
+        lastFundedDate: getColumnDataByName("date_funded", index),
+        historicalRange: {
+          minimum: parseInt(getColumnDataByName("min_hostorical_range", index)),
+          maximum: parseInt(getColumnDataByName("max_historical_range", index)),
+        },
+        contacts: [],
+      },
+      status: getColumnDataByName("case_status", index),
+      totalDebt: parseInt(getColumnDataByName("total_funded_amount", index)),
+      lastPaymentDate: getColumnDataByName("last_payment_date", index),
+      paidAmount: parseInt(getColumnDataByName("total_paid_amount", index)),
+      remaining: parseInt(getColumnDataByName("total_remaining_amount", index)),
+      documents: [],
+      intervals: [],
+    });
+  }
+
+  useEffect(() => {
+    const numColumns = parseInt(localStorage.getItem("Columns"), 10) || 0;
+    const csvDataFromLocal = localStorage.getItem("csvData");
+    setCsvData(JSON.parse(csvDataFromLocal));
+    const columnNaming = generateColumnNames(numColumns);
+    setColumnNames(columnNaming);
+    setApiData(apiDataSet);
+  }, []);
 
   const renderData = (category, itemName) => {
     const dropdownStates = JSON.parse(localStorage.getItem("dropdownState"));
@@ -167,19 +183,19 @@ export default function ClientImport({ setApiData }) {
       {rowsInCsv > 1 ? (
         <Grid container sx={{ justifyContent: "right", alignItems: "center" }}>
           <IconButton
-            onClick={() => setCurrentCase((prev) => Math.max(prev - 1, 1))}
-            disabled={currentCase <= 1}
+            onClick={() => setCurrentCase((prev) => Math.min(prev - 1, 1))}
+            disabled={currentCase === 0}
           >
             <KeyboardArrowLeftIcon />
           </IconButton>
           <Typography sx={{ color: Colors.DIM_LIGHT_GRAY }}>
-            Case {currentCase} of {rowsInCsv}
+            Case {currentCase + 1} of {rowsInCsv}
           </Typography>
           <IconButton
             onClick={() =>
               setCurrentCase((prev) => Math.min(prev + 1, rowsInCsv))
             }
-            disabled={currentCase >= rowsInCsv}
+            disabled={currentCase === rowsInCsv - 1}
           >
             <KeyboardArrowRightIcon />
           </IconButton>
