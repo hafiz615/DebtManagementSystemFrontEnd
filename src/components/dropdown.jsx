@@ -79,11 +79,20 @@ export default function Dropdown({
         MenuListProps={{
           "aria-labelledby": "basic-button",
         }}
+        PaperProps={{
+          style: {
+            maxHeight: 300,
+            overflowY: "auto",
+          },
+        }}
       >
         {menuItems?.map((item, index) => (
           <MenuItem
             key={index}
-            sx={{ color: Colors.LIGHT_GRAY, width: "100%" }}
+            sx={{
+              color: Colors.LIGHT_GRAY,
+              width: "100%",
+            }}
             onClick={() => handleMenuItemClick(item?.value)}
           >
             {item.label}
