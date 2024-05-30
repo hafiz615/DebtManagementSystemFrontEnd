@@ -54,9 +54,6 @@ export default function AboutAccordion({ caseDetails }) {
           <Typography sx={{ color: Colors.WHITE, fontFamily: "Nunito" }}>
             About
           </Typography>
-          <IconButton>
-            <EditIcon sx={{ color: Colors.WHITE, fontSize: "16px" }} />
-          </IconButton>
         </div>
       </AccordionSummary>
       <AccordionDetails
