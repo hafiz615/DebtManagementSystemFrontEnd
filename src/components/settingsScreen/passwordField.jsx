@@ -1,18 +1,20 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
-// import Input from "@mui/material/Input";
 import FilledInput from "@mui/material/FilledInput";
-// import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
-// import FormHelperText from "@mui/material/FormHelperText";
 import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import FormHelperText from "@mui/material/FormHelperText";
 
-export default function PasswordField() {
+export default function PasswordField({ password, setPassword, helperText, error }) {
   const [showPassword, setShowPassword] = React.useState(false);
+
+  const handleChange = (event) => {
+    setPassword(event.target.value);
+  };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -23,11 +25,13 @@ export default function PasswordField() {
   return (
     <Box sx={{ display: "flex", flexWrap: "wrap" }}>
       <div>
-        <FormControl sx={{ m: 1, width: "25ch" }} variant="filled">
-          <InputLabel htmlFor="filled-adornment-password">Password</InputLabel>
+        <FormControl sx={{ m: 1, width: "25ch" }} variant="filled" error={error}>
+          <InputLabel htmlFor="filled-adornment-password">*********</InputLabel>
           <FilledInput
             id="filled-adornment-password"
             type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={handleChange}
             sx={{
               height: "3rem",
               "&:before": {
@@ -53,6 +57,7 @@ export default function PasswordField() {
               </InputAdornment>
             }
           />
+          {helperText && <FormHelperText>{helperText}</FormHelperText>}
         </FormControl>
       </div>
     </Box>

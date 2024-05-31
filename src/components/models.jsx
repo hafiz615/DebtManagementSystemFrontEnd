@@ -30,6 +30,7 @@ export default function MuiModels({
   width,
   height,
   caseData,
+  handleModalClose
 }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -146,9 +147,9 @@ export default function MuiModels({
           ) : show === "task" ? (
             <AddTask show={show} handleClose={handleClose} />
           ) : show === "editField" ? (
-            <EditField show={show} handleClose={handleClose} />
+            <EditField show={show} handleClose={handleClose} data={data} handleModalClose={handleModalClose} />
           ) : show === "addCustomField" ? (
-            <AddCustomField show={show} handleClose={handleClose} />
+            <AddCustomField show={show} handleClose={handleClose} handleModalClose={handleModalClose} />
           ) : show === "creditorDetail" ? (
             <EditCreditorDetail show={show} handleClose={handleClose} />
           ) : show === "addCase" ? (
