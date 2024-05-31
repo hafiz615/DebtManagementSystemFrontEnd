@@ -66,6 +66,18 @@ export const DeleteUserById = async (id) => {
   }
 };
 
+export const DeleteCustomField = async (id) => {
+  try {
+    return await axios.delete(
+      BASE_URL + `/v1/settings/deleteCustomField/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+
 export const VerifyLink = async (token) => {
   try {
     return await axios.post(
@@ -83,6 +95,14 @@ export const UpdateUserPassword = async (payload, token) => {
       BASE_URL + `/v1/user/updatePassword?token=${token}`,
       payload
     );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const ResetUserPassword = async (payload) => {
+  try {
+    return await axios.put(BASE_URL + `/v1/user/resetPassword`, payload, setHeaders());
   } catch (error) {
     return error;
   }
@@ -180,6 +200,46 @@ export const GetClientById = async (id) => {
   }
 };
 
+export const GetAllSettings = async () => {
+  try {
+    return await axios.get(BASE_URL + "/v1/settings/getSettings", setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+
+export const SaveSettings = async (payload) => {
+  try {
+    return await axios.patch(BASE_URL + "/v1/settings/addSettings", payload, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+
+export const EditCustomField = async (payload) => {
+  try {
+    const modifiedPayload = {
+      "name": payload.name,
+      "type": payload.type,
+      "target": payload.target,
+      "description": payload.description,
+      "shared": payload.shared
+    }
+    return await axios.put(BASE_URL + `/v1/settings/editCustomField/${payload._id}`, modifiedPayload, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+
+export const CreateCustomField = async (payload) => {
+  try {
+    return await axios.post(BASE_URL + `/v1/settings/addCustomField`, payload, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+
+
 export const UpdateDebtor = async (id, payload) => {
   try {
     return await axios.put(
@@ -209,14 +269,6 @@ export const UpdateCreditor = async (id, payload) => {
 //       BASE_URL + "/v1/payment/getHomePayments",
 //       setHeaders()
 //     );
-//   } catch (error) {
-//     return error;
-//   }
-// };
-
-// export const GetAllSettings = async () => {
-//   try {
-//     return await axios.get(BASE_URL + "/v1/settings/getSettings", setHeaders());
 //   } catch (error) {
 //     return error;
 //   }

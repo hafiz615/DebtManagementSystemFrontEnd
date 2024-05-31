@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Grid, Typography, Radio, Divider, Switch } from "@mui/material";
+import { Grid, Typography, Divider, Switch, Checkbox } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -8,8 +8,29 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { Colors } from "../config/default";
 import TextButton from "./button";
+import { EditCustomField } from "../services/services";
+import { useToast } from "../toast/toastContext";
 
-export default function EditField({ handleClose }) {
+export default function EditField({ handleClose, data, handleModalClose }) {
+  const { showToast } = useToast();
+  const [formData, setFormData] = React.useState(data)
+  const handleChange = (field, value) => {
+    setFormData(prevState => ({
+      ...prevState,
+      [field]: value
+    }));
+  }
+  const handleSave = async () => {
+    const customFieldSubmission = await EditCustomField(formData);
+    if (customFieldSubmission?.status === 200) {
+      showToast(customFieldSubmission?.data?.message, "success");
+      handleClose()
+      handleModalClose()
+    } else {
+      const errorMessage = customFieldSubmission?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+  }
   return (
     <Grid>
       <div>
@@ -21,7 +42,7 @@ export default function EditField({ handleClose }) {
       </div>
       <Divider />
       <input
-        type="email"
+        type="text"
         placeholder="Name"
         style={{
           backgroundColor: Colors.BG_LIGHT_GRAY,
@@ -34,11 +55,13 @@ export default function EditField({ handleClose }) {
           marginTop: "1em",
           width: "calc(48% - 1rem)",
         }}
-      />
+        value={formData.name}
+        onChange={(e)=> handleChange("name", e.target.value)} 
+        />
 
       <div style={{ display: "flex", gap: "1em", marginTop: "1em" }}>
         <input
-          type="number"
+          type="text"
           placeholder="Type"
           style={{
             backgroundColor: Colors.BG_LIGHT_GRAY,
@@ -50,10 +73,12 @@ export default function EditField({ handleClose }) {
             borderRadius: "5px",
             width: "calc(100% - 1rem)",
           }}
-        />
+          value={formData.type} 
+          onChange={(e)=> handleChange("type", e.target.value)} 
+          />
 
         <input
-          type="number"
+          type="text"
           placeholder="Target"
           style={{
             backgroundColor: Colors.BG_LIGHT_GRAY,
@@ -65,6 +90,8 @@ export default function EditField({ handleClose }) {
             borderRadius: "5px",
             width: "calc(100% - 1rem)",
           }}
+          value={formData.target}
+          onChange={(e)=> handleChange("target", e.target.value)} 
         />
       </div>
       <div style={{ marginTop: "1em" }}>
@@ -79,10 +106,12 @@ export default function EditField({ handleClose }) {
             maxWidth: "100%",
             padding: "1em",
           }}
+          value={formData.description}
+          onChange={(e)=> handleChange("description", e.target.value)} 
         />
       </div>
       <div style={{ fontFamily: "Nunito" }}>
-        <Radio />
+        <Checkbox checked={formData.shared} onChange={(e)=> handleChange("shared", e.target.checked)} />
         Share
       </div>
       <Accordion
@@ -146,7 +175,7 @@ export default function EditField({ handleClose }) {
           buttonText="Save"
           height="2rem"
           width="8rem"
-          onClick={handleClose}
+          onClick={handleSave}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
         />
