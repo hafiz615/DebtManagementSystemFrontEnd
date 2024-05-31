@@ -44,7 +44,8 @@ export default function AnalyticsAccordion({ loading, paymentDetails }) {
       sx={{
         boxShadow: "none",
         marginBottom: "10px",
-        backgroundColor: Colors.BG_LIGHT_GRAY,
+        borderRadius: "1rem !important",
+        backgroundColor: Colors.WHITE,
       }}
       defaultExpanded
     >
@@ -55,18 +56,19 @@ export default function AnalyticsAccordion({ loading, paymentDetails }) {
         sx={{
           height: "20px",
           backgroundColor: Colors.SKY_BLUE,
-          borderRadius: "10px",
+          borderRadius: "1rem",
         }}
       >
-        <Typography sx={{ color: Colors.WHITE, fontFamily: "Nunito" }}>
-          Analytics
+        <Typography
+          sx={{ color: Colors.WHITE, fontFamily: "Nunito", fontWeight: "700" }}
+        >
+          ANALYTICS
         </Typography>
       </AccordionSummary>
       <AccordionDetails
         sx={{
-          backgroundColor: Colors.BG_LIGHT_GRAY,
+          backgroundColor: Colors.WHITE,
           boxShadow: " 0 2px 5px -3px rgba(0, 0, 0, 0.5)",
-
           borderBottomLeftRadius: "10px",
           borderBottomRightRadius: "10px",
         }}
@@ -87,31 +89,32 @@ export default function AnalyticsAccordion({ loading, paymentDetails }) {
             </Grid>
           ) : (
             <>
-              {" "}
               {analyticsData?.map((item) => (
                 <Grid
                   container
                   xs={12}
                   sx={{ justifyContent: "space-between", mb: "10px" }}
                 >
-                  <Grid
+                  <Typography
                     sx={{
                       fontSize: "11px",
                       fontFamily: "Nunito",
-                      color: Colors.BLACK,
+                      color: Colors.DARK_GRAY,
+                      fontWeight: "700",
                     }}
                   >
                     {item?.name}
-                  </Grid>
-                  <Grid
+                  </Typography>
+                  <Typography
                     sx={{
                       fontSize: "11px",
                       fontFamily: "Nunito",
+                      fontWeight: "500",
                       color: Colors.DIM_LIGHT_GRAY,
                     }}
                   >
                     {item?.value}
-                  </Grid>
+                  </Typography>
                 </Grid>
               ))}
             </>

@@ -18,19 +18,19 @@ export default function TaskAccordion() {
       taskName: "Task 1",
       userName: "rummaz",
       status: "On Hold",
-      time: "2/2/24 5:40pm",
+      time: "2/2/24 ",
     },
     {
       taskName: "Task 2",
       userName: "rummaz",
       status: "On Hold",
-      time: "2/2/24 5:40pm",
+      time: "2/2/24 ",
     },
     {
       taskName: "Task 3",
       userName: "rummaz",
       status: "On Hold",
-      time: "2/2/24 5:40pm",
+      time: "2/2/24 ",
     },
   ];
   return (
@@ -38,7 +38,8 @@ export default function TaskAccordion() {
       sx={{
         boxShadow: "none",
         marginBottom: "10px",
-        backgroundColor: Colors.BG_LIGHT_GRAY,
+        borderRadius: "1rem !important",
+        backgroundColor: Colors.WHITE,
       }}
       defaultExpanded
     >
@@ -51,7 +52,7 @@ export default function TaskAccordion() {
         sx={{
           height: "20px",
           backgroundColor: Colors.SKY_BLUE,
-          borderRadius: "10px",
+          borderRadius: "1rem",
         }}
       >
         <div
@@ -62,7 +63,15 @@ export default function TaskAccordion() {
             width: "100%",
           }}
         >
-          <Typography sx={{ color: Colors.WHITE }}>Tasks</Typography>
+          <Typography
+            sx={{
+              color: Colors.WHITE,
+              fontFamily: "Nunito",
+              fontWeight: "700",
+            }}
+          >
+            TASKS
+          </Typography>
           <div onClick={(e) => e.stopPropagation()}>
             <MuiModels
               buttonName="Add Task"
@@ -75,7 +84,7 @@ export default function TaskAccordion() {
       </AccordionSummary>
       <AccordionDetails
         sx={{
-          backgroundColor: Colors.BG_LIGHT_GRAY,
+          backgroundColor: Colors.WHITE,
           boxShadow: " 0 2px 5px -3px rgba(0, 0, 0, 0.5)",
           borderBottomLeftRadius: "10px",
           borderBottomRightRadius: "10px",
@@ -93,7 +102,8 @@ export default function TaskAccordion() {
                   sx={{
                     fontSize: "11px",
                     fontFamily: "Nunito",
-                    color: Colors.BLACK,
+                    color: Colors.DARK_GRAY,
+                    fontWeight: "700",
                   }}
                 >
                   {item?.taskName}
@@ -105,6 +115,7 @@ export default function TaskAccordion() {
                     fontSize: "11px",
                     fontFamily: "Nunito",
                     color: Colors.DIM_LIGHT_GRAY,
+                    fontWeight: "600",
                   }}
                 >
                   {item?.userName}
@@ -116,6 +127,7 @@ export default function TaskAccordion() {
                     fontSize: "11px",
                     fontFamily: "Nunito",
                     color: Colors.DIM_LIGHT_GRAY,
+                    fontWeight: "600",
                   }}
                 >
                   {item?.status}
@@ -127,6 +139,7 @@ export default function TaskAccordion() {
                     fontSize: "11px",
                     fontFamily: "Nunito",
                     color: Colors.DIM_LIGHT_GRAY,
+                    fontWeight: "600",
                   }}
                 >
                   {item?.time}
