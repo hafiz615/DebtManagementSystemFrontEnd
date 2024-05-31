@@ -78,6 +78,8 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
         sx={{
           fontFamily: "Nunito",
           fontWeight: "600",
+          borderTopRightRadius: "1rem",
+          borderTopLeftRadius: "1rem",
           borderBottomLeftRadius: "1rem",
           borderBottomRightRadius: "1rem",
           borderBottom: "1px solid #EAEBEB",

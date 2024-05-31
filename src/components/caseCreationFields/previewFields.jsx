@@ -22,6 +22,7 @@ export default function BasicCard({
   CreditorNotes,
   creditorBusinessDetails,
   totalReceivable,
+  paidAmount,
 }) {
   return (
     <Card
@@ -457,17 +458,28 @@ export default function BasicCard({
             >
               {cardHeading}
             </Typography>
-
-            <Typography
-              sx={{
-                fontFamily: "Nunito",
-                fontWeight: "600",
-                marginLeft: "2rem",
-              }}
-            >
-              Total Receivable
-              <span style={{ marginLeft: "1rem" }}>${totalReceivable}</span>
-            </Typography>
+            <Grid container item>
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontWeight: "600",
+                  marginLeft: "2rem",
+                }}
+              >
+                Total Receivable
+                <span style={{ marginLeft: "1rem" }}>${totalReceivable}</span>
+              </Typography>
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontWeight: "600",
+                  marginLeft: "2rem",
+                }}
+              >
+                Paid Amount
+                <span style={{ marginLeft: "1rem" }}>${paidAmount}</span>
+              </Typography>
+            </Grid>
 
             <Grid
               container
@@ -486,9 +498,10 @@ export default function BasicCard({
               }}
             >
               {newDataList?.map((item, index) => {
+                console.log(item);
                 return (
                   <Grid container item>
-                    <Grid container item xs={12} lg={2.5}>
+                    <Grid container item xs={12} lg={3}>
                       <Typography
                         sx={{
                           fontFamily: "Nunito",
@@ -510,7 +523,8 @@ export default function BasicCard({
                         {item?.amount}
                       </Typography>
                     </Grid>
-                    <Grid container item xs={12} lg={2.5}>
+
+                    <Grid container item xs={12} lg={3}>
                       <Typography
                         sx={{
                           fontFamily: "Nunito",
@@ -533,7 +547,7 @@ export default function BasicCard({
                       </Typography>
                     </Grid>
                     {item?.timePeriod !== "Custom" && (
-                      <Grid container item xs={12} lg={4}>
+                      <Grid container item xs={12} lg={3}>
                         <Typography
                           sx={{
                             fontFamily: "Nunito",
