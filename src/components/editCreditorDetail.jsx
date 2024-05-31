@@ -144,6 +144,7 @@ export default function EditCreditorDetail({
       >
         <Close />
       </Box>
+
       <Grid
         item
         xs={12}
@@ -152,13 +153,19 @@ export default function EditCreditorDetail({
           marginTop: { xs: ".5rem", xl: "0rem" },
           backgroundColor: Colors.WHITE,
           padding: "1rem",
-          height: "350px",
         }}
       >
         <Typography
-          sx={{ fontFamily: "Nunito", fontWeight: "600" }}
-          gutterBottom
+          sx={{
+            fontFamily: "Nunito",
+            fontWeight: "600",
+            fontSize: 20,
+            marginBottom: "1rem",
+          }}
         >
+          Edit Creditor Details
+        </Typography>
+        <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
           Business Information
         </Typography>
         <Grid container item xs={12}>
@@ -236,8 +243,7 @@ export default function EditCreditorDetail({
           />
         </Grid>
       </Grid>
-
-      <Grid container sx={{ justifyContent: "right" }}>
+      <Grid container xs={11.4} sx={{ justifyContent: "right" }}>
         <TextButton
           buttonText="Save"
           height="2rem"

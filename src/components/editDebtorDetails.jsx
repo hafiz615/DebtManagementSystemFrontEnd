@@ -298,9 +298,16 @@ export default function EditDebtorDetail({
         }}
       >
         <Typography
-          sx={{ fontFamily: "Nunito", fontWeight: "600" }}
-          gutterBottom
+          sx={{
+            fontFamily: "Nunito",
+            fontWeight: "600",
+            fontSize: 20,
+            marginBottom: "1.5rem",
+          }}
         >
+          Edit Debtor Details
+        </Typography>
+        <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
           Personal Details
         </Typography>
         <Grid
@@ -625,7 +632,7 @@ export default function EditDebtorDetail({
           />
         </Grid>
       </Grid>
-      <Grid container sx={{ justifyContent: "right" }}>
+      <Grid container xs={11.8} sx={{ justifyContent: "right" }}>
         <TextButton
           buttonText="Save"
           height="2rem"

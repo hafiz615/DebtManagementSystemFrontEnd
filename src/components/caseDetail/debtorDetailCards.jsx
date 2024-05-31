@@ -57,17 +57,26 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
       ?.replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
     return formattedKeys;
   };
+  const desiredKeys = [
+    "companyName",
+    "businessCategory",
+    "EIN",
+    "phone",
+    "description",
+  ];
+  console.log(caseData?.debtor?.businessInformation);
   return (
     <Grid
       container
       sx={{
-        height: "13rem",
+        height: "max-content",
         justifyContent: "space-between",
       }}
     >
       <Grid
         item
-        xs={3.6}
+        xs={12}
+        lg={3.6}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",
@@ -101,7 +110,13 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
             GetCaseDetails={GetCaseDetails}
           />
         </div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "10%" }}>
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "10%",
+          }}
+        >
           {Object.entries(caseData?.debtor?.basicInformation)?.map(
             ([key, value]) => (
               <div
@@ -113,7 +128,14 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
                   marginBottom: "8px",
                 }}
               >
-                <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+                <Typography
+                  style={{
+                    fontSize: "11px",
+                    fontWeight: "700",
+                    fontFamily: "Nunito",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
                   {key === "SSID" ? "SSN" : formatKeys(key)}
                 </Typography>
                 <Typography
@@ -121,6 +143,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
                     fontSize: "11px",
                     color: Colors.DIM_LIGHT_GRAY,
                     fontFamily: "Nunito",
+                    fontWeight: "500",
                   }}
                 >
                   {value}
@@ -132,7 +155,8 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
       </Grid>
       <Grid
         item
-        xs={2}
+        xs={12}
+        lg={2}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",
@@ -174,7 +198,14 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
                   marginBottom: "8px",
                 }}
               >
-                <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+                <Typography
+                  style={{
+                    fontSize: "11px",
+                    fontWeight: "700",
+                    fontFamily: "Nunito",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
                   {key === "EIN" ? key : formatKeys(key)}
                 </Typography>
                 <Typography
@@ -182,6 +213,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
                     fontSize: "11px",
                     color: Colors.DIM_LIGHT_GRAY,
                     fontFamily: "Nunito",
+                    fontWeight: "500",
                   }}
                 >
                   {value}
