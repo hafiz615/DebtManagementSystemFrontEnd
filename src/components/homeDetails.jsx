@@ -18,33 +18,38 @@ function HomeDetails() {
   const [homeData, setHomeData] = useState({});
   const [loading, setLoading] = useState(false);
 
-  const accordionData = [
-    {
-      tableHeading: "Failed Authorizations",
-      paymentNumber: "5",
-      rowData: homeData?.failedAuthorizations,
-    },
-    {
-      tableHeading: "Failed Payments",
-      paymentNumber: "5",
-      rowData: homeData?.failedPayments,
-    },
-    {
-      tableHeading: "Successful Authorizations",
-      paymentNumber: "4",
-      rowData: homeData?.successAuthorizations,
-    },
-    {
-      tableHeading: "Successful Payments",
-      paymentNumber: "4",
-      rowData: homeData?.successPayments,
-    },
-    {
-      tableHeading: "Upcoming Payments",
-      paymentNumber: "4",
-      rowData: homeData?.upcomingPayments,
-    },
-  ];
+  const accordionData = {
+    group1: [
+      {
+        tableHeading: "Failed Authorizations",
+        paymentNumber: "5",
+        rowData: homeData?.failedAuthorizations,
+      },
+      {
+        tableHeading: "Successful Authorizations",
+        paymentNumber: "4",
+        rowData: homeData?.successAuthorizations,
+      },
+      {
+        tableHeading: "Upcoming Payments",
+        paymentNumber: "4",
+        rowData: homeData?.upcomingPayments,
+      },
+    ],
+    group2: [
+      {
+        tableHeading: "Failed Payments",
+        paymentNumber: "5",
+        rowData: homeData?.failedPayments,
+      },
+      {
+        tableHeading: "Successful Payments",
+        paymentNumber: "4",
+        rowData: homeData?.successPayments,
+      },
+    ],
+  };
+
   const menuItems = [
     { label: "3", value: 3 },
     { label: "5", value: 5 },
@@ -134,6 +139,7 @@ function HomeDetails() {
         >
           <span style={{ marginRight: ".5rem" }}>{VIEW_DAYS}</span>
           <Dropdown
+            menuWidth="4rem"
             menuItems={menuItems}
             defaultSelectedItem={3}
             backgroundColor={Colors.WHITE}
@@ -167,22 +173,32 @@ function HomeDetails() {
             <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
           </Grid>
         ) : (
-          accordionData?.map((data, index) => (
-            <Grid
-              item
-              xs={12}
-              lg={6}
-              key={index}
-              sx={{ marginBottom: "0.5rem" }}
-            >
-              <AccordionUsage
-                tableHeading={data?.tableHeading}
-                paymentNumber={data?.paymentNumber}
-                index={index}
-                rowArray={data?.rowData}
-              />
+          <>
+            <Grid item xs={12} lg={6}>
+              {accordionData.group1.map((data, index) => (
+                <Grid item xs={12} key={index} sx={{ marginBottom: "0.5rem" }}>
+                  <AccordionUsage
+                    tableHeading={data?.tableHeading}
+                    paymentNumber={data?.paymentNumber}
+                    index={index}
+                    rowArray={data?.rowData}
+                  />
+                </Grid>
+              ))}
             </Grid>
-          ))
+            <Grid item xs={12} lg={6}>
+              {accordionData.group2.map((data, index) => (
+                <Grid item xs={12} key={index} sx={{ marginBottom: "0.5rem" }}>
+                  <AccordionUsage
+                    tableHeading={data?.tableHeading}
+                    paymentNumber={data?.paymentNumber}
+                    index={index}
+                    rowArray={data?.rowData}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </>
         )}
       </Grid>
     </Grid>

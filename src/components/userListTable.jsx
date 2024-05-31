@@ -174,6 +174,7 @@ export default function UserListTable({
                           heading="Delete User"
                           text={`Are you sure you want to delete ${row?.email} ?`}
                           id={row?.id}
+                          handleUserDelete={handleUserDelete}
                           GetUsers={GetUsers}
                         />
                       </StyledTableCell>

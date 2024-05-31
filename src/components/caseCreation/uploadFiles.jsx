@@ -122,19 +122,12 @@ const FileUploadComponent = ({ setUploadedFiles, files, setFiles }) => {
             paddingLeft: "1rem",
             paddingRight: "1rem",
             borderRadius: "10px",
+            height: "20vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontWeight: "400",
-              width: "40%",
-              color: Colors.BLACK,
-              marginTop: "0.5rem",
-            }}
-          >
-            Upload Documents
-          </Typography>
           <Grid
             container
             item

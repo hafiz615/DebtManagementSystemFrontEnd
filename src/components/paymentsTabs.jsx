@@ -68,7 +68,7 @@ export default function PaymentsTabs() {
           aria-label="ant example"
           variant="scrollable"
           scrollButtons="auto"
-          sx={{ width: { xs: "22rem", md: "50rem" } }}
+          sx={{ width: { xs: "22rem", md: "70rem" } }}
         >
           <AntTab
             sx={{
@@ -103,11 +103,20 @@ export default function PaymentsTabs() {
             sx={{
               bgcolor: Colors.WHITE,
               width: "max-content",
-              borderTopRightRadius: "10px",
               fontWeight: "600",
               height: "3.5rem",
             }}
             label="Successful Payments"
+          />
+          <AntTab
+            sx={{
+              bgcolor: Colors.WHITE,
+              width: "max-content",
+              borderTopRightRadius: "10px",
+              fontWeight: "600",
+              height: "3.5rem",
+            }}
+            label="Upcoming Payments"
           />
         </AntTabs>
       </Box>
@@ -138,6 +147,12 @@ export default function PaymentsTabs() {
         {value === 3 && (
           <PaymentTabsTable
             data={paymentsData?.successPayments}
+            headerData={headers}
+          />
+        )}
+        {value === 4 && (
+          <PaymentTabsTable
+            data={paymentsData?.upcomingPayments}
             headerData={headers}
           />
         )}

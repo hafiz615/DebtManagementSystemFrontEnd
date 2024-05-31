@@ -17,7 +17,7 @@ export default function Prompt({
   heading,
   text,
   id,
-  // GetUsers,
+  GetUsers,
   handleModalClose,
   handleUserDelete,
 }) {
@@ -46,7 +46,7 @@ export default function Prompt({
       setOpen(false);
       showToast(deleteUser?.data?.message, "success");
       handleUserDelete(id);
-      // GetUsers();
+      GetUsers();
     } else {
       showToast(
         deleteUser?.response?.data?.message || deleteUser?.data?.message,

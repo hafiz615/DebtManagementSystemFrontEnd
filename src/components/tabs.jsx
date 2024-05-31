@@ -194,7 +194,7 @@ export default function CustomizedTabs({ heading }) {
               rows={rows}
               columns={columns}
               handleUserDelete={handleUserDelete}
-              // GetUsers={GetUsers}
+              GetUsers={GetUsers}
             />
             {/* <DataTable rows={rows} columns={columns} /> */}
           </>

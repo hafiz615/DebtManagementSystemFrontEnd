@@ -74,6 +74,7 @@ export default function PaymentFields({
               fontWeight: "500",
               color: Colors.DARK_GRAY,
               marginRight: "2rem",
+              width: "45%",
             }}
           >
             Total Receivable
@@ -94,7 +95,7 @@ export default function PaymentFields({
               border: "none",
               outline: "none",
               borderRadius: "5px",
-              width: smallScreen ? "100%" : "60%",
+              width: smallScreen ? "100%" : "65%",
             }}
           />
         </Grid>
@@ -210,6 +211,7 @@ export default function PaymentFields({
               fontWeight: "500",
               color: Colors.DARK_GRAY,
               marginRight: "1rem",
+              width: "45%",
             }}
           >
             Last Payment Date
@@ -257,6 +259,7 @@ export default function PaymentFields({
             Status
           </Typography>
           <Dropdown
+            menuWidth="14.8rem"
             selectedValue={selectedValue}
             setSelectedValue={setSelectedValue}
             menuItems={menuItems}

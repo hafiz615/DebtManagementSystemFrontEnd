@@ -13,10 +13,23 @@ import RowConfigForm from "./paymentsAuthsNotificationRow";
 import { SaveSettings } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 
-export default function SettingsAccordion({ failedAuthorizations, successfulAuthorizations, failedPayments, successPayments,
-  upcomingPayments, retryInterval, authorizationInterval, notificationTemplates,
-  setfailedAuthorizations, setSuccessfulAuthorizations, setFailedPayments, setSuccessPayments, setUpcomingPayments,
-  setRetryInterval, setAuthorizationInterval }) {
+export default function SettingsAccordion({
+  failedAuthorizations,
+  successfulAuthorizations,
+  failedPayments,
+  successPayments,
+  upcomingPayments,
+  retryInterval,
+  authorizationInterval,
+  notificationTemplates,
+  setfailedAuthorizations,
+  setSuccessfulAuthorizations,
+  setFailedPayments,
+  setSuccessPayments,
+  setUpcomingPayments,
+  setRetryInterval,
+  setAuthorizationInterval,
+}) {
   const { showToast } = useToast();
 
   const retry = [
@@ -24,9 +37,13 @@ export default function SettingsAccordion({ failedAuthorizations, successfulAuth
     { label: "Hours", value: "hours" },
   ];
 
-  const [retryAuthIntervalUnit, setRetryAuthIntervalUnit] = useState(retryInterval.failedAuthorization.unit);
-  const [retryPaymentIntervalUnit, setRetryPaymentIntervalUnit] = useState(retryInterval.failedPayment.unit);
-  const [templates, setTemplates] = useState({})
+  const [retryAuthIntervalUnit, setRetryAuthIntervalUnit] = useState(
+    retryInterval.failedAuthorization.unit
+  );
+  const [retryPaymentIntervalUnit, setRetryPaymentIntervalUnit] = useState(
+    retryInterval.failedPayment.unit
+  );
+  const [templates, setTemplates] = useState({});
 
   const saveAuthsPaymentsConfig = async () => {
     const settings = {
@@ -37,9 +54,9 @@ export default function SettingsAccordion({ failedAuthorizations, successfulAuth
         successPayments: successPayments,
         upcomingPayments: upcomingPayments,
         retryInterval: retryInterval,
-        authorizationInterval: authorizationInterval
-      }
-    }
+        authorizationInterval: authorizationInterval,
+      },
+    };
     const settingsSubmission = await SaveSettings(settings);
     if (settingsSubmission?.status === 200) {
       showToast(settingsSubmission?.data?.message, "success");
@@ -47,80 +64,76 @@ export default function SettingsAccordion({ failedAuthorizations, successfulAuth
       const errorMessage = settingsSubmission?.response?.data?.message;
       showToast(errorMessage, "error");
     }
-  }
+  };
 
   const handleIntervalInputChange = (field, value) => {
     if (field === "auth_value") {
-      setRetryInterval(prevData => ({
+      setRetryInterval((prevData) => ({
         ...prevData,
         failedAuthorization: {
           ...prevData.failedAuthorization,
-          value: value
-        }
+          value: value,
+        },
       }));
-    }
-    else if (field === "auth_retries") {
-      setRetryInterval(prevData => ({
+    } else if (field === "auth_retries") {
+      setRetryInterval((prevData) => ({
         ...prevData,
         failedAuthorization: {
           ...prevData.failedAuthorization,
-          maxRetry: value
-        }
+          maxRetry: value,
+        },
       }));
-    }
-    else if (field === "payment_value") {
-      setRetryInterval(prevData => ({
+    } else if (field === "payment_value") {
+      setRetryInterval((prevData) => ({
         ...prevData,
         failedPayment: {
           ...prevData.failedPayment,
-          value: value
-        }
+          value: value,
+        },
       }));
-    }
-    else if (field === "payment_retries") {
-      setRetryInterval(prevData => ({
+    } else if (field === "payment_retries") {
+      setRetryInterval((prevData) => ({
         ...prevData,
         failedPayment: {
           ...prevData.failedPayment,
-          maxRetry: value
-        }
+          maxRetry: value,
+        },
       }));
     }
-  }
+  };
   const handleAuthIntervalInputChange = (field, value) => {
-    setAuthorizationInterval(prevIntervals => ({
+    setAuthorizationInterval((prevIntervals) => ({
       ...prevIntervals,
       [field]: {
         ...prevIntervals[field],
         value: value,
       },
     }));
-  }
+  };
 
   React.useEffect(() => {
     const result = {};
 
     for (const [key, value] of Object.entries(notificationTemplates)) {
-      result[key] = value.map(template => {
-        return { label: template.templateId, value: template.templateId }
+      result[key] = value.map((template) => {
+        return { label: template.templateId, value: template.templateId };
       });
     }
-    setTemplates(result)
-  }, [notificationTemplates])
+    setTemplates(result);
+  }, [notificationTemplates]);
 
   React.useEffect(() => {
-    setRetryInterval(prevData => ({
+    setRetryInterval((prevData) => ({
       failedAuthorization: {
         ...prevData.failedAuthorization,
-        unit: retryAuthIntervalUnit
+        unit: retryAuthIntervalUnit,
       },
       failedPayment: {
         ...prevData.failedPayment,
-        unit: retryPaymentIntervalUnit
-      }
-
+        unit: retryPaymentIntervalUnit,
+      },
     }));
-  }, [retryAuthIntervalUnit, retryPaymentIntervalUnit])
+  }, [retryAuthIntervalUnit, retryPaymentIntervalUnit]);
 
   return (
     <>
@@ -138,9 +151,11 @@ export default function SettingsAccordion({ failedAuthorizations, successfulAuth
           sx={{
             fontFamily: "Nunito",
             fontWeight: "600",
+            borderTopRightRadius: "1rem",
+            borderTopLeftRadius: "1rem",
             borderBottomLeftRadius: "1rem",
             borderBottomRightRadius: "1rem",
-            borderBottom: "1px solid #6D6D6D",
+            borderBottom: "1px solid #EAEBEB",
           }}
         >
           Payments & Authorizations
@@ -217,11 +232,36 @@ export default function SettingsAccordion({ failedAuthorizations, successfulAuth
             </Grid>
           </Grid>
           <Grid container item sx={{ marginTop: "1rem" }}>
-            <RowConfigForm title={"Failed Authorizations"} data={failedAuthorizations} setData={setfailedAuthorizations} menuItems={templates} />
-            <RowConfigForm title={"Successful Authorizations"} data={successfulAuthorizations} setData={setSuccessfulAuthorizations} menuItems={templates} />
-            <RowConfigForm title={"Failed Payments"} data={failedPayments} setData={setFailedPayments} menuItems={templates} />
-            <RowConfigForm title={"Successful Payments"} data={successPayments} setData={setSuccessPayments} menuItems={templates} />
-            <RowConfigForm title={"Upcoming Payments"} data={upcomingPayments} setData={setUpcomingPayments} menuItems={templates} />
+            <RowConfigForm
+              title={"Failed Authorizations"}
+              data={failedAuthorizations}
+              setData={setfailedAuthorizations}
+              menuItems={templates}
+            />
+            <RowConfigForm
+              title={"Successful Authorizations"}
+              data={successfulAuthorizations}
+              setData={setSuccessfulAuthorizations}
+              menuItems={templates}
+            />
+            <RowConfigForm
+              title={"Failed Payments"}
+              data={failedPayments}
+              setData={setFailedPayments}
+              menuItems={templates}
+            />
+            <RowConfigForm
+              title={"Successful Payments"}
+              data={successPayments}
+              setData={setSuccessPayments}
+              menuItems={templates}
+            />
+            <RowConfigForm
+              title={"Upcoming Payments"}
+              data={upcomingPayments}
+              setData={setUpcomingPayments}
+              menuItems={templates}
+            />
           </Grid>
 
           <hr></hr>
@@ -271,7 +311,8 @@ export default function SettingsAccordion({ failedAuthorizations, successfulAuth
                 }}
                 value={retryInterval.failedAuthorization.value}
                 onChange={(e) =>
-                  handleIntervalInputChange("auth_value", e.target.value)}
+                  handleIntervalInputChange("auth_value", e.target.value)
+                }
               />
               <Dropdown
                 menuItems={retry}
@@ -308,7 +349,8 @@ export default function SettingsAccordion({ failedAuthorizations, successfulAuth
                 }}
                 value={retryInterval.failedAuthorization.maxRetry}
                 onChange={(e) =>
-                  handleIntervalInputChange("auth_retries", e.target.value)}
+                  handleIntervalInputChange("auth_retries", e.target.value)
+                }
               />
             </Grid>
             <Grid
