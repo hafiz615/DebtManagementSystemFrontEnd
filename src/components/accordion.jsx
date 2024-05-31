@@ -11,112 +11,31 @@ import { Grid, Typography, Box } from "@mui/material";
 
 import { Colors } from "../config/default";
 
-import DataTable from "./table";
-const rowArray = [
-  {
-    name: "User Name",
-    dueDate: "4/2/2024",
-    amount: "$3,254.00",
-    ssid: "721-07-4426",
-    failureReason: "Lorium Ipsum",
-  },
-  {
-    name: "User Name",
-    dueDate: "4/2/2024",
-    amount: "$3,254.00",
-    ssid: "721-07-4426",
-    failureReason: "Lorium Ipsum",
-  },
-  {
-    name: "User Name",
-    dueDate: "4/2/2024",
-    amount: "$3,254.00",
-    ssid: "721-07-4426",
-    failureReason: "Lorium Ipsum",
-  },
-  {
-    name: "User Name",
-    dueDate: "4/2/2024",
-    amount: "$3,254.00",
-    ssid: "721-07-4426",
-    failureReason: "Lorium Ipsum",
-  },
-  {
-    name: "User Name",
-    dueDate: "4/2/2024",
-    amount: "$3,254.00",
-    ssid: "721-07-4426",
-    failureReason: "Lorium Ipsum",
-  },
-  {
-    name: "User Name",
-    dueDate: "4/2/2024",
-    amount: "$3,254.00",
-    ssid: "721-07-4426",
-    failureReason: "Lorium Ipsum",
-  },
-  {
-    name: "User Name",
-    dueDate: "4/2/2024",
-    amount: "$3,254.00",
-    ssid: "721-07-4426",
-    failureReason: "Lorium Ipsum",
-  },
-  {
-    name: "User Name",
-    dueDate: "4/2/2024",
-    amount: "$3,254.00",
-    ssid: "721-07-4426",
-    failureReason: "Lorium Ipsum",
-  },
-];
-const columns = [
-  {
-    field: "name",
-    headerName: "Name",
-    flex: 1,
-    minWidth: 90,
-  },
-  {
-    field: "dueDate",
-    headerName: "Due Date",
-    flex: 1,
-    minWidth: 90,
-  },
-  {
-    field: "amount",
-    headerName: "Amount",
-    flex: 1,
-    minWidth: 90,
-  },
-  {
-    field: "ssid",
-    headerName: "SSN",
-    flex: 1,
-    minWidth: 90,
-  },
-  {
-    field: "failureReason",
-    headerName: "Failure Reason",
-    flex: 1,
-    minWidth: 90,
-  },
-];
-export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
+// import DataTable from "./table";
+import ListTable from "./listTable";
+
+const headers = ["Name", "Due Date", "Amount", "SSN", "Failure Reason"];
+
+export default function AccordionUsage({
+  tableHeading,
+  paymentNumber,
+  index,
+  rowArray,
+}) {
   const [rows, setRows] = useState([]);
   useEffect(() => {
     const generatedData = rowArray?.map((item, index) => ({
       id: index,
-      name: item?.name,
-      dueDate: item?.dueDate,
-      amount: item?.amount,
-      ssid: item?.ssid,
-      failureReason: item?.failureReason,
+      name: item?.fullName || "-",
+      dueDate: item?.dueDate || "-",
+      amount: item?.amount || "-",
+      ssid: item?.SSID || "-",
+      failureReason: item?.failedReasonCaptured || "-",
     }));
     if (!isEqual(generatedData, rowArray)) {
       setRows(generatedData);
     }
-  }, []);
+  }, [rowArray]);
   const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
     padding: theme.spacing(0),
   }));
@@ -226,7 +145,8 @@ export default function AccordionUsage({ tableHeading, paymentNumber, index }) {
       </AccordionSummary>
 
       <AccordionDetails>
-        <DataTable rows={rows} columns={columns} />
+        <ListTable data={rows} headerData={headers} />
+        {/* <DataTable rows={rows} columns={columns} /> */}
       </AccordionDetails>
     </Accordion>
   );

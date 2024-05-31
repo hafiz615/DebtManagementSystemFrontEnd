@@ -203,17 +203,39 @@ export const UpdateCreditor = async (id, payload) => {
   }
 };
 
-// export const GetHomePayments = async () => {
-//   try {
-//     return await axios.get(
-//       BASE_URL + "/v1/payment/getHomePayments",
-//       setHeaders()
-//     );
-//   } catch (error) {
-//     return error;
-//   }
-// };
+export const GetHomePayments = async (count) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/payment/getHomePayments?days=${count}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
 
+export const AddCustomFieldsByTarget = async (target, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/settings/addCustomFieldByTarget?target=${target}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetCustomFieldsByTarget = async (target) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/settings/getCustomFieldsByTarget?target=${target}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
 // export const GetAllSettings = async () => {
 //   try {
 //     return await axios.get(BASE_URL + "/v1/settings/getSettings", setHeaders());

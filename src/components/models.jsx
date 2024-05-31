@@ -33,6 +33,7 @@ export default function MuiModels({
   height,
   caseData,
   GetCaseDetails,
+  customFieldsData,
 }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -173,9 +174,20 @@ export default function MuiModels({
           ) : show === "addCustomField" ? (
             <AddCustomField show={show} handleClose={handleClose} />
           ) : show === "CaseCustomField" ? (
-            <CaseCustomField show={show} handleClose={handleClose} />
+            <CaseCustomField
+              show={show}
+              handleClose={handleClose}
+              customFieldsData={customFieldsData}
+              GetCaseDetails={GetCaseDetails}
+            />
           ) : show === "EditCaseCustomField" ? (
-            <EditCaseCustomField show={show} handleClose={handleClose} />
+            <EditCaseCustomField
+              show={show}
+              handleClose={handleClose}
+              customFieldsData={customFieldsData}
+              GetCaseDetails={GetCaseDetails}
+              caseData={caseData}
+            />
           ) : show === "creditorDetail" ? (
             <EditCreditorDetail
               show={show}

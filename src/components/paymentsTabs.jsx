@@ -3,6 +3,7 @@ import { styled } from "@mui/material/styles";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
+import { useSelector } from "react-redux";
 
 import { Colors } from "../config/default";
 import PaymentTabsTable from "./paymentsTabTable";
@@ -39,120 +40,15 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
 );
 
 export default function PaymentsTabs() {
+  const paymentsData = useSelector((state) => state?.payments?.payments[0]);
   const [value, setValue] = React.useState(0);
   const headers = [
-    "Debtor",
+    "Name",
     "Due Date",
     "Try Date",
     "Total Debt",
     "SSN",
     "Case Owner",
-    "Actions",
-  ];
-
-  function createData(
-    debtor,
-    dueDate,
-    tryDate,
-    totalDebt,
-    ssid,
-    caseOwner,
-    actions
-  ) {
-    return { debtor, dueDate, tryDate, totalDebt, ssid, caseOwner, actions };
-  }
-  const tableData = [
-    createData(
-      "User Name",
-      "4/2/2024",
-      "4/6/2024",
-      "$3,254.00",
-      "721-07-4426",
-      "Negotiator",
-      "+18143008957"
-    ),
-    createData(
-      "User Name",
-      "4/2/2024",
-      "4/6/2024",
-      "$3,254.00",
-      "721-07-4426",
-      "Negotiator",
-      "+18143008957"
-    ),
-    createData(
-      "User Name",
-      "4/2/2024",
-      "4/6/2024",
-      "$3,254.00",
-      "721-07-4426",
-      "Negotiator",
-      "+18143008957"
-    ),
-    createData(
-      "User Name",
-      "4/2/2024",
-      "4/6/2024",
-      "$3,254.00",
-      "721-07-4426",
-      "Negotiator",
-      "+18143008957"
-    ),
-    createData(
-      "User Name",
-      "4/2/2024",
-      "4/6/2024",
-      "$3,254.00",
-      "721-07-4426",
-      "Negotiator",
-      "+18143008957"
-    ),
-    createData(
-      "User Name",
-      "4/2/2024",
-      "4/6/2024",
-      "$3,254.00",
-      "721-07-4426",
-      "Negotiator",
-      "+18143008957"
-    ),
-    createData(
-      "User Name",
-      "4/2/2024",
-      "4/6/2024",
-      "$3,254.00",
-      "721-07-4426",
-      "Negotiator",
-      "+18143008957"
-    ),
-
-    createData(
-      "User Name",
-      "4/2/2024",
-      "4/6/2024",
-      "$3,254.00",
-      "721-07-4426",
-      "Negotiator",
-      "+18143008957"
-    ),
-    createData(
-      "User Name",
-      "4/2/2024",
-      "4/6/2024",
-      "$3,254.00",
-      "721-07-4426",
-      "Negotiator",
-      "+18143008957"
-    ),
-    createData(
-      "User khan",
-      "4/2/2024",
-      "4/6/2024",
-      "$3,254.00",
-      "721-07-4426",
-      "Negotiator",
-      "+18143008957"
-    ),
   ];
 
   const handleChange = (event, newValue) => {
@@ -222,16 +118,28 @@ export default function PaymentsTabs() {
         }}
       >
         {value === 0 && (
-          <PaymentTabsTable data={tableData} headerData={headers} />
+          <PaymentTabsTable
+            data={paymentsData?.failedAuthorizations}
+            headerData={headers}
+          />
         )}
         {value === 1 && (
-          <PaymentTabsTable data={tableData} headerData={headers} />
+          <PaymentTabsTable
+            data={paymentsData?.successAuthorizations}
+            headerData={headers}
+          />
         )}
         {value === 2 && (
-          <PaymentTabsTable data={tableData} headerData={headers} />
+          <PaymentTabsTable
+            data={paymentsData?.failedPayments}
+            headerData={headers}
+          />
         )}
         {value === 3 && (
-          <PaymentTabsTable data={tableData} headerData={headers} />
+          <PaymentTabsTable
+            data={paymentsData?.successPayments}
+            headerData={headers}
+          />
         )}
       </Box>
     </Box>

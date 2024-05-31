@@ -13,6 +13,7 @@ import BasicModal from "./customPopup";
 
 import { Colors } from "../config/default";
 import Prompt from "./prompt";
+import { isEmpty } from "lodash";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -127,50 +128,59 @@ export default function UserListTable({
                 )}
               </TableRow>
             </TableHead>
-            <TableBody>
-              {(rowsPerPage > 0
-                ? rows?.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )
-                : rows
-              ).map((row) => (
-                <StyledTableRow key={row.id}>
-                  {columns?.map((column, colIndex) => (
-                    <StyledTableCell key={colIndex}>
-                      {column.field === "email" && row[column.field].length > 10
-                        ? row[column.field].substring(0, 15) + "..."
-                        : column.field === "address" &&
-                          row[column.field].length > 15
-                        ? row[column.field].substring(0, 10) + "..."
-                        : row[column.field]}
-                    </StyledTableCell>
-                  ))}
-                  {requiredCustomFieldIcons && role === "Admin" && (
-                    <StyledTableCell
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        height: "3rem",
-                      }}
-                    >
-                      <BasicModal
-                        modelButton="ADD USERS"
-                        modalType="edit"
-                        GetUsers={GetUsers}
-                        id={row?.id}
-                      />
-                      <Prompt
-                        heading="Delete User"
-                        text={`Are you sure you want to delete ${row?.email} ?`}
-                        id={row?.id}
-                        GetUsers={GetUsers}
-                      />
-                    </StyledTableCell>
-                  )}
-                </StyledTableRow>
-              ))}
-            </TableBody>
+            {isEmpty(rows) ? (
+              <StyledTableRow>
+                <StyledTableCell colSpan={columns?.length + 1} align="center">
+                  No data available
+                </StyledTableCell>
+              </StyledTableRow>
+            ) : (
+              <TableBody>
+                {(rowsPerPage > 0
+                  ? rows?.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
+                  : rows
+                ).map((row) => (
+                  <StyledTableRow key={row.id}>
+                    {columns?.map((column, colIndex) => (
+                      <StyledTableCell key={colIndex}>
+                        {column.field === "email" &&
+                        row[column.field].length > 10
+                          ? row[column.field].substring(0, 15) + "..."
+                          : column.field === "address" &&
+                            row[column.field].length > 15
+                          ? row[column.field].substring(0, 10) + "..."
+                          : row[column.field]}
+                      </StyledTableCell>
+                    ))}
+                    {requiredCustomFieldIcons && role === "Admin" && (
+                      <StyledTableCell
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          height: "3rem",
+                        }}
+                      >
+                        <BasicModal
+                          modelButton="ADD USERS"
+                          modalType="edit"
+                          GetUsers={GetUsers}
+                          id={row?.id}
+                        />
+                        <Prompt
+                          heading="Delete User"
+                          text={`Are you sure you want to delete ${row?.email} ?`}
+                          id={row?.id}
+                          GetUsers={GetUsers}
+                        />
+                      </StyledTableCell>
+                    )}
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            )}
           </Table>
         </TableContainer>
         <TablePagination

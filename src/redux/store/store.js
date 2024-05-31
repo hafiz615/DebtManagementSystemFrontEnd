@@ -6,11 +6,13 @@ import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
 
 import signInReducer from "../reducers/signInReducer";
+import paymentsReducer from "../reducers/paymentsReducer";
 
 const middleware = [thunk];
 
 const Reducer = combineReducers({
   signIn: signInReducer,
+  payments: paymentsReducer,
 });
 const persistConfig = {
   key: "root",

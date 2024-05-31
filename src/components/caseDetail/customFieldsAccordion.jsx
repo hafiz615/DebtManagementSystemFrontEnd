@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   Typography,
@@ -11,9 +11,21 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
+import { GetCustomFieldsByTarget } from "../../services/services";
 
-export default function CustomFieldsAccordion({ caseData }) {
-  const customField = caseData?.customFields || [{}];
+export default function CustomFieldsAccordion({ caseData, GetCaseDetails }) {
+  const [customFieldsData, setCustomFieldsData] = useState([]);
+  const customField = caseData?.customFields;
+  const getFields = async () => {
+    const result = await GetCustomFieldsByTarget("case");
+    if (result?.status === 200) {
+      setCustomFieldsData(result?.data?.data);
+    }
+  };
+  useEffect(() => {
+    getFields();
+  }, []);
+
   return (
     <Accordion
       sx={{
@@ -48,9 +60,16 @@ export default function CustomFieldsAccordion({ caseData }) {
             <MuiModels
               buttonName="editCaseCustomField"
               show="EditCaseCustomField"
+              customFieldsData={customFieldsData}
+              GetCaseDetails={GetCaseDetails}
+              caseData={caseData}
             />
-
-            <MuiModels buttonName="CaseCustomFields" show="CaseCustomField" />
+            <MuiModels
+              buttonName="CaseCustomFields"
+              show="CaseCustomField"
+              customFieldsData={customFieldsData}
+              GetCaseDetails={GetCaseDetails}
+            />
           </div>
         </div>
       </AccordionSummary>
@@ -58,38 +77,38 @@ export default function CustomFieldsAccordion({ caseData }) {
         sx={{
           backgroundColor: Colors.BG_LIGHT_GRAY,
           boxShadow: " 0 2px 5px -3px rgba(0, 0, 0, 0.5)",
-
           borderBottomLeftRadius: "10px",
           borderBottomRightRadius: "10px",
         }}
       >
         <Grid>
-          {customField?.map((item) => (
-            <Grid
-              container
-              xs={12}
-              sx={{ justifyContent: "space-between", mb: "10px" }}
-            >
+          {customField &&
+            customField?.map((item) => (
               <Grid
-                sx={{
-                  fontSize: "11px",
-                  fontFamily: "Nunito",
-                  color: Colors.BLACK,
-                }}
+                container
+                xs={12}
+                sx={{ justifyContent: "space-between", mb: "10px" }}
               >
-                {item?.name}
+                <Grid
+                  sx={{
+                    fontSize: "11px",
+                    fontFamily: "Nunito",
+                    color: Colors.BLACK,
+                  }}
+                >
+                  {item?.name}
+                </Grid>
+                <Grid
+                  sx={{
+                    fontSize: "11px",
+                    fontFamily: "Nunito",
+                    color: Colors.DIM_LIGHT_GRAY,
+                  }}
+                >
+                  {item?.value}
+                </Grid>
               </Grid>
-              <Grid
-                sx={{
-                  fontSize: "11px",
-                  fontFamily: "Nunito",
-                  color: Colors.DIM_LIGHT_GRAY,
-                }}
-              >
-                {item?.value}
-              </Grid>
-            </Grid>
-          ))}
+            ))}
         </Grid>
       </AccordionDetails>
     </Accordion>
