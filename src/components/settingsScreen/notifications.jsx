@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -10,7 +10,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { Colors } from "../../config/default";
-import ListTable from "../listTable";
+import ListTableDynamic from "../listTableDynamic";
 import MuiModels from "../models";
 
 const AntTabs = styled(Tabs)({
@@ -43,42 +43,27 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
     },
   })
 );
-const headers = ["Template Id", "Name", "Event"];
-function createData(templateId, name, event, actions) {
-  return {
-    templateId,
-    name,
-    event,
+
+export default function NotificationTemplatesTabs({ notificationTemplates }) {
+  const TABS = {
+    EMAIL: "Email",
+    SMS: "SMS",
   };
-}
-const tableData = [
-  createData("Template id 1", "Template name", "Event Name"),
-  createData("Template id 1", "Template name", "Event Name"),
-  createData("Template id 1", "Template name", "Event Name"),
-  createData("Template id 1", "Template name", "Event Name"),
-  createData("Template id 1", "Template name", "Event Name"),
-];
-export default function NotificationTemplatesTabs() {
-  const [value, setValue] = React.useState(0);
-  const [rows, setRows] = useState([]);
+  const [value, setValue] = useState(TABS.EMAIL);
   const [froalaEditor, setFroalaEditor] = useState("");
+  const headerData = [
+    { key: "templateId", heading: "Template ID", width: "10%" },
+    { key: "name", heading: "Name", width: "15%" },
+    { key: "event", heading: "Event", width: "15%" }
+  ];
 
-  useEffect(() => {
-    // Simulate fetching data from an API
-    const fetchData = () => {
-      const generatedData = tableData?.map((item) => ({
-        templateId: item?.templateId,
-        name: item?.name,
-        event: item?.event,
-      }));
-      setRows(generatedData);
-    };
-
-    fetchData();
-  }, []);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  const renderTemplate = (id) => {
+
+  }
+  
   return (
     <Accordion
       sx={{
@@ -120,7 +105,8 @@ export default function NotificationTemplatesTabs() {
                 fontWeight: "600",
                 height: "3.5rem",
               }}
-              label="Email"
+              label={TABS.EMAIL}
+              value={TABS.EMAIL}
             />
 
             <AntTab
@@ -130,17 +116,18 @@ export default function NotificationTemplatesTabs() {
                 fontWeight: "600",
                 height: "3.5rem",
               }}
-              label="SMS"
+              label={TABS.SMS}
+              value={TABS.SMS}
             />
           </AntTabs>
 
           <Box
             sx={{
               backgroundColor: Colors.WHITE,
-              borderRadius: "10px ",
+              borderRadius: "10px",
             }}
           >
-            {value === 0 && (
+            {value === TABS.EMAIL && (
               <Grid
                 container
                 sx={{ justifyContent: "space-between", marginTop: "1rem" }}
@@ -177,10 +164,12 @@ export default function NotificationTemplatesTabs() {
                       justifyContent: "center",
                     }}
                   >
-                    <ListTable
-                      headerData={headers}
-                      data={rows}
+                    <ListTableDynamic
+                      headerData={headerData}
+                      data={notificationTemplates.email}
                       requiredIcons={true}
+                      onRowClick={renderTemplate}
+                      show="email_template"
                     />
                   </Grid>
                 </Grid>
@@ -221,7 +210,7 @@ export default function NotificationTemplatesTabs() {
                 </Grid>
               </Grid>
             )}
-            {value === 1 && (
+            {value === TABS.SMS && (
               <Grid
                 container
                 sx={{ justifyContent: "space-between", marginTop: "1rem" }}
@@ -258,10 +247,12 @@ export default function NotificationTemplatesTabs() {
                       justifyContent: "center",
                     }}
                   >
-                    <ListTable
-                      headerData={headers}
-                      data={rows}
+                    <ListTableDynamic
+                      headerData={headerData}
+                      data={notificationTemplates.sms}
                       requiredIcons={true}
+                      onRowClick={renderTemplate}
+                      show="sms_template"
                     />
                   </Grid>
                 </Grid>

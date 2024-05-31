@@ -4,17 +4,33 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import Close from "@mui/icons-material/Close";
+// import Close from "@mui/icons-material/Close";
 
 import { Colors } from "../config/default";
-import { DeleteUserById } from "../services/services";
+import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
+import { DeleteUserById, DeleteCustomField } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import TextButton from "./button";
 
-export default function Prompt({ heading, text, id, GetUsers }) {
+export default function Prompt({ deleting, heading, text, id, GetUsers, handleModalClose }) {
   const { showToast } = useToast();
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const deleteCustomField = async () => {
+    setLoading(true);
+    const deletion = await DeleteCustomField(id);
+    if (deletion?.status === 200) {
+      setOpen(false);
+      showToast(deletion?.data?.message, "success");
+      handleModalClose();
+    } else {
+      showToast(
+        deletion?.response?.data?.message || deletion?.data?.message,
+        "error"
+      );
+    }
+    setLoading(false);
+  }
   const deleteUserById = async () => {
     setLoading(true);
     const deleteUser = await DeleteUserById(id);
@@ -41,7 +57,7 @@ export default function Prompt({ heading, text, id, GetUsers }) {
 
   return (
     <React.Fragment>
-      <Close
+      <DeleteForeverOutlinedIcon
         onClick={handleClickOpen}
         sx={{
           color: Colors.ORANGE_COLOR,
@@ -79,7 +95,7 @@ export default function Prompt({ heading, text, id, GetUsers }) {
           <TextButton
             loading={loading}
             buttonText="Confirm"
-            onClick={deleteUserById}
+            onClick={deleting==="Custom Field"? deleteCustomField: deleteUserById}
             backgroundColor={Colors.SKY_BLUE}
             hoverColor={Colors.SKY_BLUE}
             paddingLeft="2rem"

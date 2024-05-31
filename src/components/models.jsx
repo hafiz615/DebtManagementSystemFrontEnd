@@ -32,6 +32,7 @@ export default function MuiModels({
   width,
   height,
   caseData,
+  handleModalClose,
   GetCaseDetails,
   customFieldsData,
 }) {
@@ -170,9 +171,9 @@ export default function MuiModels({
           ) : show === "task" ? (
             <AddTask show={show} handleClose={handleClose} />
           ) : show === "editField" ? (
-            <EditField show={show} handleClose={handleClose} />
+            <EditField show={show} handleClose={handleClose} data={data} handleModalClose={handleModalClose} />
           ) : show === "addCustomField" ? (
-            <AddCustomField show={show} handleClose={handleClose} />
+            <AddCustomField show={show} handleClose={handleClose} handleModalClose={handleModalClose} />
           ) : show === "CaseCustomField" ? (
             <CaseCustomField
               show={show}
