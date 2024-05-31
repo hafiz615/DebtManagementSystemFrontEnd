@@ -83,7 +83,7 @@ function CaseDetail() {
         sx={{
           display: "flex",
           justifyContent: smallScreen ? "flex-start" : "flex-end",
-          marginTop: ".5rem",
+          marginTop: "1.5rem",
         }}
       >
         <Typography
@@ -114,7 +114,7 @@ function CaseDetail() {
           item
           xs={12}
           sx={{
-            marginTop: ".5rem",
+            marginTop: "1.5rem",
           }}
         >
           <Typography
@@ -127,7 +127,9 @@ function CaseDetail() {
           >
             {caseData?.caseCode}
           </Typography>
-          <Grid>
+
+          {/* remove container  */}
+          <Grid item sx={{ marginTop: "1.5rem" }}>
             <Accordion
               sx={{
                 boxShadow: "none",
@@ -202,7 +204,10 @@ function CaseDetail() {
                 />
                 <AboutAccordion caseDetails={caseData} />
                 <TaskAccordion />
-                <CustomFieldsAccordion caseData={caseData}  GetCaseDetails={GetCaseDetails}  />
+                <CustomFieldsAccordion
+                  caseData={caseData}
+                  GetCaseDetails={GetCaseDetails}
+                />
                 <TransactionAccordion
                   loading={isPaymentLoading}
                   paymentDetails={paymentDetails}
