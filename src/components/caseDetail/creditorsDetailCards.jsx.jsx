@@ -16,7 +16,6 @@ import {
 } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
-import avatar from "../../assets/Ellipse 12.png";
 import MuiModels from "../models";
 
 const SearchContainer = styled("div")(({ theme }) => ({
@@ -63,18 +62,20 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
     <Grid
       container
       sx={{
-        height: "13rem",
+        height: "max-content",
         gap: "1%",
       }}
     >
       <Grid
         item
-        xs={2}
+        xs={12}
+        lg={2}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",
           padding: "0px 10px",
           height: "13rem",
+          marginBottom: "0.5rem",
         }}
       >
         <div
@@ -110,7 +111,14 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             marginBottom: "8px",
           }}
         >
-          <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+          <Typography
+            style={{
+              fontSize: "11px",
+              fontFamily: "Nunito",
+              color: Colors.DARK_GRAY,
+              fontWeight: "700",
+            }}
+          >
             Full Name
           </Typography>
           <Typography
@@ -118,6 +126,8 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
               fontSize: "11px",
               color: Colors.DIM_LIGHT_GRAY,
               fontFamily: "Nunito",
+              fontWeight: "500",
+              textAlign: "right",
             }}
           >
             {caseData?.creditor?.basicInformation?.fullName}
@@ -130,7 +140,14 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             marginBottom: "8px",
           }}
         >
-          <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+          <Typography
+            style={{
+              fontSize: "11px",
+              fontFamily: "Nunito",
+              color: Colors.DARK_GRAY,
+              fontWeight: "700",
+            }}
+          >
             Email
           </Typography>
           <Typography
@@ -138,13 +155,22 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
               fontSize: "11px",
               color: Colors.DIM_LIGHT_GRAY,
               fontFamily: "Nunito",
+              textAlign: "right",
+              fontWeight: "500",
             }}
           >
             {caseData?.creditor?.basicInformation?.email}
           </Typography>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+          <Typography
+            style={{
+              fontSize: "11px",
+              fontFamily: "Nunito",
+              color: Colors.DARK_GRAY,
+              fontWeight: "700",
+            }}
+          >
             Phone #
           </Typography>
           <Typography
@@ -152,6 +178,8 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
               fontSize: "11px",
               color: Colors.DIM_LIGHT_GRAY,
               fontFamily: "Nunito",
+              fontWeight: "500",
+              textAlign: "right",
             }}
           >
             {caseData?.creditor?.basicInformation?.phone}
@@ -160,12 +188,14 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
       </Grid>
       <Grid
         item
-        xs={2}
+        xs={12}
+        lg={2}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",
           padding: "0px 10px",
           height: "13rem",
+          marginBottom: ".5rem",
         }}
       >
         <p
@@ -184,7 +214,14 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             marginBottom: "8px",
           }}
         >
-          <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+          <Typography
+            style={{
+              fontSize: "11px",
+              fontFamily: "Nunito",
+              fontWeight: "700",
+              color: Colors.DARK_GRAY,
+            }}
+          >
             Company
           </Typography>
           <Typography
@@ -192,13 +229,22 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
               fontSize: "11px",
               color: Colors.DIM_LIGHT_GRAY,
               fontFamily: "Nunito",
+              fontWeight: "500",
+              textAlign: "500",
             }}
           >
             {caseData?.creditor?.businessInformation?.companyName}
           </Typography>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+          <Typography
+            style={{
+              fontSize: "11px",
+              fontFamily: "Nunito",
+              fontWeight: "700",
+              color: Colors.DARK_GRAY,
+            }}
+          >
             Category
           </Typography>
           <Typography
@@ -206,6 +252,8 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
               fontSize: "11px",
               color: Colors.DIM_LIGHT_GRAY,
               fontFamily: "Nunito",
+              fontWeight: "500",
+              textAlign: "right",
             }}
           >
             {caseData?.creditor?.businessInformation?.businessCategory}
@@ -226,39 +274,78 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
       </Grid>
       <Grid
         item
-        xs={1.5}
+        xs={12}
+        lg={1.5}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",
           padding: "0px 10px",
           height: "13rem",
+          marginBottom: ".5rem",
         }}
       >
         <p
-          style={{ fontWeight: "600", fontSize: "13px", fontFamily: "Nunito" }}
+          style={{
+            fontWeight: "600",
+            fontSize: "13px",
+            fontFamily: "Nunito",
+          }}
         >
           Funded
         </p>
-        <p style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+        <p
+          style={{
+            fontSize: "11px",
+            fontFamily: "Nunito",
+            fontWeight: "700",
+            color: Colors.DARK_GRAY,
+          }}
+        >
           Last Funded Date
         </p>
-        <p style={{ fontSize: "11px", color: Colors.DIM_LIGHT_GRAY }}>
+        <p
+          style={{
+            fontSize: "11px",
+            color: Colors.DIM_LIGHT_GRAY,
+            fontWeight: "500",
+          }}
+        >
           {formatDate(caseData?.creditor?.lastFundedDate)}
         </p>
-        <p style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+        <p
+          style={{
+            fontSize: "11px",
+            fontFamily: "Nunito",
+            fontWeight: "700",
+            color: Colors.DARK_GRAY,
+          }}
+        >
           Historical Range
         </p>
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
-            color: Colors.DIM_LIGHT_GRAY,
           }}
         >
-          <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+          <Typography
+            style={{
+              fontSize: "11px",
+              fontFamily: "Nunito",
+              fontWeight: "500",
+              color: Colors.DIM_LIGHT_GRAY,
+            }}
+          >
             Min
           </Typography>
-          <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+          <Typography
+            style={{
+              fontSize: "11px",
+              fontFamily: "Nunito",
+              fontWeight: "500",
+              color: Colors.DIM_LIGHT_GRAY,
+            }}
+          >
             {caseData?.creditor?.historicalRange?.minimum}
           </Typography>
         </div>
@@ -266,25 +353,40 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
           style={{
             display: "flex",
             justifyContent: "space-between",
-            color: Colors.DIM_LIGHT_GRAY,
           }}
         >
-          <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+          <Typography
+            style={{
+              fontSize: "11px",
+              fontFamily: "Nunito",
+              fontWeight: "500",
+              color: Colors.DIM_LIGHT_GRAY,
+            }}
+          >
             Max
           </Typography>
-          <Typography style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+          <Typography
+            style={{
+              fontSize: "11px",
+              fontFamily: "Nunito",
+              fontWeight: "500",
+              color: Colors.DIM_LIGHT_GRAY,
+            }}
+          >
             {caseData?.creditor?.historicalRange?.maximum}
           </Typography>
         </div>
       </Grid>
       <Grid
         item
-        xs={3.5}
+        xs={12}
+        lg={3.5}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",
           padding: "0px 10px",
           height: "13rem",
+          marginBottom: ".5rem",
         }}
       >
         <div
@@ -326,81 +428,98 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             </IconButton>
           </div>
         </div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "4%" }}>
+        <Box
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "3%",
+            height: "10rem",
+            overflowY: "auto",
+            "&::-webkit-scrollbar": {
+              width: "5px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "#E5E5E5",
+              borderRadius: "8px",
+            },
+            "&::-webkit-scrollbar-track": {
+              backgroundColor: Colors.WHITE,
+              borderRadius: "8px",
+            },
+          }}
+        >
           {caseData?.creditor?.contacts?.map((item, index) => {
             return (
-              <Card
-                key={index}
-                sx={{
-                  height: "5rem",
-                  display: "flex",
-                  boxShadow: "none",
-                  border: "1px solid lightgrey",
-                  borderRadius: "10px",
-                  width: "48%",
-                  padding: "0px 8px",
-                  marginBottom: "4%",
-                }}
-              >
-                <div
-                  style={{
-                    width: "30%",
-                    marginTop: "10%",
-                  }}
-                >
-                  <img
-                    style={{ borderRadius: "50%" }}
-                    width={25}
-                    height={25}
-                    src={avatar}
-                    alt=""
-                  />
-                </div>
-                <div
-                  style={{
-                    width: "70%",
+              <>
+                <Card
+                  key={index}
+                  sx={{
+                    height: "4.5rem",
                     display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
+                    boxShadow: "none",
+                    border: "1px solid lightgrey",
+                    borderRadius: "10px",
+                    width: "48%",
+                    padding: "0px 8px",
+                    marginBottom: ".5rem",
                   }}
                 >
-                  <Typography
-                    style={{ fontSize: "11px", fontFamily: "Nunito" }}
-                  >
-                    {item?.name}
-                  </Typography>
-                  <Typography
+                  <div
                     style={{
-                      fontSize: "11px",
-                      color: Colors.DIM_LIGHT_GRAY,
-                      fontFamily: "Nunito",
+                      width: "70%",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
                     }}
                   >
-                    {item?.email}
-                  </Typography>
-                  <Typography
-                    style={{
-                      fontSize: "11px",
-                      color: Colors.DIM_LIGHT_GRAY,
-                      fontFamily: "Nunito",
-                    }}
-                  >
-                    {item?.phone}
-                  </Typography>
-                </div>
-              </Card>
+                    <Typography
+                      style={{
+                        fontSize: "11px",
+                        fontFamily: "Nunito",
+                        fontWeight: "700",
+                        color: Colors.DARK_GRAY,
+                      }}
+                    >
+                      {item?.name}
+                    </Typography>
+                    <Typography
+                      style={{
+                        fontSize: "11px",
+                        fontWeight: "500",
+                        color: Colors.DIM_LIGHT_GRAY,
+                        fontFamily: "Nunito",
+                        overflowWrap: item?.email?.length > 20 && "break-word",
+                      }}
+                    >
+                      {item?.email}
+                    </Typography>
+                    <Typography
+                      style={{
+                        fontSize: "11px",
+                        color: Colors.DIM_LIGHT_GRAY,
+                        fontFamily: "Nunito",
+                        fontWeight: "500",
+                      }}
+                    >
+                      {item?.phone}
+                    </Typography>
+                  </div>
+                </Card>
+              </>
             );
           })}
-        </div>
+        </Box>
       </Grid>
       <Grid
         item
-        xs={2.5}
+        xs={12}
+        lg={2.5}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",
           padding: "0px 10px",
           height: "13rem",
+          marginBotto: ".5rem",
           overflowY: "auto",
           "&::-webkit-scrollbar": {
             width: "5px",
@@ -438,7 +557,14 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
                 justifyContent: "space-between",
               }}
             >
-              <p style={{ fontSize: "11px", fontFamily: "Nunito" }}>
+              <p
+                style={{
+                  fontSize: "11px",
+                  fontFamily: "Nunito",
+                  fontWeight: "700",
+                  color: Colors.DARK_GRAY,
+                }}
+              >
                 {item?.name}
               </p>
               <p
@@ -446,6 +572,7 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
                   fontSize: "11px",
                   color: Colors.DIM_LIGHT_GRAY,
                   fontFamily: "Nunito",
+                  fontWeight: "600",
                 }}
               >
                 {item?.totalDebt}
@@ -455,6 +582,7 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
                   fontSize: "11px",
                   color: Colors.DIM_LIGHT_GRAY,
                   fontFamily: "Nunito",
+                  fontWeight: "600",
                 }}
               >
                 {item?.caseCode}
@@ -464,6 +592,7 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
                   fontSize: "11px",
                   color: Colors.DIM_LIGHT_GRAY,
                   fontFamily: "Nunito",
+                  fontWeight: "600",
                 }}
               >
                 {item?.status}

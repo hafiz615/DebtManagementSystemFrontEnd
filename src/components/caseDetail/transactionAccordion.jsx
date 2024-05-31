@@ -27,7 +27,8 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
       sx={{
         boxShadow: "none",
         marginBottom: "10px",
-        backgroundColor: Colors.BG_LIGHT_GRAY,
+        borderRadius: "1rem !important",
+        backgroundColor: Colors.WHITE,
       }}
       defaultExpanded
     >
@@ -38,16 +39,22 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
         sx={{
           height: "20px",
           backgroundColor: Colors.SKY_BLUE,
-          borderRadius: "10px",
+          borderRadius: "1rem",
         }}
       >
-        <Typography sx={{ color: Colors.WHITE, fontFamily: "Nunito" }}>
-          Transactions
+        <Typography
+          sx={{
+            color: Colors.WHITE,
+            fontFamily: "Nunito",
+            fontWeight: "700",
+          }}
+        >
+          TRANSACTIONS
         </Typography>
       </AccordionSummary>
       <AccordionDetails
         sx={{
-          backgroundColor: Colors.BG_LIGHT_GRAY,
+          backgroundColor: Colors.WHITE,
           boxShadow: " 0 2px 5px -3px rgba(0, 0, 0, 0.5)",
           borderBottomLeftRadius: "10px",
           borderBottomRightRadius: "10px",
@@ -69,7 +76,15 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
         ) : (
           <>
             {!isEmpty(paymentDetails?.transactions?.successAuthorizations) && (
-              <strong>Success Authorization</strong>
+              <Typography
+                sx={{
+                  color: Colors.BLACK,
+                  fontWeight: "700",
+                  fontFamily: "Nunito",
+                }}
+              >
+                Success Authorization
+              </Typography>
             )}
             {paymentDetails?.transactions?.successAuthorizations?.map(
               (item, index) => {
@@ -85,7 +100,8 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
                       style={{
                         fontSize: "11px",
                         fontFamily: "Nunito",
-                        color: Colors.DIM_LIGHT_GRAY,
+                        color: Colors.SKY_BLUE,
+                        fontWeight: "500",
                       }}
                     >
                       {formatDate(item?.dueDate)}
@@ -93,8 +109,9 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
                     <p
                       style={{
                         fontSize: "11px",
-                        color: Colors.DIM_LIGHT_GRAY,
                         fontFamily: "Nunito",
+                        color: Colors.SKY_BLUE,
+                        fontWeight: "500",
                       }}
                     >
                       {item?.totalDebt}
@@ -102,8 +119,9 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
                     <p
                       style={{
                         fontSize: "11px",
-                        color: Colors.DIM_LIGHT_GRAY,
                         fontFamily: "Nunito",
+                        color: Colors.SKY_BLUE,
+                        fontWeight: "500",
                       }}
                     >
                       {item?.status}
@@ -113,7 +131,15 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
               }
             )}
             {!isEmpty(paymentDetails?.transactions?.failedAuthorizations) && (
-              <strong>Failed Authorization</strong>
+              <Typography
+                sx={{
+                  color: Colors.BLACK,
+                  fontWeight: "700",
+                  fontFamily: "Nunito",
+                }}
+              >
+                Failed Authorization
+              </Typography>
             )}
             {paymentDetails?.transactions?.failedAuthorizations?.map(
               (item, index) => {
@@ -129,7 +155,8 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
                       style={{
                         fontSize: "11px",
                         fontFamily: "Nunito",
-                        color: Colors.DIM_LIGHT_GRAY,
+                        color: Colors.ORANGE_COLOR,
+                        fontWeight: "500",
                       }}
                     >
                       {formatDate(item?.dueDate)}
@@ -137,8 +164,9 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
                     <p
                       style={{
                         fontSize: "11px",
-                        color: Colors.DIM_LIGHT_GRAY,
                         fontFamily: "Nunito",
+                        color: Colors.ORANGE_COLOR,
+                        fontWeight: "500",
                       }}
                     >
                       {item?.totalDebt}
@@ -146,8 +174,9 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
                     <p
                       style={{
                         fontSize: "11px",
-                        color: Colors.DIM_LIGHT_GRAY,
                         fontFamily: "Nunito",
+                        color: Colors.ORANGE_COLOR,
+                        fontWeight: "500",
                       }}
                     >
                       {item?.status}
@@ -157,7 +186,15 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
               }
             )}
             {!isEmpty(paymentDetails?.transactions?.failedPayments) && (
-              <strong>Failed Payments</strong>
+              <Typography
+                sx={{
+                  color: Colors.BLACK,
+                  fontWeight: "700",
+                  fontFamily: "Nunito",
+                }}
+              >
+                Failed Payments
+              </Typography>
             )}
             {paymentDetails?.transactions?.failedPayments?.map(
               (item, index) => {
@@ -173,7 +210,8 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
                       style={{
                         fontSize: "11px",
                         fontFamily: "Nunito",
-                        color: Colors.DIM_LIGHT_GRAY,
+                        color: Colors.ORANGE_COLOR,
+                        fontWeight: "500",
                       }}
                     >
                       {formatDate(item?.dueDate)}
@@ -181,8 +219,9 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
                     <p
                       style={{
                         fontSize: "11px",
-                        color: Colors.DIM_LIGHT_GRAY,
                         fontFamily: "Nunito",
+                        color: Colors.ORANGE_COLOR,
+                        fontWeight: "500",
                       }}
                     >
                       {item?.totalDebt}
@@ -190,8 +229,9 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
                     <p
                       style={{
                         fontSize: "11px",
-                        color: Colors.DIM_LIGHT_GRAY,
                         fontFamily: "Nunito",
+                        color: Colors.ORANGE_COLOR,
+                        fontWeight: "500",
                       }}
                     >
                       {item?.status}
@@ -201,7 +241,15 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
               }
             )}
             {!isEmpty(paymentDetails?.transactions?.successPayments) && (
-              <strong>Success Payments</strong>
+              <Typography
+                sx={{
+                  color: Colors.BLACK,
+                  fontWeight: "700",
+                  fontFamily: "Nunito",
+                }}
+              >
+                Success Payments
+              </Typography>
             )}
             {paymentDetails?.transactions?.successPayments?.map(
               (item, index) => {
@@ -217,7 +265,8 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
                       style={{
                         fontSize: "11px",
                         fontFamily: "Nunito",
-                        color: Colors.DIM_LIGHT_GRAY,
+                        color: Colors.SKY_BLUE,
+                        fontWeight: "500",
                       }}
                     >
                       {formatDate(item?.dueDate)}
@@ -225,8 +274,9 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
                     <p
                       style={{
                         fontSize: "11px",
-                        color: Colors.DIM_LIGHT_GRAY,
                         fontFamily: "Nunito",
+                        color: Colors.SKY_BLUE,
+                        fontWeight: "500",
                       }}
                     >
                       {item?.totalDebt}
@@ -234,8 +284,9 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
                     <p
                       style={{
                         fontSize: "11px",
-                        color: Colors.DIM_LIGHT_GRAY,
                         fontFamily: "Nunito",
+                        color: Colors.SKY_BLUE,
+                        fontWeight: "500",
                       }}
                     >
                       {item?.status}
@@ -245,7 +296,15 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
               }
             )}
             {!isEmpty(paymentDetails?.transactions?.upcomingPayments) && (
-              <strong>Upcoming</strong>
+              <Typography
+                sx={{
+                  color: Colors.BLACK,
+                  fontWeight: "700",
+                  fontFamily: "Nunito",
+                }}
+              >
+                Upcoming
+              </Typography>
             )}
             {paymentDetails?.transactions?.upcomingPayments?.map(
               (item, index) => {
@@ -261,7 +320,8 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
                       style={{
                         fontSize: "11px",
                         fontFamily: "Nunito",
-                        color: Colors.DIM_LIGHT_GRAY,
+                        color: Colors.DARK_GRAY,
+                        fontWeight: "500",
                       }}
                     >
                       {formatDate(item?.dueDate)}
@@ -269,8 +329,9 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
                     <p
                       style={{
                         fontSize: "11px",
-                        color: Colors.DIM_LIGHT_GRAY,
+                        color: Colors.DARK_GRAY,
                         fontFamily: "Nunito",
+                        fontWeight: "500",
                       }}
                     >
                       {item?.totalDebt}
@@ -278,8 +339,9 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
                     <p
                       style={{
                         fontSize: "11px",
-                        color: Colors.DIM_LIGHT_GRAY,
+                        color: Colors.DARK_GRAY,
                         fontFamily: "Nunito",
+                        fontWeight: "500",
                       }}
                     >
                       {item?.status}

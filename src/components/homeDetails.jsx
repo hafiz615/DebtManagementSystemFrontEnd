@@ -10,6 +10,7 @@ import AccordionUsage from "./accordion";
 import Dropdown from "./dropdown";
 import { GetHomePayments } from "../services/services";
 import { get_payments } from "../redux/action/action";
+// import SelectMenu from "./select";
 
 function HomeDetails() {
   const dispatch = useDispatch();
@@ -146,6 +147,14 @@ function HomeDetails() {
             selectedValue={selectedValue}
             setSelectedValue={setSelectedValue}
           />
+          {/* <SelectMenu
+            menuWidth="4rem"
+            menuItems={menuItems}
+            defaultSelectedItem={3}
+            backgroundColor={Colors.WHITE}
+            selectedValue={selectedValue}
+            setSelectedValue={setSelectedValue}
+          /> */}
           <span style={{ marginLeft: ".5rem" }}>{DAYS_TEXT}</span>
         </Typography>
       </Grid>
