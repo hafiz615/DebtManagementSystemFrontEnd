@@ -182,9 +182,15 @@ function CaseDetail() {
                 }}
               >
                 {value === "Debtor" ? (
-                  <DebtorDetailsCards caseData={caseData} />
+                  <DebtorDetailsCards
+                    caseData={caseData}
+                    GetCaseDetails={GetCaseDetails}
+                  />
                 ) : (
-                  <CreditorsDetailCards caseData={caseData} />
+                  <CreditorsDetailCards
+                    caseData={caseData}
+                    GetCaseDetails={GetCaseDetails}
+                  />
                 )}
               </AccordionDetails>
             </Accordion>
@@ -196,7 +202,7 @@ function CaseDetail() {
                 />
                 <AboutAccordion caseDetails={caseData} />
                 <TaskAccordion />
-                <CustomFieldsAccordion />
+                <CustomFieldsAccordion caseData={caseData} />
                 <TransactionAccordion
                   loading={isPaymentLoading}
                   paymentDetails={paymentDetails}

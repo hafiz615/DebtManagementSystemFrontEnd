@@ -29,6 +29,7 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
         marginBottom: "10px",
         backgroundColor: Colors.BG_LIGHT_GRAY,
       }}
+      defaultExpanded
     >
       <AccordionSummary
         expandIcon={<ExpandMoreIcon sx={{ color: Colors.WHITE }} />}

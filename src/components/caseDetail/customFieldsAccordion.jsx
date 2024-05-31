@@ -5,23 +5,15 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  IconButton,
   Grid,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import EditIcon from "@mui/icons-material/Edit";
 
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
 
-export default function CustomFieldsAccordion() {
-  const customFieldData = [
-    { name: "Name", value: "Ruma" },
-    { name: "Title", value: "khan" },
-    { name: "Phone", value: "03211017632" },
-    { name: "Email", value: "rumakhan@gmail.com" },
-    { name: "Relation With Debtor", value: "brother" },
-  ];
+export default function CustomFieldsAccordion({ caseData }) {
+  const customField = caseData?.customFields || [{}];
   return (
     <Accordion
       sx={{
@@ -53,14 +45,12 @@ export default function CustomFieldsAccordion() {
             Custom Fields
           </Typography>
           <div style={{ display: "flex" }} onClick={(e) => e.stopPropagation()}>
-            <IconButton>
-              <EditIcon sx={{ color: Colors.WHITE, fontSize: "16px" }} />
-            </IconButton>
             <MuiModels
-              buttonName="Add Custom Fields"
-              show="addCustomField"
-              button="icon"
+              buttonName="editCaseCustomField"
+              show="EditCaseCustomField"
             />
+
+            <MuiModels buttonName="CaseCustomFields" show="CaseCustomField" />
           </div>
         </div>
       </AccordionSummary>
@@ -74,7 +64,7 @@ export default function CustomFieldsAccordion() {
         }}
       >
         <Grid>
-          {customFieldData?.map((item) => (
+          {customField?.map((item) => (
             <Grid
               container
               xs={12}

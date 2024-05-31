@@ -50,7 +50,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function DebtorDetailsCards({ caseData }) {
+export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
   const formatKeys = (keys) => {
     const formattedKeys = keys
       ?.replace(/([A-Z])/g, " $1") // Add a space before each uppercase letter
@@ -97,6 +97,8 @@ export default function DebtorDetailsCards({ caseData }) {
             iconColor={Colors.BLACK}
             width="80vw"
             height="90vh"
+            caseData={caseData}
+            GetCaseDetails={GetCaseDetails}
           />
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "10%" }}>

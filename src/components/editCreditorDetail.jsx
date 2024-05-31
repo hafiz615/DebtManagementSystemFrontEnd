@@ -1,12 +1,136 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { Grid, Box, Typography } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { Colors } from "../config/default";
 import PaymentsTextFields from "./caseTextField";
 import TextButton from "./button";
+import { UpdateCreditor } from "../services/services";
+import { useToast } from "../toast/toastContext";
 
-export default function EditCreditorDetail({ handleClose }) {
+export default function EditCreditorDetail({
+  handleClose,
+  caseData,
+  GetCaseDetails,
+}) {
+  const { showToast } = useToast();
+  const creditorBasicInfo = caseData?.creditor?.basicInformation;
+  const creditorBusinessInfo = caseData?.creditor?.businessInformation;
+  const [creditorBasicsInfo, setCreditorBasicsInfo] = useState({
+    CreditorBasicFullName: creditorBasicInfo?.fullName || "",
+    CreditorBasicEmailAddress: creditorBasicInfo?.email || "",
+    CreditorBasicPhoneNumber: creditorBasicInfo?.phone || "",
+  });
+  const [creditorBusinessDetails, setCreditorBusinessDetails] = useState({
+    businessCompanyName: creditorBusinessInfo?.companyName || "",
+    businessCategory: creditorBusinessInfo?.businessCategory || "",
+  });
+  const [loading, setLoading] = useState(false);
+
+  const [creditorFieldsError, setCreditorFieldsError] = useState({
+    emailValidError: "",
+    creditorPhoneError: "",
+  });
+  const isEmailValid = (email) => {
+    // Use a more robust email validation regular expression
+    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    return emailRegex.test(email);
+  };
+  const basicInfoInputChange = (fieldName, value) => {
+    if (fieldName === "CreditorBasicEmailAddress") {
+      if (!isEmailValid(value)) {
+        setCreditorFieldsError((prevErrors) => ({
+          ...prevErrors,
+          emailValidError: "Email must be valid",
+        }));
+      } else {
+        setCreditorFieldsError((prevErrors) => ({
+          ...prevErrors,
+          emailValidError: "",
+        }));
+      }
+    }
+    if (fieldName === "CreditorBasicPhoneNumber") {
+      if (value.length !== 10) {
+        setCreditorFieldsError((prevErrors) => ({
+          ...prevErrors,
+          creditorPhoneError: "Phone number must be 10 digits",
+        }));
+      } else {
+        setCreditorFieldsError((prevErrors) => ({
+          ...prevErrors,
+          creditorPhoneError: "",
+        }));
+      }
+    }
+    if (fieldName === "CreditorBasicPhoneNumber") {
+      const inputValue = value;
+      if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
+        setCreditorBasicsInfo((prevState) => ({
+          ...prevState,
+          [fieldName]: value,
+        }));
+      }
+    } else {
+      setCreditorBasicsInfo((prevState) => ({
+        ...prevState,
+        [fieldName]: value,
+      }));
+    }
+  };
+  const businessInfoInputChange = (fieldName, value) => {
+    setCreditorBusinessDetails((prevState) => ({
+      ...prevState,
+      [fieldName]: value,
+    }));
+  };
+
+  const handleNumberInputKeyDown = (e) => {
+    const invalidChars = ["e", "E", ".", "-"];
+    if (invalidChars.includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
+  const validateForm = () => {
+    return (
+      creditorFieldsError?.emailValidError ||
+      creditorFieldsError?.creditorPhoneError ||
+      Object.values(creditorBasicsInfo)?.some((value) => value === "") ||
+      Object.values(creditorBusinessDetails)?.some((value) => value === "")
+    );
+  };
+
+  const updateCreditorBYId = async () => {
+    setLoading(true);
+    const params = {
+      basicInformation: {
+        fullName: creditorBasicsInfo?.CreditorBasicFullName,
+        email: creditorBasicsInfo?.CreditorBasicEmailAddress,
+        phone: creditorBasicsInfo?.CreditorBasicPhoneNumber,
+      },
+      businessInformation: {
+        companyName: creditorBusinessDetails?.businessCompanyName,
+        businessCategory: creditorBusinessDetails?.businessCategory,
+      },
+    };
+    const updateCreditor = await UpdateCreditor(
+      caseData?.creditor?._id,
+      params
+    );
+    if (updateCreditor?.status === 200) {
+      showToast(updateCreditor?.data?.message, "success");
+      handleClose();
+      GetCaseDetails();
+    } else {
+      showToast(
+        updateCreditor?.response?.data?.message ||
+          updateCreditor?.data?.message,
+        "error"
+      );
+    }
+    setLoading(false);
+  };
   return (
     <>
       <Box
@@ -43,20 +167,20 @@ export default function EditCreditorDetail({ handleClose }) {
             label="Company Name*"
             placeHolderValue="Enter Company Name"
             width="97%"
-            // value={creditorBusinessDetails?.businessCompanyName}
-            // onChange={(e) =>
-            //   businessInfoInputChange("businessCompanyName", e.target.value)
-            // }
+            value={creditorBusinessDetails?.businessCompanyName}
+            onChange={(e) =>
+              businessInfoInputChange("businessCompanyName", e.target.value)
+            }
           />
           <PaymentsTextFields
             type="text"
             label="Business Category*"
             placeHolderValue="Enter Category"
             width="97%"
-            // value={creditorBusinessDetails?.businessCategory}
-            // onChange={(e) =>
-            //   businessInfoInputChange("businessCategory", e.target.value)
-            // }
+            value={creditorBusinessDetails?.businessCategory}
+            onChange={(e) =>
+              businessInfoInputChange("businessCategory", e.target.value)
+            }
           />
         </Grid>
         <Typography
@@ -82,169 +206,34 @@ export default function EditCreditorDetail({ handleClose }) {
             label="Full Name*"
             placeHolderValue="Enter Full Name"
             width="97%"
-            // value={creditorBasicsInfo?.CreditorBasicFullName}
-            // onChange={(e) =>
-            //   basicInfoInputChange("CreditorBasicFullName", e.target.value)
-            // }
+            value={creditorBasicsInfo?.CreditorBasicFullName}
+            onChange={(e) =>
+              basicInfoInputChange("CreditorBasicFullName", e.target.value)
+            }
           />
           <PaymentsTextFields
             type="text"
             label="Email Address*"
             placeHolderValue="Enter Valid Email"
             width="97%"
-            // value={creditorBasicsInfo?.CreditorBasicEmailAddress}
-            // onChange={(e) =>
-            //   basicInfoInputChange("CreditorBasicEmailAddress", e.target.value)
-            // }
-            // error={creditorFieldsError?.emailValidError}
+            value={creditorBasicsInfo?.CreditorBasicEmailAddress}
+            onChange={(e) =>
+              basicInfoInputChange("CreditorBasicEmailAddress", e.target.value)
+            }
+            error={creditorFieldsError?.emailValidError}
           />
           <PaymentsTextFields
             type="number"
             label="Phone #*"
             placeHolderValue="Enter Phone Number"
             width="97%"
-            // value={creditorBasicsInfo?.CreditorBasicPhoneNumber}
-            // onChange={(e) =>
-            //   basicInfoInputChange("CreditorBasicPhoneNumber", e.target.value)
-            // }
-            // error={creditorFieldsError?.creditorPhoneError}
-            // onKeyDown={handleNumberInputKeyDown}
+            value={creditorBasicsInfo?.CreditorBasicPhoneNumber}
+            onChange={(e) =>
+              basicInfoInputChange("CreditorBasicPhoneNumber", e.target.value)
+            }
+            error={creditorFieldsError?.creditorPhoneError}
+            onKeyDown={handleNumberInputKeyDown}
           />
-          <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontWeight: "600",
-              marginTop: "1rem",
-            }}
-            gutterBottom
-          >
-            Notes (optional)
-          </Typography>
-          <input
-            type="text"
-            placeholder="Notes"
-            // value={CreditorNotes}
-            // onChange={(e) => notesInputChange(e.target.value)}
-            style={{
-              backgroundColor: Colors.BG_LIGHT_GRAY,
-              height: "2.5rem",
-              color: Colors.DIM_LIGHT_GRAY,
-              paddingLeft: "1rem",
-              border: "none",
-              outline: "none",
-              borderRadius: "5px",
-              width: "97%",
-            }}
-          />
-        </Grid>
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        sx={{
-          borderRadius: "10px",
-          marginTop: { xs: ".5rem", xl: "0rem" },
-          backgroundColor: Colors.WHITE,
-          padding: "1rem",
-          height: "350px",
-        }}
-      >
-        <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
-          Funded
-        </Typography>
-        <Grid
-          item
-          xs={12}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              color: Colors.DARK_GRAY,
-              marginRight: "1rem",
-            }}
-          >
-            Last Funded Date*
-          </Typography>
-          <PaymentsTextFields
-            type="date"
-            placeHolderValue="00/00/00"
-            width="100%"
-            // value={fundedDate}
-            // onChange={(e) => fundedInputChange(e.target.value)}
-            // max={today}
-          />
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          sx={{
-            display: "flex",
-            marginTop: "1rem",
-          }}
-        >
-          <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              color: Colors.DARK_GRAY,
-              marginRight: "1rem",
-            }}
-          >
-            Historical Range
-          </Typography>
-
-          <Grid
-            container
-            item
-            xs={8}
-            sx={{
-              marginLeft: "2rem",
-            }}
-          >
-            <Grid item xs={12} sx={{ display: "flex" }}>
-              <Typography
-                sx={{
-                  fontFamily: "Nunito",
-                  fontWeight: "600",
-                  marginRight: ".7rem",
-                }}
-              >
-                Minimum*
-              </Typography>
-              <PaymentsTextFields
-                type="number"
-                placeHolderValue="$"
-                width="100%"
-                // value={historicRange?.minimum}
-                // onChange={(e) => historicInputChange("minimum", e.target.value)}
-                // onKeyDown={handleNumberInput}
-              />
-            </Grid>
-            <Grid item xs={12} sx={{ display: "flex", marginTop: "1rem" }}>
-              <Typography
-                sx={{
-                  fontFamily: "Nunito",
-                  fontWeight: "600",
-                  marginRight: ".5rem",
-                }}
-              >
-                Maximum*
-              </Typography>
-              <PaymentsTextFields
-                type="number"
-                placeHolderValue="$"
-                width="100%"
-                // value={historicRange?.maximum}
-                // onChange={(e) => historicInputChange("maximum", e.target.value)}
-                // onKeyDown={handleNumberInput}
-              />
-            </Grid>
-          </Grid>
         </Grid>
       </Grid>
 
@@ -253,9 +242,11 @@ export default function EditCreditorDetail({ handleClose }) {
           buttonText="Save"
           height="2rem"
           width="8rem"
-          onClick={handleClose}
+          onClick={updateCreditorBYId}
+          disabled={validateForm()}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
+          loading={loading}
         />
       </Grid>
     </>

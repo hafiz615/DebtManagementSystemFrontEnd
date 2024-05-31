@@ -1,29 +1,279 @@
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
 import { Grid, Box, Typography } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { Colors } from "../config/default";
 import TextButton from "./button";
 import PaymentsTextFields from "./caseTextField";
 import Dropdown from "./dropdown";
+import { UpdateDebtor } from "../services/services";
+import { useToast } from "../toast/toastContext";
 
 export default function EditDebtorDetail({
   handleClose,
-  selectedValue,
-  setSelectedValue,
+  caseData,
+  GetCaseDetails,
 }) {
+  const { showToast } = useToast();
   const menuItems = [
     { label: "Customer", value: "Customer" },
     { label: "On hold", value: "On hold" },
     { label: "Canceled", value: "Canceled" },
-    { label: "Declared Bankrupcy", value: "Declared Bankrupcy" },
+    { label: "Declared Bankruptcy", value: "Declared Bankruptcy" },
   ];
-  // const isEmailValid = (email) => {
-  //   // Use a more robust email validation regular expression
-  //   const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-  //   return emailRegex.test(email);
-  // };
-  const [editDebtor, setEditDebtor] = useState("");
+
+  const debtorBasicInfo = caseData?.debtor?.basicInformation;
+  const debtorBusinessInfo = caseData?.debtor?.businessInformation;
+  const [loading, setLoading] = useState(false);
+  const [debtorOwnDetails, setDebtorOwnDetails] = useState({
+    BasicFullName: debtorBasicInfo?.fullName || "",
+    BasicEmailAddress: debtorBasicInfo?.email || "",
+    BasicSsid: debtorBasicInfo?.SSID || "",
+    BasicCountry: debtorBasicInfo?.country || "",
+    BasicState: debtorBasicInfo?.state || "",
+    BasicCity: debtorBasicInfo?.city || "",
+    BasicZipCode: debtorBasicInfo?.zipCode || "",
+    BasicPhoneNumber: debtorBasicInfo?.phone || "",
+    BasicAddress: debtorBasicInfo?.address || "",
+  });
+
+  const [debtorBusinessDetails, setDebtorBusinessDetails] = useState({
+    businessCompanyName: debtorBusinessInfo?.companyName || "",
+    businessEinNumber: debtorBusinessInfo?.EIN || "",
+    businessCategory: debtorBusinessInfo?.businessCategory || "",
+    businessDescription: debtorBusinessInfo?.description || "",
+    businessCountry: debtorBusinessInfo?.country || "",
+    businessState: debtorBusinessInfo?.state || "",
+    businessCity: debtorBusinessInfo?.city || "",
+    businessZipCode: debtorBusinessInfo?.zipCode || "",
+    businessPhoneNumber: debtorBusinessInfo?.phone || "",
+    businessAddress: debtorBusinessInfo?.address || "",
+  });
+
+  const [status, setStatus] = useState(debtorBasicInfo?.status || "");
+  const [errors, setErrors] = useState({
+    businessPhone: "",
+    einNumber: "",
+    ssn: "",
+    basicPhone: "",
+    emailValid: "",
+  });
+  const isEmailValid = (email) => {
+    // Use a more robust email validation regular expression
+    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    return emailRegex.test(email);
+  };
+  const [isFormValid, setIsFormValid] = useState(false);
+  const validateForm = () => {
+    const ownDetailsValid = Object.values(debtorOwnDetails).every(
+      (value) => value !== ""
+    );
+    const businessDetailsValid = Object.entries(debtorBusinessDetails).every(
+      ([key, value]) => key === "businessDescription" || value !== ""
+    );
+    const noErrors = Object.values(errors).every((error) => error === "");
+    return ownDetailsValid && businessDetailsValid && noErrors && status !== "";
+  };
+  useEffect(() => {
+    setIsFormValid(validateForm());
+  }, [debtorOwnDetails, debtorBusinessDetails, errors, status]);
+  const handleOwnDetailsChange = (field, value) => {
+    if (field === "BasicEmailAddress") {
+      if (!isEmailValid(value)) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          emailValid: "Email must be valid",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          emailValid: "",
+        }));
+      }
+    }
+    if (field === "BasicSsid") {
+      if (value.length !== 9) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          ssn: "SSN must be 9 digits",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          ssn: "",
+        }));
+      }
+    }
+    if (field === "BasicPhoneNumber") {
+      if (value.length !== 10) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          basicPhone: "Phone number must be 10 digits",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          basicPhone: "",
+        }));
+      }
+    }
+    if (
+      field === "BasicSsid" ||
+      field === "BasicZipCode" ||
+      field === "BasicPhoneNumber"
+    ) {
+      const inputValue = value;
+      if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
+        setDebtorOwnDetails((prevDetails) => ({
+          ...prevDetails,
+          [field]: value,
+        }));
+      }
+    } else {
+      setDebtorOwnDetails((prevState) => ({
+        ...prevState,
+        [field]: value,
+      }));
+    }
+  };
+
+  const updateDebtorById = async () => {
+    setLoading(true);
+    const params = {
+      basicInformation: {
+        fullName: debtorOwnDetails?.BasicFullName,
+        email: debtorOwnDetails?.BasicEmailAddress,
+        SSID: debtorOwnDetails?.BasicSsid,
+        country: debtorOwnDetails?.BasicCountry,
+        state: debtorOwnDetails?.BasicState,
+        city: debtorOwnDetails?.BasicCity,
+        zipCode: debtorOwnDetails?.BasicZipCode,
+        status: status,
+        phone: debtorOwnDetails?.BasicPhoneNumber,
+        address: debtorOwnDetails?.BasicAddress,
+      },
+      businessInformation: {
+        companyName: debtorBusinessDetails?.businessCompanyName,
+        EIN: debtorBusinessDetails?.businessEinNumber,
+        businessCategory: debtorBusinessDetails?.businessCategory,
+        description: debtorBusinessDetails?.businessDescription,
+        country: debtorBusinessDetails?.businessCountry,
+        state: debtorBusinessDetails?.businessState,
+        city: debtorBusinessDetails?.businessCity,
+        zipCode: debtorBusinessDetails?.businessZipCode,
+        phone: debtorBusinessDetails?.businessPhoneNumber,
+        address: debtorBusinessDetails?.businessAddress,
+      },
+    };
+    const updateDebtor = await UpdateDebtor(caseData?.debtor?._id, params);
+    if (updateDebtor?.status === 200) {
+      showToast(updateDebtor?.data?.message, "success");
+      handleClose();
+      GetCaseDetails();
+    } else {
+      showToast(
+        updateDebtor?.response?.data?.message || updateDebtor?.data?.message,
+        "error"
+      );
+    }
+    setLoading(false);
+  };
+
+  const handleBusinessDetailsChange = (field, value) => {
+    if (field === "businessPhoneNumber") {
+      if (value.length !== 10) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          businessPhone: "Phone number must be 10 digits",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          businessPhone: "",
+        }));
+      }
+    }
+    if (field === "businessEinNumber") {
+      if (value.length !== 9) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          einNumber: "EIN must be 9 digits",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          einNumber: "",
+        }));
+      }
+    }
+    if (
+      field === "businessEinNumber" ||
+      field === "businessPhoneNumber " ||
+      field === "businessZipCode"
+    ) {
+      const inputValue = value;
+      if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
+        setDebtorBusinessDetails((prevDetails) => ({
+          ...prevDetails,
+          [field]: value,
+        }));
+      }
+    } else {
+      setDebtorBusinessDetails((prevState) => ({
+        ...prevState,
+        [field]: value,
+      }));
+    }
+  };
+
+  const handleNumberInputKeyDown = (e) => {
+    const invalidChars = ["e", "E", ".", "-"];
+    const allowedKeys = [
+      "+",
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "Backspace",
+      "ArrowLeft",
+      "ArrowRight",
+    ];
+    if (!allowedKeys.includes(e.key)) {
+      e.preventDefault();
+    }
+    if (invalidChars.includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+  const handleNumberInput = (e) => {
+    const allowedKeys = [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "Backspace",
+      "ArrowLeft",
+      "ArrowRight",
+    ];
+    if (!allowedKeys.includes(e.key)) {
+      e.preventDefault();
+    }
+    const invalidChars = ["e", "E", ".", "+", "-"];
+    if (invalidChars.includes(e.key)) {
+      e.preventDefault();
+    }
+  };
   return (
     <>
       <Box
@@ -42,7 +292,6 @@ export default function EditDebtorDetail({
         xs={12}
         sx={{
           borderRadius: "10px",
-
           marginTop: { xs: ".5rem", xl: "0rem" },
           backgroundColor: Colors.WHITE,
           padding: "1rem",
@@ -54,7 +303,6 @@ export default function EditDebtorDetail({
         >
           Personal Details
         </Typography>
-
         <Grid
           container
           item
@@ -70,31 +318,33 @@ export default function EditDebtorDetail({
             label="Full Name*"
             placeHolderValue="Enter Your Name"
             width="100%"
-            // value={debtorOwnDetails?.BasicFullName}
-            // onChange={(e) =>
-            //   basicInfoInputChange("BasicFullName", e.target.value)
-            // }
+            value={debtorOwnDetails?.BasicFullName}
+            onChange={(e) =>
+              handleOwnDetailsChange("BasicFullName", e.target.value)
+            }
           />
           <PaymentsTextFields
             type="text"
             label="Email Address*"
             placeHolderValue="Enter Valid Email"
             width="100%"
-            // value={debtorOwnDetails?.BasicEmailAddress}
-            // onChange={(e) =>
-            //   basicInfoInputChange("BasicEmailAddress", e.target.value)
-            // }
-            // error={errors?.emailValid}
+            value={debtorOwnDetails?.BasicEmailAddress}
+            onChange={(e) =>
+              handleOwnDetailsChange("BasicEmailAddress", e.target.value)
+            }
+            error={errors?.emailValid}
           />
           <PaymentsTextFields
             type="text"
             label="SSN*"
             placeHolderValue="Enter SSN"
             width="100%"
-            // value={debtorOwnDetails?.BasicSsid}
-            // onChange={(e) => basicInfoInputChange("BasicSsid", e.target.value)}
-            // onKeyDown={handleNumberInput}
-            // error={errors?.ssn}
+            value={debtorOwnDetails?.BasicSsid}
+            onChange={(e) =>
+              handleOwnDetailsChange("BasicSsid", e.target.value)
+            }
+            onKeyDown={handleNumberInput}
+            error={errors?.ssn}
           />
           <Typography
             sx={{
@@ -106,15 +356,14 @@ export default function EditDebtorDetail({
           >
             Status*
           </Typography>
-
           <Dropdown
             menuItems={menuItems}
             placeholder="Choose Status"
             backgroundColor={Colors.BG_LIGHT_GRAY}
             hoverColor={Colors.BG_LIGHT_GRAY}
             width="100%"
-            selectedValue={editDebtor}
-            setSelectedValue={setEditDebtor}
+            selectedValue={status}
+            setSelectedValue={setStatus}
           />
         </Grid>
         <Grid
@@ -132,25 +381,30 @@ export default function EditDebtorDetail({
             label="Country*"
             placeHolderValue="Enter Country Name"
             width="100%"
-            // value={debtorOwnDetails?.BasicCountry}
-            // onChange={(e) =>
-            //   basicInfoInputChange("BasicCountry", e.target.value)
-            // }
+            value={debtorOwnDetails?.BasicCountry}
+            onChange={(e) =>
+              handleOwnDetailsChange("BasicCountry", e.target.value)
+            }
           />
           <PaymentsTextFields
             type="text"
             label="State*"
             placeHolderValue="Enter State Name"
             width="100%"
-            // value={debtorOwnDetails?.BasicState}
-            // onChange={(e) => basicInfoInputChange("BasicState", e.target.value)}
+            value={debtorOwnDetails?.BasicState}
+            onChange={(e) =>
+              handleOwnDetailsChange("BasicState", e.target.value)
+            }
           />
           <PaymentsTextFields
+            type="text"
             label="City*"
             placeHolderValue="Enter City Name"
             width="100%"
-            // value={debtorOwnDetails?.BasicCity}
-            // onChange={(e) => basicInfoInputChange("BasicCity", e.target.value)}
+            value={debtorOwnDetails?.BasicCity}
+            onChange={(e) =>
+              handleOwnDetailsChange("BasicCity", e.target.value)
+            }
           />
         </Grid>
         <Grid
@@ -168,34 +422,33 @@ export default function EditDebtorDetail({
             label="Zip Code*"
             placeHolderValue="Enter Zip Code"
             width="100%"
-            // value={debtorOwnDetails?.BasicZipCode}
-            // onChange={(e) =>
-            //   basicInfoInputChange("BasicZipCode", e.target.value)
-            // }
-            // onKeyDown={handleNumberInput}
+            value={debtorOwnDetails?.BasicZipCode}
+            onChange={(e) =>
+              handleOwnDetailsChange("BasicZipCode", e.target.value)
+            }
+            onKeyDown={handleNumberInput}
           />
           <PaymentsTextFields
-            // type="number"
             type="text"
             label="Phone #*"
             placeHolderValue="Enter Phone Number"
             width="100%"
-            // value={debtorOwnDetails?.BasicPhoneNumber}
-            // onChange={(e) =>
-            //   basicInfoInputChange("BasicPhoneNumber", e.target.value)
-            // }
-            // error={errors?.basicPhone}
-            // onKeyDown={handleNumberInputKeyDown}
+            value={debtorOwnDetails?.BasicPhoneNumber}
+            onChange={(e) =>
+              handleOwnDetailsChange("BasicPhoneNumber", e.target.value)
+            }
+            error={errors?.basicPhone}
+            onKeyDown={handleNumberInputKeyDown}
           />
           <PaymentsTextFields
             type="text"
             label="Address*"
             placeHolderValue="Add Your Address"
             width="100%"
-            // value={debtorOwnDetails?.BasicAddress}
-            // onChange={(e) =>
-            //   basicInfoInputChange("BasicAddress", e.target.value)
-            // }
+            value={debtorOwnDetails?.BasicAddress}
+            onChange={(e) =>
+              handleOwnDetailsChange("BasicAddress", e.target.value)
+            }
           />
         </Grid>
       </Grid>
@@ -230,32 +483,32 @@ export default function EditDebtorDetail({
             label="Company Name*"
             placeHolderValue="Enter Company Name"
             width="100%"
-            // value={debtorBusinessDetails?.businessCompanyName}
-            // onChange={(e) =>
-            //   businessInfoInputChange("businessCompanyName", e.target.value)
-            // }
+            value={debtorBusinessDetails?.businessCompanyName}
+            onChange={(e) =>
+              handleBusinessDetailsChange("businessCompanyName", e.target.value)
+            }
           />
           <PaymentsTextFields
             type="number"
             label="EIN Number*"
             placeHolderValue="Enter Ein Number"
             width="100%"
-            // value={debtorBusinessDetails?.businessEinNumber}
-            // onKeyDown={handleNumberInput}
-            // onChange={(e) =>
-            //   businessInfoInputChange("businessEinNumber", e.target.value)
-            // }
-            // error={errors?.einNumber}
+            value={debtorBusinessDetails?.businessEinNumber}
+            onChange={(e) =>
+              handleBusinessDetailsChange("businessEinNumber", e.target.value)
+            }
+            error={errors?.einNumber}
+            onKeyDown={handleNumberInput}
           />
           <PaymentsTextFields
             type="text"
             label="Business Category*"
             placeHolderValue="Enter Business Category"
             width="100%"
-            // value={debtorBusinessDetails?.businessCategory}
-            // onChange={(e) =>
-            //   businessInfoInputChange("businessCategory", e.target.value)
-            // }
+            value={debtorBusinessDetails?.businessCategory}
+            onChange={(e) =>
+              handleBusinessDetailsChange("businessCategory", e.target.value)
+            }
           />
           <Typography
             sx={{
@@ -270,10 +523,10 @@ export default function EditDebtorDetail({
           <input
             type="text"
             placeholder="Add Description"
-            // value={debtorBusinessDetails?.businessDescription}
-            // onChange={(e) =>
-            //   businessInfoInputChange("businessDescription", e.target.value)
-            // }
+            value={debtorBusinessDetails?.businessDescription}
+            onChange={(e) =>
+              handleBusinessDetailsChange("businessDescription", e.target.value)
+            }
             style={{
               backgroundColor: Colors.BG_LIGHT_GRAY,
               height: "2.5rem",
@@ -301,30 +554,30 @@ export default function EditDebtorDetail({
             label="Country*"
             placeHolderValue="Enter Country Name"
             width="100%"
-            // value={debtorBusinessDetails?.businessCountry}
-            // onChange={(e) =>
-            //   businessInfoInputChange("businessCountry", e.target.value)
-            // }
+            value={debtorBusinessDetails?.businessCountry}
+            onChange={(e) =>
+              handleBusinessDetailsChange("businessCountry", e.target.value)
+            }
           />
           <PaymentsTextFields
             type="text"
             label="State*"
             placeHolderValue="Enter State Name"
             width="100%"
-            // value={debtorBusinessDetails?.businessState}
-            // onChange={(e) =>
-            //   businessInfoInputChange("businessState", e.target.value)
-            // }
+            value={debtorBusinessDetails?.businessState}
+            onChange={(e) =>
+              handleBusinessDetailsChange("businessState", e.target.value)
+            }
           />
           <PaymentsTextFields
             type="text"
             label="City*"
             placeHolderValue="Enter City Name"
             width="100%"
-            // value={debtorBusinessDetails?.businessCity}
-            // onChange={(e) =>
-            //   businessInfoInputChange("businessCity", e.target.value)
-            // }
+            value={debtorBusinessDetails?.businessCity}
+            onChange={(e) =>
+              handleBusinessDetailsChange("businessCity", e.target.value)
+            }
           />
         </Grid>
         <Grid
@@ -342,34 +595,33 @@ export default function EditDebtorDetail({
             label="Zip Code*"
             placeHolderValue="Enter Zip Code"
             width="100%"
-            // value={debtorBusinessDetails?.businessZipCode}
-            // onChange={(e) =>
-            //   businessInfoInputChange("businessZipCode", e.target.value)
-            // }
-            // onKeyDown={handleNumberInput}
+            value={debtorBusinessDetails?.businessZipCode}
+            onChange={(e) =>
+              handleBusinessDetailsChange("businessZipCode", e.target.value)
+            }
+            onKeyDown={handleNumberInput}
           />
           <PaymentsTextFields
-            // type="number"
             type="text"
             label="Phone #*"
             placeHolderValue="Enter Phone Number"
             width="100%"
-            // value={debtorBusinessDetails?.businessPhoneNumber}
-            // onChange={(e) =>
-            //   businessInfoInputChange("businessPhoneNumber", e.target.value)
-            // }
-            // error={errors?.businessPhone}
-            // onKeyDown={handleNumberInputKeyDown}
+            value={debtorBusinessDetails?.businessPhoneNumber}
+            onChange={(e) =>
+              handleBusinessDetailsChange("businessPhoneNumber", e.target.value)
+            }
+            error={errors?.businessPhone}
+            onKeyDown={handleNumberInputKeyDown}
           />
           <PaymentsTextFields
             type="text"
             label="Address*"
             placeHolderValue="Add Your Address"
             width="100%"
-            // value={debtorBusinessDetails?.businessAddress}
-            // onChange={(e) =>
-            //   businessInfoInputChange("businessAddress", e.target.value)
-            // }
+            value={debtorBusinessDetails?.businessAddress}
+            onChange={(e) =>
+              handleBusinessDetailsChange("businessAddress", e.target.value)
+            }
           />
         </Grid>
       </Grid>
@@ -378,9 +630,11 @@ export default function EditDebtorDetail({
           buttonText="Save"
           height="2rem"
           width="8rem"
-          onClick={handleClose}
+          disabled={!isFormValid}
+          onClick={updateDebtorById}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
+          loading={loading}
         />
       </Grid>
     </>

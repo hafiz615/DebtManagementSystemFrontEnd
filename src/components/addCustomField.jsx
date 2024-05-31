@@ -3,28 +3,51 @@ import React from "react";
 import {
   Grid,
   Typography,
-  Radio,
+  Checkbox,
   Divider,
   Switch,
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Tabs,
-  Tab,
-  Box,
+  // Tabs,
+  // Tab,
+  // Box,
 } from "@mui/material";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { Colors } from "../config/default";
 import TextButton from "./button";
+import { CreateCustomField } from "../services/services";
+import { useToast } from "../toast/toastContext";
 
-export default function AddCustomField({ handleClose }) {
-  const [value, setValue] = React.useState(0);
+export default function AddCustomField({ handleClose, handleModalClose }) {
+  const { showToast } = useToast();
+  const [formData, setFormData] = React.useState({
+    "name": null,
+    "type": null,
+    "target": null,
+    "description": null,
+    "shared": false
+  });
+  const handleChange = (field, value) => {
+    setFormData(prevState => ({
+      ...prevState,
+      [field]: value
+    }));
+  }
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+  const handleSave = async () => {
+    const customFieldSubmission = await CreateCustomField(formData);
+    if (customFieldSubmission?.status === 200) {
+      showToast(customFieldSubmission?.data?.message, "success");
+      handleClose()
+      handleModalClose()
+    } else {
+      const errorMessage = customFieldSubmission?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+  }
   return (
     <Grid>
       <div>
@@ -35,15 +58,15 @@ export default function AddCustomField({ handleClose }) {
         </Typography>
       </div>
 
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+      {/* <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={value} onChange={handleChange}>
           <Tab sx={{ fontFamily: "Nunito" }} label="New" />
           <Tab sx={{ fontFamily: "Nunito" }} label="Shared" />
         </Tabs>
-      </Box>
+      </Box> */}
       <Divider />
       <input
-        type="email"
+        type="text"
         placeholder="Name"
         style={{
           backgroundColor: Colors.BG_LIGHT_GRAY,
@@ -56,11 +79,13 @@ export default function AddCustomField({ handleClose }) {
           marginTop: "1em",
           width: "calc(50% - .5rem)",
         }}
+        value={formData.name}
+        onChange={(e)=> handleChange("name", e.target.value)} 
       />
 
       <div style={{ display: "flex", gap: "1rem", marginTop: "1em" }}>
         <input
-          type="email"
+          type="text"
           placeholder="Type"
           style={{
             backgroundColor: Colors.BG_LIGHT_GRAY,
@@ -72,10 +97,12 @@ export default function AddCustomField({ handleClose }) {
             borderRadius: "5px",
             width: "50%",
           }}
+          value={formData.type} 
+          onChange={(e)=> handleChange("type", e.target.value)} 
         />
 
         <input
-          type="email"
+          type="text"
           placeholder="Target"
           style={{
             backgroundColor: Colors.BG_LIGHT_GRAY,
@@ -87,6 +114,8 @@ export default function AddCustomField({ handleClose }) {
             borderRadius: "5px",
             width: "50%",
           }}
+          value={formData.target}
+          onChange={(e)=> handleChange("target", e.target.value)} 
         />
       </div>
       <div style={{ marginTop: "1em" }}>
@@ -101,10 +130,12 @@ export default function AddCustomField({ handleClose }) {
             maxWidth: "100%",
             padding: "1em",
           }}
+          value={formData.description}
+          onChange={(e)=> handleChange("description", e.target.value)}
         />
       </div>
       <div style={{ fontFamily: "Nunito" }}>
-        <Radio />
+      <Checkbox checked={formData.shared} onChange={(e)=> handleChange("shared", e.target.checked)} />
         Share
       </div>
       <Accordion
@@ -168,7 +199,7 @@ export default function AddCustomField({ handleClose }) {
           buttonText="Save"
           height="2rem"
           width="8rem"
-          onClick={handleClose}
+          onClick={handleSave}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
         />

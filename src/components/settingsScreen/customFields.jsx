@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -6,38 +6,14 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { Grid } from "@mui/material";
 import { Colors } from "../../config/default";
-import ListTable from "../listTable";
+import ListTableDynamic from "../listTableDynamic";
 import MuiModels from "../models";
-const headers = ["Name", "Types"];
-function createData(name, types) {
-  return {
-    name,
-    types,
-  };
-}
-const tableData = [
-  createData("Date of First Payment", "Date"),
-  createData("EIN", "Text (single line)"),
-  createData("Date of First Payment", "Date"),
-  createData("EIN", "Text (single line)"),
-  createData("Date of First Payment", "Date"),
-  createData("EIN", "Text (single line)"),
-];
-export default function CustomFieldsAccordion() {
-  const [rows, setRows] = useState([]);
-  useEffect(() => {
-    // Simulate fetching data from an API
-    const fetchData = () => {
-      const generatedData = tableData?.map((item) => ({
-        name: item?.name,
-        types: item?.types,
-      }));
-      setRows(generatedData);
-    };
 
-    fetchData();
-  }, []);
-
+export default function CustomFieldsAccordion({customFields, refreshData}) {
+  const headerData = [
+    { key: "name", heading: "Name", width: "15%" },
+    { key: "type", heading: "Type", width: "15%"}
+  ];
   return (
     <Accordion
       sx={{
@@ -70,6 +46,7 @@ export default function CustomFieldsAccordion() {
             buttonName="Add Custom Fields"
             show="addCustomField"
             button="customField"
+            handleModalClose={refreshData}
           />
         </Grid>
 
@@ -78,10 +55,11 @@ export default function CustomFieldsAccordion() {
           xs={12}
           sx={{ justifyContent: "flex-end", marginTop: "1rem" }}
         >
-          <ListTable
-            headerData={headers}
-            data={rows}
+          <ListTableDynamic
+            headerData={headerData}
+            data={customFields}
             requiredCustomFieldIcons={true}
+            handleModalClose={refreshData}
           />
         </Grid>
       </AccordionDetails>
