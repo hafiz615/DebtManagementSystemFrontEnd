@@ -118,7 +118,11 @@ export default function CustomizedTabs({ heading }) {
   useEffect(() => {
     setRows(generatedData);
   }, [generatedData]);
-
+  const handleUserDelete = (deletedUserId) => {
+    setUserArray((prevUserArray) =>
+      prevUserArray.filter((user) => user._id !== deletedUserId)
+    );
+  };
   return (
     <>
       <Grid
@@ -189,7 +193,8 @@ export default function CustomizedTabs({ heading }) {
               requiredCustomFieldIcons={true}
               rows={rows}
               columns={columns}
-              GetUsers={GetUsers}
+              handleUserDelete={handleUserDelete}
+              // GetUsers={GetUsers}
             />
             {/* <DataTable rows={rows} columns={columns} /> */}
           </>

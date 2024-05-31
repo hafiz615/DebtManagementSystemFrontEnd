@@ -12,7 +12,15 @@ import { DeleteUserById, DeleteCustomField } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import TextButton from "./button";
 
-export default function Prompt({ deleting, heading, text, id, GetUsers, handleModalClose }) {
+export default function Prompt({
+  deleting,
+  heading,
+  text,
+  id,
+  // GetUsers,
+  handleModalClose,
+  handleUserDelete,
+}) {
   const { showToast } = useToast();
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -30,14 +38,15 @@ export default function Prompt({ deleting, heading, text, id, GetUsers, handleMo
       );
     }
     setLoading(false);
-  }
+  };
   const deleteUserById = async () => {
     setLoading(true);
     const deleteUser = await DeleteUserById(id);
     if (deleteUser?.status === 200) {
       setOpen(false);
       showToast(deleteUser?.data?.message, "success");
-      GetUsers();
+      handleUserDelete(id);
+      // GetUsers();
     } else {
       showToast(
         deleteUser?.response?.data?.message || deleteUser?.data?.message,
@@ -95,7 +104,9 @@ export default function Prompt({ deleting, heading, text, id, GetUsers, handleMo
           <TextButton
             loading={loading}
             buttonText="Confirm"
-            onClick={deleting==="Custom Field"? deleteCustomField: deleteUserById}
+            onClick={
+              deleting === "Custom Field" ? deleteCustomField : deleteUserById
+            }
             backgroundColor={Colors.SKY_BLUE}
             hoverColor={Colors.SKY_BLUE}
             paddingLeft="2rem"

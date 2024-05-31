@@ -76,6 +76,7 @@ export default function UserListTable({
   columns,
   requiredCustomFieldIcons,
   GetUsers,
+  handleUserDelete,
 }) {
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const [page, setPage] = React.useState(0);
@@ -164,7 +165,8 @@ export default function UserListTable({
                         heading="Delete User"
                         text={`Are you sure you want to delete ${row?.email} ?`}
                         id={row?.id}
-                        GetUsers={GetUsers}
+                        handleUserDelete={handleUserDelete}
+                        // GetUsers={GetUsers}
                       />
                     </StyledTableCell>
                   )}
