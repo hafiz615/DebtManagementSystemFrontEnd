@@ -276,6 +276,217 @@ export default function DebtorFields({
         xl={5.9}
         sx={{
           borderRadius: "10px",
+
+          marginTop: { xs: ".5rem", xl: "0rem" },
+          backgroundColor: Colors.WHITE,
+          padding: "1rem",
+        }}
+      >
+        <Typography
+          sx={{ fontFamily: "Nunito", fontWeight: "600" }}
+          gutterBottom
+        >
+          Debtor Details
+        </Typography>
+
+        <Grid
+          container
+          item
+          xs={12}
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "0.5rem",
+          }}
+        >
+          <PaymentsTextFields
+            type="text"
+            label="Full Name*"
+            placeHolderValue="Enter Your Name"
+            width="100%"
+            value={debtorOwnDetails?.BasicFullName}
+            onChange={(e) =>
+              basicInfoInputChange("BasicFullName", e.target.value)
+            }
+          />
+          <PaymentsTextFields
+            type="text"
+            label="Email Address*"
+            placeHolderValue="Enter Valid Email"
+            width="100%"
+            value={debtorOwnDetails?.BasicEmailAddress}
+            onChange={(e) =>
+              basicInfoInputChange("BasicEmailAddress", e.target.value)
+            }
+            error={errors?.emailValid}
+          />
+          <PaymentsTextFields
+            type="text"
+            label="SSN*"
+            placeHolderValue="Enter SSN"
+            width="100%"
+            value={debtorOwnDetails?.BasicSsid}
+            onChange={(e) => basicInfoInputChange("BasicSsid", e.target.value)}
+            onKeyDown={handleNumberInput}
+            error={errors?.ssn}
+          />
+        </Grid>
+        <Grid
+          container
+          item
+          xs={12}
+          sx={{
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Grid
+            container
+            item
+            xs={4}
+            sx={{ display: "flex", flexDirection: "column" }}
+          >
+            <Typography
+              sx={{
+                fontWeight: "500",
+                fontFamily: "Nunito",
+                marginLeft: "1rem",
+                color: Colors.DARK_GRAY,
+              }}
+            >
+              Status*
+            </Typography>
+
+            <Dropdown
+              menuItems={menuItems}
+              menuWidth="11.7rem"
+              placeholder="Choose Status"
+              backgroundColor={Colors.BG_LIGHT_GRAY}
+              hoverColor={Colors.BG_LIGHT_GRAY}
+              width="98%"
+              selectedValue={selectedValue}
+              setSelectedValue={setSelectedValue}
+            />
+          </Grid>
+          <Grid
+            container
+            item
+            xs={8}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Checkboxes
+              checked={checked}
+              handleCheckChange={handleCheckChange}
+              fontSize="28"
+            />
+            <Typography
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                fontWeight: "500",
+                fontFamily: "Nunito",
+                marginLeft: "0.5rem",
+                color: Colors.DARK_GRAY,
+              }}
+            >
+              Same as business
+            </Typography>
+          </Grid>
+        </Grid>
+
+        <Grid
+          container
+          item
+          xs={12}
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginTop: "0.5rem",
+          }}
+        >
+          <PaymentsTextFields
+            type="text"
+            label="Country*"
+            placeHolderValue="Enter Country Name"
+            width="100%"
+            value={debtorOwnDetails?.BasicCountry}
+            onChange={(e) =>
+              basicInfoInputChange("BasicCountry", e.target.value)
+            }
+          />
+          <PaymentsTextFields
+            type="text"
+            label="State*"
+            placeHolderValue="Enter State Name"
+            width="100%"
+            value={debtorOwnDetails?.BasicState}
+            onChange={(e) => basicInfoInputChange("BasicState", e.target.value)}
+          />
+          <PaymentsTextFields
+            label="City*"
+            placeHolderValue="Enter City Name"
+            width="100%"
+            value={debtorOwnDetails?.BasicCity}
+            onChange={(e) => basicInfoInputChange("BasicCity", e.target.value)}
+          />
+        </Grid>
+        <Grid
+          container
+          item
+          xs={12}
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginTop: "0.5rem",
+          }}
+        >
+          <PaymentsTextFields
+            type="number"
+            label="Zip Code*"
+            placeHolderValue="Enter Zip Code"
+            width="100%"
+            value={debtorOwnDetails?.BasicZipCode}
+            onChange={(e) =>
+              basicInfoInputChange("BasicZipCode", e.target.value)
+            }
+            onKeyDown={handleNumberInput}
+          />
+          <PaymentsTextFields
+            // type="number"
+            type="text"
+            label="Phone #*"
+            placeHolderValue="Enter Phone Number"
+            width="100%"
+            value={debtorOwnDetails?.BasicPhoneNumber}
+            onChange={(e) =>
+              basicInfoInputChange("BasicPhoneNumber", e.target.value)
+            }
+            error={errors?.basicPhone}
+            onKeyDown={handleNumberInputKeyDown}
+          />
+          <PaymentsTextFields
+            type="text"
+            label="Address*"
+            placeHolderValue="Add Your Address"
+            width="100%"
+            value={debtorOwnDetails?.BasicAddress}
+            onChange={(e) =>
+              basicInfoInputChange("BasicAddress", e.target.value)
+            }
+          />
+        </Grid>
+      </Grid>
+      <Grid
+        item
+        xs={12}
+        xl={5.9}
+        sx={{
+          borderRadius: "10px",
           marginTop: { xs: ".5rem", xl: "0rem" },
           backgroundColor: Colors.WHITE,
           padding: "1rem",
@@ -448,216 +659,6 @@ export default function DebtorFields({
         </Grid>
       </Grid>
 
-      <Grid
-        item
-        xs={12}
-        xl={5.9}
-        sx={{
-          borderRadius: "10px",
-
-          marginTop: { xs: ".5rem", xl: "0rem" },
-          backgroundColor: Colors.WHITE,
-          padding: "1rem",
-        }}
-      >
-        <Typography
-          sx={{ fontFamily: "Nunito", fontWeight: "600" }}
-          gutterBottom
-        >
-          Debtor Details
-        </Typography>
-
-        <Grid
-          container
-          item
-          xs={12}
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: "0.5rem",
-          }}
-        >
-          <PaymentsTextFields
-            type="text"
-            label="Full Name*"
-            placeHolderValue="Enter Your Name"
-            width="100%"
-            value={debtorOwnDetails?.BasicFullName}
-            onChange={(e) =>
-              basicInfoInputChange("BasicFullName", e.target.value)
-            }
-          />
-          <PaymentsTextFields
-            type="text"
-            label="Email Address*"
-            placeHolderValue="Enter Valid Email"
-            width="100%"
-            value={debtorOwnDetails?.BasicEmailAddress}
-            onChange={(e) =>
-              basicInfoInputChange("BasicEmailAddress", e.target.value)
-            }
-            error={errors?.emailValid}
-          />
-          <PaymentsTextFields
-            type="text"
-            label="SSN*"
-            placeHolderValue="Enter SSN"
-            width="100%"
-            value={debtorOwnDetails?.BasicSsid}
-            onChange={(e) => basicInfoInputChange("BasicSsid", e.target.value)}
-            onKeyDown={handleNumberInput}
-            error={errors?.ssn}
-          />
-        </Grid>
-        <Grid
-          container
-          item
-          xs={12}
-          sx={{
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Grid
-            container
-            item
-            xs={4}
-            sx={{ display: "flex", flexDirection: "column" }}
-          >
-            <Typography
-              sx={{
-                fontWeight: "500",
-                fontFamily: "Nunito",
-                marginLeft: "1rem",
-                color: Colors.DARK_GRAY,
-              }}
-            >
-              Status*
-            </Typography>
-
-            <Dropdown
-              menuItems={menuItems}
-              placeholder="Choose Status"
-              backgroundColor={Colors.BG_LIGHT_GRAY}
-              hoverColor={Colors.BG_LIGHT_GRAY}
-              width="98%"
-              selectedValue={selectedValue}
-              setSelectedValue={setSelectedValue}
-            />
-          </Grid>
-          <Grid
-            container
-            item
-            xs={8}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Checkboxes
-              checked={checked}
-              handleCheckChange={handleCheckChange}
-              fontSize="28"
-            />
-            <Typography
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                fontWeight: "500",
-                fontFamily: "Nunito",
-                marginLeft: "0.5rem",
-                color: Colors.DARK_GRAY,
-              }}
-            >
-              Same as business
-            </Typography>
-          </Grid>
-        </Grid>
-
-        <Grid
-          container
-          item
-          xs={12}
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginTop: "0.5rem",
-          }}
-        >
-          <PaymentsTextFields
-            type="text"
-            label="Country*"
-            placeHolderValue="Enter Country Name"
-            width="100%"
-            value={debtorOwnDetails?.BasicCountry}
-            onChange={(e) =>
-              basicInfoInputChange("BasicCountry", e.target.value)
-            }
-          />
-          <PaymentsTextFields
-            type="text"
-            label="State*"
-            placeHolderValue="Enter State Name"
-            width="100%"
-            value={debtorOwnDetails?.BasicState}
-            onChange={(e) => basicInfoInputChange("BasicState", e.target.value)}
-          />
-          <PaymentsTextFields
-            label="City*"
-            placeHolderValue="Enter City Name"
-            width="100%"
-            value={debtorOwnDetails?.BasicCity}
-            onChange={(e) => basicInfoInputChange("BasicCity", e.target.value)}
-          />
-        </Grid>
-        <Grid
-          container
-          item
-          xs={12}
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginTop: "0.5rem",
-          }}
-        >
-          <PaymentsTextFields
-            type="number"
-            label="Zip Code*"
-            placeHolderValue="Enter Zip Code"
-            width="100%"
-            value={debtorOwnDetails?.BasicZipCode}
-            onChange={(e) =>
-              basicInfoInputChange("BasicZipCode", e.target.value)
-            }
-            onKeyDown={handleNumberInput}
-          />
-          <PaymentsTextFields
-            // type="number"
-            type="text"
-            label="Phone #*"
-            placeHolderValue="Enter Phone Number"
-            width="100%"
-            value={debtorOwnDetails?.BasicPhoneNumber}
-            onChange={(e) =>
-              basicInfoInputChange("BasicPhoneNumber", e.target.value)
-            }
-            error={errors?.basicPhone}
-            onKeyDown={handleNumberInputKeyDown}
-          />
-          <PaymentsTextFields
-            type="text"
-            label="Address*"
-            placeHolderValue="Add Your Address"
-            width="100%"
-            value={debtorOwnDetails?.BasicAddress}
-            onChange={(e) =>
-              basicInfoInputChange("BasicAddress", e.target.value)
-            }
-          />
-        </Grid>
-      </Grid>
       <Grid
         item
         xs={12}

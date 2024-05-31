@@ -44,7 +44,7 @@ export default function SettingsScreen() {
     "email": [],
     "sms": []
   })
-  const [customFileds, setCustomFields] = useState([])
+  const [customFields, setCustomFields] = useState([])
 
   const getSettings = async () => {
     const allSettings = await GetAllSettings();
@@ -56,7 +56,7 @@ export default function SettingsScreen() {
     setRetryInterval(allSettings.data.data.paymentsAuthorizations.retryInterval)
     setAuthorizationInterval(allSettings.data.data.paymentsAuthorizations.authorizationInterval)
     setNotificationTemplates(allSettings.data.data.notificationTemplates)
-    setCustomFields(allSettings.data.data.customFileds)
+    setCustomFields(allSettings.data.data.customFields)
   };
 
   useEffect(() => {
@@ -116,7 +116,7 @@ export default function SettingsScreen() {
           {...{setfailedAuthorizations, setSuccessfulAuthorizations, setFailedPayments, setSuccessPayments, setUpcomingPayments, setRetryInterval, setAuthorizationInterval}}
         />
         <NotificationTemplatesTabs notificationTemplates={notificationTemplates} />
-        <CustomFieldsAccordion customFields={customFileds} refreshData={refreshData} />
+        <CustomFieldsAccordion customFields={customFields} refreshData={refreshData} />
         <PasswordAccordion />
       </Grid>
     </Grid>
