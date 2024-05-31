@@ -8,3 +8,13 @@ export const sign_In = (text) => async (dispatch) => {
     return err;
   }
 };
+export const get_payments = (text) => async (dispatch) => {
+  try {
+    dispatch({
+      type: "payments",
+      payload: text,
+    });
+  } catch (err) {
+    return err;
+  }
+};
