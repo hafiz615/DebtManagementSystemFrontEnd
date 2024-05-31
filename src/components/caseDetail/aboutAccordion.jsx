@@ -29,7 +29,8 @@ export default function AboutAccordion({ caseDetails }) {
       sx={{
         boxShadow: "none",
         marginBottom: "10px",
-        backgroundColor: Colors.BG_LIGHT_GRAY,
+        borderRadius: "1rem !important",
+        backgroundColor: Colors.WHITE,
       }}
       defaultExpanded
     >
@@ -40,7 +41,7 @@ export default function AboutAccordion({ caseDetails }) {
         sx={{
           height: "20px",
           backgroundColor: Colors.SKY_BLUE,
-          borderRadius: "10px",
+          borderRadius: "1rem",
         }}
       >
         <div
@@ -51,16 +52,21 @@ export default function AboutAccordion({ caseDetails }) {
             width: "100%",
           }}
         >
-          <Typography sx={{ color: Colors.WHITE, fontFamily: "Nunito" }}>
-            About
+          <Typography
+            sx={{
+              color: Colors.WHITE,
+              fontFamily: "Nunito",
+              fontWeight: "700",
+            }}
+          >
+            ABOUT
           </Typography>
         </div>
       </AccordionSummary>
       <AccordionDetails
         sx={{
-          backgroundColor: Colors.BG_LIGHT_GRAY,
+          backgroundColor: Colors.WHITE,
           boxShadow: " 0 2px 5px -3px rgba(0, 0, 0, 0.5)",
-
           borderBottomLeftRadius: "10px",
           borderBottomRightRadius: "10px",
         }}
@@ -72,24 +78,26 @@ export default function AboutAccordion({ caseDetails }) {
               xs={12}
               sx={{ justifyContent: "space-between", mb: "10px" }}
             >
-              <Grid
+              <Typography
                 sx={{
                   fontSize: "11px",
                   fontFamily: "Nunito",
-                  color: Colors.BLACK,
+                  color: Colors.DARK_GRAY,
+                  fontWeight: "700",
                 }}
               >
                 {item?.name}
-              </Grid>
-              <Grid
+              </Typography>
+              <Typography
                 sx={{
                   fontSize: "11px",
                   fontFamily: "Nunito",
                   color: Colors.DIM_LIGHT_GRAY,
+                  fontWeight: "600",
                 }}
               >
                 {item?.value}
-              </Grid>
+              </Typography>
             </Grid>
           ))}
         </Grid>

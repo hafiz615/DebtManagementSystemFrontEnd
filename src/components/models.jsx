@@ -108,14 +108,19 @@ export default function MuiModels({
           }}
         >
           <EditIcon
-            sx={{ color: Colors.BLACK, fontSize: iconSize || "16px" }}
+            sx={{ color: Colors.DARK_GRAY, fontSize: iconSize || "16px" }}
           />
         </IconButton>
       ) : show === "addCase" ? (
-        <AddIcon
-          sx={{ fontSize: "16px", color: Colors.BLACK, cursor: "pointer" }}
-          onClick={handleOpen}
-        />
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <AddIcon
+            sx={{ fontSize: "16px", color: Colors.BLACK, cursor: "pointer" }}
+          />
+        </IconButton>
       ) : show === "CaseCustomField" ? (
         <IconButton
           onClick={() => {
@@ -171,9 +176,18 @@ export default function MuiModels({
           ) : show === "task" ? (
             <AddTask show={show} handleClose={handleClose} />
           ) : show === "editField" ? (
-            <EditField show={show} handleClose={handleClose} data={data} handleModalClose={handleModalClose} />
+            <EditField
+              show={show}
+              handleClose={handleClose}
+              data={data}
+              handleModalClose={handleModalClose}
+            />
           ) : show === "addCustomField" ? (
-            <AddCustomField show={show} handleClose={handleClose} handleModalClose={handleModalClose} />
+            <AddCustomField
+              show={show}
+              handleClose={handleClose}
+              handleModalClose={handleModalClose}
+            />
           ) : show === "CaseCustomField" ? (
             <CaseCustomField
               show={show}
