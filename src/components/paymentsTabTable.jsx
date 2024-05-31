@@ -96,7 +96,7 @@ export default function PaymentTabsTable({ data, headerData }) {
   useEffect(() => {
     const generatedData = data?.map((item, index) => ({
       name: item?.fullName || "-",
-      dueDate: item?.dueDate || "-",
+      dueDate: new Date(item?.dueDate).toLocaleDateString() || "-",
       tryDate: item?.tryDate || "-",
       totalDebt: item?.totalDebt || "-",
       ssid: item?.SSID || "-",

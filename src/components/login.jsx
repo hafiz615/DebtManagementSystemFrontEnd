@@ -148,7 +148,7 @@ function Login() {
           {INPUT_PASSWORD_LABEL}
         </InputLabel>
         <Input
-          id="standard-adornment-password"
+          className="no-autofill-bg"
           type={showPassword ? "text" : "password"}
           value={password}
           onChange={handlePasswordChange}
@@ -193,6 +193,7 @@ function Login() {
         loading={loading}
         marginTop="2rem"
         height="3rem"
+        loginFont="600"
       />
     </Grid>
   );

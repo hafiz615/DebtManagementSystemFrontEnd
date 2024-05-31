@@ -54,16 +54,14 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
   const headerData = [
     { key: "templateId", heading: "Template ID", width: "10%" },
     { key: "name", heading: "Name", width: "15%" },
-    { key: "event", heading: "Event", width: "15%" }
+    { key: "event", heading: "Event", width: "15%" },
   ];
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  const renderTemplate = (id) => {
+  const renderTemplate = (id) => {};
 
-  }
-  
   return (
     <Accordion
       sx={{
@@ -82,7 +80,7 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
           fontWeight: "600",
           borderBottomLeftRadius: "1rem",
           borderBottomRightRadius: "1rem",
-          borderBottom: "1px solid #6D6D6D",
+          borderBottom: "1px solid #EAEBEB",
         }}
       >
         Notification Templates

@@ -18,6 +18,7 @@ function TextButton({
   backgroundColor,
   hoverColor,
   width,
+  loginFont,
 }) {
   return (
     <Button
@@ -26,7 +27,7 @@ function TextButton({
       sx={{
         width: width,
         fontFamily: "Nunito",
-        fontWeight: "500",
+        fontWeight: loginFont || "500",
         height: { height },
         marginTop: { marginTop },
         marginBottom: {

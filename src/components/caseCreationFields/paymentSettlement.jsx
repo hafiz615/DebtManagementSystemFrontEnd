@@ -68,7 +68,6 @@ export default function PaymentSettlement({
         item
         sx={{
           marginTop: "1rem",
-          alignItems: "center",
         }}
       >
         {newDataList?.map((item, index) => (
@@ -137,12 +136,12 @@ export default function PaymentSettlement({
                   marginRight: ".5rem",
                   color: Colors.DARK_GRAY,
                 }}
-                gutterBottom
               >
                 Time Period
               </Typography>
               <Dropdown
                 // placeholder="Choose Time Period"
+                menuWidth="11.5rem"
                 initialValue={item?.timePeriod}
                 menuItems={menuItems}
                 backgroundColor={Colors.BG_LIGHT_GRAY}

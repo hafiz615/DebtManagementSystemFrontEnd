@@ -20,6 +20,7 @@ export default function Dropdown({
   initialValue,
   hoverColor,
   placeholder,
+  menuWidth,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -91,7 +92,7 @@ export default function Dropdown({
             key={index}
             sx={{
               color: Colors.LIGHT_GRAY,
-              width: "100%",
+              width: menuWidth,
             }}
             onClick={() => handleMenuItemClick(item?.value)}
           >

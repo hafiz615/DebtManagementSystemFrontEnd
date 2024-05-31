@@ -27,7 +27,7 @@ export default function AccordionUsage({
     const generatedData = rowArray?.map((item, index) => ({
       id: index,
       name: item?.fullName || "-",
-      dueDate: item?.dueDate || "-",
+      dueDate: new Date(item?.dueDate).toLocaleDateString() || "-",
       amount: item?.amount || "-",
       ssid: item?.SSID || "-",
       failureReason: item?.failedReasonCaptured || "-",
@@ -39,10 +39,14 @@ export default function AccordionUsage({
   const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
     padding: theme.spacing(0),
   }));
-  const [expanded, setExpanded] = React.useState(index < 2);
+  const [expanded, setExpanded] = React.useState([0, 3]);
 
-  const handleChange = () => {
-    setExpanded((prevExpanded) => !prevExpanded);
+  const handleChange = (index) => {
+    setExpanded((prevExpanded) =>
+      prevExpanded.includes(index)
+        ? prevExpanded.filter((i) => i !== index)
+        : [...prevExpanded, index]
+    );
   };
   let backgroundColor;
   if (paymentNumber === "5") {
@@ -57,9 +61,9 @@ export default function AccordionUsage({
 
   return (
     <Accordion
-      defaultExpanded={index < 2}
-      expanded={expanded}
-      onChange={handleChange}
+      // defaultExpanded={index < 2}
+      defaultExpanded={expanded.includes(index)}
+      onChange={() => handleChange(index)}
       sx={{
         borderRadius: "1rem !important",
         backgroundColor: Colors.WHITE,
@@ -90,6 +94,7 @@ export default function AccordionUsage({
                 fontFamily: "Nunito",
                 fontWeight: "600",
                 color: Colors.BLACK,
+                marginLeft: "0.5rem",
               }}
             >
               {tableHeading}
@@ -108,7 +113,7 @@ export default function AccordionUsage({
             <Box
               sx={{
                 backgroundColor,
-                borderRadius: "10px",
+                borderRadius: "50%",
                 height: "2.5rem",
                 width: "2.5rem",
                 display: "flex",
@@ -125,7 +130,7 @@ export default function AccordionUsage({
                   color: Colors.BLACK,
                 }}
               >
-                {paymentNumber}
+                {rows?.length}
               </Typography>
             </Box>
             <Launch
