@@ -731,6 +731,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               creditorBusinessDetails={creditorBusinessDetails}
               newDataList={newDataList}
               totalReceivable={totalReceivable}
+              paidAmount={paidAmount}
               status={status}
               fundedDate={fundedDate}
               CreditorNotes={CreditorNotes}
@@ -757,7 +758,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               }}
             >
               <TextButton
-                buttonText="EXIT"
+                buttonText="BACK"
                 disabled={activeStep === 0}
                 onClick={handleBack}
                 backgroundColor={Colors.ORANGE_COLOR}
