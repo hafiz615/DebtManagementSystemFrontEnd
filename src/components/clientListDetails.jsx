@@ -111,7 +111,7 @@ export default function ClientListDetails() {
               container
               item
               xs={12}
-              lg={5.5}
+              lg={7}
               sx={{ justifyContent: "space-evenly" }}
             >
               <Grid item xs={12} lg={5.5}>
@@ -145,6 +145,7 @@ export default function ClientListDetails() {
                       fontWeight: "600",
                       color: Colors.DARK_GRAY,
                       width: "6rem",
+                      marginTop: "0.5rem",
                     }}
                   >
                     Email
@@ -156,9 +157,10 @@ export default function ClientListDetails() {
                       fontWeight: "300",
                       fontSize: "0.9rem",
                       color: Colors.DIM_LIGHT_GRAY,
+                      marginTop: "0.5rem",
                     }}
                   >
-                    {truncateText(clientData?.debtor?.email, 10)}
+                    {truncateText(clientData?.debtor?.email, 25)}
                   </span>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -168,6 +170,7 @@ export default function ClientListDetails() {
                       fontWeight: "600",
                       color: Colors.DARK_GRAY,
                       width: "6rem",
+                      marginTop: "0.5rem",
                     }}
                   >
                     Status
@@ -179,6 +182,7 @@ export default function ClientListDetails() {
                       fontWeight: "300",
                       fontSize: "0.9rem",
                       color: Colors.DIM_LIGHT_GRAY,
+                      marginTop: "0.5rem",
                     }}
                   >
                     {clientData?.debtor?.status}
@@ -192,6 +196,7 @@ export default function ClientListDetails() {
                       fontWeight: "600",
                       color: Colors.DARK_GRAY,
                       width: "6rem",
+                      marginTop: "0.5rem",
                     }}
                   >
                     Address
@@ -203,9 +208,10 @@ export default function ClientListDetails() {
                       fontWeight: "300",
                       fontSize: "0.9rem",
                       color: Colors.DIM_LIGHT_GRAY,
+                      marginTop: "0.5rem",
                     }}
                   >
-                    {truncateText(clientData?.debtor?.address, 10)}
+                    {truncateText(clientData?.debtor?.address, 30)}
                   </span>
                 </Box>
               </Grid>
@@ -217,6 +223,7 @@ export default function ClientListDetails() {
                       fontWeight: "600",
                       color: Colors.DARK_GRAY,
                       width: "10rem",
+                      marginTop: "0.5rem",
                     }}
                   >
                     Company Name
@@ -228,6 +235,7 @@ export default function ClientListDetails() {
                       fontWeight: "300",
                       fontSize: "0.9rem",
                       color: Colors.DIM_LIGHT_GRAY,
+                      marginTop: "0.5rem",
                     }}
                   >
                     {clientData?.debtor?.companyName}
@@ -240,6 +248,7 @@ export default function ClientListDetails() {
                       fontWeight: "600",
                       color: Colors.DARK_GRAY,
                       width: "10rem",
+                      marginTop: "0.5rem",
                     }}
                   >
                     Outstanding Debt
@@ -251,6 +260,7 @@ export default function ClientListDetails() {
                       fontWeight: "300",
                       fontSize: "0.9rem",
                       color: Colors.DIM_LIGHT_GRAY,
+                      marginTop: "0.5rem",
                     }}
                   >
                     {clientData?.debtor?.outstandingDebt}
@@ -263,6 +273,7 @@ export default function ClientListDetails() {
                       fontWeight: "600",
                       color: Colors.DARK_GRAY,
                       width: "10rem",
+                      marginTop: "0.5rem",
                     }}
                   >
                     Total Debt
@@ -274,6 +285,7 @@ export default function ClientListDetails() {
                       fontWeight: "300",
                       fontSize: "0.9rem",
                       color: Colors.DIM_LIGHT_GRAY,
+                      marginTop: "0.5rem",
                     }}
                   >
                     {clientData?.debtor?.totalDebt}
@@ -286,10 +298,10 @@ export default function ClientListDetails() {
               container
               item
               xs={12}
-              lg={6}
+              lg={5}
               sx={{ justifyContent: "space-between" }}
             >
-              <Grid container sx={{ justifyContent: "space-around" }}>
+              <Grid container sx={{ justifyContent: "space-evenly" }}>
                 {[
                   {
                     title: "Failed Payments",
@@ -317,27 +329,25 @@ export default function ClientListDetails() {
                     container
                     item
                     xs={12}
-                    lg={5.8}
+                    lg={5}
                     sx={{
                       backgroundColor: Colors?.WHITE,
                       justifyContent: "space-around",
                       alignItems: "center",
                       borderRadius: "10px",
-                      marginBottom: "0.5rem",
+                      marginBottom: "1rem",
                     }}
                   >
-                    <Typography sx={{ width: "12rem" }}>
-                      {item.title}
-                    </Typography>
+                    <Typography sx={{ width: "7rem" }}>{item.title}</Typography>
                     <Typography
                       sx={{
                         color: item.color,
                         fontWeight: "700",
                         fontFamily: "Nunito",
-                        fontSize: "4rem",
+                        fontSize: "3rem",
                       }}
                     >
-                      {item.value}
+                      {String(item.value).padStart(2, "0")}
                     </Typography>
                   </Grid>
                 ))}
