@@ -77,7 +77,6 @@ export const DeleteCustomField = async (id) => {
   }
 };
 
-
 export const VerifyLink = async (token) => {
   try {
     return await axios.post(
@@ -102,7 +101,11 @@ export const UpdateUserPassword = async (payload, token) => {
 
 export const ResetUserPassword = async (payload) => {
   try {
-    return await axios.put(BASE_URL + `/v1/user/resetPassword`, payload, setHeaders());
+    return await axios.put(
+      BASE_URL + `/v1/user/resetPassword`,
+      payload,
+      setHeaders()
+    );
   } catch (error) {
     return error;
   }
@@ -210,7 +213,11 @@ export const GetAllSettings = async () => {
 
 export const SaveSettings = async (payload) => {
   try {
-    return await axios.patch(BASE_URL + "/v1/settings/addSettings", payload, setHeaders());
+    return await axios.patch(
+      BASE_URL + "/v1/settings/addSettings",
+      payload,
+      setHeaders()
+    );
   } catch (error) {
     return error;
   }
@@ -219,13 +226,17 @@ export const SaveSettings = async (payload) => {
 export const EditCustomField = async (payload) => {
   try {
     const modifiedPayload = {
-      "name": payload.name,
-      "type": payload.type,
-      "target": payload.target,
-      "description": payload.description,
-      "shared": payload.shared
-    }
-    return await axios.put(BASE_URL + `/v1/settings/editCustomField/${payload._id}`, modifiedPayload, setHeaders());
+      name: payload.name,
+      type: payload.type,
+      target: payload.target,
+      description: payload.description,
+      shared: payload.shared,
+    };
+    return await axios.put(
+      BASE_URL + `/v1/settings/editCustomField/${payload._id}`,
+      modifiedPayload,
+      setHeaders()
+    );
   } catch (error) {
     return error;
   }
@@ -233,12 +244,15 @@ export const EditCustomField = async (payload) => {
 
 export const CreateCustomField = async (payload) => {
   try {
-    return await axios.post(BASE_URL + `/v1/settings/addCustomField`, payload, setHeaders());
+    return await axios.post(
+      BASE_URL + `/v1/settings/addCustomField`,
+      payload,
+      setHeaders()
+    );
   } catch (error) {
     return error;
   }
 };
-
 
 export const UpdateDebtor = async (id, payload) => {
   try {
@@ -263,12 +277,42 @@ export const UpdateCreditor = async (id, payload) => {
   }
 };
 
-// export const GetHomePayments = async () => {
+export const GetHomePayments = async (count) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/payment/getHomePayments?days=${count}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const AddCustomFieldsByTarget = async (target, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/settings/addCustomFieldByTarget?target=${target}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetCustomFieldsByTarget = async (target) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/settings/getCustomFieldsByTarget?target=${target}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+// export const GetAllSettings = async () => {
 //   try {
-//     return await axios.get(
-//       BASE_URL + "/v1/payment/getHomePayments",
-//       setHeaders()
-//     );
+//     return await axios.get(BASE_URL + "/v1/settings/getSettings", setHeaders());
 //   } catch (error) {
 //     return error;
 //   }

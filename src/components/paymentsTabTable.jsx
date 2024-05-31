@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -17,6 +17,7 @@ import {
   Sync,
 } from "@mui/icons-material";
 import { Colors } from "../config/default";
+import { isEmpty, isEqual } from "lodash";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     color: Colors.BLACK,
@@ -90,7 +91,21 @@ export default function PaymentTabsTable({ data, headerData }) {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+  const [rows, setRows] = useState([]);
 
+  useEffect(() => {
+    const generatedData = data?.map((item, index) => ({
+      name: item?.fullName || "-",
+      dueDate: item?.dueDate || "-",
+      tryDate: item?.tryDate || "-",
+      totalDebt: item?.totalDebt || "-",
+      ssid: item?.SSID || "-",
+      caseOwner: item?.caseOwner || "-",
+    }));
+    if (!isEqual(generatedData, data)) {
+      setRows(generatedData);
+    }
+  }, [data]);
   const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];
@@ -128,76 +143,87 @@ export default function PaymentTabsTable({ data, headerData }) {
               ))}
             </TableRow>
           </TableHead>
-          <TableBody>
-            {(rowsPerPage > 0
-              ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              : data
-            ).map((row, index) => (
-              <StyledTableRow
-                key={row.id}
-                hover
-                onClick={(event) => handleClick(event, row.id)}
-                role="checkbox"
-                aria-checked={isSelected(row.id)}
-                tabIndex={-1}
-                selected={isSelected(row.id)}
-              >
-                {Object.values(row).map((value, i) => (
-                  <StyledTableCell key={i}>{value}</StyledTableCell>
-                ))}
-                <IconsContainer className="icons">
-                  <IconStyle
-                    onClick={() => {
-                      alert("clicked");
-                    }}
-                  >
-                    <LocalPhone />
-                  </IconStyle>
-                  <IconStyle
-                    onClick={() => {
-                      alert("clicked");
-                    }}
-                  >
-                    <Textsms />
-                  </IconStyle>
-                  <IconStyle
-                    onClick={() => {
-                      alert("clicked");
-                    }}
-                  >
-                    <Mail />
-                  </IconStyle>
-                  <IconStyle
-                    onClick={() => {
-                      alert("clicked");
-                    }}
-                  >
-                    <EditCalendar />
-                  </IconStyle>
-                  <IconStyle
-                    onClick={() => {
-                      alert("clicked");
-                    }}
-                  >
-                    <OpenInNew />
-                  </IconStyle>
-                  <IconStyle
-                    onClick={() => {
-                      alert("clicked");
-                    }}
-                  >
-                    <Sync />
-                  </IconStyle>
-                </IconsContainer>
-              </StyledTableRow>
-            ))}
-          </TableBody>
+          {isEmpty(rows) ? (
+            <StyledTableRow>
+              <StyledTableCell colSpan={headerData?.length + 1} align="center">
+                No data available
+              </StyledTableCell>
+            </StyledTableRow>
+          ) : (
+            <TableBody>
+              {(rowsPerPage > 0
+                ? rows.slice(
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
+                : rows
+              ).map((row, index) => (
+                <StyledTableRow
+                  key={row.id}
+                  hover
+                  onClick={(event) => handleClick(event, row.id)}
+                  role="checkbox"
+                  aria-checked={isSelected(row.id)}
+                  tabIndex={-1}
+                  selected={isSelected(row.id)}
+                >
+                  {Object.values(row).map((value, i) => (
+                    <StyledTableCell key={i}>{value}</StyledTableCell>
+                  ))}
+                  <IconsContainer className="icons">
+                    <IconStyle
+                      onClick={() => {
+                        alert("clicked");
+                      }}
+                    >
+                      <LocalPhone />
+                    </IconStyle>
+                    <IconStyle
+                      onClick={() => {
+                        alert("clicked");
+                      }}
+                    >
+                      <Textsms />
+                    </IconStyle>
+                    <IconStyle
+                      onClick={() => {
+                        alert("clicked");
+                      }}
+                    >
+                      <Mail />
+                    </IconStyle>
+                    <IconStyle
+                      onClick={() => {
+                        alert("clicked");
+                      }}
+                    >
+                      <EditCalendar />
+                    </IconStyle>
+                    <IconStyle
+                      onClick={() => {
+                        alert("clicked");
+                      }}
+                    >
+                      <OpenInNew />
+                    </IconStyle>
+                    <IconStyle
+                      onClick={() => {
+                        alert("clicked");
+                      }}
+                    >
+                      <Sync />
+                    </IconStyle>
+                  </IconsContainer>
+                </StyledTableRow>
+              ))}
+            </TableBody>
+          )}
         </Table>
       </TableContainer>
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={data.length}
+        count={rows.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

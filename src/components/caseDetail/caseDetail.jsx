@@ -202,7 +202,7 @@ function CaseDetail() {
                 />
                 <AboutAccordion caseDetails={caseData} />
                 <TaskAccordion />
-                <CustomFieldsAccordion caseData={caseData} />
+                <CustomFieldsAccordion caseData={caseData}  GetCaseDetails={GetCaseDetails}  />
                 <TransactionAccordion
                   loading={isPaymentLoading}
                   paymentDetails={paymentDetails}

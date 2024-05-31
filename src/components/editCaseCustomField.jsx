@@ -4,15 +4,48 @@ import { Close } from "@mui/icons-material";
 import Dropdown from "./dropdown";
 import { Colors } from "../config/default";
 import TextButton from "./button";
+import { useToast } from "../toast/toastContext";
 
-export default function EditCaseCustomField({ handleClose }) {
-  const menuItems = [
-    { label: "Customer", value: "Customer" },
-    { label: "On hold", value: "On hold" },
-    { label: "Canceled", value: "Canceled" },
-    { label: "Declared Bankruptcy", value: "Declared Bankruptcy" },
-  ];
-  const [status, setStatus] = useState("");
+export default function EditCaseCustomField({
+  handleClose,
+  customFieldsData,
+  GetCaseDetails,
+  caseData,
+}) {
+  const { showToast } = useToast();
+  const menuItems =
+    customFieldsData &&
+    customFieldsData?.map((field) => ({
+      label: field?.name,
+      value: field?.name,
+      type: field?.type,
+    }));
+
+  const [fields, setFields] = useState(
+    caseData?.customFields?.map((field) => ({
+      ...field,
+      type:
+        customFieldsData?.find((item) => item?.name === field?.name)?.type ||
+        "text",
+    }))
+  );
+  const handleFieldChange = (index, key, value) => {
+    const updatedFields = [...fields];
+    updatedFields[index][key] = value;
+    if (key === "name") {
+      const selectedField = customFieldsData?.find(
+        (item) => item?.name === value
+      );
+      updatedFields[index].type = selectedField?.type || "text";
+      updatedFields[index].value = "";
+    }
+    setFields(updatedFields);
+  };
+  const isButtonDisabled = fields?.some((field) => !field.name || !field.value);
+  const handleSubmit = async () => {
+    showToast("Integration under progress", "success");
+    handleClose();
+  };
   return (
     <Grid container>
       <Grid
@@ -57,80 +90,86 @@ export default function EditCaseCustomField({ handleClose }) {
           marginTop: "2rem",
         }}
       >
-        <Grid
-          container
-          item
-          xs={10}
-          sx={{
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Grid
-            container
-            item
-            xs={5}
-            sx={{ alignItems: "center", justifyContent: "space-between" }}
-          >
-            <Typography
+        {fields?.map((item, index) => {
+          return (
+            <Grid
+              key={index}
+              container
+              item
+              xs={10}
               sx={{
-                fontFamily: "Nunito",
-                fontWeight: "500",
-                color: Colors.BLACK,
-                fontSize: "1rem",
+                alignItems: "center",
+                justifyContent: "space-between",
+                mt: ".5rem",
               }}
             >
-              Title
-            </Typography>
-            <Dropdown
-              menuItems={menuItems}
-              placeholder="Title"
-              backgroundColor={Colors.BG_LIGHT_GRAY}
-              hoverColor={Colors.BG_LIGHT_GRAY}
-              width="75%"
-              selectedValue={status}
-              setSelectedValue={setStatus}
-            />
-          </Grid>
-          <Grid
-            container
-            item
-            xs={5}
-            sx={{ alignItems: "center", justifyContent: "space-between" }}
-          >
-            <Typography
-              sx={{
-                fontFamily: "Nunito",
-                fontWeight: "500",
-                color: Colors.BLACK,
-                fontSize: "1rem",
-              }}
-            >
-              Value
-            </Typography>
-            <input
-              type="text"
-              placeholder="Input Value"
-              //   value={debtorBusinessDetails?.businessDescription}
-              //   onChange={(e) =>
-              //     handleBusinessDetailsChange(
-              //       "businessDescription",
-              //       e.target.value
-              //     )
-              //   }
-              style={{
-                backgroundColor: Colors.BG_LIGHT_GRAY,
-                height: "2.5rem",
-                color: Colors.DIM_LIGHT_GRAY,
-                paddingLeft: "1rem",
-                border: "none",
-                outline: "none",
-                borderRadius: "5px",
-                width: "75%",
-              }}
-            />
-          </Grid>
-        </Grid>
+              <Grid
+                container
+                item
+                xs={5}
+                sx={{ alignItems: "center", justifyContent: "space-between" }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    color: Colors.BLACK,
+                    fontSize: "1rem",
+                  }}
+                >
+                  Title
+                </Typography>
+                <Dropdown
+                  menuItems={menuItems}
+                  placeholder="Title"
+                  backgroundColor={Colors.BG_LIGHT_GRAY}
+                  hoverColor={Colors.BG_LIGHT_GRAY}
+                  width="75%"
+                  selectedValue={item?.name}
+                  setSelectedValue={(value) =>
+                    handleFieldChange(index, "name", value)
+                  }
+                />
+              </Grid>
+              <Grid
+                container
+                item
+                xs={5}
+                sx={{ alignItems: "center", justifyContent: "space-between" }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    color: Colors.BLACK,
+                    fontSize: "1rem",
+                  }}
+                >
+                  Value
+                </Typography>
+                <input
+                  type={item?.type?.toLowerCase()}
+                  placeholder="Input Value"
+                  value={item?.value}
+                  onChange={(e) =>
+                    handleFieldChange(index, "value", e.target.value)
+                  }
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "75%",
+                  }}
+                />
+              </Grid>
+            </Grid>
+          );
+        })}
+
         <Grid container item xs={10}>
           <Grid
             container
@@ -143,6 +182,8 @@ export default function EditCaseCustomField({ handleClose }) {
             }}
           >
             <TextButton
+              disabled={isButtonDisabled}
+              onClick={handleSubmit}
               buttonText="UPDATE"
               height="2rem"
               width="8rem"
