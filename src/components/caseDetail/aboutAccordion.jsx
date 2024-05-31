@@ -5,11 +5,9 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  IconButton,
   Grid,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import EditIcon from "@mui/icons-material/Edit";
 
 import { Colors } from "../../config/default";
 

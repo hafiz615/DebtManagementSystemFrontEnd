@@ -13,11 +13,9 @@ import {
   Search,
   KeyboardArrowLeft,
   KeyboardArrowRight,
-  ColorLens,
 } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
-import avatar from "../../assets/Ellipse 12.png";
 import MuiModels from "../models";
 
 const SearchContainer = styled("div")(({ theme }) => ({
