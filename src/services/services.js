@@ -240,3 +240,36 @@ export const CreateCustomField = async (payload) => {
 };
 
 
+export const UpdateDebtor = async (id, payload) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/debtor/updateDebtor/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateCreditor = async (id, payload) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/creditor/updateCreditor/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+// export const GetHomePayments = async () => {
+//   try {
+//     return await axios.get(
+//       BASE_URL + "/v1/payment/getHomePayments",
+//       setHeaders()
+//     );
+//   } catch (error) {
+//     return error;
+//   }
+// };

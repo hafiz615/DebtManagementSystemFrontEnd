@@ -16,6 +16,8 @@ import EditCreditorDetail from "./editCreditorDetail";
 import EditDebtorDetails from "./editDebtorDetails";
 import FroalaEditor from "./froalaEditor";
 import CaseModel from "./caseModel";
+import CaseCustomField from "./caseCustomField";
+import EditCaseCustomField from "./editCaseCustomField";
 
 export default function MuiModels({
   buttonName,
@@ -31,6 +33,7 @@ export default function MuiModels({
   height,
   caseData,
   handleModalClose
+  GetCaseDetails,
 }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -112,6 +115,26 @@ export default function MuiModels({
           sx={{ fontSize: "16px", color: Colors.BLACK, cursor: "pointer" }}
           onClick={handleOpen}
         />
+      ) : show === "CaseCustomField" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <AddIcon
+            sx={{ fontSize: "16px", color: Colors.WHITE, cursor: "pointer" }}
+          />
+        </IconButton>
+      ) : show === "EditCaseCustomField" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <EditIcon
+            sx={{ fontSize: "16px", color: Colors.WHITE, cursor: "pointer" }}
+          />
+        </IconButton>
       ) : (
         <>
           <Button onClick={handleOpen}>{buttonName}</Button>
@@ -150,8 +173,17 @@ export default function MuiModels({
             <EditField show={show} handleClose={handleClose} data={data} handleModalClose={handleModalClose} />
           ) : show === "addCustomField" ? (
             <AddCustomField show={show} handleClose={handleClose} handleModalClose={handleModalClose} />
+          ) : show === "CaseCustomField" ? (
+            <CaseCustomField show={show} handleClose={handleClose} />
+          ) : show === "EditCaseCustomField" ? (
+            <EditCaseCustomField show={show} handleClose={handleClose} />
           ) : show === "creditorDetail" ? (
-            <EditCreditorDetail show={show} handleClose={handleClose} />
+            <EditCreditorDetail
+              show={show}
+              handleClose={handleClose}
+              caseData={caseData}
+              GetCaseDetails={GetCaseDetails}
+            />
           ) : show === "addCase" ? (
             <CaseModel
               show={show}
@@ -159,7 +191,12 @@ export default function MuiModels({
               caseData={caseData}
             />
           ) : show === "debtorDetail" ? (
-            <EditDebtorDetails show={show} handleClose={handleClose} />
+            <EditDebtorDetails
+              show={show}
+              handleClose={handleClose}
+              caseData={caseData}
+              GetCaseDetails={GetCaseDetails}
+            />
           ) : show === "froalaEditor" ? (
             <FroalaEditor
               froalaEditor={froalaEditor}
