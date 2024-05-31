@@ -129,7 +129,7 @@ function CaseDetail() {
           </Typography>
 
           {/* remove container  */}
-          <Grid container item sx={{ marginTop: "1.5rem" }}>
+          <Grid item sx={{ marginTop: "1.5rem" }}>
             <Accordion
               sx={{
                 boxShadow: "none",
