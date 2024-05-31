@@ -32,7 +32,7 @@ export default function MuiModels({
   width,
   height,
   caseData,
-  handleModalClose
+  handleModalClose,
   GetCaseDetails,
 }) {
   const [open, setOpen] = React.useState(false);
