@@ -149,6 +149,8 @@ export default function CustomizedTabs({ heading }) {
                 fontWeight: "600",
                 marginLeft: "2.5rem",
                 height: "3.5rem",
+                fontFamily: "Nunito",
+                fontSize: 14,
               }}
             />
           </AntTabs>

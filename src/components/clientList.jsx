@@ -135,12 +135,13 @@ export default function ClientList() {
             borderTopLeftRadius: "10px",
             borderTopRightRadius: "10px",
             fontWeight: "600",
-            fontSize: "0.8rem",
+            fontSize: 14,
             marginLeft: "2.5rem",
             height: "3.5rem",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            fontFamily: "Nunito",
           }}
         >
           Clients List

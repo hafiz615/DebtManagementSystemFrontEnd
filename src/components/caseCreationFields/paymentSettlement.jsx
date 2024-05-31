@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -37,7 +37,10 @@ export default function PaymentSettlement({
     setNewDataList(updatedList);
   };
 
+  const [isInteracted, setIsInteracted] = useState(false);
+
   const handleInputChange = (index, field, value) => {
+    setIsInteracted(true);
     const updatedList = [...newDataList];
     if (field === "timePeriod" && value === "Custom") {
       updatedList[index].frequency = 1;
@@ -45,13 +48,21 @@ export default function PaymentSettlement({
     updatedList[index][field] = value;
     setNewDataList(updatedList);
   };
+
   const handleNumberInput = (e) => {
     const invalidChars = ["e", "E", ".", "+", "-"];
     if (invalidChars.includes(e.key)) {
       e.preventDefault();
     }
   };
-  const today = new Date().toISOString().split("T")[0];
+
+  // const today = new Date().toISOString().split("T")[0];
+
+  // Calculate the first day of the current month
+  const firstDayOfMonth = new Date();
+  firstDayOfMonth.setDate(1);
+  const minDate = firstDayOfMonth.toISOString().split("T")[0];
+
   return (
     <>
       <Typography
@@ -71,7 +82,7 @@ export default function PaymentSettlement({
         }}
       >
         {newDataList?.map((item, index) => (
-          <>
+          <React.Fragment key={index}>
             <Grid
               container
               item
@@ -183,7 +194,8 @@ export default function PaymentSettlement({
                 onChange={(e) =>
                   handleInputChange(index, "startDate", e.target.value)
                 }
-                max={today}
+                min={minDate} // Set min date to the first day of the current month
+                // max={today} // Set max date to today
                 style={{
                   backgroundColor: Colors.BG_LIGHT_GRAY,
                   height: "2.5rem",
@@ -259,7 +271,9 @@ export default function PaymentSettlement({
                 </>
               )}
             </Grid>
+
             {index === newDataList?.length - 1 &&
+              isInteracted &&
               remainingAmount !== totalAmount && (
                 <Typography
                   sx={{ color: "red", marginLeft: "2rem", fontSize: "10px" }}
@@ -267,7 +281,7 @@ export default function PaymentSettlement({
                   Total debt must be equal to remaining amount
                 </Typography>
               )}
-          </>
+          </React.Fragment>
         ))}
       </Grid>
     </>

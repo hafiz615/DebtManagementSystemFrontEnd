@@ -26,3 +26,6 @@ code {
 .MuiDataGrid-columnHeaders {
   font-weight: bold !important;
 }
+::-ms-reveal {
+  display: none;
+}

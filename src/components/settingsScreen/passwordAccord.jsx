@@ -8,7 +8,7 @@ import { Colors } from "../../config/default";
 import { Typography, Grid } from "@mui/material";
 import PasswordField from "./passwordField";
 import TextButton from "../button";
-import {ResetUserPassword} from "../../services/services";
+import { ResetUserPassword } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 
 export default function PasswordAccordion() {
@@ -20,14 +20,17 @@ export default function PasswordAccordion() {
   const [passwordStrengthError, setPasswordStrengthError] = useState("");
 
   const handleResetPassword = async () => {
-    const resetPWD = await ResetUserPassword({currentPassword: currentPassword, newPassword: verifyPassword});
+    const resetPWD = await ResetUserPassword({
+      currentPassword: currentPassword,
+      newPassword: verifyPassword,
+    });
     if (resetPWD?.status === 200) {
       showToast(resetPWD?.data?.message, "success");
     } else {
       const errorMessage = resetPWD?.response?.data?.message;
       showToast(errorMessage, "error");
     }
-  }
+  };
 
   useEffect(() => {
     if (newPassword && verifyPassword && newPassword !== verifyPassword) {
@@ -60,9 +63,11 @@ export default function PasswordAccordion() {
         sx={{
           fontFamily: "Nunito",
           fontWeight: "600",
+          borderTopRightRadius: "1rem",
+          borderTopLeftRadius: "1rem",
           borderBottomLeftRadius: "1rem",
           borderBottomRightRadius: "1rem",
-          borderBottom: "1px solid #6D6D6D",
+          borderBottom: "1px solid #EAEBEB",
         }}
       >
         Password
@@ -94,7 +99,10 @@ export default function PasswordAccordion() {
             >
               Current Password
             </Typography>
-            <PasswordField password={currentPassword} setPassword={setCurrentPassword} />
+            <PasswordField
+              password={currentPassword}
+              setPassword={setCurrentPassword}
+            />
           </Grid>
           <Grid
             container

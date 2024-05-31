@@ -9,10 +9,10 @@ import { Colors } from "../../config/default";
 import ListTableDynamic from "../listTableDynamic";
 import MuiModels from "../models";
 
-export default function CustomFieldsAccordion({customFields, refreshData}) {
+export default function CustomFieldsAccordion({ customFields, refreshData }) {
   const headerData = [
     { key: "name", heading: "Name", width: "15%" },
-    { key: "type", heading: "Type", width: "15%"}
+    { key: "type", heading: "Type", width: "15%" },
   ];
   return (
     <Accordion
@@ -29,9 +29,11 @@ export default function CustomFieldsAccordion({customFields, refreshData}) {
         sx={{
           fontFamily: "Nunito",
           fontWeight: "600",
+          borderTopRightRadius: "1rem",
+          borderTopLeftRadius: "1rem",
           borderBottomLeftRadius: "1rem",
           borderBottomRightRadius: "1rem",
-          borderBottom: "1px solid #6D6D6D",
+          borderBottom: "1px solid #EAEBEB",
         }}
       >
         Custom Fields

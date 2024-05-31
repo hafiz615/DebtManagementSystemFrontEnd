@@ -12,6 +12,7 @@ export default function PreviewDetails({
   CreditorNotes,
   creditorBusinessDetails,
   totalReceivable,
+  paidAmount,
 }) {
   return (
     <Grid
@@ -36,6 +37,7 @@ export default function PreviewDetails({
           CreditorNotes={CreditorNotes}
           creditorBusinessDetails={creditorBusinessDetails}
           totalReceivable={totalReceivable}
+          paidAmount={paidAmount}
         />
       </Grid>
       <Grid item xs={12}>
@@ -50,6 +52,7 @@ export default function PreviewDetails({
           CreditorNotes={CreditorNotes}
           creditorBusinessDetails={creditorBusinessDetails}
           totalReceivable={totalReceivable}
+          paidAmount={paidAmount}
         />
       </Grid>
       <Grid item xs={12} sx={{ marginTop: "0.5rem" }}>
@@ -64,6 +67,7 @@ export default function PreviewDetails({
           CreditorNotes={CreditorNotes}
           creditorBusinessDetails={creditorBusinessDetails}
           totalReceivable={totalReceivable}
+          paidAmount={paidAmount}
         />
       </Grid>
     </Grid>
