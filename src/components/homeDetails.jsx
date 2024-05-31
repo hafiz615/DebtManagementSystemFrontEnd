@@ -1,33 +1,72 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
-import { Grid, Typography } from "@mui/material";
+import { Grid, Typography, CircularProgress } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Colors } from "../config/default";
 import { HomePageDetails } from "../constants/appConstants";
 import AccordionUsage from "./accordion";
 import Dropdown from "./dropdown";
+import { GetHomePayments } from "../services/services";
+import { get_payments } from "../redux/action/action";
 
 function HomeDetails() {
+  const dispatch = useDispatch();
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
+  const [homeData, setHomeData] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const accordionData = [
-    { tableHeading: "Failed Authorizations", paymentNumber: "5" },
-    { tableHeading: "Failed Payments", paymentNumber: "5" },
-    { tableHeading: "Successful Authorizations", paymentNumber: "4" },
-    { tableHeading: "Successful Payments", paymentNumber: "4" },
-    { tableHeading: "Upcoming Payments", paymentNumber: "4" },
+    {
+      tableHeading: "Failed Authorizations",
+      paymentNumber: "5",
+      rowData: homeData?.failedAuthorizations,
+    },
+    {
+      tableHeading: "Failed Payments",
+      paymentNumber: "5",
+      rowData: homeData?.failedPayments,
+    },
+    {
+      tableHeading: "Successful Authorizations",
+      paymentNumber: "4",
+      rowData: homeData?.successAuthorizations,
+    },
+    {
+      tableHeading: "Successful Payments",
+      paymentNumber: "4",
+      rowData: homeData?.successPayments,
+    },
+    {
+      tableHeading: "Upcoming Payments",
+      paymentNumber: "4",
+      rowData: homeData?.upcomingPayments,
+    },
   ];
   const menuItems = [
+    { label: "3", value: 3 },
     { label: "5", value: 5 },
     { label: "7", value: 7 },
   ];
-  const [selectedValue, setSelectedValue] = useState("3");
-
+  const [selectedValue, setSelectedValue] = useState(3);
   const { AUTHORITY_TEXT, HOME_HEADING, VIEW_DAYS, DAYS_TEXT } =
     HomePageDetails;
+  const getHomeData = async () => {
+    if (selectedValue) {
+      setLoading(true);
+      const result = await GetHomePayments(selectedValue);
+      if (result?.status === 200) {
+        setHomeData(result?.data?.data);
+        dispatch(get_payments(result?.data?.data));
+      }
+    }
+    setLoading(false);
+  };
+  useEffect(() => {
+    getHomeData();
+  }, [selectedValue]);
   return (
     <Grid
       container
@@ -114,15 +153,37 @@ function HomeDetails() {
         }}
         spacing={smallScreen ? 0 : 2}
       >
-        {accordionData?.map((data, index) => (
-          <Grid item xs={12} lg={6} key={index} sx={{ marginBottom: "0.5rem" }}>
-            <AccordionUsage
-              tableHeading={data?.tableHeading}
-              paymentNumber={data?.paymentNumber}
-              index={index}
-            />
+        {loading ? (
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "50vh",
+            }}
+          >
+            <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
           </Grid>
-        ))}
+        ) : (
+          accordionData?.map((data, index) => (
+            <Grid
+              item
+              xs={12}
+              lg={6}
+              key={index}
+              sx={{ marginBottom: "0.5rem" }}
+            >
+              <AccordionUsage
+                tableHeading={data?.tableHeading}
+                paymentNumber={data?.paymentNumber}
+                index={index}
+                rowArray={data?.rowData}
+              />
+            </Grid>
+          ))
+        )}
       </Grid>
     </Grid>
   );

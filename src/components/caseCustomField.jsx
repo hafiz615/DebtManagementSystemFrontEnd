@@ -4,15 +4,48 @@ import { Close } from "@mui/icons-material";
 import Dropdown from "./dropdown";
 import { Colors } from "../config/default";
 import TextButton from "./button";
+import { AddCustomFieldsByTarget } from "../services/services";
+import { useToast } from "../toast/toastContext";
 
-export default function CaseCustomField({ handleClose }) {
-  const menuItems = [
-    { label: "Customer", value: "Customer" },
-    { label: "On hold", value: "On hold" },
-    { label: "Canceled", value: "Canceled" },
-    { label: "Declared Bankruptcy", value: "Declared Bankruptcy" },
-  ];
-  const [status, setStatus] = useState("");
+export default function CaseCustomField({
+  handleClose,
+  customFieldsData,
+  GetCaseDetails,
+}) {
+  const { showToast } = useToast();
+  const menuItems =
+    customFieldsData &&
+    customFieldsData?.map((field) => ({
+      label: field?.name,
+      value: field?.name,
+      type: field?.type,
+    }));
+  const [selectedField, setSelectedField] = useState(menuItems[0]);
+  const [loading, setLoading] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const handleSubmit = async () => {
+    setLoading(true);
+    const params = {
+      name: selectedField?.value,
+      value: inputValue,
+    };
+    const addFields = await AddCustomFieldsByTarget("case", params);
+    if (addFields?.status === 200) {
+      showToast(addFields?.data?.message, "success");
+      GetCaseDetails();
+      handleClose();
+    } else {
+      showToast(
+        addFields?.response?.data?.message || addFields?.data?.message,
+        "error"
+      );
+    }
+    setLoading(false);
+  };
+  const handleDropdownChange = (value) => {
+    const selected = menuItems.find((item) => item.value === value);
+    setSelectedField(selected);
+  };
   return (
     <Grid container>
       <Grid
@@ -88,8 +121,8 @@ export default function CaseCustomField({ handleClose }) {
               backgroundColor={Colors.BG_LIGHT_GRAY}
               hoverColor={Colors.BG_LIGHT_GRAY}
               width="75%"
-              selectedValue={status}
-              setSelectedValue={setStatus}
+              selectedValue={selectedField?.value}
+              setSelectedValue={handleDropdownChange}
             />
           </Grid>
           <Grid
@@ -109,15 +142,10 @@ export default function CaseCustomField({ handleClose }) {
               Value
             </Typography>
             <input
-              type="text"
+              type={selectedField?.type?.toLowerCase()}
               placeholder="Input Value"
-              //   value={debtorBusinessDetails?.businessDescription}
-              //   onChange={(e) =>
-              //     handleBusinessDetailsChange(
-              //       "businessDescription",
-              //       e.target.value
-              //     )
-              //   }
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
               style={{
                 backgroundColor: Colors.BG_LIGHT_GRAY,
                 height: "2.5rem",
@@ -143,11 +171,14 @@ export default function CaseCustomField({ handleClose }) {
             }}
           >
             <TextButton
+              disabled={selectedField?.value === "" || inputValue === ""}
               buttonText="SAVE"
               height="2rem"
               width="8rem"
               backgroundColor={Colors.SKY_BLUE}
               hoverColor={Colors.SKY_BLUE}
+              onClick={handleSubmit}
+              loading={loading}
             />
           </Grid>
         </Grid>

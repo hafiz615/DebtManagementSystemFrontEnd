@@ -15,6 +15,7 @@ import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import { Colors } from "../config/default";
 import MuiModels from "./models";
+import { isEmpty } from "lodash";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -123,88 +124,101 @@ export default function ListTable({
                 )}
               </TableRow>
             </TableHead>
-            <TableBody>
-              {(rowsPerPage > 0
-                ? data?.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )
-                : data
-              )?.map((row) => (
-                <StyledTableRow
-                  key={row?.id}
-                  onClick={() => (onRowClick ? onRowClick(row?.id) : undefined)}
+            {isEmpty(data) ? (
+              <StyledTableRow>
+                <StyledTableCell
+                  colSpan={headerData?.length + 1}
+                  align="center"
                 >
-                  {Object?.entries(row)
-                    ?.filter(([key]) => key !== "id") // Filter out the id field
-                    ?.map(([key, value], i) => (
-                      <StyledTableCell key={i}>{value}</StyledTableCell>
-                    ))}
-                  {requiredIcons && (
-                    <StyledTableCell
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <CreateIcon
+                  No data available
+                </StyledTableCell>
+              </StyledTableRow>
+            ) : (
+              <TableBody>
+                {(rowsPerPage > 0
+                  ? data?.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
+                  : data
+                )?.map((row) => (
+                  <StyledTableRow
+                    key={row?.id}
+                    onClick={() =>
+                      onRowClick ? onRowClick(row?.id) : undefined
+                    }
+                  >
+                    {Object?.entries(row)
+                      ?.filter(([key]) => key !== "id") // Filter out the id field
+                      ?.map(([key, value], i) => (
+                        <StyledTableCell key={i}>{value}</StyledTableCell>
+                      ))}
+                    {requiredIcons && (
+                      <StyledTableCell
                         sx={{
-                          color: Colors.DARK_GRAY,
-                          cursor: "pointer",
-                          fontSize: "20px",
+                          display: "flex",
+                          alignItems: "center",
                         }}
-                      />
+                      >
+                        <CreateIcon
+                          sx={{
+                            color: Colors.DARK_GRAY,
+                            cursor: "pointer",
+                            fontSize: "20px",
+                          }}
+                        />
 
-                      <CloseIcon
+                        <CloseIcon
+                          sx={{
+                            color: Colors.ORANGE_COLOR,
+                            cursor: "pointer",
+                            fontSize: "20px",
+                            marginLeft: "0.5rem",
+                          }}
+                        />
+                        <VisibilityIcon
+                          sx={{
+                            color: Colors.DARK_GRAY,
+                            cursor: "pointer",
+                            fontSize: "20px",
+                            marginLeft: "0.5rem",
+                          }}
+                        />
+                      </StyledTableCell>
+                    )}
+                    {requiredCustomFieldIcons && (
+                      <StyledTableCell
                         sx={{
-                          color: Colors.ORANGE_COLOR,
-                          cursor: "pointer",
-                          fontSize: "20px",
-                          marginLeft: "0.5rem",
+                          display: "flex",
+                          alignItems: "center",
+                          height: "3rem",
                         }}
-                      />
-                      <VisibilityIcon
-                        sx={{
-                          color: Colors.DARK_GRAY,
-                          cursor: "pointer",
-                          fontSize: "20px",
-                          marginLeft: "0.5rem",
-                        }}
-                      />
-                    </StyledTableCell>
-                  )}
-                  {requiredCustomFieldIcons && (
-                    <StyledTableCell
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        height: "3rem",
-                      }}
-                    >
-                      <MuiModels show="editField" />
+                      >
+                        <MuiModels show="editField" />
 
-                      <DeleteForeverOutlinedIcon
-                        sx={{
-                          color: Colors.DARK_GRAY,
-                          cursor: "pointer",
-                          fontSize: "20px",
-                          marginLeft: "0.5rem",
-                        }}
-                      />
+                        <DeleteForeverOutlinedIcon
+                          sx={{
+                            color: Colors.DARK_GRAY,
+                            cursor: "pointer",
+                            fontSize: "20px",
+                            marginLeft: "0.5rem",
+                          }}
+                        />
 
-                      <MoreHorizOutlinedIcon
-                        sx={{
-                          color: Colors.DARK_GRAY,
-                          cursor: "pointer",
-                          fontSize: "20px",
-                          marginLeft: "0.5rem",
-                        }}
-                      />
-                    </StyledTableCell>
-                  )}
-                </StyledTableRow>
-              ))}
-            </TableBody>
+                        <MoreHorizOutlinedIcon
+                          sx={{
+                            color: Colors.DARK_GRAY,
+                            cursor: "pointer",
+                            fontSize: "20px",
+                            marginLeft: "0.5rem",
+                          }}
+                        />
+                      </StyledTableCell>
+                    )}
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            )}
           </Table>
         </TableContainer>
         <TablePagination
