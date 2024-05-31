@@ -498,7 +498,6 @@ export default function BasicCard({
               }}
             >
               {newDataList?.map((item, index) => {
-                console.log(item);
                 return (
                   <Grid container item>
                     <Grid container item xs={12} lg={3}>
