@@ -34,6 +34,7 @@ export default function CustomFieldsAccordion({ customFields, refreshData }) {
           borderBottomLeftRadius: "1rem",
           borderBottomRightRadius: "1rem",
           borderBottom: "1px solid #EAEBEB",
+          marginLeft: "0.5rem",
         }}
       >
         Custom Fields

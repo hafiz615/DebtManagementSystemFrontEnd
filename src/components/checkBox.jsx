@@ -9,11 +9,13 @@ export default function Checkboxes({ checked, handleCheckChange, fontSize }) {
     <div>
       <Checkbox
         {...label}
+        size="small"
         checked={checked}
         onChange={handleCheckChange}
         sx={{
           "& .MuiSvgIcon-root": { fontSize: fontSize },
-          color: Colors.DARK_GRAY,
+          color: Colors.DIM_LIGHT_GRAY,
+
           "&.Mui-checked": {
             color: Colors.SKY_BLUE, // Change this to the color you want for checked state
           },

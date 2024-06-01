@@ -35,6 +35,7 @@ export default function MuiModels({
   handleModalClose,
   GetCaseDetails,
   customFieldsData,
+  templateType,
 }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -87,6 +88,7 @@ export default function MuiModels({
           }}
           startIcon={<AddIcon />}
           buttonText="New Custom Field"
+          backgroundColor={Colors.SKY_BLUE}
         />
       ) : show === "editField" ? (
         <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -141,23 +143,25 @@ export default function MuiModels({
             sx={{ fontSize: "16px", color: Colors.WHITE, cursor: "pointer" }}
           />
         </IconButton>
+      ) : show === "froalaEditor" ? (
+        <Button
+          onClick={handleOpen}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            border: `2px solid ${Colors.SKY_BLUE}`,
+            height: "2rem",
+            borderRadius: "10px",
+            color: Colors.SKY_BLUE,
+            fontWeight: "600",
+            marginRight: ".5rem",
+          }}
+        >
+          <AddIcon sx={{ fontSize: ".9rem" }} />
+          {froalaEditorButton}
+        </Button>
       ) : (
-        <>
-          <Button onClick={handleOpen}>{buttonName}</Button>
-          <Button
-            onClick={handleOpen}
-            sx={{
-              border: `2px solid ${Colors.SKY_BLUE}`,
-              height: "2rem",
-              borderRadius: "10px",
-              color: Colors.SKY_BLUE,
-              fontWeight: "600",
-            }}
-          >
-            <AddIcon />
-            {froalaEditorButton}
-          </Button>
-        </>
+        <Button onClick={handleOpen}>{buttonName}</Button>
       )}
       <Modal
         open={open}
@@ -227,6 +231,7 @@ export default function MuiModels({
             <FroalaEditor
               froalaEditor={froalaEditor}
               setFroalaEditor={setFroalaEditor}
+              templateType={templateType}
             />
           ) : (
             ""

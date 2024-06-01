@@ -150,7 +150,8 @@ export default function SettingsAccordion({
           expandIcon={<ExpandMoreIcon />}
           sx={{
             fontFamily: "Nunito",
-            fontWeight: "600",
+            fontWeight: "700",
+            marginLeft: "0.5rem",
             borderTopRightRadius: "1rem",
             borderTopLeftRadius: "1rem",
             borderBottomLeftRadius: "1rem",
@@ -178,7 +179,7 @@ export default function SettingsAccordion({
                   width: "35%",
                 }}
               >
-                <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
+                <Typography sx={{ fontFamily: "Nunito", fontWeight: "700" }}>
                   Notifications
                 </Typography>
               </Box>
@@ -190,7 +191,7 @@ export default function SettingsAccordion({
                   width: "7.5%",
                 }}
               >
-                <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
+                <Typography sx={{ fontFamily: "Nunito", fontWeight: "700" }}>
                   Email
                 </Typography>
               </Box>
@@ -202,7 +203,7 @@ export default function SettingsAccordion({
                   width: "7.5%",
                 }}
               >
-                <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
+                <Typography sx={{ fontFamily: "Nunito", fontWeight: "700" }}>
                   SMS
                 </Typography>
               </Box>
@@ -217,7 +218,7 @@ export default function SettingsAccordion({
                 <Typography
                   sx={{
                     fontFamily: "Nunito",
-                    fontWeight: "600",
+                    fontWeight: "700",
                   }}
                 >
                   Template
@@ -226,7 +227,7 @@ export default function SettingsAccordion({
             </Grid>
 
             <Grid item xs={12} lg={5}>
-              <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
+              <Typography sx={{ fontFamily: "Nunito", fontWeight: "700" }}>
                 Send To
               </Typography>
             </Grid>
@@ -320,6 +321,7 @@ export default function SettingsAccordion({
                 backgroundColor={Colors.BG_LIGHT_GRAY}
                 hoverColor={Colors.BG_LIGHT_GRAY}
                 width="15%"
+                height="2.5rem"
                 selectedValue={retryInterval.failedAuthorization.unit}
                 setSelectedValue={setRetryAuthIntervalUnit}
               />
@@ -395,6 +397,7 @@ export default function SettingsAccordion({
                 backgroundColor={Colors.BG_LIGHT_GRAY}
                 hoverColor={Colors.BG_LIGHT_GRAY}
                 width="15%"
+                height="2.5rem"
                 selectedValue={retryInterval.failedPayment.unit}
                 setSelectedValue={setRetryPaymentIntervalUnit}
               />
