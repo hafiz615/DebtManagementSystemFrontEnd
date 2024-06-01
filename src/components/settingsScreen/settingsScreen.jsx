@@ -45,6 +45,7 @@ export default function SettingsScreen() {
     "sms": []
   })
   const [customFields, setCustomFields] = useState([])
+  const [templates, setTemplates] = useState({});
 
   const getSettings = async () => {
     const allSettings = await GetAllSettings();
@@ -57,6 +58,14 @@ export default function SettingsScreen() {
     setAuthorizationInterval(allSettings.data.data.paymentsAuthorizations.authorizationInterval)
     setNotificationTemplates(allSettings.data.data.notificationTemplates)
     setCustomFields(allSettings.data.data.customFields)
+    const result = {};
+
+    for (const [key, value] of Object.entries(notificationTemplates)) {
+      result[key] = value.map((template) => {
+        return { label: template.templateId, value: template.templateId };
+      });
+    }
+    setTemplates(result)
   };
 
   useEffect(() => {
@@ -113,6 +122,7 @@ export default function SettingsScreen() {
           retryInterval={retryInterval}
           authorizationInterval={authorizationInterval}
           notificationTemplates={notificationTemplates}
+          templates={templates}
           {...{setfailedAuthorizations, setSuccessfulAuthorizations, setFailedPayments, setSuccessPayments, setUpcomingPayments, setRetryInterval, setAuthorizationInterval}}
         />
         <NotificationTemplatesTabs notificationTemplates={notificationTemplates} />
