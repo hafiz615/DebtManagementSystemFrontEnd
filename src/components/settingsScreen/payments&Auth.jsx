@@ -22,6 +22,7 @@ export default function SettingsAccordion({
   retryInterval,
   authorizationInterval,
   notificationTemplates,
+  templates,
   setfailedAuthorizations,
   setSuccessfulAuthorizations,
   setFailedPayments,
@@ -43,7 +44,6 @@ export default function SettingsAccordion({
   const [retryPaymentIntervalUnit, setRetryPaymentIntervalUnit] = useState(
     retryInterval.failedPayment.unit
   );
-  const [templates, setTemplates] = useState({});
 
   const saveAuthsPaymentsConfig = async () => {
     const settings = {
@@ -110,17 +110,6 @@ export default function SettingsAccordion({
       },
     }));
   };
-
-  React.useEffect(() => {
-    const result = {};
-
-    for (const [key, value] of Object.entries(notificationTemplates)) {
-      result[key] = value.map((template) => {
-        return { label: template.templateId, value: template.templateId };
-      });
-    }
-    setTemplates(result);
-  }, [notificationTemplates]);
 
   React.useEffect(() => {
     setRetryInterval((prevData) => ({
