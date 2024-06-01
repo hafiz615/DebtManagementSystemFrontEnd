@@ -33,7 +33,7 @@ export default function FroalaEditor({
         content: froalaEditor,
       };
     }
-    console.log(templateData);
+    // console.log(templateData);
     // Save the template data, maybe in a state variable or send it to a backend API
     // Update your state or send the data to the backend for storage
   };
