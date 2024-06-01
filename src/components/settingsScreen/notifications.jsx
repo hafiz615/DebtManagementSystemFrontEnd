@@ -106,7 +106,9 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
             aria-label="ant example"
             variant="scrollable"
             scrollButtons="auto"
-            sx={{ width: { xs: "22rem", md: "50rem" } }}
+            sx={{
+              width: { xs: "22rem", md: "max-content" },
+            }}
           >
             <AntTab
               sx={{
