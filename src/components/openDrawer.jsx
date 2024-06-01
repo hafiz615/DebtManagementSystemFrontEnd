@@ -102,6 +102,9 @@ export default function PersistentDrawerLeft({ children }) {
         case "Analytics":
           navigate("/analytics");
           break;
+        case "bulk-cases":
+          navigate("/bulk-cases");
+          break;
         default:
           break;
       }
