@@ -69,7 +69,7 @@ export default function ListTableDynamic({
   onRowClick,
   requiredIcons,
   requiredCustomFieldIcons,
-  handleModalClose
+  handleModalClose,
 }) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -113,7 +113,10 @@ export default function ListTableDynamic({
                   </StyledTableCell>
                 ))}
                 {(requiredIcons || requiredCustomFieldIcons) && (
-                  <StyledTableCell align="left" sx={{ fontWeight: "700", width: "10%" }}>
+                  <StyledTableCell
+                    align="left"
+                    sx={{ fontWeight: "700", width: "10%" }}
+                  >
                     Actions
                   </StyledTableCell>
                 )}
@@ -129,7 +132,11 @@ export default function ListTableDynamic({
               )?.map((row) => (
                 <StyledTableRow
                   key={row?.id}
-                  onClick={() => (onRowClick ? onRowClick(row?.id) : undefined)}
+                  onClick={() =>
+                    onRowClick
+                      ? onRowClick(row?.templateId, row?.html || row?.text)
+                      : undefined
+                  }
                 >
                   {headerData?.map(({ key, width }, i) => (
                     <StyledTableCell key={i} sx={{ width }}>
@@ -176,7 +183,11 @@ export default function ListTableDynamic({
                         height: "3rem",
                       }}
                     >
-                      <MuiModels show="editField" data={row} handleModalClose={handleModalClose} />
+                      <MuiModels
+                        show="editField"
+                        data={row}
+                        handleModalClose={handleModalClose}
+                      />
                       <Prompt
                         deleting="Custom Field"
                         heading="Delete Custom Field"
@@ -184,7 +195,7 @@ export default function ListTableDynamic({
                         id={row?._id}
                         handleModalClose={handleModalClose}
                       />
-                     
+
                       <MoreHorizOutlinedIcon
                         sx={{
                           color: Colors.DARK_GRAY,

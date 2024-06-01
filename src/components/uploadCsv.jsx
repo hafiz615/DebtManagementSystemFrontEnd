@@ -62,7 +62,9 @@ export default function UploadCsv({ handleModalClose }) {
 
   const handleUpload = () => {
     if (data) {
+      localStorage.setItem("route", "bulk-cases");
       navigate("/bulk-cases");
+
       handleModalClose();
     } else {
       showToast("Please upload a CSV file first.", "error");

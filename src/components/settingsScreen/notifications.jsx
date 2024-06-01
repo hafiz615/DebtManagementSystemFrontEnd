@@ -51,6 +51,10 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
   };
   const [value, setValue] = useState(TABS.EMAIL);
   const [froalaEditor, setFroalaEditor] = useState("");
+  const [htmlData, setHtmlData] = useState(null);
+  const [emailTemplateId, setEmailTemplateId] = useState("");
+  const [textData, setTextData] = useState(null);
+  const [smsTemplateId, setSmsTemplateId] = useState("");
   const headerData = [
     { key: "templateId", heading: "Template ID", width: "10%" },
     { key: "name", heading: "Name", width: "15%" },
@@ -60,8 +64,14 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  const renderTemplate = (id) => {};
-
+  const renderEmailTemplate = (id, data) => {
+    setHtmlData(data);
+    setEmailTemplateId(id);
+  };
+  const renderSmsTemplate = (id, data) => {
+    setTextData(data);
+    setSmsTemplateId(id);
+  };
   return (
     <Accordion
       sx={{
@@ -83,6 +93,7 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
           borderBottomLeftRadius: "1rem",
           borderBottomRightRadius: "1rem",
           borderBottom: "1px solid #EAEBEB",
+          marginLeft: "0.5rem",
         }}
       >
         Notification Templates
@@ -95,7 +106,9 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
             aria-label="ant example"
             variant="scrollable"
             scrollButtons="auto"
-            sx={{ width: { xs: "22rem", md: "50rem" } }}
+            sx={{
+              width: { xs: "22rem", md: "max-content" },
+            }}
           >
             <AntTab
               sx={{
@@ -151,6 +164,7 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
                     froalaEditorButton="Add New"
                     froalaEditor={froalaEditor}
                     setFroalaEditor={setFroalaEditor}
+                    templateType="email"
                   />
                   <Grid
                     item
@@ -168,7 +182,7 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
                       headerData={headerData}
                       data={notificationTemplates.email}
                       requiredIcons={true}
-                      onRowClick={renderTemplate}
+                      onRowClick={renderEmailTemplate}
                       show="email_template"
                     />
                   </Grid>
@@ -177,7 +191,7 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
                   container
                   item
                   xs={12}
-                  lg={5.8}
+                  lg={6}
                   sx={{
                     display: "flex",
                     justifyContent: "space-between",
@@ -185,11 +199,10 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
                 >
                   <Box
                     sx={{
-                      backgroundColor: Colors.BG_LIGHT_GRAY,
-                      padding: "1rem",
-                      borderRadius: "10px",
+                      backgroundColor: "#E5E5E5",
+                      padding: ".5rem",
                       marginTop: "3rem",
-                      height: "55vh",
+                      // height: "6vh",
                       width: "100%",
                       overflowY: "auto",
                       "&::-webkit-scrollbar": {
@@ -205,7 +218,37 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
                       },
                     }}
                   >
-                    <div dangerouslySetInnerHTML={{ __html: froalaEditor }} />
+                    <div
+                      style={{
+                        backgroundColor: Colors.WHITE,
+                        borderRadius: "10px",
+                        width: "100%",
+                        height: "100%",
+                        padding: "1rem",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontWeight: "600",
+                          fontSize: "1rem",
+                          marginBottom: "1rem",
+                        }}
+                      >
+                        Template Preview
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontWeight: "600",
+                          fontSize: ".9rem",
+                          marginBottom: "1.5rem",
+                        }}
+                      >
+                        {emailTemplateId}
+                      </Typography>
+                      <div dangerouslySetInnerHTML={{ __html: htmlData }} />
+                    </div>
                   </Box>
                 </Grid>
               </Grid>
@@ -234,6 +277,7 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
                     froalaEditorButton="Add New"
                     froalaEditor={froalaEditor}
                     setFroalaEditor={setFroalaEditor}
+                    templateType="sms"
                   />
                   <Grid
                     item
@@ -251,7 +295,7 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
                       headerData={headerData}
                       data={notificationTemplates.sms}
                       requiredIcons={true}
-                      onRowClick={renderTemplate}
+                      onRowClick={renderSmsTemplate}
                       show="sms_template"
                     />
                   </Grid>
@@ -260,7 +304,7 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
                   container
                   item
                   xs={12}
-                  lg={5.8}
+                  lg={6}
                   sx={{
                     display: "flex",
                     justifyContent: "space-between",
@@ -268,9 +312,8 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
                 >
                   <Box
                     sx={{
-                      backgroundColor: Colors.BG_LIGHT_GRAY,
-                      padding: "1rem",
-                      borderRadius: "10px",
+                      backgroundColor: "#E5E5E5",
+                      padding: ".5rem",
                       marginTop: "3rem",
                       height: "55vh",
                       width: "100%",
@@ -288,7 +331,37 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
                       },
                     }}
                   >
-                    <div dangerouslySetInnerHTML={{ __html: froalaEditor }} />
+                    <div
+                      style={{
+                        backgroundColor: Colors.WHITE,
+                        borderRadius: "10px",
+                        width: "100%",
+                        height: "100%",
+                        padding: "1rem",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontWeight: "600",
+                          fontSize: "1rem",
+                          marginBottom: "1rem",
+                        }}
+                      >
+                        Template Preview
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontWeight: "600",
+                          fontSize: ".9rem",
+                          marginBottom: "1.5rem",
+                        }}
+                      >
+                        {smsTemplateId}
+                      </Typography>
+                      <div dangerouslySetInnerHTML={{ __html: textData }} />
+                    </div>
                   </Box>
                 </Grid>
               </Grid>
