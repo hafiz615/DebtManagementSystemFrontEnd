@@ -33,6 +33,7 @@ export default function FroalaEditor({
         content: froalaEditor,
       };
     }
+    console.log(templateData);
     // Save the template data, maybe in a state variable or send it to a backend API
     // Update your state or send the data to the backend for storage
   };
@@ -46,7 +47,7 @@ export default function FroalaEditor({
               fontFamily: "Nunito",
               fontWeight: "600",
               color: Colors.DARK_GRAY,
-              paddingLeft: "1.5rem",
+              // paddingLeft: "1.5rem",
               width: "20%",
             }}
           >
@@ -62,7 +63,7 @@ export default function FroalaEditor({
               outline: "none",
               borderRadius: "5px",
               width: "50%",
-              marginLeft: "1rem",
+              // marginLeft: "1rem",
               marginRight: "1rem",
               marginBottom: "1rem",
             }}
