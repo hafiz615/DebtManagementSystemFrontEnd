@@ -24,6 +24,11 @@ export default function BasicCard({
   totalReceivable,
   paidAmount,
 }) {
+  function formatDate(dateString) {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", options);
+  }
   return (
     <Card
       sx={{
@@ -589,7 +594,7 @@ export default function BasicCard({
                           color: Colors.DARK_GRAY,
                         }}
                       >
-                        {item?.startDate}
+                        {formatDate(item?.startDate)}
                       </Typography>
                     </Grid>
                   </Grid>

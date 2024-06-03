@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { Grid } from "@mui/material";
 import Stepper from "@mui/material/Stepper";
@@ -29,6 +30,7 @@ const steps = ["Debtor", "Creditor", "Payment", "File upload", "Preview"];
 
 export default function HorizontalLinearStepper({ hide, caseData }) {
   const { showToast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
@@ -571,6 +573,10 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   const handleReset = () => {
     setActiveStep(0);
   };
+  const resetAll = () => {
+    localStorage.setItem("route", "home");
+    navigate("/home");
+  };
 
   return (
     <Grid
@@ -635,7 +641,13 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           <Stepper
             activeStep={activeStep}
             alternativeLabel
-            sx={{ width: { xs: "100%", md: "50%" } }}
+            sx={{
+              width: {
+                xs: "100%",
+                md: "50%",
+                color: Colors.SKY_BLUE,
+              },
+            }}
           >
             {steps.map((label, index) => {
               const stepProps = {};
@@ -771,6 +783,16 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               <TextButton
                 buttonText="RESET"
                 onClick={handleReset}
+                backgroundColor={Colors.DARK_GRAY}
+                hoverColor={Colors.DARK_GRAY}
+                paddingLeft="2rem"
+                paddingRight="2rem"
+                height="2rem"
+                marginRight="1rem"
+              />
+              <TextButton
+                buttonText="RESET ALL"
+                onClick={resetAll}
                 backgroundColor={Colors.DARK_GRAY}
                 hoverColor={Colors.DARK_GRAY}
                 paddingLeft="2rem"
