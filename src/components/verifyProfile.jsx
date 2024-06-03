@@ -187,10 +187,11 @@ export default function VerifyProfile() {
       <Button
         disabled={isButtonDisabled}
         loading={loading}
-        buttonText="Save"
+        buttonText="SAVE"
         onClick={handleFormSubmit}
         marginTop="2rem"
         height="3rem"
+        loginFont="600"
       />
     </Grid>
   );

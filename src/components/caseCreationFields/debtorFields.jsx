@@ -149,14 +149,14 @@ export default function DebtorFields({
   const handleCheckChange = (event) => {
     setChecked(event.target.checked);
     if (event.target.checked) {
-      setDebtorOwnDetails((prevDetails) => ({
+      setDebtorBusinessDetails((prevDetails) => ({
         ...prevDetails,
-        BasicCountry: debtorBusinessDetails?.businessCountry,
-        BasicState: debtorBusinessDetails?.businessState,
-        BasicCity: debtorBusinessDetails?.businessCity,
-        BasicZipCode: debtorBusinessDetails?.businessZipCode,
-        BasicPhoneNumber: debtorBusinessDetails?.businessPhoneNumber,
-        BasicAddress: debtorBusinessDetails?.businessAddress,
+        businessCountry: debtorOwnDetails?.BasicCountry,
+        businessState: debtorOwnDetails?.BasicState,
+        businessCity: debtorOwnDetails?.BasicCity,
+        businessZipCode: debtorOwnDetails?.BasicZipCode,
+        businessPhoneNumber: debtorOwnDetails?.BasicPhoneNumber,
+        businessAddress: debtorOwnDetails?.BasicAddress,
       }));
     }
   };
@@ -394,7 +394,7 @@ export default function DebtorFields({
                 color: Colors.DARK_GRAY,
               }}
             >
-              Same as business
+              Same for business
             </Typography>
           </Grid>
         </Grid>

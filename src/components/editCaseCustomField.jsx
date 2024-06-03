@@ -5,6 +5,7 @@ import Dropdown from "./dropdown";
 import { Colors } from "../config/default";
 import TextButton from "./button";
 import { useToast } from "../toast/toastContext";
+import { EditCustomFieldsByTarget } from "../services/services";
 
 export default function EditCaseCustomField({
   handleClose,
@@ -43,7 +44,22 @@ export default function EditCaseCustomField({
   };
   const isButtonDisabled = fields?.some((field) => !field.name || !field.value);
   const handleSubmit = async () => {
-    showToast("Integration under progress", "success");
+    const params = {
+      customFields: fields.map((field) => ({
+        name: field.name,
+        value: field.value,
+      })),
+    };
+    const editCustomField = await EditCustomFieldsByTarget("case", params);
+    if (editCustomField?.status === 200) {
+      showToast(editCustomField?.data?.message, "success");
+    } else {
+      showToast(
+        editCustomField?.response?.data?.message ||
+          editCustomField?.data?.message,
+        "error"
+      );
+    }
     handleClose();
   };
   return (

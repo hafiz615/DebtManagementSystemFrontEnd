@@ -16,8 +16,16 @@ export default function AboutAccordion({ caseDetails }) {
     { name: "Case Code", value: caseDetails?.caseCode || "-" },
     { name: "Status", value: caseDetails?.status || "-" },
     { name: "Case Owner", value: caseDetails?.caseOwner || "-" },
-    // { name: "Negotiator", value: "5" },
-    // { name: "Manager", value: "6" },
+    {
+      name: "Debtor",
+      value: caseDetails?.debtor?.basicInformation?.fullName || "-",
+    },
+    {
+      name: "Creditor",
+      value: caseDetails?.creditor?.basicInformation?.fullName || "-",
+    },
+    { name: "Negotiator", value: "" || "-" },
+    { name: "Manager", value: "" || "-" },
     { name: "Total Debt", value: caseDetails?.totalDebt || "-" },
     { name: "Remaining Debt", value: caseDetails?.remaining || "-" },
     { name: "Paid Debt", value: caseDetails?.paidAmount || "-" },

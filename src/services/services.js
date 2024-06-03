@@ -299,6 +299,17 @@ export const AddCustomFieldsByTarget = async (target, payload) => {
     return error;
   }
 };
+export const EditCustomFieldsByTarget = async (target, payload) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/settings/updateCustomFieldByTarget?target=${target}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
 
 export const GetCustomFieldsByTarget = async (target) => {
   try {
@@ -310,10 +321,3 @@ export const GetCustomFieldsByTarget = async (target) => {
     return error;
   }
 };
-// export const GetAllSettings = async () => {
-//   try {
-//     return await axios.get(BASE_URL + "/v1/settings/getSettings", setHeaders());
-//   } catch (error) {
-//     return error;
-//   }
-// };
