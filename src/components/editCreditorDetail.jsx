@@ -7,6 +7,7 @@ import PaymentsTextFields from "./caseTextField";
 import TextButton from "./button";
 import { UpdateCreditor } from "../services/services";
 import { useToast } from "../toast/toastContext";
+import MuiPhoneTextField from "./muiPhoneText";
 
 export default function EditCreditorDetail({
   handleClose,
@@ -31,6 +32,11 @@ export default function EditCreditorDetail({
     emailValidError: "",
     creditorPhoneError: "",
   });
+  const formatPhoneNumber = (value) => {
+    const spaceReplace = value?.replace(/ /g, "");
+    const phoneFormat = spaceReplace?.replace(/[^+a-zA-Z 0-9]+/g, "");
+    return phoneFormat;
+  };
   const isEmailValid = (email) => {
     // Use a more robust email validation regular expression
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
@@ -51,7 +57,7 @@ export default function EditCreditorDetail({
       }
     }
     if (fieldName === "CreditorBasicPhoneNumber") {
-      if (value.length !== 10) {
+      if (value.length !== 11) {
         setCreditorFieldsError((prevErrors) => ({
           ...prevErrors,
           creditorPhoneError: "Phone number must be 10 digits",
@@ -60,15 +66,6 @@ export default function EditCreditorDetail({
         setCreditorFieldsError((prevErrors) => ({
           ...prevErrors,
           creditorPhoneError: "",
-        }));
-      }
-    }
-    if (fieldName === "CreditorBasicPhoneNumber") {
-      const inputValue = value;
-      if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
-        setCreditorBasicsInfo((prevState) => ({
-          ...prevState,
-          [fieldName]: value,
         }));
       }
     } else {
@@ -229,17 +226,18 @@ export default function EditCreditorDetail({
             }
             error={creditorFieldsError?.emailValidError}
           />
-          <PaymentsTextFields
-            type="number"
+
+          <MuiPhoneTextField
             label="Phone #*"
-            placeHolderValue="Enter Phone Number"
-            width="97%"
             value={creditorBasicsInfo?.CreditorBasicPhoneNumber}
             onChange={(e) =>
-              basicInfoInputChange("CreditorBasicPhoneNumber", e.target.value)
+              basicInfoInputChange(
+                "CreditorBasicPhoneNumber",
+                formatPhoneNumber(e)
+              )
             }
-            error={creditorFieldsError?.creditorPhoneError}
             onKeyDown={handleNumberInputKeyDown}
+            error={creditorFieldsError?.creditorPhoneError}
           />
         </Grid>
       </Grid>

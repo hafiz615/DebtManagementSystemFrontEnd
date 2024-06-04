@@ -15,6 +15,7 @@ import { useToast } from "../../toast/toastContext";
 
 function BulkImportCase() {
   const [activeStep, setActiveStep] = useState(0);
+  const [completedSteps, setCompletedSteps] = useState(new Set());
   const [apiData, setApiData] = useState([]);
   const { showToast } = useToast();
   const navigate = useNavigate();
@@ -28,7 +29,11 @@ function BulkImportCase() {
   const handleBack = () => {
     setActiveStep(0);
   };
-
+  const handleStep = (step) => () => {
+    if (completedSteps.has(step)) {
+      setActiveStep(step);
+    }
+  };
   const handleReset = () => {
     setActiveStep(0);
   };
@@ -36,6 +41,11 @@ function BulkImportCase() {
   const handleNext = () => {
     if (activeStep === 0) {
       setActiveStep(1);
+      setCompletedSteps((prevCompletedSteps) => {
+        const newCompletedSteps = new Set(prevCompletedSteps);
+        newCompletedSteps?.add(activeStep);
+        return newCompletedSteps;
+      });
     }
   };
 
@@ -45,6 +55,7 @@ function BulkImportCase() {
       localStorage.removeItem("Columns");
       localStorage.removeItem("dropdownState");
       localStorage.removeItem("csvData");
+      localStorage.setItem("route", "Home");
       navigate("/home");
       showToast(caseCreation?.data?.message, "success");
     } else if (caseCreation?.response?.status === 400) {
@@ -120,7 +131,18 @@ function BulkImportCase() {
 
             return (
               <Step key={label} {...stepProps}>
-                <StepLabel {...labelProps}>{label}</StepLabel>
+                <StepLabel
+                  {...labelProps}
+                  sx={{
+                    cursor: completedSteps?.has(index) ? "pointer" : "default",
+                    color: completedSteps?.has(index)
+                      ? Colors.SKY_BLUE
+                      : "inherit",
+                  }}
+                  onClick={handleStep(index)}
+                >
+                  {label}
+                </StepLabel>
               </Step>
             );
           })}
