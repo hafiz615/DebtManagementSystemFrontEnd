@@ -7,6 +7,8 @@ import PaymentsTextFields from "./caseTextField";
 import Dropdown from "./dropdown";
 import { UpdateDebtor } from "../services/services";
 import { useToast } from "../toast/toastContext";
+import MuiPhoneNumber from "material-ui-phone-number";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function EditDebtorDetail({
   handleClose,
@@ -62,6 +64,12 @@ export default function EditDebtorDetail({
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     return emailRegex.test(email);
   };
+  const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
+  const formatPhoneNumber = (value) => {
+    const spaceReplace = value?.replace(/ /g, "");
+    const phoneFormat = spaceReplace?.replace(/[^+a-zA-Z 0-9]+/g, "");
+    return phoneFormat;
+  };
   const [isFormValid, setIsFormValid] = useState(false);
   const validateForm = () => {
     const ownDetailsValid = Object.values(debtorOwnDetails).every(
@@ -104,7 +112,7 @@ export default function EditDebtorDetail({
       }
     }
     if (field === "BasicPhoneNumber") {
-      if (value.length !== 10) {
+      if (value.length !== 11) {
         setErrors((prevErrors) => ({
           ...prevErrors,
           basicPhone: "Phone number must be 10 digits",
@@ -116,11 +124,7 @@ export default function EditDebtorDetail({
         }));
       }
     }
-    if (
-      field === "BasicSsid" ||
-      field === "BasicZipCode" ||
-      field === "BasicPhoneNumber"
-    ) {
+    if (field === "BasicSsid" || field === "BasicZipCode") {
       const inputValue = value;
       if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
         setDebtorOwnDetails((prevDetails) => ({
@@ -180,7 +184,7 @@ export default function EditDebtorDetail({
 
   const handleBusinessDetailsChange = (field, value) => {
     if (field === "businessPhoneNumber") {
-      if (value.length !== 10) {
+      if (value.length !== 11) {
         setErrors((prevErrors) => ({
           ...prevErrors,
           businessPhone: "Phone number must be 10 digits",
@@ -205,11 +209,7 @@ export default function EditDebtorDetail({
         }));
       }
     }
-    if (
-      field === "businessEinNumber" ||
-      field === "businessPhoneNumber " ||
-      field === "businessZipCode"
-    ) {
+    if (field === "businessEinNumber" || field === "businessZipCode") {
       const inputValue = value;
       if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
         setDebtorBusinessDetails((prevDetails) => ({
@@ -435,18 +435,70 @@ export default function EditDebtorDetail({
             }
             onKeyDown={handleNumberInput}
           />
-          <PaymentsTextFields
-            type="text"
-            label="Phone #*"
-            placeHolderValue="Enter Phone Number"
-            width="100%"
-            value={debtorOwnDetails?.BasicPhoneNumber}
-            onChange={(e) =>
-              handleOwnDetailsChange("BasicPhoneNumber", e.target.value)
-            }
-            error={errors?.basicPhone}
-            onKeyDown={handleNumberInputKeyDown}
-          />
+
+          <Grid item xs={12} md={3.9}>
+            <Typography
+              sx={{
+                fontWeight: "500",
+                fontFamily: "Nunito",
+                marginLeft: "1rem",
+                color: Colors.DARK_GRAY,
+              }}
+            >
+              Phone #*
+            </Typography>
+            <MuiPhoneNumber
+              sx={{
+                backgroundColor: Colors.BG_LIGHT_GRAY,
+                height: "2.5rem",
+                paddingLeft: ".4rem",
+                borderRadius: "5px",
+                display: "flex",
+                justifyContent: "center",
+                border: "none !important",
+                "& .MuiInputBase-input": {
+                  color: Colors.DIM_LIGHT_GRAY,
+                  fontSize: ".8rem",
+                },
+                "& .MuiInput-underline:before": {
+                  borderBottom: "none",
+                },
+                "& .MuiInput-underline:after": {
+                  borderBottom: "none",
+                },
+                "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                  borderBottom: "none",
+                },
+              }}
+              value={debtorOwnDetails?.BasicPhoneNumber}
+              variant="standard"
+              fullWidth
+              defaultCountry={"us"}
+              disableDropdown={false}
+              onChange={(e) =>
+                handleOwnDetailsChange("BasicPhoneNumber", formatPhoneNumber(e))
+              }
+              onKeyDown={handleNumberInputKeyDown}
+            />
+            {errors?.basicPhone ? (
+              <Box
+                sx={{
+                  color: "red",
+                  fontSize: "9.3px",
+                  height: smallScreen ? "0.5rem" : "0.7rem",
+                }}
+              >
+                {errors?.basicPhone}
+              </Box>
+            ) : (
+              <Box
+                sx={{
+                  color: "red",
+                  height: smallScreen ? "0.5rem" : "0.7rem",
+                }}
+              ></Box>
+            )}
+          </Grid>
           <PaymentsTextFields
             type="text"
             label="Address*"
@@ -608,18 +660,73 @@ export default function EditDebtorDetail({
             }
             onKeyDown={handleNumberInput}
           />
-          <PaymentsTextFields
-            type="text"
-            label="Phone #*"
-            placeHolderValue="Enter Phone Number"
-            width="100%"
-            value={debtorBusinessDetails?.businessPhoneNumber}
-            onChange={(e) =>
-              handleBusinessDetailsChange("businessPhoneNumber", e.target.value)
-            }
-            error={errors?.businessPhone}
-            onKeyDown={handleNumberInputKeyDown}
-          />
+
+          <Grid item xs={12} md={3.9}>
+            <Typography
+              sx={{
+                fontWeight: "500",
+                fontFamily: "Nunito",
+                marginLeft: "1rem",
+                color: Colors.DARK_GRAY,
+              }}
+            >
+              Phone #*
+            </Typography>
+            <MuiPhoneNumber
+              sx={{
+                backgroundColor: Colors.BG_LIGHT_GRAY,
+                height: "2.5rem",
+                paddingLeft: ".4rem",
+                borderRadius: "5px",
+                display: "flex",
+                justifyContent: "center",
+                border: "none !important",
+                "& .MuiInputBase-input": {
+                  color: Colors.DIM_LIGHT_GRAY,
+                  fontSize: ".8rem",
+                },
+                "& .MuiInput-underline:before": {
+                  borderBottom: "none",
+                },
+                "& .MuiInput-underline:after": {
+                  borderBottom: "none",
+                },
+                "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                  borderBottom: "none",
+                },
+              }}
+              value={debtorBusinessDetails?.businessPhoneNumber}
+              variant="standard"
+              fullWidth
+              defaultCountry={"us"}
+              disableDropdown={false}
+              onChange={(e) =>
+                handleBusinessDetailsChange(
+                  "businessPhoneNumber",
+                  formatPhoneNumber(e)
+                )
+              }
+              onKeyDown={handleNumberInputKeyDown}
+            />
+            {errors?.businessPhone ? (
+              <Box
+                sx={{
+                  color: "red",
+                  fontSize: "9.3px",
+                  height: smallScreen ? "0.5rem" : "0.7rem",
+                }}
+              >
+                {errors?.businessPhone}
+              </Box>
+            ) : (
+              <Box
+                sx={{
+                  color: "red",
+                  height: smallScreen ? "0.5rem" : "0.7rem",
+                }}
+              ></Box>
+            )}
+          </Grid>
           <PaymentsTextFields
             type="text"
             label="Address*"

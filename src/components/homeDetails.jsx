@@ -184,7 +184,7 @@ function HomeDetails() {
         ) : (
           <>
             <Grid item xs={12} lg={6}>
-              {accordionData.group1.map((data, index) => (
+              {accordionData?.group1?.map((data, index) => (
                 <Grid item xs={12} key={index} sx={{ marginBottom: "0.5rem" }}>
                   <AccordionUsage
                     tableHeading={data?.tableHeading}
@@ -196,7 +196,7 @@ function HomeDetails() {
               ))}
             </Grid>
             <Grid item xs={12} lg={6}>
-              {accordionData.group2.map((data, index) => (
+              {accordionData?.group2?.map((data, index) => (
                 <Grid item xs={12} key={index} sx={{ marginBottom: "0.5rem" }}>
                   <AccordionUsage
                     tableHeading={data?.tableHeading}

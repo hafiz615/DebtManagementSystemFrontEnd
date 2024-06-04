@@ -1,13 +1,14 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
-import { Add } from "@mui/icons-material";
+import { Grid, Box } from "@mui/material";
+import { Add, Delete } from "@mui/icons-material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Colors } from "../../config/default";
 import PaymentsTextFields from "../caseTextField";
-import TextButton from "../button";
 import Dropdown from "./../dropdown";
 import Checkboxes from "../checkBox";
+import MuiPhoneNumber from "material-ui-phone-number";
 
 export default function DebtorFields({
   debtorOwnDetails,
@@ -38,7 +39,7 @@ export default function DebtorFields({
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     return emailRegex.test(email);
   };
-
+  const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
   const basicInfoInputChange = (fieldName, value) => {
     if (fieldName === "BasicEmailAddress") {
       if (!isEmailValid(value)) {
@@ -67,7 +68,9 @@ export default function DebtorFields({
       }
     }
     if (fieldName === "BasicPhoneNumber") {
-      if (value.length !== 10) {
+      // const spaceReplace = value?.replace(/ /g, "");
+      // const phoneFormat = spaceReplace?.replace(/[^+a-zA-Z 0-9]+/g, "");
+      if (value?.length !== 11) {
         setErrors((prevErrors) => ({
           ...prevErrors,
           basicPhone: "Phone number must be 10 digits",
@@ -79,11 +82,7 @@ export default function DebtorFields({
         }));
       }
     }
-    if (
-      fieldName === "BasicSsid" ||
-      fieldName === "BasicZipCode" ||
-      fieldName === "BasicPhoneNumber"
-    ) {
+    if (fieldName === "BasicSsid" || fieldName === "BasicZipCode") {
       const inputValue = value;
       if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
         setDebtorOwnDetails((prevDetails) => ({
@@ -98,9 +97,14 @@ export default function DebtorFields({
       }));
     }
   };
+  const formatPhoneNumber = (value) => {
+    const spaceReplace = value?.replace(/ /g, "");
+    const phoneFormat = spaceReplace?.replace(/[^+a-zA-Z 0-9]+/g, "");
+    return phoneFormat;
+  };
   const businessInfoInputChange = (fieldName, value) => {
     if (fieldName === "businessPhoneNumber") {
-      if (value.length !== 10) {
+      if (value.length !== 11) {
         setErrors((prevErrors) => ({
           ...prevErrors,
           businessPhone: "Phone number must be 10 digits",
@@ -126,11 +130,7 @@ export default function DebtorFields({
       }
     }
 
-    if (
-      fieldName === "businessEinNumber" ||
-      fieldName === "businessPhoneNumber " ||
-      fieldName === "businessZipCode"
-    ) {
+    if (fieldName === "businessEinNumber" || fieldName === "businessZipCode") {
       const inputValue = value;
       if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
         setDebtorBusinessDetails((prevDetails) => ({
@@ -196,7 +196,7 @@ export default function DebtorFields({
       }
     }
     if (field === "phone") {
-      if (value.length !== 10) {
+      if (value.length !== 11) {
         setContactErrors((prevErrors) => ({
           ...prevErrors,
           [`phone${index}`]: "Phone number must be 10 digits",
@@ -208,7 +208,7 @@ export default function DebtorFields({
         }));
       }
     }
-    if (field === "phone" || field === "zipCode") {
+    if (field === "zipCode") {
       if (value === "" || /^\d*\.?\d*$/.test(value)) {
         updatedList[index][field] = value;
         setDebtorContactDetails(updatedList);
@@ -456,19 +456,70 @@ export default function DebtorFields({
             }
             onKeyDown={handleNumberInput}
           />
-          <PaymentsTextFields
-            // type="number"
-            type="text"
-            label="Phone #*"
-            placeHolderValue="Enter Phone Number"
-            width="100%"
-            value={debtorOwnDetails?.BasicPhoneNumber}
-            onChange={(e) =>
-              basicInfoInputChange("BasicPhoneNumber", e.target.value)
-            }
-            error={errors?.basicPhone}
-            onKeyDown={handleNumberInputKeyDown}
-          />
+
+          <Grid item xs={12} md={3.9}>
+            <Typography
+              sx={{
+                fontWeight: "500",
+                fontFamily: "Nunito",
+                marginLeft: "1rem",
+                color: Colors.DARK_GRAY,
+              }}
+            >
+              Phone #*
+            </Typography>
+            <MuiPhoneNumber
+              sx={{
+                backgroundColor: Colors.BG_LIGHT_GRAY,
+                height: "2.5rem",
+                paddingLeft: ".4rem",
+                borderRadius: "5px",
+                display: "flex",
+                justifyContent: "center",
+                border: "none !important",
+                "& .MuiInputBase-input": {
+                  color: Colors.DIM_LIGHT_GRAY,
+                  fontSize: ".8rem",
+                },
+                "& .MuiInput-underline:before": {
+                  borderBottom: "none",
+                },
+                "& .MuiInput-underline:after": {
+                  borderBottom: "none",
+                },
+                "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                  borderBottom: "none",
+                },
+              }}
+              value={debtorOwnDetails?.BasicPhoneNumber}
+              variant="standard"
+              fullWidth
+              defaultCountry={"us"}
+              disableDropdown={false}
+              onChange={(e) =>
+                basicInfoInputChange("BasicPhoneNumber", formatPhoneNumber(e))
+              }
+              onKeyDown={handleNumberInputKeyDown}
+            />
+            {errors?.basicPhone ? (
+              <Box
+                sx={{
+                  color: "red",
+                  fontSize: "9.3px",
+                  height: smallScreen ? "0.5rem" : "0.7rem",
+                }}
+              >
+                {errors?.basicPhone}
+              </Box>
+            ) : (
+              <Box
+                sx={{
+                  color: "red",
+                  height: smallScreen ? "0.5rem" : "0.7rem",
+                }}
+              ></Box>
+            )}
+          </Grid>
           <PaymentsTextFields
             type="text"
             label="Address*"
@@ -633,19 +684,73 @@ export default function DebtorFields({
             }
             onKeyDown={handleNumberInput}
           />
-          <PaymentsTextFields
-            // type="number"
-            type="text"
-            label="Phone #*"
-            placeHolderValue="Enter Phone Number"
-            width="100%"
-            value={debtorBusinessDetails?.businessPhoneNumber}
-            onChange={(e) =>
-              businessInfoInputChange("businessPhoneNumber", e.target.value)
-            }
-            error={errors?.businessPhone}
-            onKeyDown={handleNumberInputKeyDown}
-          />
+
+          <Grid item xs={12} md={3.9}>
+            <Typography
+              sx={{
+                fontWeight: "500",
+                fontFamily: "Nunito",
+                marginLeft: "1rem",
+                color: Colors.DARK_GRAY,
+              }}
+            >
+              Phone #*
+            </Typography>
+            <MuiPhoneNumber
+              sx={{
+                backgroundColor: Colors.BG_LIGHT_GRAY,
+                height: "2.5rem",
+                paddingLeft: ".4rem",
+                borderRadius: "5px",
+                display: "flex",
+                justifyContent: "center",
+                border: "none !important",
+                "& .MuiInputBase-input": {
+                  color: Colors.DIM_LIGHT_GRAY,
+                  fontSize: ".8rem",
+                },
+                "& .MuiInput-underline:before": {
+                  borderBottom: "none",
+                },
+                "& .MuiInput-underline:after": {
+                  borderBottom: "none",
+                },
+                "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                  borderBottom: "none",
+                },
+              }}
+              value={debtorBusinessDetails?.businessPhoneNumber}
+              variant="standard"
+              fullWidth
+              defaultCountry={"us"}
+              disableDropdown={false}
+              onChange={(e) =>
+                businessInfoInputChange(
+                  "businessPhoneNumber",
+                  formatPhoneNumber(e)
+                )
+              }
+              onKeyDown={handleNumberInputKeyDown}
+            />
+            {errors?.businessPhone ? (
+              <Box
+                sx={{
+                  color: "red",
+                  fontSize: "9.3px",
+                  height: smallScreen ? "0.5rem" : "0.7rem",
+                }}
+              >
+                {errors?.businessPhone}
+              </Box>
+            ) : (
+              <Box
+                sx={{
+                  color: "red",
+                  height: smallScreen ? "0.5rem" : "0.7rem",
+                }}
+              ></Box>
+            )}
+          </Grid>
           <PaymentsTextFields
             type="text"
             label="Address*"
@@ -684,18 +789,43 @@ export default function DebtorFields({
           >
             Contact Details
           </Typography>
-          <TextButton
-            buttonText="ADD CONTACT"
-            startIcon={<Add />}
-            backgroundColor={Colors.SKY_BLUE}
-            hoverColor={Colors.SKY_BLUE}
+          <Add
             onClick={handleAddNewContact}
+            sx={{
+              backgroundColor: Colors.SKY_BLUE,
+              color: Colors.WHITE,
+              borderRadius: "50%",
+              fontSize: "2.5rem",
+              padding: ".4rem",
+            }}
           />
         </Grid>
         {debtorContactDetails &&
           debtorContactDetails?.map((item, index) => {
             return (
               <>
+                {index !== 0 && (
+                  <Box
+                    item
+                    xs={12}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      width: "100%",
+                    }}
+                  >
+                    <Delete
+                      onClick={() => handleRemoveNewData(index)}
+                      sx={{
+                        backgroundColor: Colors.ORANGE_COLOR,
+                        color: Colors.WHITE,
+                        borderRadius: "50%",
+                        fontSize: "2.5rem",
+                        padding: ".4rem",
+                      }}
+                    />
+                  </Box>
+                )}
                 <Grid key={index} container item xs={12}>
                   <Grid container item xs={12} md={8}>
                     <PaymentsTextFields
@@ -718,18 +848,76 @@ export default function DebtorFields({
                         handleInputChange(index, "title", e.target.value)
                       }
                     />
-                    <PaymentsTextFields
-                      type="number"
-                      label="Phone"
-                      placeHolderValue="Enter Phone Number"
-                      width="97%"
-                      value={item?.phone}
-                      onChange={(e) =>
-                        handleInputChange(index, "phone", e.target.value)
-                      }
-                      error={contactError?.[`phone${index}`]}
-                      onKeyDown={handleNumberInputKeyDown}
-                    />
+
+                    <Grid item xs={12} md={3.9}>
+                      <Typography
+                        sx={{
+                          fontWeight: "500",
+                          fontFamily: "Nunito",
+                          marginLeft: "1rem",
+                          color: Colors.DARK_GRAY,
+                        }}
+                      >
+                        Phone #*
+                      </Typography>
+                      <MuiPhoneNumber
+                        sx={{
+                          backgroundColor: Colors.BG_LIGHT_GRAY,
+                          height: "2.5rem",
+                          paddingLeft: ".4rem",
+                          borderRadius: "5px",
+                          display: "flex",
+                          justifyContent: "center",
+                          border: "none !important",
+                          "& .MuiInputBase-input": {
+                            color: Colors.DIM_LIGHT_GRAY,
+                            fontSize: ".8rem",
+                          },
+                          "& .MuiInput-underline:before": {
+                            borderBottom: "none",
+                          },
+                          "& .MuiInput-underline:after": {
+                            borderBottom: "none",
+                          },
+                          "& .MuiInput-underline:hover:not(.Mui-disabled):before":
+                            {
+                              borderBottom: "none",
+                            },
+                        }}
+                        value={item?.phone}
+                        variant="standard"
+                        fullWidth
+                        defaultCountry={"us"}
+                        disableDropdown={false}
+                        onChange={(e) =>
+                          handleInputChange(
+                            index,
+                            "phone",
+                            formatPhoneNumber(e)
+                          )
+                        }
+                        onKeyDown={handleNumberInputKeyDown}
+                      />
+                      {contactError?.[`phone${index}`] ? (
+                        <Box
+                          sx={{
+                            color: "red",
+                            fontSize: "9.3px",
+                            height: smallScreen ? "0.5rem" : "0.7rem",
+                          }}
+                        >
+                          {contactError?.[`phone${index}`]}
+                        </Box>
+                      ) : (
+                        <Box
+                          sx={{
+                            color: "red",
+                            height: smallScreen ? "0.5rem" : "0.7rem",
+                          }}
+                        ></Box>
+                      )}
+                    </Grid>
+
                     <PaymentsTextFields
                       type="text"
                       label="Enter Email"
@@ -822,18 +1010,6 @@ export default function DebtorFields({
                         width: "80%",
                       }}
                     />
-                    {index !== 0 && (
-                      <>
-                        <TextButton
-                          buttonText="DELETE CONTACT"
-                          backgroundColor={Colors.ORANGE_COLOR}
-                          hoverColor={Colors.ORANGE_COLOR}
-                          onClick={() => handleRemoveNewData(index)}
-                          width="40%"
-                          marginTop="1.5rem"
-                        />
-                      </>
-                    )}
                   </Grid>
                 </Grid>
                 <hr></hr>

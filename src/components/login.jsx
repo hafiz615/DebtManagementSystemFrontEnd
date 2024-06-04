@@ -35,7 +35,7 @@ function Login() {
   useEffect(() => {
     const auth = localStorage.getItem("token");
     if (auth) {
-      navigate("/Home");
+      navigate("/home");
     }
   }, []);
   const navigate = useNavigate();

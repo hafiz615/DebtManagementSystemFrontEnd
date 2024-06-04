@@ -283,35 +283,39 @@ export default function MappingDetails() {
               },
             }}
           >
-            {[...Array(paymentPlansCount)]?.map((_, index) => (
-              <Grid
-                container
-                xs={12}
-                sx={{
-                  padding: "0px 10px",
-                  alignItems: "center",
-                  mt: "25px",
-                  gap: "1em",
-                }}
-              >
-                {automationPlan.map((item) => (
-                  <Grid
-                    key={item.name}
-                    item
-                    xs={12}
-                    md={5.5}
-                    lg={2.75}
-                    container
-                    sx={{ justifyContent: "space-between" }}
-                  >
-                    <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
-                      {item.name}
-                    </Typography>
-                    {renderDropdown("automation", item.name)}
-                  </Grid>
-                ))}
-              </Grid>
-            ))}
+            {Array.isArray(new Array(paymentPlansCount)) &&
+              paymentPlansCount > 0 &&
+              [...Array(paymentPlansCount)]?.map((_, index) => (
+                <Grid
+                  container
+                  xs={12}
+                  sx={{
+                    padding: "0px 10px",
+                    alignItems: "center",
+                    mt: "25px",
+                    gap: "1em",
+                  }}
+                >
+                  {automationPlan?.map((item, index) => (
+                    <Grid
+                      key={index}
+                      item
+                      xs={12}
+                      md={5.5}
+                      lg={2.75}
+                      container
+                      sx={{ justifyContent: "space-between" }}
+                    >
+                      <Typography
+                        sx={{ fontFamily: "Nunito", fontSize: "14px" }}
+                      >
+                        {item?.name}
+                      </Typography>
+                      {renderDropdown("automation", item?.name)}
+                    </Grid>
+                  ))}
+                </Grid>
+              ))}
           </Grid>
         </Grid>
       </Grid>

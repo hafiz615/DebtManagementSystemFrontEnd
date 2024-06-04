@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { CircularProgress, Grid } from "@mui/material";
+import { CircularProgress, Grid, Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
@@ -10,6 +10,7 @@ import { CreateUser, GetUserById, UpdateUser } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import Dropdown from "./dropdown";
 import { Colors } from "../config/default";
+import MuiPhoneNumber from "material-ui-phone-number";
 
 function ModelInfo({ modalType, setOpen, GetUsers, id }) {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
@@ -73,7 +74,7 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
 
   const handleInputChange = (field, value, event) => {
     if (field === "phone") {
-      if (value.length !== 10) {
+      if (value.length !== 11) {
         setErrors((prevErrors) => ({
           ...prevErrors,
           phone: "Phone number must be 10 digits",
@@ -98,7 +99,7 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
         }));
       }
     }
-    if (field === "ssid" || field === "phone") {
+    if (field === "ssid") {
       const inputValue = value;
       if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
         setFormData({
@@ -118,6 +119,11 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
     // Use a more robust email validation regular expression
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     return emailRegex.test(email);
+  };
+  const formatPhoneNumber = (value) => {
+    const spaceReplace = value?.replace(/ /g, "");
+    const phoneFormat = spaceReplace?.replace(/[^+a-zA-Z 0-9]+/g, "");
+    return phoneFormat;
   };
 
   const handleSubmit = async () => {
@@ -292,7 +298,7 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
               onChange={(e) => handleInputChange("email", e.target.value, e)}
               value={formData?.email}
             />
-            <CustomTextField
+            {/* <CustomTextField
               label="Phone #*"
               type="number"
               width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
@@ -301,7 +307,75 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
               error={errors?.phone}
               value={formData?.phone}
               onKeyDown={handleNumberInputKeyDown}
-            />
+            /> */}
+            <Box>
+              <Typography
+                sx={{
+                  fontWeight: "500",
+                  fontFamily: "Nunito",
+                  marginLeft: "1rem",
+                  color: Colors.DARK_GRAY,
+                }}
+              >
+                Phone #*
+              </Typography>
+              <MuiPhoneNumber
+                sx={{
+                  backgroundColor: Colors.BG_LIGHT_GRAY,
+                  height: "2.5rem",
+                  paddingLeft: ".4rem",
+                  borderRadius: "5px",
+                  display: "flex",
+                  justifyContent: "center",
+                  width: smallScreen
+                    ? "15rem"
+                    : largeScreen
+                    ? "20rem"
+                    : "10rem",
+                  border: "none !important",
+                  "& .MuiInputBase-input": {
+                    color: Colors.DIM_LIGHT_GRAY,
+                    fontSize: ".8rem",
+                  },
+                  "& .MuiInput-underline:before": {
+                    borderBottom: "none",
+                  },
+                  "& .MuiInput-underline:after": {
+                    borderBottom: "none",
+                  },
+                  "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                    borderBottom: "none",
+                  },
+                }}
+                value={formData?.phone}
+                variant="standard"
+                // fullWidth
+                defaultCountry={"us"}
+                disableDropdown={false}
+                onChange={(e) =>
+                  handleInputChange("phone", formatPhoneNumber(e))
+                }
+                onKeyDown={handleNumberInputKeyDown}
+              />
+              {errors?.phone ? (
+                <Box
+                  sx={{
+                    color: "red",
+                    fontSize: "9.3px",
+                    height: smallScreen ? "0.5rem" : "0.7rem",
+                  }}
+                >
+                  {errors?.phone}
+                </Box>
+              ) : (
+                <Box
+                  sx={{
+                    color: "red",
+                    height: smallScreen ? "0.5rem" : "0.7rem",
+                  }}
+                ></Box>
+              )}
+            </Box>
 
             <Grid
               container
