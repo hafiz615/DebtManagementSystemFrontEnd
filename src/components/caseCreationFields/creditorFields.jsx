@@ -5,8 +5,7 @@ import { Add, Delete } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
 import PaymentsTextFields from "../caseTextField";
-import MuiPhoneNumber from "material-ui-phone-number";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import MuiPhoneTextField from "../muiPhoneText";
 
 export default function CreditorFields({
   creditorBasicsInfo,
@@ -33,7 +32,7 @@ export default function CreditorFields({
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     return emailRegex.test(email);
   };
-  const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
+
   const formatPhoneNumber = (value) => {
     const spaceReplace = value?.replace(/ /g, "");
     const phoneFormat = spaceReplace?.replace(/[^+a-zA-Z 0-9]+/g, "");
@@ -65,6 +64,11 @@ export default function CreditorFields({
           creditorPhoneError: "",
         }));
       }
+    } else {
+      setCreditorBasicsInfo((prevState) => ({
+        ...prevState,
+        [fieldName]: value,
+      }));
     }
   };
   const businessInfoInputChange = (fieldName, value) => {
@@ -248,72 +252,18 @@ export default function CreditorFields({
             error={creditorFieldsError?.emailValidError}
           />
 
-          <Grid item xs={12} md={3.9}>
-            <Typography
-              sx={{
-                fontWeight: "500",
-                fontFamily: "Nunito",
-                marginLeft: "1rem",
-                color: Colors.DARK_GRAY,
-              }}
-            >
-              Phone #*
-            </Typography>
-            <MuiPhoneNumber
-              sx={{
-                backgroundColor: Colors.BG_LIGHT_GRAY,
-                height: "2.5rem",
-                paddingLeft: ".4rem",
-                borderRadius: "5px",
-                display: "flex",
-                justifyContent: "center",
-                border: "none !important",
-                "& .MuiInputBase-input": {
-                  color: Colors.DIM_LIGHT_GRAY,
-                  fontSize: ".8rem",
-                },
-                "& .MuiInput-underline:before": {
-                  borderBottom: "none",
-                },
-                "& .MuiInput-underline:after": {
-                  borderBottom: "none",
-                },
-                "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
-                  borderBottom: "none",
-                },
-              }}
-              value={creditorBasicsInfo?.CreditorBasicPhoneNumber}
-              variant="standard"
-              fullWidth
-              defaultCountry={"us"}
-              disableDropdown={false}
-              onChange={(e) =>
-                basicInfoInputChange(
-                  "CreditorBasicPhoneNumber",
-                  formatPhoneNumber(e)
-                )
-              }
-              onKeyDown={handleNumberInputKeyDown}
-            />
-            {creditorFieldsError?.creditorPhoneError ? (
-              <Box
-                sx={{
-                  color: "red",
-                  fontSize: "9.3px",
-                  height: smallScreen ? "0.5rem" : "0.7rem",
-                }}
-              >
-                {creditorFieldsError?.creditorPhoneError}
-              </Box>
-            ) : (
-              <Box
-                sx={{
-                  color: "red",
-                  height: smallScreen ? "0.5rem" : "0.7rem",
-                }}
-              ></Box>
-            )}
-          </Grid>
+          <MuiPhoneTextField
+            label="Phone #*"
+            value={creditorBasicsInfo?.CreditorBasicPhoneNumber}
+            onChange={(e) =>
+              basicInfoInputChange(
+                "CreditorBasicPhoneNumber",
+                formatPhoneNumber(e)
+              )
+            }
+            onKeyDown={handleNumberInputKeyDown}
+            error={creditorFieldsError?.creditorPhoneError}
+          />
         </Grid>
         <Typography
           sx={{
@@ -537,70 +487,15 @@ export default function CreditorFields({
                     }
                   />
 
-                  <Grid item xs={12} md={3.9}>
-                    <Typography
-                      sx={{
-                        fontWeight: "500",
-                        fontFamily: "Nunito",
-                        marginLeft: "1rem",
-                        color: Colors.DARK_GRAY,
-                      }}
-                    >
-                      Phone #*
-                    </Typography>
-                    <MuiPhoneNumber
-                      sx={{
-                        backgroundColor: Colors.BG_LIGHT_GRAY,
-                        height: "2.5rem",
-                        paddingLeft: ".4rem",
-                        borderRadius: "5px",
-                        display: "flex",
-                        justifyContent: "center",
-                        border: "none !important",
-                        "& .MuiInputBase-input": {
-                          color: Colors.DIM_LIGHT_GRAY,
-                          fontSize: ".8rem",
-                        },
-                        "& .MuiInput-underline:before": {
-                          borderBottom: "none",
-                        },
-                        "& .MuiInput-underline:after": {
-                          borderBottom: "none",
-                        },
-                        "& .MuiInput-underline:hover:not(.Mui-disabled):before":
-                          {
-                            borderBottom: "none",
-                          },
-                      }}
-                      value={item?.phone}
-                      variant="standard"
-                      fullWidth
-                      defaultCountry={"us"}
-                      disableDropdown={false}
-                      onChange={(e) =>
-                        handleInputChange(index, "phone", formatPhoneNumber(e))
-                      }
-                      onKeyDown={handleNumberInputKeyDown}
-                    />
-                    {creditorContactError?.[`phone${index}`] ? (
-                      <Box
-                        sx={{
-                          color: "red",
-                          fontSize: "9.3px",
-                          height: smallScreen ? "0.5rem" : "0.7rem",
-                        }}
-                      >
-                        {creditorContactError?.[`phone${index}`]}
-                      </Box>
-                    ) : (
-                      <Box
-                        sx={{
-                          color: "red",
-                          height: smallScreen ? "0.5rem" : "0.7rem",
-                        }}
-                      ></Box>
-                    )}
-                  </Grid>
+                  <MuiPhoneTextField
+                    label="Phone #"
+                    value={item?.phone}
+                    onChange={(e) =>
+                      handleInputChange(index, "phone", formatPhoneNumber(e))
+                    }
+                    onKeyDown={handleNumberInputKeyDown}
+                    error={creditorContactError?.[`phone${index}`]}
+                  />
                   <PaymentsTextFields
                     type="text"
                     label="Enter Email"
