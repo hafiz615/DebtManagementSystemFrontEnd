@@ -305,6 +305,7 @@ export default function SettingsAccordion({
                 }
               />
               <Dropdown
+                menuWidth="11.3rem"
                 menuItems={retry}
                 placeholder="Choose Interval"
                 backgroundColor={Colors.BG_LIGHT_GRAY}
@@ -381,6 +382,7 @@ export default function SettingsAccordion({
                 }
               />
               <Dropdown
+                menuWidth="11.3rem"
                 menuItems={retry}
                 placeholder="Choose Interval"
                 backgroundColor={Colors.BG_LIGHT_GRAY}

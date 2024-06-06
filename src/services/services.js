@@ -288,10 +288,23 @@ export const GetHomePayments = async (count) => {
   }
 };
 
-export const AddCustomFieldsByTarget = async (target, payload) => {
+export const AddCustomFieldsByTarget = async (target, payload, id) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/settings/addCustomFieldByTarget?target=${target}`,
+      BASE_URL +
+        `/v1/settings/addCustomFieldByTarget?target=${target}&caseId=${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const EditCustomFieldsByTarget = async (target, payload, id) => {
+  try {
+    return await axios.put(
+      BASE_URL +
+        `/v1/settings/updateCustomFieldByTarget?target=${target}&caseId=${id}`,
       payload,
       setHeaders()
     );
@@ -300,20 +313,36 @@ export const AddCustomFieldsByTarget = async (target, payload) => {
   }
 };
 
-export const GetCustomFieldsByTarget = async (target) => {
+export const GetCustomFieldsByTarget = async (target, id) => {
   try {
     return await axios.get(
-      BASE_URL + `/v1/settings/getCustomFieldsByTarget?target=${target}`,
+      BASE_URL +
+        `/v1/settings/getCustomFieldsByTarget?target=${target}&caseId=${id}`,
       setHeaders()
     );
   } catch (error) {
     return error;
   }
 };
-// export const GetAllSettings = async () => {
-//   try {
-//     return await axios.get(BASE_URL + "/v1/settings/getSettings", setHeaders());
-//   } catch (error) {
-//     return error;
-//   }
-// };
+
+export const GetAllCreditors = async () => {
+  try {
+    return await axios.get(
+      BASE_URL + "/v1/creditor/listing?search",
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetCreditorById = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/creditor/listing/details/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

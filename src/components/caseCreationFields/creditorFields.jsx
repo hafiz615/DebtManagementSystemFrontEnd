@@ -1,11 +1,14 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
-import { Add } from "@mui/icons-material";
+import { Grid, Box } from "@mui/material";
+import { Add, Delete } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
 import PaymentsTextFields from "../caseTextField";
-import TextButton from "../button";
+import MuiPhoneTextField from "../muiPhoneText";
+import AmountTextField from "../amountTextField";
+import { PhoneValidation } from "../../constants/appConstants";
+import { formatPhoneNumber } from "../../common";
 
 export default function CreditorFields({
   creditorBasicsInfo,
@@ -27,11 +30,13 @@ export default function CreditorFields({
   creditorContactEmailError,
   setCreditorContactEmailError,
 }) {
+  const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const isEmailValid = (email) => {
     // Use a more robust email validation regular expression
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     return emailRegex.test(email);
   };
+
   const basicInfoInputChange = (fieldName, value) => {
     if (fieldName === "CreditorBasicEmailAddress") {
       if (!isEmailValid(value)) {
@@ -47,10 +52,10 @@ export default function CreditorFields({
       }
     }
     if (fieldName === "CreditorBasicPhoneNumber") {
-      if (value.length !== 10) {
+      if (value.length !== PHONE_NO_CHARACTERS) {
         setCreditorFieldsError((prevErrors) => ({
           ...prevErrors,
-          creditorPhoneError: "Phone number must be 10 digits",
+          creditorPhoneError: PHONE_NO_ERROR,
         }));
       } else {
         setCreditorFieldsError((prevErrors) => ({
@@ -59,20 +64,10 @@ export default function CreditorFields({
         }));
       }
     }
-    if (fieldName === "CreditorBasicPhoneNumber") {
-      const inputValue = value;
-      if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
-        setCreditorBasicsInfo((prevState) => ({
-          ...prevState,
-          [fieldName]: value,
-        }));
-      }
-    } else {
-      setCreditorBasicsInfo((prevState) => ({
-        ...prevState,
-        [fieldName]: value,
-      }));
-    }
+    setCreditorBasicsInfo((prevState) => ({
+      ...prevState,
+      [fieldName]: value,
+    }));
   };
   const businessInfoInputChange = (fieldName, value) => {
     setCreditorBusinessDetails((prevState) => ({
@@ -138,10 +133,10 @@ export default function CreditorFields({
       }
     }
     if (field === "phone") {
-      if (value.length !== 10) {
+      if (value.length !== PHONE_NO_CHARACTERS) {
         setCreditorContactError((prevErrors) => ({
           ...prevErrors,
-          [`phone${index}`]: "Phone number must be 10 digits",
+          [`phone${index}`]: PHONE_NO_ERROR,
         }));
       } else {
         setCreditorContactError((prevErrors) => ({
@@ -150,7 +145,7 @@ export default function CreditorFields({
         }));
       }
     }
-    if (field === "phone" || field === "zipCode") {
+    if (field === "zipCode") {
       if (value === "" || /^\d*\.?\d*$/.test(value)) {
         updatedList[index][field] = value;
         setCreditorContactDetails(updatedList);
@@ -184,7 +179,7 @@ export default function CreditorFields({
           marginTop: { xs: ".5rem", xl: "0rem" },
           backgroundColor: Colors.WHITE,
           padding: "1rem",
-          height: "350px",
+          height: { xl: "350px", xs: "600px" },
         }}
       >
         <Typography
@@ -254,17 +249,18 @@ export default function CreditorFields({
             }
             error={creditorFieldsError?.emailValidError}
           />
-          <PaymentsTextFields
-            type="number"
+
+          <MuiPhoneTextField
             label="Phone #*"
-            placeHolderValue="Enter Phone Number"
-            width="97%"
             value={creditorBasicsInfo?.CreditorBasicPhoneNumber}
             onChange={(e) =>
-              basicInfoInputChange("CreditorBasicPhoneNumber", e.target.value)
+              basicInfoInputChange(
+                "CreditorBasicPhoneNumber",
+                formatPhoneNumber(e)
+              )
             }
-            error={creditorFieldsError?.creditorPhoneError}
             onKeyDown={handleNumberInputKeyDown}
+            error={creditorFieldsError?.creditorPhoneError}
           />
         </Grid>
         <Typography
@@ -374,10 +370,9 @@ export default function CreditorFields({
               >
                 Minimum*
               </Typography>
-              <PaymentsTextFields
-                type="number"
-                placeHolderValue="$"
-                width="97%"
+
+              <AmountTextField
+                width="40%"
                 value={historicRange?.minimum}
                 onChange={(e) => historicInputChange("minimum", e.target.value)}
                 onKeyDown={handleNumberInput}
@@ -393,10 +388,9 @@ export default function CreditorFields({
               >
                 Maximum*
               </Typography>
-              <PaymentsTextFields
-                type="number"
-                placeHolderValue="$"
-                width="97%"
+
+              <AmountTextField
+                width="40%"
                 value={historicRange?.maximum}
                 onChange={(e) => historicInputChange("maximum", e.target.value)}
                 onKeyDown={handleNumberInput}
@@ -430,17 +424,44 @@ export default function CreditorFields({
           >
             Contact Details
           </Typography>
-          <TextButton
-            buttonText="ADD CONTACT"
-            startIcon={<Add />}
-            backgroundColor={Colors.SKY_BLUE}
-            hoverColor={Colors.SKY_BLUE}
+          <Add
             onClick={handleAddNewContact}
+            sx={{
+              backgroundColor: Colors.SKY_BLUE,
+              color: Colors.WHITE,
+              borderRadius: "50%",
+              fontSize: "2.5rem",
+              padding: ".4rem",
+              cursor: "pointer",
+            }}
           />
         </Grid>
         {creditorContactDetails?.map((item, index) => {
           return (
             <>
+              {index !== 0 && (
+                <Box
+                  item
+                  xs={12}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    width: "100%",
+                  }}
+                >
+                  <Delete
+                    onClick={() => handleRemoveNewData(index)}
+                    sx={{
+                      backgroundColor: Colors.ORANGE_COLOR,
+                      color: Colors.WHITE,
+                      borderRadius: "50%",
+                      fontSize: "2.5rem",
+                      padding: ".4rem",
+                      cursor: "pointer",
+                    }}
+                  />
+                </Box>
+              )}
               <Grid key={index} container item xs={12}>
                 <Grid container item xs={12} md={8}>
                   <PaymentsTextFields
@@ -463,17 +484,15 @@ export default function CreditorFields({
                       handleInputChange(index, "title", e.target.value)
                     }
                   />
-                  <PaymentsTextFields
-                    type="number"
-                    label="Phone"
-                    placeHolderValue="Enter Phone Number"
-                    width="97%"
+
+                  <MuiPhoneTextField
+                    label="Phone #"
                     value={item?.phone}
                     onChange={(e) =>
-                      handleInputChange(index, "phone", e.target.value)
+                      handleInputChange(index, "phone", formatPhoneNumber(e))
                     }
-                    error={creditorContactError?.[`phone${index}`]}
                     onKeyDown={handleNumberInputKeyDown}
+                    error={creditorContactError?.[`phone${index}`]}
                   />
                   <PaymentsTextFields
                     type="text"
@@ -567,18 +586,6 @@ export default function CreditorFields({
                       width: "80%",
                     }}
                   />
-                  {index !== 0 && (
-                    <>
-                      <TextButton
-                        buttonText="DELETE CONTACT"
-                        backgroundColor={Colors.ORANGE_COLOR}
-                        hoverColor={Colors.ORANGE_COLOR}
-                        onClick={() => handleRemoveNewData(index)}
-                        width="40%"
-                        marginTop="1.5rem"
-                      />
-                    </>
-                  )}
                 </Grid>
               </Grid>
               <hr></hr>

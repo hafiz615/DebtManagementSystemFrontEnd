@@ -18,6 +18,7 @@ import FroalaEditor from "./froalaEditor";
 import CaseModel from "./caseModel";
 import CaseCustomField from "./caseCustomField";
 import EditCaseCustomField from "./editCaseCustomField";
+import EditAbout from "./editAbout";
 
 export default function MuiModels({
   buttonName,
@@ -111,6 +112,16 @@ export default function MuiModels({
         >
           <EditIcon
             sx={{ color: Colors.DARK_GRAY, fontSize: iconSize || "16px" }}
+          />
+        </IconButton>
+      ) : show === "editAbout" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <EditIcon
+            sx={{ color: Colors.WHITE, fontSize: iconSize || "16px" }}
           />
         </IconButton>
       ) : show === "addCase" ? (
@@ -214,6 +225,8 @@ export default function MuiModels({
               caseData={caseData}
               GetCaseDetails={GetCaseDetails}
             />
+          ) : show === "editAbout" ? (
+            <EditAbout show={show} handleClose={handleClose} />
           ) : show === "addCase" ? (
             <CaseModel
               show={show}

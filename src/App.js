@@ -14,6 +14,7 @@ import CaseCodeDetail from "./pages/caseCodeDetail";
 import ClientListDetailsPage from "./pages/clientListDetails";
 import DashboardPage from "./pages/dashboardPage";
 import SettingsPage from "./pages/settingsPage";
+import CreditorListPage from "./pages/creditorListPage";
 function App() {
   return (
     <Routes>
@@ -78,7 +79,7 @@ function App() {
       />
       <Route
         exact
-        path="/client-list-details/:id"
+        path="/:userRole/list-details/:id"
         element={
           <Protected>
             <ClientListDetailsPage />
@@ -114,6 +115,16 @@ function App() {
         element={
           <Protected>
             <CaseCodeDetail />
+          </Protected>
+        }
+      />
+
+      <Route
+        exact
+        path="/creditor-listing"
+        element={
+          <Protected>
+            <CreditorListPage />
           </Protected>
         }
       />

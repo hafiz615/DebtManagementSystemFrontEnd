@@ -1,17 +1,20 @@
 import React, { useState } from "react";
+import { useParams } from "react-router-dom";
 import { Grid, Typography, Box } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import Dropdown from "./dropdown";
 import { Colors } from "../config/default";
 import TextButton from "./button";
 import { useToast } from "../toast/toastContext";
+import { EditCustomFieldsByTarget } from "../services/services";
+import { isEmpty } from "lodash";
 
 export default function EditCaseCustomField({
   handleClose,
   customFieldsData,
-  GetCaseDetails,
   caseData,
 }) {
+  const { id } = useParams();
   const { showToast } = useToast();
   const menuItems =
     customFieldsData &&
@@ -43,7 +46,22 @@ export default function EditCaseCustomField({
   };
   const isButtonDisabled = fields?.some((field) => !field.name || !field.value);
   const handleSubmit = async () => {
-    showToast("Integration under progress", "success");
+    const params = {
+      customFields: fields.map((field) => ({
+        name: field.name,
+        value: field.value,
+      })),
+    };
+    const editCustomField = await EditCustomFieldsByTarget("case", params, id);
+    if (editCustomField?.status === 200) {
+      showToast(editCustomField?.data?.message, "success");
+    } else {
+      showToast(
+        editCustomField?.response?.data?.message ||
+          editCustomField?.data?.message,
+        "error"
+      );
+    }
     handleClose();
   };
   return (
@@ -120,6 +138,7 @@ export default function EditCaseCustomField({
                   Title
                 </Typography>
                 <Dropdown
+                  disabled={isEmpty(menuItems)}
                   menuItems={menuItems}
                   placeholder="Title"
                   backgroundColor={Colors.BG_LIGHT_GRAY}

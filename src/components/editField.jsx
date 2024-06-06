@@ -10,27 +10,29 @@ import { Colors } from "../config/default";
 import TextButton from "./button";
 import { EditCustomField } from "../services/services";
 import { useToast } from "../toast/toastContext";
+import Dropdown from "./dropdown";
 
 export default function EditField({ handleClose, data, handleModalClose }) {
+  const menuItems = [{ label: "Case", value: "case" }];
   const { showToast } = useToast();
-  const [formData, setFormData] = React.useState(data)
+  const [formData, setFormData] = React.useState(data);
   const handleChange = (field, value) => {
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
-      [field]: value
+      [field]: value,
     }));
-  }
+  };
   const handleSave = async () => {
     const customFieldSubmission = await EditCustomField(formData);
     if (customFieldSubmission?.status === 200) {
       showToast(customFieldSubmission?.data?.message, "success");
-      handleClose()
-      handleModalClose()
+      handleClose();
+      handleModalClose();
     } else {
       const errorMessage = customFieldSubmission?.response?.data?.message;
       showToast(errorMessage, "error");
     }
-  }
+  };
   return (
     <Grid>
       <div>
@@ -46,7 +48,7 @@ export default function EditField({ handleClose, data, handleModalClose }) {
         placeholder="Name"
         style={{
           backgroundColor: Colors.BG_LIGHT_GRAY,
-          height: "2rem",
+          height: "2.5rem",
           color: Colors.DIM_LIGHT_GRAY,
           paddingLeft: "1rem",
           border: "none",
@@ -56,8 +58,8 @@ export default function EditField({ handleClose, data, handleModalClose }) {
           width: "calc(48% - 1rem)",
         }}
         value={formData.name}
-        onChange={(e)=> handleChange("name", e.target.value)} 
-        />
+        onChange={(e) => handleChange("name", e.target.value)}
+      />
 
       <div style={{ display: "flex", gap: "1em", marginTop: "1em" }}>
         <input
@@ -65,33 +67,27 @@ export default function EditField({ handleClose, data, handleModalClose }) {
           placeholder="Type"
           style={{
             backgroundColor: Colors.BG_LIGHT_GRAY,
-            height: "2rem",
+            height: "2.5rem",
             color: Colors.DIM_LIGHT_GRAY,
             paddingLeft: "1rem",
             border: "none",
             outline: "none",
             borderRadius: "5px",
-            width: "calc(100% - 1rem)",
+            width: "50%",
           }}
-          value={formData.type} 
-          onChange={(e)=> handleChange("type", e.target.value)} 
-          />
+          value={formData.type}
+          onChange={(e) => handleChange("type", e.target.value)}
+        />
 
-        <input
-          type="text"
+        <Dropdown
+          menuWidth="22rem"
+          menuItems={menuItems}
           placeholder="Target"
-          style={{
-            backgroundColor: Colors.BG_LIGHT_GRAY,
-            height: "2rem",
-            color: Colors.DIM_LIGHT_GRAY,
-            paddingLeft: "1rem",
-            border: "none",
-            outline: "none",
-            borderRadius: "5px",
-            width: "calc(100% - 1rem)",
-          }}
-          value={formData.target}
-          onChange={(e)=> handleChange("target", e.target.value)} 
+          backgroundColor={Colors.BG_LIGHT_GRAY}
+          hoverColor={Colors.BG_LIGHT_GRAY}
+          width="50%"
+          selectedValue={formData.target}
+          setSelectedValue={(value) => handleChange("target", value)}
         />
       </div>
       <div style={{ marginTop: "1em" }}>
@@ -107,11 +103,14 @@ export default function EditField({ handleClose, data, handleModalClose }) {
             padding: "1em",
           }}
           value={formData.description}
-          onChange={(e)=> handleChange("description", e.target.value)} 
+          onChange={(e) => handleChange("description", e.target.value)}
         />
       </div>
       <div style={{ fontFamily: "Nunito" }}>
-        <Checkbox checked={formData.shared} onChange={(e)=> handleChange("shared", e.target.checked)} />
+        <Checkbox
+          checked={formData.shared}
+          onChange={(e) => handleChange("shared", e.target.checked)}
+        />
         Share
       </div>
       <Accordion

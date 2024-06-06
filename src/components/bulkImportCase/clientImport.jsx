@@ -50,7 +50,7 @@ export default function ClientImport({ setApiData }) {
     if (!csvData?.data || csvData.data.length === 0) {
       return null;
     }
-    const keys = Object?.keys(csvData?.data[currentCase]);
+    const keys = Object.keys(csvData?.data[currentCase]);
     return csvData?.data[currentCase][keys[columnIndex]];
   };
 
@@ -154,7 +154,7 @@ export default function ClientImport({ setApiData }) {
   const renderData = (category, itemName) => {
     const dropdownStates = JSON.parse(localStorage.getItem("dropdownState"));
     const selectedColumn = dropdownStates
-      ? dropdownStates[`${category}-${itemName}`]
+      ? dropdownStates[`${category}-${itemName}-0`]
       : null;
     const columnIndex = columnNames.findIndex(
       (col) => col.value === selectedColumn
@@ -173,6 +173,7 @@ export default function ClientImport({ setApiData }) {
       </Typography>
     );
   };
+
   return (
     <Grid
       xs={12}

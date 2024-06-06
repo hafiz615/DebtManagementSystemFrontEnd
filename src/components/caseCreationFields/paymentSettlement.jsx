@@ -6,6 +6,7 @@ import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 
 import { Colors } from "../../config/default";
 import Dropdown from "./../dropdown";
+import AmountTextField from "../amountTextField";
 
 export default function PaymentSettlement({
   newDataList,
@@ -21,11 +22,43 @@ export default function PaymentSettlement({
     { label: "Monthly", value: "Monthly" },
   ];
 
+  const calculateStartDate = (prevItem, timePeriod, frequency) => {
+    if (!prevItem) return new Date().toISOString().split("T")[0]; // If no previous item, return today's date
+
+    const prevDate = new Date(prevItem.startDate);
+    let multiplier;
+
+    switch (timePeriod) {
+      case "Daily":
+        multiplier = 1;
+        break;
+      case "Weekly":
+        multiplier = 7;
+        break;
+      case "Fortnightly":
+        multiplier = 14;
+        break;
+      case "Monthly":
+        multiplier = 30;
+        break;
+      default:
+        multiplier = 0;
+    }
+
+    const newDate = new Date(prevDate);
+    newDate.setDate(newDate.getDate() + multiplier * (frequency || 1));
+    return newDate.toISOString().split("T")[0];
+  };
   const handleAddNewData = () => {
+    const lastItem = newDataList[newDataList.length - 1];
     const newItem = {
       amount: "",
-      timePeriod: "Custom", // Default value for time period
-      startDate: "",
+      timePeriod: "Custom", // Use previous item's timePeriod if available
+      startDate: calculateStartDate(
+        lastItem,
+        lastItem?.timePeriod || "Custom",
+        lastItem?.frequency || 1
+      ),
       frequency: 1,
     };
     setNewDataList([...newDataList, newItem]);
@@ -33,7 +66,12 @@ export default function PaymentSettlement({
 
   const handleRemoveNewData = (index) => {
     const updatedList = [...newDataList];
-    updatedList.splice(index, 1); // Remove item at the specified index
+
+    if (index < updatedList?.length - 1) {
+      const removedStartDate = updatedList[index].startDate;
+      updatedList[index + 1].startDate = removedStartDate;
+    }
+    updatedList.splice(index, 1);
     setNewDataList(updatedList);
   };
 
@@ -42,10 +80,16 @@ export default function PaymentSettlement({
   const handleInputChange = (index, field, value) => {
     setIsInteracted(true);
     const updatedList = [...newDataList];
-    if (field === "timePeriod" && value === "Custom") {
-      updatedList[index].frequency = 1;
-    }
     updatedList[index][field] = value;
+
+    for (let i = index; i < updatedList?.length - 1; i++) {
+      updatedList[i + 1].startDate = calculateStartDate(
+        updatedList[i],
+        updatedList[i]?.timePeriod,
+        updatedList[i]?.frequency
+      );
+    }
+
     setNewDataList(updatedList);
   };
 
@@ -55,8 +99,6 @@ export default function PaymentSettlement({
       e.preventDefault();
     }
   };
-
-  // const today = new Date().toISOString().split("T")[0];
 
   // Calculate the first day of the current month
   const firstDayOfMonth = new Date();
@@ -106,7 +148,7 @@ export default function PaymentSettlement({
               >
                 Debt
               </Typography>
-              <input
+              {/* <input
                 type="number"
                 placeholder="$ Debt Amount"
                 value={item?.amount}
@@ -125,6 +167,15 @@ export default function PaymentSettlement({
                   borderRadius: "5px",
                   width: "60%",
                 }}
+              /> */}
+
+              <AmountTextField
+                width="60%"
+                value={item?.amount}
+                onChange={(e) =>
+                  handleInputChange(index, "amount", parseInt(e.target.value))
+                }
+                onKeyDown={handleNumberInput}
               />
             </Grid>
 
@@ -262,7 +313,7 @@ export default function PaymentSettlement({
                 sx={{ color: Colors.SKY_BLUE }}
                 onClick={handleAddNewData}
               />
-              {index !== 0 && (
+              {newDataList?.length > 1 && (
                 <>
                   <RemoveCircleIcon
                     sx={{ color: Colors.ORANGE_COLOR }}
@@ -274,7 +325,7 @@ export default function PaymentSettlement({
 
             {index === newDataList?.length - 1 &&
               isInteracted &&
-              remainingAmount !== totalAmount && (
+              parseInt(remainingAmount) !== totalAmount && (
                 <Typography
                   sx={{ color: "red", marginLeft: "2rem", fontSize: "10px" }}
                 >

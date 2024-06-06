@@ -20,7 +20,9 @@ import {
   Home,
   ChevronLeft,
   ChevronRight,
+  People,
 } from "@mui/icons-material";
+
 import ListItemText from "@mui/material/ListItemText";
 
 import NavBar from "./navBar";
@@ -61,6 +63,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 const icons = [
   <Home />,
   <AccountCircle />,
+  <People />,
   <Settings />,
   <Group />,
   <Window />,
@@ -82,6 +85,11 @@ export default function PersistentDrawerLeft({ children }) {
   const navigate = useNavigate();
   useEffect(() => {
     const handleItemClick = (text) => {
+      if (text !== "bulk-cases") {
+        localStorage.removeItem("Columns");
+        localStorage.removeItem("dropdownState");
+        localStorage.removeItem("csvData");
+      }
       localStorage.setItem("route", text);
       switch (text) {
         case "Home":
@@ -99,12 +107,16 @@ export default function PersistentDrawerLeft({ children }) {
         case "Clients":
           navigate("/client-listing");
           break;
+        case "Creditors":
+          navigate("/creditor-listing");
+          break;
         case "Analytics":
           navigate("/analytics");
           break;
         case "bulk-cases":
           navigate("/bulk-cases");
           break;
+
         default:
           break;
       }
@@ -177,44 +189,49 @@ export default function PersistentDrawerLeft({ children }) {
         </Box>
 
         <List sx={{ marginLeft: "0.5rem" }}>
-          {["Home", "Clients", "Settings", "User Listing", "Analytics"]?.map(
-            (text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton
-                  onClick={() => setSelectedItem(text)}
+          {[
+            "Home",
+            "Clients",
+            "Creditors",
+            "Settings",
+            "User Listing",
+            "Analytics",
+          ]?.map((text, index) => (
+            <ListItem key={text} disablePadding>
+              <ListItemButton
+                onClick={() => setSelectedItem(text)}
+                sx={{
+                  color: selectedItem === text ? Colors.SKY_BLUE : "inherit",
+                  ":hover": {
+                    backgroundColor: Colors.WHITE,
+                    color: Colors.SKY_BLUE,
+                  },
+                }}
+              >
+                <ListItemIcon
                   sx={{
-                    color: selectedItem === text ? Colors.SKY_BLUE : "inherit",
-                    ":hover": {
-                      backgroundColor: Colors.WHITE,
-                      color: Colors.SKY_BLUE,
-                    },
+                    color:
+                      selectedItem === text
+                        ? Colors.SKY_BLUE
+                        : Colors.DIM_LIGHT_GRAY,
                   }}
                 >
-                  <ListItemIcon
-                    sx={{
-                      color:
-                        selectedItem === text
-                          ? Colors.SKY_BLUE
-                          : Colors.DIM_LIGHT_GRAY,
-                    }}
-                  >
-                    {icons[index]}
-                  </ListItemIcon>
+                  {icons[index]}
+                </ListItemIcon>
 
-                  <ListItemText
-                    primary={text}
-                    sx={{
-                      fontFamily: "Nunito !important",
-                      color:
-                        selectedItem === text
-                          ? Colors.SKY_BLUE
-                          : Colors.DARK_GRAY,
-                    }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            )
-          )}
+                <ListItemText
+                  primary={text}
+                  sx={{
+                    fontFamily: "Nunito !important",
+                    color:
+                      selectedItem === text
+                        ? Colors.SKY_BLUE
+                        : Colors.DARK_GRAY,
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
         </List>
       </Drawer>
       <Main open={open}>

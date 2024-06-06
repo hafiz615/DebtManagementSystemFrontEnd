@@ -7,12 +7,17 @@ import PaymentsTextFields from "./caseTextField";
 import Dropdown from "./dropdown";
 import { UpdateDebtor } from "../services/services";
 import { useToast } from "../toast/toastContext";
+import MuiPhoneTextField from "./muiPhoneText";
+import { PhoneValidation } from "../constants/appConstants";
+import { formatPhoneNumber } from "../common";
+import AmountTextField from "./amountTextField";
 
 export default function EditDebtorDetail({
   handleClose,
   caseData,
   GetCaseDetails,
 }) {
+  const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const { showToast } = useToast();
   const menuItems = [
     { label: "Customer", value: "Customer" },
@@ -62,6 +67,7 @@ export default function EditDebtorDetail({
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     return emailRegex.test(email);
   };
+
   const [isFormValid, setIsFormValid] = useState(false);
   const validateForm = () => {
     const ownDetailsValid = Object.values(debtorOwnDetails).every(
@@ -104,10 +110,10 @@ export default function EditDebtorDetail({
       }
     }
     if (field === "BasicPhoneNumber") {
-      if (value.length !== 10) {
+      if (value.length !== PHONE_NO_CHARACTERS) {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          basicPhone: "Phone number must be 10 digits",
+          basicPhone: PHONE_NO_ERROR,
         }));
       } else {
         setErrors((prevErrors) => ({
@@ -116,11 +122,7 @@ export default function EditDebtorDetail({
         }));
       }
     }
-    if (
-      field === "BasicSsid" ||
-      field === "BasicZipCode" ||
-      field === "BasicPhoneNumber"
-    ) {
+    if (field === "BasicSsid" || field === "BasicZipCode") {
       const inputValue = value;
       if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
         setDebtorOwnDetails((prevDetails) => ({
@@ -150,6 +152,7 @@ export default function EditDebtorDetail({
         status: status,
         phone: debtorOwnDetails?.BasicPhoneNumber,
         address: debtorOwnDetails?.BasicAddress,
+        weeklyBudget: debtorOwnDetails?.BasicWeeklyBudget,
       },
       businessInformation: {
         companyName: debtorBusinessDetails?.businessCompanyName,
@@ -180,10 +183,10 @@ export default function EditDebtorDetail({
 
   const handleBusinessDetailsChange = (field, value) => {
     if (field === "businessPhoneNumber") {
-      if (value.length !== 10) {
+      if (value.length !== PHONE_NO_CHARACTERS) {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          businessPhone: "Phone number must be 10 digits",
+          businessPhone: PHONE_NO_ERROR,
         }));
       } else {
         setErrors((prevErrors) => ({
@@ -205,11 +208,7 @@ export default function EditDebtorDetail({
         }));
       }
     }
-    if (
-      field === "businessEinNumber" ||
-      field === "businessPhoneNumber " ||
-      field === "businessZipCode"
-    ) {
+    if (field === "businessEinNumber" || field === "businessZipCode") {
       const inputValue = value;
       if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
         setDebtorBusinessDetails((prevDetails) => ({
@@ -294,7 +293,6 @@ export default function EditDebtorDetail({
           borderRadius: "10px",
           marginTop: { xs: ".5rem", xl: "0rem" },
           backgroundColor: Colors.WHITE,
-          padding: "1rem",
         }}
       >
         <Typography
@@ -373,6 +371,7 @@ export default function EditDebtorDetail({
             setSelectedValue={setStatus}
           />
         </Grid>
+
         <Grid
           container
           item
@@ -435,17 +434,15 @@ export default function EditDebtorDetail({
             }
             onKeyDown={handleNumberInput}
           />
-          <PaymentsTextFields
-            type="text"
+
+          <MuiPhoneTextField
             label="Phone #*"
-            placeHolderValue="Enter Phone Number"
-            width="100%"
             value={debtorOwnDetails?.BasicPhoneNumber}
             onChange={(e) =>
-              handleOwnDetailsChange("BasicPhoneNumber", e.target.value)
+              handleOwnDetailsChange("BasicPhoneNumber", formatPhoneNumber(e))
             }
-            error={errors?.basicPhone}
             onKeyDown={handleNumberInputKeyDown}
+            error={errors?.basicPhone}
           />
           <PaymentsTextFields
             type="text"
@@ -458,7 +455,30 @@ export default function EditDebtorDetail({
             }
           />
         </Grid>
+        <Grid container xs={12}>
+          <Typography
+            sx={{
+              fontWeight: "500",
+              fontFamily: "Nunito",
+              marginLeft: "1rem",
+              color: Colors.DARK_GRAY,
+            }}
+          >
+            Weekly Budget*
+          </Typography>
+          <AmountTextField
+            width="100%"
+            value={debtorOwnDetails?.BasicWeeklyBudget}
+            onChange={(e) =>
+              handleOwnDetailsChange(
+                "BasicWeeklyBudget",
+                Number(e.target.value)
+              )
+            }
+          />
+        </Grid>
       </Grid>
+
       <Grid
         item
         xs={12}
@@ -466,7 +486,7 @@ export default function EditDebtorDetail({
           borderRadius: "10px",
           marginTop: { xs: ".5rem", xl: "0rem" },
           backgroundColor: Colors.WHITE,
-          padding: "1rem",
+          // padding: "1rem",
         }}
       >
         <Typography
@@ -608,17 +628,18 @@ export default function EditDebtorDetail({
             }
             onKeyDown={handleNumberInput}
           />
-          <PaymentsTextFields
-            type="text"
+
+          <MuiPhoneTextField
             label="Phone #*"
-            placeHolderValue="Enter Phone Number"
-            width="100%"
             value={debtorBusinessDetails?.businessPhoneNumber}
             onChange={(e) =>
-              handleBusinessDetailsChange("businessPhoneNumber", e.target.value)
+              handleBusinessDetailsChange(
+                "businessPhoneNumber",
+                formatPhoneNumber(e)
+              )
             }
-            error={errors?.businessPhone}
             onKeyDown={handleNumberInputKeyDown}
+            error={errors?.businessPhone}
           />
           <PaymentsTextFields
             type="text"
@@ -632,7 +653,7 @@ export default function EditDebtorDetail({
           />
         </Grid>
       </Grid>
-      <Grid container xs={11.8} sx={{ justifyContent: "right" }}>
+      <Grid container xs={12} sx={{ justifyContent: "right" }}>
         <TextButton
           buttonText="Save"
           height="2rem"

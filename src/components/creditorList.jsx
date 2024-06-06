@@ -9,19 +9,18 @@ import { UserListPage } from "../constants/appConstants";
 import { Colors } from "../config/default";
 import SearchBar from "./searchBar";
 import ListTable from "./listTable";
-import { GetAllClients } from "../services/services";
+import { GetAllCreditors } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import CircularProgress from "@mui/material/CircularProgress";
 const headers = [
   // "Index",
   "Name",
   "Number of Cases",
-  "Number of Creditors",
-  "Client Status",
+  "Number of Debtors",
   "Total Dept",
 ];
 
-export default function ClientList() {
+export default function CreditorList() {
   const { showToast } = useToast();
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState("");
@@ -34,20 +33,21 @@ export default function ClientList() {
   const [userArray, setUserArray] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const GetClients = async () => {
+  const GetCreditors = async () => {
     setLoading(true);
-    const getClients = await GetAllClients();
-    if (getClients?.status === 200) {
-      setUserArray(getClients?.data?.data?.clientDetails);
+    const getCreditors = await GetAllCreditors();
+    console.log(getCreditors);
+    if (getCreditors?.status === 200) {
+      setUserArray(getCreditors?.data?.data?.clientDetails);
     } else {
-      const errorMessage = getClients?.response?.data?.message;
+      const errorMessage = getCreditors?.response?.data?.message;
       showToast(errorMessage, "error");
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    GetClients();
+    GetCreditors();
   }, []);
 
   const generatedData = useMemo(() => {
@@ -55,10 +55,9 @@ export default function ClientList() {
       userArray &&
       userArray?.map((item) => ({
         id: item?.id,
-        name: item?.debtorName || "-",
+        name: item?.creditorName || "-",
         totalCases: item?.totalCases || "-",
-        totalCreditors: item?.totalCreditors || "-",
-        status: item?.status || "-",
+        totalCreditors: item?.totalDebtors || "-",
         totalDebt: item?.totalDebt || "-",
       }))
     );
@@ -69,7 +68,7 @@ export default function ClientList() {
 
   const handleRowClick = (id) => {
     localStorage.setItem("route", "list-details");
-    navigate(`/client/list-details/${id}`);
+    navigate(`/creditor/list-details/${id}`);
   };
   return (
     <Grid
@@ -114,7 +113,7 @@ export default function ClientList() {
             color: Colors.BLACK,
           }}
         >
-          Clients
+          Creditors
         </Typography>
       </Grid>
       <Grid
@@ -144,12 +143,12 @@ export default function ClientList() {
             fontFamily: "Nunito",
           }}
         >
-          Clients List
+          Creditors List
         </Typography>
         <SearchBar
           searchText={searchText}
           setSearchText={setSearchText}
-          placeholder="Search Client..."
+          placeholder="Search Creditor..."
         />
       </Grid>
 

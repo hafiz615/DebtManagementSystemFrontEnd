@@ -35,7 +35,7 @@ function Login() {
   useEffect(() => {
     const auth = localStorage.getItem("token");
     if (auth) {
-      navigate("/Home");
+      navigate("/home");
     }
   }, []);
   const navigate = useNavigate();
@@ -52,7 +52,7 @@ function Login() {
       navigate("/home");
     } else {
       const errorMessage = login?.response?.data?.message;
-      showToast(errorMessage, "error");
+      showToast(errorMessage || login?.message, "error");
     }
     setLoading(false);
   };

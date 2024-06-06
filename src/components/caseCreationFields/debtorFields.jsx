@@ -1,13 +1,16 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
-import { Add } from "@mui/icons-material";
+import { Grid, Box } from "@mui/material";
+import { Add, Delete } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
 import PaymentsTextFields from "../caseTextField";
-import TextButton from "../button";
 import Dropdown from "./../dropdown";
 import Checkboxes from "../checkBox";
+import MuiPhoneTextField from "../muiPhoneText";
+import { PhoneValidation } from "../../constants/appConstants";
+import { formatPhoneNumber } from "../../common";
+import AmountTextField from "../amountTextField";
 
 export default function DebtorFields({
   debtorOwnDetails,
@@ -27,12 +30,14 @@ export default function DebtorFields({
   emailContactError,
   setEmailContactError,
 }) {
+  const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const menuItems = [
     { label: "Customer", value: "Customer" },
     { label: "On hold", value: "On hold" },
     { label: "Canceled", value: "Canceled" },
     { label: "Declared Bankrupcy", value: "Declared Bankrupcy" },
   ];
+
   const isEmailValid = (email) => {
     // Use a more robust email validation regular expression
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
@@ -67,10 +72,10 @@ export default function DebtorFields({
       }
     }
     if (fieldName === "BasicPhoneNumber") {
-      if (value.length !== 10) {
+      if (value?.length !== PHONE_NO_CHARACTERS) {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          basicPhone: "Phone number must be 10 digits",
+          basicPhone: PHONE_NO_ERROR,
         }));
       } else {
         setErrors((prevErrors) => ({
@@ -79,11 +84,7 @@ export default function DebtorFields({
         }));
       }
     }
-    if (
-      fieldName === "BasicSsid" ||
-      fieldName === "BasicZipCode" ||
-      fieldName === "BasicPhoneNumber"
-    ) {
+    if (fieldName === "BasicSsid" || fieldName === "BasicZipCode") {
       const inputValue = value;
       if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
         setDebtorOwnDetails((prevDetails) => ({
@@ -98,12 +99,13 @@ export default function DebtorFields({
       }));
     }
   };
+
   const businessInfoInputChange = (fieldName, value) => {
     if (fieldName === "businessPhoneNumber") {
-      if (value.length !== 10) {
+      if (value.length !== PHONE_NO_CHARACTERS) {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          businessPhone: "Phone number must be 10 digits",
+          businessPhone: PHONE_NO_ERROR,
         }));
       } else {
         setErrors((prevErrors) => ({
@@ -126,11 +128,7 @@ export default function DebtorFields({
       }
     }
 
-    if (
-      fieldName === "businessEinNumber" ||
-      fieldName === "businessPhoneNumber " ||
-      fieldName === "businessZipCode"
-    ) {
+    if (fieldName === "businessEinNumber" || fieldName === "businessZipCode") {
       const inputValue = value;
       if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
         setDebtorBusinessDetails((prevDetails) => ({
@@ -149,14 +147,14 @@ export default function DebtorFields({
   const handleCheckChange = (event) => {
     setChecked(event.target.checked);
     if (event.target.checked) {
-      setDebtorOwnDetails((prevDetails) => ({
+      setDebtorBusinessDetails((prevDetails) => ({
         ...prevDetails,
-        BasicCountry: debtorBusinessDetails?.businessCountry,
-        BasicState: debtorBusinessDetails?.businessState,
-        BasicCity: debtorBusinessDetails?.businessCity,
-        BasicZipCode: debtorBusinessDetails?.businessZipCode,
-        BasicPhoneNumber: debtorBusinessDetails?.businessPhoneNumber,
-        BasicAddress: debtorBusinessDetails?.businessAddress,
+        businessCountry: debtorOwnDetails?.BasicCountry,
+        businessState: debtorOwnDetails?.BasicState,
+        businessCity: debtorOwnDetails?.BasicCity,
+        businessZipCode: debtorOwnDetails?.BasicZipCode,
+        businessPhoneNumber: debtorOwnDetails?.BasicPhoneNumber,
+        businessAddress: debtorOwnDetails?.BasicAddress,
       }));
     }
   };
@@ -196,10 +194,10 @@ export default function DebtorFields({
       }
     }
     if (field === "phone") {
-      if (value.length !== 10) {
+      if (value.length !== PHONE_NO_CHARACTERS) {
         setContactErrors((prevErrors) => ({
           ...prevErrors,
-          [`phone${index}`]: "Phone number must be 10 digits",
+          [`phone${index}`]: PHONE_NO_ERROR,
         }));
       } else {
         setContactErrors((prevErrors) => ({
@@ -208,7 +206,7 @@ export default function DebtorFields({
         }));
       }
     }
-    if (field === "phone" || field === "zipCode") {
+    if (field === "zipCode") {
       if (value === "" || /^\d*\.?\d*$/.test(value)) {
         updatedList[index][field] = value;
         setDebtorContactDetails(updatedList);
@@ -336,8 +334,8 @@ export default function DebtorFields({
           item
           xs={12}
           sx={{
-            alignItems: "center",
             justifyContent: "center",
+            marginBottom: "0.5rem",
           }}
         >
           <Grid
@@ -358,6 +356,7 @@ export default function DebtorFields({
             </Typography>
 
             <Dropdown
+              height="2.5rem"
               menuItems={menuItems}
               menuWidth="11.7rem"
               placeholder="Choose Status"
@@ -371,11 +370,37 @@ export default function DebtorFields({
           <Grid
             container
             item
-            xs={8}
+            xs={4}
+            sx={{ display: "flex", flexDirection: "column" }}
+          >
+            <Typography
+              sx={{
+                fontWeight: "500",
+                fontFamily: "Nunito",
+                marginLeft: "1rem",
+                color: Colors.DARK_GRAY,
+              }}
+            >
+              Weekly Budget*
+            </Typography>
+
+            <AmountTextField
+              width="98%"
+              marginLeft=".2rem"
+              value={debtorOwnDetails?.BasicWeeklyBudget}
+              onChange={(e) =>
+                basicInfoInputChange("BasicWeeklyBudget", e.target.value)
+              }
+              onKeyDown={handleNumberInput}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={4}
             sx={{
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
+              marginTop: ".5rem",
             }}
           >
             <Checkboxes
@@ -390,11 +415,10 @@ export default function DebtorFields({
                 alignItems: "center",
                 fontWeight: "500",
                 fontFamily: "Nunito",
-                marginLeft: "0.5rem",
                 color: Colors.DARK_GRAY,
               }}
             >
-              Same as business
+              Same for business
             </Typography>
           </Grid>
         </Grid>
@@ -456,18 +480,14 @@ export default function DebtorFields({
             }
             onKeyDown={handleNumberInput}
           />
-          <PaymentsTextFields
-            // type="number"
-            type="text"
+          <MuiPhoneTextField
             label="Phone #*"
-            placeHolderValue="Enter Phone Number"
-            width="100%"
             value={debtorOwnDetails?.BasicPhoneNumber}
             onChange={(e) =>
-              basicInfoInputChange("BasicPhoneNumber", e.target.value)
+              basicInfoInputChange("BasicPhoneNumber", formatPhoneNumber(e))
             }
-            error={errors?.basicPhone}
             onKeyDown={handleNumberInputKeyDown}
+            error={errors?.basicPhone}
           />
           <PaymentsTextFields
             type="text"
@@ -633,18 +653,18 @@ export default function DebtorFields({
             }
             onKeyDown={handleNumberInput}
           />
-          <PaymentsTextFields
-            // type="number"
-            type="text"
+
+          <MuiPhoneTextField
             label="Phone #*"
-            placeHolderValue="Enter Phone Number"
-            width="100%"
             value={debtorBusinessDetails?.businessPhoneNumber}
             onChange={(e) =>
-              businessInfoInputChange("businessPhoneNumber", e.target.value)
+              businessInfoInputChange(
+                "businessPhoneNumber",
+                formatPhoneNumber(e)
+              )
             }
-            error={errors?.businessPhone}
             onKeyDown={handleNumberInputKeyDown}
+            error={errors?.businessPhone}
           />
           <PaymentsTextFields
             type="text"
@@ -684,18 +704,45 @@ export default function DebtorFields({
           >
             Contact Details
           </Typography>
-          <TextButton
-            buttonText="ADD CONTACT"
-            startIcon={<Add />}
-            backgroundColor={Colors.SKY_BLUE}
-            hoverColor={Colors.SKY_BLUE}
+          <Add
             onClick={handleAddNewContact}
+            sx={{
+              backgroundColor: Colors.SKY_BLUE,
+              color: Colors.WHITE,
+              borderRadius: "50%",
+              fontSize: "2.5rem",
+              padding: ".4rem",
+              cursor: "pointer",
+            }}
           />
         </Grid>
         {debtorContactDetails &&
           debtorContactDetails?.map((item, index) => {
             return (
               <>
+                {index !== 0 && (
+                  <Box
+                    item
+                    xs={12}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      width: "100%",
+                    }}
+                  >
+                    <Delete
+                      onClick={() => handleRemoveNewData(index)}
+                      sx={{
+                        backgroundColor: Colors.ORANGE_COLOR,
+                        color: Colors.WHITE,
+                        borderRadius: "50%",
+                        fontSize: "2.5rem",
+                        padding: ".4rem",
+                        cursor: "pointer",
+                      }}
+                    />
+                  </Box>
+                )}
                 <Grid key={index} container item xs={12}>
                   <Grid container item xs={12} md={8}>
                     <PaymentsTextFields
@@ -718,18 +765,17 @@ export default function DebtorFields({
                         handleInputChange(index, "title", e.target.value)
                       }
                     />
-                    <PaymentsTextFields
-                      type="number"
-                      label="Phone"
-                      placeHolderValue="Enter Phone Number"
-                      width="97%"
+
+                    <MuiPhoneTextField
+                      label="Phone #"
                       value={item?.phone}
                       onChange={(e) =>
-                        handleInputChange(index, "phone", e.target.value)
+                        handleInputChange(index, "phone", formatPhoneNumber(e))
                       }
-                      error={contactError?.[`phone${index}`]}
                       onKeyDown={handleNumberInputKeyDown}
+                      error={contactError?.[`phone${index}`]}
                     />
+
                     <PaymentsTextFields
                       type="text"
                       label="Enter Email"
@@ -822,18 +868,6 @@ export default function DebtorFields({
                         width: "80%",
                       }}
                     />
-                    {index !== 0 && (
-                      <>
-                        <TextButton
-                          buttonText="DELETE CONTACT"
-                          backgroundColor={Colors.ORANGE_COLOR}
-                          hoverColor={Colors.ORANGE_COLOR}
-                          onClick={() => handleRemoveNewData(index)}
-                          width="40%"
-                          marginTop="1.5rem"
-                        />
-                      </>
-                    )}
                   </Grid>
                 </Grid>
                 <hr></hr>

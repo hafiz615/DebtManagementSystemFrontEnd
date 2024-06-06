@@ -37,7 +37,7 @@ function CaseHistory({ data }) {
         data?.map((item) => ({
           id: item?._id,
           caseOwner: item?.caseOwner || "-",
-          Creditor: item?.creditorName || "-",
+          Creditor: item?.creditorName || item?.debtorName || "-",
           lastDate: formatDate(item?.lastPaymentDate) || "-",
           OutstandingDebt: item?.outstandingDebt || "-",
           totalDebt: item?.totalDebt || "-",

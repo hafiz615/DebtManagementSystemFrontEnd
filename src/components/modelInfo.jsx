@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { CircularProgress, Grid } from "@mui/material";
+import { CircularProgress, Grid, Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
@@ -10,8 +10,12 @@ import { CreateUser, GetUserById, UpdateUser } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import Dropdown from "./dropdown";
 import { Colors } from "../config/default";
+import MuiPhoneNumber from "material-ui-phone-number";
+import { PhoneValidation } from "../constants/appConstants";
+import { formatPhoneNumber } from "../common";
 
 function ModelInfo({ modalType, setOpen, GetUsers, id }) {
+  const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const largeScreen = useMediaQuery("(min-width:1850px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
@@ -73,10 +77,10 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
 
   const handleInputChange = (field, value, event) => {
     if (field === "phone") {
-      if (value.length !== 10) {
+      if (value.length !== PHONE_NO_CHARACTERS) {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          phone: "Phone number must be 10 digits",
+          phone: PHONE_NO_ERROR,
         }));
       } else {
         setErrors((prevErrors) => ({
@@ -98,7 +102,7 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
         }));
       }
     }
-    if (field === "ssid" || field === "phone") {
+    if (field === "ssid") {
       const inputValue = value;
       if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
         setFormData({
@@ -274,6 +278,7 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
               </Typography>
               <Dropdown
                 menuItems={genderItems}
+                menuWidth="10rem"
                 placeholder="Enter Gender"
                 width="100%"
                 height="2.5rem"
@@ -292,7 +297,7 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
               onChange={(e) => handleInputChange("email", e.target.value, e)}
               value={formData?.email}
             />
-            <CustomTextField
+            {/* <CustomTextField
               label="Phone #*"
               type="number"
               width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
@@ -301,7 +306,74 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
               error={errors?.phone}
               value={formData?.phone}
               onKeyDown={handleNumberInputKeyDown}
-            />
+            /> */}
+            <Box>
+              <Typography
+                sx={{
+                  fontWeight: "500",
+                  fontFamily: "Nunito",
+                  marginLeft: "1rem",
+                  color: Colors.DARK_GRAY,
+                }}
+              >
+                Phone #*
+              </Typography>
+              <MuiPhoneNumber
+                sx={{
+                  backgroundColor: Colors.BG_LIGHT_GRAY,
+                  height: "2.5rem",
+                  paddingLeft: ".4rem",
+                  borderRadius: "5px",
+                  display: "flex",
+                  justifyContent: "center",
+                  width: smallScreen
+                    ? "15rem"
+                    : largeScreen
+                    ? "20rem"
+                    : "10rem",
+                  border: "none !important",
+                  "& .MuiInputBase-input": {
+                    color: Colors.DIM_LIGHT_GRAY,
+                    fontSize: ".8rem",
+                  },
+                  "& .MuiInput-underline:before": {
+                    borderBottom: "none",
+                  },
+                  "& .MuiInput-underline:after": {
+                    borderBottom: "none",
+                  },
+                  "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                    borderBottom: "none",
+                  },
+                }}
+                value={formData?.phone}
+                variant="standard"
+                defaultCountry={"us"}
+                disableDropdown={false}
+                onChange={(e) =>
+                  handleInputChange("phone", formatPhoneNumber(e))
+                }
+                onKeyDown={handleNumberInputKeyDown}
+              />
+              {errors?.phone ? (
+                <Box
+                  sx={{
+                    color: "red",
+                    fontSize: "9.3px",
+                    height: smallScreen ? "0.5rem" : "0.7rem",
+                  }}
+                >
+                  {errors?.phone}
+                </Box>
+              ) : (
+                <Box
+                  sx={{
+                    color: "red",
+                    height: smallScreen ? "0.5rem" : "0.7rem",
+                  }}
+                ></Box>
+              )}
+            </Box>
 
             <Grid
               container
@@ -364,6 +436,7 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
                 </Typography>
                 <Dropdown
                   menuItems={menuItems}
+                  menuWidth="10rem"
                   placeholder="Enter Role"
                   height="2.5rem"
                   width="100%"

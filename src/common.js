@@ -87,3 +87,9 @@ export const findColumnName = (index) => {
 export const getColumnFieldIndex = (headerName, headers) => {
   return headers?.indexOf(headerName);
 };
+
+export const formatPhoneNumber = (value) => {
+  const spaceReplace = value?.replace(/ /g, "");
+  const phoneFormat = spaceReplace?.replace(/[^+a-zA-Z 0-9]+/g, "");
+  return phoneFormat;
+};
