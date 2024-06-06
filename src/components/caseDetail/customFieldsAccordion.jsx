@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 import {
   Typography,
@@ -16,15 +17,16 @@ import { GetCustomFieldsByTarget } from "../../services/services";
 export default function CustomFieldsAccordion({ caseData, GetCaseDetails }) {
   const [customFieldsData, setCustomFieldsData] = useState([]);
   const customField = caseData?.customFields;
-  const getFields = async () => {
-    const result = await GetCustomFieldsByTarget("case");
+  const { id } = useParams();
+  const getFields = async (rowId) => {
+    const result = await GetCustomFieldsByTarget("case", rowId);
     if (result?.status === 200) {
       setCustomFieldsData(result?.data?.data);
     }
   };
   useEffect(() => {
-    getFields();
-  }, []);
+    getFields(id);
+  }, [id]);
 
   return (
     <Accordion

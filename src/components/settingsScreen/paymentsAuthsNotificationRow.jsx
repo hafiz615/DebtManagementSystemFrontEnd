@@ -128,12 +128,13 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
             }}
           >
             <Dropdown
+              menuWidth="7rem"
               menuItems={menuItems.email}
               placeholder="Email"
               backgroundColor={Colors.BG_LIGHT_GRAY}
               hoverColor={Colors.BG_LIGHT_GRAY}
               width="7rem" // Adjust width as necessary
-              //   marginBottom="0.5rem"
+              marginBottom="0.3rem"
               selectedValue={truncateTemplateName(emailTemplate)}
               setSelectedValue={setEmailTemplate}
             />
@@ -146,12 +147,13 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
             }}
           >
             <Dropdown
+              menuWidth="7rem"
               menuItems={menuItems.sms}
               placeholder="SMS"
               backgroundColor={Colors.BG_LIGHT_GRAY}
               hoverColor={Colors.BG_LIGHT_GRAY}
               width="7rem" // Adjust width as necessary
-              //   marginBottom="0.5rem"
+              marginBottom="0.3rem"
               selectedValue={truncateTemplateName(smsTemplate)}
               setSelectedValue={setSMSTemplate}
             />

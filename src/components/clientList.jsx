@@ -68,8 +68,8 @@ export default function ClientList() {
   }, [generatedData]);
 
   const handleRowClick = (id) => {
-    localStorage.setItem("route", "client-list-details");
-    navigate(`/client-list-details/${id}`);
+    localStorage.setItem("route", "list-details");
+    navigate(`/client/list-details/${id}`);
   };
   return (
     <Grid
@@ -149,7 +149,7 @@ export default function ClientList() {
         <SearchBar
           searchText={searchText}
           setSearchText={setSearchText}
-          placeholder="Search Creditor..."
+          placeholder="Search Client..."
         />
       </Grid>
 

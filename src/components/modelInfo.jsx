@@ -11,8 +11,11 @@ import { useToast } from "../toast/toastContext";
 import Dropdown from "./dropdown";
 import { Colors } from "../config/default";
 import MuiPhoneNumber from "material-ui-phone-number";
+import { PhoneValidation } from "../constants/appConstants";
+import { formatPhoneNumber } from "../common";
 
 function ModelInfo({ modalType, setOpen, GetUsers, id }) {
+  const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const largeScreen = useMediaQuery("(min-width:1850px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
@@ -74,10 +77,10 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
 
   const handleInputChange = (field, value, event) => {
     if (field === "phone") {
-      if (value.length !== 11) {
+      if (value.length !== PHONE_NO_CHARACTERS) {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          phone: "Phone number must be 10 digits",
+          phone: PHONE_NO_ERROR,
         }));
       } else {
         setErrors((prevErrors) => ({
@@ -119,11 +122,6 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
     // Use a more robust email validation regular expression
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     return emailRegex.test(email);
-  };
-  const formatPhoneNumber = (value) => {
-    const spaceReplace = value?.replace(/ /g, "");
-    const phoneFormat = spaceReplace?.replace(/[^+a-zA-Z 0-9]+/g, "");
-    return phoneFormat;
   };
 
   const handleSubmit = async () => {
@@ -280,6 +278,7 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
               </Typography>
               <Dropdown
                 menuItems={genderItems}
+                menuWidth="10rem"
                 placeholder="Enter Gender"
                 width="100%"
                 height="2.5rem"
@@ -349,7 +348,6 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
                 }}
                 value={formData?.phone}
                 variant="standard"
-                // fullWidth
                 defaultCountry={"us"}
                 disableDropdown={false}
                 onChange={(e) =>
@@ -438,6 +436,7 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
                 </Typography>
                 <Dropdown
                   menuItems={menuItems}
+                  menuWidth="10rem"
                   placeholder="Enter Role"
                   height="2.5rem"
                   width="100%"

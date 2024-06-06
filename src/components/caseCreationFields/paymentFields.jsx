@@ -2,11 +2,12 @@ import React from "react";
 
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Grid from "@mui/material/Grid";
+import { Grid } from "@mui/material";
 
 import { Colors } from "../../config/default";
 import Dropdown from "./../dropdown";
-import { unset } from "lodash";
+import AmountTextField from "../amountTextField";
+import PaymentProcess from "../radioPayment";
 
 export default function PaymentFields({
   totalReceivable,
@@ -19,8 +20,10 @@ export default function PaymentFields({
   setLastPaymentDate,
   selectedValue,
   setSelectedValue,
+  setFeePayment,
+  feePayment,
 }) {
-  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
+  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:1440px)");
 
   const menuItems = [
     { label: "Customer", value: "Customer" },
@@ -47,25 +50,15 @@ export default function PaymentFields({
         Debt Details
       </Typography>
 
-      <Grid
-        container
-        item
-        xs={12}
-        sx={{
-          justifyContent: "space-between",
-          gap: { xs: "1rem", md: "0" },
-        }}
-      >
+      <Grid container xs={12}>
         <Grid
           item
           xs={12}
-          md={6}
-          lg={3.9}
+          lg={4}
           sx={{
             display: "flex",
-            flexDirection: smallScreen ? "column" : unset,
-            alignItems: smallScreen ? "flex-start" : "center",
-            justifyContent: { xs: "space-between", lg: "unset" },
+            alignItems: "center",
+            marginBottom: "0.5rem",
           }}
         >
           <Typography
@@ -73,42 +66,29 @@ export default function PaymentFields({
               fontFamily: "Nunito",
               fontWeight: "500",
               color: Colors.DARK_GRAY,
-              marginRight: "2rem",
-              width: "45%",
+              marginLeft: "2rem",
+              width: "50%",
             }}
           >
             Total Receivable
           </Typography>
 
-          <input
-            type="number"
-            placeholder="$ Total Receivable Amount"
+          <AmountTextField
+            width="60%"
             value={totalReceivable}
             onChange={(e) => setTotalReceivable(e.target.value)}
             onKeyDown={handleNumberInput}
-            min="0"
-            style={{
-              backgroundColor: Colors.BG_LIGHT_GRAY,
-              height: "2.5rem",
-              color: Colors.DIM_LIGHT_GRAY,
-              paddingLeft: "1rem",
-              border: "none",
-              outline: "none",
-              borderRadius: "5px",
-              width: smallScreen ? "100%" : "65%",
-            }}
           />
         </Grid>
+
         <Grid
           item
           xs={12}
-          md={6}
-          lg={3.9}
+          lg={4}
           sx={{
             display: "flex",
-            flexDirection: smallScreen ? "column" : unset,
-            alignItems: smallScreen ? "flex-start" : "center",
-            justifyContent: { xs: "space-between", lg: "unset" },
+            alignItems: "center",
+            marginBottom: "0.5rem",
           }}
         >
           <Typography
@@ -116,42 +96,27 @@ export default function PaymentFields({
               fontFamily: "Nunito",
               fontWeight: "500",
               color: Colors.DARK_GRAY,
-              marginRight: "1rem",
-              marginLeft: smallScreen ? "0rem" : "2rem",
+              marginLeft: "2rem",
+              width: "50%",
             }}
           >
             Paid
           </Typography>
-          <input
-            type="number"
-            placeholder="$ Paid Amount"
+          <AmountTextField
+            width="60%"
             value={paidAmount}
-            onChange={(e) => setPaidAmount(e.target.value)}
+            onChange={(e) => setPaidAmount(parseInt(e.target.value))}
             onKeyDown={handleNumberInput}
-            min="0"
-            style={{
-              backgroundColor: Colors.BG_LIGHT_GRAY,
-              height: "2.5rem",
-              color: Colors.DIM_LIGHT_GRAY,
-              paddingLeft: "1rem",
-              border: "none",
-              outline: "none",
-              borderRadius: "5px",
-              width: smallScreen ? "100%" : "60%",
-            }}
           />
         </Grid>
         <Grid
           item
           xs={12}
-          md={6}
-          lg={3.9}
+          lg={4}
           sx={{
             display: "flex",
-            alignItems: smallScreen ? "flex-start" : "center",
-            flexDirection: smallScreen ? "column" : unset,
-            justifyContent: { xs: "space-between", lg: "unset" },
-            marginTop: { md: "1rem", lg: 0 },
+            alignItems: "center",
+            marginBottom: "0.5rem",
           }}
         >
           <Typography
@@ -159,50 +124,32 @@ export default function PaymentFields({
               fontFamily: "Nunito",
               fontWeight: "500",
               color: Colors.DARK_GRAY,
-              marginRight: "1rem",
+              marginLeft: "2rem",
+              width: "50%",
             }}
           >
             Remaining
           </Typography>
-          <input
-            disabled
-            type="number"
-            placeholder="$ Remaining Amount"
+
+          <AmountTextField
+            marginRight={smallScreen ? "0rem" : "2rem"}
+            width="60%"
             value={remainingAmount}
-            min="0"
             onChange={(e) => setRemainingAmount(e.target.value)}
             onKeyDown={handleNumberInput}
-            style={{
-              backgroundColor: Colors.BG_LIGHT_GRAY,
-              height: "2.5rem",
-              color: Colors.DIM_LIGHT_GRAY,
-              paddingLeft: "1rem",
-              border: "none",
-              outline: "none",
-              borderRadius: "5px",
-              width: smallScreen ? "100%" : "60%",
-            }}
           />
         </Grid>
       </Grid>
 
-      <Grid
-        container
-        sx={{
-          marginTop: "1rem",
-          gap: { xs: "1rem", md: "0" },
-        }}
-      >
+      <Grid container xs={12} sx={{ marginTop: "1rem" }}>
         <Grid
           item
           xs={12}
-          md={6}
-          lg={3.9}
+          lg={4}
           sx={{
             display: "flex",
-            flexDirection: smallScreen ? "column" : unset,
-            alignItems: smallScreen ? "flex-start" : "center",
-            justifyContent: { xs: "space-between", lg: "unset" },
+            alignItems: "center",
+            marginBottom: "0.5rem",
           }}
         >
           <Typography
@@ -210,8 +157,8 @@ export default function PaymentFields({
               fontFamily: "Nunito",
               fontWeight: "500",
               color: Colors.DARK_GRAY,
-              marginRight: "1rem",
-              width: "45%",
+              marginLeft: "2rem",
+              width: "50%",
             }}
           >
             Last Payment Date
@@ -238,13 +185,11 @@ export default function PaymentFields({
         <Grid
           item
           xs={12}
-          md={6}
-          lg={3.9}
+          lg={4}
           sx={{
             display: "flex",
-            flexDirection: smallScreen ? "column" : unset,
-            alignItems: smallScreen ? "flex-start" : "center",
-            justifyContent: { xs: "space-between", lg: "unset" },
+            alignItems: "center",
+            marginBottom: "0.5rem",
           }}
         >
           <Typography
@@ -252,8 +197,8 @@ export default function PaymentFields({
               fontFamily: "Nunito",
               fontWeight: "500",
               color: Colors.DARK_GRAY,
-              marginRight: "1rem",
-              marginLeft: smallScreen ? "0rem" : "2rem",
+              marginLeft: "2rem",
+              width: "50%",
             }}
           >
             Status
@@ -266,6 +211,33 @@ export default function PaymentFields({
             placeholder="Choose Status"
             backgroundColor={Colors.BG_LIGHT_GRAY}
             width={smallScreen ? "100%" : "60%"}
+          />
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          lg={4}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            marginBottom: "0.5rem",
+          }}
+        >
+          <Typography
+            sx={{
+              fontFamily: "Nunito",
+              fontWeight: "500",
+              color: Colors.DARK_GRAY,
+              marginLeft: "2rem",
+              width: "45%",
+            }}
+          >
+            Fee Payment
+          </Typography>
+
+          <PaymentProcess
+            feePayment={feePayment}
+            setFeePayment={setFeePayment}
           />
         </Grid>
       </Grid>

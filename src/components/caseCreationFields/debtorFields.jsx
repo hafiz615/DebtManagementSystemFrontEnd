@@ -8,6 +8,9 @@ import PaymentsTextFields from "../caseTextField";
 import Dropdown from "./../dropdown";
 import Checkboxes from "../checkBox";
 import MuiPhoneTextField from "../muiPhoneText";
+import { PhoneValidation } from "../../constants/appConstants";
+import { formatPhoneNumber } from "../../common";
+import AmountTextField from "../amountTextField";
 
 export default function DebtorFields({
   debtorOwnDetails,
@@ -27,6 +30,7 @@ export default function DebtorFields({
   emailContactError,
   setEmailContactError,
 }) {
+  const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const menuItems = [
     { label: "Customer", value: "Customer" },
     { label: "On hold", value: "On hold" },
@@ -68,12 +72,10 @@ export default function DebtorFields({
       }
     }
     if (fieldName === "BasicPhoneNumber") {
-      // const spaceReplace = value?.replace(/ /g, "");
-      // const phoneFormat = spaceReplace?.replace(/[^+a-zA-Z 0-9]+/g, "");
-      if (value?.length !== 11) {
+      if (value?.length !== PHONE_NO_CHARACTERS) {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          basicPhone: "Phone number must be 10 digits",
+          basicPhone: PHONE_NO_ERROR,
         }));
       } else {
         setErrors((prevErrors) => ({
@@ -97,17 +99,13 @@ export default function DebtorFields({
       }));
     }
   };
-  const formatPhoneNumber = (value) => {
-    const spaceReplace = value?.replace(/ /g, "");
-    const phoneFormat = spaceReplace?.replace(/[^+a-zA-Z 0-9]+/g, "");
-    return phoneFormat;
-  };
+
   const businessInfoInputChange = (fieldName, value) => {
     if (fieldName === "businessPhoneNumber") {
-      if (value.length !== 11) {
+      if (value.length !== PHONE_NO_CHARACTERS) {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          businessPhone: "Phone number must be 10 digits",
+          businessPhone: PHONE_NO_ERROR,
         }));
       } else {
         setErrors((prevErrors) => ({
@@ -196,10 +194,10 @@ export default function DebtorFields({
       }
     }
     if (field === "phone") {
-      if (value.length !== 11) {
+      if (value.length !== PHONE_NO_CHARACTERS) {
         setContactErrors((prevErrors) => ({
           ...prevErrors,
-          [`phone${index}`]: "Phone number must be 10 digits",
+          [`phone${index}`]: PHONE_NO_ERROR,
         }));
       } else {
         setContactErrors((prevErrors) => ({
@@ -336,8 +334,8 @@ export default function DebtorFields({
           item
           xs={12}
           sx={{
-            alignItems: "center",
             justifyContent: "center",
+            marginBottom: "0.5rem",
           }}
         >
           <Grid
@@ -358,6 +356,7 @@ export default function DebtorFields({
             </Typography>
 
             <Dropdown
+              height="2.5rem"
               menuItems={menuItems}
               menuWidth="11.7rem"
               placeholder="Choose Status"
@@ -371,11 +370,37 @@ export default function DebtorFields({
           <Grid
             container
             item
-            xs={8}
+            xs={4}
+            sx={{ display: "flex", flexDirection: "column" }}
+          >
+            <Typography
+              sx={{
+                fontWeight: "500",
+                fontFamily: "Nunito",
+                marginLeft: "1rem",
+                color: Colors.DARK_GRAY,
+              }}
+            >
+              Weekly Budget*
+            </Typography>
+
+            <AmountTextField
+              width="98%"
+              marginLeft=".2rem"
+              value={debtorOwnDetails?.BasicWeeklyBudget}
+              onChange={(e) =>
+                basicInfoInputChange("BasicWeeklyBudget", e.target.value)
+              }
+              onKeyDown={handleNumberInput}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={4}
             sx={{
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
+              marginTop: ".5rem",
             }}
           >
             <Checkboxes
@@ -390,7 +415,6 @@ export default function DebtorFields({
                 alignItems: "center",
                 fontWeight: "500",
                 fontFamily: "Nunito",
-                marginLeft: "0.5rem",
                 color: Colors.DARK_GRAY,
               }}
             >
@@ -688,6 +712,7 @@ export default function DebtorFields({
               borderRadius: "50%",
               fontSize: "2.5rem",
               padding: ".4rem",
+              cursor: "pointer",
             }}
           />
         </Grid>
@@ -713,6 +738,7 @@ export default function DebtorFields({
                         borderRadius: "50%",
                         fontSize: "2.5rem",
                         padding: ".4rem",
+                        cursor: "pointer",
                       }}
                     />
                   </Box>

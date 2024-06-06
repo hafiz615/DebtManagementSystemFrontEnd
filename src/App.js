@@ -79,7 +79,7 @@ function App() {
       />
       <Route
         exact
-        path="/client-list-details/:id"
+        path="/:userRole/list-details/:id"
         element={
           <Protected>
             <ClientListDetailsPage />

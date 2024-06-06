@@ -6,7 +6,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { UserListPage } from "../constants/appConstants";
 import { Colors } from "../config/default";
 import CaseHistory from "./caseHistory";
-import { GetClientById } from "../services/services";
+import { GetClientById, GetCreditorById } from "../services/services";
 import { isEmpty } from "lodash";
 
 export default function ClientListDetails() {
@@ -14,17 +14,21 @@ export default function ClientListDetails() {
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const [clientData, setClientData] = useState({});
   const [loading, setLoading] = useState("");
-  const { id } = useParams();
-
+  const { userRole, id } = useParams();
   const GetClientDetails = async () => {
     setLoading(true);
-    const getClientData = await GetClientById(id);
-
+    let getClientData;
+    if (userRole === "client") {
+      getClientData = await GetClientById(id);
+    } else {
+      getClientData = await GetCreditorById(id);
+    }
     if (getClientData?.status === 200) {
       setClientData(getClientData?.data?.data);
     }
     setLoading(false);
   };
+
   useEffect(() => {
     GetClientDetails();
   }, []);
@@ -35,6 +39,7 @@ export default function ClientListDetails() {
     return text;
   };
   const { AUTHORITY_TEXT } = UserListPage;
+  const dataUser = clientData?.debtor || clientData?.creditor;
   return (
     <Grid
       container
@@ -95,7 +100,7 @@ export default function ClientListDetails() {
                 color: Colors.BLACK,
               }}
             >
-              {clientData?.debtor?.fullName}
+              {dataUser?.fullName}
             </Typography>
           </Grid>
           <Grid
@@ -122,29 +127,6 @@ export default function ClientListDetails() {
                       fontWeight: "600",
                       color: Colors.DARK_GRAY,
                       width: "6rem",
-                    }}
-                  >
-                    SSN
-                  </div>
-
-                  <span
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "300",
-                      fontSize: "0.9rem",
-                      color: Colors.DIM_LIGHT_GRAY,
-                    }}
-                  >
-                    {clientData?.debtor?.SSN}
-                  </span>
-                </Box>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <div
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "600",
-                      color: Colors.DARK_GRAY,
-                      width: "6rem",
                       marginTop: "0.5rem",
                     }}
                   >
@@ -160,32 +142,7 @@ export default function ClientListDetails() {
                       marginTop: "0.5rem",
                     }}
                   >
-                    {truncateText(clientData?.debtor?.email, 25)}
-                  </span>
-                </Box>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <div
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "600",
-                      color: Colors.DARK_GRAY,
-                      width: "6rem",
-                      marginTop: "0.5rem",
-                    }}
-                  >
-                    Status
-                  </div>
-
-                  <span
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "300",
-                      fontSize: "0.9rem",
-                      color: Colors.DIM_LIGHT_GRAY,
-                      marginTop: "0.5rem",
-                    }}
-                  >
-                    {clientData?.debtor?.status}
+                    {truncateText(dataUser?.email, 25)}
                   </span>
                 </Box>
 
@@ -199,7 +156,7 @@ export default function ClientListDetails() {
                       marginTop: "0.5rem",
                     }}
                   >
-                    Address
+                    Total Debt
                   </div>
 
                   <span
@@ -211,36 +168,66 @@ export default function ClientListDetails() {
                       marginTop: "0.5rem",
                     }}
                   >
-                    {truncateText(clientData?.debtor?.address, 30)}
+                    {dataUser?.totalDebt}
                   </span>
                 </Box>
+                {userRole === "client" && (
+                  <>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <div
+                        style={{
+                          fontFamily: "Nunito",
+                          fontWeight: "600",
+                          color: Colors.DARK_GRAY,
+                          width: "6rem",
+                          marginTop: "0.5rem",
+                        }}
+                      >
+                        SSN
+                      </div>
+
+                      <span
+                        style={{
+                          fontFamily: "Nunito",
+                          fontWeight: "300",
+                          fontSize: "0.9rem",
+                          color: Colors.DIM_LIGHT_GRAY,
+                          marginTop: "0.5rem",
+                        }}
+                      >
+                        {dataUser?.SSN}
+                      </span>
+                    </Box>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <div
+                        style={{
+                          fontFamily: "Nunito",
+                          fontWeight: "600",
+                          color: Colors.DARK_GRAY,
+                          width: "6rem",
+                          marginTop: "0.5rem",
+                        }}
+                      >
+                        Address
+                      </div>
+
+                      <span
+                        style={{
+                          fontFamily: "Nunito",
+                          fontWeight: "300",
+                          fontSize: "0.9rem",
+                          color: Colors.DIM_LIGHT_GRAY,
+                          marginTop: "0.5rem",
+                        }}
+                      >
+                        {truncateText(dataUser?.address, 30)}
+                      </span>
+                    </Box>
+                  </>
+                )}
               </Grid>
-              <Grid item xs={12} lg={6}>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <div
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "600",
-                      color: Colors.DARK_GRAY,
-                      width: "10rem",
-                      marginTop: "0.5rem",
-                    }}
-                  >
-                    Company Name
-                  </div>
 
-                  <span
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "300",
-                      fontSize: "0.9rem",
-                      color: Colors.DIM_LIGHT_GRAY,
-                      marginTop: "0.5rem",
-                    }}
-                  >
-                    {clientData?.debtor?.companyName}
-                  </span>
-                </Box>
+              <Grid item xs={12} lg={6}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <div
                     style={{
@@ -263,34 +250,63 @@ export default function ClientListDetails() {
                       marginTop: "0.5rem",
                     }}
                   >
-                    {clientData?.debtor?.outstandingDebt}
+                    {dataUser?.outstandingDebt}
                   </span>
                 </Box>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <div
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "600",
-                      color: Colors.DARK_GRAY,
-                      width: "10rem",
-                      marginTop: "0.5rem",
-                    }}
-                  >
-                    Total Debt
-                  </div>
+                {userRole === "client" && (
+                  <>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <div
+                        style={{
+                          fontFamily: "Nunito",
+                          fontWeight: "600",
+                          color: Colors.DARK_GRAY,
+                          width: "10rem",
+                          marginTop: "0.5rem",
+                        }}
+                      >
+                        Company Name
+                      </div>
 
-                  <span
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "300",
-                      fontSize: "0.9rem",
-                      color: Colors.DIM_LIGHT_GRAY,
-                      marginTop: "0.5rem",
-                    }}
-                  >
-                    {clientData?.debtor?.totalDebt}
-                  </span>
-                </Box>
+                      <span
+                        style={{
+                          fontFamily: "Nunito",
+                          fontWeight: "300",
+                          fontSize: "0.9rem",
+                          color: Colors.DIM_LIGHT_GRAY,
+                          marginTop: "0.5rem",
+                        }}
+                      >
+                        {dataUser?.companyName}
+                      </span>
+                    </Box>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <div
+                        style={{
+                          fontFamily: "Nunito",
+                          fontWeight: "600",
+                          color: Colors.DARK_GRAY,
+                          width: "10rem",
+                          marginTop: "0.5rem",
+                        }}
+                      >
+                        Status
+                      </div>
+
+                      <span
+                        style={{
+                          fontFamily: "Nunito",
+                          fontWeight: "300",
+                          fontSize: "0.9rem",
+                          color: Colors.DIM_LIGHT_GRAY,
+                          marginTop: "0.5rem",
+                        }}
+                      >
+                        {dataUser?.status}
+                      </span>
+                    </Box>
+                  </>
+                )}
               </Grid>
             </Grid>
 

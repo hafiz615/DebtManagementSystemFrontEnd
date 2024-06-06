@@ -10,6 +10,7 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { Colors } from "../../config/default";
+import MuiModels from "../models";
 
 export default function AboutAccordion({ caseDetails }) {
   const aboutData = [
@@ -67,6 +68,9 @@ export default function AboutAccordion({ caseDetails }) {
           >
             ABOUT
           </Typography>
+        </div>
+        <div style={{ display: "flex" }} onClick={(e) => e.stopPropagation()}>
+          <MuiModels show="editAbout" />
         </div>
       </AccordionSummary>
       <AccordionDetails

@@ -30,7 +30,11 @@ function BulkImportCase() {
     setActiveStep(0);
   };
   const handleStep = (step) => () => {
-    if (completedSteps.has(step)) {
+    if (
+      step === activeStep + 1 ||
+      completedSteps?.has(step) ||
+      step < activeStep
+    ) {
       setActiveStep(step);
     }
   };
@@ -41,11 +45,9 @@ function BulkImportCase() {
   const handleNext = () => {
     if (activeStep === 0) {
       setActiveStep(1);
-      setCompletedSteps((prevCompletedSteps) => {
-        const newCompletedSteps = new Set(prevCompletedSteps);
-        newCompletedSteps?.add(activeStep);
-        return newCompletedSteps;
-      });
+      setCompletedSteps((prevCompletedSteps) =>
+        new Set(prevCompletedSteps)?.add(activeStep)
+      );
     }
   };
 
@@ -134,12 +136,11 @@ function BulkImportCase() {
                 <StepLabel
                   {...labelProps}
                   sx={{
-                    cursor: completedSteps?.has(index) ? "pointer" : "default",
-                    color: completedSteps?.has(index)
-                      ? Colors.SKY_BLUE
-                      : "inherit",
+                    cursor: "pointer",
                   }}
-                  onClick={handleStep(index)}
+                  onClick={() => {
+                    handleStep(index)();
+                  }}
                 >
                   {label}
                 </StepLabel>
@@ -153,49 +154,64 @@ function BulkImportCase() {
       ) : (
         <ClientImport setApiData={setApiData} />
       )}
-
       <Grid
         item
         xs={12}
         sx={{
           display: "flex",
-          justifyContent: { xs: "space-between", sm: "flex-end" },
-          margin: "1rem 0rem",
+          justifyContent: { xs: "flex-start", md: "flex-end" },
+          marginTop: "1rem",
+          marginBottom: "1.5rem",
         }}
       >
-        <TextButton
-          buttonText="BACK"
-          disabled={activeStep === 0}
-          onClick={handleBack}
-          backgroundColor={Colors.ORANGE_COLOR}
-          hoverColor={Colors.ORANGE_COLOR}
-          paddingLeft="2rem"
-          paddingRight="2rem"
-          height="2rem"
-          marginRight="1rem"
-        />
-        <TextButton
-          buttonText="RESET"
-          onClick={handleReset}
-          backgroundColor={Colors.DARK_GRAY}
-          hoverColor={Colors.DARK_GRAY}
-          paddingLeft="2rem"
-          paddingRight="2rem"
-          height="2rem"
-          marginRight="1rem"
-        />
-        <TextButton
-          buttonText={activeStep === steps.length - 1 ? "SAVE" : "NEXT"}
-          backgroundColor={Colors.SKY_BLUE}
-          hoverColor={Colors.SKY_BLUE}
-          paddingLeft="2rem"
-          paddingRight="2rem"
-          height="2rem"
-          onClick={() => {
-            activeStep === 0 ? handleNext() : handleSave();
+        <Grid
+          item
+          xs={12}
+          sx={{
+            display: "flex",
+            justifyContent: { xs: "space-between", sm: "flex-end" },
+            width: "100%",
+            backgroundColor: Colors.BG_LIGHT_GRAY,
+            position: "fixed",
+            bottom: "1px",
+            height: "3rem",
+            alignItems: "center",
           }}
-          marginRight="1rem"
-        />
+        >
+          <TextButton
+            buttonText="BACK"
+            disabled={activeStep === 0}
+            onClick={handleBack}
+            backgroundColor={Colors.ORANGE_COLOR}
+            hoverColor={Colors.ORANGE_COLOR}
+            paddingLeft="2rem"
+            paddingRight="2rem"
+            height="2rem"
+            marginRight="1rem"
+          />
+          <TextButton
+            buttonText="RESET"
+            onClick={handleReset}
+            backgroundColor={Colors.DARK_GRAY}
+            hoverColor={Colors.DARK_GRAY}
+            paddingLeft="2rem"
+            paddingRight="2rem"
+            height="2rem"
+            marginRight="1rem"
+          />
+          <TextButton
+            buttonText={activeStep === steps.length - 1 ? "SAVE" : "NEXT"}
+            backgroundColor={Colors.SKY_BLUE}
+            hoverColor={Colors.SKY_BLUE}
+            paddingLeft="2rem"
+            paddingRight="2rem"
+            height="2rem"
+            onClick={() => {
+              activeStep === 0 ? handleNext() : handleSave();
+            }}
+            marginRight="1rem"
+          />
+        </Grid>
       </Grid>
     </Grid>
   );

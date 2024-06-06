@@ -8,12 +8,15 @@ import TextButton from "./button";
 import { UpdateCreditor } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import MuiPhoneTextField from "./muiPhoneText";
+import { PhoneValidation } from "../constants/appConstants";
+import { formatPhoneNumber } from "../common";
 
 export default function EditCreditorDetail({
   handleClose,
   caseData,
   GetCaseDetails,
 }) {
+  const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const { showToast } = useToast();
   const creditorBasicInfo = caseData?.creditor?.basicInformation;
   const creditorBusinessInfo = caseData?.creditor?.businessInformation;
@@ -32,11 +35,6 @@ export default function EditCreditorDetail({
     emailValidError: "",
     creditorPhoneError: "",
   });
-  const formatPhoneNumber = (value) => {
-    const spaceReplace = value?.replace(/ /g, "");
-    const phoneFormat = spaceReplace?.replace(/[^+a-zA-Z 0-9]+/g, "");
-    return phoneFormat;
-  };
   const isEmailValid = (email) => {
     // Use a more robust email validation regular expression
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
@@ -57,10 +55,10 @@ export default function EditCreditorDetail({
       }
     }
     if (fieldName === "CreditorBasicPhoneNumber") {
-      if (value.length !== 11) {
+      if (value.length !== PHONE_NO_CHARACTERS) {
         setCreditorFieldsError((prevErrors) => ({
           ...prevErrors,
-          creditorPhoneError: "Phone number must be 10 digits",
+          creditorPhoneError: PHONE_NO_ERROR,
         }));
       } else {
         setCreditorFieldsError((prevErrors) => ({
@@ -68,12 +66,11 @@ export default function EditCreditorDetail({
           creditorPhoneError: "",
         }));
       }
-    } else {
-      setCreditorBasicsInfo((prevState) => ({
-        ...prevState,
-        [fieldName]: value,
-      }));
     }
+    setCreditorBasicsInfo((prevState) => ({
+      ...prevState,
+      [fieldName]: value,
+    }));
   };
   const businessInfoInputChange = (fieldName, value) => {
     setCreditorBusinessDetails((prevState) => ({
@@ -149,7 +146,6 @@ export default function EditCreditorDetail({
           borderRadius: "10px",
           marginTop: { xs: ".5rem", xl: "0rem" },
           backgroundColor: Colors.WHITE,
-          padding: "1rem",
         }}
       >
         <Typography
@@ -193,7 +189,6 @@ export default function EditCreditorDetail({
             fontWeight: "600",
             marginTop: "1rem",
           }}
-          gutterBottom
         >
           Creditor Details
         </Typography>
@@ -203,13 +198,14 @@ export default function EditCreditorDetail({
           xs={12}
           sx={{
             display: "flex",
+            justifyContent: "space-between",
           }}
         >
           <PaymentsTextFields
             type="text"
             label="Full Name*"
             placeHolderValue="Enter Full Name"
-            width="97%"
+            width="100%"
             value={creditorBasicsInfo?.CreditorBasicFullName}
             onChange={(e) =>
               basicInfoInputChange("CreditorBasicFullName", e.target.value)
@@ -219,7 +215,7 @@ export default function EditCreditorDetail({
             type="text"
             label="Email Address*"
             placeHolderValue="Enter Valid Email"
-            width="97%"
+            width="100%"
             value={creditorBasicsInfo?.CreditorBasicEmailAddress}
             onChange={(e) =>
               basicInfoInputChange("CreditorBasicEmailAddress", e.target.value)
@@ -241,7 +237,7 @@ export default function EditCreditorDetail({
           />
         </Grid>
       </Grid>
-      <Grid container xs={11.4} sx={{ justifyContent: "right" }}>
+      <Grid container xs={12} sx={{ justifyContent: "right" }}>
         <TextButton
           buttonText="Save"
           height="2rem"

@@ -85,6 +85,11 @@ export default function PersistentDrawerLeft({ children }) {
   const navigate = useNavigate();
   useEffect(() => {
     const handleItemClick = (text) => {
+      if (text !== "bulk-cases") {
+        localStorage.removeItem("Columns");
+        localStorage.removeItem("dropdownState");
+        localStorage.removeItem("csvData");
+      }
       localStorage.setItem("route", text);
       switch (text) {
         case "Home":

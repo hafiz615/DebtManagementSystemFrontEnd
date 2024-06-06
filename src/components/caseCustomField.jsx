@@ -6,12 +6,15 @@ import { Colors } from "../config/default";
 import TextButton from "./button";
 import { AddCustomFieldsByTarget } from "../services/services";
 import { useToast } from "../toast/toastContext";
+import { useParams } from "react-router-dom";
+import { isEmpty } from "lodash";
 
 export default function CaseCustomField({
   handleClose,
   customFieldsData,
   GetCaseDetails,
 }) {
+  const { id } = useParams();
   const { showToast } = useToast();
   const menuItems =
     customFieldsData &&
@@ -20,6 +23,7 @@ export default function CaseCustomField({
       value: field?.name,
       type: field?.type,
     }));
+  console.log(menuItems, "menuItems");
   const [selectedField, setSelectedField] = useState(menuItems[0]);
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -29,7 +33,7 @@ export default function CaseCustomField({
       name: selectedField?.value,
       value: inputValue,
     };
-    const addFields = await AddCustomFieldsByTarget("case", params);
+    const addFields = await AddCustomFieldsByTarget("case", params, id);
     if (addFields?.status === 200) {
       showToast(addFields?.data?.message, "success");
       GetCaseDetails();
@@ -116,6 +120,7 @@ export default function CaseCustomField({
               Title
             </Typography>
             <Dropdown
+              disabled={isEmpty(menuItems)}
               menuItems={menuItems}
               placeholder="Title"
               backgroundColor={Colors.BG_LIGHT_GRAY}

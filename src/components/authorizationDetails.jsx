@@ -1,6 +1,7 @@
 import React from "react";
-import { Grid, Typography } from "@mui/material";
+import { useSelector } from "react-redux";
 
+import { Grid, Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { UserListPage } from "../constants/appConstants";
@@ -8,7 +9,7 @@ import { Colors } from "../config/default";
 import PaymentsTabs from "./paymentsTabs";
 export default function AuthorizationDetails() {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
-
+  const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { AUTHORITY_TEXT, AUTHORITY_VALUE } = UserListPage;
   return (
     <Grid
@@ -35,7 +36,7 @@ export default function AuthorizationDetails() {
             color: Colors.DARK_GRAY,
           }}
         >
-          {AUTHORITY_TEXT} <span>{AUTHORITY_VALUE}</span>
+          {AUTHORITY_TEXT} <span>{role}</span>
         </Typography>
       </Grid>
       <Grid
