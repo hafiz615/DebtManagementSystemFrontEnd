@@ -52,7 +52,7 @@ function Login() {
       navigate("/home");
     } else {
       const errorMessage = login?.response?.data?.message;
-      showToast(errorMessage, "error");
+      showToast(errorMessage || login?.message, "error");
     }
     setLoading(false);
   };

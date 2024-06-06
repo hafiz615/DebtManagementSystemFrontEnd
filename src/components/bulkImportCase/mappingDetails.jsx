@@ -70,69 +70,79 @@ export default function MappingDetails() {
     let csvData = JSON.parse(localStorage.getItem("csvData"));
     let dropdownLocalState = JSON.parse(localStorage.getItem("dropdownState"));
     csvHeaders = csvData?.meta?.fields;
-
     if (dropdownLocalState) {
       setDropdownStates(dropdownLocalState);
     } else {
       const initialDropdownStates = {};
-      initialDropdownStates[`debtor-Full Name`] = getFieldIndex("debtor_name");
-      initialDropdownStates[`debtor-Email`] = getFieldIndex("debtor_email");
-      initialDropdownStates[`debtor-SSN`] = getFieldIndex("debtor_ssn");
-      initialDropdownStates[`debtor-Status`] = getFieldIndex("debtor_status");
-      initialDropdownStates[`debtor-Address`] = getFieldIndex("debtor_address");
-      initialDropdownStates[`debtor-Company`] = getFieldIndex(
+      initialDropdownStates[`debtor-Full Name-0`] =
+        getFieldIndex("debtor_name");
+      initialDropdownStates[`debtor-Email-0`] = getFieldIndex("debtor_email");
+      initialDropdownStates[`debtor-SSN-0`] = getFieldIndex("debtor_ssn");
+      initialDropdownStates[`debtor-Status-0`] = getFieldIndex("debtor_status");
+      initialDropdownStates[`debtor-Address-0`] =
+        getFieldIndex("debtor_address");
+      initialDropdownStates[`debtor-Company-0`] = getFieldIndex(
         "debtor_business_name"
       );
-      initialDropdownStates[`debtor-EIN`] = getFieldIndex(
+      initialDropdownStates[`debtor-EIN-0`] = getFieldIndex(
         "debtor_business_ein"
       );
-      initialDropdownStates[`debtor-Business Category`] = getFieldIndex(
+      initialDropdownStates[`debtor-Business Category-0`] = getFieldIndex(
         "debtor_business_category"
       );
-      initialDropdownStates[`debtor-Country`] = getFieldIndex(
+      initialDropdownStates[`debtor-Country-0`] = getFieldIndex(
         "debtor_business_country"
       );
-      initialDropdownStates[`debtor-State`] = getFieldIndex(
+      initialDropdownStates[`debtor-State-0`] = getFieldIndex(
         "debtor_business_state"
       );
-      initialDropdownStates[`debtor-City`] = getFieldIndex(
+      initialDropdownStates[`debtor-City-0`] = getFieldIndex(
         "debtor_business_city"
       );
-      initialDropdownStates[`debtor-Zip Code`] = getFieldIndex(
+      initialDropdownStates[`debtor-Zip Code-0`] = getFieldIndex(
         "debtor_business_zipcode"
       );
-      initialDropdownStates[`debtor-Phone #`] = getFieldIndex(
+      initialDropdownStates[`debtor-Phone #-0`] = getFieldIndex(
         "debtor_business_phone"
       );
-      initialDropdownStates[`creditor-Full Name`] =
+      initialDropdownStates[`creditor-Full Name-0`] =
         getFieldIndex("creditor_name");
-      initialDropdownStates[`creditor-Company Name`] = getFieldIndex(
+      initialDropdownStates[`creditor-Company Name-0`] = getFieldIndex(
         "creditor_business_name"
       );
-      initialDropdownStates[`creditor-Address`] = getFieldIndex(
+      initialDropdownStates[`creditor-Address-0`] = getFieldIndex(
         "debtor_business_phone"
       );
-      initialDropdownStates[`creditor-Email`] = getFieldIndex("creditor_email");
-      initialDropdownStates[`creditor-Business Category`] = getFieldIndex(
+      initialDropdownStates[`creditor-Email-0`] =
+        getFieldIndex("creditor_email");
+      initialDropdownStates[`creditor-Business Category-0`] = getFieldIndex(
         "creditor_business_category"
       );
-      initialDropdownStates[`creditor-Notes`] = getFieldIndex("creditor_notes");
-      initialDropdownStates[`creditor-Funded`] = getFieldIndex("date_funded");
-      initialDropdownStates[`creditor-Phone #`] =
+      initialDropdownStates[`creditor-Notes-0`] =
+        getFieldIndex("creditor_notes");
+      initialDropdownStates[`creditor-Funded-0`] = getFieldIndex("date_funded");
+      initialDropdownStates[`creditor-Phone #-0`] =
         getFieldIndex("creditor_phone");
-      initialDropdownStates[`automation-Total Receivable`] = getFieldIndex(
+      initialDropdownStates[`automation-Total Receivable-0`] = getFieldIndex(
         "total_remaining_amount"
       );
-      initialDropdownStates[`automation-Debt`] =
+      initialDropdownStates[`automation-Debt-0`] =
         getFieldIndex("payment_1_amount");
-      initialDropdownStates[`automation-Time Period`] =
+      initialDropdownStates[`automation-Time Period-0`] =
         getFieldIndex("payment_1_interval");
-      initialDropdownStates[`automation-Start Date`] = getFieldIndex(
+      initialDropdownStates[`automation-Start Date-0`] = getFieldIndex(
         "payment_1_start_date"
       );
-      initialDropdownStates[`automation-Frequency`] = getFieldIndex(
+      initialDropdownStates[`automation-Frequency-0`] = getFieldIndex(
         "payment_1_frequency"
       );
+      for (let i = 1; i < paymentPlansCount; i++) {
+        automationPlan.forEach((item) => {
+          initialDropdownStates[`automation-${item.name}-${i}`] = getFieldIndex(
+            `payment_${i + 1}_${item.name.toLowerCase().replace(" ", "_")}`
+          );
+        });
+      }
       setDropdownStates(initialDropdownStates);
       localStorage.setItem(
         "dropdownState",
@@ -141,25 +151,27 @@ export default function MappingDetails() {
     }
   }, []);
 
-  const handleDropdownChange = (category, itemName, selectedValue) => {
+  const handleDropdownChange = (category, itemName, selectedValue, index) => {
     setDropdownStates((prevStates) => {
       const newState = {
         ...prevStates,
-        [`${category}-${itemName}`]: selectedValue,
+        [`${category}-${itemName}-${index}`]: selectedValue,
       };
       localStorage.setItem("dropdownState", JSON.stringify(newState));
       return newState;
     });
   };
 
-  const renderDropdown = (category, itemName) => (
+  const renderDropdown = (category, itemName, index) => (
     <Dropdown
-      width="6rem"
+      width="6.2rem"
       height="2rem"
       menuItems={columnNames}
-      selectedValue={dropdownStates[`${category}-${itemName}`] || "Col A"}
+      selectedValue={
+        dropdownStates[`${category}-${itemName}-${index}`] || "Col A"
+      }
       setSelectedValue={(value) =>
-        handleDropdownChange(category, itemName, value)
+        handleDropdownChange(category, itemName, value, index)
       }
       backgroundColor={Colors.BG_LIGHT_GRAY}
       hoverColor={Colors.BG_LIGHT_GRAY}
@@ -202,7 +214,7 @@ export default function MappingDetails() {
                 <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
                   {debtDetail.name}
                 </Typography>
-                {renderDropdown("debtor", debtDetail.name)}
+                {renderDropdown("debtor", debtDetail.name, 0)}
               </Grid>
             ))}
           </Grid>
@@ -235,7 +247,7 @@ export default function MappingDetails() {
                 <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
                   {creditDetail.name}
                 </Typography>
-                {renderDropdown("creditor", creditDetail.name)}
+                {renderDropdown("creditor", creditDetail.name, 0)}
               </Grid>
             ))}
           </Grid>
@@ -261,7 +273,7 @@ export default function MappingDetails() {
             }}
           >
             <p style={{ fontFamily: "Nunito" }}>Total Receivable</p>
-            {renderDropdown("automation", "Total Receivable")}
+            {renderDropdown("automation", "Total Receivable", 0)}
           </div>
           <Grid
             sx={{
@@ -295,10 +307,11 @@ export default function MappingDetails() {
                     mt: "25px",
                     gap: "1em",
                   }}
+                  key={index}
                 >
-                  {automationPlan?.map((item, index) => (
+                  {automationPlan?.map((item, itemIndex) => (
                     <Grid
-                      key={index}
+                      key={itemIndex}
                       item
                       xs={12}
                       md={5.5}
@@ -311,7 +324,7 @@ export default function MappingDetails() {
                       >
                         {item?.name}
                       </Typography>
-                      {renderDropdown("automation", item?.name)}
+                      {renderDropdown("automation", item?.name, index)}
                     </Grid>
                   ))}
                 </Grid>

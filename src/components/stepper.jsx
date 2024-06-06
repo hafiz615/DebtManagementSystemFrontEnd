@@ -32,7 +32,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   const { showToast } = useToast();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [activeStep, setActiveStep] = React.useState(0);
+  const [activeStep, setActiveStep] = React.useState(hide ? 1 : 0);
   const [skipped, setSkipped] = React.useState(new Set());
   const [completedSteps, setCompletedSteps] = useState(new Set());
 
@@ -51,6 +51,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     BasicZipCode: debtorBasicInfo?.zipCode || "",
     BasicPhoneNumber: debtorBasicInfo?.phone || "",
     BasicAddress: debtorBasicInfo?.address || "",
+    BasicWeeklyBudget: debtorBasicInfo?.weeklyBudget || "",
   });
   //Debtor-Business-Details-State
   const [debtorBusinessDetails, setDebtorBusinessDetails] = useState({
@@ -134,11 +135,12 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   const [remainingAmount, setRemainingAmount] = useState(null);
   const [lastPaymentDate, setLastPaymentDate] = useState("");
   const [debtorDetailsStatus, setDebtorDetailsStatus] = useState("");
-
+  const [feePayment, setFeePayment] = useState("");
+  const today = new Date().toISOString().split("T")[0];
   const [newDataList, setNewDataList] = useState([
     {
       amount: "",
-      startDate: "",
+      startDate: today,
       timePeriod: "Custom",
       frequency: 1,
     },
@@ -221,13 +223,14 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     (activeStep === 2 &&
       (totalReceivable === null ||
         totalReceivable === "" ||
+        feePayment === "" ||
         paidAmount === null ||
         paidAmount === "" ||
         remainingAmount === null ||
         remainingAmount === "" ||
         lastPaymentDate === "" ||
         debtorDetailsStatus === "" ||
-        remainingAmount !== totalAmount ||
+        parseInt(remainingAmount) !== totalAmount ||
         newDataList?.some((newData) =>
           Object.values(newData)?.some((value) => value === "")
         )));
@@ -263,6 +266,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           BasicZipCode: debtorData?.basicInformation?.zipCode || "",
           BasicPhoneNumber: debtorData?.basicInformation?.phone || "",
           BasicAddress: debtorData?.basicInformation?.address || "",
+          BasicWeeklyBudget: debtorData?.basicInformation?.weeklyBudget || "",
         });
         setStatus(debtorData?.basicInformation?.status);
 
@@ -429,6 +433,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               zipCode: debtorOwnDetails?.BasicZipCode,
               phone: debtorOwnDetails?.BasicPhoneNumber,
               address: debtorOwnDetails?.BasicAddress,
+              weeklyBudget: debtorOwnDetails?.BasicWeeklyBudget || "",
             },
             businessInformation: {
               companyName: debtorBusinessDetails?.businessCompanyName,
@@ -461,6 +466,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           },
           status: debtorDetailsStatus,
           totalDebt: parseInt(totalReceivable),
+          feePayment: feePayment,
           lastPaymentDate: lastPaymentDate,
           paidAmount: parseInt(paidAmount),
           remaining: parseInt(remainingAmount),
@@ -482,6 +488,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
             BasicZipCode: "",
             BasicPhoneNumber: "",
             BasicAddress: "",
+            BasicWeeklyBudget: "",
           });
           setDebtorBusinessDetails({
             businessCompanyName: "",
@@ -530,6 +537,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           setRemainingAmount(null);
           setPaidAmount(null);
           setTotalReceivable(null);
+          setFeePayment("");
           setFiles([]);
           setCompletedSteps(null);
           setNewDataList([
@@ -570,19 +578,22 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         newSkipped = new Set(newSkipped.values());
         newSkipped.delete(activeStep);
       }
-      setCompletedSteps((prevCompletedSteps) => {
-        const newCompletedSteps = new Set(prevCompletedSteps);
-        newCompletedSteps?.add(activeStep);
-        return newCompletedSteps;
-      });
+      setCompletedSteps((prevCompletedSteps) =>
+        new Set(prevCompletedSteps)?.add(activeStep)
+      );
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
       setSkipped(newSkipped);
     }
     setLoading(false);
   };
-
   const handleStep = (step) => () => {
-    setActiveStep(step);
+    if (
+      (step === activeStep + 1 && !disableButton) ||
+      completedSteps?.has(step) ||
+      step < activeStep
+    ) {
+      setActiveStep(step);
+    }
   };
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
@@ -667,7 +678,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               },
             }}
           >
-            {steps.map((label, index) => {
+            {steps?.map((label, index) => {
               const stepProps = {};
               const labelProps = {};
               if (isStepSkipped(index)) {
@@ -678,17 +689,10 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
                   <StepLabel
                     {...labelProps}
                     sx={{
-                      cursor: completedSteps?.has(index)
-                        ? "pointer"
-                        : "default",
-                      color: completedSteps?.has(index)
-                        ? Colors.SKY_BLUE
-                        : "inherit",
+                      cursor: "pointer",
                     }}
                     onClick={() => {
-                      if (completedSteps?.has(index)) {
-                        handleStep(index)();
-                      }
+                      handleStep(index)();
                     }}
                   >
                     {label}
@@ -752,6 +756,8 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
             <PaymentDetails
               totalReceivable={totalReceivable}
               setTotalReceivable={setTotalReceivable}
+              setFeePayment={setFeePayment}
+              feePayment={feePayment}
               paidAmount={paidAmount}
               setPaidAmount={setPaidAmount}
               remainingAmount={remainingAmount}
@@ -778,6 +784,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               creditorBusinessDetails={creditorBusinessDetails}
               newDataList={newDataList}
               totalReceivable={totalReceivable}
+              feePayment={feePayment}
               paidAmount={paidAmount}
               status={status}
               fundedDate={fundedDate}
@@ -801,7 +808,16 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               xs={12}
               sx={{
                 display: "flex",
-                justifyContent: { xs: "space-between", sm: "flex-end" },
+                justifyContent: {
+                  xs: "space-between",
+                  sm: "flex-end",
+                },
+                width: "100%",
+                backgroundColor: Colors.BG_LIGHT_GRAY,
+                // position: "fixed",
+                // bottom: "1px",
+                // height: "3rem",
+                // alignItems: "center",
               }}
             >
               <TextButton

@@ -1,5 +1,4 @@
-import React from "react";
-
+import React, { useState } from "react";
 import {
   Grid,
   Typography,
@@ -9,68 +8,65 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  // Tabs,
-  // Tab,
-  // Box,
 } from "@mui/material";
-
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-
 import { Colors } from "../config/default";
 import TextButton from "./button";
 import { CreateCustomField } from "../services/services";
 import { useToast } from "../toast/toastContext";
+import Dropdown from "./dropdown";
 
 export default function AddCustomField({ handleClose, handleModalClose }) {
+  const menuItems = [{ label: "Case", value: "case" }];
+
   const { showToast } = useToast();
-  const [formData, setFormData] = React.useState({
-    "name": null,
-    "type": null,
-    "target": null,
-    "description": null,
-    "shared": false
+  const [formData, setFormData] = useState({
+    name: "",
+    type: "",
+    target: "",
+    description: "",
+    shared: false,
   });
+
   const handleChange = (field, value) => {
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
-      [field]: value
+      [field]: value,
     }));
-  }
+  };
 
   const handleSave = async () => {
     const customFieldSubmission = await CreateCustomField(formData);
     if (customFieldSubmission?.status === 200) {
       showToast(customFieldSubmission?.data?.message, "success");
-      handleClose()
-      handleModalClose()
+      handleClose();
+      handleModalClose();
     } else {
       const errorMessage = customFieldSubmission?.response?.data?.message;
       showToast(errorMessage, "error");
     }
-  }
+  };
+
   return (
     <Grid>
       <div>
         <Typography
-          sx={{ fontWeight: "700", marginBottom: "1em", fontFamily: "Nunito" }}
+          sx={{
+            fontWeight: "700",
+            marginBottom: "1em",
+            fontFamily: "Nunito",
+          }}
         >
           Add Custom Field
         </Typography>
       </div>
-
-      {/* <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={value} onChange={handleChange}>
-          <Tab sx={{ fontFamily: "Nunito" }} label="New" />
-          <Tab sx={{ fontFamily: "Nunito" }} label="Shared" />
-        </Tabs>
-      </Box> */}
       <Divider />
       <input
         type="text"
         placeholder="Name"
         style={{
           backgroundColor: Colors.BG_LIGHT_GRAY,
-          height: "2rem",
+          height: "2.5rem",
           color: Colors.DIM_LIGHT_GRAY,
           paddingLeft: "1rem",
           border: "none",
@@ -80,7 +76,7 @@ export default function AddCustomField({ handleClose, handleModalClose }) {
           width: "calc(50% - .5rem)",
         }}
         value={formData.name}
-        onChange={(e)=> handleChange("name", e.target.value)} 
+        onChange={(e) => handleChange("name", e.target.value)}
       />
 
       <div style={{ display: "flex", gap: "1rem", marginTop: "1em" }}>
@@ -89,7 +85,7 @@ export default function AddCustomField({ handleClose, handleModalClose }) {
           placeholder="Type"
           style={{
             backgroundColor: Colors.BG_LIGHT_GRAY,
-            height: "2rem",
+            height: "2.5rem",
             color: Colors.DIM_LIGHT_GRAY,
             paddingLeft: "1rem",
             border: "none",
@@ -97,25 +93,19 @@ export default function AddCustomField({ handleClose, handleModalClose }) {
             borderRadius: "5px",
             width: "50%",
           }}
-          value={formData.type} 
-          onChange={(e)=> handleChange("type", e.target.value)} 
+          value={formData.type}
+          onChange={(e) => handleChange("type", e.target.value)}
         />
 
-        <input
-          type="text"
+        <Dropdown
+          menuWidth="22rem"
+          menuItems={menuItems}
           placeholder="Target"
-          style={{
-            backgroundColor: Colors.BG_LIGHT_GRAY,
-            height: "2rem",
-            color: Colors.DIM_LIGHT_GRAY,
-            paddingLeft: "1rem",
-            border: "none",
-            outline: "none",
-            borderRadius: "5px",
-            width: "50%",
-          }}
-          value={formData.target}
-          onChange={(e)=> handleChange("target", e.target.value)} 
+          backgroundColor={Colors.BG_LIGHT_GRAY}
+          hoverColor={Colors.BG_LIGHT_GRAY}
+          width="50%"
+          selectedValue={formData.target}
+          setSelectedValue={(value) => handleChange("target", value)}
         />
       </div>
       <div style={{ marginTop: "1em" }}>
@@ -131,11 +121,14 @@ export default function AddCustomField({ handleClose, handleModalClose }) {
             padding: "1em",
           }}
           value={formData.description}
-          onChange={(e)=> handleChange("description", e.target.value)}
+          onChange={(e) => handleChange("description", e.target.value)}
         />
       </div>
       <div style={{ fontFamily: "Nunito" }}>
-      <Checkbox checked={formData.shared} onChange={(e)=> handleChange("shared", e.target.checked)} />
+        <Checkbox
+          checked={formData.shared}
+          onChange={(e) => handleChange("shared", e.target.checked)}
+        />
         Share
       </div>
       <Accordion

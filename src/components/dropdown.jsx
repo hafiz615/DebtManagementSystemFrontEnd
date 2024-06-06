@@ -21,6 +21,7 @@ export default function Dropdown({
   hoverColor,
   placeholder,
   menuWidth,
+  disabled,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -46,6 +47,7 @@ export default function Dropdown({
   return (
     <>
       <Button
+        disabled={disabled}
         id="basic-button"
         aria-controls={open ? "basic-menu" : undefined}
         aria-haspopup="true"
@@ -81,9 +83,10 @@ export default function Dropdown({
           "aria-labelledby": "basic-button",
         }}
         PaperProps={{
-          style: {
+          sx: {
             maxHeight: 300,
             overflowY: "auto",
+            minWidth: menuWidth,
           },
         }}
       >
@@ -92,7 +95,6 @@ export default function Dropdown({
             key={index}
             sx={{
               color: Colors.LIGHT_GRAY,
-              width: menuWidth,
             }}
             onClick={() => handleMenuItemClick(item?.value)}
           >

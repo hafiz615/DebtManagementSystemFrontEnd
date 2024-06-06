@@ -7,6 +7,8 @@ import { Colors } from "../../config/default";
 import PaymentSettlement from "../caseCreationFields/paymentSettlement";
 
 function PaymentDetails({
+  setFeePayment,
+  feePayment,
   totalReceivable,
   setTotalReceivable,
   paidAmount,
@@ -53,6 +55,8 @@ function PaymentDetails({
           setLastPaymentDate={setLastPaymentDate}
           selectedValue={selectedValue}
           setSelectedValue={setSelectedValue}
+          setFeePayment={setFeePayment}
+          feePayment={feePayment}
         />
       </Grid>
       <Grid

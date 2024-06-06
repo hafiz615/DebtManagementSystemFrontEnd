@@ -6,6 +6,9 @@ import { Add, Delete } from "@mui/icons-material";
 import { Colors } from "../../config/default";
 import PaymentsTextFields from "../caseTextField";
 import MuiPhoneTextField from "../muiPhoneText";
+import AmountTextField from "../amountTextField";
+import { PhoneValidation } from "../../constants/appConstants";
+import { formatPhoneNumber } from "../../common";
 
 export default function CreditorFields({
   creditorBasicsInfo,
@@ -27,17 +30,13 @@ export default function CreditorFields({
   creditorContactEmailError,
   setCreditorContactEmailError,
 }) {
+  const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const isEmailValid = (email) => {
     // Use a more robust email validation regular expression
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     return emailRegex.test(email);
   };
 
-  const formatPhoneNumber = (value) => {
-    const spaceReplace = value?.replace(/ /g, "");
-    const phoneFormat = spaceReplace?.replace(/[^+a-zA-Z 0-9]+/g, "");
-    return phoneFormat;
-  };
   const basicInfoInputChange = (fieldName, value) => {
     if (fieldName === "CreditorBasicEmailAddress") {
       if (!isEmailValid(value)) {
@@ -53,10 +52,10 @@ export default function CreditorFields({
       }
     }
     if (fieldName === "CreditorBasicPhoneNumber") {
-      if (value.length !== 11) {
+      if (value.length !== PHONE_NO_CHARACTERS) {
         setCreditorFieldsError((prevErrors) => ({
           ...prevErrors,
-          creditorPhoneError: "Phone number must be 10 digits",
+          creditorPhoneError: PHONE_NO_ERROR,
         }));
       } else {
         setCreditorFieldsError((prevErrors) => ({
@@ -64,12 +63,11 @@ export default function CreditorFields({
           creditorPhoneError: "",
         }));
       }
-    } else {
-      setCreditorBasicsInfo((prevState) => ({
-        ...prevState,
-        [fieldName]: value,
-      }));
     }
+    setCreditorBasicsInfo((prevState) => ({
+      ...prevState,
+      [fieldName]: value,
+    }));
   };
   const businessInfoInputChange = (fieldName, value) => {
     setCreditorBusinessDetails((prevState) => ({
@@ -135,10 +133,10 @@ export default function CreditorFields({
       }
     }
     if (field === "phone") {
-      if (value.length !== 11) {
+      if (value.length !== PHONE_NO_CHARACTERS) {
         setCreditorContactError((prevErrors) => ({
           ...prevErrors,
-          [`phone${index}`]: "Phone number must be 10 digits",
+          [`phone${index}`]: PHONE_NO_ERROR,
         }));
       } else {
         setCreditorContactError((prevErrors) => ({
@@ -181,7 +179,7 @@ export default function CreditorFields({
           marginTop: { xs: ".5rem", xl: "0rem" },
           backgroundColor: Colors.WHITE,
           padding: "1rem",
-          height: "350px",
+          height: { xl: "350px", xs: "600px" },
         }}
       >
         <Typography
@@ -372,10 +370,9 @@ export default function CreditorFields({
               >
                 Minimum*
               </Typography>
-              <PaymentsTextFields
-                type="number"
-                placeHolderValue="$"
-                width="97%"
+
+              <AmountTextField
+                width="40%"
                 value={historicRange?.minimum}
                 onChange={(e) => historicInputChange("minimum", e.target.value)}
                 onKeyDown={handleNumberInput}
@@ -391,10 +388,9 @@ export default function CreditorFields({
               >
                 Maximum*
               </Typography>
-              <PaymentsTextFields
-                type="number"
-                placeHolderValue="$"
-                width="97%"
+
+              <AmountTextField
+                width="40%"
                 value={historicRange?.maximum}
                 onChange={(e) => historicInputChange("maximum", e.target.value)}
                 onKeyDown={handleNumberInput}
@@ -436,6 +432,7 @@ export default function CreditorFields({
               borderRadius: "50%",
               fontSize: "2.5rem",
               padding: ".4rem",
+              cursor: "pointer",
             }}
           />
         </Grid>
@@ -460,6 +457,7 @@ export default function CreditorFields({
                       borderRadius: "50%",
                       fontSize: "2.5rem",
                       padding: ".4rem",
+                      cursor: "pointer",
                     }}
                   />
                 </Box>

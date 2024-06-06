@@ -23,11 +23,21 @@ export default function BasicCard({
   creditorBusinessDetails,
   totalReceivable,
   paidAmount,
+  feePayment,
 }) {
   function formatDate(dateString) {
     const options = { year: "numeric", month: "long", day: "numeric" };
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", options);
+  }
+  function getReadablePaymentMethod(paymentMethod) {
+    const paymentMapping = {
+      paidViaCash: "Via Cash",
+      toPay: "To Pay",
+      paidViaThirdParty: "Third Party",
+    };
+
+    return paymentMapping[paymentMethod] || paymentMethod;
   }
   return (
     <Card
@@ -278,6 +288,31 @@ export default function BasicCard({
                   {debtorOwnDetails?.BasicAddress || "-"}
                 </Typography>
               </Grid>
+              <Grid container item xs={12} lg={3}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    width: "40%",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Budget
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "50%",
+                    color: Colors.DARK_GRAY,
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                  }}
+                >
+                  {debtorOwnDetails?.BasicWeeklyBudget || "-"}
+                </Typography>
+              </Grid>
             </Grid>
           </>
         ) : previewCreditorDetails ? (
@@ -380,7 +415,7 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  {fundedDate || "-"}
+                  {formatDate(fundedDate || "-")}
                 </Typography>
               </Grid>
 
@@ -483,6 +518,18 @@ export default function BasicCard({
               >
                 Paid Amount
                 <span style={{ marginLeft: "1rem" }}>${paidAmount}</span>
+              </Typography>
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontWeight: "600",
+                  marginLeft: "2rem",
+                }}
+              >
+                Fee Payment
+                <span style={{ marginLeft: "1rem" }}>
+                  {getReadablePaymentMethod(feePayment)}
+                </span>
               </Typography>
             </Grid>
 
