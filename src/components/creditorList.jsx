@@ -36,7 +36,7 @@ export default function CreditorList() {
   const GetCreditors = async () => {
     setLoading(true);
     const getCreditors = await GetAllCreditors();
-    console.log(getCreditors);
+
     if (getCreditors?.status === 200) {
       setUserArray(getCreditors?.data?.data?.clientDetails);
     } else {
