@@ -10,7 +10,30 @@ import PasswordField from "./passwordField";
 import TextButton from "../button";
 import { ResetUserPassword } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
+import { styled } from "@mui/material/styles";
+const StyledAccordion = styled(Accordion)({
+  "&:before": {
+    display: "none", // Remove the default line
+  },
+  width: "100%",
+  borderRadius: "1rem !important",
+  backgroundColor: Colors.WHITE,
+  marginBottom: "1rem",
+  boxShadow: "none",
+});
+const StyledAccordionSummary = styled(AccordionSummary)({
+  fontFamily: "Nunito",
+  fontWeight: "600",
+  borderTopRightRadius: "1rem",
+  borderTopLeftRadius: "1rem",
+  borderBottomLeftRadius: "1rem",
+  borderBottomRightRadius: "1rem",
+  borderBottom: "1px solid #EAEBEB", // Remove bottom border
+});
 
+const StyledAccordionDetails = styled(AccordionDetails)({
+  borderTop: "none", // Remove top border
+});
 export default function PasswordAccordion() {
   const { showToast } = useToast();
   const [currentPassword, setCurrentPassword] = useState("");
@@ -49,31 +72,11 @@ export default function PasswordAccordion() {
   }, [newPassword, verifyPassword]);
 
   return (
-    <Accordion
-      sx={{
-        width: "100%",
-        borderRadius: "1rem !important",
-        backgroundColor: Colors.WHITE,
-        marginBottom: "1rem",
-        boxShadow: "none",
-      }}
-    >
-      <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
-        sx={{
-          fontFamily: "Nunito",
-          fontWeight: "600",
-          borderTopRightRadius: "1rem",
-          borderTopLeftRadius: "1rem",
-          borderBottomLeftRadius: "1rem",
-          borderBottomRightRadius: "1rem",
-          borderBottom: "1px solid #EAEBEB",
-          marginLeft: "0.5rem",
-        }}
-      >
+    <StyledAccordion>
+      <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
         Password
-      </AccordionSummary>
-      <AccordionDetails>
+      </StyledAccordionSummary>
+      <StyledAccordionDetails>
         <Grid
           container
           sx={{
@@ -169,8 +172,8 @@ export default function PasswordAccordion() {
             onClick={handleResetPassword}
           />
         </Grid>
-      </AccordionDetails>
-    </Accordion>
+      </StyledAccordionDetails>
+    </StyledAccordion>
   );
 }
 

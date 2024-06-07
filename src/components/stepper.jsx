@@ -201,7 +201,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   const [creditorContactEmailError, setCreditorContactEmailError] = useState(
     {}
   );
-  console.log(contactError, "contactError");
+
   const disableButton =
     (activeStep === 0 &&
       (status === "" ||

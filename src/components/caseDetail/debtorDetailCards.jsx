@@ -275,16 +275,21 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
           >
             Contacts
           </p>
-          <SearchContainer>
+          <SearchContainer sx={{ width: "16rem" }}>
             <SearchIconWrapper>
-              <Search sx={{ fontSize: "16px", color: Colors.DIM_LIGHT_GRAY }} />
+              <Search
+                sx={{
+                  fontSize: "16px",
+                  color: Colors.DIM_LIGHT_GRAY,
+                }}
+              />
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Search Contact..."
               inputProps={{ "aria-label": "search" }}
             />
           </SearchContainer>
-          <div
+          {/* <div
             style={{
               display: "flex",
               fontSize: "11px",
@@ -299,7 +304,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
             <IconButton>
               <KeyboardArrowRight sx={{ fontSize: "16px" }} />
             </IconButton>
-          </div>
+          </div> */}
         </div>
         <Box
           sx={{
@@ -333,9 +338,9 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
               alignItems: "center",
             }}
           >
-            <span style={{ fontSize: "13px" }}>Name</span>
-            <span style={{ fontSize: "13px" }}>Relation</span>
-            <span style={{ fontSize: "13px" }}>Action</span>
+            <span style={{ fontSize: "11px" }}>Name</span>
+            <span style={{ fontSize: "11px" }}>Relation</span>
+            <span style={{ fontSize: "11px" }}>Action</span>
           </Grid>
           {caseData?.debtor?.contacts?.map((item, index) => {
             return (

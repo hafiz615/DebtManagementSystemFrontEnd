@@ -43,6 +43,30 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
     },
   })
 );
+const StyledAccordion = styled(Accordion)({
+  "&:before": {
+    display: "none", // Remove the default line
+  },
+  width: "100%",
+  borderRadius: "1rem !important",
+  backgroundColor: Colors.WHITE,
+  marginTop: "1rem",
+  marginBottom: "1rem",
+  boxShadow: "none",
+});
+const StyledAccordionSummary = styled(AccordionSummary)({
+  fontFamily: "Nunito",
+  fontWeight: "600",
+  borderTopRightRadius: "1rem",
+  borderTopLeftRadius: "1rem",
+  borderBottomLeftRadius: "1rem",
+  borderBottomRightRadius: "1rem",
+  borderBottom: "1px solid #EAEBEB", // Remove bottom border
+});
+
+const StyledAccordionDetails = styled(AccordionDetails)({
+  borderTop: "none", // Remove top border
+});
 
 export default function NotificationTemplatesTabs({ notificationTemplates }) {
   const TABS = {
@@ -73,32 +97,11 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
     setSmsTemplateId(id);
   };
   return (
-    <Accordion
-      sx={{
-        width: "100%",
-        borderRadius: "1rem !important",
-        backgroundColor: Colors.WHITE,
-        marginTop: "1rem",
-        marginBottom: "1rem",
-        boxShadow: "none",
-      }}
-    >
-      <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
-        sx={{
-          fontFamily: "Nunito",
-          fontWeight: "600",
-          borderTopRightRadius: "1rem",
-          borderTopLeftRadius: "1rem",
-          borderBottomLeftRadius: "1rem",
-          borderBottomRightRadius: "1rem",
-          borderBottom: "1px solid #EAEBEB",
-          marginLeft: "0.5rem",
-        }}
-      >
+    <StyledAccordion>
+      <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
         Notification Templates
-      </AccordionSummary>
-      <AccordionDetails sx={{ border: "none" }}>
+      </StyledAccordionSummary>
+      <StyledAccordionDetails>
         <Box>
           <AntTabs
             value={value}
@@ -368,7 +371,7 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
             )}
           </Box>
         </Box>
-      </AccordionDetails>
-    </Accordion>
+      </StyledAccordionDetails>
+    </StyledAccordion>
   );
 }
