@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Grid, Box, Typography } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { Colors } from "../config/default";
@@ -17,6 +18,7 @@ export default function EditDebtorDetail({
   caseData,
   GetCaseDetails,
 }) {
+  const { id } = useParams();
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const { showToast } = useToast();
   const menuItems = [
@@ -39,6 +41,7 @@ export default function EditDebtorDetail({
     BasicZipCode: debtorBasicInfo?.zipCode || "",
     BasicPhoneNumber: debtorBasicInfo?.phone || "",
     BasicAddress: debtorBasicInfo?.address || "",
+    BasicWeeklyBudget: debtorBasicInfo?.weeklyBudget || "",
   });
 
   const [debtorBusinessDetails, setDebtorBusinessDetails] = useState({
@@ -171,7 +174,7 @@ export default function EditDebtorDetail({
     if (updateDebtor?.status === 200) {
       showToast(updateDebtor?.data?.message, "success");
       handleClose();
-      GetCaseDetails();
+      GetCaseDetails(id);
     } else {
       showToast(
         updateDebtor?.response?.data?.message || updateDebtor?.data?.message,

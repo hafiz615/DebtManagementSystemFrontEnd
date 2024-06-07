@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Grid } from "@mui/material";
+import { Grid, IconButton } from "@mui/material";
 import Button from "@mui/material/Button";
 
 import Modal from "@mui/material/Modal";
@@ -20,14 +20,17 @@ export default function BasicModal({ modelButton, GetUsers, modalType, id }) {
   return (
     <div>
       {modalType === "edit" ? (
-        <Create
-          onClick={handleOpen}
-          sx={{
-            color: Colors.BLACK,
-            cursor: "pointer",
-            fontSize: "20px",
-          }}
-        />
+        <IconButton onClick={handleOpen}>
+          <Create
+            sx={{
+              color: Colors.BLACK,
+              cursor: "pointer",
+              fontSize: "20px",
+              display: "flex",
+              alignItems: "center",
+            }}
+          />
+        </IconButton>
       ) : (
         <Button
           sx={{

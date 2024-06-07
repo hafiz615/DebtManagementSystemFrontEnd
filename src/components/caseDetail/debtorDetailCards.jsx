@@ -131,42 +131,43 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
           }}
         >
           {Object.entries(caseData?.debtor?.basicInformation)?.map(
-            ([key, value]) => (
-              <div
-                key={key}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  width: "45%",
-                  marginBottom: "8px",
-                }}
-              >
-                <Typography
+            ([key, value]) =>
+              key !== "weeklyBudget" && (
+                <div
+                  key={key}
                   style={{
-                    fontSize: "11px",
-                    fontWeight: "700",
-                    fontFamily: "Nunito",
-                    color: Colors.DARK_GRAY,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    width: "45%",
+                    marginBottom: "8px",
                   }}
                 >
-                  {key === "SSID" ? "SSN" : formatKeys(key)}
-                </Typography>
-                <Typography
-                  style={{
-                    fontSize: "11px",
-                    color: Colors.DIM_LIGHT_GRAY,
-                    fontFamily: "Nunito",
-                    fontWeight: "500",
-                    textAlign: "right",
-                    flexWrap: "wrap",
-                    maxWidth: "80%",
-                    wordBreak: "break-word",
-                  }}
-                >
-                  {getTruncatedText(value, 17)}
-                </Typography>
-              </div>
-            )
+                  <Typography
+                    style={{
+                      fontSize: "11px",
+                      fontWeight: "700",
+                      fontFamily: "Nunito",
+                      color: Colors.DARK_GRAY,
+                    }}
+                  >
+                    {key === "SSID" ? "SSN" : formatKeys(key)}
+                  </Typography>
+                  <Typography
+                    style={{
+                      fontSize: "11px",
+                      color: Colors.DIM_LIGHT_GRAY,
+                      fontFamily: "Nunito",
+                      fontWeight: "500",
+                      textAlign: "right",
+                      flexWrap: "wrap",
+                      maxWidth: "80%",
+                      wordBreak: "break-word",
+                    }}
+                  >
+                    {getTruncatedText(value, 17)}
+                  </Typography>
+                </div>
+              )
           )}
         </div>
       </Grid>

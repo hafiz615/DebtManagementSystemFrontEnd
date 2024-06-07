@@ -82,7 +82,7 @@ export default function AmountTextField({
           width: width,
           marginTop: marginTop,
           marginLeft: marginLeft,
-          paddingLeft: ".4rem",
+          paddingLeft: "1rem",
           borderRadius: "5px",
           display: "flex",
           fontFamily: "Nunito",
@@ -114,7 +114,7 @@ export default function AmountTextField({
         }}
         variant="standard"
       />
-      {error ? (
+      {error && value ? (
         <Box
           sx={{
             color: "red",
