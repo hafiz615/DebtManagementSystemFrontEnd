@@ -14,6 +14,7 @@ export default function CaseCustomField({
   customFieldsData,
   GetCaseDetails,
 }) {
+  //usecase
   const { id } = useParams();
   const { showToast } = useToast();
   const menuItems =
