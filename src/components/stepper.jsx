@@ -201,10 +201,14 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   const [creditorContactEmailError, setCreditorContactEmailError] = useState(
     {}
   );
-
+  console.log(contactError, "contactError");
   const disableButton =
     (activeStep === 0 &&
       (status === "" ||
+        (!isEmpty(emailContactError) &&
+          !Object.values(emailContactError)?.some((value) => value === "")) ||
+        (!isEmpty(contactError) &&
+          !Object.values(contactError)?.some((value) => value === "")) ||
         Object.values(debtorOwnDetails)?.some((value) => value === "") ||
         Object.entries(debtorBusinessDetails)
           .filter(([key]) => key !== "businessDescription")
@@ -217,6 +221,14 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         errors?.basicPhone)) ||
     (activeStep === 1 &&
       (fundedDate === "" ||
+        (!isEmpty(creditorContactEmailError) &&
+          !Object.values(creditorContactEmailError)?.some(
+            (value) => value === ""
+          )) ||
+        (!isEmpty(creditorContactError) &&
+          !Object.values(creditorContactError)?.some(
+            (value) => value === ""
+          )) ||
         creditorFieldsError?.emailValidError ||
         creditorFieldsError?.creditorPhoneError ||
         Object.values(creditorBasicsInfo)?.some((value) => value === "") ||
