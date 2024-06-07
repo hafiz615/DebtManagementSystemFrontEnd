@@ -54,10 +54,11 @@ function PaymentsTextFields({
           width: width,
           marginRight: marginRight,
           marginLeft: marginLeft,
+          fontFamily: "Nunito",
         }}
         min={type === "number" ? "0" : undefined}
       />
-      {error ? (
+      {error && value ? (
         <Box
           sx={{
             color: "red",

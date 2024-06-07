@@ -228,7 +228,12 @@ export default function MuiModels({
               GetCaseDetails={GetCaseDetails}
             />
           ) : show === "editAbout" ? (
-            <EditAbout show={show} handleClose={handleClose} data={data} />
+            <EditAbout
+              show={show}
+              GetCaseDetails={GetCaseDetails}
+              handleClose={handleClose}
+              data={data}
+            />
           ) : show === "addCase" ? (
             <CaseModel
               show={show}

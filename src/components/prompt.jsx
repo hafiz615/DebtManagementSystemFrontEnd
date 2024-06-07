@@ -11,6 +11,7 @@ import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined
 import { DeleteUserById, DeleteCustomField } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import TextButton from "./button";
+import { IconButton } from "@mui/material";
 
 export default function Prompt({
   deleting,
@@ -66,16 +67,15 @@ export default function Prompt({
 
   return (
     <React.Fragment>
-      <DeleteForeverOutlinedIcon
-        onClick={handleClickOpen}
-        sx={{
-          color: Colors.ORANGE_COLOR,
-          fontSize: "20px",
-          cursor: "pointer",
-          marginLeft: "1rem",
-          mb: ".2rem",
-        }}
-      />
+      <IconButton onClick={handleClickOpen}>
+        <DeleteForeverOutlinedIcon
+          sx={{
+            color: Colors.ORANGE_COLOR,
+            fontSize: "20px",
+            cursor: "pointer",
+          }}
+        />
+      </IconButton>
 
       <Dialog
         open={open}

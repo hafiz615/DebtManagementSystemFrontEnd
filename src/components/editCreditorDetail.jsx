@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { useParams } from "react-router-dom";
 import { Grid, Box, Typography } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { Colors } from "../config/default";
@@ -16,6 +16,7 @@ export default function EditCreditorDetail({
   caseData,
   GetCaseDetails,
 }) {
+  const { id } = useParams();
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const { showToast } = useToast();
   const creditorBasicInfo = caseData?.creditor?.basicInformation;
@@ -115,7 +116,7 @@ export default function EditCreditorDetail({
     if (updateCreditor?.status === 200) {
       showToast(updateCreditor?.data?.message, "success");
       handleClose();
-      GetCaseDetails();
+      GetCaseDetails(id);
     } else {
       showToast(
         updateCreditor?.response?.data?.message ||

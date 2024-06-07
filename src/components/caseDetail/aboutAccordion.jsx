@@ -12,7 +12,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
 
-export default function AboutAccordion({ caseDetails }) {
+export default function AboutAccordion({ caseDetails, GetCaseDetails }) {
   const aboutData = [
     { name: "Case Code", value: caseDetails?.caseCode || "-" },
     { name: "Status", value: caseDetails?.status || "-" },
@@ -26,7 +26,7 @@ export default function AboutAccordion({ caseDetails }) {
       value: caseDetails?.creditor?.basicInformation?.fullName || "-",
     },
     { name: "Negotiator", value: caseDetails?.negotiator || "-" },
-    { name: "Manager", value: caseDetails?.Manager || "-" },
+    { name: "Manager", value: caseDetails?.manager || "-" },
     { name: "Total Debt", value: caseDetails?.totalDebt || "-" },
     { name: "Remaining Debt", value: caseDetails?.remaining || "-" },
     { name: "Paid Debt", value: caseDetails?.paidAmount || "-" },
@@ -70,7 +70,11 @@ export default function AboutAccordion({ caseDetails }) {
           </Typography>
         </div>
         <div style={{ display: "flex" }} onClick={(e) => e.stopPropagation()}>
-          <MuiModels show="editAbout" data={caseDetails} />
+          <MuiModels
+            show="editAbout"
+            data={caseDetails}
+            GetCaseDetails={GetCaseDetails}
+          />
         </div>
       </AccordionSummary>
       <AccordionDetails
