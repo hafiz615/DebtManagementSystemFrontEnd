@@ -346,3 +346,15 @@ export const GetCreditorById = async (id) => {
     return error;
   }
 };
+
+export const UpdateCaseAbout = async (payload, id) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/case/updateCaseAbout/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

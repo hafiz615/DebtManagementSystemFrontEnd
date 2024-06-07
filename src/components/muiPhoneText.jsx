@@ -13,7 +13,7 @@ export default function MuiPhoneTextField({
   label,
 }) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
-
+  const country = ["us"];
   return (
     <Grid item xs={12} md={3.9}>
       <Typography
@@ -52,10 +52,12 @@ export default function MuiPhoneTextField({
         variant="standard"
         fullWidth
         defaultCountry={"us"}
+        onlyCountries={country}
         disableDropdown={false}
         onChange={onChange}
         value={value}
         onKeyDown={onKeyDown}
+        preferredCountries={["us"]}
       />
       {error ? (
         <Box

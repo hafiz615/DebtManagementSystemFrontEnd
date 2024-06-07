@@ -7,18 +7,9 @@ import { Grid, Typography } from "@mui/material";
 import { Colors } from "../config/default";
 import SearchBar from "./searchBar";
 import ListTable from "./listTable";
-const headers = [
-  "Case Owner",
-  "Creditor",
-  "Last Payment Date",
-  "Outstanding Debt",
-  "Total Debt",
-  "Upcoming Debt",
-  "Upcoming Date",
-  "Last Payment Amount",
-];
+import { formatDollarAmount } from "../common";
 
-function CaseHistory({ data }) {
+function CaseHistory({ data, userRole }) {
   const [rows, setRows] = useState([]);
   const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
@@ -29,6 +20,16 @@ function CaseHistory({ data }) {
       new Date(dateString)
     );
   };
+  const headers = [
+    "Case Owner",
+    userRole === "client" ? "Creditor" : "Debtor",
+    "Last Payment Date",
+    "Outstanding Debt",
+    "Total Debt",
+    "Upcoming Debt",
+    "Upcoming Date",
+    "Last Payment Amount",
+  ];
   useEffect(() => {
     // Simulate fetching data from an API
     const fetchData = () => {
@@ -39,11 +40,11 @@ function CaseHistory({ data }) {
           caseOwner: item?.caseOwner || "-",
           Creditor: item?.creditorName || item?.debtorName || "-",
           lastDate: formatDate(item?.lastPaymentDate) || "-",
-          OutstandingDebt: item?.outstandingDebt || "-",
-          totalDebt: item?.totalDebt || "-",
-          UpcomingDebt: item?.upcomingPayment || "-",
+          OutstandingDebt: formatDollarAmount(item?.outstandingDebt) || "-",
+          totalDebt: formatDollarAmount(item?.totalDebt) || "-",
+          UpcomingDebt: formatDollarAmount(item?.upcomingPayment) || "-",
           upcomingDate: formatDate(item?.upcomingPaymentDate) || "-",
-          lastPaymentAmount: item?.lastPayment || "-",
+          lastPaymentAmount: formatDollarAmount(item?.lastPayment) || "-",
         }));
       setRows(generatedData);
     };

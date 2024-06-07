@@ -8,6 +8,7 @@ import { styled } from "@mui/material/styles";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import { ExpandMore, Launch } from "@mui/icons-material";
 import { Grid, Typography, Box } from "@mui/material";
+import { formatDollarAmount } from "../common";
 
 import { Colors } from "../config/default";
 
@@ -21,6 +22,7 @@ export default function AccordionUsage({
   paymentNumber,
   index,
   rowArray,
+  showFailureReason,
 }) {
   const [rows, setRows] = useState([]);
   useEffect(() => {
@@ -28,7 +30,7 @@ export default function AccordionUsage({
       id: index,
       name: item?.fullName || "-",
       dueDate: new Date(item?.dueDate).toLocaleDateString() || "-",
-      amount: item?.amount || "-",
+      amount: formatDollarAmount(item?.amount),
       ssid: item?.SSID || "-",
       failureReason: item?.failedReasonCaptured || "-",
     }));
@@ -150,7 +152,11 @@ export default function AccordionUsage({
       </AccordionSummary>
 
       <AccordionDetails>
-        <ListTable data={rows} headerData={headers} />
+        <ListTable
+          data={rows}
+          headerData={headers}
+          showFailureReason={showFailureReason}
+        />
         {/* <DataTable rows={rows} columns={columns} /> */}
       </AccordionDetails>
     </Accordion>
