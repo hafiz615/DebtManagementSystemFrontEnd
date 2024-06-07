@@ -36,7 +36,7 @@ export default function CaseCustomField({
     const addFields = await AddCustomFieldsByTarget("case", params, id);
     if (addFields?.status === 200) {
       showToast(addFields?.data?.message, "success");
-      GetCaseDetails();
+      GetCaseDetails(id);
       handleClose();
     } else {
       showToast(

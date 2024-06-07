@@ -60,7 +60,7 @@ export default function CustomTextField({
         }}
         min={type === "number" ? "0" : undefined}
       />
-      {error ? (
+      {error && value ? (
         <Box
           sx={{
             color: "red",

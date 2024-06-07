@@ -59,7 +59,7 @@ export default function MuiPhoneTextField({
         onKeyDown={onKeyDown}
         preferredCountries={["us"]}
       />
-      {error ? (
+      {error && value ? (
         <Box
           sx={{
             color: "red",
