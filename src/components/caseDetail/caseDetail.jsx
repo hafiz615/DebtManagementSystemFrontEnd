@@ -311,7 +311,10 @@ function CaseDetail() {
                   loading={isPaymentLoading}
                   paymentDetails={paymentDetails}
                 />
-                <AboutAccordion caseDetails={caseData} />
+                <AboutAccordion
+                  caseDetails={caseData}
+                  GetCaseDetails={GetCaseDetails}
+                />
                 <TaskAccordion />
                 <CustomFieldsAccordion
                   caseData={caseData}

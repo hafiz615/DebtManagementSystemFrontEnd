@@ -9,7 +9,7 @@ import { isEmpty } from "lodash";
 import { useParams } from "react-router-dom";
 import { useToast } from "../toast/toastContext";
 
-export default function EditAbout({ handleClose, data }) {
+export default function EditAbout({ handleClose, data, GetCaseDetails }) {
   const [userArray, setUserArray] = useState([]);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(data?.status || "");
@@ -59,6 +59,7 @@ export default function EditAbout({ handleClose, data }) {
     if (res?.status === 200) {
       showToast(res?.data?.message, "success");
       handleClose();
+      GetCaseDetails(id);
     } else {
       showToast(res?.response?.data?.message || res?.data?.message, "error");
     }

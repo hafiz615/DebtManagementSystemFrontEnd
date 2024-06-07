@@ -34,9 +34,7 @@ function DebtorDetails({
 }) {
   const handleSearchChange = (value) => {
     setSearchText(value);
-    if (value) {
-      SearchFields();
-    }
+    SearchFields(value);
   };
 
   return (

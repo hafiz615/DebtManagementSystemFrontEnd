@@ -25,6 +25,7 @@ import {
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import { isEmpty } from "lodash";
+import { hasAnyValue, checkContacts } from "../common";
 
 const steps = ["Debtor", "Creditor", "Payment", "File upload", "Preview"];
 
@@ -98,7 +99,11 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
 
   const [debtorContactDetails, setDebtorContactDetails] = useState(contacts);
 
-  // creditor state
+  const debtorContantHasValue = debtorContactDetails?.some((contact) =>
+    hasAnyValue(contact)
+  );
+
+  //creditor state
   const [creditorBasicsInfo, setCreditorBasicsInfo] = useState({
     CreditorBasicFullName: "",
     CreditorBasicEmailAddress: "",
@@ -130,6 +135,9 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       relationWithDebtor: "",
     },
   ]);
+  const creditorContantHasValue = creditorContactDetails?.some((contact) =>
+    hasAnyValue(contact)
+  );
   // payment state
   const [totalReceivable, setTotalReceivable] = useState(null);
   const [paidAmount, setPaidAmount] = useState(null);
@@ -201,14 +209,17 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   const [creditorContactEmailError, setCreditorContactEmailError] = useState(
     {}
   );
-  console.log(contactError, "contactError");
+
   const disableButton =
     (activeStep === 0 &&
       (status === "" ||
-        (!isEmpty(emailContactError) &&
-          !Object.values(emailContactError)?.some((value) => value === "")) ||
-        (!isEmpty(contactError) &&
-          !Object.values(contactError)?.some((value) => value === "")) ||
+        (debtorContantHasValue &&
+          !isEmpty(emailContactError) &&
+          hasAnyValue(emailContactError)) ||
+        checkContacts(debtorContactDetails) ||
+        (debtorContantHasValue &&
+          !isEmpty(contactError) &&
+          hasAnyValue(contactError)) ||
         Object.values(debtorOwnDetails)?.some((value) => value === "") ||
         Object.entries(debtorBusinessDetails)
           .filter(([key]) => key !== "businessDescription")
@@ -221,14 +232,13 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         errors?.basicPhone)) ||
     (activeStep === 1 &&
       (fundedDate === "" ||
-        (!isEmpty(creditorContactEmailError) &&
-          !Object.values(creditorContactEmailError)?.some(
-            (value) => value === ""
-          )) ||
-        (!isEmpty(creditorContactError) &&
-          !Object.values(creditorContactError)?.some(
-            (value) => value === ""
-          )) ||
+        (creditorContantHasValue &&
+          !isEmpty(creditorContactEmailError) &&
+          hasAnyValue(creditorContactEmailError)) ||
+        checkContacts(creditorContactDetails) ||
+        (creditorContantHasValue &&
+          !isEmpty(creditorContactError) &&
+          hasAnyValue(creditorContactError)) ||
         creditorFieldsError?.emailValidError ||
         creditorFieldsError?.creditorPhoneError ||
         Object.values(creditorBasicsInfo)?.some((value) => value === "") ||
@@ -253,9 +263,9 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     return skipped.has(step);
   };
 
-  const SearchDebtorFields = async () => {
-    if (debtorSearchText) {
-      const params = { text: debtorSearchText };
+  const SearchDebtorFields = async (value) => {
+    if (value) {
+      const params = { text: value };
       const getDebtorDataInSearch = await GetDebtorSearch(params);
       if (getDebtorDataInSearch?.status === 200) {
         const data = getDebtorDataInSearch?.data?.data;
@@ -330,9 +340,9 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     setFilteredArray([]);
     setDebtorSearchText("");
   };
-  const SearchCreditorFields = async () => {
-    if (creditorSearchText) {
-      const params = { text: creditorSearchText };
+  const SearchCreditorFields = async (value) => {
+    if (value) {
+      const params = { text: value };
       const getCreditorDataInSearch = await GetCreditorSearch(params);
       if (getCreditorDataInSearch?.status === 200) {
         const data = getCreditorDataInSearch?.data?.data;

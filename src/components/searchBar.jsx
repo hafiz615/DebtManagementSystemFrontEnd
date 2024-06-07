@@ -156,6 +156,7 @@ function SearchBar({
                     fontSize: "11px",
                   }}
                 >
+                  <span>{result?.basicInformation?.fullName}</span>
                   <span>{result?.basicInformation?.email}</span>
                   <span>{result?.basicInformation?.phone}</span>
                   <span> {result?.basicInformation?.SSID}</span>

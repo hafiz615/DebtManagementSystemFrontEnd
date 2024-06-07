@@ -15,10 +15,10 @@ import TextButton from "./button";
 import { CreateCustomField } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import Dropdown from "./dropdown";
+import { inputTypesArray } from "../common";
 
 export default function AddCustomField({ handleClose, handleModalClose }) {
   const menuItems = [{ label: "Case", value: "case" }];
-
   const { showToast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
@@ -80,21 +80,15 @@ export default function AddCustomField({ handleClose, handleModalClose }) {
       />
 
       <div style={{ display: "flex", gap: "1rem", marginTop: "1em" }}>
-        <input
-          type="text"
+        <Dropdown
+          menuWidth="22rem"
+          menuItems={inputTypesArray}
           placeholder="Type"
-          style={{
-            backgroundColor: Colors.BG_LIGHT_GRAY,
-            height: "2.5rem",
-            color: Colors.DIM_LIGHT_GRAY,
-            paddingLeft: "1rem",
-            border: "none",
-            outline: "none",
-            borderRadius: "5px",
-            width: "50%",
-          }}
-          value={formData.type}
-          onChange={(e) => handleChange("type", e.target.value)}
+          backgroundColor={Colors.BG_LIGHT_GRAY}
+          hoverColor={Colors.BG_LIGHT_GRAY}
+          width="50%"
+          selectedValue={formData.type}
+          setSelectedValue={(value) => handleChange("type", value)}
         />
 
         <Dropdown
