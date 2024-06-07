@@ -70,6 +70,7 @@ export default function ListTable({
   onRowClick,
   requiredIcons,
   requiredCustomFieldIcons,
+  showFailureReason,
 }) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -103,15 +104,19 @@ export default function ListTable({
           <Table aria-label="customized table">
             <TableHead sx={{ fontFamily: "Nunito" }}>
               <TableRow sx={{ fontFamily: "Nunito" }}>
-                {headerData?.map((header, index) => (
-                  <StyledTableCell
-                    align="left"
-                    sx={{ fontWeight: "700" }}
-                    key={index}
-                  >
-                    {header}
-                  </StyledTableCell>
-                ))}
+                {headerData
+                  ?.filter(
+                    (header) => showFailureReason || header !== "Failure Reason"
+                  )
+                  ?.map((header, index) => (
+                    <StyledTableCell
+                      align="left"
+                      sx={{ fontWeight: "700" }}
+                      key={index}
+                    >
+                      {header}
+                    </StyledTableCell>
+                  ))}
                 {requiredIcons && (
                   <StyledTableCell align="left" sx={{ fontWeight: "700" }}>
                     Actions
@@ -148,8 +153,12 @@ export default function ListTable({
                       onRowClick ? onRowClick(row?.id) : undefined
                     }
                   >
-                    {Object?.entries(row)
-                      ?.filter(([key]) => key !== "id") // Filter out the id field
+                    {Object.entries(row)
+                      ?.filter(
+                        ([key]) =>
+                          key !== "id" &&
+                          (showFailureReason || key !== "failureReason")
+                      )
                       ?.map(([key, value], i) => (
                         <StyledTableCell key={i}>{value}</StyledTableCell>
                       ))}

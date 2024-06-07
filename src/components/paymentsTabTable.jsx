@@ -18,6 +18,7 @@ import {
 } from "@mui/icons-material";
 import { Colors } from "../config/default";
 import { isEmpty, isEqual } from "lodash";
+import { formatDollarAmount } from "../common";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     color: Colors.BLACK,
@@ -98,7 +99,7 @@ export default function PaymentTabsTable({ data, headerData }) {
       name: item?.fullName || "-",
       dueDate: new Date(item?.dueDate).toLocaleDateString() || "-",
       tryDate: item?.tryDate || "-",
-      totalDebt: item?.totalDebt || "-",
+      totalDebt: formatDollarAmount(item?.totalDebt) || "-",
       ssid: item?.SSID || "-",
       caseOwner: item?.caseOwner || "-",
     }));

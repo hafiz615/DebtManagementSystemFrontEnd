@@ -23,7 +23,7 @@ export default function CaseCustomField({
       value: field?.name,
       type: field?.type,
     }));
-  console.log(menuItems, "menuItems");
+
   const [selectedField, setSelectedField] = useState(menuItems[0]);
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");

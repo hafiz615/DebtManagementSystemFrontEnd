@@ -28,7 +28,17 @@ function DebtorDetails({
   contactError,
   emailContactError,
   setEmailContactError,
+  filteredArray,
+  handleSelect,
+  setFilteredArray,
 }) {
+  const handleSearchChange = (value) => {
+    setSearchText(value);
+    if (value) {
+      SearchFields();
+    }
+  };
+
   return (
     <>
       <Grid
@@ -44,9 +54,12 @@ function DebtorDetails({
       >
         <SearchBar
           searchText={searchText}
-          setSearchText={setSearchText}
-          SearchFields={SearchFields}
           placeholder="Search by Email,Phone and SSN..."
+          onChange={handleSearchChange}
+          filteredArray={filteredArray}
+          handleSelect={handleSelect}
+          setFilteredArray={setFilteredArray}
+          setSearchText={setSearchText}
         />
       </Grid>
       {loading ? (

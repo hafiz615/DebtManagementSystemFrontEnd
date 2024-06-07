@@ -12,6 +12,7 @@ import ListTable from "./listTable";
 import { GetAllCreditors } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import CircularProgress from "@mui/material/CircularProgress";
+import { formatDollarAmount } from "../common";
 const headers = [
   // "Index",
   "Name",
@@ -36,7 +37,7 @@ export default function CreditorList() {
   const GetCreditors = async () => {
     setLoading(true);
     const getCreditors = await GetAllCreditors();
-    console.log(getCreditors);
+
     if (getCreditors?.status === 200) {
       setUserArray(getCreditors?.data?.data?.clientDetails);
     } else {
@@ -58,7 +59,7 @@ export default function CreditorList() {
         name: item?.creditorName || "-",
         totalCases: item?.totalCases || "-",
         totalCreditors: item?.totalDebtors || "-",
-        totalDebt: item?.totalDebt || "-",
+        totalDebt: formatDollarAmount(item?.totalDebt) || "-",
       }))
     );
   }, [userArray]);

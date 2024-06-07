@@ -21,7 +21,7 @@ export default function CustomFieldsAccordion({ caseData, GetCaseDetails }) {
   const getFields = async (rowId) => {
     const result = await GetCustomFieldsByTarget("case", rowId);
     if (result?.status === 200) {
-      setCustomFieldsData(result?.data?.data);
+      setCustomFieldsData(result?.data?.data?.customFields);
     }
   };
   useEffect(() => {

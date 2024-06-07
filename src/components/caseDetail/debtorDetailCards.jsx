@@ -163,7 +163,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
                     wordBreak: "break-word",
                   }}
                 >
-                  {getTruncatedText(value, 35)}
+                  {getTruncatedText(value, 17)}
                 </Typography>
               </div>
             )
@@ -216,6 +216,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
                     justifyContent: "space-between",
                     width: "100%",
                     marginBottom: "8px",
+                    gap: "8px",
                   }}
                 >
                   <Typography
@@ -237,7 +238,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
                       textAlign: "right",
                     }}
                   >
-                    {getTruncatedText(value, 35)}
+                    {getTruncatedText(value, 20)}
                   </Typography>
                 </div>
               );

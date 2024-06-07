@@ -30,7 +30,17 @@ export default function CreditorDetails({
   setCreditorContactError,
   creditorContactEmailError,
   setCreditorContactEmailError,
+  handleSelect,
+  filteredArray,
+  setFilteredArray,
 }) {
+  const handleSearchChange = (value) => {
+    setSearchText(value);
+    if (value) {
+      SearchFields();
+    }
+  };
+
   return (
     <>
       <Grid
@@ -46,9 +56,12 @@ export default function CreditorDetails({
       >
         <SearchBar
           searchText={searchText}
-          setSearchText={setSearchText}
-          SearchFields={SearchFields}
+          onChange={handleSearchChange}
           placeholder="Search by Email and Phone..."
+          filteredArray={filteredArray}
+          handleSelect={handleSelect}
+          setFilteredArray={setFilteredArray}
+          setSearchText={setSearchText}
         />
       </Grid>
       {loading ? (

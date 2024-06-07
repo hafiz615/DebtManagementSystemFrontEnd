@@ -19,6 +19,7 @@ import CaseModel from "./caseModel";
 import CaseCustomField from "./caseCustomField";
 import EditCaseCustomField from "./editCaseCustomField";
 import EditAbout from "./editAbout";
+import { isEmpty } from "lodash";
 
 export default function MuiModels({
   buttonName,
@@ -146,6 +147,7 @@ export default function MuiModels({
         </IconButton>
       ) : show === "EditCaseCustomField" ? (
         <IconButton
+          disabled={isEmpty(customFieldsData)}
           onClick={() => {
             handleOpen();
           }}
@@ -226,7 +228,7 @@ export default function MuiModels({
               GetCaseDetails={GetCaseDetails}
             />
           ) : show === "editAbout" ? (
-            <EditAbout show={show} handleClose={handleClose} />
+            <EditAbout show={show} handleClose={handleClose} data={data} />
           ) : show === "addCase" ? (
             <CaseModel
               show={show}

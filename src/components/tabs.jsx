@@ -13,7 +13,6 @@ import BasicModal from "./customPopup";
 import { GetAllUsers } from "../services/services";
 import CircularProgress from "@mui/material/CircularProgress";
 import UserListTable from "./userListTable";
-import { get_users } from "../redux/action/action";
 const AntTabs = styled(Tabs)({
   border: "none",
   "& .MuiTabs-indicator": {

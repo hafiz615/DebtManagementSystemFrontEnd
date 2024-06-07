@@ -235,7 +235,6 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
         sx={{
           justifyContent: "space-between",
           marginTop: "2rem",
-          height: "40vh",
         }}
       >
         {gettingUser ? (
@@ -246,7 +245,7 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              height: "40vh",
+              height: "34vh",
             }}
           >
             <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
@@ -464,15 +463,15 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
               sx={{
                 display: "flex",
                 justifyContent: "flex-end",
-                marginTop: "2rem",
               }}
             >
               <TextButton
                 loading={loading}
                 buttonText={modalType === "edit" ? "UPDATE" : "ADD"}
                 height="2rem"
+                marginTop="1rem"
                 marginBottom="2rem"
-                width="4.5rem"
+                width="5rem"
                 onClick={modalType === "edit" ? handleEdit : handleSubmit}
                 disabled={!isFormValid()}
               />

@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import CreateIcon from "@mui/icons-material/Create";
 
 import { Colors } from "../../config/default";
+import { formatDollarAmount } from "../../common";
 
 export default function BasicCard({
   cardHeading,
@@ -310,7 +311,8 @@ export default function BasicCard({
                     overflow: "hidden",
                   }}
                 >
-                  {debtorOwnDetails?.BasicWeeklyBudget || "-"}
+                  {formatDollarAmount(debtorOwnDetails?.BasicWeeklyBudget) ||
+                    "-"}
                 </Typography>
               </Grid>
             </Grid>
@@ -507,7 +509,9 @@ export default function BasicCard({
                 }}
               >
                 Total Receivable
-                <span style={{ marginLeft: "1rem" }}>${totalReceivable}</span>
+                <span style={{ marginLeft: "1rem" }}>
+                  {formatDollarAmount(totalReceivable) || "-"}
+                </span>
               </Typography>
               <Typography
                 sx={{
@@ -517,7 +521,9 @@ export default function BasicCard({
                 }}
               >
                 Paid Amount
-                <span style={{ marginLeft: "1rem" }}>${paidAmount}</span>
+                <span style={{ marginLeft: "1rem" }}>
+                  ${formatDollarAmount(paidAmount) || "-"}
+                </span>
               </Typography>
               <Typography
                 sx={{
@@ -528,7 +534,7 @@ export default function BasicCard({
               >
                 Fee Payment
                 <span style={{ marginLeft: "1rem" }}>
-                  {getReadablePaymentMethod(feePayment)}
+                  {getReadablePaymentMethod(feePayment) || "-"}
                 </span>
               </Typography>
             </Grid>
@@ -571,7 +577,7 @@ export default function BasicCard({
                           width: "50%",
                         }}
                       >
-                        {item?.amount}
+                        {formatDollarAmount(item?.amount) || "-"}
                       </Typography>
                     </Grid>
 

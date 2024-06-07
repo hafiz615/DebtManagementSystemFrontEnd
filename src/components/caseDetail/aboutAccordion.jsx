@@ -25,8 +25,8 @@ export default function AboutAccordion({ caseDetails }) {
       name: "Creditor",
       value: caseDetails?.creditor?.basicInformation?.fullName || "-",
     },
-    { name: "Negotiator", value: "" || "-" },
-    { name: "Manager", value: "" || "-" },
+    { name: "Negotiator", value: caseDetails?.negotiator || "-" },
+    { name: "Manager", value: caseDetails?.Manager || "-" },
     { name: "Total Debt", value: caseDetails?.totalDebt || "-" },
     { name: "Remaining Debt", value: caseDetails?.remaining || "-" },
     { name: "Paid Debt", value: caseDetails?.paidAmount || "-" },
@@ -70,7 +70,7 @@ export default function AboutAccordion({ caseDetails }) {
           </Typography>
         </div>
         <div style={{ display: "flex" }} onClick={(e) => e.stopPropagation()}>
-          <MuiModels show="editAbout" />
+          <MuiModels show="editAbout" data={caseDetails} />
         </div>
       </AccordionSummary>
       <AccordionDetails
