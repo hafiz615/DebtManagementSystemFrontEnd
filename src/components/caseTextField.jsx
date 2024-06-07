@@ -54,6 +54,7 @@ function PaymentsTextFields({
           width: width,
           marginRight: marginRight,
           marginLeft: marginLeft,
+          fontFamily: "Nunito",
         }}
         min={type === "number" ? "0" : undefined}
       />
