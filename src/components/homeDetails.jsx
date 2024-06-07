@@ -191,6 +191,9 @@ function HomeDetails() {
                     paymentNumber={data?.paymentNumber}
                     index={index}
                     rowArray={data?.rowData}
+                    showFailureReason={
+                      data?.tableHeading !== "Upcoming Payments"
+                    }
                   />
                 </Grid>
               ))}
@@ -203,6 +206,9 @@ function HomeDetails() {
                     paymentNumber={data?.paymentNumber}
                     index={index}
                     rowArray={data?.rowData}
+                    showFailureReason={
+                      data?.tableHeading !== "Upcoming Payments"
+                    }
                   />
                 </Grid>
               ))}

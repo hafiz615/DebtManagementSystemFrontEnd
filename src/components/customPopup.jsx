@@ -61,12 +61,13 @@ export default function BasicModal({ modelButton, GetUsers, modalType, id }) {
         <Grid
           container
           sx={{
-            overflowY: "auto",
+            // overflowY: "auto",
             position: "absolute",
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
             width: smallScreen ? "65%" : "55%",
+            height: "max-content",
             bgcolor: Colors.WHITE,
             borderRadius: "10px",
             boxShadow: 24,
