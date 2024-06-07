@@ -93,3 +93,11 @@ export const formatPhoneNumber = (value) => {
   const phoneFormat = spaceReplace?.replace(/[^+a-zA-Z 0-9]+/g, "");
   return phoneFormat;
 };
+
+export function formatDollarAmount(amount) {
+  if (amount == null) return "-";
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(amount);
+}

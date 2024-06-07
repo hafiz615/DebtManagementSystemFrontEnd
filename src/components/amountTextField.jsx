@@ -7,15 +7,15 @@ import { Colors } from "../config/default";
 import { Box } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-const TextMaskCustom = React.forwardRef(function TextMaskCustom(props, ref) {
+const USPhoneMaskCustom = React.forwardRef(function USPhoneMaskCustom(
+  props,
+  ref
+) {
   const { onChange, ...other } = props;
   return (
     <IMaskInput
       {...other}
-      mask="(#00) 000-0000"
-      definitions={{
-        "#": /[1-9]/,
-      }}
+      mask="(000) 000-0000"
       inputRef={ref}
       onAccept={(value) => onChange({ target: { name: props.name, value } })}
       overwrite
@@ -23,7 +23,7 @@ const TextMaskCustom = React.forwardRef(function TextMaskCustom(props, ref) {
   );
 });
 
-TextMaskCustom.propTypes = {
+USPhoneMaskCustom.propTypes = {
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
 };
@@ -77,6 +77,7 @@ export default function AmountTextField({
         sx={{
           marginRight: marginRight,
           backgroundColor: Colors.BG_LIGHT_GRAY,
+          color: Colors.DIM_LIGHT_GRAY,
           height: "2.5rem",
           width: width,
           marginTop: marginTop,
@@ -84,11 +85,13 @@ export default function AmountTextField({
           paddingLeft: ".4rem",
           borderRadius: "5px",
           display: "flex",
+          fontFamily: "Nunito",
           justifyContent: "center",
           border: "none !important",
           "& .MuiInputBase-input": {
-            color: Colors.DARK_GRAY,
+            color: Colors.DIM_LIGHT_GRAY,
             fontSize: ".8rem",
+            fontFamily: "Nunito",
           },
           "& .MuiInput-underline:before": {
             borderBottom: "none",

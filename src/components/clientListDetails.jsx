@@ -8,6 +8,7 @@ import { Colors } from "../config/default";
 import CaseHistory from "./caseHistory";
 import { GetClientById, GetCreditorById } from "../services/services";
 import { isEmpty } from "lodash";
+import { formatDollarAmount } from "../common";
 
 export default function ClientListDetails() {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
@@ -168,7 +169,7 @@ export default function ClientListDetails() {
                       marginTop: "0.5rem",
                     }}
                   >
-                    {dataUser?.totalDebt}
+                    {formatDollarAmount(dataUser?.totalDebt)}
                   </span>
                 </Box>
                 {userRole === "client" && (
@@ -218,9 +219,10 @@ export default function ClientListDetails() {
                           fontSize: "0.9rem",
                           color: Colors.DIM_LIGHT_GRAY,
                           marginTop: "0.5rem",
+                          wordBreak: "break-word",
                         }}
                       >
-                        {truncateText(dataUser?.address, 30)}
+                        {truncateText(dataUser?.address, 40)}
                       </span>
                     </Box>
                   </>
@@ -250,7 +252,7 @@ export default function ClientListDetails() {
                       marginTop: "0.5rem",
                     }}
                   >
-                    {dataUser?.outstandingDebt}
+                    {formatDollarAmount(dataUser?.outstandingDebt)}
                   </span>
                 </Box>
                 {userRole === "client" && (
@@ -369,7 +371,7 @@ export default function ClientListDetails() {
                 ))}
               </Grid>
             </Grid>
-            <CaseHistory data={clientData?.caseHistory} />
+            <CaseHistory data={clientData?.caseHistory} userRole={userRole} />
           </Grid>
         </>
       )}
