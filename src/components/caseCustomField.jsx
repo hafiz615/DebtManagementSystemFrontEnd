@@ -8,31 +8,31 @@ import { AddCustomFieldsByTarget } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import { useParams } from "react-router-dom";
 import { isEmpty } from "lodash";
+import { removeDuplicates } from "../common";
 
 export default function CaseCustomField({
   handleClose,
   customFieldsData,
   GetCaseDetails,
 }) {
-  //usecase
   const { id } = useParams();
   const { showToast } = useToast();
-  const menuItems =
+  const ItemsArray =
     customFieldsData &&
     customFieldsData?.map((field) => ({
       label: field?.name,
       value: field?.name,
       type: field?.type,
     }));
-
-  const [selectedField, setSelectedField] = useState(menuItems[0]);
+  const menuItems = removeDuplicates(ItemsArray);
+  const [selectedField, setSelectedField] = useState(null);
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const handleSubmit = async () => {
     setLoading(true);
     const params = {
       name: selectedField?.value,
-      value: inputValue,
+      value: selectedField?.type === "number" ? Number(inputValue) : inputValue,
     };
     const addFields = await AddCustomFieldsByTarget("case", params, id);
     if (addFields?.status === 200) {
