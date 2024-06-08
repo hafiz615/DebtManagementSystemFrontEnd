@@ -90,7 +90,7 @@ export default function ListTable({
         backgroundColor: Colors.WHITE,
         borderRadius: "10px ",
         width: "100%",
-        height: "55vh",
+        // height: "55vh",
       }}
     >
       <div
@@ -238,7 +238,10 @@ export default function ListTable({
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          style={{ alignSelf: "flex-end", marginBottom: "1rem" }}
+          style={{
+            alignSelf: "flex-end",
+            marginBottom: "1rem",
+          }}
         />
       </div>
     </Paper>

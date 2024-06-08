@@ -10,8 +10,34 @@ import { Colors } from "../../config/default";
 import Dropdown from "../dropdown";
 import TextButton from "../button";
 import RowConfigForm from "./paymentsAuthsNotificationRow";
+
 import { SaveSettings } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
+
+import { styled } from "@mui/material/styles";
+const StyledAccordion = styled(Accordion)({
+  "&:before": {
+    display: "none", // Remove the default line
+  },
+  width: "100%",
+  borderRadius: "1rem !important",
+  backgroundColor: Colors.WHITE,
+  marginTop: "1rem",
+  boxShadow: "none",
+});
+const StyledAccordionSummary = styled(AccordionSummary)({
+  fontFamily: "Nunito",
+  fontWeight: "600",
+  borderTopRightRadius: "1rem",
+  borderTopLeftRadius: "1rem",
+  borderBottomLeftRadius: "1rem",
+  borderBottomRightRadius: "1rem",
+  borderBottom: "1px solid #EAEBEB", // Remove bottom border
+});
+
+const StyledAccordionDetails = styled(AccordionDetails)({
+  borderTop: "none", // Remove top border
+});
 
 export default function SettingsAccordion({
   failedAuthorizations,
@@ -126,31 +152,11 @@ export default function SettingsAccordion({
 
   return (
     <>
-      <Accordion
-        defaultExpanded
-        sx={{
-          width: "100%",
-          borderRadius: "1rem !important",
-          backgroundColor: Colors.WHITE,
-          boxShadow: "none",
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          sx={{
-            fontFamily: "Nunito",
-            fontWeight: "700",
-            marginLeft: "0.5rem",
-            borderTopRightRadius: "1rem",
-            borderTopLeftRadius: "1rem",
-            borderBottomLeftRadius: "1rem",
-            borderBottomRightRadius: "1rem",
-            borderBottom: "1px solid #EAEBEB",
-          }}
-        >
+      <StyledAccordion defaultExpanded>
+        <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
           Payments & Authorizations
-        </AccordionSummary>
-        <AccordionDetails>
+        </StyledAccordionSummary>
+        <StyledAccordionDetails>
           <Grid container item sx={{ marginTop: "1rem" }}>
             <Grid
               item
@@ -675,8 +681,8 @@ export default function SettingsAccordion({
               onClick={saveAuthsPaymentsConfig}
             />
           </Grid>
-        </AccordionDetails>
-      </Accordion>
+        </StyledAccordionDetails>
+      </StyledAccordion>
     </>
   );
 }

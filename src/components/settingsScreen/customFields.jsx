@@ -8,38 +8,41 @@ import { Grid } from "@mui/material";
 import { Colors } from "../../config/default";
 import ListTableDynamic from "../listTableDynamic";
 import MuiModels from "../models";
+import { styled } from "@mui/material/styles";
+const StyledAccordion = styled(Accordion)({
+  "&:before": {
+    display: "none", // Remove the default line
+  },
+  width: "100%",
+  borderRadius: "1rem !important",
+  backgroundColor: Colors.WHITE,
+  marginBottom: "1rem",
+  boxShadow: "none",
+});
+const StyledAccordionSummary = styled(AccordionSummary)({
+  fontFamily: "Nunito",
+  fontWeight: "600",
+  borderTopRightRadius: "1rem",
+  borderTopLeftRadius: "1rem",
+  borderBottomLeftRadius: "1rem",
+  borderBottomRightRadius: "1rem",
+  borderBottom: "1px solid #EAEBEB", // Remove bottom border
+});
 
+const StyledAccordionDetails = styled(AccordionDetails)({
+  borderTop: "none", // Remove top border
+});
 export default function CustomFieldsAccordion({ customFields, refreshData }) {
   const headerData = [
     { key: "name", heading: "Name", width: "15%" },
     { key: "type", heading: "Type", width: "15%" },
   ];
   return (
-    <Accordion
-      sx={{
-        width: "100%",
-        borderRadius: "1rem !important",
-        backgroundColor: Colors.WHITE,
-        marginBottom: "1rem",
-        boxShadow: "none",
-      }}
-    >
-      <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
-        sx={{
-          fontFamily: "Nunito",
-          fontWeight: "600",
-          borderTopRightRadius: "1rem",
-          borderTopLeftRadius: "1rem",
-          borderBottomLeftRadius: "1rem",
-          borderBottomRightRadius: "1rem",
-          borderBottom: "1px solid #EAEBEB",
-          marginLeft: "0.5rem",
-        }}
-      >
+    <StyledAccordion>
+      <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
         Custom Fields
-      </AccordionSummary>
-      <AccordionDetails>
+      </StyledAccordionSummary>
+      <StyledAccordionDetails>
         <Grid
           container
           item
@@ -65,7 +68,7 @@ export default function CustomFieldsAccordion({ customFields, refreshData }) {
             handleModalClose={refreshData}
           />
         </Grid>
-      </AccordionDetails>
-    </Accordion>
+      </StyledAccordionDetails>
+    </StyledAccordion>
   );
 }

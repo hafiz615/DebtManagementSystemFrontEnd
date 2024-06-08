@@ -98,7 +98,7 @@ export default function UserListTable({
         backgroundColor: Colors.WHITE,
         borderRadius: "10px ",
         width: "100%",
-        height: "55vh",
+        // height: "55vh",
       }}
     >
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
@@ -147,13 +147,13 @@ export default function UserListTable({
                   <StyledTableRow key={row.id}>
                     {columns?.map((column, colIndex) => (
                       <StyledTableCell key={colIndex}>
-                        {column.field === "email" &&
-                        row[column.field].length > 10
-                          ? row[column.field].substring(0, 15) + "..."
-                          : column.field === "address" &&
-                            row[column.field].length > 15
-                          ? row[column.field].substring(0, 10) + "..."
-                          : row[column.field]}
+                        {column?.field === "email" &&
+                        row[column?.field]?.length > 10
+                          ? row[column.field]?.substring(0, 15) + "..."
+                          : column?.field === "address" &&
+                            row[column?.field]?.length > 15
+                          ? row[column?.field]?.substring(0, 10) + "..."
+                          : row[column?.field]}
                       </StyledTableCell>
                     ))}
                     {requiredCustomFieldIcons && role === "Admin" && (
@@ -188,7 +188,7 @@ export default function UserListTable({
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={rows.length}
+          count={rows?.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

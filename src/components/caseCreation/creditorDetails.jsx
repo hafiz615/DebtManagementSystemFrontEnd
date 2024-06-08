@@ -36,9 +36,7 @@ export default function CreditorDetails({
 }) {
   const handleSearchChange = (value) => {
     setSearchText(value);
-    if (value) {
-      SearchFields();
-    }
+    SearchFields(value);
   };
 
   return (

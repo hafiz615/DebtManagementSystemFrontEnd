@@ -89,9 +89,13 @@ export const getColumnFieldIndex = (headerName, headers) => {
 };
 
 export const formatPhoneNumber = (value) => {
-  const spaceReplace = value?.replace(/ /g, "");
-  const phoneFormat = spaceReplace?.replace(/[^+a-zA-Z 0-9]+/g, "");
-  return phoneFormat;
+  if (value !== "" && value !== "+") {
+    const spaceReplace = value?.replace(/ /g, "");
+    const phoneFormat = spaceReplace?.replace(/[^+a-zA-Z 0-9]+/g, "");
+    return phoneFormat;
+  } else {
+    return "";
+  }
 };
 
 export function formatDollarAmount(amount) {
@@ -100,4 +104,64 @@ export function formatDollarAmount(amount) {
     style: "currency",
     currency: "USD",
   }).format(amount);
+}
+
+export function hasAnyValue(obj) {
+  for (let key in obj) {
+    if (obj[key] !== "") {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function checkContacts(contacts) {
+  return contacts?.some(
+    (contact) =>
+      hasAnyValue(contact) &&
+      (contact.name === "" ||
+        contact.title === "" ||
+        contact.phone === "" ||
+        contact.email === "")
+  );
+}
+
+// export const inputTypesArray = [
+//   { label: "button", value: "button" },
+//   { label: "checkbox", value: "checkbox" },
+//   { label: "color", value: "color" },
+//   { label: "date", value: "date" },
+//   { label: "datetime-local", value: "datetime-local" },
+//   { label: "email", value: "email" },
+//   { label: "file", value: "file" },
+//   { label: "hidden", value: "hidden" },
+//   { label: "image", value: "image" },
+//   { label: "month", value: "month" },
+//   { label: "number", value: "number" },
+//   { label: "password", value: "password" },
+//   { label: "radio", value: "radio" },
+//   { label: "range", value: "range" },
+//   { label: "reset", value: "reset" },
+//   { label: "search", value: "search" },
+//   { label: "submit", value: "submit" },
+//   { label: "tel", value: "tel" },
+//   { label: "text", value: "text" },
+//   { label: "time", value: "time" },
+//   { label: "url", value: "url" },
+//   { label: "week", value: "week" },
+// ];
+
+export const inputTypesArray = [
+  { label: "date", value: "date" },
+  { label: "number", value: "number" },
+  { label: "text", value: "text" },
+];
+
+export function removeDuplicates(array) {
+  const seen = new Set();
+  return array?.filter((item) => {
+    const duplicate = seen?.has(item?.label);
+    seen.add(item?.label);
+    return !duplicate;
+  });
 }

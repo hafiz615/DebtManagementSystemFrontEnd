@@ -18,7 +18,7 @@ const headers = [
   "Name",
   "Number of Cases",
   "Number of Debtors",
-  "Total Dept",
+  "Total Debt",
 ];
 
 export default function CreditorList() {

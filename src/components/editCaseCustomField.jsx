@@ -8,22 +8,25 @@ import TextButton from "./button";
 import { useToast } from "../toast/toastContext";
 import { EditCustomFieldsByTarget } from "../services/services";
 import { isEmpty } from "lodash";
+import { removeDuplicates } from "../common";
 
 export default function EditCaseCustomField({
   handleClose,
   customFieldsData,
   caseData,
+  GetCaseDetails,
 }) {
+  const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const { showToast } = useToast();
-  const menuItems =
+  const ItemsArray =
     customFieldsData &&
     customFieldsData?.map((field) => ({
       label: field?.name,
       value: field?.name,
       type: field?.type,
     }));
-
+  const menuItems = removeDuplicates(ItemsArray);
   const [fields, setFields] = useState(
     caseData?.customFields?.map((field) => ({
       ...field,
@@ -46,15 +49,18 @@ export default function EditCaseCustomField({
   };
   const isButtonDisabled = fields?.some((field) => !field.name || !field.value);
   const handleSubmit = async () => {
+    setLoading(true);
     const params = {
-      customFields: fields.map((field) => ({
-        name: field.name,
-        value: field.value,
+      customFields: fields?.map((field) => ({
+        name: field?.name,
+        value: field?.type === "number" ? Number(field?.value) : field?.value,
       })),
     };
     const editCustomField = await EditCustomFieldsByTarget("case", params, id);
     if (editCustomField?.status === 200) {
       showToast(editCustomField?.data?.message, "success");
+      handleClose();
+      GetCaseDetails(id);
     } else {
       showToast(
         editCustomField?.response?.data?.message ||
@@ -62,7 +68,7 @@ export default function EditCaseCustomField({
         "error"
       );
     }
-    handleClose();
+    setLoading(false);
   };
   return (
     <Grid container>
@@ -202,6 +208,7 @@ export default function EditCaseCustomField({
           >
             <TextButton
               disabled={isButtonDisabled}
+              loading={loading}
               onClick={handleSubmit}
               buttonText="UPDATE"
               height="2rem"

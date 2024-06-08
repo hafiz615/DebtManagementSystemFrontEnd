@@ -313,11 +313,10 @@ export const EditCustomFieldsByTarget = async (target, payload, id) => {
   }
 };
 
-export const GetCustomFieldsByTarget = async (target, id) => {
+export const GetCustomFieldsByTarget = async (target) => {
   try {
     return await axios.get(
-      BASE_URL +
-        `/v1/settings/getCustomFieldsByTarget?target=${target}&caseId=${id}`,
+      BASE_URL + `/v1/settings/getCustomFieldsByTarget?target=${target}`,
       setHeaders()
     );
   } catch (error) {
