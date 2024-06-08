@@ -156,3 +156,12 @@ export const inputTypesArray = [
   { label: "number", value: "number" },
   { label: "text", value: "text" },
 ];
+
+export function removeDuplicates(array) {
+  const seen = new Set();
+  return array?.filter((item) => {
+    const duplicate = seen?.has(item?.label);
+    seen.add(item?.label);
+    return !duplicate;
+  });
+}

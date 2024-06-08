@@ -61,10 +61,10 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              height: "90vh",
+              height: "35vh",
             }}
           >
-            <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
+            <CircularProgress size={60} sx={{ color: Colors.SKY_BLUE }} />
           </Grid>
         ) : (
           <>

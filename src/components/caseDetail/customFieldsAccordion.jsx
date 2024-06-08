@@ -18,14 +18,14 @@ export default function CustomFieldsAccordion({ caseData, GetCaseDetails }) {
   const [customFieldsData, setCustomFieldsData] = useState([]);
   const customField = caseData?.customFields;
   const { id } = useParams();
-  const getFields = async (rowId) => {
-    const result = await GetCustomFieldsByTarget("case", rowId);
+  const getFields = async () => {
+    const result = await GetCustomFieldsByTarget("case");
     if (result?.status === 200) {
-      setCustomFieldsData(result?.data?.data?.customFields);
+      setCustomFieldsData(result?.data?.data);
     }
   };
   useEffect(() => {
-    getFields(id);
+    getFields();
   }, [id]);
 
   return (

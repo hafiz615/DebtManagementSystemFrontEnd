@@ -8,6 +8,7 @@ import TextButton from "./button";
 import { useToast } from "../toast/toastContext";
 import { EditCustomFieldsByTarget } from "../services/services";
 import { isEmpty } from "lodash";
+import { removeDuplicates } from "../common";
 
 export default function EditCaseCustomField({
   handleClose,
@@ -18,14 +19,14 @@ export default function EditCaseCustomField({
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const { showToast } = useToast();
-  const menuItems =
+  const ItemsArray =
     customFieldsData &&
     customFieldsData?.map((field) => ({
       label: field?.name,
       value: field?.name,
       type: field?.type,
     }));
-
+  const menuItems = removeDuplicates(ItemsArray);
   const [fields, setFields] = useState(
     caseData?.customFields?.map((field) => ({
       ...field,
@@ -50,9 +51,9 @@ export default function EditCaseCustomField({
   const handleSubmit = async () => {
     setLoading(true);
     const params = {
-      customFields: fields.map((field) => ({
-        name: field.name,
-        value: field.value,
+      customFields: fields?.map((field) => ({
+        name: field?.name,
+        value: field?.type === "number" ? Number(field?.value) : field?.value,
       })),
     };
     const editCustomField = await EditCustomFieldsByTarget("case", params, id);

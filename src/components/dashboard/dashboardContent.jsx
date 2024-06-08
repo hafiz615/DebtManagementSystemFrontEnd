@@ -117,7 +117,7 @@ function DashboardContent() {
               container
               xs={12}
               sx={{
-                padding: "10px 16px",
+                marginTop: "1rem",
                 height: "16rem",
                 gap: { xs: "1em", md: "0" },
                 overflowY: "auto",
@@ -139,17 +139,30 @@ function DashboardContent() {
                 xs={12}
                 md={3}
                 sx={{
-                  display: { xs: "flex", md: "unset" },
-                  flexDirection: { xs: "column", md: "unset" },
-                  alignItems: { xs: "center", md: "unset" },
-                  justifyContent: { xs: "center", md: "unset" },
+                  flexDirection: "column",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  // display: { xs: "flex", md: "unset" },
+                  // flexDirection: { xs: "column", md: "unset" },
+                  // alignItems: { xs: "center", md: "center" },
+                  // justifyContent: { xs: "center", md: "center" },
                 }}
               >
                 <SpinnerWithPercentage
                   value={100}
                   color={Colors.ORANGE_COLOR}
                 />
-                <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
+                <Typography
+                  style={{
+                    fontSize: "14px",
+                    fontFamily: "Nunito",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop: "2rem",
+                  }}
+                >
                   Failed Authorizations
                 </Typography>
               </Grid>
@@ -158,14 +171,27 @@ function DashboardContent() {
                 xs={12}
                 md={3}
                 sx={{
-                  display: { xs: "flex", md: "unset" },
-                  flexDirection: { xs: "column", md: "unset" },
-                  alignItems: { xs: "center", md: "unset" },
-                  justifyContent: { xs: "center", md: "unset" },
+                  flexDirection: "column",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  // display: { xs: "flex", md: "unset" },
+                  // flexDirection: { xs: "column", md: "unset" },
+                  // alignItems: { xs: "center", md: "center" },
+                  // justifyContent: { xs: "center", md: "center" },
                 }}
               >
                 <SpinnerWithPercentage value={40} color={Colors.YELLOW} />
-                <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
+                <Typography
+                  style={{
+                    fontSize: "14px",
+                    fontFamily: "Nunito",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop: "2rem",
+                  }}
+                >
                   Failed Payments
                 </Typography>
               </Grid>
@@ -174,14 +200,27 @@ function DashboardContent() {
                 xs={12}
                 md={3}
                 sx={{
-                  display: { xs: "flex", md: "unset" },
-                  flexDirection: { xs: "column", md: "unset" },
-                  alignItems: { xs: "center", md: "unset" },
-                  justifyContent: { xs: "center", md: "unset" },
+                  flexDirection: "column",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  // display: { xs: "flex", md: "unset" },
+                  // flexDirection: { xs: "column", md: "unset" },
+                  // alignItems: { xs: "center", md: "unset" },
+                  // justifyContent: { xs: "center", md: "unset" },
                 }}
               >
                 <SpinnerWithPercentage color={Colors.SKY_BLUE} value={70} />
-                <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
+                <Typography
+                  style={{
+                    fontSize: "14px",
+                    fontFamily: "Nunito",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop: "2rem",
+                  }}
+                >
                   Successful Authorizations
                 </Typography>
               </Grid>
@@ -190,14 +229,27 @@ function DashboardContent() {
                 xs={12}
                 md={3}
                 sx={{
-                  display: { xs: "flex", md: "unset" },
-                  flexDirection: { xs: "column", md: "unset" },
-                  alignItems: { xs: "center", md: "unset" },
-                  justifyContent: { xs: "center", md: "unset" },
+                  // display: { xs: "flex", md: "unset" },
+                  // flexDirection: { xs: "column", md: "unset" },
+                  // alignItems: { xs: "center", md: "center" },
+                  // justifyContent: { xs: "center", md: "center" },
+                  flexDirection: "column",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
                 <SpinnerWithPercentage value={60} color={Colors.NAVY_BLUE} />
-                <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
+                <Typography
+                  style={{
+                    fontSize: "14px",
+                    fontFamily: "Nunito",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop: "2rem",
+                  }}
+                >
                   Successful Payments
                 </Typography>
               </Grid>

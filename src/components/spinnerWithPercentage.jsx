@@ -20,7 +20,12 @@ function SpinnerWithPercentage({ value, color }) {
     : "11vw";
 
   return (
-    <Box sx={{ position: "relative", display: "inline-flex" }}>
+    <Box
+      sx={{
+        position: "relative",
+        display: "inline-flex",
+      }}
+    >
       <CircularProgress
         size={size}
         variant="determinate"
