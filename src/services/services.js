@@ -12,9 +12,12 @@ export const SignIn = async (payload) => {
   }
 };
 
-export const GetAllUsers = async () => {
+export const GetAllUsers = async (page) => {
   try {
-    return await axios.get(BASE_URL + "/v1/user/getAllUsers", setHeaders());
+    return await axios.get(
+      BASE_URL + `/v1/user/getAllUsers?page=${page}&limit=5`,
+      setHeaders()
+    );
   } catch (error) {
     return error;
   }
@@ -182,20 +185,37 @@ export const GetCasePaymentById = async (id) => {
   }
 };
 
-export const GetAllClients = async () => {
+export const GetAllClients = async ({
+  search,
+  filter,
+  page,
+  limit,
+  payload,
+}) => {
   try {
-    return await axios.get(
-      BASE_URL + "/v1/debtor/listing/search",
+    return await axios.post(
+      BASE_URL +
+        `/v1/debtor/listing/search?search=${search}&filter=${filter}&page=${page}&limit=${limit}`,
+      payload,
       setHeaders()
     );
   } catch (error) {
     return error;
   }
 };
-export const GetClientById = async (id) => {
+export const GetClientById = async (
+  id,
+  search,
+  filter,
+  limit,
+  pages,
+  payload
+) => {
   try {
-    return await axios.get(
-      BASE_URL + `/v1/debtor/listing/details/${id}`,
+    return await axios.post(
+      BASE_URL +
+        `/v1/debtor/listing/details/${id}?search=${search}&filter=${filter}&page=${pages}&limit=${limit}`,
+      payload,
       setHeaders()
     );
   } catch (error) {
@@ -277,10 +297,11 @@ export const UpdateCreditor = async (id, payload) => {
   }
 };
 
-export const GetHomePayments = async (count) => {
+export const GetHomePayments = async (count, page, arrayName) => {
   try {
     return await axios.get(
-      BASE_URL + `/v1/payment/getHomePayments?days=${count}`,
+      BASE_URL +
+        `/v1/payment/getHomePayments?days=${count}&page=${page}&limit=5&arrayName=${arrayName}`,
       setHeaders()
     );
   } catch (error) {
@@ -324,10 +345,18 @@ export const GetCustomFieldsByTarget = async (target) => {
   }
 };
 
-export const GetAllCreditors = async () => {
+export const GetAllCreditors = async ({
+  search,
+  filter,
+  page,
+  limit,
+  payload,
+}) => {
   try {
-    return await axios.get(
-      BASE_URL + "/v1/creditor/listing?search",
+    return await axios.post(
+      BASE_URL +
+        `/v1/creditor/listing?search=${search}&filter=${filter}&page=${page}&limit=${limit}`,
+      payload,
       setHeaders()
     );
   } catch (error) {
@@ -335,10 +364,19 @@ export const GetAllCreditors = async () => {
   }
 };
 
-export const GetCreditorById = async (id) => {
+export const GetCreditorById = async (
+  id,
+  search,
+  filter,
+  limit,
+  pages,
+  payload
+) => {
   try {
-    return await axios.get(
-      BASE_URL + `/v1/creditor/listing/details/${id}`,
+    return await axios.post(
+      BASE_URL +
+        `/v1/creditor/listing/details/${id}?search=${search}&filter=${filter}&page=${pages}&limit=${limit}`,
+      payload,
       setHeaders()
     );
   } catch (error) {
