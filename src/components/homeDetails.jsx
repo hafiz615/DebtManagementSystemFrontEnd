@@ -18,6 +18,9 @@ function HomeDetails() {
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const [homeData, setHomeData] = useState({});
   const [loading, setLoading] = useState(false);
+  const [totalData, setTotalData] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(totalData / 5);
 
   const accordionData = {
     group1: [
@@ -62,8 +65,11 @@ function HomeDetails() {
   const getHomeData = async () => {
     if (selectedValue) {
       setLoading(true);
-      const result = await GetHomePayments(selectedValue);
+      const page = currentPage;
+      const arrayName = "default";
+      const result = await GetHomePayments(selectedValue, page, arrayName);
       if (result?.status === 200) {
+        setTotalData(result?.data?.data?.counts);
         setHomeData(result?.data?.data);
         dispatch(get_payments(result?.data?.data));
       }
@@ -187,6 +193,9 @@ function HomeDetails() {
               {accordionData?.group1?.map((data, index) => (
                 <Grid item xs={12} key={index} sx={{ marginBottom: "0.5rem" }}>
                   <AccordionUsage
+                    totalPages={totalPages}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
                     tableHeading={data?.tableHeading}
                     paymentNumber={data?.paymentNumber}
                     index={index}
@@ -202,6 +211,9 @@ function HomeDetails() {
               {accordionData?.group2?.map((data, index) => (
                 <Grid item xs={12} key={index} sx={{ marginBottom: "0.5rem" }}>
                   <AccordionUsage
+                    totalPages={totalPages}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
                     tableHeading={data?.tableHeading}
                     paymentNumber={data?.paymentNumber}
                     index={index}
