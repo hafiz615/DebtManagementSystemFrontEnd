@@ -88,18 +88,23 @@ export default function CustomizedTabs({ heading }) {
   const [rows, setRows] = useState([]);
   const [userArray, setUserArray] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [totalData, setTotalData] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(totalData / 5);
 
   const GetUsers = async () => {
     setLoading(true);
-    const users = await GetAllUsers();
+    let page = currentPage;
+    const users = await GetAllUsers({ page });
     if (users?.status === 200) {
-      setUserArray(users?.data?.data);
+      setUserArray(users?.data?.data?.users);
+      setTotalData(users?.data?.data?.totalUsers);
     }
     setLoading(false);
   };
   useEffect(() => {
     GetUsers();
-  }, []);
+  }, [currentPage]);
 
   const generatedData = useMemo(() => {
     return userArray?.map((item, index) => ({
@@ -193,6 +198,10 @@ export default function CustomizedTabs({ heading }) {
         ) : (
           <>
             <UserListTable
+              apiPagination={true}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              totalPages={totalPages}
               requiredCustomFieldIcons={true}
               rows={rows}
               columns={columns}

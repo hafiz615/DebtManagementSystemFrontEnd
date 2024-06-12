@@ -10,7 +10,6 @@ import { Colors } from "../config/default";
 import SearchBar from "./searchBar";
 import ListTable from "./listTable";
 import { GetAllCreditors } from "../services/services";
-
 import CircularProgress from "@mui/material/CircularProgress";
 import { formatDollarAmount } from "../common";
 const headers = [
@@ -24,6 +23,12 @@ const headers = [
 export default function CreditorList() {
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState("");
+  const [totalData, setTotalData] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(totalData / 5);
+  const [limit, setLimit] = useState(5);
+  const [searchActive, setSearchActive] = useState(false);
+
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { AUTHORITY_TEXT } = UserListPage;
@@ -33,19 +38,56 @@ export default function CreditorList() {
   const [userArray, setUserArray] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const GetCreditors = async () => {
+  const GetCreditors = async (search) => {
     setLoading(true);
-    const getCreditors = await GetAllCreditors();
+    setSearchActive(search);
+    let filter = false;
+    let payload = {};
+    setLimit(5);
 
+    if (search) {
+      payload = {
+        text: searchText,
+      };
+    } else {
+      payload = {
+        text: "",
+      };
+    }
+    let page = currentPage;
+
+    const getCreditors = await GetAllCreditors({
+      search,
+      filter,
+      page,
+      limit,
+      payload,
+    });
     if (getCreditors?.status === 200) {
       setUserArray(getCreditors?.data?.data?.clientDetails);
+      setTotalData(getCreditors?.data?.data?.creditorsCount);
     }
     setLoading(false);
   };
 
   useEffect(() => {
+    if (searchActive) {
+      GetCreditors(true);
+    } else if (searchText) {
+      GetCreditors(true);
+    } else {
+      GetCreditors();
+    }
+  }, [currentPage, searchText]);
+
+  const handleKeyPress = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const clearSearchFromApi = () => {
+    setSearchText("");
     GetCreditors();
-  }, []);
+  };
 
   const generatedData = useMemo(() => {
     return (
@@ -143,9 +185,11 @@ export default function CreditorList() {
           Creditors List
         </Typography>
         <SearchBar
-          searchText={searchText}
-          setSearchText={setSearchText}
+          searchCheck={true}
+          searchingText={searchText}
+          handleKeyPress={handleKeyPress}
           placeholder="Search Creditor..."
+          clearSearchFromApi={clearSearchFromApi}
         />
       </Grid>
 
@@ -179,6 +223,10 @@ export default function CreditorList() {
               headerData={headers}
               data={rows}
               onRowClick={handleRowClick}
+              apiPagination={true}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              totalPages={totalPages}
             />
           </>
         )}

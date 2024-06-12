@@ -287,8 +287,16 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     }
   };
   const handleUploadData = (response) => {
+    setWalletId("");
     const parseString = (value) =>
       value ? String(value).replace(/-/g, "") : "";
+
+    const phoneNumberFormat = (phoneNumber) => {
+      if (!phoneNumber?.startsWith("+")) {
+        return "+" + phoneNumber;
+      }
+      return phoneNumber;
+    };
     setDebtorOwnDetails({
       BasicFullName: response?.debtor_info["Debtor's Name"] || "",
       BasicEmailAddress: response?.debtor_info["Debtor's Email address"] || "",
@@ -297,9 +305,10 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       BasicState: response?.debtor_info["Debtor's State Name"] || "",
       BasicCity: response?.debtor_info["Debtor's City Name"] || "",
       BasicZipCode: response?.debtor_info["Debtor's Zip code"] || "",
-      BasicPhoneNumber: formatPhoneNumber(
-        response?.debtor_info["Debtor's Phone Number"] || ""
-      ),
+      BasicPhoneNumber:
+        phoneNumberFormat(
+          formatPhoneNumber(response?.debtor_info["Debtor's Phone Number"])
+        ) || "",
       BasicAddress: response?.debtor_info["Debtor's Address"] || "",
       // BasicWeeklyBudget: response?.debtor_info["Debtor's Country Name"] || "",
     });
@@ -316,9 +325,10 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       businessState: response?.bussiness_info["Business State Name"] || "",
       businessCity: response?.bussiness_info["Business City Name"] || "",
       businessZipCode: response?.bussiness_info["Business Zip code"] || "",
-      businessPhoneNumber: formatPhoneNumber(
-        response?.bussiness_info["Business Phone Number"] || ""
-      ),
+      businessPhoneNumber:
+        phoneNumberFormat(
+          formatPhoneNumber(response?.bussiness_info["Business Phone Number"])
+        ) || "",
       businessAddress:
         response?.bussiness_info["Business Street Address"] || "",
     });
@@ -326,12 +336,12 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       CreditorBasicFullName: response?.creditor_info["creditor's Name"] || "",
       CreditorBasicEmailAddress:
         response?.creditor_info["creditor's Email address"] || "",
-      CreditorBasicPhoneNumber: formatPhoneNumber(
-        response?.creditor_info["creditor's Phone Number"] || ""
-      ),
+      CreditorBasicPhoneNumber:
+        phoneNumberFormat(
+          formatPhoneNumber(response?.creditor_info["creditor's Phone Number"])
+        ) || "",
     });
   };
-
   const handleSelect = (debtorData) => {
     setErrors({
       phone: "",
@@ -648,6 +658,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
             },
           ]);
           setUploadedFiles([]);
+          setWalletId("");
           setDebtorSearchText("");
           setCreditorSearchText("");
           setActiveStep(0);

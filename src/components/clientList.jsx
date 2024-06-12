@@ -24,6 +24,12 @@ const headers = [
 export default function ClientList() {
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState("");
+  const [totalData, setTotalData] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(totalData / 5);
+  const [limit, setLimit] = useState(5);
+  const [searchActive, setSearchActive] = useState(false);
+
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { AUTHORITY_TEXT } = UserListPage;
@@ -33,18 +39,56 @@ export default function ClientList() {
   const [userArray, setUserArray] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const GetClients = async () => {
+  const GetClients = async (search) => {
     setLoading(true);
-    const getClients = await GetAllClients();
+    setSearchActive(search);
+    let filter = false;
+    let payload = {};
+    setLimit(5);
+
+    if (search) {
+      payload = {
+        text: searchText,
+      };
+    } else {
+      payload = {
+        text: "",
+      };
+    }
+    let page = currentPage;
+
+    const getClients = await GetAllClients({
+      search,
+      filter,
+      page,
+      limit,
+      payload,
+    });
     if (getClients?.status === 200) {
       setUserArray(getClients?.data?.data?.clientDetails);
+      setTotalData(getClients?.data?.data?.debtorsCount);
     }
     setLoading(false);
   };
 
   useEffect(() => {
+    if (searchActive) {
+      GetClients(true);
+    } else if (searchText) {
+      GetClients(true);
+    } else {
+      GetClients();
+    }
+  }, [currentPage, searchText]);
+
+  const handleKeyPress = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const clearSearchFromApi = () => {
+    setSearchText("");
     GetClients();
-  }, []);
+  };
 
   const generatedData = useMemo(() => {
     return (
@@ -143,9 +187,11 @@ export default function ClientList() {
           Clients List
         </Typography>
         <SearchBar
-          searchText={searchText}
-          setSearchText={setSearchText}
+          searchCheck={true}
+          searchingText={searchText}
+          handleKeyPress={handleKeyPress}
           placeholder="Search Client..."
+          clearSearchFromApi={clearSearchFromApi}
         />
       </Grid>
 
@@ -179,6 +225,10 @@ export default function ClientList() {
               headerData={headers}
               data={rows}
               onRowClick={handleRowClick}
+              apiPagination={true}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              totalPages={totalPages}
             />
           </>
         )}

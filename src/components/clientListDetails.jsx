@@ -14,25 +14,103 @@ export default function ClientListDetails() {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const [clientData, setClientData] = useState({});
-  const [loading, setLoading] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const [totalData, setTotalData] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [caseHistory, setCaseHistory] = useState([]);
+
+  const totalPages = Math.ceil(totalData / 5);
+  const [limit, setLimit] = useState(5);
+  const [tableLoading, setTableLoading] = useState(false);
+
+  const [loading, setLoading] = useState(false);
   const { userRole, id } = useParams();
+
+  const searchClientDetails = async () => {
+    setTableLoading(true);
+    setCaseHistory([]);
+    let filter = false;
+    let search = true;
+    const payload = {
+      text: searchText,
+    };
+
+    let res;
+    let page = currentPage;
+
+    if (userRole === "client") {
+      res = await GetClientById(id, search, filter, limit, page, payload);
+    } else {
+      res = await GetCreditorById(id, search, filter, limit, page, payload);
+    }
+    if (res?.status === 200) {
+      setCaseHistory(res?.data?.data?.caseHistory);
+    }
+    setTableLoading(false);
+  };
   const GetClientDetails = async () => {
     setLoading(true);
+    let filter = false;
+    let payload = {};
+    let search = false;
+    setLimit(5);
+
+    payload = {
+      text: "",
+    };
+
     let getClientData;
+    let page = currentPage;
+
     if (userRole === "client") {
-      getClientData = await GetClientById(id);
+      getClientData = await GetClientById(
+        id,
+        search,
+        filter,
+        limit,
+        page,
+        payload
+      );
     } else {
-      getClientData = await GetCreditorById(id);
+      getClientData = await GetCreditorById(
+        id,
+        search,
+        filter,
+        limit,
+        page,
+        payload
+      );
     }
     if (getClientData?.status === 200) {
       setClientData(getClientData?.data?.data);
+
+      setCaseHistory(getClientData?.data?.data?.caseHistory);
+      if (userRole === "client") {
+        setTotalData(getClientData?.data?.data?.debtorTotalCases);
+      } else {
+        setTotalData(getClientData?.data?.data?.creditorTotalCases);
+      }
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    GetClientDetails();
+    GetClientDetails(false);
   }, []);
+
+  useEffect(() => {
+    searchClientDetails();
+  }, [currentPage, searchText]);
+
+  const handleKeyPress = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const clearSearchFromApi = () => {
+    setSearchText("");
+    GetClientDetails();
+  };
+
   const truncateText = (text, length) => {
     if (text?.length > length) {
       return text.substring(0, length) + "...";
@@ -341,7 +419,7 @@ export default function ClientListDetails() {
                     value: clientData?.paymentCounts?.successfulAuthorizations,
                     color: Colors.SKY_BLUE,
                   },
-                ].map((item, index) => (
+                ]?.map((item, index) => (
                   <Grid
                     key={index}
                     container
@@ -356,7 +434,9 @@ export default function ClientListDetails() {
                       marginBottom: "1rem",
                     }}
                   >
-                    <Typography sx={{ width: "7rem" }}>{item.title}</Typography>
+                    <Typography sx={{ width: "7rem" }}>
+                      {item?.title}
+                    </Typography>
                     <Typography
                       sx={{
                         color: item.color,
@@ -365,13 +445,23 @@ export default function ClientListDetails() {
                         fontSize: "3rem",
                       }}
                     >
-                      {String(item.value).padStart(2, "0")}
+                      {String(item?.value).padStart(2, "0")}
                     </Typography>
                   </Grid>
                 ))}
               </Grid>
             </Grid>
-            <CaseHistory data={clientData?.caseHistory} userRole={userRole} />
+            <CaseHistory
+              tableLoading={tableLoading}
+              searchText={searchText}
+              handleKeyPress={handleKeyPress}
+              clearSearchFromApi={clearSearchFromApi}
+              data={caseHistory}
+              userRole={userRole}
+              totalPages={totalPages}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+            />
           </Grid>
         </>
       )}
