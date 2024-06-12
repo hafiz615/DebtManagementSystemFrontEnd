@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useSelector } from "react-redux";
 import { styled } from "@mui/material/styles";
-import { Table } from "@mui/material";
+import { Table, Typography, IconButton } from "@mui/material";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
@@ -10,6 +10,8 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TablePagination from "@mui/material/TablePagination";
 import BasicModal from "./customPopup";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 import { Colors } from "../config/default";
 import Prompt from "./prompt";
@@ -78,6 +80,10 @@ export default function UserListTable({
   requiredCustomFieldIcons,
   GetUsers,
   handleUserDelete,
+  apiPagination,
+  currentPage,
+  setCurrentPage,
+  totalPages,
 }) {
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const [page, setPage] = React.useState(0);
@@ -85,6 +91,14 @@ export default function UserListTable({
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+  };
+
+  const backward = () => {
+    setCurrentPage(currentPage - 1);
+  };
+
+  const forward = () => {
+    setCurrentPage(currentPage + 1);
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -185,16 +199,42 @@ export default function UserListTable({
             )}
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows?.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          style={{ alignSelf: "flex-end" }}
-        />
+        {apiPagination ? (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+              margin: "10px 0px",
+              gap: "20px",
+            }}
+          >
+            <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
+              Rows Per Page: 5
+            </Typography>
+            <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
+              {totalPages === 0 ? 0 : currentPage} of {totalPages}
+            </Typography>
+            <IconButton onClick={backward} disabled={currentPage === 1}>
+              <ArrowBackIosNewIcon sx={{ fontSize: "16px" }} />
+            </IconButton>
+
+            <IconButton onClick={forward} disabled={currentPage === totalPages}>
+              <ArrowForwardIosIcon sx={{ fontSize: "16px" }} />
+            </IconButton>
+          </div>
+        ) : (
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={rows?.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            style={{ alignSelf: "flex-end" }}
+          />
+        )}
       </div>
     </Paper>
   );

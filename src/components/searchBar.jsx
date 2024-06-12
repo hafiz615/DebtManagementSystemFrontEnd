@@ -68,12 +68,16 @@ const ClearIconWrapper = styled("div")(({ theme }) => ({
 }));
 function SearchBar({
   searchText,
+  searchCheck,
+  searchingText,
   placeholder,
   onChange,
   filteredArray,
   handleSelect,
   setFilteredArray,
   setSearchText,
+  handleKeyPress,
+  clearSearchFromApi,
 }) {
   const clearSearch = () => {
     setSearchText("");
@@ -81,6 +85,7 @@ function SearchBar({
       setFilteredArray([]);
     }
   };
+
   return (
     <Search
       sx={{
@@ -107,13 +112,19 @@ function SearchBar({
         sx={{ color: Colors.LIGHT_GRAY, fontFamily: "Nunito" }}
         value={searchText}
         onChange={(e) =>
-          onChange ? onChange(e.target.value) : setSearchText(e.target.value)
+          onChange
+            ? onChange(e.target.value)
+            : searchCheck
+            ? handleKeyPress(e)
+            : setSearchText(e.target.value)
         }
       />
-      {searchText && (
+      {searchText ? (
         <ClearIconWrapper onClick={clearSearch}>
           <ClearIcon sx={{ fontSize: "1.5rem" }} />
         </ClearIconWrapper>
+      ) : (
+        ""
       )}
       {searchText && (
         <Dropdown
@@ -170,15 +181,6 @@ function SearchBar({
           )}
         </Dropdown>
       )}
-
-      {/* <IconButton size="large" aria-label="show filter data" color="inherit">
-        <FilterListIcon
-          sx={{
-            color: Colors.DIM_LIGHT_GRAY,
-            fontSize: "2rem",
-          }}
-        />
-      </IconButton> */}
     </Search>
   );
 }
