@@ -31,6 +31,9 @@ function DebtorDetails({
   filteredArray,
   handleSelect,
   setFilteredArray,
+  connectPayment,
+  setConnectPayment,
+  walletId,
 }) {
   const handleSearchChange = (value) => {
     setSearchText(value);
@@ -45,7 +48,7 @@ function DebtorDetails({
         xs={12}
         sx={{
           display: "flex",
-          justifyContent: "flex-start",
+          justifyContent: "space-between",
           alignItems: "center",
           marginTop: "1rem",
         }}
@@ -103,6 +106,9 @@ function DebtorDetails({
             contactError={contactError}
             emailContactError={emailContactError}
             setEmailContactError={setEmailContactError}
+            connectPayment={connectPayment}
+            setConnectPayment={setConnectPayment}
+            walletId={walletId}
           />
         </Grid>
       )}

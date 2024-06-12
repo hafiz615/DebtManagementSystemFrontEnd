@@ -2,6 +2,7 @@ import React from "react";
 import { isEmpty } from "lodash";
 import { Colors } from "../config/default";
 import { Typography } from "@mui/material";
+import { formatDollarAmount } from "../common";
 
 function TransactionRow({ data, heading }) {
   const formatDate = (dateString) => {
@@ -16,6 +17,7 @@ function TransactionRow({ data, heading }) {
     fontSize: "11px",
     fontFamily: "Nunito",
     fontWeight: "500",
+    width: "25%",
   };
   return (
     <>
@@ -46,9 +48,13 @@ function TransactionRow({ data, heading }) {
               color: heading ? Colors.BLACK : colorScheme,
             }}
           >
-            <p style={typographyStyle}>{formatDate(item?.dueDate)}</p>
-            <p style={typographyStyle}>{item?.totalDebt}</p>
-            <p style={typographyStyle}>{heading ? item?.status : item?.type}</p>
+            <p style={typographyStyle}>{formatDate(item?.dueDate) || "-"}</p>
+            <p style={typographyStyle}>
+              {formatDollarAmount(item?.totalDebt) || "-"}
+            </p>
+            <p style={typographyStyle}>
+              {heading ? item?.status || "-" : item?.type || "-"}
+            </p>
           </div>
         );
       })}

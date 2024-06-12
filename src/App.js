@@ -15,6 +15,7 @@ import ClientListDetailsPage from "./pages/clientListDetails";
 import DashboardPage from "./pages/dashboardPage";
 import SettingsPage from "./pages/settingsPage";
 import CreditorListPage from "./pages/creditorListPage";
+import PaymentsCardPage from "./pages/paymentPage";
 function App() {
   return (
     <Routes>
@@ -107,8 +108,6 @@ function App() {
         }
       />
 
-      {/* update and verify user password  */}
-      <Route exact path="/set-password" element={<VerifyProfilePage />} />
       <Route
         exact
         path="/all-cases/:id"
@@ -128,6 +127,10 @@ function App() {
           </Protected>
         }
       />
+
+      {/* update and verify user password  */}
+      <Route exact path="/set-password" element={<VerifyProfilePage />} />
+      <Route exact path="/paymentGateway" element={<PaymentsCardPage />} />
     </Routes>
   );
 }

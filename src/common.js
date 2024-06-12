@@ -90,8 +90,8 @@ export const getColumnFieldIndex = (headerName, headers) => {
 
 export const formatPhoneNumber = (value) => {
   if (value !== "" && value !== "+") {
-    const spaceReplace = value?.replace(/ /g, "");
-    const phoneFormat = spaceReplace?.replace(/[^+a-zA-Z 0-9]+/g, "");
+    const spaceAndDashReplace = value?.replace(/[ -]/g, "");
+    const phoneFormat = spaceAndDashReplace?.replace(/[^+a-zA-Z0-9]+/g, "");
     return phoneFormat;
   } else {
     return "";

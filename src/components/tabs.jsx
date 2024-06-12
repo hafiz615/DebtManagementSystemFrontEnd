@@ -13,6 +13,7 @@ import BasicModal from "./customPopup";
 import { GetAllUsers } from "../services/services";
 import CircularProgress from "@mui/material/CircularProgress";
 import UserListTable from "./userListTable";
+
 const AntTabs = styled(Tabs)({
   border: "none",
   "& .MuiTabs-indicator": {
@@ -122,6 +123,7 @@ export default function CustomizedTabs({ heading }) {
       prevUserArray.filter((user) => user._id !== deletedUserId)
     );
   };
+
   return (
     <>
       <Grid

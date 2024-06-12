@@ -10,7 +10,6 @@ import { Colors } from "../config/default";
 import SearchBar from "./searchBar";
 import ListTable from "./listTable";
 import { GetAllClients } from "../services/services";
-import { useToast } from "../toast/toastContext";
 import CircularProgress from "@mui/material/CircularProgress";
 import { formatDollarAmount } from "../common";
 const headers = [
@@ -23,7 +22,6 @@ const headers = [
 ];
 
 export default function ClientList() {
-  const { showToast } = useToast();
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState("");
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
@@ -40,9 +38,6 @@ export default function ClientList() {
     const getClients = await GetAllClients();
     if (getClients?.status === 200) {
       setUserArray(getClients?.data?.data?.clientDetails);
-    } else {
-      const errorMessage = getClients?.response?.data?.message;
-      showToast(errorMessage, "error");
     }
     setLoading(false);
   };

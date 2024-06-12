@@ -71,6 +71,7 @@ export default function ListTable({
   requiredIcons,
   requiredCustomFieldIcons,
   showFailureReason,
+  accordionHeight,
 }) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -90,7 +91,7 @@ export default function ListTable({
         backgroundColor: Colors.WHITE,
         borderRadius: "10px ",
         width: "100%",
-        // height: "55vh",
+        height: accordionHeight,
       }}
     >
       <div

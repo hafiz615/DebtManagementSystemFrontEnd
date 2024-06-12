@@ -10,7 +10,7 @@ import { Colors } from "../config/default";
 import SearchBar from "./searchBar";
 import ListTable from "./listTable";
 import { GetAllCreditors } from "../services/services";
-import { useToast } from "../toast/toastContext";
+
 import CircularProgress from "@mui/material/CircularProgress";
 import { formatDollarAmount } from "../common";
 const headers = [
@@ -22,7 +22,6 @@ const headers = [
 ];
 
 export default function CreditorList() {
-  const { showToast } = useToast();
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState("");
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
@@ -40,9 +39,6 @@ export default function CreditorList() {
 
     if (getCreditors?.status === 200) {
       setUserArray(getCreditors?.data?.data?.clientDetails);
-    } else {
-      const errorMessage = getCreditors?.response?.data?.message;
-      showToast(errorMessage, "error");
     }
     setLoading(false);
   };

@@ -92,6 +92,9 @@ export default function AmountTextField({
             color: Colors.DIM_LIGHT_GRAY,
             fontSize: ".8rem",
             fontFamily: "Nunito",
+            "&::placeholder": {
+              color: "#6D6D6D",
+            },
           },
           "& .MuiInput-underline:before": {
             borderBottom: "none",

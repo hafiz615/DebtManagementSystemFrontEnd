@@ -97,8 +97,8 @@ export default function PaymentTabsTable({ data, headerData }) {
   useEffect(() => {
     const generatedData = data?.map((item, index) => ({
       name: item?.fullName || "-",
-      dueDate: new Date(item?.dueDate).toLocaleDateString() || "-",
-      tryDate: item?.tryDate || "-",
+      dueDate: new Date(item?.dueDate)?.toLocaleDateString() || "-",
+      tryDate: new Date(item?.tryDate)?.toLocaleDateString() || "-",
       totalDebt: formatDollarAmount(item?.totalDebt) || "-",
       ssid: item?.SSID || "-",
       caseOwner: item?.caseOwner || "-",
