@@ -3,15 +3,25 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import { Grid, Typography } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import { Colors } from "../config/default";
 import SearchBar from "./searchBar";
 import ListTable from "./listTable";
 import { formatDollarAmount } from "../common";
 
-function CaseHistory({ data, userRole }) {
+function CaseHistory({
+  tableLoading,
+  searchText,
+  data,
+  userRole,
+  clearSearchFromApi,
+  handleKeyPress,
+  totalPages,
+  currentPage,
+  setCurrentPage,
+}) {
   const [rows, setRows] = useState([]);
-  const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
   const formatDate = (dateString) => {
     if (!dateString) return "-";
@@ -50,7 +60,7 @@ function CaseHistory({ data, userRole }) {
     };
 
     fetchData();
-  }, []);
+  }, [data]);
 
   return (
     <>
@@ -84,11 +94,14 @@ function CaseHistory({ data, userRole }) {
           Case History
         </Typography>
         <SearchBar
-          searchText={searchText}
-          setSearchText={setSearchText}
+          searchCheck={true}
+          searchingText={searchText}
+          handleKeyPress={handleKeyPress}
           placeholder="Search Creditor..."
+          clearSearchFromApi={clearSearchFromApi}
         />
       </Grid>
+
       <Grid
         item
         xs={12}
@@ -100,11 +113,29 @@ function CaseHistory({ data, userRole }) {
           justifyContent: "center",
         }}
       >
-        <ListTable
-          headerData={headers}
-          data={rows}
-          onRowClick={(id) => navigate(`/all-cases/${id}`)}
-        />
+        {tableLoading ? (
+          <Grid
+            container
+            xs={12}
+            sx={{
+              justifyContent: "center",
+              alignItems: "center",
+              height: "40vh",
+            }}
+          >
+            <CircularProgress size={24} sx={{ color: Colors.SKY_BLUE }} />
+          </Grid>
+        ) : (
+          <ListTable
+            headerData={headers}
+            data={rows}
+            onRowClick={(id) => navigate(`/all-cases/${id}`)}
+            apiPagination={true}
+            totalPages={totalPages}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+          />
+        )}
       </Grid>
     </>
   );

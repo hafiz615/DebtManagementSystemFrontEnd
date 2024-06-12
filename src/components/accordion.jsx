@@ -23,6 +23,9 @@ export default function AccordionUsage({
   index,
   rowArray,
   showFailureReason,
+  totalPages,
+  currentPage,
+  setCurrentPage,
 }) {
   const [rows, setRows] = useState([]);
   useEffect(() => {
@@ -153,6 +156,10 @@ export default function AccordionUsage({
 
       <AccordionDetails>
         <ListTable
+          currentPage={currentPage}
+          totalPages={totalPages}
+          setCurrentPage={setCurrentPage}
+          apiPagination={true}
           data={rows}
           headerData={headers}
           showFailureReason={showFailureReason}
