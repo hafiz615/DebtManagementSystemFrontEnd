@@ -225,7 +225,7 @@ export default function ClientImport({ setApiData }) {
               sx={{
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "space-between",
+                gap: "1em",
                 mb: "10px",
               }}
             >
@@ -259,7 +259,7 @@ export default function ClientImport({ setApiData }) {
               sx={{
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "space-between",
+                gap: "1em",
                 mb: "10px",
               }}
             >
@@ -332,7 +332,7 @@ export default function ClientImport({ setApiData }) {
                   md={5}
                   lg={2.5}
                   container
-                  sx={{ justifyContent: "space-between" }}
+                  sx={{ gap: "1em" }}
                 >
                   <Typography sx={{ fontFamily: "Nunito" }}>
                     {item?.name}

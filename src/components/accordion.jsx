@@ -36,7 +36,10 @@ export default function AccordionUsage({
       dueDate: new Date(item?.dueDate).toLocaleDateString() || "-",
       amount: formatDollarAmount(item?.amount),
       ssid: item?.SSID || "-",
-      failureReason: item?.failedReasonCaptured || "-",
+      failureReason:
+        arrayName === "failedAuthorizations"
+          ? item?.failedReasonAuthorization
+          : item?.failedReasonCaptured || "-",
     }));
     if (!isEqual(generatedData, rowArray)) {
       setRows(generatedData);

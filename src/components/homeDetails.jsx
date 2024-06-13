@@ -60,13 +60,13 @@ function HomeDetails() {
       if (result?.status === 200) {
         setTotalData((prev) => ({
           ...prev,
-          [key]: result.data.data.counts[key],
+          [key]: result?.data?.data?.counts[key],
         }));
         setHomeData((prev) => ({
           ...prev,
-          [key]: result.data.data.payments[key],
+          [key]: result?.data?.data?.payments[key],
         }));
-        dispatch(get_payments(result.data.data));
+        dispatch(get_payments(result?.data?.data));
       }
 
       if (isInitialLoad) {
@@ -97,7 +97,11 @@ function HomeDetails() {
         tableHeading={data.heading}
         paymentNumber={data.number}
         rowArray={homeData[data.key]}
-        showFailureReason={data.heading !== "Upcoming Payments"}
+        showFailureReason={
+          data.heading !== "Upcoming Payments" &&
+          data.heading !== "Successful Payments" &&
+          data.heading !== "Successful Authorizations"
+        }
       />
     </Grid>
   );

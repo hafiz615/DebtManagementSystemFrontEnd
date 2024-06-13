@@ -38,6 +38,7 @@ export default function MuiModels({
   GetCaseDetails,
   customFieldsData,
   templateType,
+  disabled,
 }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -93,7 +94,7 @@ export default function MuiModels({
           backgroundColor={Colors.SKY_BLUE}
         />
       ) : show === "editField" ? (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        <IconButton sx={{ display: "flex", alignItems: "center" }}>
           <CreateIcon
             onClick={() => {
               handleOpen();
@@ -104,7 +105,7 @@ export default function MuiModels({
               fontSize: "16px",
             }}
           />
-        </Box>
+        </IconButton>
       ) : button === "create" ? (
         <IconButton
           onClick={() => {
