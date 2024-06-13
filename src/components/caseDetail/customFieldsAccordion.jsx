@@ -66,13 +66,16 @@ export default function CustomFieldsAccordion({ caseData, GetCaseDetails }) {
             CUSTOM FIELDS
           </Typography>
           <div style={{ display: "flex" }} onClick={(e) => e.stopPropagation()}>
-            <MuiModels
-              buttonName="editCaseCustomField"
-              show="EditCaseCustomField"
-              customFieldsData={customFieldsData}
-              GetCaseDetails={GetCaseDetails}
-              caseData={caseData}
-            />
+            {customField?.length > 0 && (
+              <MuiModels
+                buttonName="editCaseCustomField"
+                show="EditCaseCustomField"
+                customFieldsData={customFieldsData}
+                GetCaseDetails={GetCaseDetails}
+                caseData={caseData}
+              />
+            )}
+
             <MuiModels
               buttonName="CaseCustomFields"
               show="CaseCustomField"

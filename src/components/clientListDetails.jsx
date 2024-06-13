@@ -18,7 +18,7 @@ export default function ClientListDetails() {
   const [totalData, setTotalData] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [caseHistory, setCaseHistory] = useState([]);
-  
+
   const totalPages = Math.ceil(totalData / 5);
   const [limit, setLimit] = useState(5);
   const [tableLoading, setTableLoading] = useState(false);
@@ -195,7 +195,7 @@ export default function ClientListDetails() {
               container
               item
               xs={12}
-              lg={7}
+              lg={6}
               sx={{ justifyContent: "space-evenly" }}
             >
               <Grid item xs={12} lg={5.5}>
@@ -394,7 +394,7 @@ export default function ClientListDetails() {
               container
               item
               xs={12}
-              lg={5}
+              lg={6}
               sx={{ justifyContent: "space-between" }}
             >
               <Grid container sx={{ justifyContent: "space-evenly" }}>
