@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Grid, Box, Typography } from "@mui/material";
-import { Close } from "@mui/icons-material";
+import { CleaningServices, Close } from "@mui/icons-material";
 import { Colors } from "../config/default";
 import TextButton from "./button";
 import PaymentsTextFields from "./caseTextField";
@@ -80,8 +80,16 @@ export default function EditDebtorDetail({
       ([key, value]) => key === "businessDescription" || value !== ""
     );
     const noErrors = Object.values(errors).every((error) => error === "");
-    return ownDetailsValid && businessDetailsValid && noErrors && status !== "";
+    const isWeeklyBudgetValid = debtorOwnDetails.BasicWeeklyBudget > 0; // Check if weekly budget is greater than 0
+    return (
+      ownDetailsValid &&
+      businessDetailsValid &&
+      noErrors &&
+      status !== "" &&
+      isWeeklyBudgetValid
+    );
   };
+
   useEffect(() => {
     setIsFormValid(validateForm());
   }, [debtorOwnDetails, debtorBusinessDetails, errors, status]);

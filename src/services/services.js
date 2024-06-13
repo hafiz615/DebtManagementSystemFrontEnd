@@ -141,6 +141,21 @@ export const UploadFiles = async (data) => {
   }
 };
 
+export const UploadFilesAi = async (data) => {
+  const formData = new FormData();
+  for (let i = 0; i < data.length; i++) {
+    formData.append("pdf", data[i]);
+  }
+  try {
+    return await axios.post(
+      "http://103.31.104.196:4405/extract-fields",
+      formData
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
 export const GetDebtorSearch = async (payload) => {
   try {
     return await axios.post(
@@ -391,6 +406,13 @@ export const UpdateCaseAbout = async (payload, id) => {
       payload,
       setHeaders()
     );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetDashboard = async () => {
+  try {
+    return await axios.get(BASE_URL + "/v1/user/dashboard", setHeaders());
   } catch (error) {
     return error;
   }

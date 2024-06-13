@@ -11,6 +11,7 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { Colors } from "../../config/default";
+import { formatDollarAmount } from "../../common";
 
 export default function AnalyticsAccordion({ loading, paymentDetails }) {
   const analyticsData = [
@@ -32,11 +33,12 @@ export default function AnalyticsAccordion({ loading, paymentDetails }) {
     },
     {
       name: "Remaining Debt",
-      value: paymentDetails?.paymentCounts?.remainingAmount || 0,
+      value:
+        formatDollarAmount(paymentDetails?.paymentCounts?.remainingAmount) || 0,
     },
     {
       name: "Paid Debt",
-      value: paymentDetails?.paymentCounts?.paidAmount || 0,
+      value: formatDollarAmount(paymentDetails?.paymentCounts?.paidAmount) || 0,
     },
   ];
   return (

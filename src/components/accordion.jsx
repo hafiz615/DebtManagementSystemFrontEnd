@@ -163,6 +163,7 @@ export default function AccordionUsage({
           data={rows}
           headerData={headers}
           showFailureReason={showFailureReason}
+          accordionHeight="40vh"
         />
         {/* <DataTable rows={rows} columns={columns} /> */}
       </AccordionDetails>

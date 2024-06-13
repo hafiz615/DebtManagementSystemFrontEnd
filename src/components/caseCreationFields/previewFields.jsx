@@ -370,7 +370,19 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  {creditorBasicsInfo?.CreditorBasicEmailAddress || "-"}
+                  {creditorBasicsInfo?.CreditorBasicEmailAddress
+                    ? creditorBasicsInfo?.CreditorBasicEmailAddress?.includes(
+                        "@"
+                      )
+                      ? `${creditorBasicsInfo?.CreditorBasicEmailAddress?.split(
+                          "@"
+                        )[0].substring(0, 4)}...@${
+                          creditorBasicsInfo.CreditorBasicEmailAddress?.split(
+                            "@"
+                          )[1]
+                        }`
+                      : creditorBasicsInfo.CreditorBasicEmailAddress
+                    : "-"}
                 </Typography>
               </Grid>
               <Grid container item xs={12} lg={4}>
@@ -522,7 +534,7 @@ export default function BasicCard({
               >
                 Paid Amount
                 <span style={{ marginLeft: "1rem" }}>
-                  ${formatDollarAmount(paidAmount) || "-"}
+                  {formatDollarAmount(paidAmount) || "-"}
                 </span>
               </Typography>
               <Typography

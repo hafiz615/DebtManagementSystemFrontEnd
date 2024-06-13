@@ -11,6 +11,7 @@ import MuiPhoneTextField from "../muiPhoneText";
 import { PhoneValidation } from "../../constants/appConstants";
 import { formatPhoneNumber } from "../../common";
 import AmountTextField from "../amountTextField";
+import PaymentCardDetails from "../paymentCard";
 
 export default function DebtorFields({
   debtorOwnDetails,
@@ -29,6 +30,9 @@ export default function DebtorFields({
   contactError,
   emailContactError,
   setEmailContactError,
+  connectPayment,
+  setConnectPayment,
+  walletId,
 }) {
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const menuItems = [
@@ -274,18 +278,26 @@ export default function DebtorFields({
         xl={5.9}
         sx={{
           borderRadius: "10px",
-
           marginTop: { xs: ".5rem", xl: "0rem" },
           backgroundColor: Colors.WHITE,
           padding: "1rem",
+          height: { xs: "max-content", xl: "390px" },
         }}
       >
-        <Typography
-          sx={{ fontFamily: "Nunito", fontWeight: "600" }}
-          gutterBottom
-        >
-          Debtor Details
-        </Typography>
+        <Grid item sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Typography
+            sx={{ fontFamily: "Nunito", fontWeight: "600" }}
+            gutterBottom
+          >
+            Debtor Details
+          </Typography>
+          {walletId === "" && (
+            <PaymentCardDetails
+              connectPayment={connectPayment}
+              setConnectPayment={setConnectPayment}
+            />
+          )}
+        </Grid>
 
         <Grid
           container
@@ -510,6 +522,7 @@ export default function DebtorFields({
           marginTop: { xs: ".5rem", xl: "0rem" },
           backgroundColor: Colors.WHITE,
           padding: "1rem",
+          height: { xs: "max-content", xl: "390px" },
         }}
       >
         <Typography
@@ -598,7 +611,7 @@ export default function DebtorFields({
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            marginTop: "0.5rem",
+            marginTop: "1.2rem",
           }}
         >
           <PaymentsTextFields
