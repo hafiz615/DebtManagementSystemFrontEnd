@@ -67,8 +67,8 @@ export default function AccordionUsage({
 
   return (
     <Accordion
-      // defaultExpanded={index < 2}
-      defaultExpanded={expanded.includes(index)}
+      defaultExpanded={index < 2}
+      // defaultExpanded={expanded.includes(index)}
       onChange={() => handleChange(index)}
       sx={{
         borderRadius: "1rem !important",

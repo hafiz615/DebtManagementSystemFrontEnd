@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-
 import { Grid, Typography, CircularProgress } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-
 import { Colors } from "../config/default";
 import { HomePageDetails } from "../constants/appConstants";
 import AccordionUsage from "./accordion";
@@ -17,58 +15,30 @@ function HomeDetails() {
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const [homeData, setHomeData] = useState({});
   const [loading, setLoading] = useState(false);
-  const [totalData, setTotalData] = useState();
-  const [arrayName, setArrayName] = useState("default");
-
-  const [faCurrent, setFaCurrent] = useState(1);
-  const [saCurrent, setSaCurrent] = useState(1);
-  const [upCurrent, setUpCurrent] = useState(1);
-  const [fpCurrent, setFpCurrent] = useState(1);
-  const [spCurrent, setSpCurrent] = useState(1);
-
-  const [faCurrentLoading, setFaCurrentLoading] = useState(false);
-  const [saCurrentLoading, setSaCurrentLoading] = useState(false);
-  const [upCurrentLoading, setUpCurrentLoading] = useState(false);
-  const [fpCurrentLoading, setFpCurrentLoading] = useState(false);
-  const [spCurrentLoading, setSpCurrentLoading] = useState(false);
+  const [totalData, setTotalData] = useState({});
+  const [selectedValue, setSelectedValue] = useState(3);
+  const [currentPage, setCurrentPage] = useState({
+    failedAuthorizations: 1,
+    failedPayments: 1,
+    successAuthorizations: 1,
+    upcomingPayments: 1,
+    successPayments: 1,
+  });
 
   const accordionData = [
     {
-      arrayTotal: totalData?.failedAuthorizations,
-      arrayName: "failedAuthorizations",
-      tableHeading: "Failed Authorizations",
-      paymentNumber: "5",
-      rowData: homeData?.failedAuthorizations,
+      key: "failedAuthorizations",
+      heading: "Failed Authorizations",
+      number: "5",
     },
+    { key: "failedPayments", heading: "Failed Payments", number: "5" },
     {
-      arrayTotal: totalData?.successAuthorizations,
-      arrayName: "successAuthorizations",
-      tableHeading: "Successful Authorizations",
-      paymentNumber: "4",
-      rowData: homeData?.successAuthorizations,
+      key: "successAuthorizations",
+      heading: "Successful Authorizations",
+      number: "4",
     },
-    {
-      arrayTotal: totalData?.upcomingPayments,
-      arrayName: "upcomingPayments",
-      tableHeading: "Upcoming Payments",
-      paymentNumber: "4",
-      rowData: homeData?.upcomingPayments,
-    },
-
-    {
-      arrayTotal: totalData?.failedPayments,
-      arrayName: "failedPayments",
-      tableHeading: "Failed Payments",
-      paymentNumber: "5",
-      rowData: homeData?.failedPayments,
-    },
-    {
-      arrayTotal: totalData?.successPayments,
-      arrayName: "successPayments",
-      tableHeading: "Successful Payments",
-      paymentNumber: "4",
-      rowData: homeData?.successPayments,
-    },
+    { key: "upcomingPayments", heading: "Upcoming Payments", number: "4" },
+    { key: "successPayments", heading: "Successful Payments", number: "4" },
   ];
 
   const menuItems = [
@@ -76,67 +46,66 @@ function HomeDetails() {
     { label: "5", value: 5 },
     { label: "7", value: 7 },
   ];
-  const [selectedValue, setSelectedValue] = useState(3);
+
   const { AUTHORITY_TEXT, HOME_HEADING, VIEW_DAYS, DAYS_TEXT } =
     HomePageDetails;
 
-  const getHomeData = async (name, pageNumber) => {
+  const getHomeData = async (key, pageNumber, isInitialLoad = false) => {
     if (selectedValue) {
-      const page = pageNumber;
-      setArrayName(name);
-      const result = await GetHomePayments(selectedValue, page, arrayName);
+      if (isInitialLoad) {
+        setLoading(true);
+      }
+
+      const result = await GetHomePayments(selectedValue, pageNumber, key);
       if (result?.status === 200) {
-        setTotalData(result?.data?.data?.counts);
-        setHomeData(result?.data?.data?.payments);
-        dispatch(get_payments(result?.data?.data));
+        setTotalData((prev) => ({
+          ...prev,
+          [key]: result.data.data.counts[key],
+        }));
+        setHomeData((prev) => ({
+          ...prev,
+          [key]: result.data.data.payments[key],
+        }));
+        dispatch(get_payments(result.data.data));
+      }
+
+      if (isInitialLoad) {
+        setLoading(false);
       }
     }
-    setLoading(false);
-    setFaCurrentLoading(false);
-    setSaCurrentLoading(false);
-    setUpCurrentLoading(false);
-    setFpCurrentLoading(false);
-    setSpCurrentLoading(false);
   };
 
   useEffect(() => {
-    setLoading(true);
-    getHomeData("default", 1);
+    accordionData.forEach((data) => {
+      getHomeData(data.key, currentPage[data.key], true);
+    });
   }, [selectedValue]);
 
-  useEffect(() => {
-    setFaCurrentLoading(true);
-    getHomeData("failedAuthorizations", faCurrent);
-  }, [faCurrent]);
+  const handlePageChange = (key, page) => {
+    setCurrentPage((prev) => ({ ...prev, [key]: page }));
+    getHomeData(key, page);
+  };
 
-  useEffect(() => {
-    setSaCurrentLoading(true);
-    getHomeData("successAuthorizations", saCurrent);
-  }, [saCurrent]);
-
-  useEffect(() => {
-    setUpCurrentLoading(true);
-    getHomeData("upcomingPayments", upCurrent);
-  }, [upCurrent]);
-
-  useEffect(() => {
-    setFpCurrentLoading(true);
-    getHomeData("failedPayments", fpCurrent);
-  }, [fpCurrent]);
-
-  useEffect(() => {
-    setSpCurrentLoading(true);
-    getHomeData("successPayments", spCurrent);
-  }, [spCurrent]);
+  const renderAccordion = (data, index) => (
+    <Grid item xs={12} lg={6} sx={{ marginBottom: "0.5rem" }} key={data.key}>
+      <AccordionUsage
+        index={index}
+        totalPages={Math.ceil(totalData[data.key] / 5)}
+        arrayName={data.key}
+        currentPage={currentPage[data.key]}
+        setCurrentPage={(page) => handlePageChange(data.key, page)}
+        tableHeading={data.heading}
+        paymentNumber={data.number}
+        rowArray={homeData[data.key]}
+        showFailureReason={data.heading !== "Upcoming Payments"}
+      />
+    </Grid>
+  );
 
   return (
     <Grid
       container
-      sx={{
-        backgroundColor: Colors.BG_LIGHT_GRAY,
-        paddingLeft: "2rem",
-        paddingRight: "2rem",
-      }}
+      sx={{ backgroundColor: Colors.BG_LIGHT_GRAY, padding: "2rem" }}
     >
       <Grid
         item
@@ -157,13 +126,7 @@ function HomeDetails() {
           {AUTHORITY_TEXT} <span>{role}</span>
         </Typography>
       </Grid>
-      <Grid
-        item
-        xs={12}
-        sx={{
-          marginTop: "1.5rem",
-        }}
-      >
+      <Grid item xs={12} sx={{ marginTop: "1.5rem" }}>
         <Typography
           sx={{
             fontWeight: "600",
@@ -190,7 +153,6 @@ function HomeDetails() {
             fontFamily: "Nunito",
             display: "flex",
             alignItems: "center",
-            justifyContent: smallScreen ? "flex-start" : "center",
             color: Colors.BLACK,
           }}
         >
@@ -203,18 +165,14 @@ function HomeDetails() {
             selectedValue={selectedValue}
             setSelectedValue={setSelectedValue}
           />
-
           <span style={{ marginLeft: ".5rem" }}>{DAYS_TEXT}</span>
         </Typography>
       </Grid>
-
       <Grid
         container
         item
         xs={12}
-        sx={{
-          marginTop: "1rem",
-        }}
+        sx={{ marginTop: "1rem" }}
         spacing={smallScreen ? 0 : 2}
       >
         {loading ? (
@@ -231,87 +189,7 @@ function HomeDetails() {
             <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
           </Grid>
         ) : (
-          <>
-            <Grid item xs={12} lg={6}>
-              <Grid item xs={12} sx={{ marginBottom: "0.5rem" }}>
-                <AccordionUsage
-                  totalPages={Math.ceil(accordionData[0]?.arrayTotal / 5)}
-                  arrayName={accordionData[0]?.arrayName}
-                  index={0}
-                  currentPage={faCurrent}
-                  setCurrentPage={setFaCurrent}
-                  tableHeading={accordionData[0]?.tableHeading}
-                  paymentNumber={accordionData[0]?.paymentNumber}
-                  rowArray={accordionData[0]?.rowData}
-                  showFailureReason={
-                    accordionData[0]?.tableHeading !== "Upcoming Payments"
-                  }
-                />
-              </Grid>
-              <Grid item xs={12} sx={{ marginBottom: "0.5rem" }}>
-                <AccordionUsage
-                  totalPages={Math.ceil(accordionData[1]?.arrayTotal / 5)}
-                  arrayName={accordionData[1]?.arrayName}
-                  index={1}
-                  currentPage={saCurrent}
-                  setCurrentPage={setSaCurrent}
-                  tableHeading={accordionData[1]?.tableHeading}
-                  paymentNumber={accordionData[1]?.paymentNumber}
-                  rowArray={accordionData[1]?.rowData}
-                  showFailureReason={
-                    accordionData[1]?.tableHeading !== "Upcoming Payments"
-                  }
-                />
-              </Grid>
-              <Grid item xs={12} sx={{ marginBottom: "0.5rem" }}>
-                <AccordionUsage
-                  totalPages={Math.ceil(accordionData[2]?.arrayTotal / 5)}
-                  arrayName={accordionData[2]?.arrayName}
-                  currentPage={upCurrent}
-                  index={2}
-                  setCurrentPage={setUpCurrent}
-                  tableHeading={accordionData[2]?.tableHeading}
-                  paymentNumber={accordionData[2]?.paymentNumber}
-                  rowArray={accordionData[2]?.rowData}
-                  showFailureReason={
-                    accordionData[2]?.tableHeading !== "Upcoming Payments"
-                  }
-                />
-              </Grid>
-            </Grid>
-            <Grid item xs={12} lg={6}>
-              <Grid item xs={12} sx={{ marginBottom: "0.5rem" }}>
-                <AccordionUsage
-                  totalPages={Math.ceil(accordionData[3]?.arrayTotal / 5)}
-                  arrayName={accordionData[3]?.arrayName}
-                  index={3}
-                  currentPage={fpCurrent}
-                  setCurrentPage={setFpCurrent}
-                  tableHeading={accordionData[3]?.tableHeading}
-                  paymentNumber={accordionData[3]?.paymentNumber}
-                  rowArray={accordionData[3]?.rowData}
-                  showFailureReason={
-                    accordionData[3]?.tableHeading !== "Upcoming Payments"
-                  }
-                />
-              </Grid>
-              <Grid item xs={12} sx={{ marginBottom: "0.5rem" }}>
-                <AccordionUsage
-                  totalPages={Math.ceil(accordionData[4]?.arrayTotal / 5)}
-                  arrayName={accordionData[4]?.arrayName}
-                  index={4}
-                  currentPage={spCurrent}
-                  setCurrentPage={setSpCurrent}
-                  tableHeading={accordionData[4]?.tableHeading}
-                  paymentNumber={accordionData[4]?.paymentNumber}
-                  rowArray={accordionData[4]?.rowData}
-                  showFailureReason={
-                    accordionData[4]?.tableHeading !== "Upcoming Payments"
-                  }
-                />
-              </Grid>
-            </Grid>
-          </>
+          accordionData.map(renderAccordion)
         )}
       </Grid>
     </Grid>
