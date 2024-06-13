@@ -214,7 +214,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     {}
   );
 
-  //send Token
   const [connectPayment, setConnectPayment] = useState({
     paymentToken: "",
     paymentType: "",

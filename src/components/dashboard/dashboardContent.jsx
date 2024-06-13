@@ -78,35 +78,146 @@ function DashboardContent() {
               mt: "2em",
             }}
           >
-            <Grid item xs={8}>
-              <div style={{ display: "flex" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                padding: "10px 16px",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "16px",
+                  fontWeight: "600",
+                  fontFamily: "Nunito",
+                }}
+              >
+                Payments & Authorizations
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "14px",
+                  fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
+                }}
+              >
+                Year{" "}
+                <span style={{ color: Colors.BLACK, fontSize: "16px" }}>
+                  2024
+                </span>
+              </Typography>
+            </div>
+            <hr style={{ background: "lightgrey" }} />
+            <Grid
+              container
+              xs={12}
+              sx={{
+                marginTop: "1rem",
+                height: "16rem",
+                gap: { xs: "1em", md: "0" },
+                overflowY: "auto",
+                "&::-webkit-scrollbar": {
+                  width: "10px",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  backgroundColor: "#E5E5E5",
+                  borderRadius: "8px",
+                },
+                "&::-webkit-scrollbar-track": {
+                  backgroundColor: Colors.WHITE,
+                  borderRadius: "8px",
+                },
+              }}
+            >
+              <Grid
+                item
+                xs={12}
+                md={3}
+                sx={{
+                  flexDirection: "column",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  // display: { xs: "flex", md: "unset" },
+                  // flexDirection: { xs: "column", md: "unset" },
+                  // alignItems: { xs: "center", md: "center" },
+                  // justifyContent: { xs: "center", md: "center" },
+                }}
+              >
+                <SpinnerWithPercentage
+                  value={100}
+                  color={Colors.ORANGE_COLOR}
+                />
                 <Typography
-                  sx={{
-                    fontWeight: "600",
-                    fontSize: "2rem",
+                  style={{
+                    fontSize: "14px",
                     fontFamily: "Nunito",
-                    color: Colors.BLACK,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop: "2rem",
                   }}
                 >
-                  Hi
+                  Failed Authorizations
                 </Typography>
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                md={3}
+                sx={{
+                  flexDirection: "column",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  // display: { xs: "flex", md: "unset" },
+                  // flexDirection: { xs: "column", md: "unset" },
+                  // alignItems: { xs: "center", md: "center" },
+                  // justifyContent: { xs: "center", md: "center" },
+                }}
+              >
+                <SpinnerWithPercentage value={40} color={Colors.YELLOW} />
                 <Typography
-                  sx={{
-                    color: Colors.SKY_BLUE,
-                    fontSize: "2rem",
-                    ml: "10px",
-                    fontWeight: "800",
+                  style={{
+                    fontSize: "14px",
                     fontFamily: "Nunito",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop: "2rem",
                   }}
                 >
-                  {userName},
+                  Failed Payments
                 </Typography>
-              </div>
-              <div>
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                md={3}
+                sx={{
+                  flexDirection: "column",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  // display: { xs: "flex", md: "unset" },
+                  // flexDirection: { xs: "column", md: "unset" },
+                  // alignItems: { xs: "center", md: "unset" },
+                  // justifyContent: { xs: "center", md: "unset" },
+                }}
+              >
+                <SpinnerWithPercentage color={Colors.SKY_BLUE} value={70} />
                 <Typography
-                  style={{ color: Colors.DIM_LIGHT_GRAY, fontFamily: "Nunito" }}
+                  style={{
+                    fontSize: "14px",
+                    fontFamily: "Nunito",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop: "2rem",
+                  }}
                 >
-                  You can manage your whole team from here.
+                  Successful Authorizations
+
                 </Typography>
               </div>
             </Grid>
@@ -123,31 +234,63 @@ function DashboardContent() {
             <Grid item xs={12} lg={8}>
               <Card
                 sx={{
-                  width: { xs: "100%", lg: "95%" },
-                  backgroundColor: Colors.WHITE,
-                  height: "20rem",
-                  borderRadius: "16px",
-                  boxShadow: "none",
+                  // display: { xs: "flex", md: "unset" },
+                  // flexDirection: { xs: "column", md: "unset" },
+                  // alignItems: { xs: "center", md: "center" },
+                  // justifyContent: { xs: "center", md: "center" },
+                  flexDirection: "column",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                <div
+                <SpinnerWithPercentage value={60} color={Colors.NAVY_BLUE} />
+                <Typography
                   style={{
+                    fontSize: "14px",
+                    fontFamily: "Nunito",
                     display: "flex",
-                    justifyContent: "space-between",
-                    padding: "10px 16px",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop: "2rem",
                   }}
                 >
-                  <Typography
-                    sx={{
-                      fontSize: "16px",
-                      fontWeight: "600",
-                      fontFamily: "Nunito",
-                    }}
-                  >
-                    Payments & Authorizations
-                  </Typography>
-                  <Typography
-                    sx={{
+                  Successful Payments
+                </Typography>
+              </Grid>
+            </Grid>
+          </Card>
+        </Grid>
+        <Grid item xs={12} lg={4} sx={{ mt: { xs: "1rem", lg: "0" } }}>
+          <Card
+            sx={{
+              backgroundColor: Colors.WHITE,
+              height: "20rem",
+              borderRadius: "16px",
+              boxShadow: "none",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: "16px",
+                fontWeight: "600",
+                padding: "10px 16px",
+                fontFamily: "Nunito",
+              }}
+            >
+              Case Status
+            </Typography>
+            <hr style={{ background: "lightgrey" }} />
+            <div style={{ height: "10rem" }}>
+              <PieChart
+                sx={{ width: "100%" }}
+                margin={{ top: 10, bottom: 40, left: 10, right: 10 }}
+                slotProps={{
+                  legend: {
+                    direction: "row",
+                    position: { vertical: "bottom", horizontal: "middle" },
+                    padding: 2,
+                    labelStyle: {
                       fontSize: "14px",
                       fontFamily: "Nunito",
                       color: Colors.DIM_LIGHT_GRAY,

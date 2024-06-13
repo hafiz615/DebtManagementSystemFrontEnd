@@ -18,7 +18,7 @@ export default function ClientListDetails() {
   const [totalData, setTotalData] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [caseHistory, setCaseHistory] = useState([]);
-
+  
   const totalPages = Math.ceil(totalData / 5);
   const [limit, setLimit] = useState(5);
   const [tableLoading, setTableLoading] = useState(false);

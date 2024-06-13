@@ -39,7 +39,7 @@ export default function AboutAccordion({ caseDetails, GetCaseDetails }) {
     {
       name: "Paid Debt",
       value: formatDollarAmount(caseDetails?.paidAmount) || "-",
-    },
+    }
   ];
   return (
     <Accordion
