@@ -3,15 +3,15 @@ import React from "react";
 import {
   Grid,
   Typography,
-  IconButton,
+  // IconButton,
   styled,
   InputBase,
   Box,
 } from "@mui/material";
 import {
   Search,
-  KeyboardArrowLeft,
-  KeyboardArrowRight,
+  // KeyboardArrowLeft,
+  // KeyboardArrowRight,
   Sms,
   Email,
   Call,
@@ -19,6 +19,7 @@ import {
 
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
+import { formatDollarAmount } from "../../common";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -106,7 +107,7 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             button="create"
             iconColor={Colors.BLACK}
             width="80vw"
-            height="60vh"
+            height="max-content"
             caseData={caseData}
             GetCaseDetails={GetCaseDetails}
           />
@@ -219,6 +220,7 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             display: "flex",
             justifyContent: "space-between",
             marginBottom: "8px",
+            gap: "10%",
           }}
         >
           <Typography
@@ -227,6 +229,7 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
               fontFamily: "Nunito",
               fontWeight: "700",
               color: Colors.DARK_GRAY,
+              width: "45%",
             }}
           >
             Company
@@ -238,18 +241,26 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
               fontFamily: "Nunito",
               fontWeight: "500",
               textAlign: "500",
+              wordBreak: "break-word",
             }}
           >
             {caseData?.creditor?.businessInformation?.companyName}
           </Typography>
         </div>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: "10%",
+          }}
+        >
           <Typography
             style={{
               fontSize: "11px",
               fontFamily: "Nunito",
               fontWeight: "700",
               color: Colors.DARK_GRAY,
+              width: "45%",
             }}
           >
             Category
@@ -261,6 +272,7 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
               fontFamily: "Nunito",
               fontWeight: "500",
               textAlign: "right",
+              wordBreak: "break-word",
             }}
           >
             {caseData?.creditor?.businessInformation?.businessCategory}
@@ -317,7 +329,7 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             fontWeight: "500",
           }}
         >
-          {formatDate(caseData?.creditor?.lastFundedDate)}
+          {formatDate(caseData?.creditor?.lastFundedDate) || "-"}
         </p>
         <p
           style={{
@@ -353,7 +365,8 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
               color: Colors.DIM_LIGHT_GRAY,
             }}
           >
-            {caseData?.creditor?.historicalRange?.minimum}
+            {formatDollarAmount(caseData?.creditor?.historicalRange?.minimum) ||
+              "-"}
           </Typography>
         </div>
         <div
@@ -380,7 +393,8 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
               color: Colors.DIM_LIGHT_GRAY,
             }}
           >
-            {caseData?.creditor?.historicalRange?.maximum}
+            {formatDollarAmount(caseData?.creditor?.historicalRange?.maximum) ||
+              "-"}
           </Typography>
         </div>
       </Grid>
@@ -412,7 +426,7 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
           >
             Contacts
           </p>
-          <SearchContainer>
+          <SearchContainer sx={{ width: "16rem" }}>
             <SearchIconWrapper>
               <Search sx={{ fontSize: "16px", color: Colors.DIM_LIGHT_GRAY }} />
             </SearchIconWrapper>
@@ -421,7 +435,7 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
               inputProps={{ "aria-label": "search" }}
             />
           </SearchContainer>
-          <div
+          {/* <div
             style={{ display: "flex", fontSize: "11px", alignItems: "center" }}
           >
             <IconButton>
@@ -433,13 +447,10 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             <IconButton>
               <KeyboardArrowRight sx={{ fontSize: "16px" }} />
             </IconButton>
-          </div>
+          </div> */}
         </div>
         <Box
           style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "3%",
             height: "10rem",
             overflowY: "auto",
             "&::-webkit-scrollbar": {
@@ -466,13 +477,12 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
               paddingRight: ".5rem",
               paddingLeft: ".5rem",
               height: "2rem",
-              display: "flex",
               alignItems: "center",
             }}
           >
-            <span style={{ fontSize: "13px" }}>Name</span>
-            <span style={{ fontSize: "13px" }}>Relation</span>
-            <span style={{ fontSize: "13px" }}>Action</span>
+            <span style={{ fontSize: "11px" }}>Name</span>
+            <span style={{ fontSize: "11px" }}>Relation</span>
+            <span style={{ fontSize: "11px" }}>Action</span>
           </Grid>
 
           {caseData?.creditor?.contacts?.map((item, index) => {
@@ -493,7 +503,6 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
                   paddingRight: ".2rem",
                   paddingLeft: ".2rem",
                   height: "2rem",
-                  display: "flex",
                   alignItems: "center",
                 }}
               >

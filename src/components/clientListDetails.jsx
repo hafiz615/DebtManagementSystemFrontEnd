@@ -18,6 +18,7 @@ export default function ClientListDetails() {
   const [totalData, setTotalData] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [caseHistory, setCaseHistory] = useState([]);
+  
   const totalPages = Math.ceil(totalData / 5);
   const [limit, setLimit] = useState(5);
   const [tableLoading, setTableLoading] = useState(false);
@@ -418,7 +419,7 @@ export default function ClientListDetails() {
                     value: clientData?.paymentCounts?.successfulAuthorizations,
                     color: Colors.SKY_BLUE,
                   },
-                ].map((item, index) => (
+                ]?.map((item, index) => (
                   <Grid
                     key={index}
                     container
@@ -433,7 +434,9 @@ export default function ClientListDetails() {
                       marginBottom: "1rem",
                     }}
                   >
-                    <Typography sx={{ width: "7rem" }}>{item.title}</Typography>
+                    <Typography sx={{ width: "7rem" }}>
+                      {item?.title}
+                    </Typography>
                     <Typography
                       sx={{
                         color: item.color,
@@ -442,7 +445,7 @@ export default function ClientListDetails() {
                         fontSize: "3rem",
                       }}
                     >
-                      {String(item.value).padStart(2, "0")}
+                      {String(item?.value).padStart(2, "0")}
                     </Typography>
                   </Grid>
                 ))}

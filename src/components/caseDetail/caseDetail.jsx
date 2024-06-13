@@ -249,7 +249,7 @@ function CaseDetail() {
                         <MuiModels
                           show="addCase"
                           width="80vw"
-                          height="90vh"
+                          height="80vh"
                           caseData={caseData}
                         />
                       </Box>
