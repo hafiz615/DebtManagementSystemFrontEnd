@@ -3,15 +3,15 @@ import React from "react";
 import {
   Grid,
   Typography,
-  IconButton,
+  // IconButton,
   styled,
   InputBase,
   Box,
 } from "@mui/material";
 import {
   Search,
-  KeyboardArrowLeft,
-  KeyboardArrowRight,
+  // KeyboardArrowLeft,
+  // KeyboardArrowRight,
   Call,
   Sms,
   Email,
@@ -118,7 +118,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
             button="create"
             iconColor={Colors.BLACK}
             width="80vw"
-            height="90vh"
+            height="70vh"
             caseData={caseData}
             GetCaseDetails={GetCaseDetails}
           />
@@ -335,7 +335,6 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
               paddingRight: ".5rem",
               paddingLeft: ".5rem",
               height: "2rem",
-              display: "flex",
               alignItems: "center",
             }}
           >
@@ -361,7 +360,6 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
                   paddingRight: ".2rem",
                   paddingLeft: ".2rem",
                   height: "2rem",
-                  display: "flex",
                   alignItems: "center",
                 }}
               >

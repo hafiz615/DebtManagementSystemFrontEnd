@@ -30,6 +30,7 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
   const GetUsers = async () => {
     setLoading(true);
     const users = await GetAllUsers();
+
     if (users?.status === 200) {
       const transformArray = (data) => {
         return data?.map((item) => ({
@@ -37,9 +38,9 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
           value: item?.name,
         }));
       };
-      const transformedArray = isEmpty(users?.data?.data)
+      const transformedArray = isEmpty(users?.data?.data?.users)
         ? []
-        : transformArray(users?.data?.data);
+        : transformArray(users?.data?.data?.users);
       setUserArray(transformedArray);
     }
     setLoading(false);
@@ -54,6 +55,10 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
       caseOwner: caseOwner,
       manager: manager,
       negotiator: negotiator,
+
+      caseOwnerId: data?.caseOwnerId || "",
+      negotiatorId: data?.negotiatorId || "",
+      managerId: data?.managerId || "",
     };
     const res = await UpdateCaseAbout(params, id);
     if (res?.status === 200) {

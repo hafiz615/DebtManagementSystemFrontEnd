@@ -346,6 +346,7 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
                   },
                 }}
                 value={formData?.phone}
+                onlyCountries={["us"]}
                 variant="standard"
                 defaultCountry={"us"}
                 disableDropdown={false}

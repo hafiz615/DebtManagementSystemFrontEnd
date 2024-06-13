@@ -1,0 +1,110 @@
+.form-control {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #004085;
+}
+
+.is-invalid {
+  border-color: red;
+}
+
+html {
+  font-family: "Abel";
+}
+
+.pageTitle {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 40px;
+  font-family: "Domine" !important;
+}
+
+.form-group {
+  width: 290px;
+}
+
+.formInner {
+  width: 600px;
+  max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin: 20px auto;
+}
+
+#payButton {
+  width: 290px;
+  display: block;
+  margin: 20px auto;
+  height: 50px !important;
+  font-size: 20px;
+  background-color: #1cc48b;
+  border-color: #1cc48b;
+  box-shadow: 0 3px 10px #bbbbbb;
+}
+
+#payButton:hover {
+  background-color: #19c687;
+  border-color: #19c687;
+  box-shadow: 0 3px 4px #bbbbbb;
+}
+
+#payButton:active {
+  opacity: 0.7;
+}
+
+.form-control {
+  border: 3px solid #ffffff !important;
+  box-shadow: 0 2px 8px #dddddd !important;
+  font-family: "Abel";
+}
+
+.form-control:hover {
+  box-shadow: 0 2px 4px #dddddd;
+}
+
+.form-control:focus {
+  box-shadow: 0 2px 4px #dddddd !important;
+  border: 3px solid #1cc48b !important;
+}
+
+#paymentTokenInfo {
+  display: block;
+  width: 600px;
+  margin: 30px auto;
+}
+
+@media only screen and (max-width: 600px) {
+  .pageTitle {
+    font-size: 30px;
+  }
+
+  .theForm {
+    width: 300px;
+    max-width: 90%;
+    margin: auto;
+  }
+
+  .form-group {
+    width: 100%;
+  }
+
+  #paymentTokenInfo {
+    width: 100%;
+  }
+}

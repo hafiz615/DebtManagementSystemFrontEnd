@@ -73,6 +73,7 @@ export default function ListTable({
   requiredIcons,
   requiredCustomFieldIcons,
   showFailureReason,
+  accordionHeight,
   apiPagination,
   currentPage,
   setCurrentPage,
@@ -104,7 +105,7 @@ export default function ListTable({
         backgroundColor: Colors.WHITE,
         borderRadius: "10px ",
         width: "100%",
-        // height: "55vh",
+        height: accordionHeight,
       }}
     >
       <div
