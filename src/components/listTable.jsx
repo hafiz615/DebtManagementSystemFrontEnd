@@ -260,11 +260,17 @@ export default function ListTable({
             <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
               {totalPages === 0 ? 0 : currentPage} of {totalPages}
             </Typography>
-            <IconButton onClick={backward} disabled={currentPage === 1}>
+            <IconButton
+              onClick={backward}
+              disabled={currentPage === 1 || currentPage === 0}
+            >
               <ArrowBackIosNewIcon sx={{ fontSize: "16px" }} />
             </IconButton>
 
-            <IconButton onClick={forward} disabled={currentPage === totalPages}>
+            <IconButton
+              onClick={forward}
+              disabled={currentPage === totalPages || totalPages === 0}
+            >
               <ArrowForwardIosIcon sx={{ fontSize: "16px" }} />
             </IconButton>
           </div>
