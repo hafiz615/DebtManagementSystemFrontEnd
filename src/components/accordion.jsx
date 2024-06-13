@@ -19,6 +19,7 @@ const headers = ["Name", "Due Date", "Amount", "SSN", "Failure Reason"];
 
 export default function AccordionUsage({
   tableHeading,
+  arrayName,
   paymentNumber,
   index,
   rowArray,
@@ -66,8 +67,8 @@ export default function AccordionUsage({
 
   return (
     <Accordion
-      // defaultExpanded={index < 2}
-      defaultExpanded={expanded.includes(index)}
+      defaultExpanded={index < 2}
+      // defaultExpanded={expanded.includes(index)}
       onChange={() => handleChange(index)}
       sx={{
         borderRadius: "1rem !important",
@@ -163,6 +164,7 @@ export default function AccordionUsage({
           data={rows}
           headerData={headers}
           showFailureReason={showFailureReason}
+          arrayName={arrayName}
           accordionHeight="40vh"
         />
         {/* <DataTable rows={rows} columns={columns} /> */}
