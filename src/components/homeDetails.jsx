@@ -37,8 +37,8 @@ function HomeDetails() {
       heading: "Successful Authorizations",
       number: "4",
     },
-    { key: "upcomingPayments", heading: "Upcoming Payments", number: "4" },
     { key: "successPayments", heading: "Successful Payments", number: "4" },
+    { key: "upcomingPayments", heading: "Upcoming Payments", number: "4" },
   ];
 
   const menuItems = [
