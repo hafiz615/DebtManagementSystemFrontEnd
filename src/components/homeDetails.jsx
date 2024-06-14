@@ -102,6 +102,12 @@ function HomeDetails() {
           data.heading !== "Successful Payments" &&
           data.heading !== "Successful Authorizations"
         }
+        showDueDate={
+          data.heading !== "Successful Payments" &&
+          data.heading !== "Successful Authorizations" &&
+          data.heading !== "Failed Payments" &&
+          data.heading !== "Failed Authorizations"
+        }
       />
     </Grid>
   );

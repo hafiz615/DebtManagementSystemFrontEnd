@@ -40,7 +40,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   const [completedSteps, setCompletedSteps] = useState(new Set());
   const [filteredArray, setFilteredArray] = useState([]);
 
-  const { AUTHORITY_TEXT, AUTHORITY_VALUE, DEBTOR_HEADING } = DebtorDetailsPage;
+  const { AUTHORITY_TEXT, DEBTOR_HEADING } = DebtorDetailsPage;
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const debtorBasicInfo = caseData?.debtor?.basicInformation;
   const debtorBusinessInfo = caseData?.debtor?.businessInformation;
@@ -293,8 +293,8 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       value ? String(value).replace(/-/g, "") : "";
 
     const phoneNumberFormat = (phoneNumber) => {
-      if (!phoneNumber?.startsWith("+")) {
-        return "+" + phoneNumber;
+      if (!phoneNumber?.startsWith("+1")) {
+        return "+1" + phoneNumber;
       }
       return phoneNumber;
     };
