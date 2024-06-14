@@ -25,6 +25,7 @@ export default function BasicCard({
   totalReceivable,
   paidAmount,
   feePayment,
+  remainingAmount,
 }) {
   function formatDate(dateString) {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -535,6 +536,18 @@ export default function BasicCard({
                 Paid Amount
                 <span style={{ marginLeft: "1rem" }}>
                   {formatDollarAmount(paidAmount) || "-"}
+                </span>
+              </Typography>
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontWeight: "600",
+                  marginLeft: "2rem",
+                }}
+              >
+                Remaining Amount
+                <span style={{ marginLeft: "1rem" }}>
+                  {formatDollarAmount(remainingAmount) || "-"}
                 </span>
               </Typography>
               <Typography

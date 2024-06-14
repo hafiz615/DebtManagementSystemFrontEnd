@@ -22,6 +22,8 @@ export default function Dropdown({
   placeholder,
   menuWidth,
   disabled,
+  show,
+  setId,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -35,12 +37,15 @@ export default function Dropdown({
     setAnchorEl(null);
   };
 
-  const handleMenuItemClick = (value) => {
+  const handleMenuItemClick = (value, id) => {
     handleClose();
     if (onChange) {
       onChange(value);
     } else {
       setSelectedValue(value);
+      if (show === "editAbout") {
+        setId(id);
+      }
     }
   };
 
@@ -96,7 +101,7 @@ export default function Dropdown({
             sx={{
               color: Colors.LIGHT_GRAY,
             }}
-            onClick={() => handleMenuItemClick(item?.value)}
+            onClick={() => handleMenuItemClick(item?.value, item?.id || "")}
           >
             {item.label}
           </MenuItem>
