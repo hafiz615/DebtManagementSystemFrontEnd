@@ -73,6 +73,7 @@ export default function ListTable({
   requiredIcons,
   requiredCustomFieldIcons,
   showFailureReason,
+  showDueDate,
   accordionHeight,
   apiPagination,
   currentPage,
@@ -121,7 +122,9 @@ export default function ListTable({
               <TableRow sx={{ fontFamily: "Nunito" }}>
                 {headerData
                   ?.filter(
-                    (header) => showFailureReason || header !== "Failure Reason"
+                    (header) =>
+                      (showFailureReason || header !== "Failure Reason") &&
+                      (showDueDate || header !== "Due Date")
                   )
                   ?.map((header, index) => (
                     <StyledTableCell
@@ -172,7 +175,8 @@ export default function ListTable({
                       ?.filter(
                         ([key]) =>
                           key !== "id" &&
-                          (showFailureReason || key !== "failureReason")
+                          (showFailureReason || key !== "failureReason") &&
+                          (showDueDate || key !== "dueDate")
                       )
                       ?.map(([key, value], i) => (
                         <StyledTableCell key={i}>{value}</StyledTableCell>
