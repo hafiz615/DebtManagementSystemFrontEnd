@@ -27,7 +27,7 @@ import {
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import { isEmpty } from "lodash";
-import { hasAnyValue, checkContacts, formatPhoneNumber } from "../common";
+import { hasAnyValue, checkContacts } from "../common";
 
 const steps = ["File upload ", "Debtor", "Creditor", "Payment", "Preview"];
 
