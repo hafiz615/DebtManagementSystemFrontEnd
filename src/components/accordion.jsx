@@ -24,6 +24,7 @@ export default function AccordionUsage({
   index,
   rowArray,
   showFailureReason,
+  showDueDate,
   totalPages,
   currentPage,
   setCurrentPage,
@@ -168,6 +169,7 @@ export default function AccordionUsage({
           data={rows}
           headerData={headers}
           showFailureReason={showFailureReason}
+          showDueDate={showDueDate}
           arrayName={arrayName}
           accordionHeight="40vh"
         />

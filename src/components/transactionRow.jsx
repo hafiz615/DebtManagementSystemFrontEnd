@@ -13,12 +13,18 @@ function TransactionRow({ data, heading }) {
 
     return `${month}/${day}/${year}`;
   };
+
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   const typographyStyle = {
     fontSize: "11px",
     fontFamily: "Nunito",
     fontWeight: "500",
     width: "25%",
   };
+
   return (
     <>
       {!isEmpty(data) && heading && (
@@ -39,6 +45,7 @@ function TransactionRow({ data, heading }) {
             : item?.type === "payment" && item?.captured === "Failed"
             ? Colors.ORANGE_COLOR
             : Colors.SKY_BLUE;
+
         return (
           <div
             key={index}
@@ -53,7 +60,9 @@ function TransactionRow({ data, heading }) {
               {formatDollarAmount(item?.totalDebt) || "-"}
             </p>
             <p style={typographyStyle}>
-              {heading ? item?.status || "-" : item?.type || "-"}
+              {heading
+                ? item?.status || "-"
+                : capitalizeFirstLetter(item?.type) || "-"}
             </p>
           </div>
         );
