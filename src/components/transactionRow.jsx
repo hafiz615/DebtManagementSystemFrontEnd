@@ -1,7 +1,8 @@
 import React from "react";
 import { isEmpty } from "lodash";
 import { Colors } from "../config/default";
-import { Typography } from "@mui/material";
+import { Typography, Box } from "@mui/material";
+import ReplayIcon from "@mui/icons-material/Replay";
 import { formatDollarAmount } from "../common";
 
 function TransactionRow({ data, heading }) {
@@ -51,7 +52,9 @@ function TransactionRow({ data, heading }) {
             key={index}
             style={{
               display: "flex",
-              justifyContent: "space-between",
+              gap: "10px",
+              alignItems: "center",
+
               color: heading ? Colors.BLACK : colorScheme,
             }}
           >
@@ -59,10 +62,28 @@ function TransactionRow({ data, heading }) {
             <p style={typographyStyle}>
               {formatDollarAmount(item?.totalDebt) || "-"}
             </p>
-            <p style={typographyStyle}>
+            <p
+              style={{
+                display: "flex",
+                fontSize: "11px",
+                fontFamily: "Nunito",
+                fontWeight: "500",
+                width: "100px",
+                justifyContent: "space-between",
+              }}
+            >
               {heading
                 ? item?.status || "-"
                 : capitalizeFirstLetter(item?.type) || "-"}
+              {(item?.type === "authorization" &&
+                item?.authorized === "Failed") ||
+              (item?.type === "payment" && item?.captured === "Failed") ? (
+                <Box sx={{ cursor: "pointer" }}>
+                  <ReplayIcon
+                    sx={{ color: Colors.ORANGE_COLOR, fontSize: "14px" }}
+                  />
+                </Box>
+              ) : null}
             </p>
           </div>
         );
