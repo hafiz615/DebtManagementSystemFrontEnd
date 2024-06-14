@@ -91,6 +91,7 @@ function HomeDetails() {
       <AccordionUsage
         index={index}
         totalPages={Math.ceil(totalData[data.key] / 5)}
+        totalData={totalData[data.key]}
         arrayName={data.key}
         currentPage={currentPage[data.key]}
         setCurrentPage={(page) => handlePageChange(data.key, page)}

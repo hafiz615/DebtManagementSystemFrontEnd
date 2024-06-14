@@ -27,6 +27,7 @@ export default function AccordionUsage({
   totalPages,
   currentPage,
   setCurrentPage,
+  totalData,
 }) {
   const [rows, setRows] = useState([]);
   useEffect(() => {
@@ -139,7 +140,7 @@ export default function AccordionUsage({
                   color: Colors.BLACK,
                 }}
               >
-                {rows?.length}
+                {totalData}
               </Typography>
             </Box>
             <Launch
