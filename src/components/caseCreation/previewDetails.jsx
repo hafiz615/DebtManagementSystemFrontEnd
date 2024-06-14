@@ -14,6 +14,7 @@ export default function PreviewDetails({
   totalReceivable,
   paidAmount,
   feePayment,
+  remainingAmount,
 }) {
   return (
     <Grid
@@ -40,6 +41,7 @@ export default function PreviewDetails({
           totalReceivable={totalReceivable}
           paidAmount={paidAmount}
           feePayment={feePayment}
+          remainingAmount={remainingAmount}
         />
       </Grid>
       <Grid item xs={12}>
@@ -56,6 +58,7 @@ export default function PreviewDetails({
           totalReceivable={totalReceivable}
           paidAmount={paidAmount}
           feePayment={feePayment}
+          remainingAmount={remainingAmount}
         />
       </Grid>
       <Grid item xs={12} sx={{ marginTop: "0.5rem" }}>
@@ -72,6 +75,7 @@ export default function PreviewDetails({
           totalReceivable={totalReceivable}
           paidAmount={paidAmount}
           feePayment={feePayment}
+          remainingAmount={remainingAmount}
         />
       </Grid>
     </Grid>

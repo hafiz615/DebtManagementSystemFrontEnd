@@ -27,7 +27,7 @@ import {
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import { isEmpty } from "lodash";
-import { hasAnyValue, checkContacts, formatPhoneNumber } from "../common";
+import { hasAnyValue, checkContacts } from "../common";
 
 const steps = ["File upload ", "Debtor", "Creditor", "Payment", "Preview"];
 
@@ -118,6 +118,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     businessCategory: "",
   });
   const [CreditorNotes, setCreditorNotes] = useState("");
+  const [securityKey, setSecurityKey] = useState("");
 
   const [fundedDate, setFundedDate] = useState("");
 
@@ -257,7 +258,8 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         creditorFieldsError?.creditorPhoneError ||
         Object.values(creditorBasicsInfo)?.some((value) => value === "") ||
         Object.values(creditorBusinessDetails)?.some((value) => value === "") ||
-        Object.values(historicRange).some((value) => value === ""))) ||
+        Object.values(historicRange).some((value) => value === "") ||
+        securityKey === "")) ||
     (activeStep === 3 &&
       (totalReceivable === null ||
         totalReceivable === "" ||
@@ -289,15 +291,25 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   };
   const handleUploadData = (response) => {
     setWalletId("");
+
     const parseString = (value) =>
       value ? String(value).replace(/-/g, "") : "";
 
     const phoneNumberFormat = (phoneNumber) => {
-      if (!phoneNumber?.startsWith("+1")) {
-        return "+1" + phoneNumber;
+      if (!phoneNumber) return "";
+
+      const cleanedPhoneNumber = phoneNumber.replace(/\D/g, ""); // Remove all non-numeric characters
+
+      if (cleanedPhoneNumber.length === 10) {
+        return "+1" + cleanedPhoneNumber;
+      } else if (cleanedPhoneNumber.length === 11) {
+        return "+" + cleanedPhoneNumber;
       }
-      return phoneNumber;
+      return phoneNumber.startsWith("+")
+        ? phoneNumber
+        : "+" + cleanedPhoneNumber;
     };
+
     setDebtorOwnDetails({
       BasicFullName: response?.debtor_info["Debtor's Name"] || "",
       BasicEmailAddress: response?.debtor_info["Debtor's Email address"] || "",
@@ -307,12 +319,11 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       BasicCity: response?.debtor_info["Debtor's City Name"] || "",
       BasicZipCode: response?.debtor_info["Debtor's Zip code"] || "",
       BasicPhoneNumber:
-        phoneNumberFormat(
-          formatPhoneNumber(response?.debtor_info["Debtor's Phone Number"])
-        ) || "",
+        phoneNumberFormat(response?.debtor_info["Debtor's Phone Number"]) || "",
       BasicAddress: response?.debtor_info["Debtor's Address"] || "",
       // BasicWeeklyBudget: response?.debtor_info["Debtor's Country Name"] || "",
     });
+
     // setStatus(debtorData?.basicInformation?.status);
     setDebtorBusinessDetails({
       businessCompanyName:
@@ -321,28 +332,28 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         response?.bussiness_info["Business EIN Number"] || ""
       ),
       businessCategory: response?.bussiness_info["Business Category"] || "",
-      // businessDescription:response?.bussiness_info["Business Legal Name"] || "",
+      // businessDescription: response?.bussiness_info["Business Legal Name"] || "",
       businessCountry: response?.bussiness_info["Business Country Name"] || "",
       businessState: response?.bussiness_info["Business State Name"] || "",
       businessCity: response?.bussiness_info["Business City Name"] || "",
       businessZipCode: response?.bussiness_info["Business Zip code"] || "",
       businessPhoneNumber:
-        phoneNumberFormat(
-          formatPhoneNumber(response?.bussiness_info["Business Phone Number"])
-        ) || "",
+        phoneNumberFormat(response?.bussiness_info["Business Phone Number"]) ||
+        "",
       businessAddress:
         response?.bussiness_info["Business Street Address"] || "",
     });
+
     setCreditorBasicsInfo({
       CreditorBasicFullName: response?.creditor_info["creditor's Name"] || "",
       CreditorBasicEmailAddress:
         response?.creditor_info["creditor's Email address"] || "",
       CreditorBasicPhoneNumber:
-        phoneNumberFormat(
-          formatPhoneNumber(response?.creditor_info["creditor's Phone Number"])
-        ) || "",
+        phoneNumberFormat(response?.creditor_info["creditor's Phone Number"]) ||
+        "",
     });
   };
+
   const handleSelect = (debtorData) => {
     setErrors({
       phone: "",
@@ -439,6 +450,8 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         creditorData?.businessInformation?.businessCategory || "",
     });
     setCreditorNotes(creditorData?.notes || "");
+    setSecurityKey(creditorData?.creditorSecurityKey || "");
+
     const formattedFundedDate = creditorData?.lastFundedDate
       ? new Date(creditorData.lastFundedDate).toISOString().split("T")[0]
       : "";
@@ -482,6 +495,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
 
   //Api call
   const handleNext = async () => {
+    window.scrollTo(0, 0);
     if (activeStep === 0) {
       setLoading(true);
       const UploadAiData = await UploadFilesAi(uploadedFiles);
@@ -558,6 +572,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               businessCategory: creditorBusinessDetails?.businessCategory,
             },
             notes: CreditorNotes,
+            creditorSecurityKey: securityKey,
             lastFundedDate: fundedDate,
             historicalRange: historicRange,
             contacts: creditorContacts,
@@ -626,6 +641,8 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           });
           setFundedDate("");
           setCreditorNotes("");
+          setSecurityKey("");
+
           setHistoricRange({
             minimum: "",
             maximum: "",
@@ -694,6 +711,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     }
   };
   const handleBack = () => {
+    window.scrollTo(0, 0);
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
@@ -843,6 +861,8 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               creditorBasicsInfo={creditorBasicsInfo}
               CreditorNotes={CreditorNotes}
               setCreditorNotes={setCreditorNotes}
+              securityKey={securityKey}
+              setSecurityKey={setSecurityKey}
               fundedDate={fundedDate}
               setFundedDate={setFundedDate}
               historicRange={historicRange}
@@ -893,6 +913,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               totalReceivable={totalReceivable}
               feePayment={feePayment}
               paidAmount={paidAmount}
+              remainingAmount={remainingAmount}
               status={status}
               fundedDate={fundedDate}
               CreditorNotes={CreditorNotes}

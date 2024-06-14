@@ -29,6 +29,9 @@ export default function PaymentSettlement({
     let multiplier;
 
     switch (timePeriod) {
+      case "Custom":
+        multiplier = 1;
+        break;
       case "Daily":
         multiplier = 1;
         break;
