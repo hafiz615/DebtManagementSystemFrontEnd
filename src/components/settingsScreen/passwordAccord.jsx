@@ -104,6 +104,7 @@ export default function PasswordAccordion() {
               Current Password
             </Typography>
             <PasswordField
+              label="Current Password"
               password={currentPassword}
               setPassword={setCurrentPassword}
             />
@@ -125,6 +126,7 @@ export default function PasswordAccordion() {
               New Password
             </Typography>
             <PasswordField
+              label="New Password"
               password={newPassword}
               setPassword={setNewPassword}
               helperText={passwordStrengthError}
@@ -148,6 +150,7 @@ export default function PasswordAccordion() {
               Confirm Password
             </Typography>
             <PasswordField
+              label="Verify Password"
               password={verifyPassword}
               setPassword={setVerifyPassword}
               helperText={passwordMatchError}
