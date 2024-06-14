@@ -28,11 +28,13 @@ function DashboardContent() {
     dashBoard();
   }, []);
 
-  const countData = dashboardData?.statusCounts?.map((item, i) => ({
-    id: i,
-    value: item?.count,
-    label: item?.label,
-  }));
+  const countData = dashboardData?.statusCounts
+    ?.filter((item) => item?.count > 0)
+    ?.map((item, i) => ({
+      id: i,
+      value: item?.count,
+      label: item?.label,
+    }));
   const processedData = dashboardData?.casesByDate?.map((item) => ({
     date: item?.date,
     value: item?.count,
@@ -354,6 +356,17 @@ function DashboardContent() {
                   {!isEmpty(countData) ? (
                     <PieChart
                       sx={{ width: "100%" }}
+                      slotProps={{
+                        legend: {
+                          direction: "column",
+                          itemGap: 6,
+                          padding: 40,
+                          labelStyle: {
+                            fontSize: "14px",
+                            fontFamily: "Nunito",
+                          },
+                        },
+                      }}
                       series={[
                         {
                           data: countData,
@@ -363,10 +376,7 @@ function DashboardContent() {
                           },
                         },
                       ]}
-                      margin={{ top: 10, bottom: 40, left: 10, right: 10 }}
-                      slotProps={{
-                        legend: { hidden: true },
-                      }}
+                      margin={{ top: 10, bottom: 40, left: 0, right: 150 }}
                       height={250}
                     />
                   ) : (
