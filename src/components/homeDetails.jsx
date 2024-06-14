@@ -37,8 +37,8 @@ function HomeDetails() {
       heading: "Successful Authorizations",
       number: "4",
     },
-    { key: "upcomingPayments", heading: "Upcoming Payments", number: "4" },
     { key: "successPayments", heading: "Successful Payments", number: "4" },
+    { key: "upcomingPayments", heading: "Upcoming Payments", number: "4" },
   ];
 
   const menuItems = [
@@ -101,6 +101,12 @@ function HomeDetails() {
           data.heading !== "Upcoming Payments" &&
           data.heading !== "Successful Payments" &&
           data.heading !== "Successful Authorizations"
+        }
+        showDueDate={
+          data.heading !== "Successful Payments" &&
+          data.heading !== "Successful Authorizations" &&
+          data.heading !== "Failed Payments" &&
+          data.heading !== "Failed Authorizations"
         }
       />
     </Grid>

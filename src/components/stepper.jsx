@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import { Grid } from "@mui/material";
 import Stepper from "@mui/material/Stepper";
@@ -39,7 +40,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   const [completedSteps, setCompletedSteps] = useState(new Set());
   const [filteredArray, setFilteredArray] = useState([]);
 
-  const { AUTHORITY_TEXT, AUTHORITY_VALUE, DEBTOR_HEADING } = DebtorDetailsPage;
+  const { AUTHORITY_TEXT, DEBTOR_HEADING } = DebtorDetailsPage;
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const debtorBasicInfo = caseData?.debtor?.basicInformation;
   const debtorBusinessInfo = caseData?.debtor?.businessInformation;
@@ -166,6 +167,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   //calculation
   const [totalAmount, setTotalAmount] = useState();
   const [walletId, setWalletId] = useState("");
+  const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
 
   useEffect(() => {
     if (
@@ -291,8 +293,8 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       value ? String(value).replace(/-/g, "") : "";
 
     const phoneNumberFormat = (phoneNumber) => {
-      if (!phoneNumber?.startsWith("+")) {
-        return "+" + phoneNumber;
+      if (!phoneNumber?.startsWith("+1")) {
+        return "+1" + phoneNumber;
       }
       return phoneNumber;
     };
@@ -729,7 +731,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               color: Colors.DARK_GRAY,
             }}
           >
-            {AUTHORITY_TEXT} <span>{AUTHORITY_VALUE}</span>
+            {AUTHORITY_TEXT} <span>{role}</span>
           </Typography>
         </Grid>
       )}
