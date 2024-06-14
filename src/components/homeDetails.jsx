@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-
 import { Grid, Typography, CircularProgress } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-
 import { Colors } from "../config/default";
 import { HomePageDetails } from "../constants/appConstants";
 import AccordionUsage from "./accordion";
 import Dropdown from "./dropdown";
 import { GetHomePayments } from "../services/services";
 import { get_payments } from "../redux/action/action";
-// import SelectMenu from "./select";
 
 function HomeDetails() {
   const dispatch = useDispatch();
@@ -18,75 +15,101 @@ function HomeDetails() {
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const [homeData, setHomeData] = useState({});
   const [loading, setLoading] = useState(false);
-  const [totalData, setTotalData] = useState();
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(totalData / 5);
+  const [totalData, setTotalData] = useState({});
+  const [selectedValue, setSelectedValue] = useState(3);
+  const [currentPage, setCurrentPage] = useState({
+    failedAuthorizations: 1,
+    failedPayments: 1,
+    successAuthorizations: 1,
+    upcomingPayments: 1,
+    successPayments: 1,
+  });
 
-  const accordionData = {
-    group1: [
-      {
-        tableHeading: "Failed Authorizations",
-        paymentNumber: "5",
-        rowData: homeData?.failedAuthorizations,
-      },
-      {
-        tableHeading: "Successful Authorizations",
-        paymentNumber: "4",
-        rowData: homeData?.successAuthorizations,
-      },
-      {
-        tableHeading: "Upcoming Payments",
-        paymentNumber: "4",
-        rowData: homeData?.upcomingPayments,
-      },
-    ],
-    group2: [
-      {
-        tableHeading: "Failed Payments",
-        paymentNumber: "5",
-        rowData: homeData?.failedPayments,
-      },
-      {
-        tableHeading: "Successful Payments",
-        paymentNumber: "4",
-        rowData: homeData?.successPayments,
-      },
-    ],
-  };
+  const accordionData = [
+    {
+      key: "failedAuthorizations",
+      heading: "Failed Authorizations",
+      number: "5",
+    },
+    { key: "failedPayments", heading: "Failed Payments", number: "5" },
+    {
+      key: "successAuthorizations",
+      heading: "Successful Authorizations",
+      number: "4",
+    },
+    { key: "successPayments", heading: "Successful Payments", number: "4" },
+    { key: "upcomingPayments", heading: "Upcoming Payments", number: "4" },
+  ];
 
   const menuItems = [
     { label: "3", value: 3 },
     { label: "5", value: 5 },
     { label: "7", value: 7 },
   ];
-  const [selectedValue, setSelectedValue] = useState(3);
+
   const { AUTHORITY_TEXT, HOME_HEADING, VIEW_DAYS, DAYS_TEXT } =
     HomePageDetails;
-  const getHomeData = async () => {
+
+  const getHomeData = async (key, pageNumber, isInitialLoad = false) => {
     if (selectedValue) {
-      setLoading(true);
-      const page = currentPage;
-      const arrayName = "default";
-      const result = await GetHomePayments(selectedValue, page, arrayName);
+      if (isInitialLoad) {
+        setLoading(true);
+      }
+
+      const result = await GetHomePayments(selectedValue, pageNumber, key);
       if (result?.status === 200) {
-        setTotalData(result?.data?.data?.counts);
-        setHomeData(result?.data?.data);
+        setTotalData((prev) => ({
+          ...prev,
+          [key]: result?.data?.data?.counts[key],
+        }));
+        setHomeData((prev) => ({
+          ...prev,
+          [key]: result?.data?.data?.payments[key],
+        }));
         dispatch(get_payments(result?.data?.data));
       }
+
+      if (isInitialLoad) {
+        setLoading(false);
+      }
     }
-    setLoading(false);
   };
+
   useEffect(() => {
-    getHomeData();
+    accordionData.forEach((data) => {
+      getHomeData(data.key, currentPage[data.key], true);
+    });
   }, [selectedValue]);
+
+  const handlePageChange = (key, page) => {
+    setCurrentPage((prev) => ({ ...prev, [key]: page }));
+    getHomeData(key, page);
+  };
+
+  const renderAccordion = (data, index) => (
+    <Grid item xs={12} lg={6} sx={{ marginBottom: "0.5rem" }} key={data.key}>
+      <AccordionUsage
+        index={index}
+        totalPages={Math.ceil(totalData[data.key] / 5)}
+        arrayName={data.key}
+        currentPage={currentPage[data.key]}
+        setCurrentPage={(page) => handlePageChange(data.key, page)}
+        tableHeading={data.heading}
+        paymentNumber={data.number}
+        rowArray={homeData[data.key]}
+        showFailureReason={
+          data.heading !== "Upcoming Payments" &&
+          data.heading !== "Successful Payments" &&
+          data.heading !== "Successful Authorizations"
+        }
+      />
+    </Grid>
+  );
+
   return (
     <Grid
       container
-      sx={{
-        backgroundColor: Colors.BG_LIGHT_GRAY,
-        paddingLeft: "2rem",
-        paddingRight: "2rem",
-      }}
+      sx={{ backgroundColor: Colors.BG_LIGHT_GRAY, padding: "2rem" }}
     >
       <Grid
         item
@@ -107,13 +130,7 @@ function HomeDetails() {
           {AUTHORITY_TEXT} <span>{role}</span>
         </Typography>
       </Grid>
-      <Grid
-        item
-        xs={12}
-        sx={{
-          marginTop: "1.5rem",
-        }}
-      >
+      <Grid item xs={12} sx={{ marginTop: "1.5rem" }}>
         <Typography
           sx={{
             fontWeight: "600",
@@ -140,7 +157,6 @@ function HomeDetails() {
             fontFamily: "Nunito",
             display: "flex",
             alignItems: "center",
-            justifyContent: smallScreen ? "flex-start" : "center",
             color: Colors.BLACK,
           }}
         >
@@ -153,25 +169,14 @@ function HomeDetails() {
             selectedValue={selectedValue}
             setSelectedValue={setSelectedValue}
           />
-          {/* <SelectMenu
-            menuWidth="4rem"
-            menuItems={menuItems}
-            defaultSelectedItem={3}
-            backgroundColor={Colors.WHITE}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-          /> */}
           <span style={{ marginLeft: ".5rem" }}>{DAYS_TEXT}</span>
         </Typography>
       </Grid>
-
       <Grid
         container
         item
         xs={12}
-        sx={{
-          marginTop: "1rem",
-        }}
+        sx={{ marginTop: "1rem" }}
         spacing={smallScreen ? 0 : 2}
       >
         {loading ? (
@@ -188,44 +193,7 @@ function HomeDetails() {
             <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
           </Grid>
         ) : (
-          <>
-            <Grid item xs={12} lg={6}>
-              {accordionData?.group1?.map((data, index) => (
-                <Grid item xs={12} key={index} sx={{ marginBottom: "0.5rem" }}>
-                  <AccordionUsage
-                    totalPages={totalPages}
-                    currentPage={currentPage}
-                    setCurrentPage={setCurrentPage}
-                    tableHeading={data?.tableHeading}
-                    paymentNumber={data?.paymentNumber}
-                    index={index}
-                    rowArray={data?.rowData}
-                    showFailureReason={
-                      data?.tableHeading !== "Upcoming Payments"
-                    }
-                  />
-                </Grid>
-              ))}
-            </Grid>
-            <Grid item xs={12} lg={6}>
-              {accordionData?.group2?.map((data, index) => (
-                <Grid item xs={12} key={index} sx={{ marginBottom: "0.5rem" }}>
-                  <AccordionUsage
-                    totalPages={totalPages}
-                    currentPage={currentPage}
-                    setCurrentPage={setCurrentPage}
-                    tableHeading={data?.tableHeading}
-                    paymentNumber={data?.paymentNumber}
-                    index={index}
-                    rowArray={data?.rowData}
-                    showFailureReason={
-                      data?.tableHeading !== "Upcoming Payments"
-                    }
-                  />
-                </Grid>
-              ))}
-            </Grid>
-          </>
+          accordionData.map(renderAccordion)
         )}
       </Grid>
     </Grid>

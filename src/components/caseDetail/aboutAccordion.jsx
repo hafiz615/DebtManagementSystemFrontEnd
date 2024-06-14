@@ -11,6 +11,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
+import { formatDollarAmount } from "../../common";
 
 export default function AboutAccordion({ caseDetails, GetCaseDetails }) {
   const aboutData = [
@@ -27,9 +28,18 @@ export default function AboutAccordion({ caseDetails, GetCaseDetails }) {
     },
     { name: "Negotiator", value: caseDetails?.negotiator || "-" },
     { name: "Manager", value: caseDetails?.manager || "-" },
-    { name: "Total Debt", value: caseDetails?.totalDebt || "-" },
-    { name: "Remaining Debt", value: caseDetails?.remaining || "-" },
-    { name: "Paid Debt", value: caseDetails?.paidAmount || "-" },
+    {
+      name: "Total Debt",
+      value: formatDollarAmount(caseDetails?.totalDebt) || "-",
+    },
+    {
+      name: "Remaining Debt",
+      value: formatDollarAmount(caseDetails?.remaining) || "-",
+    },
+    {
+      name: "Paid Debt",
+      value: formatDollarAmount(caseDetails?.paidAmount) || "-",
+    }
   ];
   return (
     <Accordion
