@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import { Grid } from "@mui/material";
 import Stepper from "@mui/material/Stepper";
@@ -166,6 +167,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   //calculation
   const [totalAmount, setTotalAmount] = useState();
   const [walletId, setWalletId] = useState("");
+  const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
 
   useEffect(() => {
     if (
@@ -729,7 +731,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               color: Colors.DARK_GRAY,
             }}
           >
-            {AUTHORITY_TEXT} <span>{AUTHORITY_VALUE}</span>
+            {AUTHORITY_TEXT} <span>{role}</span>
           </Typography>
         </Grid>
       )}
