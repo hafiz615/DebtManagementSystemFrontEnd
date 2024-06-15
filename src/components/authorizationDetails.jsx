@@ -10,7 +10,7 @@ import PaymentsTabs from "./paymentsTabs";
 export default function AuthorizationDetails() {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
-  const { AUTHORITY_TEXT, AUTHORITY_VALUE } = UserListPage;
+  const { AUTHORITY_TEXT } = UserListPage;
   return (
     <Grid
       container
