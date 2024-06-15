@@ -19,6 +19,8 @@ export default function CreditorFields({
   setCreditorContactDetails,
   CreditorNotes,
   setCreditorNotes,
+  securityKey,
+  setSecurityKey,
   fundedDate,
   setFundedDate,
   historicRange,
@@ -77,6 +79,9 @@ export default function CreditorFields({
   };
   const notesInputChange = (value) => {
     setCreditorNotes(value);
+  };
+  const securityKeyInputChange = (value) => {
+    setSecurityKey(value);
   };
   const fundedInputChange = (value) => {
     setFundedDate(value);
@@ -179,7 +184,7 @@ export default function CreditorFields({
           marginTop: { xs: ".5rem", xl: "0rem" },
           backgroundColor: Colors.WHITE,
           padding: "1rem",
-          height: { xl: "350px", xs: "600px" },
+          height: { xl: "420px", xs: "max-content" },
         }}
       >
         <Typography
@@ -289,6 +294,32 @@ export default function CreditorFields({
             width: "97%",
           }}
         />
+        <Typography
+          sx={{
+            fontFamily: "Nunito",
+            fontWeight: "600",
+            marginTop: "0.8rem",
+          }}
+          gutterBottom
+        >
+          Security Key*
+        </Typography>
+        <input
+          type="text"
+          placeholder="Enter Security Key"
+          value={securityKey}
+          onChange={(e) => securityKeyInputChange(e.target.value)}
+          style={{
+            backgroundColor: Colors.BG_LIGHT_GRAY,
+            height: "2.5rem",
+            color: Colors.DIM_LIGHT_GRAY,
+            paddingLeft: "1rem",
+            border: "none",
+            outline: "none",
+            borderRadius: "5px",
+            width: "97%",
+          }}
+        />
       </Grid>
 
       <Grid
@@ -300,7 +331,7 @@ export default function CreditorFields({
           marginTop: { xs: ".5rem", xl: "0rem" },
           backgroundColor: Colors.WHITE,
           padding: "1rem",
-          height: "350px",
+          height: "420px",
         }}
       >
         <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
