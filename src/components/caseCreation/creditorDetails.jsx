@@ -16,6 +16,8 @@ export default function CreditorDetails({
   setCreditorContactDetails,
   CreditorNotes,
   setCreditorNotes,
+  securityKey,
+  setSecurityKey,
   fundedDate,
   setFundedDate,
   historicRange,
@@ -90,6 +92,8 @@ export default function CreditorDetails({
             creditorBasicsInfo={creditorBasicsInfo}
             CreditorNotes={CreditorNotes}
             setCreditorNotes={setCreditorNotes}
+            securityKey={securityKey}
+            setSecurityKey={setSecurityKey}
             fundedDate={fundedDate}
             setFundedDate={setFundedDate}
             historicRange={historicRange}

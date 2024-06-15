@@ -25,6 +25,10 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
   const [caseOwner, setCaseOwner] = useState(data?.caseOwner || "");
   const [manager, setManager] = useState(data?.manager || "");
   const [negotiator, setNegotiator] = useState(data?.negotiator || "");
+  const [managerId, setManagerId] = useState(data?.managerId || "");
+  const [negotiatorId, setNegotiatorId] = useState(data?.negotiatorId || "");
+  const [caseOwnerId, setCaseOwnerId] = useState(data?.caseOwnerId || "");
+
   const { showToast } = useToast();
 
   const GetUsers = async () => {
@@ -36,11 +40,14 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
         return data?.map((item) => ({
           label: item?.name,
           value: item?.name,
+          id: item?._id,
         }));
       };
+
       const transformedArray = isEmpty(users?.data?.data?.users)
         ? []
         : transformArray(users?.data?.data?.users);
+
       setUserArray(transformedArray);
     }
     setLoading(false);
@@ -56,9 +63,9 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
       manager: manager,
       negotiator: negotiator,
 
-      caseOwnerId: data?.caseOwnerId || "",
-      negotiatorId: data?.negotiatorId || "",
-      managerId: data?.managerId || "",
+      caseOwnerId: caseOwnerId,
+      negotiatorId: negotiatorId,
+      managerId: managerId,
     };
     const res = await UpdateCaseAbout(params, id);
     if (res?.status === 200) {
@@ -166,6 +173,8 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
                   width="100%"
                   selectedValue={caseOwner}
                   setSelectedValue={setCaseOwner}
+                  show="editAbout"
+                  setId={setCaseOwnerId}
                 />
               </Grid>
             </Grid>
@@ -196,6 +205,8 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
                   width="100%"
                   selectedValue={negotiator}
                   setSelectedValue={setNegotiator}
+                  show="editAbout"
+                  setId={setNegotiatorId}
                 />
               </Grid>
               <Grid item xs={12} md={5.5}>
@@ -219,6 +230,8 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
                   width="100%"
                   selectedValue={manager}
                   setSelectedValue={setManager}
+                  show="editAbout"
+                  setId={setManagerId}
                 />
               </Grid>
             </Grid>

@@ -9,7 +9,13 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import FormHelperText from "@mui/material/FormHelperText";
 
-export default function PasswordField({ password, setPassword, helperText, error }) {
+export default function PasswordField({
+  password,
+  setPassword,
+  helperText,
+  error,
+  label,
+}) {
   const [showPassword, setShowPassword] = React.useState(false);
 
   const handleChange = (event) => {
@@ -25,8 +31,12 @@ export default function PasswordField({ password, setPassword, helperText, error
   return (
     <Box sx={{ display: "flex", flexWrap: "wrap" }}>
       <div>
-        <FormControl sx={{ m: 1, width: "25ch" }} variant="filled" error={error}>
-          <InputLabel htmlFor="filled-adornment-password">*********</InputLabel>
+        <FormControl
+          sx={{ m: 1, width: "25ch" }}
+          variant="filled"
+          error={error}
+        >
+          <InputLabel htmlFor="filled-adornment-password">{label}</InputLabel>
           <FilledInput
             id="filled-adornment-password"
             type={showPassword ? "text" : "password"}
