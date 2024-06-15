@@ -66,7 +66,7 @@ function HomeDetails() {
           ...prev,
           [key]: result?.data?.data?.payments[key],
         }));
-        dispatch(get_payments(result?.data?.data));
+        dispatch(get_payments(result?.data?.data?.payments));
       }
 
       if (isInitialLoad) {
