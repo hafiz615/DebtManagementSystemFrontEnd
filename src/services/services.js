@@ -148,7 +148,7 @@ export const UploadFilesAi = async (data) => {
   }
   try {
     return await axios.post(
-      "http://103.31.104.196:4405/extract-fields",
+      "https://dms-ai.hpdemos.co/extract-fields",
       formData
     );
   } catch (error) {
