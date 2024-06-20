@@ -15,6 +15,7 @@ export default function CustomTextField({
   onKeyDown,
   max,
   disabled,
+  paddingLeft,
 }) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
 
@@ -46,7 +47,7 @@ export default function CustomTextField({
           backgroundColor: Colors.BG_LIGHT_GRAY,
           height: "2.5rem",
           color: Colors.DIM_LIGHT_GRAY,
-          paddingLeft: "1rem",
+          paddingLeft: paddingLeft || "1rem",
           border: "none",
           outline: "none",
           borderRadius: "5px",
