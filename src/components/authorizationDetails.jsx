@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
 import { Grid, Typography } from "@mui/material";
@@ -7,10 +7,16 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { UserListPage } from "../constants/appConstants";
 import { Colors } from "../config/default";
 import PaymentsTabs from "./paymentsTabs";
+import SearchBar from "./searchBar";
 export default function AuthorizationDetails() {
+  const [searchText, setSearchText] = useState("");
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { AUTHORITY_TEXT } = UserListPage;
+
+  const handleKeyPress = (e) => {
+    setSearchText(e.target.value);
+  };
   return (
     <Grid
       container
@@ -43,7 +49,9 @@ export default function AuthorizationDetails() {
         item
         xs={12}
         sx={{
+          display: "flex",
           marginTop: "1.5rem",
+          justifyContent: "space-between",
         }}
       >
         <Typography
@@ -56,6 +64,12 @@ export default function AuthorizationDetails() {
         >
           Payments Authorization
         </Typography>
+        <SearchBar
+          searchCheck={true}
+          searchingText={searchText}
+          handleKeyPress={handleKeyPress}
+          placeholder="Search..."
+        />
       </Grid>
       <Grid
         item

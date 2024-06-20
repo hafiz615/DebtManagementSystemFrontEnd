@@ -376,6 +376,7 @@ export default function ClientList() {
                   outline: "none",
                   fontSize: "14px",
                   fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
                 }}
                 placeholder="Min"
                 type="number"
@@ -395,6 +396,7 @@ export default function ClientList() {
                   outline: "none",
                   fontSize: "14px",
                   fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
                 }}
                 type="number"
                 placeholder="Max"
@@ -422,6 +424,7 @@ export default function ClientList() {
                   outline: "none",
                   fontSize: "14px",
                   fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
                 }}
                 value={totalCasesMin}
                 type="number"
@@ -441,6 +444,7 @@ export default function ClientList() {
                   outline: "none",
                   fontSize: "14px",
                   fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
                 }}
                 type="number"
                 placeholder="Max"
@@ -469,6 +473,7 @@ export default function ClientList() {
                   outline: "none",
                   fontSize: "14px",
                   fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
                 }}
                 type="number"
                 placeholder="Min"
@@ -488,6 +493,7 @@ export default function ClientList() {
                   outline: "none",
                   fontSize: "14px",
                   fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
                 }}
                 type="number"
                 placeholder="Max"

@@ -134,7 +134,7 @@ export default function ClientListDetails() {
       upcomingPaymentDateMax !== null &&
       upcomingPaymentDateMax !== ""
     ) {
-      filter.lastPaymentDate = {
+      filter.upcomingPaymentDate = {
         start: formatDate(upcomingPaymentDateMin),
         end: formatDate(upcomingPaymentDateMax),
       };
@@ -158,7 +158,7 @@ export default function ClientListDetails() {
       upcomingPaymentMin,
       upcomingPaymentMax,
       lastPaymentDateMin,
-      lastPaymentDateMin,
+      lastPaymentDateMax,
       upcomingPaymentDateMin,
       upcomingPaymentDateMax
     );
@@ -741,6 +741,7 @@ export default function ClientListDetails() {
                   outline: "none",
                   fontSize: "14px",
                   fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
                 }}
                 placeholder="Min"
                 type="number"
@@ -760,6 +761,7 @@ export default function ClientListDetails() {
                   outline: "none",
                   fontSize: "14px",
                   fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
                 }}
                 type="number"
                 placeholder="Max"
@@ -787,6 +789,7 @@ export default function ClientListDetails() {
                   outline: "none",
                   fontSize: "14px",
                   fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
                 }}
                 value={lastPaymentMin}
                 type="number"
@@ -806,6 +809,7 @@ export default function ClientListDetails() {
                   outline: "none",
                   fontSize: "14px",
                   fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
                 }}
                 type="number"
                 placeholder="Max"
@@ -858,6 +862,7 @@ export default function ClientListDetails() {
                   outline: "none",
                   fontSize: "14px",
                   fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
                 }}
                 type="number"
                 placeholder="Min"
@@ -877,6 +882,7 @@ export default function ClientListDetails() {
                   outline: "none",
                   fontSize: "14px",
                   fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
                 }}
                 type="number"
                 placeholder="Max"
@@ -929,6 +935,7 @@ export default function ClientListDetails() {
                   outline: "none",
                   fontSize: "14px",
                   fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
                 }}
                 type="number"
                 placeholder="Min"
@@ -948,6 +955,7 @@ export default function ClientListDetails() {
                   outline: "none",
                   fontSize: "14px",
                   fontFamily: "Nunito",
+                  color: Colors.DIM_LIGHT_GRAY,
                 }}
                 type="number"
                 placeholder="Max"
