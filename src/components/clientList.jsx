@@ -340,12 +340,17 @@ export default function ClientList() {
             onClose={handleClose}
             transformOrigin={{ horizontal: "right", vertical: "top" }}
             anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+            sx={{
+              "& .MuiPaper-root": {
+                borderRadius: "12px",
+              },
+            }}
           >
-            <Grid sx={{ padding: ".5rem .75rem", width: "12rem" }}>
+            <Grid sx={{ padding: ".5rem .75rem", width: "16rem" }}>
               <Typography
                 sx={{
                   fontFamily: "Nunito",
-                  fontSize: "14px",
+                  fontSize: "16px",
                   fontWeight: "600",
                 }}
               >
@@ -499,7 +504,7 @@ export default function ClientList() {
               >
                 <TextButton
                   buttonText="Clear"
-                  height="1.5rem"
+                  height="2rem"
                   width="45%"
                   marginRight="10%"
                   fontColor={Colors.BLACK}
@@ -509,8 +514,8 @@ export default function ClientList() {
                   hoverColor={Colors.BG_LIGHT_GRAY}
                 />
                 <TextButton
-                  buttonText="Apply"
-                  height="1.5rem"
+                  buttonText="Filter"
+                  height="2rem"
                   width="45%"
                   fontColor={Colors.BLACK}
                   onClick={handleSave}
