@@ -2,8 +2,9 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import { Grid, Typography } from "@mui/material";
+import { Grid, Typography, IconButton, Menu } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
+import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
 
 import { Colors } from "../config/default";
 import SearchBar from "./searchBar";
@@ -15,11 +16,12 @@ function CaseHistory({
   searchText,
   data,
   userRole,
-  clearSearchFromApi,
   handleKeyPress,
   totalPages,
   currentPage,
   setCurrentPage,
+  open,
+  handleClick,
 }) {
   const [rows, setRows] = useState([]);
   const navigate = useNavigate();
@@ -64,42 +66,57 @@ function CaseHistory({
 
   return (
     <>
-      <Grid
-        item
-        xs={12}
-        sx={{
-          marginTop: "1.5rem",
-          display: "flex",
-          justifyContent: "space-between",
-        }}
-      >
-        <Typography
+      <Grid container sx={{ alignItems: "center" }}>
+        <Grid
+          item
+          xs={11.5}
           sx={{
-            paddingLeft: "0.8rem",
-            paddingRight: "0.8rem",
-            bgcolor: Colors.WHITE,
-            width: "max-content",
-            borderTopLeftRadius: "10px",
-            borderTopRightRadius: "10px",
-            fontWeight: "600",
-            fontSize: 14,
-            fontFamily: "Nunito",
-            marginLeft: "2.5rem",
-            height: "3.5rem",
+            marginTop: "1.5rem",
             display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            justifyContent: "space-between",
           }}
         >
-          Case History
-        </Typography>
-        <SearchBar
-          searchCheck={true}
-          searchingText={searchText}
-          handleKeyPress={handleKeyPress}
-          placeholder="Search Creditor..."
-          clearSearchFromApi={clearSearchFromApi}
-        />
+          <Typography
+            sx={{
+              paddingLeft: "0.8rem",
+              paddingRight: "0.8rem",
+              bgcolor: Colors.WHITE,
+              width: "max-content",
+              borderTopLeftRadius: "10px",
+              borderTopRightRadius: "10px",
+              fontWeight: "600",
+              fontSize: 14,
+              fontFamily: "Nunito",
+              marginLeft: "2.5rem",
+              height: "3.5rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            Case History
+          </Typography>
+          <SearchBar
+            searchCheck={true}
+            searchingText={searchText}
+            handleKeyPress={handleKeyPress}
+            placeholder="Search Creditor..."
+          />
+        </Grid>
+        <Grid item xs={0.5}>
+          <IconButton
+            id="demo-positioned-button"
+            aria-controls={open ? "demo-positioned-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={handleClick}
+            sx={{ mt: "15px" }}
+          >
+            <FilterListOutlinedIcon
+              sx={{ color: Colors.DARK_GRAY, fontSize: "30px" }}
+            />
+          </IconButton>
+        </Grid>
       </Grid>
 
       <Grid

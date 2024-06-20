@@ -21,22 +21,25 @@ export default function AuthorizationDetails() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchActive, setSearchActive] = useState(false);
   const [filterActive, setFilterActive] = useState(false);
-
+  const [saveState, setSaveState] = useState(false);
   const [totalDebtMin, setTotalDebtMin] = useState("");
   const [totalDebtMax, setTotalDebtMax] = useState("");
-
   const [tryDateMin, setTryDateMin] = useState("");
   const [tryDateMax, setTryDateMax] = useState("");
-
   const [dueDateMin, setDueDateMin] = useState("");
   const [dueDateMax, setDueDateMax] = useState("");
-
   const [applyDisabled, setApplyDisabled] = useState(true);
-  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { AUTHORITY_TEXT } = UserListPage;
+
+  const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    return date.toISOString().split(".")[0] + ".000Z";
+  };
 
   const createFilterObject = (
     totalDebtMin,
@@ -65,8 +68,8 @@ export default function AuthorizationDetails() {
       tryDateMax !== ""
     ) {
       filter.tryDate = {
-        min: parseInt(tryDateMin),
-        max: parseInt(tryDateMax),
+        start: formatDate(tryDateMin),
+        end: formatDate(tryDateMax),
       };
     }
     if (
@@ -76,8 +79,8 @@ export default function AuthorizationDetails() {
       dueDateMax !== ""
     ) {
       filter.dueDate = {
-        min: parseInt(dueDateMin),
-        max: parseInt(dueDateMax),
+        start: formatDate(dueDateMin),
+        end: formatDate(dueDateMax),
       };
     }
     return filter;
@@ -109,6 +112,8 @@ export default function AuthorizationDetails() {
 
   const handleSave = () => {
     handleClose();
+    setSaveState(!saveState);
+
     setFilterActive(true);
   };
 
@@ -198,7 +203,6 @@ export default function AuthorizationDetails() {
   };
 
   useEffect(() => {
-    getHomeData();
     if (searchText) {
       setSearchActive(true);
       getHomeData(searchActive, filterActive);
@@ -207,12 +211,13 @@ export default function AuthorizationDetails() {
     } else if (!searchText && !filterActive) {
       getHomeData(false, false);
     }
-  }, [currentPage, searchText, filterActive, searchActive]);
+  }, [currentPage, searchText, saveState, filterActive, searchActive]);
 
   useEffect(() => {
     setCurrentPage(1);
     handleClear();
-    getHomeData();
+    setSearchText("");
+    getHomeData(false, false);
   }, [value]);
 
   const totalPages = Math.ceil(totalData / 5);

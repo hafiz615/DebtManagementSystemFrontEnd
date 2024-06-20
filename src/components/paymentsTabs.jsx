@@ -46,14 +46,11 @@ export default function PaymentsTabs({
   setCurrentPage,
   totalPages,
 }) {
-  const headers = [
-    "Name",
-    "Due Date",
-    "Try Date",
-    "Total Debt",
-    "SSN",
-    "Case Owner",
-  ];
+  const headers = ["Name", "Try Date", "Total Debt", "SSN", "Case Owner"];
+
+  if (value === 4) {
+    headers.push("Due Date");
+  }
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -178,6 +175,7 @@ export default function PaymentsTabs({
             setCurrentPage={setCurrentPage}
             totalPages={totalPages}
             apiPagination={true}
+            value={value}
           />
         )}
       </Box>

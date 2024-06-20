@@ -110,7 +110,7 @@ function SearchBar({
         placeholder={placeholder}
         inputProps={{ "aria-label": "search" }}
         sx={{ color: Colors.LIGHT_GRAY, fontFamily: "Nunito" }}
-        value={searchText}
+        value={searchCheck ? searchingText : searchText}
         onChange={(e) =>
           onChange
             ? onChange(e.target.value)
