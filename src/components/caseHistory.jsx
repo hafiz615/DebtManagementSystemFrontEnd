@@ -10,7 +10,6 @@ import { Colors } from "../config/default";
 import SearchBar from "./searchBar";
 import ListTable from "./listTable";
 import { formatDollarAmount } from "../common";
-import TextButton from "./button";
 
 function CaseHistory({
   tableLoading,
