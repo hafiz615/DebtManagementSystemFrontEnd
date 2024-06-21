@@ -15,7 +15,14 @@ import { Colors } from "../config/default";
 // import DataTable from "./table";
 import ListTable from "./listTable";
 
-const headers = ["Name", "Due Date", "Amount", "SSN", "Failure Reason"];
+const headers = [
+  "Name",
+  "Due Date",
+  "Amount",
+  "SSN",
+  "Failure Reason",
+  "Re Try",
+];
 
 export default function AccordionUsage({
   tableHeading,

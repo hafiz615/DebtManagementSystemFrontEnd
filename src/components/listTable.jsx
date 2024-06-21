@@ -124,6 +124,7 @@ export default function ListTable({
                   ?.filter(
                     (header) =>
                       (showFailureReason || header !== "Failure Reason") &&
+                      (showFailureReason || header !== "Re Try") &&
                       (showDueDate || header !== "Due Date")
                   )
                   ?.map((header, index) => (

@@ -8,6 +8,7 @@ import AccordionUsage from "./accordion";
 import Dropdown from "./dropdown";
 import { GetHomePayments } from "../services/services";
 import { get_payments } from "../redux/action/action";
+// import SelectMenu from "./select";
 
 function HomeDetails() {
   const dispatch = useDispatch();
@@ -77,7 +78,7 @@ function HomeDetails() {
 
   useEffect(() => {
     accordionData.forEach((data) => {
-      getHomeData(data.key, currentPage[data.key], true);
+      getHomeData(data?.key, currentPage[data?.key], true);
     });
   }, [selectedValue]);
 
@@ -90,24 +91,25 @@ function HomeDetails() {
     <Grid item xs={12} lg={6} sx={{ marginBottom: "0.5rem" }} key={data.key}>
       <AccordionUsage
         index={index}
-        totalPages={Math.ceil(totalData[data.key] / 5)}
-        totalData={totalData[data.key]}
-        arrayName={data.key}
-        currentPage={currentPage[data.key]}
-        setCurrentPage={(page) => handlePageChange(data.key, page)}
-        tableHeading={data.heading}
-        paymentNumber={data.number}
-        rowArray={homeData[data.key]}
+        totalPages={Math.ceil(totalData[data?.key] / 5)}
+        totalData={totalData[data?.key]}
+        arrayName={data?.key}
+        currentPage={currentPage[data?.key]}
+        setCurrentPage={(page) => handlePageChange(data?.key, page)}
+        tableHeading={data?.heading}
+        paymentNumber={data?.number}
+        rowArray={homeData[data?.key]}
         showFailureReason={
-          data.heading !== "Upcoming Payments" &&
-          data.heading !== "Successful Payments" &&
-          data.heading !== "Successful Authorizations"
+          data?.heading !== "Upcoming Payments" &&
+          data?.heading !== "Successful Payments" &&
+          data?.heading !== "Re Try" &&
+          data?.heading !== "Successful Authorizations"
         }
         showDueDate={
-          data.heading !== "Successful Payments" &&
-          data.heading !== "Successful Authorizations" &&
-          data.heading !== "Failed Payments" &&
-          data.heading !== "Failed Authorizations"
+          data?.heading !== "Successful Payments" &&
+          data?.heading !== "Successful Authorizations" &&
+          data?.heading !== "Failed Payments" &&
+          data?.heading !== "Failed Authorizations"
         }
       />
     </Grid>
@@ -176,6 +178,7 @@ function HomeDetails() {
             selectedValue={selectedValue}
             setSelectedValue={setSelectedValue}
           />
+          {/* <SelectMenu /> */}
           <span style={{ marginLeft: ".5rem" }}>{DAYS_TEXT}</span>
         </Typography>
       </Grid>

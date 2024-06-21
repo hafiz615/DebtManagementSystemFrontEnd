@@ -8,6 +8,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 
 import { Colors } from "../config/default";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
+import Replay from "@mui/icons-material/Replay";
 import { DeleteUserById, DeleteCustomField } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import TextButton from "./button";
@@ -21,6 +22,7 @@ export default function Prompt({
   GetUsers,
   handleModalClose,
   handleUserDelete,
+  show,
 }) {
   const { showToast } = useToast();
   const [open, setOpen] = React.useState(false);
@@ -68,13 +70,22 @@ export default function Prompt({
   return (
     <React.Fragment>
       <IconButton onClick={handleClickOpen}>
-        <DeleteForeverOutlinedIcon
-          sx={{
-            color: Colors.ORANGE_COLOR,
-            fontSize: "20px",
-            cursor: "pointer",
-          }}
-        />
+        {show ? (
+          <Replay
+            sx={{
+              color: Colors.ORANGE_COLOR,
+              fontSize: "14px",
+            }}
+          />
+        ) : (
+          <DeleteForeverOutlinedIcon
+            sx={{
+              color: Colors.ORANGE_COLOR,
+              fontSize: "20px",
+              cursor: "pointer",
+            }}
+          />
+        )}
       </IconButton>
 
       <Dialog

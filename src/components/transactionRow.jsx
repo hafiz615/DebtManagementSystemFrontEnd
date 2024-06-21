@@ -2,8 +2,8 @@ import React from "react";
 import { isEmpty } from "lodash";
 import { Colors } from "../config/default";
 import { Typography, Box } from "@mui/material";
-import ReplayIcon from "@mui/icons-material/Replay";
 import { formatDollarAmount } from "../common";
+import Prompt from "./prompt";
 
 function TransactionRow({ data, heading }) {
   const formatDate = (dateString) => {
@@ -70,6 +70,7 @@ function TransactionRow({ data, heading }) {
                 fontWeight: "500",
                 width: "100px",
                 justifyContent: "space-between",
+                alignItems: "center",
               }}
             >
               {heading
@@ -79,8 +80,13 @@ function TransactionRow({ data, heading }) {
                 item?.authorized === "Failed") ||
               (item?.type === "payment" && item?.captured === "Failed") ? (
                 <Box sx={{ cursor: "pointer" }}>
-                  <ReplayIcon
-                    sx={{ color: Colors.ORANGE_COLOR, fontSize: "14px" }}
+                  <Prompt
+                    deleting="Retry Payment"
+                    heading="Retry Payment"
+                    text={`Are you sure you want to Retry Payment ?`}
+                    show={true}
+                    // id={row?._id}
+                    // handleModalClose={handleModalClose}
                   />
                 </Box>
               ) : null}

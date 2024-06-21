@@ -417,3 +417,11 @@ export const GetDashboard = async () => {
     return error;
   }
 };
+
+export const Logout = async () => {
+  try {
+    return await axios.post(BASE_URL + "/v1/user/logout", {}, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
