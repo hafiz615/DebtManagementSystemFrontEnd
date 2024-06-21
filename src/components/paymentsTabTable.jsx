@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
-import Table from "@mui/material/Table";
+import { Typography, Table, IconButton } from "@mui/material";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
@@ -8,6 +8,8 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TablePagination from "@mui/material/TablePagination";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import {
   LocalPhone,
   Textsms,
@@ -81,7 +83,15 @@ const IconStyle = styled("div")({
   marginLeft: "0.5rem",
   marginRight: "1rem",
 });
-export default function PaymentTabsTable({ data, headerData }) {
+export default function PaymentTabsTable({
+  currentPage,
+  setCurrentPage,
+  data,
+  headerData,
+  apiPagination,
+  totalPages,
+  value,
+}) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selected, setSelected] = React.useState([]);
@@ -95,18 +105,25 @@ export default function PaymentTabsTable({ data, headerData }) {
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
-    const generatedData = data?.map((item, index) => ({
-      name: item?.fullName || "-",
-      dueDate: new Date(item?.dueDate)?.toLocaleDateString() || "-",
-      tryDate: new Date(item?.tryDate)?.toLocaleDateString() || "-",
-      totalDebt: formatDollarAmount(item?.totalDebt) || "-",
-      ssid: item?.SSID || "-",
-      caseOwner: item?.caseOwner || "-",
-    }));
-    if (!isEqual(generatedData, data)) {
+    const generatedData = data?.map((item) => {
+      const formattedItem = {
+        name: item?.fullName || "-",
+        tryDate: new Date(item?.tryDate)?.toLocaleDateString() || "-",
+        totalDebt: formatDollarAmount(item?.totalDebt) || "-",
+        ssid: item?.SSID || "-",
+        caseOwner: item?.caseOwner || "-",
+      };
+      if (value === 4) {
+        formattedItem.dueDate =
+          new Date(item?.dueDate)?.toLocaleDateString() || "-";
+      }
+      return formattedItem;
+    });
+
+    if (!isEqual(generatedData, rows)) {
       setRows(generatedData);
     }
-  }, [data]);
+  }, [data, value]);
   const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];
@@ -125,6 +142,14 @@ export default function PaymentTabsTable({ data, headerData }) {
     setSelected(newSelected);
   };
   const isSelected = (id) => selected.indexOf(id) !== -1;
+
+  const backward = () => {
+    setCurrentPage(currentPage - 1);
+  };
+
+  const forward = () => {
+    setCurrentPage(currentPage + 1);
+  };
   return (
     <Paper>
       <TableContainer>
@@ -221,15 +246,48 @@ export default function PaymentTabsTable({ data, headerData }) {
           )}
         </Table>
       </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      {apiPagination ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            margin: "10px 0px",
+            gap: "20px",
+          }}
+        >
+          <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
+            Rows Per Page: 5
+          </Typography>
+          <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
+            {totalPages === 0 ? 0 : isNaN(totalPages) ? 0 : currentPage} of{" "}
+            {isNaN(totalPages) ? 0 : totalPages}
+          </Typography>
+          <IconButton
+            onClick={backward}
+            disabled={currentPage === 1 || currentPage === 0}
+          >
+            <ArrowBackIosNewIcon sx={{ fontSize: "16px" }} />
+          </IconButton>
+
+          <IconButton
+            onClick={forward}
+            disabled={currentPage === totalPages || totalPages === 0}
+          >
+            <ArrowForwardIosIcon sx={{ fontSize: "16px" }} />
+          </IconButton>
+        </div>
+      ) : (
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      )}
     </Paper>
   );
 }
