@@ -425,3 +425,25 @@ export const Logout = async () => {
     return error;
   }
 };
+
+export const RetryAuth = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/debtor/retryAuth/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const RetryCapture = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/debtor/retryCapture/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

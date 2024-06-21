@@ -4,8 +4,6 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-// import Close from "@mui/icons-material/Close";
-
 import { Colors } from "../config/default";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import Replay from "@mui/icons-material/Replay";
@@ -23,15 +21,18 @@ export default function Prompt({
   handleModalClose,
   handleUserDelete,
   show,
+  handleRetry,
+  item,
 }) {
   const { showToast } = useToast();
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+
   const deleteCustomField = async () => {
     setLoading(true);
     const deletion = await DeleteCustomField(id);
     if (deletion?.status === 200) {
-      setOpen(false);
+      setOpen(false); // Close the dialog on successful deletion
       showToast(deletion?.data?.message, "success");
       handleModalClose();
     } else {
@@ -42,11 +43,12 @@ export default function Prompt({
     }
     setLoading(false);
   };
+
   const deleteUserById = async () => {
     setLoading(true);
     const deleteUser = await DeleteUserById(id);
     if (deleteUser?.status === 200) {
-      setOpen(false);
+      setOpen(false); // Close the dialog on successful deletion
       showToast(deleteUser?.data?.message, "success");
       handleUserDelete(id);
       GetUsers();
@@ -65,6 +67,19 @@ export default function Prompt({
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleConfirm = async () => {
+    setLoading(true);
+    if (handleRetry) {
+      await handleRetry(item);
+    } else if (deleting === "Custom Field") {
+      await deleteCustomField();
+    } else {
+      await deleteUserById();
+    }
+    setOpen(false);
+    setLoading(false);
   };
 
   return (
@@ -115,9 +130,7 @@ export default function Prompt({
           <TextButton
             loading={loading}
             buttonText="Confirm"
-            onClick={
-              deleting === "Custom Field" ? deleteCustomField : deleteUserById
-            }
+            onClick={handleConfirm} // Close dialog after performing action
             backgroundColor={Colors.SKY_BLUE}
             hoverColor={Colors.SKY_BLUE}
             paddingLeft="2rem"

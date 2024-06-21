@@ -1,11 +1,16 @@
 import React from "react";
 import { isEmpty } from "lodash";
+import { useParams } from "react-router-dom";
 import { Colors } from "../config/default";
 import { Typography, Box } from "@mui/material";
 import { formatDollarAmount } from "../common";
+import { useToast } from "../toast/toastContext";
 import Prompt from "./prompt";
+import { RetryAuth, RetryCapture } from "../services/services";
 
-function TransactionRow({ data, heading }) {
+function TransactionRow({ data, heading, GetCasePaymentDetails }) {
+  const { id } = useParams();
+  const { showToast } = useToast();
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = date.getDate();
@@ -17,6 +22,23 @@ function TransactionRow({ data, heading }) {
 
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+  const handleRetry = async (item) => {
+    let response;
+    if (item?.type === "authorization" && item?.authorized === "Failed") {
+      response = await RetryAuth(item?.id);
+    } else if (item?.type === "payment" && item?.captured === "Failed") {
+      response = await RetryCapture(item?.id);
+    }
+    if (response?.status === 200) {
+      showToast(response?.data?.message, "success");
+      GetCasePaymentDetails(id);
+    } else {
+      showToast(
+        response?.response?.data?.message || response?.response?.data?.message,
+        "error"
+      );
+    }
   };
 
   const typographyStyle = {
@@ -81,12 +103,11 @@ function TransactionRow({ data, heading }) {
               (item?.type === "payment" && item?.captured === "Failed") ? (
                 <Box sx={{ cursor: "pointer" }}>
                   <Prompt
-                    deleting="Retry Payment"
-                    heading="Retry Payment"
-                    text={`Are you sure you want to Retry Payment ?`}
+                    heading="Retry"
+                    text={`Are you sure you want to Retry?`}
+                    handleRetry={handleRetry}
+                    item={item}
                     show={true}
-                    // id={row?._id}
-                    // handleModalClose={handleModalClose}
                   />
                 </Box>
               ) : null}

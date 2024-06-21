@@ -323,6 +323,7 @@ function CaseDetail() {
                 <TransactionAccordion
                   loading={isPaymentLoading}
                   paymentDetails={paymentDetails}
+                  GetCasePaymentDetails={GetCasePaymentDetails}
                 />
               </Grid>
               <Grid xs={12} md={9}>
