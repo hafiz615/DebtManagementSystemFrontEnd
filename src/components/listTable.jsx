@@ -263,7 +263,8 @@ export default function ListTable({
               Rows Per Page: 5
             </Typography>
             <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
-              {totalPages === 0 ? 0 : currentPage} of {totalPages}
+              {totalPages === 0 ? 0 : isNaN(totalPages) ? 0 : currentPage} of{" "}
+              {isNaN(totalPages) ? 0 : totalPages}
             </Typography>
             <IconButton
               onClick={backward}

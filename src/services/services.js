@@ -312,11 +312,19 @@ export const UpdateCreditor = async (id, payload) => {
   }
 };
 
-export const GetHomePayments = async (count, page, arrayName) => {
+export const GetHomePayments = async (
+  count,
+  page,
+  arrayName,
+  search,
+  filters,
+  payload
+) => {
   try {
-    return await axios.get(
+    return await axios.post(
       BASE_URL +
-        `/v1/payment/getHomePayments?days=${count}&page=${page}&limit=5&arrayName=${arrayName}`,
+        `/v1/payment/getHomePayments?days=${count}&page=${page}&limit=5&arrayName=${arrayName}&search=${search}&filters=${filters}`,
+      payload,
       setHeaders()
     );
   } catch (error) {

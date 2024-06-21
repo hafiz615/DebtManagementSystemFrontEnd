@@ -3,7 +3,6 @@ import { styled } from "@mui/material/styles";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import { useSelector } from "react-redux";
 
 import { Colors } from "../config/default";
 import PaymentTabsTable from "./paymentsTabTable";
@@ -39,17 +38,19 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
   })
 );
 
-export default function PaymentsTabs() {
-  const paymentsData = useSelector((state) => state?.payments?.payments[0]);
-  const [value, setValue] = React.useState(0);
-  const headers = [
-    "Name",
-    "Due Date",
-    "Try Date",
-    "Total Debt",
-    "SSN",
-    "Case Owner",
-  ];
+export default function PaymentsTabs({
+  value,
+  setValue,
+  data,
+  currentPage,
+  setCurrentPage,
+  totalPages,
+}) {
+  const headers = ["Name", "Try Date", "Total Debt", "SSN", "Case Owner"];
+
+  if (value === 4) {
+    headers.push("Due Date");
+  }
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -128,32 +129,53 @@ export default function PaymentsTabs() {
       >
         {value === 0 && (
           <PaymentTabsTable
-            data={paymentsData?.failedAuthorizations}
+            data={data?.failedAuthorizations}
             headerData={headers}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            totalPages={totalPages}
+            apiPagination={true}
           />
         )}
         {value === 1 && (
           <PaymentTabsTable
-            data={paymentsData?.successAuthorizations}
+            data={data?.successAuthorizations}
             headerData={headers}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            totalPages={totalPages}
+            apiPagination={true}
           />
         )}
         {value === 2 && (
           <PaymentTabsTable
-            data={paymentsData?.failedPayments}
+            data={data?.failedPayments}
             headerData={headers}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            totalPages={totalPages}
+            apiPagination={true}
           />
         )}
         {value === 3 && (
           <PaymentTabsTable
-            data={paymentsData?.successPayments}
+            data={data?.successPayments}
             headerData={headers}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            totalPages={totalPages}
+            apiPagination={true}
           />
         )}
         {value === 4 && (
           <PaymentTabsTable
-            data={paymentsData?.upcomingPayments}
+            data={data?.upcomingPayments}
             headerData={headers}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            totalPages={totalPages}
+            apiPagination={true}
+            value={value}
           />
         )}
       </Box>

@@ -4,6 +4,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 import { Colors } from "../config/default";
 function TextButton({
+  fontColor,
   buttonText,
   onClick,
   disabled,
@@ -37,7 +38,7 @@ function TextButton({
         paddingLeft: { paddingLeft },
         paddingRight: { paddingRight },
         borderRadius: "10px",
-        color: Colors.WHITE,
+        color: fontColor ? fontColor : Colors.WHITE,
         backgroundColor: backgroundColor,
         textTransform: "none",
         "&:hover": {
