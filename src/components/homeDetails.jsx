@@ -79,6 +79,7 @@ function HomeDetails() {
     accordionData.forEach((data) => {
       getHomeData(data.key, currentPage[data.key], true);
     });
+    localStorage.setItem("dayCount", selectedValue);
   }, [selectedValue]);
 
   const handlePageChange = (key, page) => {
