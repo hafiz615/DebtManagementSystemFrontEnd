@@ -162,8 +162,6 @@ export default function AuthorizationDetails() {
     dueDateMax,
   ]);
 
-  const count = localStorage.getItem("dayCount");
-
   const getHomeData = async (search, filter) => {
     let arrayName;
     let payload = {};
@@ -190,6 +188,8 @@ export default function AuthorizationDetails() {
       text: search ? searchText : "",
       filters: filter ? filterObj : {},
     };
+    const count = 0;
+
     const result = await GetHomePayments(
       count,
       currentPage,
@@ -215,9 +215,9 @@ export default function AuthorizationDetails() {
 
   useEffect(() => {
     setCurrentPage(1);
-    handleClear();
     setSearchText("");
-    getHomeData(false, false);
+    setSearchActive(false);
+    handleClear();
   }, [value]);
 
   const totalPages = Math.ceil(totalData / 5);

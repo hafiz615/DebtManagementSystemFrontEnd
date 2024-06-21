@@ -123,7 +123,7 @@ export default function PaymentTabsTable({
     if (!isEqual(generatedData, rows)) {
       setRows(generatedData);
     }
-  }, [data, value]);
+  }, [data]);
   const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];
