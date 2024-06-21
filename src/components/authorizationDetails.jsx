@@ -257,6 +257,8 @@ export default function AuthorizationDetails() {
           display: "flex",
           marginTop: "1.5rem",
           justifyContent: "space-between",
+          flexDirection: { xs: "column", sm: "row" },
+          gap: { xs: "1rem", sm: "0" },
         }}
       >
         <Typography

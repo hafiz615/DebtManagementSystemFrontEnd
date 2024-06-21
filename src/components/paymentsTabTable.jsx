@@ -161,6 +161,7 @@ export default function PaymentTabsTable({
                   align="left"
                   sx={{
                     fontWeight: "700",
+                    fontSize: { xs: "12px", sm: "16px" },
                   }}
                   key={index}
                 >
@@ -194,7 +195,12 @@ export default function PaymentTabsTable({
                   selected={isSelected(row.id)}
                 >
                   {Object.values(row).map((value, i) => (
-                    <StyledTableCell key={i}>{value}</StyledTableCell>
+                    <StyledTableCell
+                      sx={{ fontSize: { xs: "12px", sm: "16px" } }}
+                      key={i}
+                    >
+                      {value}
+                    </StyledTableCell>
                   ))}
                   <IconsContainer className="icons">
                     <IconStyle
