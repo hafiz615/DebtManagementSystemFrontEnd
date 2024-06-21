@@ -11,6 +11,7 @@ import IconButton from "@mui/material/IconButton";
 import Input from "@mui/material/Input";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Colors } from "../config/default";
 import { LoginPage } from "../constants/appConstants";
@@ -26,8 +27,9 @@ function Login() {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [emailError, setEmailError] = useState("");
-
   const [showPassword, setShowPassword] = useState(false);
+  const smallScreen = useMediaQuery("(min-width:250px) and (max-width:900px)");
+
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
@@ -112,90 +114,123 @@ function Login() {
   } = LoginPage;
 
   return (
-    <Grid
-      item
-      lg={8.5}
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <Typography
+    <>
+      {smallScreen && (
+        <Typography
+          sx={{
+            fontSize: "20px",
+            fontWeight: "600",
+            marginBottom: "2rem",
+            color: Colors.WHITE,
+            fontFamily: "Nunito",
+            float: "left",
+          }}
+        >
+          {LOGIN_HEADING}
+        </Typography>
+      )}
+      <Grid
+        item
+        xs={10}
+        sm={6}
+        lg={8.5}
         sx={{
-          fontSize: "2.5rem",
-          fontWeight: "700",
-          marginBottom: "2rem",
-          color: Colors.NAVY_BLUE,
-          fontFamily: "Nunito",
+          display: "flex",
+          width: { xs: "80%", md: "auto" },
+          flexDirection: "column",
+          backgroundColor: smallScreen ? Colors.WHITE : "",
+          padding: smallScreen ? "16px  12px" : "",
+          borderRadius: smallScreen ? "10px" : "",
         }}
       >
-        {LOGIN_HEADING}
-      </Typography>
-      <TextField
-        id="standard-basic"
-        label={INPUT_EMAIL_LABEL}
-        variant="standard"
-        sx={{
-          marginBottom: "1rem",
-        }}
-        value={email}
-        onChange={handleEmailChange}
-      />
-      {emailError && <FormHelperText error>{emailError}</FormHelperText>}
-
-      <FormControl variant="standard">
-        <InputLabel htmlFor="standard-adornment-password">
-          {INPUT_PASSWORD_LABEL}
-        </InputLabel>
-        <Input
-          className="no-autofill-bg"
-          type={showPassword ? "text" : "password"}
-          value={password}
-          onChange={handlePasswordChange}
-          onKeyPress={handleKeyPress}
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton
-                aria-label="toggle password visibility"
-                onClick={handleClickShowPassword}
-                onMouseDown={handleMouseDownPassword}
-              >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          }
-        />
-        {passwordError && (
-          <FormHelperText error>{passwordError}</FormHelperText>
-        )}
-        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        {!smallScreen && (
           <Typography
             sx={{
-              fontWeight: "200",
-              fontSize: "15px",
-              marginTop: "0.8rem",
-              marginBottom: "1.5rem",
-              cursor: "pointer",
+              fontSize: "2.5rem",
+              fontWeight: "700",
+              marginBottom: "2rem",
+              color: Colors.NAVY_BLUE,
               fontFamily: "Nunito",
-              color: Colors.DARK_GRAY,
             }}
-            onClick={() => alert("Forgot Password clicked")}
           >
-            {FORGOT_PASSWORD}
+            {LOGIN_HEADING}
           </Typography>
-        </div>
-      </FormControl>
+        )}
 
-      <Button
-        buttonText={LOGIN_BUTTON_TEXT}
-        disabled={isButtonDisabled}
-        onClick={handleLoginForm}
-        loading={loading}
-        marginTop="2rem"
-        height="3rem"
-        loginFont="600"
-      />
-    </Grid>
+        <TextField
+          id="standard-basic"
+          label={INPUT_EMAIL_LABEL}
+          variant="standard"
+          sx={{
+            marginBottom: "1rem",
+            "& .MuiInputBase-input": {
+              fontSize: smallScreen ? "12px" : "16px",
+              fontFamily: "Nunito",
+            },
+          }}
+          value={email}
+          onChange={handleEmailChange}
+        />
+        {emailError && <FormHelperText error>{emailError}</FormHelperText>}
+
+        <FormControl variant="standard">
+          <InputLabel htmlFor="standard-adornment-password">
+            {INPUT_PASSWORD_LABEL}
+          </InputLabel>
+          <Input
+            className="no-autofill-bg"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={handlePasswordChange}
+            onKeyPress={handleKeyPress}
+            style={{
+              fontSize: smallScreen ? "12px" : "16px",
+              fontFamily: "Nunito",
+            }}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+          {passwordError && (
+            <FormHelperText error>{passwordError}</FormHelperText>
+          )}
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Typography
+              sx={{
+                fontWeight: "200",
+                fontSize: smallScreen ? "12px" : "15px",
+                marginTop: "0.8rem",
+                marginBottom: smallScreen ? "0px" : "1.5rem",
+                cursor: "pointer",
+                fontFamily: "Nunito",
+                color: Colors.DARK_GRAY,
+              }}
+              onClick={() => alert("Forgot Password clicked")}
+            >
+              {FORGOT_PASSWORD}
+            </Typography>
+          </div>
+        </FormControl>
+
+        <Button
+          buttonText={LOGIN_BUTTON_TEXT}
+          disabled={isButtonDisabled}
+          onClick={handleLoginForm}
+          loading={loading}
+          marginTop={smallScreen ? "1rem" : "2rem"}
+          height="3rem"
+          loginFont="600"
+        />
+      </Grid>
+    </>
   );
 }
 

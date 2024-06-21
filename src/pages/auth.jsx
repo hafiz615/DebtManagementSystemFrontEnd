@@ -7,7 +7,7 @@ import Login from "../components/login";
 import Laptop from "../../src/assets/Laptop.png";
 
 function Auth() {
-  const largeScreen = useMediaQuery("(min-width:320px) and (max-width:760px)");
+  const smallScreen = useMediaQuery("(min-width:250px) and (max-width:900px)");
   return (
     <Grid
       container
@@ -15,16 +15,18 @@ function Auth() {
         height: "100vh",
         justifyContent: "center",
         alignItems: "center",
+        backgroundColor: smallScreen ? Colors.NAVY_BLUE : "",
       }}
     >
       <Grid
         item
         xs={12}
-        sm={6}
+        md={6}
         sx={{
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexDirection: smallScreen ? "column" : "unset",
         }}
       >
         <Login />
@@ -35,7 +37,7 @@ function Auth() {
         sx={{
           backgroundColor: Colors.NAVY_BLUE,
           height: "100vh",
-          display: largeScreen ? "none" : "flex",
+          display: { xs: "none", md: "flex" },
           justifyContent: "center",
           alignItems: "center",
         }}
