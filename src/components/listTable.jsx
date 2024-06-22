@@ -18,7 +18,9 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { Colors } from "../config/default";
 import MuiModels from "./models";
 import { isEmpty } from "lodash";
-
+import Prompt from "./prompt";
+import { useToast } from "../toast/toastContext";
+import { RetryAuth, RetryCapture } from "../services/services";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     color: Colors.BLACK,
@@ -46,7 +48,6 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
   },
 }));
-
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: Colors.LIGHT_BLUE_COLOR,
@@ -65,7 +66,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     border: "none",
   },
 }));
-
 export default function ListTable({
   data,
   headerData,
@@ -79,25 +79,41 @@ export default function ListTable({
   currentPage,
   setCurrentPage,
   totalPages,
+  arrayName,
+  getHomeData,
 }) {
+  const { showToast } = useToast();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-
   const backward = () => {
     setCurrentPage(currentPage - 1);
   };
-
   const forward = () => {
     setCurrentPage(currentPage + 1);
   };
-
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+  const handlePayment = async (id) => {
+    let result;
+    if (arrayName === "failedAuthorizations") {
+      result = await RetryAuth(id);
+    } else if (arrayName === "failedPayments") {
+      result = await RetryCapture(id);
+    }
+    if (result?.status === 200) {
+      showToast(result?.data?.message, "success");
+      getHomeData(arrayName, 1);
+    } else {
+      showToast(
+        result?.response?.data?.message || result?.response?.data?.message,
+        "error"
+      );
+    }
   };
 
   return (
@@ -124,7 +140,6 @@ export default function ListTable({
                   ?.filter(
                     (header) =>
                       (showFailureReason || header !== "Failure Reason") &&
-                      (showFailureReason || header !== "Re Try") &&
                       (showDueDate || header !== "Due Date")
                   )
                   ?.map((header, index) => (
@@ -144,6 +159,12 @@ export default function ListTable({
                 {requiredCustomFieldIcons && (
                   <StyledTableCell align="left" sx={{ fontWeight: "700" }}>
                     Actions
+                  </StyledTableCell>
+                )}
+                {(arrayName === "failedAuthorizations" ||
+                  arrayName === "failedPayments") && (
+                  <StyledTableCell align="left" sx={{ fontWeight: "700" }}>
+                    Re Try
                   </StyledTableCell>
                 )}
               </TableRow>
@@ -196,7 +217,6 @@ export default function ListTable({
                             fontSize: "20px",
                           }}
                         />
-
                         <CloseIcon
                           sx={{
                             color: Colors.ORANGE_COLOR,
@@ -224,7 +244,6 @@ export default function ListTable({
                         }}
                       >
                         <MuiModels show="editField" />
-
                         <DeleteForeverOutlinedIcon
                           sx={{
                             color: Colors.DARK_GRAY,
@@ -233,7 +252,6 @@ export default function ListTable({
                             marginLeft: "0.5rem",
                           }}
                         />
-
                         <MoreHorizOutlinedIcon
                           sx={{
                             color: Colors.DARK_GRAY,
@@ -241,6 +259,23 @@ export default function ListTable({
                             fontSize: "20px",
                             marginLeft: "0.5rem",
                           }}
+                        />
+                      </StyledTableCell>
+                    )}
+                    {(arrayName === "failedAuthorizations" ||
+                      arrayName === "failedPayments") && (
+                      <StyledTableCell
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Prompt
+                          heading="Retry"
+                          text={`Are you sure you want to Retry?`}
+                          handlePayment={handlePayment}
+                          item={row?.id}
+                          showPayment={true}
                         />
                       </StyledTableCell>
                     )}
@@ -273,7 +308,6 @@ export default function ListTable({
             >
               <ArrowBackIosNewIcon sx={{ fontSize: "16px" }} />
             </IconButton>
-
             <IconButton
               onClick={forward}
               disabled={currentPage === totalPages || totalPages === 0}

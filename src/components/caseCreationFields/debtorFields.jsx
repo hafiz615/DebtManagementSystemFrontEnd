@@ -2,6 +2,7 @@ import React from "react";
 import Typography from "@mui/material/Typography";
 import { Grid, Box } from "@mui/material";
 import { Add, Delete } from "@mui/icons-material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Colors } from "../../config/default";
 import PaymentsTextFields from "../caseTextField";
@@ -35,6 +36,7 @@ export default function DebtorFields({
   walletId,
 }) {
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
+  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const menuItems = [
     { label: "Customer", value: "Customer" },
     { label: "On hold", value: "On hold" },
@@ -762,7 +764,7 @@ export default function DebtorFields({
                       type="text"
                       label="Name"
                       placeHolderValue="Enter Name"
-                      width="97%"
+                      width={smallScreen ? "100%" : "97%"}
                       value={item?.name}
                       onChange={(e) =>
                         handleInputChange(index, "name", e.target.value)
@@ -772,7 +774,7 @@ export default function DebtorFields({
                       type="text"
                       label="Title"
                       placeHolderValue="Enter Title"
-                      width="97%"
+                      width={smallScreen ? "100%" : "97%"}
                       value={item?.title}
                       onChange={(e) =>
                         handleInputChange(index, "title", e.target.value)
@@ -793,7 +795,7 @@ export default function DebtorFields({
                       type="text"
                       label="Enter Email"
                       placeHolderValue="Enter Email"
-                      width="97%"
+                      width={smallScreen ? "100%" : "97%"}
                       value={item?.email}
                       onChange={(e) =>
                         handleInputChange(index, "email", e.target.value)
@@ -805,7 +807,7 @@ export default function DebtorFields({
                       type="text"
                       label="Country (Optional)"
                       placeHolderValue="Country Name"
-                      width="97%"
+                      width={smallScreen ? "100%" : "97%"}
                       value={item?.country}
                       onChange={(e) =>
                         handleInputChange(index, "country", e.target.value)
@@ -815,7 +817,7 @@ export default function DebtorFields({
                       type="text"
                       label="State (Optional)"
                       placeHolderValue="Enter State"
-                      width="97%"
+                      width={smallScreen ? "100%" : "97%"}
                       value={item?.state}
                       onChange={(e) =>
                         handleInputChange(index, "state", e.target.value)
@@ -824,7 +826,7 @@ export default function DebtorFields({
                     <PaymentsTextFields
                       label="City (Optional)"
                       placeHolderValue="Enter City"
-                      width="97%"
+                      width={smallScreen ? "100%" : "97%"}
                       value={item?.city}
                       onChange={(e) =>
                         handleInputChange(index, "city", e.target.value)
@@ -834,7 +836,7 @@ export default function DebtorFields({
                       type="number"
                       label="Zip Code (Optional)"
                       placeHolderValue="Enter Zip Code"
-                      width="97%"
+                      width={smallScreen ? "100%" : "97%"}
                       value={item?.zipCode}
                       onChange={(e) =>
                         handleInputChange(index, "zipCode", e.target.value)
@@ -878,7 +880,7 @@ export default function DebtorFields({
                         border: "none",
                         outline: "none",
                         borderRadius: "5px",
-                        width: "80%",
+                        width: smallScreen ? "100%" : "97%",
                       }}
                     />
                   </Grid>

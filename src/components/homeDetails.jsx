@@ -100,10 +100,10 @@ function HomeDetails() {
         tableHeading={data?.heading}
         paymentNumber={data?.number}
         rowArray={homeData[data?.key]}
+        getHomeData={getHomeData}
         showFailureReason={
           data?.heading !== "Upcoming Payments" &&
           data?.heading !== "Successful Payments" &&
-          data?.heading !== "Re Try" &&
           data?.heading !== "Successful Authorizations"
         }
         showDueDate={

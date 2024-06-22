@@ -7,6 +7,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Colors } from "../config/default";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import Replay from "@mui/icons-material/Replay";
+
 import { DeleteUserById, DeleteCustomField } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import TextButton from "./button";
@@ -23,6 +24,8 @@ export default function Prompt({
   show,
   handleRetry,
   item,
+  handlePayment,
+  showPayment,
 }) {
   const { showToast } = useToast();
   const [open, setOpen] = React.useState(false);
@@ -73,6 +76,9 @@ export default function Prompt({
     setLoading(true);
     if (handleRetry) {
       await handleRetry(item);
+    } else if (handlePayment) {
+      await handlePayment(item);
+    } else if (handlePayment) {
     } else if (deleting === "Custom Field") {
       await deleteCustomField();
     } else {
@@ -89,10 +95,28 @@ export default function Prompt({
           <Replay
             sx={{
               color: Colors.ORANGE_COLOR,
-              fontSize: "14px",
+              fontSize: "20px",
+            }}
+          />
+        ) : showPayment ? (
+          // <Box
+          //   sx={{
+          //     border: "1px solid red",
+          //     display: "flex",
+          //     alignItems: "center",
+          //     justifyContent: "center",
+          //     marginTop: ".2rem",
+          //     marginLeft: ".5rem",
+          //   }}
+          // >
+          <Replay
+            sx={{
+              color: Colors.DARK_GRAY,
+              fontSize: "20px",
             }}
           />
         ) : (
+          // </Box>
           <DeleteForeverOutlinedIcon
             sx={{
               color: Colors.ORANGE_COLOR,

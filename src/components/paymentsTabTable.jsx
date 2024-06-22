@@ -21,6 +21,10 @@ import {
 import { Colors } from "../config/default";
 import { isEmpty, isEqual } from "lodash";
 import { formatDollarAmount } from "../common";
+import Prompt from "./prompt";
+import { useToast } from "../toast/toastContext";
+import { RetryAuth, RetryCapture } from "../services/services";
+
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     color: Colors.BLACK,
@@ -48,6 +52,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
   },
 }));
+
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: Colors.LIGHT_BLUE_COLOR,
@@ -66,11 +71,12 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     border: "none",
   },
 }));
+
 const IconsContainer = styled("div")({
   display: "none",
   justifyContent: "center",
   alignItems: "center",
-  width: "100%",
+  width: "calc(100% - 10rem)",
   marginTop: "1rem",
   position: "absolute",
   left: 0,
@@ -78,11 +84,13 @@ const IconsContainer = styled("div")({
   backgroundColor: "transparent",
   zIndex: 1,
 });
+
 const IconStyle = styled("div")({
   cursor: "pointer",
   marginLeft: "0.5rem",
   marginRight: "1rem",
 });
+
 export default function PaymentTabsTable({
   currentPage,
   setCurrentPage,
@@ -91,22 +99,27 @@ export default function PaymentTabsTable({
   apiPagination,
   totalPages,
   value,
+  getHomeData,
 }) {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [selected, setSelected] = React.useState([]);
+  const { showToast } = useToast();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [selected, setSelected] = useState([]);
+  const [rows, setRows] = useState([]);
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
+
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-  const [rows, setRows] = useState([]);
 
   useEffect(() => {
     const generatedData = data?.map((item) => {
       const formattedItem = {
+        id: item?.id,
         name: item?.fullName || "-",
         tryDate: new Date(item?.tryDate)?.toLocaleDateString() || "-",
         totalDebt: formatDollarAmount(item?.totalDebt) || "-",
@@ -124,6 +137,7 @@ export default function PaymentTabsTable({
       setRows(generatedData);
     }
   }, [data, value]);
+
   const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];
@@ -141,6 +155,7 @@ export default function PaymentTabsTable({
     }
     setSelected(newSelected);
   };
+
   const isSelected = (id) => selected.indexOf(id) !== -1;
 
   const backward = () => {
@@ -150,6 +165,25 @@ export default function PaymentTabsTable({
   const forward = () => {
     setCurrentPage(currentPage + 1);
   };
+
+  const handlePayment = async (id) => {
+    let result;
+    if (value === 0) {
+      result = await RetryAuth(id);
+    } else if (value === 2) {
+      result = await RetryCapture(id);
+    }
+    if (result?.status === 200) {
+      showToast(result?.data?.message, "success");
+      getHomeData();
+    } else {
+      showToast(
+        result?.response?.data?.message || result?.response?.data?.message,
+        "error"
+      );
+    }
+  };
+
   return (
     <Paper>
       <TableContainer>
@@ -183,65 +217,79 @@ export default function PaymentTabsTable({
                     page * rowsPerPage + rowsPerPage
                   )
                 : rows
-              ).map((row, index) => (
-                <StyledTableRow
-                  key={row.id}
-                  hover
-                  onClick={(event) => handleClick(event, row.id)}
-                  role="checkbox"
-                  aria-checked={isSelected(row.id)}
-                  tabIndex={-1}
-                  selected={isSelected(row.id)}
-                >
-                  {Object.values(row).map((value, i) => (
-                    <StyledTableCell key={i}>{value}</StyledTableCell>
-                  ))}
-                  <IconsContainer className="icons">
-                    <IconStyle
-                      onClick={() => {
-                        alert("clicked");
-                      }}
-                    >
-                      <LocalPhone />
-                    </IconStyle>
-                    <IconStyle
-                      onClick={() => {
-                        alert("clicked");
-                      }}
-                    >
-                      <Textsms />
-                    </IconStyle>
-                    <IconStyle
-                      onClick={() => {
-                        alert("clicked");
-                      }}
-                    >
-                      <Mail />
-                    </IconStyle>
-                    <IconStyle
-                      onClick={() => {
-                        alert("clicked");
-                      }}
-                    >
-                      <EditCalendar />
-                    </IconStyle>
-                    <IconStyle
-                      onClick={() => {
-                        alert("clicked");
-                      }}
-                    >
-                      <OpenInNew />
-                    </IconStyle>
-                    <IconStyle
-                      onClick={() => {
-                        alert("clicked");
-                      }}
-                    >
-                      <Sync />
-                    </IconStyle>
-                  </IconsContainer>
-                </StyledTableRow>
-              ))}
+              ).map((row) => {
+                const { id, ...rowData } = row;
+                return (
+                  <StyledTableRow
+                    key={id}
+                    hover
+                    onClick={(event) => handleClick(event, id)}
+                    role="checkbox"
+                    aria-checked={isSelected(id)}
+                    tabIndex={-1}
+                    selected={isSelected(id)}
+                  >
+                    {Object.values(rowData).map((value, i) => (
+                      <StyledTableCell key={i}>{value}</StyledTableCell>
+                    ))}
+                    {(value === 0 || value === 2) && (
+                      <StyledTableCell align="left" sx={{ fontWeight: "700" }}>
+                        <Prompt
+                          heading="Retry"
+                          text={`Are you sure you want to Retry?`}
+                          handlePayment={handlePayment}
+                          item={id}
+                          showPayment={true}
+                        />
+                      </StyledTableCell>
+                    )}
+                    <IconsContainer className="icons">
+                      <IconStyle
+                        onClick={() => {
+                          alert("clicked");
+                        }}
+                      >
+                        <LocalPhone />
+                      </IconStyle>
+                      <IconStyle
+                        onClick={() => {
+                          alert("clicked");
+                        }}
+                      >
+                        <Textsms />
+                      </IconStyle>
+                      <IconStyle
+                        onClick={() => {
+                          alert("clicked");
+                        }}
+                      >
+                        <Mail />
+                      </IconStyle>
+                      <IconStyle
+                        onClick={() => {
+                          alert("clicked");
+                        }}
+                      >
+                        <EditCalendar />
+                      </IconStyle>
+                      <IconStyle
+                        onClick={() => {
+                          alert("clicked");
+                        }}
+                      >
+                        <OpenInNew />
+                      </IconStyle>
+                      <IconStyle
+                        onClick={() => {
+                          alert("clicked");
+                        }}
+                      >
+                        <Sync />
+                      </IconStyle>
+                    </IconsContainer>
+                  </StyledTableRow>
+                );
+              })}
             </TableBody>
           )}
         </Table>

@@ -966,6 +966,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
                 marginRight="1rem"
               />
               <TextButton
+                width={smallScreen ? "max-content" : "max-content"}
                 buttonText="RESET ALL"
                 onClick={resetAll}
                 backgroundColor={Colors.DARK_GRAY}

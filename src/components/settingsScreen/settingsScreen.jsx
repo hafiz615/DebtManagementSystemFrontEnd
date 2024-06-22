@@ -10,54 +10,113 @@ import { GetAllSettings } from "../../services/services";
 
 export default function SettingsScreen() {
   const [failedAuthorizations, setfailedAuthorizations] = useState({
-    "email": false, "sms": false, "emailTemplate": "", "smsTemplate": "",
-    "sendTo": { "admin": false, "manager": false, "negotiator": false, "debtor": false, "creditor": false }
-  })
+    email: false,
+    sms: false,
+    emailTemplate: "",
+    smsTemplate: "",
+    sendTo: {
+      admin: false,
+      manager: false,
+      negotiator: false,
+      debtor: false,
+      creditor: false,
+    },
+  });
   const [successfulAuthorizations, setSuccessfulAuthorizations] = useState({
-    "email": false, "sms": false, "emailTemplate": "", "smsTemplate":"",
-    "sendTo": { "admin": false, "manager": false, "negotiator": false, "debtor": false, "creditor": false }
-  })
+    email: false,
+    sms: false,
+    emailTemplate: "",
+    smsTemplate: "",
+    sendTo: {
+      admin: false,
+      manager: false,
+      negotiator: false,
+      debtor: false,
+      creditor: false,
+    },
+  });
   const [failedPayments, setFailedPayments] = useState({
-    "email": false, "sms": false, "emailTemplate": "", "smsTemplate":"",
-    "sendTo": { "admin": false, "manager": false, "negotiator": false, "debtor": false, "creditor": false }
-  })
+    email: false,
+    sms: false,
+    emailTemplate: "",
+    smsTemplate: "",
+    sendTo: {
+      admin: false,
+      manager: false,
+      negotiator: false,
+      debtor: false,
+      creditor: false,
+    },
+  });
   const [successPayments, setSuccessPayments] = useState({
-    "email": false, "sms": false, "emailTemplate": "", "smsTemplate":"",
-    "sendTo": { "admin": false, "manager": false, "negotiator": false, "debtor": false, "creditor": false }
-  })
+    email: false,
+    sms: false,
+    emailTemplate: "",
+    smsTemplate: "",
+    sendTo: {
+      admin: false,
+      manager: false,
+      negotiator: false,
+      debtor: false,
+      creditor: false,
+    },
+  });
   const [upcomingPayments, setUpcomingPayments] = useState({
-    "email": false, "sms": false, "emailTemplate": "", "smsTemplate":"",
-    "sendTo": { "admin": false, "manager": false, "negotiator": false, "debtor": false, "creditor": false }
-  })
+    email: false,
+    sms: false,
+    emailTemplate: "",
+    smsTemplate: "",
+    sendTo: {
+      admin: false,
+      manager: false,
+      negotiator: false,
+      debtor: false,
+      creditor: false,
+    },
+  });
   const [retryInterval, setRetryInterval] = useState({
-    "failedAuthorization": { "unit": "days", "value": 0, "maxRetry": 0, "retryCount": 0 },
-    "failedPayment": { "unit": "hours", "value": 0, "maxRetry": 0, "retryCount": 0 }
-  })
+    failedAuthorization: { unit: "days", value: 0, maxRetry: 0, retryCount: 0 },
+    failedPayment: { unit: "hours", value: 0, maxRetry: 0, retryCount: 0 },
+  });
   const [authorizationInterval, setAuthorizationInterval] = useState({
-    "custom": { "unit": "hours", "value": 0 },
-    "daily": { "unit": "hours", "value": 0 },
-    "weekly": { "unit": "days", "value": 0 },
-    "fortnightly": { "unit": "days", "value": 0 },
-    "monthly": { "unit": "days", "value": 0 }
-  })
+    custom: { unit: "hours", value: 0 },
+    daily: { unit: "hours", value: 0 },
+    weekly: { unit: "days", value: 0 },
+    fortnightly: { unit: "days", value: 0 },
+    monthly: { unit: "days", value: 0 },
+  });
   const [notificationTemplates, setNotificationTemplates] = useState({
-    "email": [],
-    "sms": []
-  })
-  const [customFields, setCustomFields] = useState([])
+    email: [],
+    sms: [],
+  });
+  const [customFields, setCustomFields] = useState([]);
   const [templates, setTemplates] = useState({});
 
   const getSettings = async () => {
     const allSettings = await GetAllSettings();
-    setfailedAuthorizations(allSettings.data.data.paymentsAuthorizations.failedAuthorizations)
-    setSuccessfulAuthorizations(allSettings.data.data.paymentsAuthorizations.successfulAuthorizations)
-    setFailedPayments(allSettings.data.data.paymentsAuthorizations.failedPayments)
-    setSuccessPayments(allSettings.data.data.paymentsAuthorizations.successPayments)
-    setUpcomingPayments(allSettings.data.data.paymentsAuthorizations.upcomingPayments)
-    setRetryInterval(allSettings.data.data.paymentsAuthorizations.retryInterval)
-    setAuthorizationInterval(allSettings.data.data.paymentsAuthorizations.authorizationInterval)
-    setNotificationTemplates(allSettings.data.data.notificationTemplates)
-    setCustomFields(allSettings.data.data.customFields)
+    setfailedAuthorizations(
+      allSettings.data.data.paymentsAuthorizations.failedAuthorizations
+    );
+    setSuccessfulAuthorizations(
+      allSettings.data.data.paymentsAuthorizations.successfulAuthorizations
+    );
+    setFailedPayments(
+      allSettings.data.data.paymentsAuthorizations.failedPayments
+    );
+    setSuccessPayments(
+      allSettings.data.data.paymentsAuthorizations.successPayments
+    );
+    setUpcomingPayments(
+      allSettings.data.data.paymentsAuthorizations.upcomingPayments
+    );
+    setRetryInterval(
+      allSettings.data.data.paymentsAuthorizations.retryInterval
+    );
+    setAuthorizationInterval(
+      allSettings.data.data.paymentsAuthorizations.authorizationInterval
+    );
+    setNotificationTemplates(allSettings.data.data.notificationTemplates);
+    setCustomFields(allSettings.data.data.customFields);
     const result = {};
 
     for (const [key, value] of Object.entries(notificationTemplates)) {
@@ -65,7 +124,7 @@ export default function SettingsScreen() {
         return { label: template.templateId, value: template.templateId };
       });
     }
-    setTemplates(result)
+    setTemplates(result);
   };
 
   useEffect(() => {
@@ -74,8 +133,7 @@ export default function SettingsScreen() {
 
   const refreshData = () => {
     getSettings();
-  }
-
+  };
 
   return (
     <Grid
@@ -123,10 +181,23 @@ export default function SettingsScreen() {
           authorizationInterval={authorizationInterval}
           notificationTemplates={notificationTemplates}
           templates={templates}
-          {...{setfailedAuthorizations, setSuccessfulAuthorizations, setFailedPayments, setSuccessPayments, setUpcomingPayments, setRetryInterval, setAuthorizationInterval}}
+          {...{
+            setfailedAuthorizations,
+            setSuccessfulAuthorizations,
+            setFailedPayments,
+            setSuccessPayments,
+            setUpcomingPayments,
+            setRetryInterval,
+            setAuthorizationInterval,
+          }}
         />
-        <NotificationTemplatesTabs notificationTemplates={notificationTemplates} />
-        <CustomFieldsAccordion customFields={customFields} refreshData={refreshData} />
+        <NotificationTemplatesTabs
+          notificationTemplates={notificationTemplates}
+        />
+        <CustomFieldsAccordion
+          customFields={customFields}
+          refreshData={refreshData}
+        />
         <PasswordAccordion />
       </Grid>
     </Grid>
