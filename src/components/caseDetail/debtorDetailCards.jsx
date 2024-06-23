@@ -19,6 +19,7 @@ import {
 
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -83,6 +84,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
     marginLeft: ".3rem",
     marginTop: ".3rem",
   };
+  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   return (
     <>
       <Grid
@@ -143,8 +145,8 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
                   }}
                 >
                   <Typography
-                    style={{
-                      fontSize: "11px",
+                    sx={{
+                      fontSize: smallScreen ? "11px" : "13px",
                       fontWeight: "700",
                       fontFamily: "Nunito",
                       color: Colors.DARK_GRAY,
@@ -153,8 +155,8 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
                     {key === "SSID" ? "SSN" : formatKeys(key)}
                   </Typography>
                   <Typography
-                    style={{
-                      fontSize: "11px",
+                    sx={{
+                      fontSize: smallScreen ? "11px" : "13px",
                       color: Colors.DIM_LIGHT_GRAY,
                       fontFamily: "Nunito",
                       fontWeight: "500",
@@ -221,8 +223,8 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
                   }}
                 >
                   <Typography
-                    style={{
-                      fontSize: "11px",
+                    sx={{
+                      fontSize: smallScreen ? "11px" : "13px",
                       fontWeight: "700",
                       fontFamily: "Nunito",
                       color: Colors.DARK_GRAY,
@@ -231,8 +233,8 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
                     {key === "EIN" ? key : formatKeys(key)}
                   </Typography>
                   <Typography
-                    style={{
-                      fontSize: "11px",
+                    sx={{
+                      fontSize: smallScreen ? "11px" : "13px",
                       color: Colors.DIM_LIGHT_GRAY,
                       fontFamily: "Nunito",
                       fontWeight: "500",
@@ -260,7 +262,9 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
           marginBottom: "0.5rem",
         }}
       >
-        <div
+        <Grid
+          container
+          item
           style={{
             display: "flex",
             alignItems: "center",
@@ -276,7 +280,12 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
           >
             Contacts
           </p>
-          <SearchContainer sx={{ width: "16rem" }}>
+          <SearchContainer
+            sx={{
+              width: "16rem",
+              marginBottom: smallScreen ? "0.5rem" : "0rem",
+            }}
+          >
             <SearchIconWrapper>
               <Search
                 sx={{
@@ -306,7 +315,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
               <KeyboardArrowRight sx={{ fontSize: "16px" }} />
             </IconButton>
           </div> */}
-        </div>
+        </Grid>
         <Box
           sx={{
             height: "10rem",
@@ -339,7 +348,14 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
             }}
           >
             <span style={{ fontSize: "11px" }}>Name</span>
-            <span style={{ fontSize: "11px" }}>Relation</span>
+            <span
+              style={{
+                fontSize: "11px",
+                marginRight: "1rem",
+              }}
+            >
+              Relation
+            </span>
             <span style={{ fontSize: "11px" }}>Action</span>
           </Grid>
           {caseData?.debtor?.contacts?.map((item, index) => {

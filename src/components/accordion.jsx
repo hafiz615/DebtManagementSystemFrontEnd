@@ -29,11 +29,12 @@ export default function AccordionUsage({
   currentPage,
   setCurrentPage,
   totalData,
+  getHomeData,
 }) {
   const [rows, setRows] = useState([]);
   useEffect(() => {
     const generatedData = rowArray?.map((item, index) => ({
-      id: index,
+      id: item?.id,
       name: item?.fullName || "-",
       dueDate: new Date(item?.dueDate).toLocaleDateString() || "-",
       amount: formatDollarAmount(item?.amount),
@@ -171,6 +172,7 @@ export default function AccordionUsage({
           showFailureReason={showFailureReason}
           showDueDate={showDueDate}
           arrayName={arrayName}
+          getHomeData={getHomeData}
           accordionHeight="40vh"
         />
         {/* <DataTable rows={rows} columns={columns} /> */}

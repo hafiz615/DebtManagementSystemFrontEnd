@@ -5,7 +5,7 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-import { Grid, Typography, Box } from "@mui/material";
+import { Grid, Typography, Box, Hidden } from "@mui/material";
 import { Colors } from "../../config/default";
 import Dropdown from "../dropdown";
 import TextButton from "../button";
@@ -13,6 +13,7 @@ import RowConfigForm from "./paymentsAuthsNotificationRow";
 
 import { SaveSettings } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { styled } from "@mui/material/styles";
 const StyledAccordion = styled(Accordion)({
@@ -149,6 +150,7 @@ export default function SettingsAccordion({
       },
     }));
   }, [retryAuthIntervalUnit, retryPaymentIntervalUnit]);
+  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
 
   return (
     <>
@@ -156,8 +158,9 @@ export default function SettingsAccordion({
         <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
           Payments & Authorizations
         </StyledAccordionSummary>
+
         <StyledAccordionDetails>
-          <Grid container item sx={{ marginTop: "1rem" }}>
+          <Grid container item>
             <Grid
               item
               xs={12}
@@ -171,7 +174,7 @@ export default function SettingsAccordion({
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  width: "35%",
+                  width: { xs: "18%", lg: "35%" },
                 }}
               >
                 <Typography sx={{ fontFamily: "Nunito", fontWeight: "700" }}>
@@ -220,12 +223,13 @@ export default function SettingsAccordion({
                 </Typography>
               </Box>
             </Grid>
-
-            <Grid item xs={12} lg={5}>
-              <Typography sx={{ fontFamily: "Nunito", fontWeight: "700" }}>
-                Send To
-              </Typography>
-            </Grid>
+            <Hidden lgDown>
+              <Grid item xs={12} lg={5}>
+                <Typography sx={{ fontFamily: "Nunito", fontWeight: "700" }}>
+                  Send To
+                </Typography>
+              </Grid>
+            </Hidden>
           </Grid>
           <Grid container item sx={{ marginTop: "1rem" }}>
             <RowConfigForm
@@ -286,7 +290,7 @@ export default function SettingsAccordion({
                   fontWeight: "600",
                   color: Colors.DARK_GRAY,
                   paddingLeft: "1.5rem",
-                  width: "20%",
+                  width: smallScreen ? "30%" : "20%",
                 }}
               >
                 Failed Authorizations
@@ -301,7 +305,7 @@ export default function SettingsAccordion({
                   border: "none",
                   outline: "none",
                   borderRadius: "5px",
-                  width: "5%",
+                  width: smallScreen ? "10%" : "5%",
                   marginLeft: "1rem",
                   marginRight: "1rem",
                 }}
@@ -316,7 +320,7 @@ export default function SettingsAccordion({
                 placeholder="Choose Interval"
                 backgroundColor={Colors.BG_LIGHT_GRAY}
                 hoverColor={Colors.BG_LIGHT_GRAY}
-                width="15%"
+                width={smallScreen ? "17%" : "15%"}
                 height="2.5rem"
                 selectedValue={retryInterval.failedAuthorization.unit}
                 setSelectedValue={setRetryAuthIntervalUnit}
@@ -326,7 +330,7 @@ export default function SettingsAccordion({
                   fontFamily: "Nunito",
                   fontWeight: "600",
                   color: Colors.DARK_GRAY,
-                  paddingLeft: "1.5rem",
+                  paddingLeft: smallScreen ? "10px" : "1.5rem",
                 }}
               >
                 Max Retry
@@ -341,7 +345,7 @@ export default function SettingsAccordion({
                   border: "none",
                   outline: "none",
                   borderRadius: "5px",
-                  width: "5%",
+                  width: smallScreen ? "10%" : "5%",
                   marginLeft: "1rem",
                   marginRight: "1rem",
                 }}
@@ -363,7 +367,7 @@ export default function SettingsAccordion({
                   fontWeight: "600",
                   color: Colors.DARK_GRAY,
                   paddingLeft: "1.5rem",
-                  width: "20%",
+                  width: smallScreen ? "30%" : "20%",
                 }}
               >
                 Failed Payment
@@ -378,7 +382,7 @@ export default function SettingsAccordion({
                   border: "none",
                   outline: "none",
                   borderRadius: "5px",
-                  width: "5%",
+                  width: smallScreen ? "10%" : "5%",
                   marginLeft: "1rem",
                   marginRight: "1rem",
                 }}
@@ -393,7 +397,7 @@ export default function SettingsAccordion({
                 placeholder="Choose Interval"
                 backgroundColor={Colors.BG_LIGHT_GRAY}
                 hoverColor={Colors.BG_LIGHT_GRAY}
-                width="15%"
+                width={smallScreen ? "17%" : "15%"}
                 height="2.5rem"
                 selectedValue={retryInterval.failedPayment.unit}
                 setSelectedValue={setRetryPaymentIntervalUnit}
@@ -403,7 +407,7 @@ export default function SettingsAccordion({
                   fontFamily: "Nunito",
                   fontWeight: "600",
                   color: Colors.DARK_GRAY,
-                  paddingLeft: "1.5rem",
+                  paddingLeft: smallScreen ? "10px" : "1.5rem",
                 }}
               >
                 Max Retry
@@ -418,7 +422,7 @@ export default function SettingsAccordion({
                   border: "none",
                   outline: "none",
                   borderRadius: "5px",
-                  width: "5%",
+                  width: smallScreen ? "10%" : "5%",
                   marginLeft: "1rem",
                   marginRight: "1rem",
                 }}

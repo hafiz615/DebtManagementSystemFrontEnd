@@ -9,6 +9,7 @@ import MuiPhoneTextField from "../muiPhoneText";
 import AmountTextField from "../amountTextField";
 import { PhoneValidation } from "../../constants/appConstants";
 import { formatPhoneNumber } from "../../common";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function CreditorFields({
   creditorBasicsInfo,
@@ -32,6 +33,7 @@ export default function CreditorFields({
   creditorContactEmailError,
   setCreditorContactEmailError,
 }) {
+  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const isEmailValid = (email) => {
     // Use a more robust email validation regular expression
@@ -198,7 +200,7 @@ export default function CreditorFields({
             type="text"
             label="Company Name*"
             placeHolderValue="Enter Company Name"
-            width="97%"
+            width={smallScreen ? "100%" : "97%"}
             value={creditorBusinessDetails?.businessCompanyName}
             onChange={(e) =>
               businessInfoInputChange("businessCompanyName", e.target.value)
@@ -208,7 +210,7 @@ export default function CreditorFields({
             type="text"
             label="Business Category*"
             placeHolderValue="Enter Category"
-            width="97%"
+            width={smallScreen ? "100%" : "97%"}
             value={creditorBusinessDetails?.businessCategory}
             onChange={(e) =>
               businessInfoInputChange("businessCategory", e.target.value)
@@ -237,7 +239,7 @@ export default function CreditorFields({
             type="text"
             label="Full Name*"
             placeHolderValue="Enter Full Name"
-            width="97%"
+            width={smallScreen ? "100%" : "97%"}
             value={creditorBasicsInfo?.CreditorBasicFullName}
             onChange={(e) =>
               basicInfoInputChange("CreditorBasicFullName", e.target.value)
@@ -247,7 +249,7 @@ export default function CreditorFields({
             type="text"
             label="Email Address*"
             placeHolderValue="Enter Valid Email"
-            width="97%"
+            width={smallScreen ? "100%" : "97%"}
             value={creditorBasicsInfo?.CreditorBasicEmailAddress}
             onChange={(e) =>
               basicInfoInputChange("CreditorBasicEmailAddress", e.target.value)
@@ -291,7 +293,7 @@ export default function CreditorFields({
             border: "none",
             outline: "none",
             borderRadius: "5px",
-            width: "97%",
+            width: smallScreen ? "100%" : "97%",
           }}
         />
         <Typography
@@ -317,7 +319,7 @@ export default function CreditorFields({
             border: "none",
             outline: "none",
             borderRadius: "5px",
-            width: "97%",
+            width: smallScreen ? "100%" : "97%",
           }}
         />
       </Grid>
@@ -499,7 +501,7 @@ export default function CreditorFields({
                     type="text"
                     label="Name"
                     placeHolderValue="Enter Name"
-                    width="97%"
+                    width={smallScreen ? "100%" : "97%"}
                     value={item?.name}
                     onChange={(e) =>
                       handleInputChange(index, "name", e.target.value)
@@ -509,7 +511,7 @@ export default function CreditorFields({
                     type="text"
                     label="Title"
                     placeHolderValue="Enter Title"
-                    width="97%"
+                    width={smallScreen ? "100%" : "97%"}
                     value={item?.title}
                     onChange={(e) =>
                       handleInputChange(index, "title", e.target.value)
@@ -529,7 +531,7 @@ export default function CreditorFields({
                     type="text"
                     label="Enter Email"
                     placeHolderValue="Enter Email"
-                    width="97%"
+                    width={smallScreen ? "100%" : "97%"}
                     value={item?.email}
                     onChange={(e) =>
                       handleInputChange(index, "email", e.target.value)
@@ -541,7 +543,7 @@ export default function CreditorFields({
                     type="text"
                     label="Country (Optional)"
                     placeHolderValue="Country Name"
-                    width="97%"
+                    width={smallScreen ? "100%" : "97%"}
                     value={item?.country}
                     onChange={(e) =>
                       handleInputChange(index, "country", e.target.value)
@@ -551,7 +553,7 @@ export default function CreditorFields({
                     type="text"
                     label="State (Optional)"
                     placeHolderValue="Enter State"
-                    width="97%"
+                    width={smallScreen ? "100%" : "97%"}
                     value={item?.state}
                     onChange={(e) =>
                       handleInputChange(index, "state", e.target.value)
@@ -560,7 +562,7 @@ export default function CreditorFields({
                   <PaymentsTextFields
                     label="City (Optional)"
                     placeHolderValue="Enter City"
-                    width="97%"
+                    width={smallScreen ? "100%" : "97%"}
                     value={item?.city}
                     onChange={(e) =>
                       handleInputChange(index, "city", e.target.value)
@@ -570,7 +572,7 @@ export default function CreditorFields({
                     type="number"
                     label="Zip Code (Optional)"
                     placeHolderValue="Enter Zip Code"
-                    width="97%"
+                    width={smallScreen ? "100%" : "97%"}
                     value={item?.zipCode}
                     onChange={(e) =>
                       handleInputChange(index, "zipCode", e.target.value)
@@ -614,7 +616,7 @@ export default function CreditorFields({
                       border: "none",
                       outline: "none",
                       borderRadius: "5px",
-                      width: "80%",
+                      width: smallScreen ? "100%" : "97%",
                     }}
                   />
                 </Grid>

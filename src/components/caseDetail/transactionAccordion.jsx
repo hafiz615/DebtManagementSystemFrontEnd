@@ -14,7 +14,11 @@ import TransactionRow from "../transactionRow";
 import { Colors } from "../../config/default";
 import { isEmpty } from "lodash";
 
-export default function TransactionAccordion({ paymentDetails, loading }) {
+export default function TransactionAccordion({
+  paymentDetails,
+  loading,
+  GetCasePaymentDetails,
+}) {
   return (
     <Accordion
       sx={{
@@ -68,10 +72,14 @@ export default function TransactionAccordion({ paymentDetails, loading }) {
           </Grid>
         ) : (
           <>
-            <TransactionRow data={paymentDetails?.transactions?.previous} />
+            <TransactionRow
+              data={paymentDetails?.transactions?.previous}
+              GetCasePaymentDetails={GetCasePaymentDetails}
+            />
             <TransactionRow
               data={paymentDetails?.transactions?.upcomingPayments}
               heading="Upcoming"
+              GetCasePaymentDetails={GetCasePaymentDetails}
             />
           </>
         )}

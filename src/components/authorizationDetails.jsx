@@ -308,6 +308,7 @@ export default function AuthorizationDetails() {
           data={data}
           value={value}
           setValue={setValue}
+          getHomeData={getHomeData}
         />
       </Grid>
       <Menu

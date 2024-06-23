@@ -7,6 +7,8 @@ import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import { Colors } from "../../config/default";
 import Dropdown from "./../dropdown";
 import AmountTextField from "../amountTextField";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import Hidden from "@mui/material/Hidden";
 
 export default function PaymentSettlement({
   newDataList,
@@ -14,6 +16,7 @@ export default function PaymentSettlement({
   remainingAmount,
   totalAmount,
 }) {
+  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:1440px)");
   const menuItems = [
     { label: "Custom", value: "Custom" },
     { label: "Daily", value: "Daily" },
@@ -138,7 +141,7 @@ export default function PaymentSettlement({
                 display: "flex",
                 justifyContent: { xs: "space-between", md: "center" },
                 alignItems: "center",
-                marginBottom: "0.5rem",
+                mt: { xs: "0.5rem", md: ".5rem" },
               }}
             >
               <Typography
@@ -173,13 +176,28 @@ export default function PaymentSettlement({
               /> */}
 
               <AmountTextField
-                width="60%"
+                width={smallScreen ? "100%" : "60%"}
                 value={item?.amount}
                 onChange={(e) =>
                   handleInputChange(index, "amount", parseInt(e.target.value))
                 }
                 onKeyDown={handleNumberInput}
               />
+              <Hidden smUp>
+                {index === newDataList?.length - 1 &&
+                  isInteracted &&
+                  parseInt(remainingAmount) !== totalAmount && (
+                    <Typography
+                      sx={{
+                        color: "red",
+                        marginLeft: smallScreen ? "0rem" : "2rem",
+                        fontSize: "10px",
+                      }}
+                    >
+                      Total debt must be equal to remaining amount
+                    </Typography>
+                  )}
+              </Hidden>
             </Grid>
 
             <Grid
@@ -192,6 +210,7 @@ export default function PaymentSettlement({
                 display: "flex",
                 justifyContent: { xs: "space-between", md: "center" },
                 alignItems: "center",
+                mt: { xs: "0.5rem", md: ".5rem" },
               }}
             >
               <Typography
@@ -210,7 +229,8 @@ export default function PaymentSettlement({
                 initialValue={item?.timePeriod}
                 menuItems={menuItems}
                 backgroundColor={Colors.BG_LIGHT_GRAY}
-                width="60%"
+                width={smallScreen ? "100%" : "60%"}
+                height="2.5rem"
                 value={item?.timePeriod}
                 onChange={(value) =>
                   handleInputChange(index, "timePeriod", value)
@@ -222,13 +242,13 @@ export default function PaymentSettlement({
               container
               item
               xs={12}
-              md={6}
+              // md={6}
               lg={3}
               sx={{
                 display: "flex",
                 justifyContent: { xs: "space-between", md: "center" },
                 alignItems: "center",
-                mt: { xs: "0.5rem", md: "0" },
+                mt: { xs: "0.5rem", md: ".5rem" },
               }}
             >
               <Typography
@@ -258,7 +278,7 @@ export default function PaymentSettlement({
                   border: "none",
                   outline: "none",
                   borderRadius: "5px",
-                  width: "60%",
+                  width: smallScreen ? "100%" : "60%",
                 }}
               />
             </Grid>
@@ -325,16 +345,21 @@ export default function PaymentSettlement({
                 </>
               )}
             </Grid>
-
-            {index === newDataList?.length - 1 &&
-              isInteracted &&
-              parseInt(remainingAmount) !== totalAmount && (
-                <Typography
-                  sx={{ color: "red", marginLeft: "2rem", fontSize: "10px" }}
-                >
-                  Total debt must be equal to remaining amount
-                </Typography>
-              )}
+            <Hidden smDown>
+              {index === newDataList?.length - 1 &&
+                isInteracted &&
+                parseInt(remainingAmount) !== totalAmount && (
+                  <Typography
+                    sx={{
+                      color: "red",
+                      marginLeft: smallScreen ? "0rem" : "2rem",
+                      fontSize: "10px",
+                    }}
+                  >
+                    Total debt must be equal to remaining amount
+                  </Typography>
+                )}
+            </Hidden>
           </React.Fragment>
         ))}
       </Grid>

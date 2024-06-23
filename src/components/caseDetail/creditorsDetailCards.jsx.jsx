@@ -20,6 +20,7 @@ import {
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import { formatDollarAmount } from "../../common";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -53,6 +54,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
+  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = date.getDate();
@@ -120,8 +122,8 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
           }}
         >
           <Typography
-            style={{
-              fontSize: "11px",
+            sx={{
+              fontSize: smallScreen ? "11px" : "13px",
               fontFamily: "Nunito",
               color: Colors.DARK_GRAY,
               fontWeight: "700",
@@ -130,8 +132,8 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             Full Name
           </Typography>
           <Typography
-            style={{
-              fontSize: "11px",
+            sx={{
+              fontSize: smallScreen ? "11px" : "13px",
               color: Colors.DIM_LIGHT_GRAY,
               fontFamily: "Nunito",
               fontWeight: "500",
@@ -149,7 +151,8 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
           }}
         >
           <Typography
-            style={{
+            sx={{
+              fontSize: smallScreen ? "11px" : "13px",
               fontSize: "11px",
               fontFamily: "Nunito",
               color: Colors.DARK_GRAY,
@@ -159,8 +162,8 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             Email
           </Typography>
           <Typography
-            style={{
-              fontSize: "11px",
+            sx={{
+              fontSize: smallScreen ? "11px" : "13px",
               color: Colors.DIM_LIGHT_GRAY,
               fontFamily: "Nunito",
               textAlign: "right",
@@ -172,8 +175,8 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
         </div>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <Typography
-            style={{
-              fontSize: "11px",
+            sx={{
+              fontSize: smallScreen ? "11px" : "13px",
               fontFamily: "Nunito",
               color: Colors.DARK_GRAY,
               fontWeight: "700",
@@ -182,8 +185,8 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             Phone #
           </Typography>
           <Typography
-            style={{
-              fontSize: "11px",
+            sx={{
+              fontSize: smallScreen ? "11px" : "13px",
               color: Colors.DIM_LIGHT_GRAY,
               fontFamily: "Nunito",
               fontWeight: "500",
@@ -224,8 +227,8 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
           }}
         >
           <Typography
-            style={{
-              fontSize: "11px",
+            sx={{
+              fontSize: smallScreen ? "11px" : "13px",
               fontFamily: "Nunito",
               fontWeight: "700",
               color: Colors.DARK_GRAY,
@@ -235,8 +238,8 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             Company
           </Typography>
           <Typography
-            style={{
-              fontSize: "11px",
+            sx={{
+              fontSize: smallScreen ? "11px" : "13px",
               color: Colors.DIM_LIGHT_GRAY,
               fontFamily: "Nunito",
               fontWeight: "500",
@@ -255,8 +258,8 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
           }}
         >
           <Typography
-            style={{
-              fontSize: "11px",
+            sx={{
+              fontSize: smallScreen ? "11px" : "13px",
               fontFamily: "Nunito",
               fontWeight: "700",
               color: Colors.DARK_GRAY,
@@ -266,8 +269,8 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             Category
           </Typography>
           <Typography
-            style={{
-              fontSize: "11px",
+            sx={{
+              fontSize: smallScreen ? "11px" : "13px",
               color: Colors.DIM_LIGHT_GRAY,
               fontFamily: "Nunito",
               fontWeight: "500",
@@ -410,7 +413,9 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
           marginBottom: ".5rem",
         }}
       >
-        <div
+        <Grid
+          container
+          item
           style={{
             display: "flex",
             alignItems: "center",
@@ -426,7 +431,12 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
           >
             Contacts
           </p>
-          <SearchContainer sx={{ width: "16rem" }}>
+          <SearchContainer
+            sx={{
+              width: "16rem",
+              marginBottom: smallScreen ? "0.5rem" : "0rem",
+            }}
+          >
             <SearchIconWrapper>
               <Search sx={{ fontSize: "16px", color: Colors.DIM_LIGHT_GRAY }} />
             </SearchIconWrapper>
@@ -448,7 +458,7 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
               <KeyboardArrowRight sx={{ fontSize: "16px" }} />
             </IconButton>
           </div> */}
-        </div>
+        </Grid>
         <Box
           style={{
             height: "10rem",
@@ -481,7 +491,9 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             }}
           >
             <span style={{ fontSize: "11px" }}>Name</span>
-            <span style={{ fontSize: "11px" }}>Relation</span>
+            <span style={{ fontSize: "11px", marginRight: "1rem" }}>
+              Relation
+            </span>
             <span style={{ fontSize: "11px" }}>Action</span>
           </Grid>
 

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 
-import { Grid, Typography, Box } from "@mui/material";
+import { Grid, Typography, Box, Hidden } from "@mui/material";
 import { Colors } from "../../config/default";
 import Checkboxes from "../checkBox";
 import Dropdown from "../dropdown";
@@ -14,8 +14,8 @@ function truncateTemplateName(name) {
 }
 
 export default function RowConfigForm({ title, data, setData, menuItems }) {
-  const [smsTemplate, setSMSTemplate] = useState(data.smsTemplate);
-  const [emailTemplate, setEmailTemplate] = useState(data.emailTemplate);
+  const [smsTemplate, setSMSTemplate] = useState(data?.smsTemplate);
+  const [emailTemplate, setEmailTemplate] = useState(data?.emailTemplate);
   const roles = ["Admin", "Manager", "Negotiator", "Debtor", "Creditor"];
 
   const onSendToRoleChange = (role, checked) => {
@@ -55,7 +55,7 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
   }, [emailTemplate]);
 
   return (
-    <Grid container item>
+    <Grid container>
       <Grid
         item
         xs={12}
@@ -70,14 +70,15 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
           sx={{
             display: "flex",
             flexDirection: "column",
-            width: "35%",
+            width: { xs: "15%", sm: "25%", lg: "35%" },
           }}
         >
           <Typography
             sx={{
+              fontSize: { xs: "13px", lg: "16px" },
               fontFamily: "Nunito",
               fontWeight: "600",
-              color: Colors.DARK_GRAY,
+              color: { xs: Colors.BLACK, lg: Colors.DARK_GRAY },
             }}
           >
             {title}
@@ -88,7 +89,7 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            width: "7.5%%",
+            // width: "7.5%",
           }}
         >
           <Checkboxes
@@ -162,6 +163,17 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
       </Grid>
 
       <Grid item xs={12} lg={5}>
+        <Hidden lgUp>
+          <Typography
+            sx={{
+              fontFamily: "Nunito",
+              fontWeight: "700",
+              marginLeft: "1.8rem",
+            }}
+          >
+            Send To
+          </Typography>
+        </Hidden>
         <Box
           key={"row"}
           sx={{
@@ -169,19 +181,20 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
             alignItems: "center",
           }}
         >
-          {roles.map((role, index) => (
+          {roles?.map((role, index) => (
             <React.Fragment key={`$row-${index}`}>
               <Checkboxes
-                checked={data.sendTo?.[role.toLowerCase()]}
+                checked={data?.sendTo?.[role.toLowerCase()]}
                 handleCheckChange={(e) =>
                   onSendToRoleChange(role, e.target.checked)
                 }
               />
               <Typography
                 sx={{
+                  fontSize: { xs: "15px", lg: "auto" },
                   fontFamily: "Nunito",
                   fontWeight: "600",
-                  color: Colors.DARK_GRAY,
+                  color: { xs: Colors.BLACK, lg: Colors.DARK_GRAY },
                 }}
               >
                 {role}
@@ -190,6 +203,7 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
           ))}
         </Box>
       </Grid>
+      {/* </Hidden> */}
     </Grid>
   );
 }

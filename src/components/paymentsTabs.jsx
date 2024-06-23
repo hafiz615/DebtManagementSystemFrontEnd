@@ -49,13 +49,19 @@ export default function PaymentsTabs({
   currentPage,
   setCurrentPage,
   totalPages,
+  getHomeData,
 }) {
   const headers = ["Name", "Try Date", "Total Debt", "SSN", "Case Owner"];
 
   if (value === 4) {
     headers.push("Due Date");
   }
-
+  if (value === 0) {
+    headers.push("Re Try");
+  }
+  if (value === 2) {
+    headers.push("Re Try");
+  }
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -139,6 +145,8 @@ export default function PaymentsTabs({
             setCurrentPage={setCurrentPage}
             totalPages={totalPages}
             apiPagination={true}
+            value={value}
+            getHomeData={getHomeData}
           />
         )}
         {value === 1 && (
@@ -159,6 +167,8 @@ export default function PaymentsTabs({
             setCurrentPage={setCurrentPage}
             totalPages={totalPages}
             apiPagination={true}
+            value={value}
+            getHomeData={getHomeData}
           />
         )}
         {value === 3 && (
