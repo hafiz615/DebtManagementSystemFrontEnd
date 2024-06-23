@@ -219,14 +219,16 @@ export default function ClientImport({ setApiData }) {
           {debtorDetails?.map((debtDetail) => (
             <Grid
               key={debtDetail.name}
-              xs={6}
+              xs={12}
+              sm={5}
               md={4}
               lg={2.5}
               sx={{
                 display: "flex",
                 alignItems: "center",
                 gap: "1em",
-                mb: "10px",
+                mb: { xs: "0px", sm: "10px" },
+                justifyContent: { xs: "space-between", sm: "unset" },
               }}
             >
               <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
@@ -253,14 +255,16 @@ export default function ClientImport({ setApiData }) {
           {creditorDetails?.map((creditDetail) => (
             <Grid
               key={creditDetail.name}
-              xs={6}
+              xs={12}
+              sm={5}
               md={4}
               lg={2.5}
               sx={{
                 display: "flex",
                 alignItems: "center",
                 gap: "1em",
-                mb: "10px",
+                mb: { xs: "0px", sm: "10px" },
+                justifyContent: { xs: "space-between", sm: "unset" },
               }}
             >
               <Typography sx={{ fontSize: "14px", fontFamily: "Nunito" }}>
@@ -329,10 +333,13 @@ export default function ClientImport({ setApiData }) {
                 <Grid
                   item
                   xs={12}
-                  md={5}
+                  sm={5}
                   lg={2.5}
                   container
-                  sx={{ gap: "1em" }}
+                  sx={{
+                    gap: "1em",
+                    justifyContent: { xs: "space-between", sm: "unset" },
+                  }}
                 >
                   <Typography sx={{ fontFamily: "Nunito" }}>
                     {item?.name}

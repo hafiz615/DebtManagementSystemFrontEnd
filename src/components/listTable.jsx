@@ -129,19 +129,34 @@ export default function ListTable({
                   ?.map((header, index) => (
                     <StyledTableCell
                       align="left"
-                      sx={{ fontWeight: "700" }}
+                      sx={{
+                        fontWeight: "700",
+                        fontSize: { xs: "10px", sm: "14px" },
+                      }}
                       key={index}
                     >
                       {header}
                     </StyledTableCell>
                   ))}
                 {requiredIcons && (
-                  <StyledTableCell align="left" sx={{ fontWeight: "700" }}>
+                  <StyledTableCell
+                    align="left"
+                    sx={{
+                      fontWeight: "700",
+                      fontSize: { xs: "10px", sm: "14px" },
+                    }}
+                  >
                     Actions
                   </StyledTableCell>
                 )}
                 {requiredCustomFieldIcons && (
-                  <StyledTableCell align="left" sx={{ fontWeight: "700" }}>
+                  <StyledTableCell
+                    align="left"
+                    sx={{
+                      fontWeight: "700",
+                      fontSize: { xs: "10px", sm: "14px" },
+                    }}
+                  >
                     Actions
                   </StyledTableCell>
                 )}
@@ -179,7 +194,17 @@ export default function ListTable({
                           (showDueDate || key !== "dueDate")
                       )
                       ?.map(([key, value], i) => (
-                        <StyledTableCell key={i}>{value}</StyledTableCell>
+                        <StyledTableCell
+                          sx={{
+                            fontSize: {
+                              xs: "10px !important",
+                              sm: "14px !important",
+                            },
+                          }}
+                          key={i}
+                        >
+                          {value}
+                        </StyledTableCell>
                       ))}
                     {requiredIcons && (
                       <StyledTableCell
@@ -259,10 +284,20 @@ export default function ListTable({
               gap: "20px",
             }}
           >
-            <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontSize: { xs: "10px", sm: "14px" },
+              }}
+            >
               Rows Per Page: 5
             </Typography>
-            <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontSize: { xs: "10px", sm: "14px" },
+              }}
+            >
               {totalPages === 0 ? 0 : isNaN(totalPages) ? 0 : currentPage} of{" "}
               {isNaN(totalPages) ? 0 : totalPages}
             </Typography>

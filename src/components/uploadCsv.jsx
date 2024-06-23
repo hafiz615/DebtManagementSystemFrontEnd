@@ -114,7 +114,11 @@ export default function UploadCsv({ handleModalClose }) {
           </Typography>
         ) : (
           <Typography
-            sx={{ fontSize: "14px", fontWeight: "600", fontFamily: "Nunito" }}
+            sx={{
+              fontSize: { xs: "10px", sm: "14px" },
+              fontWeight: "600",
+              fontFamily: "Nunito",
+            }}
           >
             Drag & drop a CSV file here, or click to select files
           </Typography>

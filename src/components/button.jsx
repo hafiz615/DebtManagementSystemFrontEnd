@@ -37,6 +37,7 @@ function TextButton({
         marginRight: { marginRight },
         paddingLeft: { paddingLeft },
         paddingRight: { paddingRight },
+        fontsize: { xs: "10xp", sm: "14px" },
         borderRadius: "10px",
         color: fontColor ? fontColor : Colors.WHITE,
         backgroundColor: backgroundColor,

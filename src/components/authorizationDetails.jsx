@@ -286,7 +286,10 @@ export default function AuthorizationDetails() {
             onClick={handleClick}
           >
             <FilterListOutlinedIcon
-              sx={{ color: Colors.DARK_GRAY, fontSize: "30px" }}
+              sx={{
+                color: Colors.DARK_GRAY,
+                fontSize: { xs: "20px", sm: "30px" },
+              }}
             />
           </IconButton>
         </div>

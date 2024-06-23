@@ -7,11 +7,13 @@ import {
   generateColumnNames,
   getColumnFieldIndex,
 } from "../../common";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function MappingDetails() {
   const [dropdownStates, setDropdownStates] = useState({});
   const [columnNames, setColumnNames] = useState([]);
   const csvDataFromLocal = localStorage?.getItem("csvData");
+  const smallScreen = useMediaQuery("(min-width:200px) and (max-width:760px)");
 
   const csvData = JSON?.parse(csvDataFromLocal);
   var csvHeaders;
@@ -165,7 +167,7 @@ export default function MappingDetails() {
   const renderDropdown = (category, itemName, index) => (
     <Dropdown
       width="6.2rem"
-      height="2rem"
+      height={smallScreen ? "1.5rem" : "2rem"}
       menuItems={columnNames}
       selectedValue={
         dropdownStates[`${category}-${itemName}-${index}`] || "Col A"
@@ -201,14 +203,15 @@ export default function MappingDetails() {
             {debtorDetails.map((debtDetail) => (
               <Grid
                 key={debtDetail.name}
-                xs={6}
+                xs={12}
+                sm={5}
                 md={4}
                 lg={2.5}
                 sx={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  mb: "10px",
+                  mb: smallScreen ? "0px" : "10px",
                 }}
               >
                 <Typography style={{ fontSize: "14px", fontFamily: "Nunito" }}>
@@ -234,14 +237,15 @@ export default function MappingDetails() {
             {creditorDetails.map((creditDetail) => (
               <Grid
                 key={creditDetail.name}
-                xs={6}
+                xs={12}
+                sm={5}
                 md={4}
                 lg={2.5}
                 sx={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  mb: "10px",
+                  mb: smallScreen ? "0px" : "10px",
                 }}
               >
                 <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
@@ -314,6 +318,7 @@ export default function MappingDetails() {
                       key={itemIndex}
                       item
                       xs={12}
+                      sm={5}
                       md={5.5}
                       lg={2.75}
                       container

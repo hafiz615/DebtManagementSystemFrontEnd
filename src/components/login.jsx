@@ -226,7 +226,7 @@ function Login() {
           onClick={handleLoginForm}
           loading={loading}
           marginTop={smallScreen ? "1rem" : "2rem"}
-          height="3rem"
+          height={smallScreen ? "2rem" : "3rem"}
           loginFont="600"
         />
       </Grid>

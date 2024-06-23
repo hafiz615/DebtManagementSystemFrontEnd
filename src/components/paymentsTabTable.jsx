@@ -161,7 +161,10 @@ export default function PaymentTabsTable({
                   align="left"
                   sx={{
                     fontWeight: "700",
-                    fontSize: { xs: "12px", sm: "16px" },
+                    fontSize: {
+                      xs: "10px !important",
+                      sm: "14px !important",
+                    },
                   }}
                   key={index}
                 >
@@ -196,7 +199,7 @@ export default function PaymentTabsTable({
                 >
                   {Object.values(row).map((value, i) => (
                     <StyledTableCell
-                      sx={{ fontSize: { xs: "12px", sm: "16px" } }}
+                      sx={{ fontSize: { xs: "12px", sm: "14px" } }}
                       key={i}
                     >
                       {value}
@@ -262,10 +265,14 @@ export default function PaymentTabsTable({
             gap: "20px",
           }}
         >
-          <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
+          <Typography
+            sx={{ fontFamily: "Nunito", fontSize: { xs: "10px", sm: "14px" } }}
+          >
             Rows Per Page: 5
           </Typography>
-          <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
+          <Typography
+            sx={{ fontFamily: "Nunito", fontSize: { xs: "10px", sm: "14px" } }}
+          >
             {totalPages === 0 ? 0 : isNaN(totalPages) ? 0 : currentPage} of{" "}
             {isNaN(totalPages) ? 0 : totalPages}
           </Typography>
@@ -273,14 +280,14 @@ export default function PaymentTabsTable({
             onClick={backward}
             disabled={currentPage === 1 || currentPage === 0}
           >
-            <ArrowBackIosNewIcon sx={{ fontSize: "16px" }} />
+            <ArrowBackIosNewIcon sx={{ fontSize: "14px" }} />
           </IconButton>
 
           <IconButton
             onClick={forward}
             disabled={currentPage === totalPages || totalPages === 0}
           >
-            <ArrowForwardIosIcon sx={{ fontSize: "16px" }} />
+            <ArrowForwardIosIcon sx={{ fontSize: "14px" }} />
           </IconButton>
         </div>
       ) : (

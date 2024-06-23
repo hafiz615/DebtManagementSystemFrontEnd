@@ -20,6 +20,10 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
     minWidth: 0,
     [theme.breakpoints.up("sm")]: {
       minWidth: 0,
+      fontSize: "14px !important",
+    },
+    [theme.breakpoints.up("xs")]: {
+      fontSize: "10px",
     },
     fontWeight: "500",
     color: Colors.DARK_GRAY,

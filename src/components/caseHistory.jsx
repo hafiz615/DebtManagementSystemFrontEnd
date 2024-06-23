@@ -69,11 +69,14 @@ function CaseHistory({
       <Grid container sx={{ alignItems: "center" }}>
         <Grid
           item
-          xs={11.5}
+          xs={12}
           sx={{
             marginTop: "1.5rem",
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: { xs: "unset", sm: "space-between" },
+            alignItems: { xs: "unset", sm: "center" },
+            gap: { xs: "1rem", sm: "0" },
+            flexDirection: { xs: "column-reverse", sm: "row" },
           }}
         >
           <Typography
@@ -96,26 +99,28 @@ function CaseHistory({
           >
             Case History
           </Typography>
-          <SearchBar
-            searchCheck={true}
-            searchingText={searchText}
-            handleKeyPress={handleKeyPress}
-            placeholder="Search Creditor..."
-          />
-        </Grid>
-        <Grid item xs={0.5}>
-          <IconButton
-            id="demo-positioned-button"
-            aria-controls={open ? "demo-positioned-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
-            onClick={handleClick}
-            sx={{ mt: "15px" }}
-          >
-            <FilterListOutlinedIcon
-              sx={{ color: Colors.DARK_GRAY, fontSize: "30px" }}
+          <div style={{ display: "flex" }}>
+            <SearchBar
+              searchCheck={true}
+              searchingText={searchText}
+              handleKeyPress={handleKeyPress}
+              placeholder="Search Creditor..."
             />
-          </IconButton>
+            <IconButton
+              id="demo-positioned-button"
+              aria-controls={open ? "demo-positioned-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+              onClick={handleClick}
+            >
+              <FilterListOutlinedIcon
+                sx={{
+                  color: Colors.DARK_GRAY,
+                  fontSize: { xs: "20px", sm: "30px" },
+                }}
+              />
+            </IconButton>
+          </div>
         </Grid>
       </Grid>
 
