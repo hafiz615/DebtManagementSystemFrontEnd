@@ -1,32 +1,115 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { isEmpty } from "lodash";
+import { filter, isEmpty } from "lodash";
 
-import { Grid, Typography, Card, CircularProgress } from "@mui/material";
+import {
+  Grid,
+  Typography,
+  Card,
+  CircularProgress,
+  IconButton,
+  Menu,
+} from "@mui/material";
 import { LineChart, PieChart, BarChart } from "@mui/x-charts";
 
 import { Colors } from "../../config/default";
-import SearchBar from "../searchBar";
 import SpinnerWithPercentage from "../spinnerWithPercentage";
 import { GetDashboard } from "../../services/services";
+import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
+import TextButton from "../button";
+import CustomTextField from "../customTextfield";
+import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../../constants/appConstants";
 
 function DashboardContent() {
-  const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(true);
+  const [filterActive, setFilterActive] = useState(false);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [applyDisabled, setApplyDisabled] = useState(true);
+  const [saveState, setSaveState] = useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
   const [dashboardData, setDashboardData] = useState({});
   const userName = useSelector((state) => state?.signIn?.signIn?.user?.name);
 
-  const dashBoard = async () => {
+  const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    return date.toISOString().split(".")[0] + ".000Z";
+  };
+
+  const createFilterObject = (startDate, endDate) => {
+    const filter = {};
+    if (
+      startDate !== null &&
+      startDate !== "" &&
+      endDate !== null &&
+      endDate !== ""
+    ) {
+      filter.date = {
+        start: formatDate(startDate),
+        end: formatDate(endDate),
+      };
+    }
+
+    return filter;
+  };
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleSave = () => {
+    handleClose();
+    setSaveState(!saveState);
+    setFilterActive(true);
+  };
+
+  const handleClear = () => {
+    setStartDate("");
+    setEndDate("");
+    setFilterActive(false);
+    handleClose();
+    dashBoard(false);
+  };
+
+  const disabled = !startDate && !endDate;
+
+  const isPairComplete = (min, max) => {
+    return (min !== "" && max !== "") || (min === "" && max === "");
+  };
+
+  useEffect(() => {
+    const allPairsValid = isPairComplete(startDate, endDate);
+    const anyPairFilled = startDate !== "" && endDate !== "";
+
+    setApplyDisabled(!(allPairsValid && anyPairFilled));
+  }, [startDate, endDate]);
+
+  const dashBoard = async (filter) => {
     setLoading(true);
-    const GetDashboardContent = await GetDashboard();
+    let payload = {};
+    const filterObj = createFilterObject(startDate, endDate);
+
+    payload = {
+      filter: filter ? filterObj : {},
+    };
+    const GetDashboardContent = await GetDashboard(filter, payload);
     if (GetDashboardContent?.status === 200) {
       setDashboardData(GetDashboardContent?.data?.data);
     }
     setLoading(false);
   };
+
   useEffect(() => {
-    dashBoard();
-  }, []);
+    if (filterActive) {
+      dashBoard(filterActive);
+    } else if (!filterActive) {
+      dashBoard(false);
+    }
+  }, [saveState, filterActive]);
 
   const countData = dashboardData?.statusCounts
     ?.filter((item) => item?.count > 0)
@@ -112,12 +195,21 @@ function DashboardContent() {
                 </Typography>
               </div>
             </Grid>
-            <Grid item xs={4}>
-              <SearchBar
-                searchText={searchText}
-                setSearchText={setSearchText}
-                placeholder="Search..."
-              />
+            <Grid container sx={{ justifyContent: "flex-end" }}>
+              <IconButton
+                id="demo-positioned-button"
+                aria-controls={open ? "demo-positioned-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? "true" : undefined}
+                onClick={handleClick}
+              >
+                <FilterListOutlinedIcon
+                  sx={{
+                    color: Colors.DARK_GRAY,
+                    fontSize: { xs: "20px", sm: "30px" },
+                  }}
+                />
+              </IconButton>
             </Grid>
           </Grid>
 
@@ -531,6 +623,85 @@ function DashboardContent() {
               </Card>
             </Grid>
           </Grid>
+          <Menu
+            id="demo-positioned-menu"
+            aria-labelledby="demo-positioned-button"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            transformOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+            sx={{
+              "& .MuiPaper-root": {
+                borderRadius: "12px",
+              },
+            }}
+          >
+            <Grid sx={{ padding: ".5rem .75rem", width: "16rem" }}>
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontSize: FONT_SIZE_XL,
+                  fontWeight: "600",
+                }}
+              >
+                Filter
+              </Typography>
+              <p
+                style={{
+                  fontFamily: "Nunito",
+                  fontSize: FONT_SIZE_LARGE,
+                  margin: "5px 0px",
+                }}
+              >
+                Date
+              </p>
+              <CustomTextField
+                type="date"
+                width="100%"
+                paddingLeft="4px"
+                onChange={(e) => setStartDate(e.target.value)}
+                value={startDate}
+              />
+              <CustomTextField
+                type="date"
+                width="100%"
+                paddingLeft="4px"
+                onChange={(e) => setEndDate(e.target.value)}
+                value={endDate}
+              />
+
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  marginTop: "1rem",
+                }}
+              >
+                <TextButton
+                  buttonText="Clear"
+                  height="2rem"
+                  width="45%"
+                  marginRight="10%"
+                  fontColor={Colors.BLACK}
+                  onClick={handleClear}
+                  disabled={disabled}
+                  backgroundColor={Colors.BG_LIGHT_GRAY}
+                  hoverColor={Colors.BG_LIGHT_GRAY}
+                />
+                <TextButton
+                  buttonText="Filter"
+                  height="2rem"
+                  width="45%"
+                  fontColor={Colors.BLACK}
+                  onClick={handleSave}
+                  disabled={applyDisabled}
+                  backgroundColor={Colors.BG_LIGHT_GRAY}
+                  hoverColor={Colors.BG_LIGHT_GRAY}
+                />
+              </div>
+            </Grid>
+          </Menu>
         </>
       )}
     </Grid>

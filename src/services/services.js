@@ -12,10 +12,12 @@ export const SignIn = async (payload) => {
   }
 };
 
-export const GetAllUsers = async (page) => {
+export const GetAllUsers = async (page, search, filter, payload) => {
   try {
-    return await axios.get(
-      BASE_URL + `/v1/user/getAllUsers?page=${page}&limit=5`,
+    return await axios.post(
+      BASE_URL +
+        `/v1/user/getAllUsers?page=${page}&limit=5&search=${search}&filter=${filter}`,
+      payload,
       setHeaders()
     );
   } catch (error) {
@@ -418,9 +420,13 @@ export const UpdateCaseAbout = async (payload, id) => {
     return error;
   }
 };
-export const GetDashboard = async () => {
+export const GetDashboard = async (filter, payload) => {
   try {
-    return await axios.get(BASE_URL + "/v1/user/dashboard", setHeaders());
+    return await axios.post(
+      BASE_URL + `/v1/user/dashboard?filter=${filter}`,
+      payload,
+      setHeaders()
+    );
   } catch (error) {
     return error;
   }
