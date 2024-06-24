@@ -953,7 +953,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
                 paddingLeft="2rem"
                 paddingRight="2rem"
                 height="2rem"
-                marginRight="1rem"
+                marginRight={smallScreen ? "8px" : "1rem"}
               />
               <TextButton
                 buttonText="RESET"
@@ -963,17 +963,18 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
                 paddingLeft="2rem"
                 paddingRight="2rem"
                 height="2rem"
-                marginRight="1rem"
+                marginRight={smallScreen ? "8px" : "1rem"}
               />
               <TextButton
+                width={smallScreen ? "12rem" : "max-content"}
                 buttonText="RESET ALL"
                 onClick={resetAll}
                 backgroundColor={Colors.DARK_GRAY}
                 hoverColor={Colors.DARK_GRAY}
-                paddingLeft="2rem"
-                paddingRight="2rem"
+                paddingLeft={smallScreen ? "10px" : "2rem"}
+                paddingRight={smallScreen ? "10px" : "2rem"}
                 height="2rem"
-                marginRight="1rem"
+                marginRight={smallScreen ? "8px" : "1rem"}
               />
               <TextButton
                 buttonText={activeStep === steps.length - 1 ? "SAVE" : "NEXT"}
@@ -986,7 +987,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
                 onClick={() => {
                   handleNext();
                 }}
-                marginRight="1rem"
+                marginRight={smallScreen ? "8px" : "1rem"}
                 disabled={disableButton || loading}
               />
             </Grid>

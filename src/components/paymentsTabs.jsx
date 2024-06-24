@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 
 import { Colors } from "../config/default";
 import PaymentTabsTable from "./paymentsTabTable";
+import { FONT_SIZE_SMALL } from "../constants/appConstants";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -20,6 +21,10 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
     minWidth: 0,
     [theme.breakpoints.up("sm")]: {
       minWidth: 0,
+      fontSize: "14px !important",
+    },
+    [theme.breakpoints.up("xs")]: {
+      fontSize: FONT_SIZE_SMALL,
     },
     fontWeight: "500",
     color: Colors.DARK_GRAY,
@@ -45,13 +50,19 @@ export default function PaymentsTabs({
   currentPage,
   setCurrentPage,
   totalPages,
+  getHomeData,
 }) {
   const headers = ["Name", "Try Date", "Total Debt", "SSN", "Case Owner"];
 
   if (value === 4) {
     headers.push("Due Date");
   }
-
+  if (value === 0) {
+    headers.push("Re Try");
+  }
+  if (value === 2) {
+    headers.push("Re Try");
+  }
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -60,7 +71,7 @@ export default function PaymentsTabs({
     <Box>
       <Box
         sx={{
-          marginLeft: "2.5rem",
+          marginLeft: { xs: "0", md: "2.5rem" },
         }}
       >
         <AntTabs
@@ -69,12 +80,12 @@ export default function PaymentsTabs({
           aria-label="ant example"
           variant="scrollable"
           scrollButtons="auto"
-          sx={{ width: { xs: "22rem", md: "70rem" } }}
+          sx={{ width: { xs: "100%", md: "70rem" } }}
         >
           <AntTab
             sx={{
               bgcolor: Colors.WHITE,
-              width: "max-content",
+              width: { xs: "20%", sm: "max-content" },
               borderTopLeftRadius: "10px",
               fontWeight: "600",
               height: "3.5rem",
@@ -85,7 +96,7 @@ export default function PaymentsTabs({
           <AntTab
             sx={{
               bgcolor: Colors.WHITE,
-              width: "max-content",
+              width: { xs: "20%", sm: "max-content" },
               fontWeight: "600",
               height: "3.5rem",
             }}
@@ -94,7 +105,7 @@ export default function PaymentsTabs({
           <AntTab
             sx={{
               bgcolor: Colors.WHITE,
-              width: "max-content",
+              width: { xs: "20%", sm: "max-content" },
               fontWeight: "600",
               height: "3.5rem",
             }}
@@ -103,7 +114,7 @@ export default function PaymentsTabs({
           <AntTab
             sx={{
               bgcolor: Colors.WHITE,
-              width: "max-content",
+              width: { xs: "20%", sm: "max-content" },
               fontWeight: "600",
               height: "3.5rem",
             }}
@@ -112,7 +123,7 @@ export default function PaymentsTabs({
           <AntTab
             sx={{
               bgcolor: Colors.WHITE,
-              width: "max-content",
+              width: { xs: "20%", sm: "max-content" },
               borderTopRightRadius: "10px",
               fontWeight: "600",
               height: "3.5rem",
@@ -135,6 +146,8 @@ export default function PaymentsTabs({
             setCurrentPage={setCurrentPage}
             totalPages={totalPages}
             apiPagination={true}
+            value={value}
+            getHomeData={getHomeData}
           />
         )}
         {value === 1 && (
@@ -155,6 +168,8 @@ export default function PaymentsTabs({
             setCurrentPage={setCurrentPage}
             totalPages={totalPages}
             apiPagination={true}
+            value={value}
+            getHomeData={getHomeData}
           />
         )}
         {value === 3 && (

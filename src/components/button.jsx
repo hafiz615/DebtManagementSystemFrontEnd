@@ -3,6 +3,7 @@ import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import { Colors } from "../config/default";
+import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../constants/appConstants";
 function TextButton({
   fontColor,
   buttonText,
@@ -37,6 +38,7 @@ function TextButton({
         marginRight: { marginRight },
         paddingLeft: { paddingLeft },
         paddingRight: { paddingRight },
+        fontsize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
         borderRadius: "10px",
         color: fontColor ? fontColor : Colors.WHITE,
         backgroundColor: backgroundColor,

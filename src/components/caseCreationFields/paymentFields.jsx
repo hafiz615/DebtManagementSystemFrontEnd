@@ -178,7 +178,7 @@ export default function PaymentFields({
               border: "none",
               outline: "none",
               borderRadius: "5px",
-              width: smallScreen ? "100%" : "60%",
+              width: "60%",
             }}
           />
         </Grid>
@@ -210,7 +210,7 @@ export default function PaymentFields({
             menuItems={menuItems}
             placeholder="Choose Status"
             backgroundColor={Colors.BG_LIGHT_GRAY}
-            width={smallScreen ? "100%" : "60%"}
+            width="60%"
           />
         </Grid>
         <Grid

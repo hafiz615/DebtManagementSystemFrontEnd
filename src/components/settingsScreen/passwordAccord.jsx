@@ -97,7 +97,7 @@ export default function PasswordAccordion() {
               sx={{
                 fontFamily: "Nunito",
                 fontWeight: "600",
-                width: "15%",
+                width: { xs: "40%", lg: "15%" },
                 color: Colors.DARK_GRAY,
               }}
             >
@@ -119,7 +119,7 @@ export default function PasswordAccordion() {
               sx={{
                 fontFamily: "Nunito",
                 fontWeight: "600",
-                width: "15%",
+                width: { xs: "40%", lg: "15%" },
                 color: Colors.DARK_GRAY,
               }}
             >
@@ -143,7 +143,7 @@ export default function PasswordAccordion() {
               sx={{
                 fontFamily: "Nunito",
                 fontWeight: "600",
-                width: "15%",
+                width: { xs: "40%", lg: "15%" },
                 color: Colors.DARK_GRAY,
               }}
             >

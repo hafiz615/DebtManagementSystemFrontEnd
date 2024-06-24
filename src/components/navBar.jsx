@@ -7,9 +7,17 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { Colors } from "../config/default";
+import { Logout } from "../services/services";
 
 export default function NavBar({ onClick }) {
   const navigate = useNavigate();
+  const handleLogout = async () => {
+    const response = await Logout();
+    if (response.status === 200) {
+      localStorage.clear();
+      navigate("/");
+    }
+  };
 
   return (
     <Box>
@@ -43,10 +51,7 @@ export default function NavBar({ onClick }) {
           <Box sx={{ flexGrow: 1 }} />
 
           <IconButton
-            onClick={() => {
-              localStorage.clear();
-              navigate("/");
-            }}
+            onClick={handleLogout}
             size="large"
             edge="end"
             aria-label="account of current user"

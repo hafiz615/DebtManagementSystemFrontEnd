@@ -9,6 +9,7 @@ import Paper from "@mui/material/Paper";
 
 import { Colors } from "../config/default";
 import { MenuItem } from "@mui/material";
+import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../constants/appConstants";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -39,8 +40,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
     width: "100%",
+    fontSize: "14px !important",
     [theme.breakpoints.up("md")]: {
       width: "18rem",
+    },
+    [theme.breakpoints.up("xs")]: {
+      fontSize: "10px",
     },
   },
 }));
@@ -93,7 +98,7 @@ function SearchBar({
         alignItems: "center",
         borderRadius: "1rem",
         backgroundColor: Colors.WHITE,
-        height: "3rem",
+        height: { xs: "2rem", sm: "3rem" },
         "&:hover": {
           backgroundColor: Colors.WHITE,
         },
@@ -102,7 +107,7 @@ function SearchBar({
       <SearchIconWrapper>
         <SearchIcon
           sx={{
-            fontSize: "2rem",
+            fontSize: { xs: "1rem", sm: "2rem" },
           }}
         />
       </SearchIconWrapper>
@@ -121,7 +126,7 @@ function SearchBar({
       />
       {searchText ? (
         <ClearIconWrapper onClick={clearSearch}>
-          <ClearIcon sx={{ fontSize: "1.5rem" }} />
+          <ClearIcon sx={{ fontSize: { xs: "1rem", sm: "1.5rem" } }} />
         </ClearIconWrapper>
       ) : (
         ""
@@ -164,10 +169,15 @@ function SearchBar({
                     padding: 0,
                     flexDirection: "column",
                     color: Colors.DIM_LIGHT_GRAY,
-                    fontSize: "11px",
+                    fontSize: FONT_SIZE_SMALL,
                   }}
                 >
-                  <span style={{ fontSize: "13px", color: Colors.DARK_GRAY }}>
+                  <span
+                    style={{
+                      fontSize: FONT_SIZE_LARGE,
+                      color: Colors.DARK_GRAY,
+                    }}
+                  >
                     {result?.basicInformation?.fullName}
                   </span>
                   <span>{result?.basicInformation?.email}</span>

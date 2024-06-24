@@ -10,6 +10,7 @@ import Papa from "papaparse";
 import { Colors } from "../config/default";
 import { useToast } from "../toast/toastContext";
 import TextButton from "./button";
+import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../constants/appConstants";
 
 export default function UploadCsv({ handleModalClose }) {
   const navigate = useNavigate();
@@ -114,7 +115,11 @@ export default function UploadCsv({ handleModalClose }) {
           </Typography>
         ) : (
           <Typography
-            sx={{ fontSize: "14px", fontWeight: "600", fontFamily: "Nunito" }}
+            sx={{
+              fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+              fontWeight: "600",
+              fontFamily: "Nunito",
+            }}
           >
             Drag & drop a CSV file here, or click to select files
           </Typography>
@@ -122,7 +127,11 @@ export default function UploadCsv({ handleModalClose }) {
       </div>
       {filename && (
         <Typography
-          sx={{ marginTop: "1em", fontSize: "14px", textAlign: "center" }}
+          sx={{
+            marginTop: "1em",
+            fontSize: FONT_SIZE_LARGE,
+            textAlign: "center",
+          }}
         >
           {filename}
         </Typography>

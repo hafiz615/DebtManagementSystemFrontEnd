@@ -18,7 +18,14 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { Colors } from "../config/default";
 import MuiModels from "./models";
 import { isEmpty } from "lodash";
-
+import Prompt from "./prompt";
+import { useToast } from "../toast/toastContext";
+import { RetryAuth, RetryCapture } from "../services/services";
+import {
+  FONT_SIZE_LARGE,
+  FONT_SIZE_SMALL,
+  FONT_SIZE_XL,
+} from "../constants/appConstants";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     color: Colors.BLACK,
@@ -33,7 +40,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
   [`&.${tableCellClasses.body}`]: {
     color: Colors.DARK_GRAY,
-    fontSize: 14,
+    fontSize: FONT_SIZE_LARGE,
     border: "none",
     paddingInlineStart: "0",
     paddingInlineEnd: "0",
@@ -46,7 +53,6 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
   },
 }));
-
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: Colors.LIGHT_BLUE_COLOR,
@@ -65,7 +71,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     border: "none",
   },
 }));
-
 export default function ListTable({
   data,
   headerData,
@@ -79,25 +84,41 @@ export default function ListTable({
   currentPage,
   setCurrentPage,
   totalPages,
+  arrayName,
+  getHomeData,
 }) {
+  const { showToast } = useToast();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-
   const backward = () => {
     setCurrentPage(currentPage - 1);
   };
-
   const forward = () => {
     setCurrentPage(currentPage + 1);
   };
-
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+  const handlePayment = async (id) => {
+    let result;
+    if (arrayName === "failedAuthorizations") {
+      result = await RetryAuth(id);
+    } else if (arrayName === "failedPayments") {
+      result = await RetryCapture(id);
+    }
+    if (result?.status === 200) {
+      showToast(result?.data?.message, "success");
+      getHomeData(arrayName, 1);
+    } else {
+      showToast(
+        result?.response?.data?.message || result?.response?.data?.message,
+        "error"
+      );
+    }
   };
 
   return (
@@ -129,20 +150,41 @@ export default function ListTable({
                   ?.map((header, index) => (
                     <StyledTableCell
                       align="left"
-                      sx={{ fontWeight: "700" }}
+                      sx={{
+                        fontWeight: "700",
+                        fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+                      }}
                       key={index}
                     >
                       {header}
                     </StyledTableCell>
                   ))}
                 {requiredIcons && (
-                  <StyledTableCell align="left" sx={{ fontWeight: "700" }}>
+                  <StyledTableCell
+                    align="left"
+                    sx={{
+                      fontWeight: "700",
+                      fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+                    }}
+                  >
                     Actions
                   </StyledTableCell>
                 )}
                 {requiredCustomFieldIcons && (
-                  <StyledTableCell align="left" sx={{ fontWeight: "700" }}>
+                  <StyledTableCell
+                    align="left"
+                    sx={{
+                      fontWeight: "700",
+                      fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+                    }}
+                  >
                     Actions
+                  </StyledTableCell>
+                )}
+                {(arrayName === "failedAuthorizations" ||
+                  arrayName === "failedPayments") && (
+                  <StyledTableCell align="left" sx={{ fontWeight: "700" }}>
+                    Re Try
                   </StyledTableCell>
                 )}
               </TableRow>
@@ -179,7 +221,17 @@ export default function ListTable({
                           (showDueDate || key !== "dueDate")
                       )
                       ?.map(([key, value], i) => (
-                        <StyledTableCell key={i}>{value}</StyledTableCell>
+                        <StyledTableCell
+                          sx={{
+                            fontSize: {
+                              xs: "10px !important",
+                              sm: "14px !important",
+                            },
+                          }}
+                          key={i}
+                        >
+                          {value}
+                        </StyledTableCell>
                       ))}
                     {requiredIcons && (
                       <StyledTableCell
@@ -195,7 +247,6 @@ export default function ListTable({
                             fontSize: "20px",
                           }}
                         />
-
                         <CloseIcon
                           sx={{
                             color: Colors.ORANGE_COLOR,
@@ -223,7 +274,6 @@ export default function ListTable({
                         }}
                       >
                         <MuiModels show="editField" />
-
                         <DeleteForeverOutlinedIcon
                           sx={{
                             color: Colors.DARK_GRAY,
@@ -232,7 +282,6 @@ export default function ListTable({
                             marginLeft: "0.5rem",
                           }}
                         />
-
                         <MoreHorizOutlinedIcon
                           sx={{
                             color: Colors.DARK_GRAY,
@@ -240,6 +289,23 @@ export default function ListTable({
                             fontSize: "20px",
                             marginLeft: "0.5rem",
                           }}
+                        />
+                      </StyledTableCell>
+                    )}
+                    {(arrayName === "failedAuthorizations" ||
+                      arrayName === "failedPayments") && (
+                      <StyledTableCell
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Prompt
+                          heading="Retry"
+                          text={`Are you sure you want to Retry?`}
+                          handlePayment={handlePayment}
+                          item={row?.id}
+                          showPayment={true}
                         />
                       </StyledTableCell>
                     )}
@@ -259,10 +325,20 @@ export default function ListTable({
               gap: "20px",
             }}
           >
-            <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+              }}
+            >
               Rows Per Page: 5
             </Typography>
-            <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+              }}
+            >
               {totalPages === 0 ? 0 : isNaN(totalPages) ? 0 : currentPage} of{" "}
               {isNaN(totalPages) ? 0 : totalPages}
             </Typography>
@@ -270,14 +346,13 @@ export default function ListTable({
               onClick={backward}
               disabled={currentPage === 1 || currentPage === 0}
             >
-              <ArrowBackIosNewIcon sx={{ fontSize: "16px" }} />
+              <ArrowBackIosNewIcon sx={{ fontSize: FONT_SIZE_XL }} />
             </IconButton>
-
             <IconButton
               onClick={forward}
               disabled={currentPage === totalPages || totalPages === 0}
             >
-              <ArrowForwardIosIcon sx={{ fontSize: "16px" }} />
+              <ArrowForwardIosIcon sx={{ fontSize: FONT_SIZE_XL }} />
             </IconButton>
           </div>
         ) : (
