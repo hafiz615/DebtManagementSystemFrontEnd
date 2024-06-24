@@ -16,6 +16,11 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { Colors } from "../config/default";
 import Prompt from "./prompt";
 import { isEmpty } from "lodash";
+import {
+  FONT_SIZE_LARGE,
+  FONT_SIZE_SMALL,
+  FONT_SIZE_XL,
+} from "../constants/appConstants";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -209,24 +214,38 @@ export default function UserListTable({
               gap: "20px",
             }}
           >
-            <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+              }}
+            >
               Rows Per Page: 5
             </Typography>
-            <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
-              {totalPages === 0 ? 0 : currentPage} of {totalPages}
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+              }}
+            >
+              {totalPages === 0 ? 0 : isNaN(totalPages) ? 0 : currentPage} of{" "}
+              {isNaN(totalPages) ? 0 : totalPages}
             </Typography>
             <IconButton
               onClick={backward}
               disabled={currentPage === 1 || currentPage === 0}
             >
-              <ArrowBackIosNewIcon sx={{ fontSize: "16px" }} />
+              <ArrowBackIosNewIcon sx={{ fontSize: FONT_SIZE_XL }} />
             </IconButton>
-
             <IconButton
               onClick={forward}
-              disabled={currentPage === totalPages || totalPages === 0}
+              disabled={
+                currentPage === totalPages ||
+                totalPages === 0 ||
+                isNaN(totalPages)
+              }
             >
-              <ArrowForwardIosIcon sx={{ fontSize: "16px" }} />
+              <ArrowForwardIosIcon sx={{ fontSize: FONT_SIZE_XL }} />
             </IconButton>
           </div>
         ) : (

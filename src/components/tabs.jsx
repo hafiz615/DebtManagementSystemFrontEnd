@@ -5,7 +5,7 @@ import { useEffect, useState, useMemo } from "react";
 import { styled } from "@mui/material/styles";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { Grid, Box } from "@mui/material";
+import { Grid, Box, IconButton, Typography, Menu } from "@mui/material";
 
 import { Colors } from "../config/default";
 import BasicModal from "./customPopup";
@@ -13,6 +13,11 @@ import BasicModal from "./customPopup";
 import { GetAllUsers } from "../services/services";
 import CircularProgress from "@mui/material/CircularProgress";
 import UserListTable from "./userListTable";
+import SearchBar from "./searchBar";
+import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../constants/appConstants";
+import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
+import TextButton from "./button";
+import CustomTextField from "./customTextfield";
 
 const AntTabs = styled(Tabs)({
   border: "none",
@@ -91,11 +96,48 @@ export default function CustomizedTabs({ heading }) {
   const [totalData, setTotalData] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(totalData / 5);
+  const [searchText, setSearchText] = useState("");
+  const [searchActive, setSearchActive] = useState(false);
+  const [filterActive, setFilterActive] = useState(false);
+  const [dateOfBirthStart, setDateOfBirthStart] = useState("");
+  const [dateOfBirthEnd, setDateOfBirthEnd] = useState("");
+  const [applyDisabled, setApplyDisabled] = useState(true);
+  const [saveState, setSaveState] = useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
 
-  const GetUsers = async () => {
+  const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    return date.toISOString().split(".")[0] + ".000Z";
+  };
+
+  const createFilterObject = (dateOfBirthStart, dateOfBirthEnd) => {
+    const filter = {};
+    if (
+      dateOfBirthStart !== null &&
+      dateOfBirthStart !== "" &&
+      dateOfBirthEnd !== null &&
+      dateOfBirthEnd !== ""
+    ) {
+      filter.dateOfBirth = {
+        start: formatDate(dateOfBirthStart),
+        end: formatDate(dateOfBirthEnd),
+      };
+    }
+
+    return filter;
+  };
+
+  const GetUsers = async (search, filter) => {
     setLoading(true);
+    let payload = {};
+    const filterObj = createFilterObject(dateOfBirthStart, dateOfBirthEnd);
+    payload = {
+      text: search ? searchText : "",
+      filter: filter ? filterObj : {},
+    };
     let page = currentPage;
-    const users = await GetAllUsers({ page });
+    const users = await GetAllUsers(page, search, filter, payload);
     if (users?.status === 200) {
       setUserArray(users?.data?.data?.users);
       setTotalData(users?.data?.data?.totalUsers);
@@ -103,8 +145,53 @@ export default function CustomizedTabs({ heading }) {
     setLoading(false);
   };
   useEffect(() => {
-    GetUsers();
-  }, [currentPage]);
+    if (searchText) {
+      setSearchActive(true);
+      GetUsers(searchActive, filterActive);
+    } else if (filterActive) {
+      GetUsers(searchActive, filterActive);
+    } else if (!searchText && !filterActive) {
+      GetUsers(false, false);
+    }
+  }, [currentPage, searchText, saveState, filterActive, searchActive]);
+
+  const handleKeyPress = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleSave = () => {
+    handleClose();
+    setSaveState(!saveState);
+    setFilterActive(true);
+  };
+
+  const handleClear = () => {
+    setDateOfBirthStart("");
+    setDateOfBirthEnd("");
+    setFilterActive(false);
+    handleClose();
+    GetUsers(searchActive, false);
+  };
+
+  const disabled = !dateOfBirthStart && !dateOfBirthEnd;
+
+  const isPairComplete = (min, max) => {
+    return (min !== "" && max !== "") || (min === "" && max === "");
+  };
+
+  useEffect(() => {
+    const allPairsValid = isPairComplete(dateOfBirthStart, dateOfBirthEnd);
+    const anyPairFilled = dateOfBirthStart !== "" && dateOfBirthEnd !== "";
+
+    setApplyDisabled(!(allPairsValid && anyPairFilled));
+  }, [dateOfBirthStart, dateOfBirthEnd]);
 
   const generatedData = useMemo(() => {
     return userArray?.map((item, index) => ({
@@ -133,10 +220,13 @@ export default function CustomizedTabs({ heading }) {
     <>
       <Grid
         item
-        xs={11.9}
+        xs={12}
         sx={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: { xs: "unset", sm: "space-between" },
+          alignItems: { xs: "unset", sm: "center" },
+          gap: { xs: "1rem", sm: "0" },
+          flexDirection: { xs: "column-reverse", sm: "row" },
         }}
       >
         <Box>
@@ -156,24 +246,45 @@ export default function CustomizedTabs({ heading }) {
                 marginLeft: "2.5rem",
                 height: "3.5rem",
                 fontFamily: "Nunito",
-                fontSize: 14,
+                fontSize: FONT_SIZE_LARGE,
               }}
             />
           </AntTabs>
         </Box>
-
-        {role === "Admin" && (
-          <BasicModal
-            modelButton="ADD USERS"
-            modalType="add"
-            GetUsers={GetUsers}
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          {role === "Admin" && (
+            <BasicModal
+              modelButton="ADD USERS"
+              modalType="add"
+              GetUsers={GetUsers}
+            />
+          )}
+          <SearchBar
+            searchCheck={true}
+            searchingText={searchText}
+            handleKeyPress={handleKeyPress}
+            placeholder="Search User..."
           />
-        )}
+          <IconButton
+            id="demo-positioned-button"
+            aria-controls={open ? "demo-positioned-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={handleClick}
+          >
+            <FilterListOutlinedIcon
+              sx={{
+                color: Colors.DARK_GRAY,
+                fontSize: { xs: "20px", sm: "30px" },
+              }}
+            />
+          </IconButton>
+        </div>
       </Grid>
 
       <Grid
         item
-        xs={11.9}
+        xs={12}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px ",
@@ -211,6 +322,85 @@ export default function CustomizedTabs({ heading }) {
             {/* <DataTable rows={rows} columns={columns} /> */}
           </>
         )}
+        <Menu
+          id="demo-positioned-menu"
+          aria-labelledby="demo-positioned-button"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          transformOrigin={{ horizontal: "right", vertical: "top" }}
+          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          sx={{
+            "& .MuiPaper-root": {
+              borderRadius: "12px",
+            },
+          }}
+        >
+          <Grid sx={{ padding: ".5rem .75rem", width: "16rem" }}>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontSize: FONT_SIZE_XL,
+                fontWeight: "600",
+              }}
+            >
+              Filter
+            </Typography>
+            <p
+              style={{
+                fontFamily: "Nunito",
+                fontSize: FONT_SIZE_LARGE,
+                margin: "5px 0px",
+              }}
+            >
+              Date Of Birth
+            </p>
+            <CustomTextField
+              type="date"
+              width="100%"
+              paddingLeft="4px"
+              onChange={(e) => setDateOfBirthStart(e.target.value)}
+              value={dateOfBirthStart}
+            />
+            <CustomTextField
+              type="date"
+              width="100%"
+              paddingLeft="4px"
+              onChange={(e) => setDateOfBirthEnd(e.target.value)}
+              value={dateOfBirthEnd}
+            />
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "1rem",
+              }}
+            >
+              <TextButton
+                buttonText="Clear"
+                height="2rem"
+                width="45%"
+                marginRight="10%"
+                fontColor={Colors.BLACK}
+                onClick={handleClear}
+                disabled={disabled}
+                backgroundColor={Colors.BG_LIGHT_GRAY}
+                hoverColor={Colors.BG_LIGHT_GRAY}
+              />
+              <TextButton
+                buttonText="Filter"
+                height="2rem"
+                width="45%"
+                fontColor={Colors.BLACK}
+                onClick={handleSave}
+                disabled={applyDisabled}
+                backgroundColor={Colors.BG_LIGHT_GRAY}
+                hoverColor={Colors.BG_LIGHT_GRAY}
+              />
+            </div>
+          </Grid>
+        </Menu>
       </Grid>
     </>
   );

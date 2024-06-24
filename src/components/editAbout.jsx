@@ -33,7 +33,8 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
 
   const GetUsers = async () => {
     setLoading(true);
-    const users = await GetAllUsers();
+    let payload = {};
+    const users = await GetAllUsers(1, false, false, payload);
 
     if (users?.status === 200) {
       const transformArray = (data) => {
