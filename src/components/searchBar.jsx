@@ -9,6 +9,7 @@ import Paper from "@mui/material/Paper";
 
 import { Colors } from "../config/default";
 import { MenuItem } from "@mui/material";
+import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../constants/appConstants";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -168,10 +169,15 @@ function SearchBar({
                     padding: 0,
                     flexDirection: "column",
                     color: Colors.DIM_LIGHT_GRAY,
-                    fontSize: "11px",
+                    fontSize: FONT_SIZE_SMALL,
                   }}
                 >
-                  <span style={{ fontSize: "13px", color: Colors.DARK_GRAY }}>
+                  <span
+                    style={{
+                      fontSize: FONT_SIZE_LARGE,
+                      color: Colors.DARK_GRAY,
+                    }}
+                  >
                     {result?.basicInformation?.fullName}
                   </span>
                   <span>{result?.basicInformation?.email}</span>

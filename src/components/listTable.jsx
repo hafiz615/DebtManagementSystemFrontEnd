@@ -21,6 +21,11 @@ import { isEmpty } from "lodash";
 import Prompt from "./prompt";
 import { useToast } from "../toast/toastContext";
 import { RetryAuth, RetryCapture } from "../services/services";
+import {
+  FONT_SIZE_LARGE,
+  FONT_SIZE_SMALL,
+  FONT_SIZE_XL,
+} from "../constants/appConstants";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     color: Colors.BLACK,
@@ -35,7 +40,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
   [`&.${tableCellClasses.body}`]: {
     color: Colors.DARK_GRAY,
-    fontSize: 14,
+    fontSize: FONT_SIZE_LARGE,
     border: "none",
     paddingInlineStart: "0",
     paddingInlineEnd: "0",
@@ -147,7 +152,7 @@ export default function ListTable({
                       align="left"
                       sx={{
                         fontWeight: "700",
-                        fontSize: { xs: "10px", sm: "14px" },
+                        fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
                       }}
                       key={index}
                     >
@@ -159,7 +164,7 @@ export default function ListTable({
                     align="left"
                     sx={{
                       fontWeight: "700",
-                      fontSize: { xs: "10px", sm: "14px" },
+                      fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
                     }}
                   >
                     Actions
@@ -170,7 +175,7 @@ export default function ListTable({
                     align="left"
                     sx={{
                       fontWeight: "700",
-                      fontSize: { xs: "10px", sm: "14px" },
+                      fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
                     }}
                   >
                     Actions
@@ -323,7 +328,7 @@ export default function ListTable({
             <Typography
               sx={{
                 fontFamily: "Nunito",
-                fontSize: { xs: "10px", sm: "14px" },
+                fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
               }}
             >
               Rows Per Page: 5
@@ -331,7 +336,7 @@ export default function ListTable({
             <Typography
               sx={{
                 fontFamily: "Nunito",
-                fontSize: { xs: "10px", sm: "14px" },
+                fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
               }}
             >
               {totalPages === 0 ? 0 : isNaN(totalPages) ? 0 : currentPage} of{" "}
@@ -341,13 +346,13 @@ export default function ListTable({
               onClick={backward}
               disabled={currentPage === 1 || currentPage === 0}
             >
-              <ArrowBackIosNewIcon sx={{ fontSize: "16px" }} />
+              <ArrowBackIosNewIcon sx={{ fontSize: FONT_SIZE_XL }} />
             </IconButton>
             <IconButton
               onClick={forward}
               disabled={currentPage === totalPages || totalPages === 0}
             >
-              <ArrowForwardIosIcon sx={{ fontSize: "16px" }} />
+              <ArrowForwardIosIcon sx={{ fontSize: FONT_SIZE_XL }} />
             </IconButton>
           </div>
         ) : (

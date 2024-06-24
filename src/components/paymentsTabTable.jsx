@@ -24,6 +24,7 @@ import { formatDollarAmount } from "../common";
 import Prompt from "./prompt";
 import { useToast } from "../toast/toastContext";
 import { RetryAuth, RetryCapture } from "../services/services";
+import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../constants/appConstants";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -39,7 +40,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
   [`&.${tableCellClasses.body}`]: {
     color: Colors.DARK_GRAY,
-    fontSize: 14,
+    fontSize: FONT_SIZE_LARGE,
     border: "none",
     paddingInlineStart: "0",
     paddingInlineEnd: "0",
@@ -234,7 +235,12 @@ export default function PaymentTabsTable({
                   >
                     {Object.values(rowData).map((value, i) => (
                       <StyledTableCell
-                        sx={{ fontSize: { xs: "12px", sm: "14px" } }}
+                        sx={{
+                          fontSize: {
+                            xs: FONT_SIZE_SMALL,
+                            sm: FONT_SIZE_LARGE,
+                          },
+                        }}
                         key={i}
                       >
                         {value}
@@ -313,12 +319,18 @@ export default function PaymentTabsTable({
           }}
         >
           <Typography
-            sx={{ fontFamily: "Nunito", fontSize: { xs: "10px", sm: "14px" } }}
+            sx={{
+              fontFamily: "Nunito",
+              fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+            }}
           >
             Rows Per Page: 5
           </Typography>
           <Typography
-            sx={{ fontFamily: "Nunito", fontSize: { xs: "10px", sm: "14px" } }}
+            sx={{
+              fontFamily: "Nunito",
+              fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+            }}
           >
             {totalPages === 0 ? 0 : isNaN(totalPages) ? 0 : currentPage} of{" "}
             {isNaN(totalPages) ? 0 : totalPages}
@@ -327,14 +339,14 @@ export default function PaymentTabsTable({
             onClick={backward}
             disabled={currentPage === 1 || currentPage === 0}
           >
-            <ArrowBackIosNewIcon sx={{ fontSize: "14px" }} />
+            <ArrowBackIosNewIcon sx={{ fontSize: FONT_SIZE_LARGE }} />
           </IconButton>
 
           <IconButton
             onClick={forward}
             disabled={currentPage === totalPages || totalPages === 0}
           >
-            <ArrowForwardIosIcon sx={{ fontSize: "14px" }} />
+            <ArrowForwardIosIcon sx={{ fontSize: FONT_SIZE_LARGE }} />
           </IconButton>
         </div>
       ) : (

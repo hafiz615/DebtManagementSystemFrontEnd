@@ -5,7 +5,11 @@ import { useSelector } from "react-redux";
 import { Grid, Typography, IconButton } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useNavigate } from "react-router-dom";
-import { UserListPage } from "../constants/appConstants";
+import {
+  FONT_SIZE_LARGE,
+  FONT_SIZE_XL,
+  UserListPage,
+} from "../constants/appConstants";
 import { Colors } from "../config/default";
 import SearchBar from "./searchBar";
 import ListTable from "./listTable";
@@ -356,7 +360,7 @@ export default function CreditorList() {
             <Typography
               sx={{
                 fontFamily: "Nunito",
-                fontSize: "16px",
+                fontSize: FONT_SIZE_XL,
                 fontWeight: "600",
               }}
             >
@@ -365,7 +369,7 @@ export default function CreditorList() {
             <p
               style={{
                 fontFamily: "Nunito",
-                fontSize: "14px",
+                fontSize: FONT_SIZE_LARGE,
                 margin: "5px 0px",
               }}
             >
@@ -380,7 +384,7 @@ export default function CreditorList() {
                 backgroundColor: Colors.BG_LIGHT_GRAY,
                 border: "none",
                 outline: "none",
-                fontSize: "14px",
+                fontSize: FONT_SIZE_LARGE,
                 fontFamily: "Nunito",
                 color: Colors.DIM_LIGHT_GRAY,
               }}
@@ -400,7 +404,7 @@ export default function CreditorList() {
                 backgroundColor: Colors.BG_LIGHT_GRAY,
                 border: "none",
                 outline: "none",
-                fontSize: "14px",
+                fontSize: FONT_SIZE_LARGE,
                 fontFamily: "Nunito",
                 color: Colors.DIM_LIGHT_GRAY,
               }}
@@ -413,7 +417,7 @@ export default function CreditorList() {
             <p
               style={{
                 fontFamily: "Nunito",
-                fontSize: "14px",
+                fontSize: FONT_SIZE_LARGE,
                 margin: "5px 0px",
               }}
             >
@@ -428,7 +432,7 @@ export default function CreditorList() {
                 backgroundColor: Colors.BG_LIGHT_GRAY,
                 border: "none",
                 outline: "none",
-                fontSize: "14px",
+                fontSize: FONT_SIZE_LARGE,
                 fontFamily: "Nunito",
                 color: Colors.DIM_LIGHT_GRAY,
               }}
@@ -448,7 +452,7 @@ export default function CreditorList() {
                 backgroundColor: Colors.BG_LIGHT_GRAY,
                 border: "none",
                 outline: "none",
-                fontSize: "14px",
+                fontSize: FONT_SIZE_LARGE,
                 fontFamily: "Nunito",
                 color: Colors.DIM_LIGHT_GRAY,
               }}
@@ -462,7 +466,7 @@ export default function CreditorList() {
             <p
               style={{
                 fontFamily: "Nunito",
-                fontSize: "14px",
+                fontSize: FONT_SIZE_LARGE,
                 margin: "5px 0px",
               }}
             >
@@ -477,7 +481,7 @@ export default function CreditorList() {
                 backgroundColor: Colors.BG_LIGHT_GRAY,
                 border: "none",
                 outline: "none",
-                fontSize: "14px",
+                fontSize: FONT_SIZE_LARGE,
                 fontFamily: "Nunito",
                 color: Colors.DIM_LIGHT_GRAY,
               }}
@@ -497,7 +501,7 @@ export default function CreditorList() {
                 backgroundColor: Colors.BG_LIGHT_GRAY,
                 border: "none",
                 outline: "none",
-                fontSize: "14px",
+                fontSize: FONT_SIZE_LARGE,
                 fontFamily: "Nunito",
                 color: Colors.DIM_LIGHT_GRAY,
               }}

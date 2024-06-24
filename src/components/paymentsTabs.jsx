@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 
 import { Colors } from "../config/default";
 import PaymentTabsTable from "./paymentsTabTable";
+import { FONT_SIZE_SMALL } from "../constants/appConstants";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -23,7 +24,7 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
       fontSize: "14px !important",
     },
     [theme.breakpoints.up("xs")]: {
-      fontSize: "10px",
+      fontSize: FONT_SIZE_SMALL,
     },
     fontWeight: "500",
     color: Colors.DARK_GRAY,

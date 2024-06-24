@@ -14,7 +14,11 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Colors } from "../config/default";
-import { LoginPage } from "../constants/appConstants";
+import {
+  FONT_SIZE_LARGE,
+  FONT_SIZE_SMALL,
+  LoginPage,
+} from "../constants/appConstants";
 import { SignIn } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import Button from "./button";
@@ -164,7 +168,7 @@ function Login() {
           sx={{
             marginBottom: "1rem",
             "& .MuiInputBase-input": {
-              fontSize: smallScreen ? "12px" : "16px",
+              fontSize: smallScreen ? FONT_SIZE_SMALL : FONT_SIZE_LARGE,
               fontFamily: "Nunito",
             },
           }}
@@ -184,7 +188,7 @@ function Login() {
             onChange={handlePasswordChange}
             onKeyPress={handleKeyPress}
             style={{
-              fontSize: smallScreen ? "12px" : "16px",
+              fontSize: smallScreen ? FONT_SIZE_SMALL : FONT_SIZE_LARGE,
               fontFamily: "Nunito",
             }}
             endAdornment={
@@ -206,7 +210,7 @@ function Login() {
             <Typography
               sx={{
                 fontWeight: "200",
-                fontSize: smallScreen ? "12px" : "15px",
+                fontSize: smallScreen ? FONT_SIZE_SMALL : FONT_SIZE_LARGE,
                 marginTop: "0.8rem",
                 marginBottom: smallScreen ? "0px" : "1.5rem",
                 cursor: "pointer",
