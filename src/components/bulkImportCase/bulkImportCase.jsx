@@ -169,8 +169,8 @@ function BulkImportCase() {
           xs={12}
           sx={{
             display: "flex",
-            justifyContent: { xs: "space-between", sm: "flex-end" },
-            width: "100%",
+            width: { xs: "85%", sm: "100%" },
+            justifyContent: { xs: "center", sm: "flex-end" },
             backgroundColor: Colors.BG_LIGHT_GRAY,
             position: "fixed",
             bottom: "1px",

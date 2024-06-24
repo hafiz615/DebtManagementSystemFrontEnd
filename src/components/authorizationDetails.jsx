@@ -257,6 +257,8 @@ export default function AuthorizationDetails() {
           display: "flex",
           marginTop: "1.5rem",
           justifyContent: "space-between",
+          flexDirection: { xs: "column", sm: "row" },
+          gap: { xs: "1rem", sm: "0" },
         }}
       >
         <Typography
@@ -284,7 +286,10 @@ export default function AuthorizationDetails() {
             onClick={handleClick}
           >
             <FilterListOutlinedIcon
-              sx={{ color: Colors.DARK_GRAY, fontSize: "30px" }}
+              sx={{
+                color: Colors.DARK_GRAY,
+                fontSize: { xs: "20px", sm: "30px" },
+              }}
             />
           </IconButton>
         </div>

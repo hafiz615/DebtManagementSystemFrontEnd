@@ -429,10 +429,16 @@ export default function ClientListDetails() {
               item
               xs={12}
               lg={6}
-              sx={{ justifyContent: "space-evenly" }}
+              sx={{ justifyContent: { xs: "left", md: "space-evenly" } }}
             >
               <Grid item xs={12} lg={5.5}>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: { xs: "space-between", md: "unset" },
+                  }}
+                >
                   <div
                     style={{
                       fontFamily: "Nunito",
@@ -458,7 +464,13 @@ export default function ClientListDetails() {
                   </span>
                 </Box>
 
-                <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: { xs: "space-between", md: "unset" },
+                  }}
+                >
                   <div
                     style={{
                       fontFamily: "Nunito",
@@ -485,7 +497,13 @@ export default function ClientListDetails() {
                 </Box>
                 {userRole === "client" && (
                   <>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: { xs: "space-between", md: "unset" },
+                      }}
+                    >
                       <div
                         style={{
                           fontFamily: "Nunito",
@@ -510,7 +528,13 @@ export default function ClientListDetails() {
                         {dataUser?.SSN}
                       </span>
                     </Box>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: { xs: "space-between", md: "unset" },
+                      }}
+                    >
                       <div
                         style={{
                           fontFamily: "Nunito",
@@ -541,7 +565,13 @@ export default function ClientListDetails() {
               </Grid>
 
               <Grid item xs={12} lg={6}>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: { xs: "space-between", md: "unset" },
+                  }}
+                >
                   <div
                     style={{
                       fontFamily: "Nunito",
@@ -568,7 +598,13 @@ export default function ClientListDetails() {
                 </Box>
                 {userRole === "client" && (
                   <>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: { xs: "space-between", md: "unset" },
+                      }}
+                    >
                       <div
                         style={{
                           fontFamily: "Nunito",
@@ -593,7 +629,13 @@ export default function ClientListDetails() {
                         {dataUser?.companyName}
                       </span>
                     </Box>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: { xs: "space-between", md: "unset" },
+                      }}
+                    >
                       <div
                         style={{
                           fontFamily: "Nunito",
@@ -628,9 +670,17 @@ export default function ClientListDetails() {
               item
               xs={12}
               lg={6}
-              sx={{ justifyContent: "space-between" }}
+              sx={{
+                justifyContent: "space-between",
+                mt: { xs: "1rem", lg: "0" },
+              }}
             >
-              <Grid container sx={{ justifyContent: "space-evenly" }}>
+              <Grid
+                container
+                sx={{
+                  justifyContent: { xs: "space-between", lg: "space-evenly" },
+                }}
+              >
                 {[
                   {
                     title: "Failed Payments",
@@ -657,7 +707,7 @@ export default function ClientListDetails() {
                     key={index}
                     container
                     item
-                    xs={12}
+                    xs={5}
                     lg={5}
                     sx={{
                       backgroundColor: Colors?.WHITE,

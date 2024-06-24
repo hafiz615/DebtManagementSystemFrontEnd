@@ -21,6 +21,11 @@ import { isEmpty } from "lodash";
 import Prompt from "./prompt";
 import { useToast } from "../toast/toastContext";
 import { RetryAuth, RetryCapture } from "../services/services";
+import {
+  FONT_SIZE_LARGE,
+  FONT_SIZE_SMALL,
+  FONT_SIZE_XL,
+} from "../constants/appConstants";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     color: Colors.BLACK,
@@ -35,7 +40,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
   [`&.${tableCellClasses.body}`]: {
     color: Colors.DARK_GRAY,
-    fontSize: 14,
+    fontSize: FONT_SIZE_LARGE,
     border: "none",
     paddingInlineStart: "0",
     paddingInlineEnd: "0",
@@ -145,19 +150,34 @@ export default function ListTable({
                   ?.map((header, index) => (
                     <StyledTableCell
                       align="left"
-                      sx={{ fontWeight: "700" }}
+                      sx={{
+                        fontWeight: "700",
+                        fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+                      }}
                       key={index}
                     >
                       {header}
                     </StyledTableCell>
                   ))}
                 {requiredIcons && (
-                  <StyledTableCell align="left" sx={{ fontWeight: "700" }}>
+                  <StyledTableCell
+                    align="left"
+                    sx={{
+                      fontWeight: "700",
+                      fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+                    }}
+                  >
                     Actions
                   </StyledTableCell>
                 )}
                 {requiredCustomFieldIcons && (
-                  <StyledTableCell align="left" sx={{ fontWeight: "700" }}>
+                  <StyledTableCell
+                    align="left"
+                    sx={{
+                      fontWeight: "700",
+                      fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+                    }}
+                  >
                     Actions
                   </StyledTableCell>
                 )}
@@ -201,7 +221,17 @@ export default function ListTable({
                           (showDueDate || key !== "dueDate")
                       )
                       ?.map(([key, value], i) => (
-                        <StyledTableCell key={i}>{value}</StyledTableCell>
+                        <StyledTableCell
+                          sx={{
+                            fontSize: {
+                              xs: "10px !important",
+                              sm: "14px !important",
+                            },
+                          }}
+                          key={i}
+                        >
+                          {value}
+                        </StyledTableCell>
                       ))}
                     {requiredIcons && (
                       <StyledTableCell
@@ -295,10 +325,20 @@ export default function ListTable({
               gap: "20px",
             }}
           >
-            <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+              }}
+            >
               Rows Per Page: 5
             </Typography>
-            <Typography sx={{ fontFamily: "Nunito", fontSize: "14px" }}>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+              }}
+            >
               {totalPages === 0 ? 0 : isNaN(totalPages) ? 0 : currentPage} of{" "}
               {isNaN(totalPages) ? 0 : totalPages}
             </Typography>
@@ -306,13 +346,13 @@ export default function ListTable({
               onClick={backward}
               disabled={currentPage === 1 || currentPage === 0}
             >
-              <ArrowBackIosNewIcon sx={{ fontSize: "16px" }} />
+              <ArrowBackIosNewIcon sx={{ fontSize: FONT_SIZE_XL }} />
             </IconButton>
             <IconButton
               onClick={forward}
               disabled={currentPage === totalPages || totalPages === 0}
             >
-              <ArrowForwardIosIcon sx={{ fontSize: "16px" }} />
+              <ArrowForwardIosIcon sx={{ fontSize: FONT_SIZE_XL }} />
             </IconButton>
           </div>
         ) : (

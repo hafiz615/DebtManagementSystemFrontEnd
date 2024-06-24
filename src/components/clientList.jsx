@@ -5,7 +5,11 @@ import { useSelector } from "react-redux";
 import { Grid, Typography, IconButton } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useNavigate } from "react-router-dom";
-import { UserListPage } from "../constants/appConstants";
+import {
+  FONT_SIZE_LARGE,
+  FONT_SIZE_XL,
+  UserListPage,
+} from "../constants/appConstants";
 import { Colors } from "../config/default";
 import SearchBar from "./searchBar";
 import ListTable from "./listTable";
@@ -285,11 +289,14 @@ export default function ClientList() {
       <Grid container sx={{ alignItems: "center" }}>
         <Grid
           item
-          xs={11.5}
+          xs={12}
           sx={{
             marginTop: "1.5rem",
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: { xs: "unset", sm: "space-between" },
+            alignItems: { xs: "unset", sm: "center" },
+            gap: { xs: "1rem", sm: "0" },
+            flexDirection: { xs: "column-reverse", sm: "row" },
           }}
         >
           <Typography
@@ -301,7 +308,7 @@ export default function ClientList() {
               borderTopLeftRadius: "10px",
               borderTopRightRadius: "10px",
               fontWeight: "600",
-              fontSize: 14,
+              fontSize: FONT_SIZE_LARGE,
               marginLeft: "2.5rem",
               height: "3.5rem",
               display: "flex",
@@ -312,227 +319,230 @@ export default function ClientList() {
           >
             Clients List
           </Typography>
-          <SearchBar
-            searchCheck={true}
-            searchingText={searchText}
-            handleKeyPress={handleKeyPress}
-            placeholder="Search Client..."
-          />
-        </Grid>
-        <Grid item xs={0.5}>
-          <IconButton
-            id="demo-positioned-button"
-            aria-controls={open ? "demo-positioned-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
-            onClick={handleClick}
-            sx={{ mt: "15px" }}
-          >
-            <FilterListOutlinedIcon
-              sx={{ color: Colors.DARK_GRAY, fontSize: "30px" }}
+          <div style={{ display: "flex" }}>
+            <SearchBar
+              searchCheck={true}
+              searchingText={searchText}
+              handleKeyPress={handleKeyPress}
+              placeholder="Search Client..."
             />
-          </IconButton>
-          <Menu
-            id="demo-positioned-menu"
-            aria-labelledby="demo-positioned-button"
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            transformOrigin={{ horizontal: "right", vertical: "top" }}
-            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-            sx={{
-              "& .MuiPaper-root": {
-                borderRadius: "12px",
-              },
-            }}
-          >
-            <Grid sx={{ padding: ".5rem .75rem", width: "16rem" }}>
-              <Typography
+            <IconButton
+              id="demo-positioned-button"
+              aria-controls={open ? "demo-positioned-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+              onClick={handleClick}
+            >
+              <FilterListOutlinedIcon
                 sx={{
-                  fontFamily: "Nunito",
-                  fontSize: "16px",
-                  fontWeight: "600",
+                  color: Colors.DARK_GRAY,
+                  fontSize: { xs: "20px", sm: "30px" },
                 }}
-              >
-                Filter
-              </Typography>
-              <p
-                style={{
-                  fontFamily: "Nunito",
-                  fontSize: "14px",
-                  margin: "5px 0px",
-                }}
-              >
-                Total Debt
-              </p>
-              <input
-                min={0}
-                style={{
-                  width: "45%",
-                  padding: "7px 5px",
-                  borderRadius: "5px",
-                  backgroundColor: Colors.BG_LIGHT_GRAY,
-                  border: "none",
-                  outline: "none",
-                  fontSize: "14px",
-                  fontFamily: "Nunito",
-                  color: Colors.DIM_LIGHT_GRAY,
-                }}
-                placeholder="Min"
-                type="number"
-                value={totalDebtMin}
-                onChange={handleInputChange(setTotalDebtMin)}
-                onKeyDown={handleKeyDown}
               />
-              <input
-                min={0}
-                style={{
-                  width: "45%",
-                  padding: "7px 5px",
-                  marginLeft: "10%",
-                  borderRadius: "5px",
-                  backgroundColor: Colors.BG_LIGHT_GRAY,
-                  border: "none",
-                  outline: "none",
-                  fontSize: "14px",
-                  fontFamily: "Nunito",
-                  color: Colors.DIM_LIGHT_GRAY,
-                }}
-                type="number"
-                placeholder="Max"
-                value={totalDebtMax}
-                onChange={handleInputChange(setTotalDebtMax)}
-                onKeyDown={handleKeyDown}
-              />
-              <p
-                style={{
-                  fontFamily: "Nunito",
-                  fontSize: "14px",
-                  margin: "5px 0px",
-                }}
-              >
-                Total Cases
-              </p>
-              <input
-                min={0}
-                style={{
-                  width: "45%",
-                  padding: "7px 5px",
-                  borderRadius: "5px",
-                  backgroundColor: Colors.BG_LIGHT_GRAY,
-                  border: "none",
-                  outline: "none",
-                  fontSize: "14px",
-                  fontFamily: "Nunito",
-                  color: Colors.DIM_LIGHT_GRAY,
-                }}
-                value={totalCasesMin}
-                type="number"
-                placeholder="Min"
-                onChange={handleInputChange(setTotalCasesMin)}
-                onKeyDown={handleKeyDown}
-              />
-              <input
-                min={0}
-                style={{
-                  width: "45%",
-                  padding: "7px 5px",
-                  marginLeft: "10%",
-                  borderRadius: "5px",
-                  backgroundColor: Colors.BG_LIGHT_GRAY,
-                  border: "none",
-                  outline: "none",
-                  fontSize: "14px",
-                  fontFamily: "Nunito",
-                  color: Colors.DIM_LIGHT_GRAY,
-                }}
-                type="number"
-                placeholder="Max"
-                value={totalCasesMax}
-                onChange={handleInputChange(setTotalCasesMax)}
-                onKeyDown={handleKeyDown}
-              />
-
-              <p
-                style={{
-                  fontFamily: "Nunito",
-                  fontSize: "14px",
-                  margin: "5px 0px",
-                }}
-              >
-                Total Creditors
-              </p>
-              <input
-                min={0}
-                style={{
-                  width: "45%",
-                  padding: "7px 5px",
-                  borderRadius: "5px",
-                  backgroundColor: Colors.BG_LIGHT_GRAY,
-                  border: "none",
-                  outline: "none",
-                  fontSize: "14px",
-                  fontFamily: "Nunito",
-                  color: Colors.DIM_LIGHT_GRAY,
-                }}
-                type="number"
-                placeholder="Min"
-                value={totalCreditorsMin}
-                onChange={handleInputChange(setTotalCreditorsMin)}
-                onKeyDown={handleKeyDown}
-              />
-              <input
-                min={0}
-                style={{
-                  width: "45%",
-                  padding: "7px 5px",
-                  marginLeft: "10%",
-                  borderRadius: "5px",
-                  backgroundColor: Colors.BG_LIGHT_GRAY,
-                  border: "none",
-                  outline: "none",
-                  fontSize: "14px",
-                  fontFamily: "Nunito",
-                  color: Colors.DIM_LIGHT_GRAY,
-                }}
-                type="number"
-                placeholder="Max"
-                value={totalCreditorsMax}
-                onChange={handleInputChange(setTotalCreditorsMax)}
-                onKeyDown={handleKeyDown}
-              />
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  marginTop: "1rem",
-                }}
-              >
-                <TextButton
-                  buttonText="Clear"
-                  height="2rem"
-                  width="45%"
-                  marginRight="10%"
-                  fontColor={Colors.BLACK}
-                  onClick={handleClear}
-                  disabled={disabled}
-                  backgroundColor={Colors.BG_LIGHT_GRAY}
-                  hoverColor={Colors.BG_LIGHT_GRAY}
-                />
-                <TextButton
-                  buttonText="Filter"
-                  height="2rem"
-                  width="45%"
-                  fontColor={Colors.BLACK}
-                  onClick={handleSave}
-                  disabled={applyDisabled}
-                  backgroundColor={Colors.BG_LIGHT_GRAY}
-                  hoverColor={Colors.BG_LIGHT_GRAY}
-                />
-              </div>
-            </Grid>
-          </Menu>
+            </IconButton>
+          </div>
         </Grid>
+
+        <Menu
+          id="demo-positioned-menu"
+          aria-labelledby="demo-positioned-button"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          transformOrigin={{ horizontal: "right", vertical: "top" }}
+          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          sx={{
+            "& .MuiPaper-root": {
+              borderRadius: "12px",
+            },
+          }}
+        >
+          <Grid sx={{ padding: ".5rem .75rem", width: "16rem" }}>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontSize: FONT_SIZE_XL,
+                fontWeight: "600",
+              }}
+            >
+              Filter
+            </Typography>
+            <p
+              style={{
+                fontFamily: "Nunito",
+                fontSize: FONT_SIZE_LARGE,
+                margin: "5px 0px",
+              }}
+            >
+              Total Debt
+            </p>
+            <input
+              min={0}
+              style={{
+                width: "45%",
+                padding: "7px 5px",
+                borderRadius: "5px",
+                backgroundColor: Colors.BG_LIGHT_GRAY,
+                border: "none",
+                outline: "none",
+                fontSize: FONT_SIZE_LARGE,
+                fontFamily: "Nunito",
+                color: Colors.DIM_LIGHT_GRAY,
+              }}
+              placeholder="Min"
+              type="number"
+              value={totalDebtMin}
+              onChange={handleInputChange(setTotalDebtMin)}
+              onKeyDown={handleKeyDown}
+            />
+            <input
+              min={0}
+              style={{
+                width: "45%",
+                padding: "7px 5px",
+                marginLeft: "10%",
+                borderRadius: "5px",
+                backgroundColor: Colors.BG_LIGHT_GRAY,
+                border: "none",
+                outline: "none",
+                fontSize: FONT_SIZE_LARGE,
+                fontFamily: "Nunito",
+                color: Colors.DIM_LIGHT_GRAY,
+              }}
+              type="number"
+              placeholder="Max"
+              value={totalDebtMax}
+              onChange={handleInputChange(setTotalDebtMax)}
+              onKeyDown={handleKeyDown}
+            />
+            <p
+              style={{
+                fontFamily: "Nunito",
+                fontSize: FONT_SIZE_LARGE,
+                margin: "5px 0px",
+              }}
+            >
+              Total Cases
+            </p>
+            <input
+              min={0}
+              style={{
+                width: "45%",
+                padding: "7px 5px",
+                borderRadius: "5px",
+                backgroundColor: Colors.BG_LIGHT_GRAY,
+                border: "none",
+                outline: "none",
+                fontSize: FONT_SIZE_LARGE,
+                fontFamily: "Nunito",
+                color: Colors.DIM_LIGHT_GRAY,
+              }}
+              value={totalCasesMin}
+              type="number"
+              placeholder="Min"
+              onChange={handleInputChange(setTotalCasesMin)}
+              onKeyDown={handleKeyDown}
+            />
+            <input
+              min={0}
+              style={{
+                width: "45%",
+                padding: "7px 5px",
+                marginLeft: "10%",
+                borderRadius: "5px",
+                backgroundColor: Colors.BG_LIGHT_GRAY,
+                border: "none",
+                outline: "none",
+                fontSize: FONT_SIZE_LARGE,
+                fontFamily: "Nunito",
+                color: Colors.DIM_LIGHT_GRAY,
+              }}
+              type="number"
+              placeholder="Max"
+              value={totalCasesMax}
+              onChange={handleInputChange(setTotalCasesMax)}
+              onKeyDown={handleKeyDown}
+            />
+
+            <p
+              style={{
+                fontFamily: "Nunito",
+                fontSize: FONT_SIZE_LARGE,
+                margin: "5px 0px",
+              }}
+            >
+              Total Creditors
+            </p>
+            <input
+              min={0}
+              style={{
+                width: "45%",
+                padding: "7px 5px",
+                borderRadius: "5px",
+                backgroundColor: Colors.BG_LIGHT_GRAY,
+                border: "none",
+                outline: "none",
+                fontSize: FONT_SIZE_LARGE,
+                fontFamily: "Nunito",
+                color: Colors.DIM_LIGHT_GRAY,
+              }}
+              type="number"
+              placeholder="Min"
+              value={totalCreditorsMin}
+              onChange={handleInputChange(setTotalCreditorsMin)}
+              onKeyDown={handleKeyDown}
+            />
+            <input
+              min={0}
+              style={{
+                width: "45%",
+                padding: "7px 5px",
+                marginLeft: "10%",
+                borderRadius: "5px",
+                backgroundColor: Colors.BG_LIGHT_GRAY,
+                border: "none",
+                outline: "none",
+                fontSize: FONT_SIZE_LARGE,
+                fontFamily: "Nunito",
+                color: Colors.DIM_LIGHT_GRAY,
+              }}
+              type="number"
+              placeholder="Max"
+              value={totalCreditorsMax}
+              onChange={handleInputChange(setTotalCreditorsMax)}
+              onKeyDown={handleKeyDown}
+            />
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "1rem",
+              }}
+            >
+              <TextButton
+                buttonText="Clear"
+                height="2rem"
+                width="45%"
+                marginRight="10%"
+                fontColor={Colors.BLACK}
+                onClick={handleClear}
+                disabled={disabled}
+                backgroundColor={Colors.BG_LIGHT_GRAY}
+                hoverColor={Colors.BG_LIGHT_GRAY}
+              />
+              <TextButton
+                buttonText="Filter"
+                height="2rem"
+                width="45%"
+                fontColor={Colors.BLACK}
+                onClick={handleSave}
+                disabled={applyDisabled}
+                backgroundColor={Colors.BG_LIGHT_GRAY}
+                hoverColor={Colors.BG_LIGHT_GRAY}
+              />
+            </div>
+          </Grid>
+        </Menu>
       </Grid>
 
       <Grid
