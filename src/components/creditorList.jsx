@@ -134,6 +134,9 @@ export default function CreditorList() {
   };
 
   useEffect(() => {
+    if (!searchText) {
+      setSearchActive(false);
+    }
     if (searchText) {
       setSearchActive(true);
       GetCreditors(searchActive, filterActive);
@@ -143,6 +146,10 @@ export default function CreditorList() {
       GetCreditors(false, false);
     }
   }, [currentPage, searchText, saveState, filterActive, searchActive]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterActive, searchActive]);
 
   const handleKeyPress = (e) => {
     setSearchText(e.target.value);
@@ -470,7 +477,7 @@ export default function CreditorList() {
                 margin: "5px 0px",
               }}
             >
-              Total Creditors
+              Total Debtors
             </p>
             <input
               min={0}

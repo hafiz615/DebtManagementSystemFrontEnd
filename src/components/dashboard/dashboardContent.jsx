@@ -447,7 +447,7 @@ function DashboardContent() {
                 <div style={{ height: "10rem" }}>
                   {!isEmpty(countData) ? (
                     <PieChart
-                      sx={{ width: "100%" }}
+                      sx={{ width: "100%", ml: { xs: "3rem", sm: "0" } }}
                       slotProps={{
                         legend: {
                           direction: "column",
@@ -468,7 +468,12 @@ function DashboardContent() {
                           },
                         },
                       ]}
-                      margin={{ top: 10, bottom: 40, left: 0, right: 150 }}
+                      margin={{
+                        top: 10,
+                        bottom: 40,
+                        left: 0,
+                        right: 150,
+                      }}
                       height={250}
                     />
                   ) : (

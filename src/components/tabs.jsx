@@ -145,6 +145,9 @@ export default function CustomizedTabs({ heading }) {
     setLoading(false);
   };
   useEffect(() => {
+    if (!searchText) {
+      setSearchActive(false);
+    }
     if (searchText) {
       setSearchActive(true);
       GetUsers(searchActive, filterActive);
@@ -154,6 +157,10 @@ export default function CustomizedTabs({ heading }) {
       GetUsers(false, false);
     }
   }, [currentPage, searchText, saveState, filterActive, searchActive]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterActive, searchActive]);
 
   const handleKeyPress = (e) => {
     setSearchText(e.target.value);
