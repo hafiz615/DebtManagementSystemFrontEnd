@@ -29,6 +29,7 @@ export default function AuthorizationDetails() {
   const [dueDateMin, setDueDateMin] = useState("");
   const [dueDateMax, setDueDateMax] = useState("");
   const [applyDisabled, setApplyDisabled] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -118,6 +119,7 @@ export default function AuthorizationDetails() {
   };
 
   const handleClear = () => {
+    setLoading(true);
     setTotalDebtMin("");
     setTotalDebtMax("");
     setTryDateMin("");
@@ -200,13 +202,19 @@ export default function AuthorizationDetails() {
     );
     setData(result?.data?.data?.payments);
     setTotalData(result?.data?.data?.counts[arrayName]);
+    setLoading(false);
   };
 
   useEffect(() => {
+    if (!searchText) {
+      setSearchActive(false);
+    }
     if (searchText) {
+      setLoading(true);
       setSearchActive(true);
       getHomeData(searchActive, filterActive);
     } else if (filterActive) {
+      setLoading(true);
       getHomeData(searchActive, filterActive);
     } else if (!searchText && !filterActive) {
       getHomeData(false, false);
@@ -214,11 +222,16 @@ export default function AuthorizationDetails() {
   }, [currentPage, searchText, saveState, filterActive, searchActive]);
 
   useEffect(() => {
+    setLoading(true);
     setCurrentPage(1);
     setSearchText("");
     setSearchActive(false);
     handleClear();
   }, [value]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterActive, searchActive]);
 
   const totalPages = Math.ceil(totalData / 5);
 
@@ -302,6 +315,7 @@ export default function AuthorizationDetails() {
         }}
       >
         <PaymentsTabs
+          loading={loading}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
           totalPages={totalPages}

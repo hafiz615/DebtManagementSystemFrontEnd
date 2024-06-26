@@ -134,6 +134,9 @@ export default function ClientList() {
   };
 
   useEffect(() => {
+    if (!searchText) {
+      setSearchActive(false);
+    }
     if (searchText) {
       setSearchActive(true);
       GetClients(searchActive, filterActive);
@@ -143,6 +146,10 @@ export default function ClientList() {
       GetClients(false, false);
     }
   }, [currentPage, searchText, saveState, filterActive, searchActive]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterActive, searchActive]);
 
   const handleKeyPress = (e) => {
     setSearchText(e.target.value);
