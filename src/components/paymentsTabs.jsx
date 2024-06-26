@@ -51,6 +51,7 @@ export default function PaymentsTabs({
   setCurrentPage,
   totalPages,
   getHomeData,
+  loading,
 }) {
   const headers = ["Name", "Try Date", "Total Debt", "SSN", "Case Owner"];
 
@@ -148,6 +149,7 @@ export default function PaymentsTabs({
             apiPagination={true}
             value={value}
             getHomeData={getHomeData}
+            loading={loading}
           />
         )}
         {value === 1 && (
@@ -158,6 +160,7 @@ export default function PaymentsTabs({
             setCurrentPage={setCurrentPage}
             totalPages={totalPages}
             apiPagination={true}
+            loading={loading}
           />
         )}
         {value === 2 && (
@@ -170,6 +173,7 @@ export default function PaymentsTabs({
             apiPagination={true}
             value={value}
             getHomeData={getHomeData}
+            loading={loading}
           />
         )}
         {value === 3 && (
@@ -180,6 +184,7 @@ export default function PaymentsTabs({
             setCurrentPage={setCurrentPage}
             totalPages={totalPages}
             apiPagination={true}
+            loading={loading}
           />
         )}
         {value === 4 && (
@@ -191,6 +196,7 @@ export default function PaymentsTabs({
             totalPages={totalPages}
             apiPagination={true}
             value={value}
+            loading={loading}
           />
         )}
       </Box>

@@ -10,6 +10,8 @@ import Paper from "@mui/material/Paper";
 import TablePagination from "@mui/material/TablePagination";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import CircularProgress from "@mui/material/CircularProgress";
+
 import {
   LocalPhone,
   Textsms,
@@ -101,6 +103,7 @@ export default function PaymentTabsTable({
   totalPages,
   value,
   getHomeData,
+  loading,
 }) {
   const { showToast } = useToast();
   const [page, setPage] = useState(0);
@@ -215,95 +218,112 @@ export default function PaymentTabsTable({
             </StyledTableRow>
           ) : (
             <TableBody>
-              {(rowsPerPage > 0
-                ? rows.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )
-                : rows
-              ).map((row) => {
-                const { id, ...rowData } = row;
-                return (
-                  <StyledTableRow
-                    key={id}
-                    hover
-                    onClick={(event) => handleClick(event, id)}
-                    role="checkbox"
-                    aria-checked={isSelected(id)}
-                    tabIndex={-1}
-                    selected={isSelected(id)}
+              {loading ? (
+                <StyledTableRow>
+                  <StyledTableCell
+                    colSpan={headerData?.length + 1}
+                    align="center"
                   >
-                    {Object.values(rowData).map((value, i) => (
-                      <StyledTableCell
-                        sx={{
-                          fontSize: {
-                            xs: FONT_SIZE_SMALL,
-                            sm: FONT_SIZE_LARGE,
-                          },
-                        }}
-                        key={i}
-                      >
-                        {value}
-                      </StyledTableCell>
-                    ))}
-                    {(value === 0 || value === 2) && (
-                      <StyledTableCell align="left" sx={{ fontWeight: "700" }}>
-                        <Prompt
-                          heading="Retry"
-                          text={`Are you sure you want to Retry?`}
-                          handlePayment={handlePayment}
-                          item={id}
-                          showPayment={true}
-                        />
-                      </StyledTableCell>
-                    )}
-                    <IconsContainer className="icons">
-                      <IconStyle
-                        onClick={() => {
-                          alert("clicked");
-                        }}
-                      >
-                        <LocalPhone />
-                      </IconStyle>
-                      <IconStyle
-                        onClick={() => {
-                          alert("clicked");
-                        }}
-                      >
-                        <Textsms />
-                      </IconStyle>
-                      <IconStyle
-                        onClick={() => {
-                          alert("clicked");
-                        }}
-                      >
-                        <Mail />
-                      </IconStyle>
-                      <IconStyle
-                        onClick={() => {
-                          alert("clicked");
-                        }}
-                      >
-                        <EditCalendar />
-                      </IconStyle>
-                      <IconStyle
-                        onClick={() => {
-                          alert("clicked");
-                        }}
-                      >
-                        <OpenInNew />
-                      </IconStyle>
-                      <IconStyle
-                        onClick={() => {
-                          alert("clicked");
-                        }}
-                      >
-                        <Sync />
-                      </IconStyle>
-                    </IconsContainer>
-                  </StyledTableRow>
-                );
-              })}
+                    <CircularProgress
+                      size={24}
+                      sx={{ color: Colors.SKY_BLUE }}
+                    />
+                  </StyledTableCell>
+                </StyledTableRow>
+              ) : (
+                (rowsPerPage > 0
+                  ? rows.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
+                  : rows
+                ).map((row) => {
+                  const { id, ...rowData } = row;
+                  return (
+                    <StyledTableRow
+                      key={id}
+                      hover
+                      onClick={(event) => handleClick(event, id)}
+                      role="checkbox"
+                      aria-checked={isSelected(id)}
+                      tabIndex={-1}
+                      selected={isSelected(id)}
+                    >
+                      {Object.values(rowData).map((value, i) => (
+                        <StyledTableCell
+                          sx={{
+                            fontSize: {
+                              xs: FONT_SIZE_SMALL,
+                              sm: FONT_SIZE_LARGE,
+                            },
+                          }}
+                          key={i}
+                        >
+                          {value}
+                        </StyledTableCell>
+                      ))}
+                      {(value === 0 || value === 2) && (
+                        <StyledTableCell
+                          align="left"
+                          sx={{ fontWeight: "700" }}
+                        >
+                          <Prompt
+                            heading="Retry"
+                            text={`Are you sure you want to Retry?`}
+                            handlePayment={handlePayment}
+                            item={id}
+                            showPayment={true}
+                          />
+                        </StyledTableCell>
+                      )}
+                      <IconsContainer className="icons">
+                        <IconStyle
+                          onClick={() => {
+                            alert("clicked");
+                          }}
+                        >
+                          <LocalPhone />
+                        </IconStyle>
+                        <IconStyle
+                          onClick={() => {
+                            alert("clicked");
+                          }}
+                        >
+                          <Textsms />
+                        </IconStyle>
+                        <IconStyle
+                          onClick={() => {
+                            alert("clicked");
+                          }}
+                        >
+                          <Mail />
+                        </IconStyle>
+                        <IconStyle
+                          onClick={() => {
+                            alert("clicked");
+                          }}
+                        >
+                          <EditCalendar />
+                        </IconStyle>
+                        <IconStyle
+                          onClick={() => {
+                            alert("clicked");
+                          }}
+                        >
+                          <OpenInNew />
+                        </IconStyle>
+                        <IconStyle
+                          onClick={() => {
+                            alert("clicked");
+                          }}
+                        >
+                          <Sync />
+                        </IconStyle>
+                      </IconsContainer>
+                    </StyledTableRow>
+                  );
+                })
+              )}
             </TableBody>
           )}
         </Table>

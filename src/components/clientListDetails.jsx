@@ -229,6 +229,9 @@ export default function ClientListDetails() {
   };
 
   useEffect(() => {
+    if (!searchText) {
+      setSearchActive(false);
+    }
     if (searchText) {
       setSearchActive(true);
       searchClientDetails(searchActive, filterActive);
@@ -238,6 +241,10 @@ export default function ClientListDetails() {
       searchClientDetails(false, false);
     }
   }, [currentPage, searchText, saveState, filterActive, searchActive]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterActive, searchActive]);
 
   useEffect(() => {
     GetClientDetails();

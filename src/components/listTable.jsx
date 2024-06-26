@@ -344,13 +344,19 @@ export default function ListTable({
             </Typography>
             <IconButton
               onClick={backward}
-              disabled={currentPage === 1 || currentPage === 0}
+              disabled={
+                currentPage === 1 || currentPage === 0 || isNaN(totalPages)
+              }
             >
               <ArrowBackIosNewIcon sx={{ fontSize: FONT_SIZE_XL }} />
             </IconButton>
             <IconButton
               onClick={forward}
-              disabled={currentPage === totalPages || totalPages === 0}
+              disabled={
+                currentPage === totalPages ||
+                totalPages === 0 ||
+                isNaN(totalPages)
+              }
             >
               <ArrowForwardIosIcon sx={{ fontSize: FONT_SIZE_XL }} />
             </IconButton>
