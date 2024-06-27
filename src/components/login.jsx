@@ -103,11 +103,6 @@ function Login() {
     !/(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/.test(
       password
     );
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      handleLoginForm();
-    }
-  };
 
   const {
     LOGIN_HEADING,
@@ -186,7 +181,6 @@ function Login() {
             type={showPassword ? "text" : "password"}
             value={password}
             onChange={handlePasswordChange}
-            onKeyPress={handleKeyPress}
             style={{
               fontSize: smallScreen ? FONT_SIZE_SMALL : FONT_SIZE_LARGE,
               fontFamily: "Nunito",
