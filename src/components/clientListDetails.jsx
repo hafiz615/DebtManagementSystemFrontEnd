@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Grid, Typography, Box, CircularProgress, Menu } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { UserListPage } from "../constants/appConstants";
+import { PAGE_HEIGHT, UserListPage } from "../constants/appConstants";
 import { Colors } from "../config/default";
 import CaseHistory from "./caseHistory";
 import { GetClientById, GetCreditorById } from "../services/services";
@@ -11,6 +11,7 @@ import { isEmpty } from "lodash";
 import { formatDollarAmount } from "../common";
 import TextButton from "./button";
 import CustomTextField from "./customTextfield";
+import ScrollbarStyles from "./customScroll";
 
 export default function ClientListDetails() {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
@@ -366,6 +367,9 @@ export default function ClientListDetails() {
         backgroundColor: Colors.BG_LIGHT_GRAY,
         paddingLeft: "2rem",
         paddingRight: "2rem",
+        height: PAGE_HEIGHT,
+        overflowY: "auto",
+        ...ScrollbarStyles,
       }}
     >
       {loading || isEmpty(clientData) ? (

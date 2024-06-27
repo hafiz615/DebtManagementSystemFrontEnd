@@ -7,11 +7,21 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Colors } from "../config/default";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import Replay from "@mui/icons-material/Replay";
+import { styled } from "@mui/material/styles";
 
 import { DeleteUserById, DeleteCustomField } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import TextButton from "./button";
 import { IconButton } from "@mui/material";
+
+const StyledDialog = styled(Dialog)(({ theme }) => ({
+  "& .MuiPaper-root": {
+    borderRadius: "10px",
+  },
+  "& .MuiTypography-root": {
+    fontFamily: "Nunito",
+  },
+}));
 
 export default function Prompt({
   deleting,
@@ -35,7 +45,7 @@ export default function Prompt({
     setLoading(true);
     const deletion = await DeleteCustomField(id);
     if (deletion?.status === 200) {
-      setOpen(false); // Close the dialog on successful deletion
+      setOpen(false);
       showToast(deletion?.data?.message, "success");
       handleModalClose();
     } else {
@@ -51,7 +61,7 @@ export default function Prompt({
     setLoading(true);
     const deleteUser = await DeleteUserById(id);
     if (deleteUser?.status === 200) {
-      setOpen(false); // Close the dialog on successful deletion
+      setOpen(false);
       showToast(deleteUser?.data?.message, "success");
       handleUserDelete(id);
       GetUsers();
@@ -127,7 +137,7 @@ export default function Prompt({
         )}
       </IconButton>
 
-      <Dialog
+      <StyledDialog
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
@@ -139,7 +149,9 @@ export default function Prompt({
             {text}
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
+        <DialogActions
+          sx={{ width: "100%", display: "flex", justifyContent: "center" }}
+        >
           <TextButton
             buttonText="Cancel"
             onClick={handleClose}
@@ -154,7 +166,7 @@ export default function Prompt({
           <TextButton
             loading={loading}
             buttonText="Confirm"
-            onClick={handleConfirm} // Close dialog after performing action
+            onClick={handleConfirm}
             backgroundColor={Colors.SKY_BLUE}
             hoverColor={Colors.SKY_BLUE}
             paddingLeft="2rem"
@@ -163,7 +175,7 @@ export default function Prompt({
             width="6rem"
           />
         </DialogActions>
-      </Dialog>
+      </StyledDialog>
     </React.Fragment>
   );
 }

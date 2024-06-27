@@ -12,7 +12,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Colors } from "../config/default";
 import DebtorDetails from "./caseCreation/debtorDetails";
-import { DebtorDetailsPage } from "../constants/appConstants";
+import { DebtorDetailsPage, PAGE_HEIGHT } from "../constants/appConstants";
 import TextButton from "./button";
 import CreditorDetails from "./caseCreation/creditorDetails";
 import PaymentDetails from "./caseCreation/paymentDetails";
@@ -28,6 +28,7 @@ import {
 import { useToast } from "../toast/toastContext";
 import { isEmpty } from "lodash";
 import { hasAnyValue, checkContacts } from "../common";
+import ScrollbarStyles from "./customScroll";
 
 const steps = ["File upload ", "Debtor", "Creditor", "Payment", "Preview"];
 
@@ -730,6 +731,9 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         backgroundColor: Colors.BG_LIGHT_GRAY,
         paddingLeft: "2rem",
         paddingRight: "2rem",
+        height: PAGE_HEIGHT,
+        overflowY: "auto",
+        ...ScrollbarStyles,
       }}
     >
       {!hide && (

@@ -3,11 +3,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { Grid, Typography, CircularProgress } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Colors } from "../config/default";
-import { HomePageDetails } from "../constants/appConstants";
+import { PAGE_HEIGHT, HomePageDetails } from "../constants/appConstants";
 import AccordionUsage from "./accordion";
 import Dropdown from "./dropdown";
 import { GetHomePayments } from "../services/services";
 import { get_payments } from "../redux/action/action";
+import ScrollbarStyles from "./customScroll";
 // import SelectMenu from "./select";
 
 function HomeDetails() {
@@ -118,7 +119,13 @@ function HomeDetails() {
   return (
     <Grid
       container
-      sx={{ backgroundColor: Colors.BG_LIGHT_GRAY, padding: "2rem" }}
+      sx={{
+        backgroundColor: Colors.BG_LIGHT_GRAY,
+        padding: "2rem",
+        height: PAGE_HEIGHT,
+        overflowY: "auto",
+        ...ScrollbarStyles,
+      }}
     >
       <Grid
         item
