@@ -7,6 +7,7 @@ import NotificationTemplatesTabs from "./notifications";
 import CustomFieldsAccordion from "./customFields";
 import PasswordAccordion from "./passwordAccord";
 import { GetAllSettings } from "../../services/services";
+import CaseStatuses from "./caseStatuses";
 
 export default function SettingsScreen() {
   const [failedAuthorizations, setfailedAuthorizations] = useState({
@@ -199,6 +200,7 @@ export default function SettingsScreen() {
           refreshData={refreshData}
         />
         <PasswordAccordion />
+        <CaseStatuses />
       </Grid>
     </Grid>
   );

@@ -20,6 +20,10 @@ import CaseCustomField from "./caseCustomField";
 import EditCaseCustomField from "./editCaseCustomField";
 import EditAbout from "./editAbout";
 import { isEmpty } from "lodash";
+import Delete from "@mui/icons-material/Delete";
+import EditStatus from "./settingsScreen/editStatus";
+import DeleteStatus from "./settingsScreen/deleteStatus";
+import { MoreHorizOutlined } from "@mui/icons-material";
 
 export default function MuiModels({
   buttonName,
@@ -39,6 +43,10 @@ export default function MuiModels({
   customFieldsData,
   templateType,
   disabled,
+  text,
+  arrayStatus,
+  statusId,
+  GetStatuses,
 }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -146,6 +154,48 @@ export default function MuiModels({
             sx={{ fontSize: "16px", color: Colors.WHITE, cursor: "pointer" }}
           />
         </IconButton>
+      ) : show === "editStatus" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <EditIcon
+            sx={{
+              fontSize: "1.2rem",
+              color: Colors.DARK_GRAY,
+              cursor: "pointer",
+            }}
+          />
+        </IconButton>
+      ) : show === "deleteStatus" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <Delete
+            sx={{
+              fontSize: "1.2rem",
+              color: Colors.DARK_GRAY,
+              cursor: "pointer",
+            }}
+          />
+        </IconButton>
+      ) : show === "moreStatus" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <MoreHorizOutlined
+            sx={{
+              fontSize: "1.2rem",
+              color: Colors.DARK_GRAY,
+              cursor: "pointer",
+            }}
+          />
+        </IconButton>
       ) : show === "EditCaseCustomField" ? (
         <IconButton
           disabled={isEmpty(customFieldsData)}
@@ -247,6 +297,23 @@ export default function MuiModels({
               handleClose={handleClose}
               caseData={caseData}
               GetCaseDetails={GetCaseDetails}
+            />
+          ) : show === "editStatus" ? (
+            <EditStatus
+              show={show}
+              handleClose={handleClose}
+              text={text}
+              statusId={statusId}
+              GetStatuses={GetStatuses}
+            />
+          ) : show === "deleteStatus" ? (
+            <DeleteStatus
+              show={show}
+              handleClose={handleClose}
+              arrayStatus={arrayStatus}
+              text={text}
+              statusId={statusId}
+              GetStatuses={GetStatuses}
             />
           ) : show === "froalaEditor" ? (
             <FroalaEditor

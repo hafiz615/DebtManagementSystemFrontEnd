@@ -4,7 +4,11 @@ import Close from "@mui/icons-material/Close";
 import { Colors } from "../config/default";
 import Dropdown from "./dropdown";
 import TextButton from "./button";
-import { GetAllUsers, UpdateCaseAbout } from "../services/services";
+import {
+  GetAllUsers,
+  UpdateCaseAbout,
+  GetAllStatuses,
+} from "../services/services";
 import { isEmpty } from "lodash";
 import { useParams } from "react-router-dom";
 import { useToast } from "../toast/toastContext";
@@ -15,12 +19,29 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
   const [status, setStatus] = useState(data?.status || "");
   const [updating, setUpdating] = useState(false);
   const { id } = useParams();
-  const statusMenuItems = [
-    { label: "Customer", value: "Customer" },
-    { label: "On hold", value: "On hold" },
-    { label: "Canceled", value: "Canceled" },
-    { label: "Declared Bankrupcy", value: "Declared Bankrupcy" },
-  ];
+
+  const [menuItems, setMenuItems] = useState([]);
+  const GetStatuses = async () => {
+    const AllStatuses = await GetAllStatuses();
+    if (AllStatuses?.status === 200) {
+      setMenuItems(AllStatuses?.data?.data?.status);
+    }
+  };
+
+  const menu = menuItems?.map((name) => ({
+    label: name,
+    value: name,
+  }));
+
+  useEffect(() => {
+    GetStatuses();
+  }, []);
+  // const statusMenuItems = [
+  //   { label: "Customer", value: "Customer" },
+  //   { label: "On hold", value: "On hold" },
+  //   { label: "Canceled", value: "Canceled" },
+  //   { label: "Declared Bankrupcy", value: "Declared Bankrupcy" },
+  // ];
 
   const [caseOwner, setCaseOwner] = useState(data?.caseOwner || "");
   const [manager, setManager] = useState(data?.manager || "");
@@ -144,7 +165,7 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
                 </Typography>
                 <Dropdown
                   menuWidth="20.5rem"
-                  menuItems={statusMenuItems}
+                  menuItems={menu}
                   placeholder="Status"
                   backgroundColor={Colors.BG_LIGHT_GRAY}
                   hoverColor={Colors.BG_LIGHT_GRAY}

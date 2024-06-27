@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -8,6 +8,7 @@ import { Colors } from "../../config/default";
 import Dropdown from "./../dropdown";
 import AmountTextField from "../amountTextField";
 import PaymentProcess from "../radioPayment";
+import { GetAllStatuses } from "../../services/services";
 
 export default function PaymentFields({
   totalReceivable,
@@ -25,12 +26,28 @@ export default function PaymentFields({
 }) {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:1440px)");
 
-  const menuItems = [
-    { label: "Customer", value: "Customer" },
-    { label: "On hold", value: "On hold" },
-    { label: "Canceled", value: "Canceled" },
-    { label: "Declared Bankrupcy", value: "Declared Bankrupcy" },
-  ];
+  const [menuItems, setMenuItems] = useState([]);
+  const GetStatuses = async () => {
+    const AllStatuses = await GetAllStatuses();
+    if (AllStatuses?.status === 200) {
+      setMenuItems(AllStatuses?.data?.data?.status);
+    }
+  };
+
+  const menu = menuItems?.map((name) => ({
+    label: name,
+    value: name,
+  }));
+
+  useEffect(() => {
+    GetStatuses();
+  }, []);
+  // const menuItems = [
+  //   { label: "Customer", value: "Customer" },
+  //   { label: "On hold", value: "On hold" },
+  //   { label: "Canceled", value: "Canceled" },
+  //   { label: "Declared Bankrupcy", value: "Declared Bankrupcy" },
+  // ];
   const handleNumberInput = (e) => {
     const invalidChars = ["e", "E", ".", "+", "-"];
     if (invalidChars.includes(e.key)) {
@@ -207,7 +224,7 @@ export default function PaymentFields({
             menuWidth="14.8rem"
             selectedValue={selectedValue}
             setSelectedValue={setSelectedValue}
-            menuItems={menuItems}
+            menuItems={menu}
             placeholder="Choose Status"
             backgroundColor={Colors.BG_LIGHT_GRAY}
             width="60%"
