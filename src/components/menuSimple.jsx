@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 
-import Button from "@mui/material/Button";
+import { Box, Button } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -11,7 +11,7 @@ import { Modal } from "@mui/material";
 import { Colors } from "../config/default";
 import UploadCsv from "./uploadCsv";
 
-export default function BasicMenu({ backgroundColor, width }) {
+export default function BasicMenu({ openState, backgroundColor, width }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
@@ -48,29 +48,58 @@ export default function BasicMenu({ backgroundColor, width }) {
 
   return (
     <>
-      <Button
-        id="basic-button"
-        aria-controls={open ? "basic-menu" : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? "true" : undefined}
-        onClick={handleClick}
-        sx={{
-          backgroundColor: backgroundColor,
-          color: Colors.WHITE,
-          fontFamily: "Nunito",
-          width: width,
-          height: "3rem",
-          borderRadius: "10px",
-          textTransform: "none",
-          ":hover": {
-            backgroundColor: Colors.SKY_BLUE,
+      {openState ? (
+        <Button
+          id="basic-button"
+          aria-controls={open ? "basic-menu" : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? "true" : undefined}
+          onClick={handleClick}
+          sx={{
+            backgroundColor: backgroundColor,
             color: Colors.WHITE,
-          },
-        }}
-      >
-        <AddchartIcon sx={{ marginRight: "0.2rem" }} />
-        {selectedValue} <ExpandMoreIcon />
-      </Button>
+            fontFamily: "Nunito",
+            width: width,
+            height: "3rem",
+            borderRadius: "10px",
+            textTransform: "none",
+            ":hover": {
+              backgroundColor: Colors.SKY_BLUE,
+              color: Colors.WHITE,
+            },
+          }}
+        >
+          <AddchartIcon sx={{ marginRight: "0.2rem" }} />
+          {selectedValue} <ExpandMoreIcon />
+        </Button>
+      ) : (
+        <Box
+          onClick={handleClick}
+          sx={{
+            backgroundColor: Colors.SKY_BLUE,
+            borderRadius: "5px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "40px",
+            width: "40px",
+            cursor: "pointer",
+
+            ":hover": {
+              backgroundColor: Colors.SKY_BLUE,
+              color: Colors.WHITE,
+            },
+          }}
+        >
+          <AddchartIcon
+            sx={{
+              color: Colors.WHITE,
+              fontSize: "1.5rem",
+            }}
+          />
+        </Box>
+      )}
+
       <Menu
         id="basic-menu"
         anchorEl={anchorEl}

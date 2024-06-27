@@ -7,6 +7,8 @@ import NotificationTemplatesTabs from "./notifications";
 import CustomFieldsAccordion from "./customFields";
 import PasswordAccordion from "./passwordAccord";
 import { GetAllSettings } from "../../services/services";
+import { PAGE_HEIGHT } from "../../constants/appConstants";
+import ScrollbarStyles from "../customScroll";
 
 export default function SettingsScreen() {
   const [failedAuthorizations, setfailedAuthorizations] = useState({
@@ -142,6 +144,9 @@ export default function SettingsScreen() {
         backgroundColor: Colors.BG_LIGHT_GRAY,
         paddingLeft: "2rem",
         paddingRight: "2rem",
+        height: PAGE_HEIGHT,
+        overflowY: "auto",
+        ...ScrollbarStyles,
       }}
     >
       <Grid

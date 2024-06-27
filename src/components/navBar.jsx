@@ -4,7 +4,6 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { Colors } from "../config/default";
 import { Logout } from "../services/services";
@@ -30,24 +29,6 @@ export default function NavBar({ onClick }) {
         }}
       >
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            aria-label="open drawer"
-            onClick={onClick}
-            sx={{ color: Colors.SKY_BLUE }}
-          >
-            <MenuIcon
-              sx={{
-                color: Colors.WHITE,
-                backgroundColor: Colors.SKY_BLUE,
-                padding: "0.3rem",
-                borderRadius: "50%",
-                fontSize: "2.5rem",
-              }}
-            />
-          </IconButton>
-
           <Box sx={{ flexGrow: 1 }} />
 
           <IconButton
