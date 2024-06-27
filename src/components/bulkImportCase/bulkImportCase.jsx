@@ -6,12 +6,13 @@ import { Grid, Typography, Stepper, Step, StepLabel } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Colors } from "../../config/default";
-import { UserListPage } from "../../constants/appConstants";
+import { PAGE_HEIGHT, UserListPage } from "../../constants/appConstants";
 import TextButton from ".././button";
 import MappingDetails from "./mappingDetails";
 import ClientImport from "./clientImport";
 import { CreateCase } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
+import ScrollbarStyles from "../customScroll";
 
 function BulkImportCase() {
   const [activeStep, setActiveStep] = useState(0);
@@ -73,6 +74,9 @@ function BulkImportCase() {
         backgroundColor: Colors.BG_LIGHT_GRAY,
         paddingLeft: "2rem",
         paddingRight: "2rem",
+        height: PAGE_HEIGHT,
+        overflowY: "auto",
+        ...ScrollbarStyles,
       }}
     >
       <Grid

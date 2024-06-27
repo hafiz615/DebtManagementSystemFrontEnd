@@ -18,7 +18,12 @@ import { GetDashboard } from "../../services/services";
 import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
 import TextButton from "../button";
 import CustomTextField from "../customTextfield";
-import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../../constants/appConstants";
+import {
+  FONT_SIZE_LARGE,
+  FONT_SIZE_XL,
+  PAGE_HEIGHT,
+} from "../../constants/appConstants";
+import ScrollbarStyles from "../customScroll";
 
 function DashboardContent() {
   const [loading, setLoading] = useState(true);
@@ -136,6 +141,9 @@ function DashboardContent() {
         backgroundColor: Colors.BG_LIGHT_GRAY,
         paddingLeft: "2rem",
         paddingRight: "2rem",
+        height: PAGE_HEIGHT,
+        overflowY: "auto",
+        ...ScrollbarStyles,
       }}
     >
       {loading ? (

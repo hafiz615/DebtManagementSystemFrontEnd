@@ -19,7 +19,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { Colors } from "../../config/default";
-import { UserListPage } from "../../constants/appConstants";
+import { PAGE_HEIGHT, UserListPage } from "../../constants/appConstants";
 import AnalyticsAccordion from "./analyticsAccordion";
 import AboutAccordion from "./aboutAccordion";
 import TaskAccordion from "./tasksAccordion";
@@ -31,6 +31,7 @@ import TimelineData from "./timelineData.jsx";
 import { GetCaseById, GetCasePaymentById } from "../../services/services.js";
 import { isEmpty } from "lodash";
 import MuiModels from "../models.jsx";
+import ScrollbarStyles from "../customScroll.jsx";
 
 function CaseDetail() {
   const navigate = useNavigate();
@@ -80,6 +81,9 @@ function CaseDetail() {
         backgroundColor: Colors.BG_LIGHT_GRAY,
         paddingLeft: "2rem",
         paddingRight: "2rem",
+        height: PAGE_HEIGHT,
+        overflowY: "auto",
+        ...ScrollbarStyles,
       }}
     >
       <Grid
