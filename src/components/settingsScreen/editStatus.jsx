@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Grid, Box, Typography } from "@mui/material";
 import TextButton from "./../../components/button";
 import { Colors } from "../../config/default";
+import { UpdateStatus } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
-import Dropdown from "../dropdown";
 
 const lineStyle = {
   width: "100%",
@@ -12,31 +12,30 @@ const lineStyle = {
   margin: "1rem 0",
 };
 
-export default function EditPipeline({ handleClose, data }) {
+export default function EditStatus({
+  handleClose,
+  text,
+  statusId,
+  GetStatuses,
+}) {
   const { showToast } = useToast();
-  const [newStatus, setNewStatus] = useState(data?.name || "");
-  const [selectedValue, setSelectedValue] = useState(data?.status || "");
+  const [newStatus, setNewStatus] = useState(text);
   const [loading, setLoading] = useState(false);
-  const menuItems = [
-    { label: "Active", value: "Active" },
-    { label: "Won", value: "Won" },
-    { label: "Lost", value: "Lost" },
-  ];
 
-  //   const editPipeline = async () => {
-  //     setLoading(true);
-  //     const params = { original: text, update: newStatus };
-  //     const editStatusResponse = await UpdateStatus(params, statusId);
-  //     if (editStatusResponse?.status === 200) {
-  //       showToast(editStatusResponse?.data?.message, "success");
-  //       GetStatuses();
-  //     } else {
-  //       const errorMessage = editStatusResponse?.response?.data?.message;
-  //       showToast(errorMessage, "error");
-  //     }
-  //     setLoading(false);
-  //     handleClose();
-  //   };
+  const editStatus = async () => {
+    setLoading(true);
+    const params = { original: text, update: newStatus };
+    const editStatusResponse = await UpdateStatus(params, statusId);
+    if (editStatusResponse?.status === 200) {
+      showToast(editStatusResponse?.data?.message, "success");
+      GetStatuses();
+    } else {
+      const errorMessage = editStatusResponse?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setLoading(false);
+    handleClose();
+  };
 
   return (
     <>
@@ -44,17 +43,11 @@ export default function EditPipeline({ handleClose, data }) {
         <Typography
           sx={{ fontWeight: "500", fontFamily: "Nunito", color: Colors.BLACK }}
         >
-          Edit Pipeline Status
+          Edit Case Status
         </Typography>
         <Box sx={lineStyle} />
       </Grid>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
+      <Box>
         <input
           type="text"
           placeholder="Edit Status"
@@ -70,22 +63,11 @@ export default function EditPipeline({ handleClose, data }) {
             border: "none",
             outline: "none",
             borderRadius: "5px",
-            width: "73%",
+            width: "100%",
           }}
         />
-        <Dropdown
-          menuWidth="12%"
-          menuItems={menuItems}
-          placeholder="Type"
-          height="2.5rem"
-          backgroundColor={Colors.BG_LIGHT_GRAY}
-          hoverColor={Colors.BG_LIGHT_GRAY}
-          width="25%"
-          selectedValue={selectedValue}
-          setSelectedValue={setSelectedValue}
-        />
+        <Box sx={lineStyle} />
       </Box>
-      <Box sx={lineStyle} />
       <Box
         sx={{ display: "flex", justifyContent: "flex-end", marginTop: "1rem" }}
       >
@@ -104,7 +86,7 @@ export default function EditPipeline({ handleClose, data }) {
           width="6rem"
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
-          //   onClick={editPipeline}
+          onClick={editStatus}
           loading={loading}
           disabled={!newStatus}
         />

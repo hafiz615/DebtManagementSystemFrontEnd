@@ -2,44 +2,48 @@ import React, { useState } from "react";
 import { Grid, Box, Typography } from "@mui/material";
 import TextButton from "./../../components/button";
 import { Colors } from "../../config/default";
-import { useToast } from "../../toast/toastContext";
 import StatusAutoComplete from "./statusAutoComplete";
+import { useToast } from "../../toast/toastContext";
+import { DeleteAndReplaceStatus } from "../../services/services";
 
 const lineStyle = {
   width: "100%",
   height: "1px",
-  backgroundColor: "#EAEBEB",
+  backgroundColor: "#EAEBEB", // Change the color as needed
   margin: "1rem 0",
 };
-export default function DeletePipeline({ handleClose, data, pipelineList }) {
+export default function DeleteStatus({
+  handleClose,
+  arrayStatus,
+  text,
+  statusId,
+  GetStatuses,
+}) {
   const { showToast } = useToast();
   const [value, setValue] = React.useState(null);
   const [loading, setLoading] = useState(false);
-  const arrayStatus = ["negotiation", "processing"];
 
-  const pipelineStatuses = pipelineList?.map((item) => item?.name);
-
-  //   const deletePipelineStatus = async () => {
-  //     setLoading(true);
-  //     const params = { original: text, update: value || text };
-  //     const deleteStatusResponse = await DeleteAndReplaceStatus(params, statusId);
-  //     if (deleteStatusResponse?.status === 200) {
-  //       showToast(deleteStatusResponse?.data?.message, "success");
-  //       GetStatuses();
-  //     } else {
-  //       const errorMessage = deleteStatusResponse?.response?.data?.message;
-  //       showToast(errorMessage, "error");
-  //     }
-  //     setLoading(false);
-  //     handleClose();
-  //   };
+  const deleteStatus = async () => {
+    setLoading(true);
+    const params = { original: text, update: value || text };
+    const deleteStatusResponse = await DeleteAndReplaceStatus(params, statusId);
+    if (deleteStatusResponse?.status === 200) {
+      showToast(deleteStatusResponse?.data?.message, "success");
+      GetStatuses();
+    } else {
+      const errorMessage = deleteStatusResponse?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setLoading(false);
+    handleClose();
+  };
   return (
     <>
       <Grid item>
         <Typography
           sx={{ fontWeight: "500", fontFamily: "Nunito", color: Colors.BLACK }}
         >
-          Delete Pipeline Status
+          Delete Case Status
         </Typography>
         <Box sx={lineStyle} />
       </Grid>
@@ -50,11 +54,21 @@ export default function DeletePipeline({ handleClose, data, pipelineList }) {
           Choose a Replacement
         </Typography>
 
+        <Typography
+          sx={{
+            fontWeight: "500",
+            fontFamily: "Nunito",
+            color: Colors.DIM_LIGHT_GRAY,
+          }}
+        >
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur
+          cursus elit id tempor tincidunt. Quisque turpis
+        </Typography>
         <StatusAutoComplete
-          arrayStatus={pipelineStatuses}
+          arrayStatus={arrayStatus}
           setValue={setValue}
           value={value}
-          text={data?.name}
+          text={text}
         />
         {value && (
           <Typography
@@ -66,7 +80,7 @@ export default function DeletePipeline({ handleClose, data, pipelineList }) {
           >
             You're going to replace{" "}
             <span style={{ fontWeight: "700", color: Colors.BLACK }}>
-              {data?.name}
+              {text}
             </span>{" "}
             to{" "}
             <span style={{ fontWeight: "700", color: Colors.BLACK }}>
@@ -93,7 +107,7 @@ export default function DeletePipeline({ handleClose, data, pipelineList }) {
           buttonText="SAVE"
           height="2rem"
           width="6rem"
-          //   onClick={deletePipelineStatus}
+          onClick={deleteStatus}
           disabled={!value}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}

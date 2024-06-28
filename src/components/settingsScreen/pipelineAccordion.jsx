@@ -48,6 +48,16 @@ export default function PipelineAccordion() {
   const { showToast } = useToast();
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:900px)");
 
+  const data = [
+    { name: "test1", status: "Won" },
+    { name: "test2", status: "Lost" },
+    { name: "test3", status: "active" },
+    { name: "test4", status: "Lost" },
+  ];
+  useEffect(() => {
+    setPipelineList(data);
+  }, []);
+
   return (
     <StyledAccordion>
       <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>

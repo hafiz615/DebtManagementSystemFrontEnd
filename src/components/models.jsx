@@ -20,7 +20,11 @@ import CaseCustomField from "./caseCustomField";
 import EditCaseCustomField from "./editCaseCustomField";
 import EditAbout from "./editAbout";
 import { isEmpty } from "lodash";
-import { Add, Delete } from "@mui/icons-material";
+import Delete from "@mui/icons-material/Delete";
+import EditStatus from "./settingsScreen/editStatus";
+import DeleteStatus from "./settingsScreen/deleteStatus";
+import { MoreHorizOutlined } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 import { FONT_SIZE_XL } from "../constants/appConstants";
 import EditPipeline from "./settingsScreen/editPipeline";
 import DeletePipeline from "./settingsScreen/deletePipeline";
@@ -46,6 +50,11 @@ export default function MuiModels({
   customFieldsData,
   templateType,
   disabled,
+  text,
+  arrayStatus,
+  statusId,
+  GetStatuses,
+  pipelineList,
 }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -151,6 +160,48 @@ export default function MuiModels({
         >
           <AddIcon
             sx={{ fontSize: "16px", color: Colors.WHITE, cursor: "pointer" }}
+          />
+        </IconButton>
+      ) : show === "editStatus" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <EditIcon
+            sx={{
+              fontSize: "1.2rem",
+              color: Colors.DARK_GRAY,
+              cursor: "pointer",
+            }}
+          />
+        </IconButton>
+      ) : show === "deleteStatus" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <Delete
+            sx={{
+              fontSize: "1.2rem",
+              color: Colors.DARK_GRAY,
+              cursor: "pointer",
+            }}
+          />
+        </IconButton>
+      ) : show === "moreStatus" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <MoreHorizOutlined
+            sx={{
+              fontSize: "1.2rem",
+              color: Colors.DARK_GRAY,
+              cursor: "pointer",
+            }}
           />
         </IconButton>
       ) : show === "EditCaseCustomField" ? (
@@ -280,6 +331,23 @@ export default function MuiModels({
               caseData={caseData}
               GetCaseDetails={GetCaseDetails}
             />
+          ) : show === "editStatus" ? (
+            <EditStatus
+              show={show}
+              handleClose={handleClose}
+              text={text}
+              statusId={statusId}
+              GetStatuses={GetStatuses}
+            />
+          ) : show === "deleteStatus" ? (
+            <DeleteStatus
+              show={show}
+              handleClose={handleClose}
+              arrayStatus={arrayStatus}
+              text={text}
+              statusId={statusId}
+              GetStatuses={GetStatuses}
+            />
           ) : show === "froalaEditor" ? (
             <FroalaEditor
               froalaEditor={froalaEditor}
@@ -287,9 +355,13 @@ export default function MuiModels({
               templateType={templateType}
             />
           ) : show === "editPipeline" ? (
-            <EditPipeline handleClose={handleClose} />
+            <EditPipeline data={data} handleClose={handleClose} />
           ) : show === "deletePipeline" ? (
-            <DeletePipeline handleClose={handleClose} />
+            <DeletePipeline
+              data={data}
+              pipelineList={pipelineList}
+              handleClose={handleClose}
+            />
           ) : show === "editMainPipeline" ? (
             <EditMainPipeline handleClose={handleClose} />
           ) : show === "deleteMainPipeline" ? (

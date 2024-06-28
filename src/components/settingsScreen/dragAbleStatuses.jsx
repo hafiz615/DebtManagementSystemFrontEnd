@@ -1,22 +1,21 @@
 import React, { useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 
-import { Typography } from "@mui/material";
-
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
-import { FONT_SIZE_LARGE } from "../../constants/appConstants";
 
-export default function DraggablePipelineRow({
-  pipelineList,
-  moveRow,
-  item,
+const ItemType = "ROW";
+
+const DraggableRow = ({
   id,
+  text,
   index,
-}) {
+  moveRow,
+  arrayStatus,
+  statusId,
+  GetStatuses,
+}) => {
   const ref = useRef(null);
-
-  const ItemType = "ROW";
 
   const [, drop] = useDrop({
     accept: ItemType,
@@ -60,12 +59,14 @@ export default function DraggablePipelineRow({
 
   const opacity = isDragging ? 0.5 : 1;
   drag(drop(ref));
+
   return (
     <tr
       ref={ref}
       style={{
         opacity,
         display: "flex",
+        justifyContent: "space-between",
         alignItems: "center",
         color: Colors.DARK_GRAY,
         backgroundColor: Colors.BG_LIGHT_GRAY,
@@ -78,37 +79,26 @@ export default function DraggablePipelineRow({
         borderRadius: "5px",
       }}
     >
-      <td style={{ width: "28%", textAlign: "left", fontFamily: "Nunito" }}>
-        {item?.name}
-      </td>
-      <td style={{ width: "68%" }}>
-        <Typography
-          sx={{
-            border: `2px solid ${
-              item?.status === "Lost" ? Colors.ORANGE_COLOR : Colors.SKY_BLUE
-            }`,
-            width: "4rem",
-            textAlign: "center",
-            textTransform: "none",
-            fontFamily: "Nunito",
-            borderRadius: "5px",
-            color:
-              item?.status === "Lost" ? Colors.ORANGE_COLOR : Colors.SKY_BLUE,
-            fontSize: FONT_SIZE_LARGE,
-          }}
-        >
-          {item?.status}
-        </Typography>
-      </td>
-      <td style={{ display: "flex", width: "8%", textAlign: "left" }}>
-        <MuiModels data={item} show="editPipeline" button="create" />
+      <td className="dataTable">{text}</td>
+      <td className="dataTable" style={{ display: "flex" }}>
         <MuiModels
-          data={item}
-          pipelineList={pipelineList}
-          show="deletePipeline"
-          button="delete"
+          show="editStatus"
+          text={text}
+          statusId={statusId}
+          GetStatuses={GetStatuses}
         />
+        {arrayStatus?.length > 1 && (
+          <MuiModels
+            show="deleteStatus"
+            arrayStatus={arrayStatus}
+            text={text}
+            statusId={statusId}
+            GetStatuses={GetStatuses}
+          />
+        )}
       </td>
     </tr>
   );
-}
+};
+
+export default DraggableRow;
