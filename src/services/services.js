@@ -461,3 +461,61 @@ export const RetryCapture = async (id) => {
     return error;
   }
 };
+
+export const GetAllStatuses = async () => {
+  try {
+    return await axios.get(
+      BASE_URL + "/v1/status/getCaseStatuses",
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const AddStatus = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + "/v1/status/addStatus",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateStatus = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/status/updateStatus/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const DeleteAndReplaceStatus = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/status/deleteStatus/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const ReArrangedStatuses = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/status/updateStatusArray/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

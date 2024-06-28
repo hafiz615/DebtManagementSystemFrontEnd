@@ -648,7 +648,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
             minimum: "",
             maximum: "",
           });
-          setDebtorDetailsStatus("Customer");
+          setDebtorDetailsStatus("");
           setLastPaymentDate("");
           setRemainingAmount(null);
           setPaidAmount(null);
