@@ -3,6 +3,7 @@ import { Grid, Box, Typography } from "@mui/material";
 import TextButton from "./../../components/button";
 import { Colors } from "../../config/default";
 import { useToast } from "../../toast/toastContext";
+import { CreatePipeline } from "../../services/services";
 
 const lineStyle = {
   width: "100%",
@@ -11,30 +12,25 @@ const lineStyle = {
   margin: "1rem 0",
 };
 
-export default function AddPipeline({
-  handleClose,
-  text,
-  statusId,
-  GetStatuses,
-}) {
+export default function AddPipeline({ handleClose, GetPipelines }) {
   const { showToast } = useToast();
-  const [newStatus, setNewStatus] = useState(text);
+  const [addPipeline, setAddPipeline] = useState("");
   const [loading, setLoading] = useState(false);
 
-  //   const editPipeline = async () => {
-  //     setLoading(true);
-  //     const params = { original: text, update: newStatus };
-  //     const editStatusResponse = await UpdateStatus(params, statusId);
-  //     if (editStatusResponse?.status === 200) {
-  //       showToast(editStatusResponse?.data?.message, "success");
-  //       GetStatuses();
-  //     } else {
-  //       const errorMessage = editStatusResponse?.response?.data?.message;
-  //       showToast(errorMessage, "error");
-  //     }
-  //     setLoading(false);
-  //     handleClose();
-  //   };
+  const AddPipeline = async () => {
+    setLoading(true);
+    const params = { pipeline: addPipeline };
+    const resaddPipeline = await CreatePipeline(params);
+    if (resaddPipeline?.status === 200) {
+      showToast(resaddPipeline?.data?.message, "success");
+      GetPipelines();
+    } else {
+      const errorMessage = resaddPipeline?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setLoading(false);
+    handleClose();
+  };
 
   return (
     <>
@@ -50,8 +46,8 @@ export default function AddPipeline({
         <input
           type="text"
           placeholder="Add Pipeline"
-          value={newStatus}
-          onChange={(e) => setNewStatus(e.target.value)}
+          value={addPipeline}
+          onChange={(e) => setAddPipeline(e.target.value)}
           style={{
             backgroundColor: Colors.BG_LIGHT_GRAY,
             marginTop: "1rem",
@@ -85,9 +81,9 @@ export default function AddPipeline({
           width="6rem"
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
-          //   onClick={editPipeline}
+          onClick={AddPipeline}
           loading={loading}
-          disabled={!newStatus}
+          disabled={!addPipeline}
         />
       </Box>
     </>

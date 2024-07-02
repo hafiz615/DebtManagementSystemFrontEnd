@@ -59,10 +59,10 @@ export default function PaymentsTabs({
     headers.push("Due Date");
   }
   if (value === 0) {
-    headers.push("Re Try");
+    headers.push("Retry");
   }
   if (value === 2) {
-    headers.push("Re Try");
+    headers.push("Retry");
   }
   const handleChange = (event, newValue) => {
     setValue(newValue);

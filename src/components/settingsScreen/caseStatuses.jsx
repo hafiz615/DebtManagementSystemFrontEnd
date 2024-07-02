@@ -40,7 +40,7 @@ const StyledAccordionDetails = styled(AccordionDetails)({
 
 export default function CaseStatuses() {
   const { showToast } = useToast();
-  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:900px)");
+  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:1440px)");
   const [loading, setLoading] = useState(false);
   const [buttonReload, setButtonReload] = useState(false);
   const [arrayStatus, setArrayStatus] = useState([]);
@@ -114,13 +114,13 @@ export default function CaseStatuses() {
               border: "none",
               outline: "none",
               borderRadius: "5px",
-              width: "83%",
+              width: smallScreen ? "100%" : "84.5%",
             }}
           />
           <TextButton
             buttonText="Add Status"
             height="2.5rem"
-            width="15%"
+            width={smallScreen ? "100%" : "15%"}
             marginTop={smallScreen && "1rem"}
             backgroundColor={Colors.SKY_BLUE}
             hoverColor={Colors.SKY_BLUE}

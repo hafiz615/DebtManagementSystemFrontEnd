@@ -58,8 +58,24 @@ const StatusLists = ({
               fontSize: "14px",
             }}
           >
-            <th>Name</th>
-            <th style={{ marginRight: "2rem" }}>Actions</th>
+            <th
+              style={{
+                width: "84.5%",
+                display: "flex",
+                justifyContent: "flex-start",
+              }}
+            >
+              Name
+            </th>
+            <th
+              style={{
+                width: "15%",
+                display: "flex",
+                justifyContent: "flex-start",
+              }}
+            >
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody>
