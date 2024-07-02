@@ -519,3 +519,94 @@ export const ReArrangedStatuses = async (payload, id) => {
     return error;
   }
 };
+
+export const GetAllPipelines = async () => {
+  try {
+    return await axios.get(
+      BASE_URL + "/v1/pipeline/getAllPipelines",
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const CreatePipeline = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + "/v1/pipeline/createPipeline",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const EditStatusPipeline = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/pipeline/updatePipeline/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const DeletePipeLine = async (id) => {
+  try {
+    return await axios.delete(
+      BASE_URL + `/v1/pipeline/deletePipeline/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const AddStatusPipeline = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/pipeline/addStatusPipeline/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetPipelinesByID = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/pipeline/getPipelineById/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateStatusPipeline = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/pipeline/updateStatusPipeline/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const DeleteStatusesPipeline = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/pipeline/deleteStatusPipeline/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

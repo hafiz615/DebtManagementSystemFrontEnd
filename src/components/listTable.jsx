@@ -184,7 +184,7 @@ export default function ListTable({
                 {(arrayName === "failedAuthorizations" ||
                   arrayName === "failedPayments") && (
                   <StyledTableCell align="left" sx={{ fontWeight: "700" }}>
-                    Re Try
+                    Retry
                   </StyledTableCell>
                 )}
               </TableRow>

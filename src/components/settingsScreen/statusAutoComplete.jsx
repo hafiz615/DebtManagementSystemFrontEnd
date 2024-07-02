@@ -10,7 +10,7 @@ export default function StatusAutoComplete({
   setValue,
   text,
 }) {
-  const filteredOptions = arrayStatus.filter((option) => option !== text);
+  const filteredOptions = arrayStatus?.filter((option) => option !== text);
 
   const defaultProps = {
     options: filteredOptions,

@@ -5,6 +5,7 @@ import { Grid, Box, Typography } from "@mui/material";
 import TextButton from "./button";
 import { Colors } from "../config/default";
 import { useToast } from "../toast/toastContext";
+import { EditStatusPipeline } from "../services/services";
 
 const lineStyle = {
   width: "100%",
@@ -13,30 +14,29 @@ const lineStyle = {
   margin: "1rem 0",
 };
 
-export default function EditMainPipeline({
-  handleClose,
-  text,
-  statusId,
-  GetStatuses,
-}) {
+export default function EditMainPipeline({ handleClose, item, GetPipelines }) {
   const { showToast } = useToast();
-  const [newStatus, setNewStatus] = useState(text);
+  const [newStatus, setNewStatus] = useState(item?.pipeline || "");
   const [loading, setLoading] = useState(false);
 
-  //   const editPipeline = async () => {
-  //     setLoading(true);
-  //     const params = { original: text, update: newStatus };
-  //     const editStatusResponse = await UpdateStatus(params, statusId);
-  //     if (editStatusResponse?.status === 200) {
-  //       showToast(editStatusResponse?.data?.message, "success");
-  //       GetStatuses();
-  //     } else {
-  //       const errorMessage = editStatusResponse?.response?.data?.message;
-  //       showToast(errorMessage, "error");
-  //     }
-  //     setLoading(false);
-  //     handleClose();
-  //   };
+  const editPipeline = async () => {
+    setLoading(true);
+    const params = {
+      pipeline: newStatus,
+      description: "",
+      status: item?.status,
+    };
+    const editStatusResponse = await EditStatusPipeline(params, item?._id);
+    if (editStatusResponse?.status === 200) {
+      showToast(editStatusResponse?.data?.message, "success");
+      GetPipelines();
+    } else {
+      const errorMessage = editStatusResponse?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setLoading(false);
+    handleClose();
+  };
 
   return (
     <>
@@ -87,7 +87,7 @@ export default function EditMainPipeline({
           width="6rem"
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
-          //   onClick={editPipeline}
+          onClick={editPipeline}
           loading={loading}
           disabled={!newStatus}
         />

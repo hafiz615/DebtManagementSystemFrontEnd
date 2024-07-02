@@ -36,6 +36,8 @@ export default function Prompt({
   item,
   handlePayment,
   showPayment,
+  handleDelete,
+  disabled,
 }) {
   const { showToast } = useToast();
   const [open, setOpen] = React.useState(false);
@@ -91,6 +93,8 @@ export default function Prompt({
     } else if (handlePayment) {
     } else if (deleting === "Custom Field") {
       await deleteCustomField();
+    } else if (handleDelete) {
+      await handleDelete();
     } else {
       await deleteUserById();
     }
@@ -100,7 +104,7 @@ export default function Prompt({
 
   return (
     <React.Fragment>
-      <IconButton onClick={handleClickOpen}>
+      <IconButton onClick={handleClickOpen} disabled={disabled}>
         {show ? (
           <Replay
             sx={{
@@ -129,7 +133,7 @@ export default function Prompt({
           // </Box>
           <DeleteForeverOutlinedIcon
             sx={{
-              color: Colors.ORANGE_COLOR,
+              color: disabled ? Colors.DIM_LIGHT_GRAY : Colors.ORANGE_COLOR,
               fontSize: "20px",
               cursor: "pointer",
             }}

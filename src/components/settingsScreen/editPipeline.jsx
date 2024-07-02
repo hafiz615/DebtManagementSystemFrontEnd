@@ -4,6 +4,7 @@ import TextButton from "./../../components/button";
 import { Colors } from "../../config/default";
 import { useToast } from "../../toast/toastContext";
 import Dropdown from "../dropdown";
+import { UpdateStatusPipeline } from "../../services/services";
 
 const lineStyle = {
   width: "100%",
@@ -12,31 +13,41 @@ const lineStyle = {
   margin: "1rem 0",
 };
 
-export default function EditPipeline({ handleClose, data }) {
+export default function EditPipeline({
+  handleClose,
+  GetPipelines,
+  item,
+  pipelineId,
+}) {
   const { showToast } = useToast();
-  const [newStatus, setNewStatus] = useState(data?.name || "");
-  const [selectedValue, setSelectedValue] = useState(data?.status || "");
+  const [newStatus, setNewStatus] = useState(item?.name || "");
+  const [selectedValue, setSelectedValue] = useState(item?.type || "");
   const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState("true");
   const menuItems = [
     { label: "Active", value: "Active" },
     { label: "Won", value: "Won" },
     { label: "Lost", value: "Lost" },
   ];
 
-  //   const editPipeline = async () => {
-  //     setLoading(true);
-  //     const params = { original: text, update: newStatus };
-  //     const editStatusResponse = await UpdateStatus(params, statusId);
-  //     if (editStatusResponse?.status === 200) {
-  //       showToast(editStatusResponse?.data?.message, "success");
-  //       GetStatuses();
-  //     } else {
-  //       const errorMessage = editStatusResponse?.response?.data?.message;
-  //       showToast(errorMessage, "error");
-  //     }
-  //     setLoading(false);
-  //     handleClose();
-  //   };
+  const editPipeline = async () => {
+    setDisabled(true);
+    setLoading(true);
+    const params = {
+      original: { name: item?.name, type: item?.type },
+      update: { name: newStatus, type: selectedValue },
+    };
+    const editStatusResponse = await UpdateStatusPipeline(params, pipelineId);
+    if (editStatusResponse?.status === 200) {
+      showToast(editStatusResponse?.data?.message, "success");
+      GetPipelines();
+    } else {
+      const errorMessage = editStatusResponse?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setLoading(false);
+    handleClose();
+  };
 
   return (
     <>
@@ -83,6 +94,7 @@ export default function EditPipeline({ handleClose, data }) {
           width="25%"
           selectedValue={selectedValue}
           setSelectedValue={setSelectedValue}
+          disabled={disabled}
         />
       </Box>
       <Box sx={lineStyle} />
@@ -104,7 +116,7 @@ export default function EditPipeline({ handleClose, data }) {
           width="6rem"
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
-          //   onClick={editPipeline}
+          onClick={editPipeline}
           loading={loading}
           disabled={!newStatus}
         />
