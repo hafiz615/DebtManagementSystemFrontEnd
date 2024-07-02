@@ -114,13 +114,13 @@ export default function CaseStatuses() {
               border: "none",
               outline: "none",
               borderRadius: "5px",
-              width: smallScreen ? "100%" : "86%",
+              width: "83%",
             }}
           />
           <TextButton
             buttonText="Add Status"
             height="2.5rem"
-            width={smallScreen ? "100%" : "10rem"}
+            width="15%"
             marginTop={smallScreen && "1rem"}
             backgroundColor={Colors.SKY_BLUE}
             hoverColor={Colors.SKY_BLUE}

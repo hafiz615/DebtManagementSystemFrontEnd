@@ -24,6 +24,13 @@ import Delete from "@mui/icons-material/Delete";
 import EditStatus from "./settingsScreen/editStatus";
 import DeleteStatus from "./settingsScreen/deleteStatus";
 import { MoreHorizOutlined } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
+import { FONT_SIZE_XL } from "../constants/appConstants";
+import EditPipeline from "./settingsScreen/editPipeline";
+import DeletePipeline from "./settingsScreen/deletePipeline";
+import EditMainPipeline from "./editMainPipeline";
+import DeleteMainPipeline from "./deleteMainPipeline";
+import AddPipeline from "./settingsScreen/addPipeline";
 
 export default function MuiModels({
   buttonName,
@@ -47,6 +54,7 @@ export default function MuiModels({
   arrayStatus,
   statusId,
   GetStatuses,
+  pipelineList,
 }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -207,6 +215,31 @@ export default function MuiModels({
             sx={{ fontSize: "16px", color: Colors.WHITE, cursor: "pointer" }}
           />
         </IconButton>
+      ) : button === "delete" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <Delete
+            sx={{
+              fontSize: FONT_SIZE_XL,
+              color: Colors.DARK_GRAY,
+              cursor: "pointer",
+            }}
+          />
+        </IconButton>
+      ) : show === "addPipeline" ? (
+        <TextButton
+          buttonText="Add Pipelines"
+          height="2.5rem"
+          width={smallScreen ? "100%" : "10rem"}
+          marginTop={smallScreen && "1rem"}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+          onClick={handleOpen}
+          startIcon={<Add />}
+        />
       ) : show === "froalaEditor" ? (
         <Button
           onClick={handleOpen}
@@ -321,6 +354,20 @@ export default function MuiModels({
               setFroalaEditor={setFroalaEditor}
               templateType={templateType}
             />
+          ) : show === "editPipeline" ? (
+            <EditPipeline data={data} handleClose={handleClose} />
+          ) : show === "deletePipeline" ? (
+            <DeletePipeline
+              data={data}
+              pipelineList={pipelineList}
+              handleClose={handleClose}
+            />
+          ) : show === "editMainPipeline" ? (
+            <EditMainPipeline handleClose={handleClose} />
+          ) : show === "deleteMainPipeline" ? (
+            <DeleteMainPipeline handleClose={handleClose} />
+          ) : show === "addPipeline" ? (
+            <AddPipeline handleClose={handleClose} />
           ) : (
             ""
           )}
