@@ -142,7 +142,7 @@ export default function AccordionUsage({
                   color: Colors.BLACK,
                 }}
               >
-                {totalData}
+                {totalData === undefined ? "0" : totalData}
               </Typography>
             </Box>
             <Launch

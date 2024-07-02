@@ -7,17 +7,18 @@ import {
   AccordionSummary,
   AccordionDetails,
   styled,
-  useMediaQuery,
+  // useMediaQuery,
+  CircularProgress,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Add } from "@mui/icons-material";
 
 import Pipelines from "./pipelines";
-import TextButton from "../button";
 import { Colors } from "../../config/default";
 import { useToast } from "../../toast/toastContext";
-import { FONT_SIZE_XL } from "../../constants/appConstants";
+import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../../constants/appConstants";
 import MuiModels from "../models";
+import { GetAllPipelines } from "../../services/services";
+import { isEmpty } from "lodash";
 
 const StyledAccordion = styled(Accordion)({
   "&:before": {
@@ -44,18 +45,25 @@ const StyledAccordionDetails = styled(AccordionDetails)({
 });
 
 export default function PipelineAccordion() {
-  const [pipelineList, setPipelineList] = useState([]);
+  const [pipeline, setPipeline] = useState([]);
+  const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
-  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:900px)");
+  // const smallScreen = useMediaQuery("(min-width:315px) and (max-width:900px)");
 
-  const data = [
-    { name: "test1", status: "Won" },
-    { name: "test2", status: "Lost" },
-    { name: "test3", status: "active" },
-    { name: "test4", status: "Lost" },
-  ];
+  const GetPipelines = async () => {
+    setLoading(true);
+    const resPipeLine = await GetAllPipelines();
+    if (resPipeLine.status === 200) {
+      setPipeline(resPipeLine?.data?.data);
+    } else {
+      const errorMessage = resPipeLine?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    setPipelineList(data);
+    GetPipelines();
   }, []);
 
   return (
@@ -65,6 +73,7 @@ export default function PipelineAccordion() {
           style={{
             width: "98%",
             display: "flex",
+            alignItems: "center",
             justifyContent: "space-between",
           }}
         >
@@ -77,18 +86,43 @@ export default function PipelineAccordion() {
           >
             Pipelines
           </Typography>
-          <div onClick={(e) => e.stopPropagation()}>
-            <MuiModels show="addPipeline" />
-          </div>
+          <span onClick={(e) => e.stopPropagation()}>
+            <MuiModels show="addPipeline" GetPipelines={GetPipelines} />
+          </span>
         </div>
       </StyledAccordionSummary>
       <StyledAccordionDetails>
-        <Grid>
-          <Pipelines
-            pipelineList={pipelineList}
-            setPipelineList={setPipelineList}
-          />
-        </Grid>
+        {loading ? (
+          <Grid
+            container
+            xs={12}
+            sx={{
+              justifyContent: "center",
+              alignItems: "center",
+              height: "40vh",
+            }}
+          >
+            <CircularProgress size={24} sx={{ color: Colors.SKY_BLUE }} />
+          </Grid>
+        ) : isEmpty(pipeline) ? (
+          <p
+            style={{
+              fontFamily: "Nunito",
+              fontSize: FONT_SIZE_LARGE,
+              textAlign: "center",
+            }}
+          >
+            No Pipeline Exist...
+          </p>
+        ) : (
+          pipeline?.map((item) => {
+            return (
+              <Grid>
+                <Pipelines GetPipelines={GetPipelines} item={item} />
+              </Grid>
+            );
+          })
+        )}
       </StyledAccordionDetails>
     </StyledAccordion>
   );

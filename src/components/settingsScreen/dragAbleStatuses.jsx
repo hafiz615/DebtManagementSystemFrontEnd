@@ -79,8 +79,10 @@ const DraggableRow = ({
         borderRadius: "5px",
       }}
     >
-      <td className="dataTable">{text}</td>
-      <td className="dataTable" style={{ display: "flex" }}>
+      <td className="dataTable" style={{ width: "85%" }}>
+        {text}
+      </td>
+      <td className="dataTable" style={{ display: "flex", width: "14.5%" }}>
         <MuiModels
           show="editStatus"
           text={text}

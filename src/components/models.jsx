@@ -25,11 +25,8 @@ import EditStatus from "./settingsScreen/editStatus";
 import DeleteStatus from "./settingsScreen/deleteStatus";
 import { MoreHorizOutlined } from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
-import { FONT_SIZE_XL } from "../constants/appConstants";
 import EditPipeline from "./settingsScreen/editPipeline";
-import DeletePipeline from "./settingsScreen/deletePipeline";
 import EditMainPipeline from "./editMainPipeline";
-import DeleteMainPipeline from "./deleteMainPipeline";
 import AddPipeline from "./settingsScreen/addPipeline";
 
 export default function MuiModels({
@@ -49,12 +46,13 @@ export default function MuiModels({
   GetCaseDetails,
   customFieldsData,
   templateType,
-  disabled,
   text,
   arrayStatus,
   statusId,
   GetStatuses,
-  pipelineList,
+  GetPipelines,
+  pipelineId,
+  item,
 }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -223,7 +221,7 @@ export default function MuiModels({
         >
           <Delete
             sx={{
-              fontSize: FONT_SIZE_XL,
+              fontSize: iconSize,
               color: Colors.DARK_GRAY,
               cursor: "pointer",
             }}
@@ -234,7 +232,6 @@ export default function MuiModels({
           buttonText="Add Pipelines"
           height="2.5rem"
           width={smallScreen ? "100%" : "10rem"}
-          marginTop={smallScreen && "1rem"}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
           onClick={handleOpen}
@@ -355,19 +352,23 @@ export default function MuiModels({
               templateType={templateType}
             />
           ) : show === "editPipeline" ? (
-            <EditPipeline data={data} handleClose={handleClose} />
-          ) : show === "deletePipeline" ? (
-            <DeletePipeline
-              data={data}
-              pipelineList={pipelineList}
+            <EditPipeline
               handleClose={handleClose}
+              GetPipelines={GetPipelines}
+              pipelineId={pipelineId}
+              item={item}
             />
           ) : show === "editMainPipeline" ? (
-            <EditMainPipeline handleClose={handleClose} />
-          ) : show === "deleteMainPipeline" ? (
-            <DeleteMainPipeline handleClose={handleClose} />
+            <EditMainPipeline
+              GetPipelines={GetPipelines}
+              item={item}
+              handleClose={handleClose}
+            />
           ) : show === "addPipeline" ? (
-            <AddPipeline handleClose={handleClose} />
+            <AddPipeline
+              handleClose={handleClose}
+              GetPipelines={GetPipelines}
+            />
           ) : (
             ""
           )}
