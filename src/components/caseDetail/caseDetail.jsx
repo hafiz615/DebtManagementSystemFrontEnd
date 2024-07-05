@@ -144,6 +144,7 @@ function CaseDetail() {
                 boxShadow: "none",
                 marginBottom: "10px",
                 backgroundColor: Colors.BG_LIGHT_GRAY,
+                width: { xs: "65vw", sm: "auto" },
               }}
               defaultExpanded
             >

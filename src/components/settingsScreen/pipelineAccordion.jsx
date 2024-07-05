@@ -67,7 +67,7 @@ export default function PipelineAccordion() {
   }, []);
 
   return (
-    <StyledAccordion>
+    <StyledAccordion sx={{ overflowX: "auto" }}>
       <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
         <div
           style={{
@@ -91,7 +91,7 @@ export default function PipelineAccordion() {
           </span>
         </div>
       </StyledAccordionSummary>
-      <StyledAccordionDetails>
+      <StyledAccordionDetails sx={{ width: { xs: "140vw", sm: "auto" } }}>
         {loading ? (
           <Grid
             container

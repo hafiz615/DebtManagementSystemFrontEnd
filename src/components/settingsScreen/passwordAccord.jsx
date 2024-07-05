@@ -80,8 +80,8 @@ export default function PasswordAccordion() {
         <Grid
           container
           sx={{
-            paddingLeft: "2rem",
-            paddingRight: "2rem",
+            paddingLeft: { xs: "0.5rem", sm: "2rem" },
+            paddingRight: { xs: "0.5rem", sm: "2rem" },
           }}
         >
           <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>

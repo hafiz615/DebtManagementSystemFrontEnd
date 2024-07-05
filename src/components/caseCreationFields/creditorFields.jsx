@@ -388,12 +388,12 @@ export default function CreditorFields({
           <Grid
             container
             item
-            xs={8}
+            xs={12}
             sx={{
               marginLeft: "2rem",
             }}
           >
-            <Grid item xs={12} sx={{ display: "flex" }}>
+            <Grid container item xs={12} sx={{ display: "flex" }}>
               <Typography
                 sx={{
                   fontFamily: "Nunito",
@@ -405,13 +405,18 @@ export default function CreditorFields({
               </Typography>
 
               <AmountTextField
-                width="40%"
+                width={smallScreen ? "100%" : "40%"}
                 value={historicRange?.minimum}
                 onChange={(e) => historicInputChange("minimum", e.target.value)}
                 onKeyDown={handleNumberInput}
               />
             </Grid>
-            <Grid item xs={12} sx={{ display: "flex", marginTop: "1rem" }}>
+            <Grid
+              container
+              item
+              xs={12}
+              sx={{ display: "flex", marginTop: "1rem" }}
+            >
               <Typography
                 sx={{
                   fontFamily: "Nunito",
@@ -423,7 +428,7 @@ export default function CreditorFields({
               </Typography>
 
               <AmountTextField
-                width="40%"
+                width={smallScreen ? "100%" : "40%"}
                 value={historicRange?.maximum}
                 onChange={(e) => historicInputChange("maximum", e.target.value)}
                 onKeyDown={handleNumberInput}

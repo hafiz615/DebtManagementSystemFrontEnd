@@ -355,8 +355,12 @@ export default function DebtorFields({
           <Grid
             container
             item
-            xs={4}
-            sx={{ display: "flex", flexDirection: "column" }}
+            xs={12}
+            md={4}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+            }}
           >
             <Typography
               sx={{
@@ -376,7 +380,7 @@ export default function DebtorFields({
               placeholder="Choose Status"
               backgroundColor={Colors.BG_LIGHT_GRAY}
               hoverColor={Colors.BG_LIGHT_GRAY}
-              width="98%"
+              width={smallScreen ? "100%" : "98%"}
               selectedValue={selectedValue}
               setSelectedValue={setSelectedValue}
             />
@@ -384,7 +388,8 @@ export default function DebtorFields({
           <Grid
             container
             item
-            xs={4}
+            xs={12}
+            md={4}
             sx={{ display: "flex", flexDirection: "column" }}
           >
             <Typography
@@ -410,7 +415,8 @@ export default function DebtorFields({
           </Grid>
           <Grid
             item
-            xs={4}
+            xs={12}
+            md={4}
             sx={{
               display: "flex",
               alignItems: "center",

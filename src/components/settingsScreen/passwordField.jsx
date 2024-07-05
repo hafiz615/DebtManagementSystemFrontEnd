@@ -32,7 +32,10 @@ export default function PasswordField({
     <Box sx={{ display: "flex", flexWrap: "wrap" }}>
       <div>
         <FormControl
-          sx={{ m: 1, width: "25ch" }}
+          sx={{
+            m: { xs: ".5rem 0", sm: 1 },
+            width: { xs: "23ch", sm: "25ch" },
+          }}
           variant="filled"
           error={error}
         >

@@ -5,6 +5,7 @@ import { Grid, Typography, Box, Hidden } from "@mui/material";
 import { Colors } from "../../config/default";
 import Checkboxes from "../checkBox";
 import Dropdown from "../dropdown";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 function truncateTemplateName(name) {
   if (name.length > 10) {
@@ -17,7 +18,7 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
   const [smsTemplate, setSMSTemplate] = useState(data?.smsTemplate);
   const [emailTemplate, setEmailTemplate] = useState(data?.emailTemplate);
   const roles = ["Admin", "Manager", "Negotiator", "Debtor", "Creditor"];
-
+  const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
   const onSendToRoleChange = (role, checked) => {
     setData((prevData) => ({
       ...prevData,
@@ -62,14 +63,16 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
         lg={6.5}
         sx={{
           display: "flex",
-          justifyContent: "space-evenly",
+          justifyContent: { xs: "space-between", sm: "space-evenly" },
           alignItems: "center",
+          padding: { xs: "0 .7rem", sm: "0" },
         }}
       >
         <Box
           sx={{
             display: "flex",
             flexDirection: "column",
+
             width: { xs: "15%", sm: "25%", lg: "35%" },
           }}
         >
@@ -129,12 +132,12 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
             }}
           >
             <Dropdown
-              menuWidth="7rem"
+              menuWidth={smallScreen ? "5rem" : "7rem"}
               menuItems={menuItems.email}
               placeholder="Email"
               backgroundColor={Colors.BG_LIGHT_GRAY}
               hoverColor={Colors.BG_LIGHT_GRAY}
-              width="7rem" // Adjust width as necessary
+              width={smallScreen ? "5rem" : "7rem"} // Adjust width as necessary
               marginBottom="0.3rem"
               selectedValue={truncateTemplateName(emailTemplate)}
               setSelectedValue={setEmailTemplate}
@@ -168,7 +171,7 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
             sx={{
               fontFamily: "Nunito",
               fontWeight: "700",
-              marginLeft: "1.8rem",
+              marginLeft: { xs: "0", sm: "1.8rem" },
             }}
           >
             Send To
@@ -191,7 +194,7 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
               />
               <Typography
                 sx={{
-                  fontSize: { xs: "15px", lg: "auto" },
+                  fontSize: { xs: "12px", lg: "auto" },
                   fontFamily: "Nunito",
                   fontWeight: "600",
                   color: { xs: Colors.BLACK, lg: Colors.DARK_GRAY },

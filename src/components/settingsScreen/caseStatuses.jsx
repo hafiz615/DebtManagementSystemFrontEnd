@@ -40,7 +40,10 @@ const StyledAccordionDetails = styled(AccordionDetails)({
 
 export default function CaseStatuses() {
   const { showToast } = useToast();
-  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:1440px)");
+  const smallScreen = useMediaQuery("(min-width:300px) and (max-width:1040px)");
+  const extraSmallScreen = useMediaQuery(
+    "(min-width:300px) and (max-width:500px)"
+  );
   const [loading, setLoading] = useState(false);
   const [buttonReload, setButtonReload] = useState(false);
   const [arrayStatus, setArrayStatus] = useState([]);
@@ -95,7 +98,6 @@ export default function CaseStatuses() {
       <StyledAccordionDetails>
         <Grid
           container
-          item
           sx={{
             justifyContent: "space-between",
             alignItems: "center",
@@ -114,17 +116,16 @@ export default function CaseStatuses() {
               border: "none",
               outline: "none",
               borderRadius: "5px",
-              width: smallScreen ? "100%" : "84.5%",
+              width: extraSmallScreen ? "65%" : "84.5%",
             }}
           />
           <TextButton
-            buttonText="Add Status"
+            buttonText={smallScreen ? <Add /> : "Add Status"}
             height="2.5rem"
-            width={smallScreen ? "100%" : "15%"}
-            marginTop={smallScreen && "1rem"}
+            width={"15%"}
             backgroundColor={Colors.SKY_BLUE}
             hoverColor={Colors.SKY_BLUE}
-            startIcon={buttonReload ? "" : <Add />}
+            startIcon={buttonReload ? "" : smallScreen ? "" : <Add />}
             onClick={handleAddStatus}
             loading={buttonReload}
             disabled={isButtonDisabled}

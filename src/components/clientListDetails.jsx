@@ -3,7 +3,12 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Grid, Typography, Box, CircularProgress, Menu } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { PAGE_HEIGHT, UserListPage } from "../constants/appConstants";
+import {
+  FONT_SIZE_MEDIUM,
+  FONT_SIZE_XL,
+  PAGE_HEIGHT,
+  UserListPage,
+} from "../constants/appConstants";
 import { Colors } from "../config/default";
 import CaseHistory from "./caseHistory";
 import { GetClientById, GetCreditorById } from "../services/services";
@@ -728,7 +733,14 @@ export default function ClientListDetails() {
                       marginBottom: "1rem",
                     }}
                   >
-                    <Typography sx={{ width: "7rem" }}>
+                    <Typography
+                      sx={{
+                        width: "7rem",
+                        paddingTop: { xs: "0.3rem", sm: "auto" },
+                        paddingLeft: { xs: "0.5rem", sm: "auto" },
+                        fontSize: { xs: FONT_SIZE_MEDIUM, sm: FONT_SIZE_XL },
+                      }}
+                    >
                       {item?.title}
                     </Typography>
                     <Typography

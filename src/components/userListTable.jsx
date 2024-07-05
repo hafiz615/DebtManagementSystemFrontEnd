@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useSelector } from "react-redux";
 import { styled } from "@mui/material/styles";
-import { Table, Typography, IconButton } from "@mui/material";
+import { Table, Typography, IconButton, CircularProgress } from "@mui/material";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
@@ -89,6 +89,7 @@ export default function UserListTable({
   currentPage,
   setCurrentPage,
   totalPages,
+  loading,
 }) {
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const [page, setPage] = React.useState(0);
@@ -116,8 +117,7 @@ export default function UserListTable({
       sx={{
         backgroundColor: Colors.WHITE,
         borderRadius: "10px ",
-        width: "100%",
-        // height: "55vh",
+        width: { xs: "65vw", sm: "100%" },
       }}
     >
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
@@ -148,7 +148,13 @@ export default function UserListTable({
                 )}
               </TableRow>
             </TableHead>
-            {isEmpty(rows) ? (
+            {loading ? (
+              <StyledTableRow>
+                <StyledTableCell colSpan={columns?.length + 1} align="center">
+                  <CircularProgress size={20} sx={{ color: Colors.SKY_BLUE }} />
+                </StyledTableCell>
+              </StyledTableRow>
+            ) : isEmpty(rows) ? (
               <StyledTableRow>
                 <StyledTableCell colSpan={columns?.length + 1} align="center">
                   No data available

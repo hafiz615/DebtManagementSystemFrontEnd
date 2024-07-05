@@ -240,8 +240,7 @@ export default function AuthorizationDetails() {
       container
       sx={{
         backgroundColor: Colors.BG_LIGHT_GRAY,
-        paddingLeft: "2rem",
-        paddingRight: "2rem",
+        padding: "0 2rem",
       }}
     >
       <Grid
@@ -312,6 +311,7 @@ export default function AuthorizationDetails() {
         xs={12}
         sx={{
           marginTop: "1.5rem",
+          width: { xs: "65vw", sm: "auto" },
         }}
       >
         <PaymentsTabs

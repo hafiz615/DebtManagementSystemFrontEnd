@@ -10,6 +10,12 @@ import {
 
 import CreateIcon from "@mui/icons-material/Create";
 import { Colors } from "../../config/default";
+import {
+  FONT_SIZE_LARGE,
+  FONT_SIZE_MEDIUM,
+  FONT_SIZE_SMALL,
+  FONT_SIZE_XL,
+} from "../../constants/appConstants";
 
 export default function AlertDialog({ handleEditFileName, initialFileName }) {
   const [open, setOpen] = React.useState(false);
@@ -42,6 +48,7 @@ export default function AlertDialog({ handleEditFileName, initialFileName }) {
           color: Colors.DARK_GRAY,
           marginTop: "0.5rem",
           cursor: "pointer",
+          fontSize: { xs: FONT_SIZE_SMALL, sm: "1.2rem" },
         }}
       />
 

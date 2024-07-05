@@ -6,7 +6,7 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { Paper, IconButton, Typography } from "@mui/material";
+import { Paper, IconButton, Typography, CircularProgress } from "@mui/material";
 import TablePagination from "@mui/material/TablePagination";
 import CreateIcon from "@mui/icons-material/Create";
 import CloseIcon from "@mui/icons-material/Close";
@@ -86,6 +86,7 @@ export default function ListTable({
   totalPages,
   arrayName,
   getHomeData,
+  loading,
 }) {
   const { showToast } = useToast();
   const [page, setPage] = React.useState(0);
@@ -126,7 +127,7 @@ export default function ListTable({
       sx={{
         backgroundColor: Colors.WHITE,
         borderRadius: "10px ",
-        width: "100%",
+        width: { xs: "65vw", sm: "100%" },
         height: accordionHeight,
       }}
     >
@@ -183,13 +184,29 @@ export default function ListTable({
                 )}
                 {(arrayName === "failedAuthorizations" ||
                   arrayName === "failedPayments") && (
-                  <StyledTableCell align="left" sx={{ fontWeight: "700" }}>
+                  <StyledTableCell
+                    align="left"
+                    sx={{
+                      fontWeight: "700",
+                      fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+                      paddingRight: "0.5rem !important",
+                    }}
+                  >
                     Retry
                   </StyledTableCell>
                 )}
               </TableRow>
             </TableHead>
-            {isEmpty(data) ? (
+            {loading ? (
+              <StyledTableRow>
+                <StyledTableCell
+                  colSpan={headerData?.length + 1}
+                  align="center"
+                >
+                  <CircularProgress size={20} sx={{ color: Colors.SKY_BLUE }} />
+                </StyledTableCell>
+              </StyledTableRow>
+            ) : isEmpty(data) ? (
               <StyledTableRow>
                 <StyledTableCell
                   colSpan={headerData?.length + 1}
@@ -227,6 +244,7 @@ export default function ListTable({
                               xs: "10px !important",
                               sm: "14px !important",
                             },
+                            paddingRight: "0.5rem !important",
                           }}
                           key={i}
                         >

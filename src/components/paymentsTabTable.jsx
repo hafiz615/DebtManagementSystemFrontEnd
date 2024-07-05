@@ -79,7 +79,7 @@ const IconsContainer = styled("div")({
   display: "none",
   justifyContent: "center",
   alignItems: "center",
-  width: "calc(100% - 10rem)",
+  width: "calc(100% - 10%)",
   marginTop: "1rem",
   position: "absolute",
   left: 0,
@@ -210,122 +210,126 @@ export default function PaymentTabsTable({
               ))}
             </TableRow>
           </TableHead>
-          {isEmpty(rows) ? (
-            <StyledTableRow>
-              <StyledTableCell colSpan={headerData?.length + 1} align="center">
-                No data available
-              </StyledTableCell>
-            </StyledTableRow>
-          ) : (
-            <TableBody>
-              {loading ? (
-                <StyledTableRow>
-                  <StyledTableCell
-                    colSpan={headerData?.length + 1}
-                    align="center"
+
+          <TableBody>
+            {loading ? (
+              <StyledTableRow>
+                <StyledTableCell
+                  colSpan={headerData?.length + 1}
+                  align="center"
+                  sx={{ padding: "10px !important" }}
+                >
+                  <CircularProgress size={24} sx={{ color: Colors.SKY_BLUE }} />
+                </StyledTableCell>
+              </StyledTableRow>
+            ) : isEmpty(rows) ? (
+              <StyledTableRow>
+                <StyledTableCell
+                  colSpan={headerData?.length + 1}
+                  align="center"
+                >
+                  No data available
+                </StyledTableCell>
+              </StyledTableRow>
+            ) : (
+              (rowsPerPage > 0
+                ? rows.slice(
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
+                : rows
+              ).map((row) => {
+                const { id, ...rowData } = row;
+                return (
+                  <StyledTableRow
+                    key={id}
+                    hover
+                    onClick={(event) => handleClick(event, id)}
+                    role="checkbox"
+                    aria-checked={isSelected(id)}
+                    tabIndex={-1}
+                    selected={isSelected(id)}
                   >
-                    <CircularProgress
-                      size={24}
-                      sx={{ color: Colors.SKY_BLUE }}
-                    />
-                  </StyledTableCell>
-                </StyledTableRow>
-              ) : (
-                (rowsPerPage > 0
-                  ? rows.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
-                  : rows
-                ).map((row) => {
-                  const { id, ...rowData } = row;
-                  return (
-                    <StyledTableRow
-                      key={id}
-                      hover
-                      onClick={(event) => handleClick(event, id)}
-                      role="checkbox"
-                      aria-checked={isSelected(id)}
-                      tabIndex={-1}
-                      selected={isSelected(id)}
-                    >
-                      {Object.values(rowData).map((value, i) => (
-                        <StyledTableCell
-                          sx={{
-                            fontSize: {
-                              xs: FONT_SIZE_SMALL,
-                              sm: FONT_SIZE_LARGE,
-                            },
-                          }}
-                          key={i}
-                        >
-                          {value}
-                        </StyledTableCell>
-                      ))}
-                      {(value === 0 || value === 2) && (
-                        <StyledTableCell
-                          align="left"
-                          sx={{ fontWeight: "700" }}
-                        >
-                          <Prompt
-                            heading="Retry"
-                            text={`Are you sure you want to Retry?`}
-                            handlePayment={handlePayment}
-                            item={id}
-                            showPayment={true}
-                          />
-                        </StyledTableCell>
-                      )}
-                      <IconsContainer className="icons">
-                        <IconStyle
-                          onClick={() => {
-                            alert("clicked");
-                          }}
-                        >
-                          <LocalPhone />
-                        </IconStyle>
-                        <IconStyle
-                          onClick={() => {
-                            alert("clicked");
-                          }}
-                        >
-                          <Textsms />
-                        </IconStyle>
-                        <IconStyle
-                          onClick={() => {
-                            alert("clicked");
-                          }}
-                        >
-                          <Mail />
-                        </IconStyle>
-                        <IconStyle
-                          onClick={() => {
-                            alert("clicked");
-                          }}
-                        >
-                          <EditCalendar />
-                        </IconStyle>
-                        <IconStyle
-                          onClick={() => {
-                            alert("clicked");
-                          }}
-                        >
-                          <OpenInNew />
-                        </IconStyle>
-                        <IconStyle
-                          onClick={() => {
-                            alert("clicked");
-                          }}
-                        >
-                          <Sync />
-                        </IconStyle>
-                      </IconsContainer>
-                    </StyledTableRow>
-                  );
-                })
-              )}
-            </TableBody>
-          )}
+                    {Object.values(rowData).map((value, i) => (
+                      <StyledTableCell
+                        sx={{
+                          fontSize: {
+                            xs: "10px !important",
+                            sm: "14px !important",
+                          },
+                          paddingRight: { xs: "0.5rem !important", sm: "0" },
+                        }}
+                        key={i}
+                      >
+                        {value}
+                      </StyledTableCell>
+                    ))}
+                    {(value === 0 || value === 2) && (
+                      <StyledTableCell
+                        align="left"
+                        sx={{
+                          fontWeight: "700",
+                          padding: "0px !important",
+                        }}
+                      >
+                        <Prompt
+                          heading="Retry"
+                          text={`Are you sure you want to Retry?`}
+                          handlePayment={handlePayment}
+                          item={id}
+                          showPayment={true}
+                        />
+                      </StyledTableCell>
+                    )}
+                    <IconsContainer className="icons">
+                      <IconStyle
+                        onClick={() => {
+                          alert("clicked");
+                        }}
+                      >
+                        <LocalPhone />
+                      </IconStyle>
+                      <IconStyle
+                        onClick={() => {
+                          alert("clicked");
+                        }}
+                      >
+                        <Textsms />
+                      </IconStyle>
+                      <IconStyle
+                        onClick={() => {
+                          alert("clicked");
+                        }}
+                      >
+                        <Mail />
+                      </IconStyle>
+                      <IconStyle
+                        onClick={() => {
+                          alert("clicked");
+                        }}
+                      >
+                        <EditCalendar />
+                      </IconStyle>
+                      <IconStyle
+                        onClick={() => {
+                          alert("clicked");
+                        }}
+                      >
+                        <OpenInNew />
+                      </IconStyle>
+                      <IconStyle
+                        onClick={() => {
+                          alert("clicked");
+                        }}
+                      >
+                        <Sync />
+                      </IconStyle>
+                    </IconsContainer>
+                  </StyledTableRow>
+                );
+              })
+            )}
+          </TableBody>
         </Table>
       </TableContainer>
       {apiPagination ? (
