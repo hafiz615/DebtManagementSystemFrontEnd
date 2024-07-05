@@ -14,7 +14,6 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import useMediaQuery from "@mui/material/useMediaQuery";
-
 import {
   AccountCircle,
   Window,
@@ -24,6 +23,7 @@ import {
   ChevronLeft,
   ChevronRight,
   People,
+  Handyman,
 } from "@mui/icons-material";
 
 import ListItemText from "@mui/material/ListItemText";
@@ -73,6 +73,7 @@ const icons = [
   <Home />,
   <AccountCircle />,
   <People />,
+  <Handyman />,
   <Settings />,
   <Group />,
   <Window />,
@@ -127,7 +128,9 @@ export default function PersistentDrawerLeft({ children }) {
         case "bulk-cases":
           navigate("/bulk-cases");
           break;
-
+        case "Pipelines":
+          navigate("/pipelines");
+          break;
         default:
           break;
       }
@@ -237,6 +240,7 @@ export default function PersistentDrawerLeft({ children }) {
             "Home",
             "Clients",
             "Creditors",
+            "Pipelines",
             "Settings",
             "User Listing",
             "Analytics",

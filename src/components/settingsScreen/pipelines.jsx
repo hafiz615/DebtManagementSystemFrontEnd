@@ -44,13 +44,12 @@ export default function Pipelines({ item, GetPipelines }) {
   }, []);
 
   const updateRowStatus = async () => {
-    if (item?._id || pipelineList) {
+    if (item?._id && pipelineList?.length !== 0) {
       const payload = {
         pipeline: item?.pipeline,
         description: "",
         status: pipelineList,
       };
-
       await EditStatusPipeline(payload, item?._id);
     }
   };
