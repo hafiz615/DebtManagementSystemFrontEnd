@@ -23,7 +23,7 @@ import { isEmpty } from "lodash";
 import Delete from "@mui/icons-material/Delete";
 import EditStatus from "./settingsScreen/editStatus";
 import DeleteStatus from "./settingsScreen/deleteStatus";
-import { MoreHorizOutlined } from "@mui/icons-material";
+import { ExpandRounded, MoreHorizOutlined } from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
 import EditMainPipeline from "./editMainPipeline";
@@ -66,7 +66,7 @@ export default function MuiModels({
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: extraSmallScreen ? "90%" : smallScreen ? "70vw" : width || "50vw",
+    width: extraSmallScreen ? "90%" : smallScreen ? "65vw" : width || "50vw",
     bgcolor: "background.paper",
     borderRadius: 5,
     boxShadow: 24,
@@ -229,13 +229,13 @@ export default function MuiModels({
         </IconButton>
       ) : show === "addPipeline" ? (
         <TextButton
-          buttonText="Add Pipelines"
-          height="2.5rem"
-          width={smallScreen ? "100%" : "10rem"}
+          buttonText={extraSmallScreen ? <Add /> : "Add Pipelines"}
+          height={extraSmallScreen ? "2rem" : "2.5rem"}
+          width={extraSmallScreen ? "2rem" : "10rem"}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
           onClick={handleOpen}
-          startIcon={<Add />}
+          startIcon={extraSmallScreen ? "" : <Add />}
         />
       ) : show === "froalaEditor" ? (
         <Button

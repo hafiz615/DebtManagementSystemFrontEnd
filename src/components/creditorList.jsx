@@ -555,39 +555,24 @@ export default function CreditorList() {
         item
         xs={12}
         sx={{
-          backgroundColor: Colors.WHITE,
           borderRadius: "10px ",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
         }}
       >
-        {loading ? (
-          <Grid
-            item
-            xs={12}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              height: "50vh",
-            }}
-          >
-            <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
-          </Grid>
-        ) : (
-          <>
-            <ListTable
-              headerData={headers}
-              data={rows}
-              onRowClick={handleRowClick}
-              apiPagination={true}
-              currentPage={currentPage}
-              setCurrentPage={setCurrentPage}
-              totalPages={totalPages}
-            />
-          </>
-        )}
+        <>
+          <ListTable
+            headerData={headers}
+            data={rows}
+            onRowClick={handleRowClick}
+            apiPagination={true}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            totalPages={totalPages}
+            loading={loading}
+          />
+        </>
       </Grid>
     </Grid>
   );

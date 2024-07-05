@@ -102,12 +102,14 @@ export default function CaseCustomField({
           sx={{
             alignItems: "center",
             justifyContent: "space-between",
+            gap: "10px",
           }}
         >
           <Grid
             container
             item
-            xs={5}
+            xs={12}
+            sm={5}
             sx={{ alignItems: "center", justifyContent: "space-between" }}
           >
             <Typography
@@ -134,7 +136,8 @@ export default function CaseCustomField({
           <Grid
             container
             item
-            xs={5}
+            xs={12}
+            sm={5}
             sx={{ alignItems: "center", justifyContent: "space-between" }}
           >
             <Typography

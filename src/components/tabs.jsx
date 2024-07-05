@@ -2,52 +2,18 @@ import * as React from "react";
 import { useSelector } from "react-redux";
 import { useEffect, useState, useMemo } from "react";
 
-import { styled } from "@mui/material/styles";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import { Grid, Box, IconButton, Typography, Menu } from "@mui/material";
+import { Grid, IconButton, Typography, Menu, Box } from "@mui/material";
 
 import { Colors } from "../config/default";
 import BasicModal from "./customPopup";
 // import DataTable from "./table";
 import { GetAllUsers } from "../services/services";
-import CircularProgress from "@mui/material/CircularProgress";
 import UserListTable from "./userListTable";
 import SearchBar from "./searchBar";
 import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../constants/appConstants";
 import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
 import TextButton from "./button";
 import CustomTextField from "./customTextfield";
-
-const AntTabs = styled(Tabs)({
-  border: "none",
-  "& .MuiTabs-indicator": {
-    backgroundColor: "white",
-  },
-});
-
-const AntTab = styled((props) => <Tab disableRipple {...props} />)(
-  ({ theme }) => ({
-    textTransform: "none",
-    minWidth: 0,
-    [theme.breakpoints.up("sm")]: {
-      minWidth: 0,
-    },
-
-    fontFamily: ["Nunito"].join(","),
-    "&:hover": {
-      color: Colors.BLACK,
-      opacity: 1,
-    },
-    "&.Mui-selected": {
-      color: Colors.BLACK,
-      // fontWeight: theme.typography.fontWeightMedium,
-    },
-    "&.Mui-focusVisible": {
-      backgroundColor: "red",
-    },
-  })
-);
 
 const columns = [
   {
@@ -83,13 +49,9 @@ const columns = [
     headerName: "Address",
   },
 ];
-export default function CustomizedTabs({ heading }) {
-  const [value, setValue] = React.useState(0);
+export default function CustomizedTabs() {
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
   const [rows, setRows] = useState([]);
   const [userArray, setUserArray] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -236,29 +198,36 @@ export default function CustomizedTabs({ heading }) {
           flexDirection: { xs: "column-reverse", sm: "row" },
         }}
       >
-        <Box>
-          <AntTabs
-            value={value}
-            onChange={handleChange}
-            aria-label="User List Tabs"
-          >
-            <AntTab
-              label={heading}
-              sx={{
-                bgcolor: Colors.WHITE,
-                width: "max-content",
-                borderTopLeftRadius: "10px",
-                borderTopRightRadius: "10px",
-                fontWeight: "600",
-                marginLeft: "2.5rem",
-                height: "3.5rem",
-                fontFamily: "Nunito",
-                fontSize: FONT_SIZE_LARGE,
-              }}
-            />
-          </AntTabs>
-        </Box>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <Typography
+          sx={{
+            paddingLeft: "0.8rem",
+            paddingRight: "0.8rem",
+            bgcolor: Colors.WHITE,
+            borderTopLeftRadius: "10px",
+            borderTopRightRadius: "10px",
+            fontWeight: "600",
+            fontSize: FONT_SIZE_LARGE,
+            marginLeft: "2.5rem",
+            height: "3.5rem",
+            width: "6rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontFamily: "Nunito",
+          }}
+        >
+          User List
+        </Typography>
+        <Grid
+          container
+          item
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: { xs: "center", sm: "flex-end" },
+            gap: "10px",
+          }}
+        >
           {role === "Admin" && (
             <BasicModal
               modelButton="ADD USERS"
@@ -266,69 +235,57 @@ export default function CustomizedTabs({ heading }) {
               GetUsers={GetUsers}
             />
           )}
-          <SearchBar
-            searchCheck={true}
-            searchingText={searchText}
-            handleKeyPress={handleKeyPress}
-            placeholder="Search User..."
-          />
-          <IconButton
-            id="demo-positioned-button"
-            aria-controls={open ? "demo-positioned-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
-            onClick={handleClick}
-          >
-            <FilterListOutlinedIcon
-              sx={{
-                color: Colors.DARK_GRAY,
-                fontSize: { xs: "20px", sm: "30px" },
-              }}
+          <Box sx={{ display: "flex" }}>
+            <SearchBar
+              searchCheck={true}
+              searchingText={searchText}
+              handleKeyPress={handleKeyPress}
+              placeholder="Search User..."
             />
-          </IconButton>
-        </div>
+            <IconButton
+              id="demo-positioned-button"
+              aria-controls={open ? "demo-positioned-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+              onClick={handleClick}
+            >
+              <FilterListOutlinedIcon
+                sx={{
+                  color: Colors.DARK_GRAY,
+                  fontSize: { xs: "20px", sm: "30px" },
+                }}
+              />
+            </IconButton>
+          </Box>
+        </Grid>
       </Grid>
 
       <Grid
         item
         xs={12}
         sx={{
-          backgroundColor: Colors.WHITE,
           borderRadius: "10px ",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
         }}
       >
-        {loading ? (
-          <Grid
-            item
-            xs={12}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              height: "50vh",
-            }}
-          >
-            <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
-          </Grid>
-        ) : (
-          <>
-            <UserListTable
-              apiPagination={true}
-              currentPage={currentPage}
-              setCurrentPage={setCurrentPage}
-              totalPages={totalPages}
-              requiredCustomFieldIcons={true}
-              rows={rows}
-              columns={columns}
-              handleUserDelete={handleUserDelete}
-              GetUsers={GetUsers}
-            />
-            {/* <DataTable rows={rows} columns={columns} /> */}
-          </>
-        )}
+        <>
+          <UserListTable
+            apiPagination={true}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            totalPages={totalPages}
+            requiredCustomFieldIcons={true}
+            rows={rows}
+            columns={columns}
+            handleUserDelete={handleUserDelete}
+            GetUsers={GetUsers}
+            loading={loading}
+          />
+          {/* <DataTable rows={rows} columns={columns} /> */}
+        </>
+
         <Menu
           id="demo-positioned-menu"
           aria-labelledby="demo-positioned-button"

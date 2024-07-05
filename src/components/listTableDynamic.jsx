@@ -15,6 +15,7 @@ import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import { Colors } from "../config/default";
 import MuiModels from "./models";
 import Prompt from "./prompt";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -71,6 +72,7 @@ export default function ListTableDynamic({
   requiredCustomFieldIcons,
   handleModalClose,
 }) {
+  const smallScreen = useMediaQuery("(min-width:300px) and (max-width:900px)");
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -211,6 +213,7 @@ export default function ListTableDynamic({
             </TableBody>
           </Table>
         </TableContainer>
+
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -219,7 +222,11 @@ export default function ListTableDynamic({
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          style={{ alignSelf: "flex-end", marginBottom: "1rem" }}
+          style={{
+            alignSelf: smallScreen ? "center" : "flex-end",
+            marginBottom: "1rem",
+            width: smallScreen ? "70%" : "auto",
+          }}
         />
       </div>
     </Paper>

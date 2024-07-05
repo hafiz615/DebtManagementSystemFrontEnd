@@ -154,12 +154,12 @@ export default function SettingsAccordion({
 
   return (
     <>
-      <StyledAccordion defaultExpanded>
+      <StyledAccordion defaultExpanded sx={{ overflowX: "auto" }}>
         <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
           Payments & Authorizations
         </StyledAccordionSummary>
 
-        <StyledAccordionDetails>
+        <StyledAccordionDetails sx={{ width: { xs: "130vw", sm: "auto" } }}>
           <Grid container item>
             <Grid
               item
@@ -167,7 +167,7 @@ export default function SettingsAccordion({
               lg={6.5}
               sx={{
                 display: "flex",
-                justifyContent: "space-evenly",
+                justifyContent: { xs: "space-between", sm: "space-evenly" },
               }}
             >
               <Box
@@ -225,7 +225,12 @@ export default function SettingsAccordion({
             </Grid>
             <Hidden lgDown>
               <Grid item xs={12} lg={5}>
-                <Typography sx={{ fontFamily: "Nunito", fontWeight: "700" }}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "700",
+                  }}
+                >
                   Send To
                 </Typography>
               </Grid>
@@ -499,7 +504,7 @@ export default function SettingsAccordion({
                   fontWeight: "600",
                   color: Colors.DARK_GRAY,
                   paddingLeft: "1.5rem",
-                  width: "15%",
+                  width: { xs: "22%", sm: "15%" },
                 }}
               >
                 Fortnightly
@@ -586,7 +591,7 @@ export default function SettingsAccordion({
                   fontWeight: "600",
                   color: Colors.DARK_GRAY,
                   paddingLeft: "1.5rem",
-                  width: "15%",
+                  width: { xs: "22%", sm: "15%" },
                 }}
               >
                 Monthly

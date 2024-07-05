@@ -12,7 +12,12 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Colors } from "../config/default";
 import DebtorDetails from "./caseCreation/debtorDetails";
-import { DebtorDetailsPage, PAGE_HEIGHT } from "../constants/appConstants";
+import {
+  DebtorDetailsPage,
+  FONT_SIZE_LARGE,
+  FONT_SIZE_SMALL,
+  PAGE_HEIGHT,
+} from "../constants/appConstants";
 import TextButton from "./button";
 import CreditorDetails from "./caseCreation/creditorDetails";
 import PaymentDetails from "./caseCreation/paymentDetails";
@@ -42,7 +47,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   const [filteredArray, setFilteredArray] = useState([]);
 
   const { AUTHORITY_TEXT, DEBTOR_HEADING } = DebtorDetailsPage;
-  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
+  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:768px)");
   const debtorBasicInfo = caseData?.debtor?.basicInformation;
   const debtorBusinessInfo = caseData?.debtor?.businessInformation;
   //Debtor-Basic-Details-State
@@ -776,7 +781,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           {DEBTOR_HEADING}
         </Typography>
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} sx={{ width: { xs: "65vw", sm: "auto" } }}>
         <Grid
           item
           xs={12}
@@ -794,8 +799,9 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               width: {
                 xs: "100%",
                 md: "50%",
-                color: Colors.SKY_BLUE,
               },
+
+              color: Colors.SKY_BLUE,
             }}
           >
             {steps?.map((label, index) => {
@@ -810,6 +816,9 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
                     {...labelProps}
                     sx={{
                       cursor: "pointer",
+                      "& .MuiStepLabel-label": {
+                        fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+                      },
                     }}
                     onClick={() => {
                       handleStep(index)();
@@ -936,20 +945,24 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
             }}
           >
             <Grid
+              container
               item
               xs={12}
+              md={6}
               sx={{
                 display: "flex",
                 justifyContent: {
                   xs: "space-between",
                   sm: "flex-end",
                 },
+                gap: "5px",
                 width: "100%",
                 backgroundColor: Colors.BG_LIGHT_GRAY,
               }}
             >
               <TextButton
                 buttonText="BACK"
+                width={smallScreen ? "6rem" : "auto"}
                 disabled={activeStep === 0}
                 onClick={handleBack}
                 backgroundColor={Colors.ORANGE_COLOR}
@@ -960,6 +973,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
                 marginRight={smallScreen ? "8px" : "1rem"}
               />
               <TextButton
+                width={smallScreen ? "6rem" : "auto"}
                 buttonText="RESET"
                 onClick={handleReset}
                 backgroundColor={Colors.DARK_GRAY}
@@ -970,7 +984,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
                 marginRight={smallScreen ? "8px" : "1rem"}
               />
               <TextButton
-                width={smallScreen ? "12rem" : "max-content"}
+                width={smallScreen ? "6rem" : "auto"}
                 buttonText="RESET ALL"
                 onClick={resetAll}
                 backgroundColor={Colors.DARK_GRAY}
@@ -982,6 +996,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               />
               <TextButton
                 buttonText={activeStep === steps.length - 1 ? "SAVE" : "NEXT"}
+                width={smallScreen ? "6rem" : "auto"}
                 loading={loading}
                 backgroundColor={Colors.SKY_BLUE}
                 hoverColor={Colors.SKY_BLUE}
