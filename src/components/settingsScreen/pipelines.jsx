@@ -23,7 +23,10 @@ import { useToast } from "../../toast/toastContext";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function Pipelines({ item, GetPipelines }) {
-  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:1440px)");
+  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:1040px)");
+  const extraSmallScreen = useMediaQuery(
+    "(min-width:300px) and (max-width:768px)"
+  );
   const [selectedValue, setSelectedValue] = useState("Active");
   const [inputChange, setInputChange] = useState("");
   const [loading, setLoading] = useState(false);
@@ -175,31 +178,31 @@ export default function Pipelines({ item, GetPipelines }) {
             border: "none",
             outline: "none",
             borderRadius: "5px",
-            width: smallScreen ? "100%" : "67%",
+            width: extraSmallScreen ? "50%" : "67%",
             fontFamily: "Nunito",
-            marginBottom: smallScreen ? "0.5rem" : "",
           }}
           value={inputChange}
           onChange={handleInputChange}
         />
         <Dropdown
+          height="2.5rem"
           menuWidth="10%"
           menuItems={menuItems}
           placeholder="Type"
           backgroundColor={Colors.BG_LIGHT_GRAY}
           hoverColor={Colors.BG_LIGHT_GRAY}
-          width={smallScreen ? "48%" : "15%"}
+          width={extraSmallScreen ? "22%" : "15%"}
           selectedValue={selectedValue}
           setSelectedValue={setSelectedValue}
         />
         <TextButton
-          buttonText="Add Status"
+          buttonText={smallScreen ? <Add /> : "Add Status"}
           height="2.5rem"
-          width={smallScreen ? "48%" : "15%"}
+          width={extraSmallScreen ? "22%" : "15%"}
           onClick={handleAddStatus}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
-          startIcon={loading ? "" : <Add />}
+          startIcon={loading ? "" : smallScreen ? "" : <Add />}
           loading={loading}
           disabled={isButtonDisabled}
         />

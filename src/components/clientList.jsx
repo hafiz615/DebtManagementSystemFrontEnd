@@ -14,7 +14,7 @@ import { Colors } from "../config/default";
 import SearchBar from "./searchBar";
 import ListTable from "./listTable";
 import { GetAllClients } from "../services/services";
-import CircularProgress from "@mui/material/CircularProgress";
+
 import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
 import Menu from "@mui/material/Menu";
 
@@ -252,8 +252,7 @@ export default function ClientList() {
       container
       sx={{
         backgroundColor: Colors.BG_LIGHT_GRAY,
-        paddingLeft: "2rem",
-        paddingRight: "2rem",
+        padding: "0 2rem",
       }}
     >
       <Grid
@@ -556,39 +555,22 @@ export default function ClientList() {
         item
         xs={12}
         sx={{
-          backgroundColor: Colors.WHITE,
           borderRadius: "10px ",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
         }}
       >
-        {loading ? (
-          <Grid
-            item
-            xs={12}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              height: "50vh",
-            }}
-          >
-            <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
-          </Grid>
-        ) : (
-          <>
-            <ListTable
-              headerData={headers}
-              data={rows}
-              onRowClick={handleRowClick}
-              apiPagination={true}
-              currentPage={currentPage}
-              setCurrentPage={setCurrentPage}
-              totalPages={totalPages}
-            />
-          </>
-        )}
+        <ListTable
+          headerData={headers}
+          data={rows}
+          onRowClick={handleRowClick}
+          apiPagination={true}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalPages={totalPages}
+          loading={loading}
+        />
       </Grid>
     </Grid>
   );

@@ -176,6 +176,7 @@ export default function SettingsScreen() {
         sx={{
           marginTop: "1rem",
           marginBottom: "1.5rem",
+          width: { xs: "65vw", sm: "auto" },
         }}
       >
         <SettingsAccordion

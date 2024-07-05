@@ -3,6 +3,7 @@ import { useDrag, useDrop } from "react-dnd";
 
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const ItemType = "ROW";
 
@@ -16,6 +17,9 @@ const DraggableRow = ({
   GetStatuses,
 }) => {
   const ref = useRef(null);
+  const extraSmallScreen = useMediaQuery(
+    "(min-width:300px) and (max-width:500px)"
+  );
 
   const [, drop] = useDrop({
     accept: ItemType,
@@ -82,7 +86,10 @@ const DraggableRow = ({
       <td className="dataTable" style={{ width: "85%" }}>
         {text}
       </td>
-      <td className="dataTable" style={{ display: "flex", width: "14.5%" }}>
+      <td
+        className="dataTable"
+        style={{ display: "flex", width: extraSmallScreen ? "35%" : "14.5%" }}
+      >
         <MuiModels
           show="editStatus"
           text={text}

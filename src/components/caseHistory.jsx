@@ -128,36 +128,22 @@ function CaseHistory({
         item
         xs={12}
         sx={{
-          backgroundColor: Colors.WHITE,
           borderRadius: "10px ",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
         }}
       >
-        {tableLoading ? (
-          <Grid
-            container
-            xs={12}
-            sx={{
-              justifyContent: "center",
-              alignItems: "center",
-              height: "40vh",
-            }}
-          >
-            <CircularProgress size={24} sx={{ color: Colors.SKY_BLUE }} />
-          </Grid>
-        ) : (
-          <ListTable
-            headerData={headers}
-            data={rows}
-            onRowClick={(id) => navigate(`/all-cases/${id}`)}
-            apiPagination={true}
-            totalPages={totalPages}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-          />
-        )}
+        <ListTable
+          headerData={headers}
+          data={rows}
+          onRowClick={(id) => navigate(`/all-cases/${id}`)}
+          apiPagination={true}
+          totalPages={totalPages}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          loading={tableLoading}
+        />
       </Grid>
     </>
   );

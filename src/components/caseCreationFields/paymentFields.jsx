@@ -9,6 +9,7 @@ import Dropdown from "./../dropdown";
 import AmountTextField from "../amountTextField";
 import PaymentProcess from "../radioPayment";
 import { GetAllStatuses } from "../../services/services";
+import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../../constants/appConstants";
 
 export default function PaymentFields({
   totalReceivable,
@@ -67,7 +68,7 @@ export default function PaymentFields({
         Debt Details
       </Typography>
 
-      <Grid container xs={12}>
+      <Grid container>
         <Grid
           item
           xs={12}
@@ -83,7 +84,7 @@ export default function PaymentFields({
               fontFamily: "Nunito",
               fontWeight: "500",
               color: Colors.DARK_GRAY,
-              marginLeft: "2rem",
+              marginLeft: { xs: "0", sm: "2rem" },
               width: "50%",
             }}
           >
@@ -112,8 +113,8 @@ export default function PaymentFields({
             sx={{
               fontFamily: "Nunito",
               fontWeight: "500",
+              marginLeft: { xs: "0", sm: "2rem" },
               color: Colors.DARK_GRAY,
-              marginLeft: "2rem",
               width: "50%",
             }}
           >
@@ -140,8 +141,8 @@ export default function PaymentFields({
             sx={{
               fontFamily: "Nunito",
               fontWeight: "500",
+              marginLeft: { xs: "0", sm: "2rem" },
               color: Colors.DARK_GRAY,
-              marginLeft: "2rem",
               width: "50%",
             }}
           >
@@ -173,8 +174,8 @@ export default function PaymentFields({
             sx={{
               fontFamily: "Nunito",
               fontWeight: "500",
+              marginLeft: { xs: "0", sm: "2rem" },
               color: Colors.DARK_GRAY,
-              marginLeft: "2rem",
               width: "50%",
             }}
           >
@@ -214,14 +215,14 @@ export default function PaymentFields({
               fontFamily: "Nunito",
               fontWeight: "500",
               color: Colors.DARK_GRAY,
-              marginLeft: "2rem",
+              marginLeft: { xs: "0", sm: "2rem" },
               width: "50%",
             }}
           >
             Status
           </Typography>
           <Dropdown
-            menuWidth="14.8rem"
+            menuWidth={smallScreen ? "17rem" : "14.8rem"}
             selectedValue={selectedValue}
             setSelectedValue={setSelectedValue}
             menuItems={menu}
@@ -238,6 +239,7 @@ export default function PaymentFields({
             display: "flex",
             alignItems: "center",
             marginBottom: "0.5rem",
+            gap: { xs: "3px", sm: "0" },
           }}
         >
           <Typography
@@ -245,8 +247,8 @@ export default function PaymentFields({
               fontFamily: "Nunito",
               fontWeight: "500",
               color: Colors.DARK_GRAY,
-              marginLeft: "2rem",
-              width: "45%",
+              marginLeft: { xs: "0", sm: "2rem" },
+              width: { xs: "100%", sm: "45?%" },
             }}
           >
             Fee Payment

@@ -14,6 +14,11 @@ import { Colors } from "../config/default";
 
 // import DataTable from "./table";
 import ListTable from "./listTable";
+import {
+  FONT_SIZE_MEDIUM,
+  FONT_SIZE_SMALL,
+  FONT_SIZE_XL,
+} from "../constants/appConstants";
 
 const headers = ["Name", "Due Date", "Amount", "SSN", "Failure Reason"];
 
@@ -79,6 +84,7 @@ export default function AccordionUsage({
       sx={{
         borderRadius: "1rem !important",
         backgroundColor: Colors.WHITE,
+        width: { xs: "65vw", sm: "100%" },
       }}
     >
       <AccordionSummary
@@ -107,6 +113,7 @@ export default function AccordionUsage({
                 fontWeight: "600",
                 color: Colors.BLACK,
                 marginLeft: "0.5rem",
+                fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_XL },
               }}
             >
               {tableHeading}
@@ -126,8 +133,8 @@ export default function AccordionUsage({
               sx={{
                 backgroundColor,
                 borderRadius: "50%",
-                height: "2.5rem",
-                width: "2.5rem",
+                height: { xs: "1.5rem", sm: "2.5rem" },
+                width: { xs: "1.5rem", sm: "2.5rem" },
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -137,7 +144,7 @@ export default function AccordionUsage({
               <Typography
                 sx={{
                   fontWeight: "600",
-                  fontSize: "1rem",
+                  fontSize: { xs: FONT_SIZE_MEDIUM, sm: "1rem" },
                   fontFamily: "Nunito",
                   color: Colors.BLACK,
                 }}

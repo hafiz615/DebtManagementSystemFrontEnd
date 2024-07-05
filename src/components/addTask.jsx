@@ -4,6 +4,7 @@ import { Grid, IconButton, Typography } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { Colors } from "../config/default";
 import Dropdown from "./dropdown";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import TextButton from "./button";
 
 export default function AddTask({ handleClose, field, data }) {
@@ -20,6 +21,8 @@ export default function AddTask({ handleClose, field, data }) {
     { label: "Completed", value: "Completed" },
   ];
 
+  const smallScreen = useMediaQuery("(min-width:300px) and (max-width:768px)");
+
   return (
     <Grid>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -30,11 +33,18 @@ export default function AddTask({ handleClose, field, data }) {
           <Close />
         </IconButton>
       </div>
-      <div style={{ display: "flex", gap: "1em", marginTop: "1.5em" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "1em",
+          marginTop: "1.5em",
+          flexDirection: smallScreen ? "column" : "row",
+        }}
+      >
         <div
           style={{
             display: "flex",
-            width: "50%",
+            width: smallScreen ? "100%" : "50%",
             justifyContent: "space-between",
             fontFamily: "Nunito",
           }}
@@ -53,7 +63,7 @@ export default function AddTask({ handleClose, field, data }) {
         <div
           style={{
             display: "flex",
-            width: "50%",
+            width: smallScreen ? "100%" : "50%",
             justifyContent: "space-between",
             fontFamily: "Nunito",
           }}
@@ -70,12 +80,20 @@ export default function AddTask({ handleClose, field, data }) {
           />
         </div>
       </div>
-      <div style={{ display: "flex", gap: "1em", marginTop: "1.5em" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "1em",
+          marginTop: "1.5em",
+          flexDirection: smallScreen ? "column" : "row",
+        }}
+      >
         {field === "addTask" ? (
           <div
             style={{
+              border: "1px solid red",
               display: "flex",
-              width: "50%",
+              width: smallScreen ? "100%" : "50%",
               justifyContent: "space-between",
               fontFamily: "Nunito",
             }}
@@ -100,7 +118,7 @@ export default function AddTask({ handleClose, field, data }) {
           <div
             style={{
               display: "flex",
-              width: "50%",
+              width: smallScreen ? "100%" : "50%",
               justifyContent: "space-between",
               fontFamily: "Nunito",
             }}
@@ -121,9 +139,10 @@ export default function AddTask({ handleClose, field, data }) {
         <div
           style={{
             display: "flex",
-            width: "50%",
+            width: smallScreen ? "100%" : "50%",
             justifyContent: "space-between",
             fontFamily: "Nunito",
+            flexWrap: "wrap",
           }}
         >
           Assignee

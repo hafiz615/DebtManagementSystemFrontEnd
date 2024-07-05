@@ -39,7 +39,7 @@ export default function BasicModal({ modelButton, GetUsers, modalType, id }) {
             borderRadius: "10px",
             paddingLeft: "1rem",
             paddingRight: "1rem",
-            width: { xs: "10rem", sm: "auto" },
+            width: { xs: "65vw", sm: "auto" },
             color: Colors.WHITE,
             backgroundColor: Colors.SKY_BLUE,
             "&:hover": {
@@ -62,13 +62,13 @@ export default function BasicModal({ modelButton, GetUsers, modalType, id }) {
         <Grid
           container
           sx={{
-            // overflowY: "auto",
+            overflowY: "auto",
             position: "absolute",
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: smallScreen ? "65%" : "55%",
-            height: "max-content",
+            width: smallScreen ? "80%" : "55%",
+            height: smallScreen ? "70vh" : "max-content",
             bgcolor: Colors.WHITE,
             borderRadius: "10px",
             boxShadow: 24,

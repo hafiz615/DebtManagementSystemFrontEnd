@@ -76,7 +76,7 @@ export default function UploadCsv({ handleModalClose }) {
   return (
     <Box
       sx={{
-        width: extraSmallScreen ? "90%" : smallScreen ? "70vw" : "45vw",
+        width: extraSmallScreen ? "90%" : smallScreen ? "65vw" : "45vw",
         borderRadius: "10px",
         backgroundColor: Colors.WHITE,
         position: "absolute",
@@ -106,6 +106,7 @@ export default function UploadCsv({ handleModalClose }) {
           backgroundColor: Colors.LIGHT_BLUE_COLOR,
           cursor: "pointer",
           flexDirection: "column",
+          padding: "0 2rem",
         }}
       >
         <input {...getInputProps()} />

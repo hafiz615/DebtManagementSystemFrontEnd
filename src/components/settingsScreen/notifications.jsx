@@ -110,7 +110,7 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
             variant="scrollable"
             scrollButtons="auto"
             sx={{
-              width: { xs: "22rem", md: "max-content" },
+              width: "max-content",
             }}
           >
             <AntTab
@@ -271,7 +271,12 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
                     justifyContent: "space-between",
                   }}
                 >
-                  <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontWeight: "600",
+                    }}
+                  >
                     Templates
                   </Typography>
 

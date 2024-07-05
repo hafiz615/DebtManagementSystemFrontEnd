@@ -4,6 +4,7 @@ import { Grid, CircularProgress, Typography } from "@mui/material";
 import update from "immutability-helper";
 import DraggableRow from "./dragAbleStatuses";
 import { Colors } from "../../config/default";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { useEffect } from "react";
 import { ReArrangedStatuses } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
@@ -27,6 +28,9 @@ const StatusLists = ({
     );
   };
   const { showToast } = useToast();
+  const extraSmallScreen = useMediaQuery(
+    "(min-width:300px) and (max-width:500px)"
+  );
 
   const reArrangedArray = async () => {
     if (statusId) {
@@ -69,7 +73,7 @@ const StatusLists = ({
             </th>
             <th
               style={{
-                width: "15%",
+                width: extraSmallScreen ? "45%" : "15%",
                 display: "flex",
                 justifyContent: "flex-start",
               }}

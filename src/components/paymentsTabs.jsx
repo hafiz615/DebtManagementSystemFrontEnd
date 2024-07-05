@@ -59,17 +59,17 @@ export default function PaymentsTabs({
     headers.push("Due Date");
   }
   if (value === 0) {
-    headers.push("Retry");
+    headers.push("Re Try");
   }
   if (value === 2) {
-    headers.push("Retry");
+    headers.push("Re Try");
   }
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
   return (
-    <Box>
+    <>
       <Box
         sx={{
           marginLeft: { xs: "0", md: "2.5rem" },
@@ -81,13 +81,16 @@ export default function PaymentsTabs({
           aria-label="ant example"
           variant="scrollable"
           scrollButtons="auto"
-          sx={{ width: { xs: "100%", md: "70rem" } }}
+          sx={{
+            width: { xs: "100%", md: "70rem" },
+            borderTopLeftRadius: "10px",
+            borderTopRightRadius: "10px",
+          }}
         >
           <AntTab
             sx={{
               bgcolor: Colors.WHITE,
-              width: { xs: "20%", sm: "max-content" },
-              borderTopLeftRadius: "10px",
+              width: { xs: "30%", sm: "max-content" },
               fontWeight: "600",
               height: "3.5rem",
             }}
@@ -97,7 +100,7 @@ export default function PaymentsTabs({
           <AntTab
             sx={{
               bgcolor: Colors.WHITE,
-              width: { xs: "20%", sm: "max-content" },
+              width: { xs: "30%", sm: "max-content" },
               fontWeight: "600",
               height: "3.5rem",
             }}
@@ -106,7 +109,7 @@ export default function PaymentsTabs({
           <AntTab
             sx={{
               bgcolor: Colors.WHITE,
-              width: { xs: "20%", sm: "max-content" },
+              width: { xs: "30%", sm: "max-content" },
               fontWeight: "600",
               height: "3.5rem",
             }}
@@ -115,7 +118,7 @@ export default function PaymentsTabs({
           <AntTab
             sx={{
               bgcolor: Colors.WHITE,
-              width: { xs: "20%", sm: "max-content" },
+              width: { xs: "30%", sm: "max-content" },
               fontWeight: "600",
               height: "3.5rem",
             }}
@@ -124,7 +127,7 @@ export default function PaymentsTabs({
           <AntTab
             sx={{
               bgcolor: Colors.WHITE,
-              width: { xs: "20%", sm: "max-content" },
+              width: { xs: "30%", sm: "max-content" },
               borderTopRightRadius: "10px",
               fontWeight: "600",
               height: "3.5rem",
@@ -200,6 +203,6 @@ export default function PaymentsTabs({
           />
         )}
       </Box>
-    </Box>
+    </>
   );
 }

@@ -121,7 +121,7 @@ function HomeDetails() {
       container
       sx={{
         backgroundColor: Colors.BG_LIGHT_GRAY,
-        padding: "2rem",
+        padding: "0 2rem",
         height: PAGE_HEIGHT,
         overflowY: "auto",
         ...ScrollbarStyles,

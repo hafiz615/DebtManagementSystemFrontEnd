@@ -518,7 +518,7 @@ export default function BasicCard({
                 sx={{
                   fontFamily: "Nunito",
                   fontWeight: "600",
-                  marginLeft: "2rem",
+                  marginLeft: { xs: "0", sm: "2rem" },
                 }}
               >
                 Total Receivable
@@ -530,7 +530,7 @@ export default function BasicCard({
                 sx={{
                   fontFamily: "Nunito",
                   fontWeight: "600",
-                  marginLeft: "2rem",
+                  marginLeft: { xs: "0", sm: "2rem" },
                 }}
               >
                 Paid Amount
@@ -542,7 +542,7 @@ export default function BasicCard({
                 sx={{
                   fontFamily: "Nunito",
                   fontWeight: "600",
-                  marginLeft: "2rem",
+                  marginLeft: { xs: "0", sm: "2rem" },
                 }}
               >
                 Remaining Amount
@@ -554,7 +554,7 @@ export default function BasicCard({
                 sx={{
                   fontFamily: "Nunito",
                   fontWeight: "600",
-                  marginLeft: "2rem",
+                  marginLeft: { xs: "0", sm: "2rem" },
                 }}
               >
                 Fee Payment

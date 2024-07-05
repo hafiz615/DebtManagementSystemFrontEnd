@@ -8,6 +8,11 @@ import CloseIcon from "@mui/icons-material/Close";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import JSZip from "jszip";
 import AlertDialog from "./editFileNamePopUp";
+import {
+  FONT_SIZE_LARGE,
+  FONT_SIZE_MEDIUM,
+  FONT_SIZE_SMALL,
+} from "../../constants/appConstants";
 
 const FileUploadComponent = ({ setUploadedFiles, files, setFiles }) => {
   const onDrop = async (acceptedFiles) => {
@@ -170,6 +175,7 @@ const FileUploadComponent = ({ setUploadedFiles, files, setFiles }) => {
             padding: "1rem",
             borderRadius: "10px",
             justifyContent: "space-between",
+            gap: { xs: "3px", sm: "auto" },
             overflowY: "scroll",
             "&::-webkit-scrollbar": {
               width: "4px",
@@ -192,6 +198,7 @@ const FileUploadComponent = ({ setUploadedFiles, files, setFiles }) => {
                 fontWeight: "600",
                 width: "40%",
                 color: Colors.BLACK,
+                fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
               }}
             >
               Title
@@ -207,7 +214,11 @@ const FileUploadComponent = ({ setUploadedFiles, files, setFiles }) => {
                 }}
               >
                 <Typography
-                  sx={{ textTransform: "none", color: Colors.BLUE_COLOR }}
+                  sx={{
+                    textTransform: "none",
+                    color: Colors.BLUE_COLOR,
+                    fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+                  }}
                 >
                   {getTruncatedText(file.name, 20)}
                 </Typography>
@@ -221,6 +232,7 @@ const FileUploadComponent = ({ setUploadedFiles, files, setFiles }) => {
                 fontWeight: "600",
                 width: "40%",
                 color: Colors.BLACK,
+                fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
               }}
             >
               Type
@@ -233,6 +245,7 @@ const FileUploadComponent = ({ setUploadedFiles, files, setFiles }) => {
                   fontWeight: "400",
                   color: Colors.DARK_GRAY,
                   marginTop: "0.5rem",
+                  fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
                 }}
               >
                 {getTruncatedText(file.type, 20)}
@@ -246,6 +259,7 @@ const FileUploadComponent = ({ setUploadedFiles, files, setFiles }) => {
                 fontWeight: "600",
                 width: "40%",
                 color: Colors.BLACK,
+                fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
               }}
             >
               Path
@@ -258,6 +272,7 @@ const FileUploadComponent = ({ setUploadedFiles, files, setFiles }) => {
                   fontFamily: "Nunito",
                   fontWeight: "400",
                   color: Colors.DARK_GRAY,
+                  fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
                 }}
               >
                 {getTruncatedText(file.path, 40)}
@@ -271,12 +286,16 @@ const FileUploadComponent = ({ setUploadedFiles, files, setFiles }) => {
                 fontWeight: "600",
                 width: "40%",
                 color: Colors.BLACK,
+                fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
               }}
             >
               Actions
             </Typography>
             {files.map((file, index) => (
-              <Box key={index} sx={{ display: "flex", gap: "0.5rem" }}>
+              <Box
+                key={index}
+                sx={{ display: "flex", gap: { xs: "2px", sm: "0.5rem" } }}
+              >
                 <AlertDialog
                   initialFileName={file.name}
                   handleEditFileName={(newName) =>
@@ -288,6 +307,7 @@ const FileUploadComponent = ({ setUploadedFiles, files, setFiles }) => {
                   sx={{
                     color: Colors.ORANGE_COLOR,
                     marginTop: "0.5rem",
+                    fontSize: { xs: FONT_SIZE_SMALL, sm: "1.2rem" },
                     cursor: "pointer",
                   }}
                 />
@@ -297,6 +317,7 @@ const FileUploadComponent = ({ setUploadedFiles, files, setFiles }) => {
                     color: Colors.DARK_GRAY,
                     marginTop: "0.5rem",
                     cursor: "pointer",
+                    fontSize: { xs: FONT_SIZE_SMALL, sm: "1.2rem" },
                   }}
                 />
               </Box>

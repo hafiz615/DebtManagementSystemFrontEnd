@@ -125,12 +125,14 @@ export default function EditCaseCustomField({
                 alignItems: "center",
                 justifyContent: "space-between",
                 mt: ".5rem",
+                gap: "10px",
               }}
             >
               <Grid
                 container
                 item
-                xs={5}
+                xs={12}
+                sm={5}
                 sx={{ alignItems: "center", justifyContent: "space-between" }}
               >
                 <Typography
@@ -159,7 +161,8 @@ export default function EditCaseCustomField({
               <Grid
                 container
                 item
-                xs={5}
+                xs={12}
+                sm={5}
                 sx={{ alignItems: "center", justifyContent: "space-between" }}
               >
                 <Typography

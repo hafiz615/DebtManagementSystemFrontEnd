@@ -166,8 +166,8 @@ export default function MappingDetails() {
 
   const renderDropdown = (category, itemName, index) => (
     <Dropdown
-      width="6.2rem"
-      height={smallScreen ? "1.5rem" : "2rem"}
+      width={smallScreen ? "6.5" : "6.2rem"}
+      height={smallScreen ? "2.5rem" : "2rem"}
       menuItems={columnNames}
       selectedValue={
         dropdownStates[`${category}-${itemName}-${index}`] || "Col A"
