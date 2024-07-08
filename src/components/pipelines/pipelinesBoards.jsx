@@ -1,12 +1,16 @@
-import React, { useState } from "react";
-import { Grid } from "@mui/material";
+import React, { useRef, useState } from "react";
+import { Grid, useMediaQuery } from "@mui/material";
 import { Colors } from "../../config/default";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import BoardColumns from "./boardColumns";
-import ScrollbarStyles from "../customScroll";
+import { useSelector } from "react-redux";
 
 export default function PipelinesBoards() {
+  const columnRef = useRef(null);
+  const mobileView = useMediaQuery("(min-width:300px) and (max-width:760px)");
+  const drawerOpen = useSelector((state) => state.drawer.open);
+
   const [columns, setColumns] = useState({
     ActiveNegotiations: [
       { id: "1", text: "Task 1" },
@@ -52,26 +56,46 @@ export default function PipelinesBoards() {
     });
   };
 
+  const widthStyling = drawerOpen
+    ? "calc(100vw - 250px - 4rem)"
+    : "calc(100vw - 70px - 4rem)";
+
+  const wrapStyling = mobileView ? "wrap" : "nowrap";
+
   return (
     <DndProvider backend={HTML5Backend}>
       <Grid
-        container
+        ref={columnRef}
         sx={{
           height: "68vh",
+          mt: "10px",
+          width: widthStyling,
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",
           overflowX: "auto",
-          ...ScrollbarStyles,
           display: "flex",
-          flexWrap: "wrap",
+          flexWrap: wrapStyling,
+          "&::-webkit-scrollbar": {
+            width: "0px",
+            height: "7px",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: Colors.SKY_BLUE,
+            borderRadius: "8px",
+          },
+          "&::-webkit-scrollbar-track": {
+            backgroundColor: Colors.WHITE,
+            borderRadius: "8px",
+          },
         }}
       >
-        {Object.keys(columns)?.map((columnId) => (
+        {Object.keys(columns).map((columnId) => (
           <BoardColumns
             key={columnId}
             columnId={columnId}
             items={columns[columnId]}
             moveItem={moveItem}
+            columnRef={columnRef}
           />
         ))}
       </Grid>

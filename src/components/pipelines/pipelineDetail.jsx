@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-import { Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import {
   Window,
   Handyman,
@@ -37,7 +37,7 @@ export default function PipelineDetail() {
   const [users, setUsers] = useState([]);
   const [usersArray, setUsersArray] = useState([]);
   const [statuses, setStatuses] = useState([]);
-  const [byTime, setByTime] = useState([]);
+  const [byTime, setByTime] = useState("All Time");
   const navigate = useNavigate();
 
   //   const GetStatuses = async () => {
@@ -60,25 +60,13 @@ export default function PipelineDetail() {
 
   const allUsers = usersArray?.map((item) => item?.name);
 
-  const menuItems = [
+  const viewType = [
     { label: "Board", value: "Board" },
     { label: "List", value: "List" },
   ];
-
-  const allPipelinesName = [
-    { label: "negotations", value: "negotations" },
-    { label: "basic", value: "basic" },
-  ];
-  const allLeads = [
-    { label: "negotations", value: "negotations" },
-    { label: "basic", value: "basic" },
-  ];
-
-  const allStatuses = [
-    { label: "Test1", value: "Test1" },
-    { label: "Test2", value: "Test2" },
-    { label: "Test3", value: "Test3" },
-  ];
+  const allPipelinesName = ["negotations", "basic"];
+  const allLeads = ["negotations", "basic"];
+  const allStatuses = ["Test1", "Test2", "Test3"];
 
   const allTime = [
     { label: "Today", value: "Today" },
@@ -151,188 +139,166 @@ export default function PipelineDetail() {
           placeholder="Search ..."
         />
       </Grid>
-      <Grid
-        xs={12}
-        container
-        sx={{ justifyContent: "space-between", mt: "1rem" }}
+
+      <div
+        style={{
+          display: "flex",
+          gap: "10px",
+          marginTop: "1rem",
+          justifyContent: "space-between",
+          width: "100%",
+          flexWrap: "wrap",
+        }}
       >
-        <Grid xs={8} container item sx={{ gap: "10px" }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              borderRight: `1px solid ${Colors.DIM_LIGHT_GRAY}`,
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            borderRight: `1px solid ${Colors.DIM_LIGHT_GRAY}`,
+          }}
+        >
+          <Window sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }} />
+          <Typography
+            sx={{
+              fontSize: {
+                xs: FONT_SIZE_SMALL,
+                sm: FONT_SIZE_LARGE,
+              },
+              fontFamily: "Nunito",
+              ml: "5px",
             }}
           >
-            <Window sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }} />
-            <Typography
-              sx={{
-                fontSize: {
-                  xs: FONT_SIZE_SMALL,
-                  sm: FONT_SIZE_LARGE,
-                },
-                fontFamily: "Nunito",
-                ml: "5px",
-              }}
-            >
-              View:
-            </Typography>
-            <Dropdown
-              width="6rem"
-              menuItems={menuItems}
-              selectedValue={pipelineType}
-              setSelectedValue={setPipelineType}
-              backgroundColor={Colors.BG_LIGHT_GRAY}
-              hoverColor={Colors.BG_LIGHT_GRAY}
-            />
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              borderRight: `1px solid ${Colors.DIM_LIGHT_GRAY}`,
+            View:
+          </Typography>
+          <Dropdown
+            width="7rem"
+            menuItems={viewType}
+            selectedValue={pipelineType}
+            setSelectedValue={setPipelineType}
+            backgroundColor={Colors.BG_LIGHT_GRAY}
+            hoverColor={Colors.BG_LIGHT_GRAY}
+          />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            borderRight: `1px solid ${Colors.DIM_LIGHT_GRAY}`,
+          }}
+        >
+          <Handyman sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }} />
+          <Typography
+            sx={{
+              fontSize: {
+                xs: FONT_SIZE_SMALL,
+                sm: FONT_SIZE_LARGE,
+              },
+              fontFamily: "Nunito",
+              ml: "5px",
             }}
           >
-            <Handyman
-              sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }}
-            />
-            <Typography
-              sx={{
-                fontSize: {
-                  xs: FONT_SIZE_SMALL,
-                  sm: FONT_SIZE_LARGE,
-                },
-                fontFamily: "Nunito",
-                ml: "5px",
-              }}
-            >
-              Pipelines:
-            </Typography>
-            <Dropdown
-              width="8rem"
-              menuItems={allPipelinesName}
-              selectedValue={pipelineName}
-              setSelectedValue={setPipelineName}
-              backgroundColor={Colors.BG_LIGHT_GRAY}
-              hoverColor={Colors.BG_LIGHT_GRAY}
-            />
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              borderRight: `1px solid ${Colors.DIM_LIGHT_GRAY}`,
-            }}
-          >
-            <Equalizer
-              sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }}
-            />
+            Pipelines:
+          </Typography>
 
-            <Dropdown
-              width="8rem"
-              menuItems={allLeads}
-              selectedValue={leads}
-              setSelectedValue={setLeads}
-              backgroundColor={Colors.BG_LIGHT_GRAY}
-              hoverColor={Colors.BG_LIGHT_GRAY}
-            />
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
+          <CheckboxAutocomplete
+            options={allPipelinesName}
+            multiSelect={pipelineName}
+            setMultiselect={setPipelineName}
+            placeholder="Pipelines"
+          />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            borderRight: `1px solid ${Colors.DIM_LIGHT_GRAY}`,
+          }}
+        >
+          <Equalizer sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }} />
+
+          <CheckboxAutocomplete
+            options={allLeads}
+            multiSelect={leads}
+            setMultiselect={setLeads}
+            placeholder="Debtors"
+          />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            borderRight: `1px solid ${Colors.DIM_LIGHT_GRAY}`,
+          }}
+        >
+          <PeopleAlt sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }} />
+          <CheckboxAutocomplete
+            options={allUsers}
+            multiSelect={users}
+            setMultiselect={setUsers}
+            placeholder="Users"
+          />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            borderRight: `1px solid ${Colors.DIM_LIGHT_GRAY}`,
+          }}
+        >
+          <DonutLarge
+            sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }}
+          />
+
+          <CheckboxAutocomplete
+            options={allStatuses}
+            multiSelect={statuses}
+            setMultiselect={setStatuses}
+            placeholder="Status"
+          />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            borderRight: `1px solid ${Colors.DIM_LIGHT_GRAY}`,
+          }}
+        >
+          <CalendarMonth
+            sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }}
+          />
+
+          <Dropdown
+            width="9rem"
+            menuItems={allTime}
+            selectedValue={byTime}
+            setSelectedValue={setByTime}
+            backgroundColor={Colors.BG_LIGHT_GRAY}
+            hoverColor={Colors.BG_LIGHT_GRAY}
+          />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <ExitToApp sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }} />
+          <Typography
+            sx={{
+              fontSize: {
+                xs: FONT_SIZE_SMALL,
+                sm: FONT_SIZE_LARGE,
+              },
+              fontFamily: "Nunito",
+              ml: "5px",
             }}
           >
-            <PeopleAlt
-              sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }}
-            />
+            Export
+          </Typography>
+        </div>
+      </div>
 
-            {/* <Dropdown
-              width="6rem"
-              menuItems={allUsers}
-              selectedValue={users}
-              setSelectedValue={setUsers}
-              backgroundColor={Colors.BG_LIGHT_GRAY}
-              hoverColor={Colors.BG_LIGHT_GRAY}
-            /> */}
-            <CheckboxAutocomplete
-              options={allUsers}
-              multiSelect={users}
-              setMultiselect={setUsers}
-              placeholder="Users"
-              width="8rem"
-            />
-          </div>
-        </Grid>
-        <Grid xs={4} container item sx={{ gap: "10px" }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              borderRight: `1px solid ${Colors.DIM_LIGHT_GRAY}`,
-            }}
-          >
-            <DonutLarge
-              sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }}
-            />
-
-            <Dropdown
-              width="6rem"
-              menuItems={allStatuses}
-              selectedValue={statuses}
-              setSelectedValue={setStatuses}
-              backgroundColor={Colors.BG_LIGHT_GRAY}
-              hoverColor={Colors.BG_LIGHT_GRAY}
-            />
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              borderRight: `1px solid ${Colors.DIM_LIGHT_GRAY}`,
-            }}
-          >
-            <CalendarMonth
-              sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }}
-            />
-
-            <Dropdown
-              width="9rem"
-              menuItems={allTime}
-              selectedValue={byTime}
-              setSelectedValue={setByTime}
-              backgroundColor={Colors.BG_LIGHT_GRAY}
-              hoverColor={Colors.BG_LIGHT_GRAY}
-            />
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <ExitToApp
-              sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }}
-            />
-            <Typography
-              sx={{
-                fontSize: {
-                  xs: FONT_SIZE_SMALL,
-                  sm: FONT_SIZE_LARGE,
-                },
-                fontFamily: "Nunito",
-                ml: "5px",
-              }}
-            >
-              Export
-            </Typography>
-          </div>
-        </Grid>
-      </Grid>
-
-      <Grid item xs={12} sx={{ mt: "1rem" }}>
-        {pipelineType === "Board" ? <PipelinesBoards /> : <PipelinesLists />}
-      </Grid>
+      {pipelineType === "Board" ? <PipelinesBoards /> : <PipelinesLists />}
     </Grid>
   );
 }

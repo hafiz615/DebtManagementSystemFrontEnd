@@ -28,6 +28,7 @@ import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
 import EditMainPipeline from "./editMainPipeline";
 import AddPipeline from "./settingsScreen/addPipeline";
+import EditPipelineCase from "./pipelines/editPipelineCase";
 
 export default function MuiModels({
   buttonName,
@@ -369,6 +370,8 @@ export default function MuiModels({
               handleClose={handleClose}
               GetPipelines={GetPipelines}
             />
+          ) : show === "editPipelineCase" ? (
+            <EditPipelineCase handleClose={handleClose} />
           ) : (
             ""
           )}

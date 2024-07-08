@@ -50,14 +50,14 @@ const DraggableItem = ({ item, columnId }) => {
         <div style={{ display: "flex" }}>
           <MuiModels
             item={item}
-            show="editMainPipeline"
+            show="editPipelineCase"
             button="create"
             iconSize="1rem"
             // GetPipelines={GetPipelines}
           />
           <Prompt
             heading="Delte Pipeline"
-            text={`Are you sure you want to Delete ${item?.pipeline}?`}
+            text={`Are you sure you want to Delete ${item?.text}?`}
             // handleDelete={handleDelete}
             item={item?.id}
             iconSize="1rem"

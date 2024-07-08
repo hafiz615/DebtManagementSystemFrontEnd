@@ -7,12 +7,14 @@ import { composeWithDevTools } from "redux-devtools-extension";
 
 import signInReducer from "../reducers/signInReducer";
 import paymentsReducer from "../reducers/paymentsReducer";
+import drawerReducer from "../reducers/drawerReducer";
 
 const middleware = [thunk];
 
 const Reducer = combineReducers({
   signIn: signInReducer,
   payments: paymentsReducer,
+  drawer: drawerReducer,
 });
 const persistConfig = {
   key: "root",

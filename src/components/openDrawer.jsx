@@ -31,6 +31,8 @@ import ListItemText from "@mui/material/ListItemText";
 import NavBar from "./navBar";
 import { Colors } from "../config/default";
 import BasicMenu from "./menuSimple";
+import { useDispatch, useSelector } from "react-redux";
+import { closeDrawer, openDrawer } from "../redux/action/action";
 
 const drawerWidth = 240;
 const closedDrawerWidth = 60;
@@ -84,14 +86,23 @@ export default function PersistentDrawerLeft({ children }) {
   const routeFound = localStorage.getItem("route");
   const [selectedItem, setSelectedItem] = useState(routeFound || "Home");
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
-  const [open, setOpen] = useState(smallScreen ? false : true);
+  const open = useSelector((state) => state.drawer.open);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (smallScreen) {
+      dispatch(closeDrawer());
+    } else {
+      dispatch(openDrawer());
+    }
+  }, [smallScreen, dispatch]);
 
   const handleDrawerOpen = () => {
-    setOpen(true);
+    dispatch(openDrawer());
   };
 
   const handleDrawerClose = () => {
-    setOpen(false);
+    dispatch(closeDrawer());
   };
 
   const navigate = useNavigate();

@@ -6,9 +6,10 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CloseIcon from "@mui/icons-material/Close";
 import { Colors } from "../config/default";
+import { FONT_SIZE_LARGE, FONT_SIZE_MEDIUM } from "../constants/appConstants";
 
-const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-const checkedIcon = <CheckBoxIcon fontSize="small" />;
+const icon = <CheckBoxOutlineBlankIcon />;
+const checkedIcon = <CheckBoxIcon />;
 
 export default function CheckboxAutocomplete({
   options,
@@ -32,7 +33,10 @@ export default function CheckboxAutocomplete({
         const { key, ...optionProps } = props;
         return (
           <li
-            style={{ fontFamily: "Nunito", padding: "0" }}
+            style={{
+              fontFamily: "Nunito",
+              padding: "0",
+            }}
             key={key}
             {...optionProps}
           >
@@ -40,18 +44,48 @@ export default function CheckboxAutocomplete({
               icon={icon}
               checkedIcon={checkedIcon}
               checked={selected}
+              sx={{
+                "& .MuiSvgIcon-root": {
+                  fontSize: FONT_SIZE_LARGE,
+                },
+              }}
             />
-            {option}
+            <span style={{ fontSize: FONT_SIZE_LARGE }}>{option}</span>
           </li>
         );
       }}
       renderTags={() => null}
-      style={{ width: width, maxHeight: "2.5rem" }}
       renderInput={(params) => (
         <TextField
-          sx={{ color: Colors.BLACK }}
           {...params}
           placeholder={placeholder}
+          sx={{
+            color: Colors.BLACK,
+            width: width || "7rem",
+            "& .MuiOutlinedInput-root": {
+              padding: 0,
+              fontSize: FONT_SIZE_LARGE,
+              "& fieldset": {
+                border: "none",
+              },
+              "&:hover fieldset": {
+                border: "none",
+              },
+              "&.Mui-focused fieldset": {
+                border: "none",
+              },
+              "& .MuiAutocomplete-inputRoot": {
+                padding: "0px 8px",
+                "& .MuiAutocomplete-input": {
+                  padding: "0",
+                  maxHeight: ".5rem",
+                },
+                "& .MuiAutocomplete-endAdornment": {
+                  display: "none",
+                },
+              },
+            },
+          }}
         />
       )}
       clearIcon={<CloseIcon style={{ display: "none" }} />}
