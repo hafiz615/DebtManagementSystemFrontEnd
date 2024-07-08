@@ -38,6 +38,7 @@ export default function Prompt({
   showPayment,
   handleDelete,
   disabled,
+  iconSize,
 }) {
   const { showToast } = useToast();
   const [open, setOpen] = React.useState(false);
@@ -134,7 +135,7 @@ export default function Prompt({
           <DeleteForeverOutlinedIcon
             sx={{
               color: disabled ? Colors.DIM_LIGHT_GRAY : Colors.ORANGE_COLOR,
-              fontSize: "20px",
+              fontSize: iconSize || "20px",
               cursor: "pointer",
             }}
           />
