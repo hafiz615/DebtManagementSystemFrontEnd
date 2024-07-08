@@ -14,7 +14,6 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import useMediaQuery from "@mui/material/useMediaQuery";
-
 import {
   AccountCircle,
   Window,
@@ -24,6 +23,7 @@ import {
   ChevronLeft,
   ChevronRight,
   People,
+  Handyman,
 } from "@mui/icons-material";
 
 import ListItemText from "@mui/material/ListItemText";
@@ -31,6 +31,8 @@ import ListItemText from "@mui/material/ListItemText";
 import NavBar from "./navBar";
 import { Colors } from "../config/default";
 import BasicMenu from "./menuSimple";
+import { useDispatch, useSelector } from "react-redux";
+import { closeDrawer, openDrawer } from "../redux/action/action";
 
 const drawerWidth = 240;
 const closedDrawerWidth = 60;
@@ -73,6 +75,7 @@ const icons = [
   <Home />,
   <AccountCircle />,
   <People />,
+  <Handyman />,
   <Settings />,
   <Group />,
   <Window />,
@@ -83,14 +86,23 @@ export default function PersistentDrawerLeft({ children }) {
   const routeFound = localStorage.getItem("route");
   const [selectedItem, setSelectedItem] = useState(routeFound || "Home");
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
-  const [open, setOpen] = useState(smallScreen ? false : true);
+  const open = useSelector((state) => state.drawer.open);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (smallScreen) {
+      dispatch(closeDrawer());
+    } else {
+      dispatch(openDrawer());
+    }
+  }, [smallScreen, dispatch]);
 
   const handleDrawerOpen = () => {
-    setOpen(true);
+    dispatch(openDrawer());
   };
 
   const handleDrawerClose = () => {
-    setOpen(false);
+    dispatch(closeDrawer());
   };
 
   const navigate = useNavigate();
@@ -127,7 +139,9 @@ export default function PersistentDrawerLeft({ children }) {
         case "bulk-cases":
           navigate("/bulk-cases");
           break;
-
+        case "Pipelines":
+          navigate("/pipelines");
+          break;
         default:
           break;
       }
@@ -237,6 +251,7 @@ export default function PersistentDrawerLeft({ children }) {
             "Home",
             "Clients",
             "Creditors",
+            "Pipelines",
             "Settings",
             "User Listing",
             "Analytics",
