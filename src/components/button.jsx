@@ -21,6 +21,7 @@ function TextButton({
   hoverColor,
   width,
   loginFont,
+  boxShadow,
 }) {
   return (
     <Button
@@ -31,6 +32,7 @@ function TextButton({
         fontFamily: "Nunito",
         fontWeight: loginFont || "500",
         height: { height },
+        boxShadow: boxShadow,
         marginTop: { marginTop },
         marginBottom: {
           marginBottom,
