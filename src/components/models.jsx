@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 
 import { Box, Button, Modal, IconButton } from "@mui/material";
 
@@ -23,12 +23,14 @@ import { isEmpty } from "lodash";
 import Delete from "@mui/icons-material/Delete";
 import EditStatus from "./settingsScreen/editStatus";
 import DeleteStatus from "./settingsScreen/deleteStatus";
-import { ExpandRounded, MoreHorizOutlined } from "@mui/icons-material";
+import { ExitToApp, MoreHorizOutlined } from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
 import EditMainPipeline from "./editMainPipeline";
 import AddPipeline from "./settingsScreen/addPipeline";
 import EditPipelineCase from "./pipelines/editPipelineCase";
+import ExportPipeline from "./pipelines/exportPipeline";
+import { FONT_SIZE_XL } from "../constants/appConstants";
 
 export default function MuiModels({
   buttonName,
@@ -54,10 +56,25 @@ export default function MuiModels({
   GetPipelines,
   pipelineId,
   item,
+  getSettings,
+  row,
+  maxHeight,
+  buttonText,
+  loading,
+  setLoading,
+  GetAllPipelineDetail,
 }) {
   const [open, setOpen] = React.useState(false);
+
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    if (show === "froalaEditor") {
+      setFroalaEditor("");
+    }
+
+    setOpen(false);
+  };
+
   const smallScreen = useMediaQuery("(min-width:900px) and (max-width:1200px)");
   const extraSmallScreen = useMediaQuery(
     "(min-width:300px) and (max-width:900px)"
@@ -71,6 +88,7 @@ export default function MuiModels({
     bgcolor: "background.paper",
     borderRadius: 5,
     boxShadow: 24,
+    maxHeight: maxHeight,
     p: 3,
     height: height || "auto",
     overflowY: "auto",
@@ -238,6 +256,34 @@ export default function MuiModels({
           onClick={handleOpen}
           startIcon={extraSmallScreen ? "" : <Add />}
         />
+      ) : button === "exportButton" ? (
+        <TextButton
+          buttonText={
+            extraSmallScreen ? (
+              <ExitToApp
+                sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }}
+              />
+            ) : (
+              "Export"
+            )
+          }
+          boxShadow="none"
+          height={"2.5rem"}
+          width={extraSmallScreen ? "2rem" : "6rem"}
+          backgroundColor={Colors.BG_LIGHT_GRAY}
+          fontColor={Colors.BLACK}
+          hoverColor={Colors.BG_LIGHT_GRAY}
+          onClick={handleOpen}
+          startIcon={
+            extraSmallScreen ? (
+              ""
+            ) : (
+              <ExitToApp
+                sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }}
+              />
+            )
+          }
+        />
       ) : show === "froalaEditor" ? (
         <Button
           onClick={handleOpen}
@@ -348,9 +394,19 @@ export default function MuiModels({
             />
           ) : show === "froalaEditor" ? (
             <FroalaEditor
+              // emailTemplate={emailTemplate}
+              // setEmailTemplate={setEmailTemplate}
+              // smsTemplate={smsTemplate}
+              // setSmsTemplate={setSmsTemplate}
               froalaEditor={froalaEditor}
               setFroalaEditor={setFroalaEditor}
               templateType={templateType}
+              handleClose={handleClose}
+              getSettings={getSettings}
+              row={row}
+              buttonText={buttonText}
+              loading={loading}
+              setLoading={setLoading}
             />
           ) : show === "editPipeline" ? (
             <EditPipeline
@@ -371,7 +427,13 @@ export default function MuiModels({
               GetPipelines={GetPipelines}
             />
           ) : show === "editPipelineCase" ? (
-            <EditPipelineCase handleClose={handleClose} />
+            <EditPipelineCase
+              item={item}
+              GetAllPipelineDetail={GetAllPipelineDetail}
+              handleClose={handleClose}
+            />
+          ) : show === "exportPipeline" ? (
+            <ExportPipeline handleClose={handleClose} data={data} />
           ) : (
             ""
           )}

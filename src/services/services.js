@@ -250,8 +250,31 @@ export const GetAllSettings = async () => {
 
 export const SaveSettings = async (payload) => {
   try {
-    return await axios.patch(
+    return await axios.post(
       BASE_URL + "/v1/settings/addSettings",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const EditSettings = async (payload, type) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/settings/editNotificationTemplate?type=${type} `,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const DeleteSettings = async (payload, type) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/settings/deleteNotificationTemplate?type=${type} `,
       payload,
       setHeaders()
     );
@@ -606,6 +629,47 @@ export const DeleteStatusesPipeline = async (payload, id) => {
       payload,
       setHeaders()
     );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetPipelinesDetails = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/pipeline/getPipelineDetails/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const DeleteCase = async (id) => {
+  try {
+    return await axios.delete(
+      BASE_URL + `/v1/case/deleteCase/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const UpdateCase = async (payload, id) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/case/updateCase/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetAllDebtors = async () => {
+  try {
+    return await axios.get(BASE_URL + `/v1/debtor/getAllDebtors`, setHeaders());
   } catch (error) {
     return error;
   }

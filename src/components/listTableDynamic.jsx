@@ -8,15 +8,15 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TablePagination from "@mui/material/TablePagination";
-import CreateIcon from "@mui/icons-material/Create";
-import CloseIcon from "@mui/icons-material/Close";
-import VisibilityIcon from "@mui/icons-material/Visibility";
+
+// import VisibilityIcon from "@mui/icons-material/Visibility";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import { Colors } from "../config/default";
 import MuiModels from "./models";
 import Prompt from "./prompt";
 import useMediaQuery from "@mui/material/useMediaQuery";
-
+import { CircularProgress } from "@mui/material";
+import { isEmpty } from "lodash";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     color: Colors.BLACK,
@@ -54,6 +54,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   position: "relative",
   "&:hover": {
     backgroundColor: "#DADADA",
+
     cursor: "pointer",
     ".icons": {
       display: "flex",
@@ -71,6 +72,12 @@ export default function ListTableDynamic({
   requiredIcons,
   requiredCustomFieldIcons,
   handleModalClose,
+  froalaEditor,
+  setFroalaEditor,
+  templateType,
+  getSettings,
+  loading,
+  setLoading,
 }) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:900px)");
   const [page, setPage] = React.useState(0);
@@ -111,7 +118,7 @@ export default function ListTableDynamic({
                     sx={{ fontWeight: "700", width: header.width }}
                     key={index}
                   >
-                    {header.heading}
+                    {header?.heading}
                   </StyledTableCell>
                 ))}
                 {(requiredIcons || requiredCustomFieldIcons) && (
@@ -124,98 +131,120 @@ export default function ListTableDynamic({
                 )}
               </TableRow>
             </TableHead>
-            <TableBody>
-              {(rowsPerPage > 0
-                ? data?.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )
-                : data
-              )?.map((row) => (
-                <StyledTableRow
-                  key={row?.id}
-                  onClick={() =>
-                    onRowClick
-                      ? onRowClick(row?.templateId, row?.html || row?.text)
-                      : undefined
-                  }
-                >
-                  {headerData?.map(({ key, width }, i) => (
-                    <StyledTableCell key={i} sx={{ width }}>
-                      {row[key]}
-                    </StyledTableCell>
-                  ))}
-                  {requiredIcons && (
-                    <StyledTableCell
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <CreateIcon
-                        sx={{
-                          color: Colors.DARK_GRAY,
-                          cursor: "pointer",
-                          fontSize: "20px",
-                        }}
-                      />
-                      <CloseIcon
-                        sx={{
-                          color: Colors.ORANGE_COLOR,
-                          cursor: "pointer",
-                          fontSize: "20px",
-                          marginLeft: "0.5rem",
-                        }}
-                      />
-                      <VisibilityIcon
-                        sx={{
-                          color: Colors.DARK_GRAY,
-                          cursor: "pointer",
-                          fontSize: "20px",
-                          marginLeft: "0.5rem",
-                        }}
-                      />
-                    </StyledTableCell>
-                  )}
-                  {requiredCustomFieldIcons && (
-                    <StyledTableCell
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        height: "3rem",
-                      }}
-                    >
-                      <MuiModels
-                        show="editField"
-                        data={row}
-                        handleModalClose={handleModalClose}
-                      />
-                      <Prompt
-                        deleting="Custom Field"
-                        heading="Delete Custom Field"
-                        text={`Are you sure you want to delete ${row?.name} ?`}
-                        id={row?._id}
-                        handleModalClose={handleModalClose}
-                      />
 
-                      <MoreHorizOutlinedIcon
-                        sx={{
-                          color: Colors.DARK_GRAY,
-                          cursor: "pointer",
-                          fontSize: "20px",
-                          marginLeft: "0.5rem",
-                        }}
-                      />
-                    </StyledTableCell>
-                  )}
+            <TableBody>
+              {loading ? (
+                <StyledTableRow>
+                  <StyledTableCell
+                    colSpan={headerData?.length + 1}
+                    align="center"
+                  >
+                    <CircularProgress
+                      size={30}
+                      sx={{ color: Colors.SKY_BLUE }}
+                    />
+                  </StyledTableCell>
                 </StyledTableRow>
-              ))}
+              ) : isEmpty(data) ? (
+                <StyledTableRow>
+                  <StyledTableCell
+                    colSpan={headerData?.length + 1}
+                    align="center"
+                  >
+                    No data available
+                  </StyledTableCell>
+                </StyledTableRow>
+              ) : (
+                (rowsPerPage > 0
+                  ? data?.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
+                  : data
+                )?.map((row) => (
+                  <StyledTableRow
+                    key={row?.id}
+                    onClick={() =>
+                      onRowClick
+                        ? onRowClick(row?.templateId, row?.html || row?.text)
+                        : undefined
+                    }
+                  >
+                    {headerData?.map(({ key, width }, i) => (
+                      <StyledTableCell key={i} sx={{ width }}>
+                        {row[key]}
+                      </StyledTableCell>
+                    ))}
+
+                    {requiredIcons && (
+                      <StyledTableCell
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <MuiModels
+                          show="froalaEditor"
+                          froalaEditor={froalaEditor}
+                          setFroalaEditor={setFroalaEditor}
+                          getSettings={getSettings}
+                          row={row}
+                          templateType={templateType}
+                          button="create"
+                          buttonText="EDIT"
+                          loading={loading}
+                          setLoading={setLoading}
+                        />
+                        <Prompt
+                          heading="Delete Template"
+                          text={`Are you sure you want to delete ${row?.name} ?`}
+                          templateType={templateType}
+                          getSettings={getSettings}
+                          row={row}
+                          iconSize="16px"
+                        />
+                      </StyledTableCell>
+                    )}
+                    {requiredCustomFieldIcons && (
+                      <StyledTableCell
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          height: "3rem",
+                        }}
+                      >
+                        <MuiModels
+                          show="editField"
+                          data={row}
+                          handleModalClose={handleModalClose}
+                        />
+                        <Prompt
+                          deleting="Custom Field"
+                          heading="Delete Custom Field"
+                          text={`Are you sure you want to delete ${row?.name} ?`}
+                          id={row?._id}
+                          handleModalClose={handleModalClose}
+                        />
+
+                        <MoreHorizOutlinedIcon
+                          sx={{
+                            color: Colors.DARK_GRAY,
+                            cursor: "pointer",
+                            fontSize: "20px",
+                            marginLeft: "0.5rem",
+                          }}
+                        />
+                      </StyledTableCell>
+                    )}
+                  </StyledTableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>
 
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[5]}
           component="div"
           count={data?.length}
           rowsPerPage={rowsPerPage}
@@ -224,7 +253,7 @@ export default function ListTableDynamic({
           onRowsPerPageChange={handleChangeRowsPerPage}
           style={{
             alignSelf: smallScreen ? "center" : "flex-end",
-            marginBottom: "1rem",
+            marginBottom: ".5rem",
             width: smallScreen ? "70%" : "auto",
           }}
         />
