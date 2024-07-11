@@ -16,6 +16,7 @@ import DashboardPage from "./pages/dashboardPage";
 import SettingsPage from "./pages/settingsPage";
 import CreditorListPage from "./pages/creditorListPage";
 import PipelinesPage from "./pages/pipelinePage";
+import SettlementRangePage from "./pages/settlementRangePage";
 // import PaymentsCardPage from "./pages/paymentPage";
 function App() {
   return (
@@ -135,6 +136,16 @@ function App() {
         element={
           <Protected>
             <PipelinesPage />
+          </Protected>
+        }
+      />
+
+      <Route
+        exact
+        path="/settlementRange"
+        element={
+          <Protected>
+            <SettlementRangePage />
           </Protected>
         }
       />
