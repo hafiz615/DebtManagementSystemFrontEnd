@@ -1,59 +1,63 @@
-import React, { useRef, useState } from "react";
-import { Grid, useMediaQuery } from "@mui/material";
+import React, { useEffect, useRef, useState } from "react";
+import { CircularProgress, Grid, useMediaQuery } from "@mui/material";
 import { Colors } from "../../config/default";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import BoardColumns from "./boardColumns";
 import { useSelector } from "react-redux";
+import { UpdateCase } from "../../services/services";
+import { FONT_SIZE_LARGE } from "../../constants/appConstants";
 
-export default function PipelinesBoards() {
+export default function PipelinesBoards({
+  data,
+  loading,
+  GetAllPipelineDetail,
+  searchText,
+  statuses,
+  users,
+  leads,
+  startDate,
+  endDate,
+}) {
   const columnRef = useRef(null);
   const mobileView = useMediaQuery("(min-width:300px) and (max-width:760px)");
   const drawerOpen = useSelector((state) => state.drawer.open);
+  const [columns, setColumns] = useState({});
+  const filteredColumns =
+    columns && statuses?.length > 0
+      ? Object.keys(columns).filter((key) => statuses.includes(key))
+      : columns && Object.keys(columns);
 
-  const [columns, setColumns] = useState({
-    ActiveNegotiations: [
-      { id: "1", text: "Task 1" },
-      { id: "2", text: "Task 2" },
-    ],
-    Productions: [
-      { id: "3", text: "Task 3" },
-      { id: "4", text: "Task 4" },
-    ],
-    Basics: [
-      { id: "5", text: "Task 5" },
-      { id: "6", text: "Task 6" },
-    ],
-    Vendor: [
-      { id: "7", text: "Task 7" },
-      { id: "8", text: "Task 8" },
-    ],
-    Matrix: [
-      { id: "9", text: "Task 9" },
-      { id: "10", text: "Task 10" },
-    ],
-    Matrix1: [
-      { id: "11", text: "Task 11" },
-      { id: "12", text: "Task 12" },
-    ],
-    Matrix2: [
-      { id: "13", text: "Task 13" },
-      { id: "14", text: "Task 14" },
-    ],
-  });
+  useEffect(() => {
+    setColumns(data);
+  }, [data]);
 
   const moveItem = (itemId, fromColumn, toColumn) => {
-    const item = columns[fromColumn].find((i) => i.id === itemId);
-    const updatedFromColumn = columns[fromColumn].filter(
-      (i) => i.id !== itemId
+    const item = columns[fromColumn].cases.find((i) => i._id === itemId);
+    const updatedFromColumn = columns[fromColumn].cases.filter(
+      (i) => i._id !== itemId
     );
-    const updatedToColumn = [...columns[toColumn], item];
+    const updatedToColumn = [
+      ...columns[toColumn].cases,
+      { ...item, status: toColumn },
+    ];
 
     setColumns({
       ...columns,
-      [fromColumn]: updatedFromColumn,
-      [toColumn]: updatedToColumn,
+      [fromColumn]: { ...columns[fromColumn], cases: updatedFromColumn },
+      [toColumn]: { ...columns[toColumn], cases: updatedToColumn },
     });
+    dragAndDropCall(toColumn, itemId);
+  };
+
+  const dragAndDropCall = async (toColumn, itemId) => {
+    const params = {
+      status: toColumn,
+    };
+    const editCaseResponse = await UpdateCase(params, itemId);
+    if (editCaseResponse?.status === 200) {
+      GetAllPipelineDetail(false);
+    }
   };
 
   const widthStyling = drawerOpen
@@ -89,15 +93,49 @@ export default function PipelinesBoards() {
           },
         }}
       >
-        {Object.keys(columns).map((columnId) => (
-          <BoardColumns
-            key={columnId}
-            columnId={columnId}
-            items={columns[columnId]}
-            moveItem={moveItem}
-            columnRef={columnRef}
-          />
-        ))}
+        {loading ? (
+          <Grid
+            xs={12}
+            container
+            sx={{
+              height: "inherit",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <CircularProgress />
+          </Grid>
+        ) : !columns ? (
+          <p
+            style={{
+              fontFamily: "Nunito",
+              fontSize: FONT_SIZE_LARGE,
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            No Status Exists For This Pipeline
+          </p>
+        ) : (
+          filteredColumns?.map((columnId) => (
+            <BoardColumns
+              key={columnId}
+              columnId={columnId}
+              items={columns[columnId]}
+              moveItem={moveItem}
+              columnRef={columnRef}
+              GetAllPipelineDetail={GetAllPipelineDetail}
+              searchText={searchText}
+              users={users}
+              leads={leads}
+              startDate={startDate}
+              endDate={endDate}
+            />
+          ))
+        )}
       </Grid>
     </DndProvider>
   );

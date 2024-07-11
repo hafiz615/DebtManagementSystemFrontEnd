@@ -61,7 +61,7 @@ export default function CheckboxAutocomplete({
           placeholder={placeholder}
           sx={{
             color: Colors.BLACK,
-            width: width || "7rem",
+            width: width || "6.5rem",
             "& .MuiOutlinedInput-root": {
               padding: 0,
               fontSize: FONT_SIZE_LARGE,

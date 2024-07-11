@@ -13,7 +13,6 @@ import {
   ExitToApp,
 } from "@mui/icons-material/";
 
-import { useNavigate } from "react-router-dom";
 import {
   FONT_SIZE_LARGE,
   FONT_SIZE_SMALL,
@@ -27,46 +26,171 @@ import PipelinesBoards from "./pipelinesBoards";
 import PipelinesLists from "./pipelinesLists";
 import Dropdown from "../dropdown";
 import ScrollbarStyles from "../customScroll";
-import { GetAllUsers } from "../../services/services";
+import {
+  GetAllDebtors,
+  GetAllPipelines,
+  GetAllUsers,
+  GetPipelinesDetails,
+} from "../../services/services";
 import CheckboxAutocomplete from "../checkboxAutocomplete";
+import moment from "moment";
+import MuiModels from "../models";
 
 export default function PipelineDetail() {
   const [pipelineType, setPipelineType] = useState("Board");
-  const [pipelineName, setPipelineName] = useState([]);
+  const [pipelineNameArray, setPipelineNameArray] = useState([]);
+  const [data, setData] = useState({});
+  const [pipelineName, setPipelineName] = useState(null);
+  const [allDebtors, setAllDebtors] = useState();
   const [leads, setLeads] = useState([]);
   const [users, setUsers] = useState([]);
   const [usersArray, setUsersArray] = useState([]);
   const [statuses, setStatuses] = useState([]);
   const [byTime, setByTime] = useState("All Time");
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
-  //   const GetStatuses = async () => {
-  //     const AllStatuses = await GetAllStatuses();
-  //     if (AllStatuses?.status === 200) {
-  //       setUsers(AllStatuses?.data?.data?.status);
-  //     }
-  //   };
+  const handleKeyPress = (e) => {
+    setSearchText(e.target.value);
+  };
 
-  const GetUsers = async () => {
+  function getIdByPipelineName(pipelineName) {
+    const pipeline = pipelineNameArray.find((p) => p.pipeline === pipelineName);
+    return pipeline ? pipeline._id : null;
+  }
+
+  const getUsers = async () => {
     const res = await GetAllUsers("", false, false);
     if (res?.status === 200) {
       setUsersArray(res?.data?.data?.users);
     }
   };
 
+  const getAllPipelinesNames = async () => {
+    const resAllPipelines = await GetAllPipelines();
+    setPipelineNameArray(resAllPipelines?.data?.data);
+  };
+
+  const getDebtors = async () => {
+    const resDebtors = await GetAllDebtors();
+    setAllDebtors(resDebtors?.data?.data);
+  };
+
+  const GetAllPipelineDetail = async (loadingBool) => {
+    if (pipelineName) {
+      setLoading(loadingBool);
+      const id = getIdByPipelineName(pipelineName);
+      const resPipelineDetail = await GetPipelinesDetails(id);
+      if (resPipelineDetail?.status === 200) {
+        setData(resPipelineDetail?.data?.data);
+      }
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    GetUsers();
+    GetAllPipelineDetail(true);
+  }, [pipelineName]);
+
+  useEffect(() => {
+    getUsers();
+    getAllPipelinesNames();
+    getDebtors();
   }, []);
 
-  const allUsers = usersArray?.map((item) => item?.name);
+  useEffect(() => {
+    setUsers([]);
+    setLeads([]);
+    setStatuses([]);
+    setByTime("All Time");
+  }, [pipelineType]);
+
+  useEffect(() => {
+    if (pipelineNameArray.length > 0 && !pipelineName) {
+      setPipelineName(pipelineNameArray[0].pipeline);
+    }
+  }, [pipelineNameArray]);
+
+  useEffect(() => {
+    const calculateDates = () => {
+      const today = moment();
+      let start = null;
+      let end = null;
+
+      switch (byTime) {
+        case "Today":
+          start = today.clone().startOf("day");
+          end = today.clone().endOf("day");
+          break;
+        case "This Week":
+          start = today.clone().startOf("week");
+          end = today.clone().endOf("week");
+          break;
+        case "This Month":
+          start = today.clone().startOf("month");
+          end = today.clone().endOf("month");
+          break;
+        case "This Quarter":
+          start = today.clone().startOf("quarter");
+          end = today.clone().endOf("quarter");
+          break;
+        case "Yesterday":
+          start = today.clone().subtract(1, "days").startOf("day");
+          end = today.clone().subtract(1, "days").endOf("day");
+          break;
+        case "Last Week":
+          start = today.clone().subtract(1, "weeks").startOf("week");
+          end = today.clone().subtract(1, "weeks").endOf("week");
+          break;
+        case "Last Month":
+          start = today.clone().subtract(1, "months").startOf("month");
+          end = today.clone().subtract(1, "months").endOf("month");
+          break;
+        case "Last Quarter":
+          start = today.clone().subtract(1, "quarters").startOf("quarter");
+          end = today.clone().subtract(1, "quarters").endOf("quarter");
+          break;
+        case "All Time":
+          start = null;
+          end = null;
+          break;
+        default:
+          start = null;
+          end = null;
+      }
+
+      setStartDate(start ? start.toISOString() : null);
+      setEndDate(end ? end.toISOString() : null);
+    };
+
+    calculateDates();
+  }, [byTime]);
+
+  const allLeads = allDebtors
+    ? [
+        "All Leads",
+        ...allDebtors?.map((item) => item?.basicInformation?.fullName),
+      ]
+    : [];
+
+  const allStatuses = data ? Object.keys(data)?.map((item) => item) : [];
+
+  const allUsers = usersArray
+    ? ["All Users", ...usersArray?.map((item) => item?.name)]
+    : [];
 
   const viewType = [
     { label: "Board", value: "Board" },
     { label: "List", value: "List" },
   ];
-  const allPipelinesName = ["negotations", "basic"];
-  const allLeads = ["negotations", "basic"];
-  const allStatuses = ["Test1", "Test2", "Test3"];
+
+  const allPipelinesName = pipelineNameArray?.map((item) => ({
+    label: item?.pipeline,
+    value: item?.pipeline,
+    id: item?._id,
+  }));
 
   const allTime = [
     { label: "Today", value: "Today" },
@@ -134,8 +258,8 @@ export default function PipelineDetail() {
         </Typography>
         <SearchBar
           searchCheck={true}
-          //   searchingText={searchText}
-          //   handleKeyPress={handleKeyPress}
+          searchingText={searchText}
+          handleKeyPress={handleKeyPress}
           placeholder="Search ..."
         />
       </Grid>
@@ -143,7 +267,6 @@ export default function PipelineDetail() {
       <div
         style={{
           display: "flex",
-          gap: "10px",
           marginTop: "1rem",
           justifyContent: "space-between",
           width: "100%",
@@ -200,11 +323,13 @@ export default function PipelineDetail() {
             Pipelines:
           </Typography>
 
-          <CheckboxAutocomplete
-            options={allPipelinesName}
-            multiSelect={pipelineName}
-            setMultiselect={setPipelineName}
-            placeholder="Pipelines"
+          <Dropdown
+            width="8rem"
+            menuItems={allPipelinesName}
+            selectedValue={pipelineName}
+            setSelectedValue={setPipelineName}
+            backgroundColor={Colors.BG_LIGHT_GRAY}
+            hoverColor={Colors.BG_LIGHT_GRAY}
           />
         </div>
         <div
@@ -220,7 +345,7 @@ export default function PipelineDetail() {
             options={allLeads}
             multiSelect={leads}
             setMultiselect={setLeads}
-            placeholder="Debtors"
+            placeholder="Leads"
           />
         </div>
         <div
@@ -276,29 +401,45 @@ export default function PipelineDetail() {
             hoverColor={Colors.BG_LIGHT_GRAY}
           />
         </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <ExitToApp sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }} />
-          <Typography
-            sx={{
-              fontSize: {
-                xs: FONT_SIZE_SMALL,
-                sm: FONT_SIZE_LARGE,
-              },
-              fontFamily: "Nunito",
-              ml: "5px",
+        {pipelineType === "List" && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
             }}
           >
-            Export
-          </Typography>
-        </div>
+            <MuiModels
+              show="exportPipeline"
+              button="exportButton"
+              data={data}
+            />
+          </div>
+        )}
       </div>
 
-      {pipelineType === "Board" ? <PipelinesBoards /> : <PipelinesLists />}
+      {pipelineType === "Board" ? (
+        <PipelinesBoards
+          data={data}
+          loading={loading}
+          GetAllPipelineDetail={GetAllPipelineDetail}
+          searchText={searchText}
+          statuses={statuses}
+          users={users}
+          leads={leads}
+          startDate={startDate}
+          endDate={endDate}
+        />
+      ) : (
+        <PipelinesLists
+          data={data}
+          searchText={searchText}
+          statuses={statuses}
+          users={users}
+          leads={leads}
+          startDate={startDate}
+          endDate={endDate}
+        />
+      )}
     </Grid>
   );
 }
