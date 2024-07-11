@@ -9,7 +9,11 @@ import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined
 import Replay from "@mui/icons-material/Replay";
 import { styled } from "@mui/material/styles";
 
-import { DeleteUserById, DeleteCustomField } from "../services/services";
+import {
+  DeleteUserById,
+  DeleteCustomField,
+  DeleteSettings,
+} from "../services/services";
 import { useToast } from "../toast/toastContext";
 import TextButton from "./button";
 import { IconButton } from "@mui/material";
@@ -39,6 +43,9 @@ export default function Prompt({
   handleDelete,
   disabled,
   iconSize,
+  row,
+  templateType,
+  getSettings,
 }) {
   const { showToast } = useToast();
   const [open, setOpen] = React.useState(false);
@@ -76,6 +83,41 @@ export default function Prompt({
     }
     setLoading(false);
   };
+  const deleteTemplate = async () => {
+    const newTemplate = {
+      subject: row?.subject,
+      name: templateType === "email" ? row?.name : row?.name,
+      event: templateType === "email" ? row?.event : row?.event,
+      html: templateType === "email" ? row?.html : row?.text,
+      templateId: row?.templateId,
+    };
+
+    const resNotificationTemplate = await DeleteSettings(
+      newTemplate,
+      templateType
+    );
+    if (resNotificationTemplate?.status === 200) {
+      showToast(resNotificationTemplate?.data?.message, "success");
+      getSettings();
+      // setFroalaEditor("");
+      // handleClose();
+      // setFroalaEditor("");
+      // setEmailTemplate({
+      //   subject: "",
+      //   name: "",
+      //   event: "",
+      //   html: "",
+      // });
+      // setSmsTemplate({
+      //   name: "",
+      //   event: "",
+      //   text: "",
+      // });
+    } else {
+      const errorMessage = resNotificationTemplate?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -96,6 +138,8 @@ export default function Prompt({
       await deleteCustomField();
     } else if (handleDelete) {
       await handleDelete();
+    } else if (deleteTemplate) {
+      await deleteTemplate();
     } else {
       await deleteUserById();
     }

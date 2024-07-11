@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -68,22 +68,39 @@ const StyledAccordionDetails = styled(AccordionDetails)({
   borderTop: "none", // Remove top border
 });
 
-export default function NotificationTemplatesTabs({ notificationTemplates }) {
+export default function NotificationTemplatesTabs({
+  notificationTemplates,
+  getSettings,
+  loading,
+  setLoading,
+}) {
   const TABS = {
     EMAIL: "Email",
     SMS: "SMS",
   };
-  const [value, setValue] = useState(TABS.EMAIL);
+  const [value, setValue] = useState(TABS?.EMAIL);
   const [froalaEditor, setFroalaEditor] = useState("");
   const [htmlData, setHtmlData] = useState(null);
-  const [emailTemplateId, setEmailTemplateId] = useState("");
   const [textData, setTextData] = useState(null);
+  const [emailTemplateId, setEmailTemplateId] = useState("");
   const [smsTemplateId, setSmsTemplateId] = useState("");
+
+  useEffect(() => {
+    setEmailTemplateId("");
+    setSmsTemplateId("");
+    setHtmlData("");
+    setTextData("");
+  }, [getSettings]);
+
   const headerData = [
     { key: "templateId", heading: "Template ID", width: "10%" },
     { key: "name", heading: "Name", width: "15%" },
     { key: "event", heading: "Event", width: "15%" },
   ];
+
+  if (value === TABS?.EMAIL) {
+    headerData?.push({ key: "subject", heading: "Subject", width: "15%" });
+  }
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -121,8 +138,8 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
                 fontWeight: "600",
                 height: "3.5rem",
               }}
-              label={TABS.EMAIL}
-              value={TABS.EMAIL}
+              label={TABS?.EMAIL}
+              value={TABS?.EMAIL}
             />
 
             <AntTab
@@ -132,8 +149,8 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
                 fontWeight: "600",
                 height: "3.5rem",
               }}
-              label={TABS.SMS}
-              value={TABS.SMS}
+              label={TABS?.SMS}
+              value={TABS?.SMS}
             />
           </AntTabs>
 
@@ -143,7 +160,7 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
               borderRadius: "10px",
             }}
           >
-            {value === TABS.EMAIL && (
+            {value === TABS?.EMAIL && (
               <Grid
                 container
                 sx={{ justifyContent: "space-between", marginTop: "1rem" }}
@@ -167,7 +184,12 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
                     froalaEditorButton="Add New"
                     froalaEditor={froalaEditor}
                     setFroalaEditor={setFroalaEditor}
+                    getSettings={getSettings}
                     templateType="email"
+                    maxHeight="70vh"
+                    buttonText="SAVE"
+                    loading={loading}
+                    setLoading={setLoading}
                   />
                   <Grid
                     item
@@ -183,10 +205,16 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
                   >
                     <ListTableDynamic
                       headerData={headerData}
-                      data={notificationTemplates.email}
+                      getSettings={getSettings}
+                      data={notificationTemplates?.email}
                       requiredIcons={true}
                       onRowClick={renderEmailTemplate}
                       show="email_template"
+                      froalaEditor={froalaEditor}
+                      setFroalaEditor={setFroalaEditor}
+                      templateType="email"
+                      loading={loading}
+                      setLoading={setLoading}
                     />
                   </Grid>
                 </Grid>
@@ -256,7 +284,7 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
                 </Grid>
               </Grid>
             )}
-            {value === TABS.SMS && (
+            {value === TABS?.SMS && (
               <Grid
                 container
                 sx={{ justifyContent: "space-between", marginTop: "1rem" }}
@@ -285,7 +313,11 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
                     froalaEditorButton="Add New"
                     froalaEditor={froalaEditor}
                     setFroalaEditor={setFroalaEditor}
+                    getSettings={getSettings}
                     templateType="sms"
+                    buttonText="SAVE"
+                    loading={loading}
+                    setLoading={setLoading}
                   />
                   <Grid
                     item
@@ -301,10 +333,16 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
                   >
                     <ListTableDynamic
                       headerData={headerData}
-                      data={notificationTemplates.sms}
+                      data={notificationTemplates?.sms}
+                      getSettings={getSettings}
                       requiredIcons={true}
                       onRowClick={renderSmsTemplate}
+                      templateType="sms"
+                      froalaEditor={froalaEditor}
+                      setFroalaEditor={setFroalaEditor}
                       show="sms_template"
+                      loading={loading}
+                      setLoading={setLoading}
                     />
                   </Grid>
                 </Grid>
@@ -358,6 +396,7 @@ export default function NotificationTemplatesTabs({ notificationTemplates }) {
                       >
                         Template Preview
                       </Typography>
+
                       <Typography
                         sx={{
                           fontFamily: "Nunito",
