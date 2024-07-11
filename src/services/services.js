@@ -250,8 +250,31 @@ export const GetAllSettings = async () => {
 
 export const SaveSettings = async (payload) => {
   try {
-    return await axios.patch(
+    return await axios.post(
       BASE_URL + "/v1/settings/addSettings",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const EditSettings = async (payload, type) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/settings/editNotificationTemplate?type=${type} `,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const DeleteSettings = async (payload, type) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/settings/deleteNotificationTemplate?type=${type} `,
       payload,
       setHeaders()
     );
