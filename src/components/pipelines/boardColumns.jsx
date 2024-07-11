@@ -6,7 +6,66 @@ import { FONT_SIZE_LARGE } from "../../constants/appConstants";
 import { Colors } from "../../config/default";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-const BoardColumns = ({ columnId, items, moveItem, columnRef }) => {
+const BoardColumns = ({
+  columnId,
+  items,
+  moveItem,
+  columnRef,
+  GetAllPipelineDetail,
+  searchText,
+  users,
+  leads,
+  startDate,
+  endDate,
+}) => {
+  const filteredCaseCodes = items?.cases?.filter((caseItem) =>
+    caseItem?.caseCode?.toLowerCase()?.includes(searchText?.toLowerCase())
+  );
+
+  const filteredCasesByUsers = filteredCaseCodes?.filter((caseItem) => {
+    if (users.length === 0) {
+      return true;
+    }
+    if (users.includes("All Users")) {
+      return true;
+    }
+    return users.some((user) =>
+      caseItem?.caseOwner.toLowerCase()?.includes(user?.toLowerCase())
+    );
+  });
+
+  const filteredCasesByLeads = filteredCasesByUsers.filter((caseItem) => {
+    if (leads.length === 0) {
+      return true;
+    }
+    if (leads.includes("All Leads")) {
+      return true;
+    }
+    return leads.some((lead) =>
+      caseItem?.debtor?.basicInformation?.fullName
+        ?.toLowerCase()
+        ?.includes(lead?.toLowerCase())
+    );
+  });
+
+  const filteredCasesByDate = filteredCasesByLeads?.filter((caseItem) => {
+    if (!startDate && !endDate) {
+      return true;
+    }
+    const updatedAt = new Date(caseItem?.updatedAt);
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+
+    if (start && end) {
+      return updatedAt >= start && updatedAt <= end;
+    } else if (start) {
+      return updatedAt >= start;
+    } else if (end) {
+      return updatedAt <= end;
+    }
+    return true;
+  });
+
   const smallScreen = useMediaQuery(
     "(min-width:1000px) and (max-width:1200px)"
   );
@@ -22,7 +81,7 @@ const BoardColumns = ({ columnId, items, moveItem, columnRef }) => {
     accept: "ITEM",
     drop: (item) => {
       if (item.columnId !== columnId) {
-        moveItem(item.id, item.columnId, columnId);
+        moveItem(item._id, item.columnId, columnId);
         item.columnId = columnId;
       }
     },
@@ -80,7 +139,7 @@ const BoardColumns = ({ columnId, items, moveItem, columnRef }) => {
           marginBottom: "10px",
         }}
       >
-        {items?.length} Opportunities
+        {items?.cases?.length} Opportunities
       </Typography>
       <div
         style={{
@@ -109,7 +168,7 @@ const BoardColumns = ({ columnId, items, moveItem, columnRef }) => {
             color: Colors.WHITE,
           }}
         >
-          ${items?.length}
+          ${items?.annualizedValue}
         </Typography>
       </div>
 
@@ -133,9 +192,26 @@ const BoardColumns = ({ columnId, items, moveItem, columnRef }) => {
           },
         }}
       >
-        {items.map((item) => (
-          <DraggableItem key={item.id} item={item} columnId={columnId} />
-        ))}
+        {filteredCasesByDate?.length === 0 ? (
+          <p
+            style={{
+              textAlign: "center",
+              fontFamily: "Nunito",
+              fontSize: FONT_SIZE_LARGE,
+            }}
+          >
+            No Cases
+          </p>
+        ) : (
+          filteredCasesByDate?.map((item) => (
+            <DraggableItem
+              key={item._id}
+              item={item}
+              columnId={columnId}
+              GetAllPipelineDetail={GetAllPipelineDetail}
+            />
+          ))
+        )}
       </Grid>
     </Grid>
   );

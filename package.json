@@ -21,6 +21,7 @@
     "jszip": "^3.10.1",
     "lodash": "^4.17.21",
     "material-ui-phone-number": "^3.0.0",
+    "moment": "^2.30.1",
     "papaparse": "^5.4.1",
     "react": "^18.2.0",
     "react-dnd": "^16.0.1",

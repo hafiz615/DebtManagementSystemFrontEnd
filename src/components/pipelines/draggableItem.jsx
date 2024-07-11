@@ -8,8 +8,12 @@ import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import Prompt from "../prompt";
 import { FONT_SIZE_LARGE } from "../../constants/appConstants";
+import { CreateCase, DeleteCase } from "../../services/services";
+import { useToast } from "../../toast/toastContext";
 
-const DraggableItem = ({ item, columnId }) => {
+const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
+  const { showToast } = useToast();
+
   const [{ isDragging }, drag] = useDrag({
     type: "ITEM",
     item: { ...item, columnId },
@@ -17,6 +21,95 @@ const DraggableItem = ({ item, columnId }) => {
       isDragging: monitor.isDragging(),
     }),
   });
+
+  const debtorBasicInfoItem = item?.debtor?.basicInformation;
+  const debtorbusinessInfoItem = item?.debtor?.businessInformation;
+  const creditorBasicInfoItem = item?.creditor?.basicInformation;
+  const creditorbusinessInfoItem = item?.creditor?.businessInformation;
+  const modifiedIntervalArray = item?.intervals?.map(
+    ({ _id, ...rest }) => rest
+  );
+  const allDocuments = item?.documents?.map((item) => item);
+  const debtorContacts = item?.debtor?.contacts?.map((item) => item);
+  const creditorContacts = item?.creditor?.contacts?.map((item) => item);
+
+  const handleDuplicate = async () => {
+    const params = {
+      debtor: {
+        basicInformation: {
+          fullName: debtorBasicInfoItem?.fullName,
+          email: debtorBasicInfoItem?.email,
+          SSID: debtorBasicInfoItem?.SSID,
+          status: debtorBasicInfoItem?.status,
+          country: debtorBasicInfoItem?.country,
+          state: debtorBasicInfoItem?.state,
+          city: debtorBasicInfoItem?.city,
+          zipCode: debtorBasicInfoItem?.zipCode,
+          phone: debtorBasicInfoItem?.phone,
+          address: debtorBasicInfoItem?.address,
+          weeklyBudget: debtorBasicInfoItem?.weeklyBudget || "",
+        },
+        businessInformation: {
+          companyName: debtorbusinessInfoItem?.companyName,
+          EIN: debtorbusinessInfoItem?.EIN,
+          businessCategory: debtorbusinessInfoItem?.businessCategory,
+          description: debtorbusinessInfoItem?.description,
+          country: debtorbusinessInfoItem?.country,
+          state: debtorbusinessInfoItem?.state,
+          city: debtorbusinessInfoItem?.city,
+          zipCode: debtorbusinessInfoItem?.zipCode,
+          phone: debtorbusinessInfoItem?.phone,
+          address: debtorbusinessInfoItem?.address,
+        },
+        contacts: debtorContacts,
+      },
+      paymentToken: item?.paymentToken,
+      paymentType: item?.paymentType,
+      creditor: {
+        basicInformation: {
+          fullName: creditorBasicInfoItem?.fullName,
+          email: creditorBasicInfoItem?.email,
+          phone: creditorBasicInfoItem?.phone,
+        },
+        businessInformation: {
+          companyName: creditorbusinessInfoItem?.companyName,
+          businessCategory: creditorbusinessInfoItem?.businessCategory,
+        },
+        notes: item?.creditor?.notes,
+        creditorSecurityKey: item?.creditor?.creditorSecurityKey,
+        lastFundedDate: item?.creditor?.lastFundedDate,
+        historicalRange: {
+          minimum: item?.creditor?.historicalRange?.minimum,
+          maximum: item?.creditor?.historicalRange?.maximum,
+        },
+        contacts: creditorContacts,
+      },
+      status: item?.status,
+      totalDebt: parseInt(item?.totalDebt),
+      feePayment: item?.feePayment,
+      lastPaymentDate: item?.lastPaymentDate,
+      paidAmount: parseInt(item?.paidAmount),
+      remaining: parseInt(item?.remaining),
+      documents: allDocuments || [],
+      intervals: modifiedIntervalArray || [],
+      confidence: item?.confidence,
+    };
+    const resCreateCase = await CreateCase(params, false);
+    if (resCreateCase?.status === 201) {
+      GetAllPipelineDetail(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    const DeleteRes = await DeleteCase(item?._id);
+    if (DeleteRes?.status === 200) {
+      showToast(DeleteRes?.data?.message, "success");
+      GetAllPipelineDetail(true);
+    } else {
+      const errorMessage = DeleteRes?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+  };
 
   const opacity = isDragging ? 0.5 : 1;
   return (
@@ -45,7 +138,7 @@ const DraggableItem = ({ item, columnId }) => {
             fontWeight: "700",
           }}
         >
-          {item.text}
+          {item?.caseCode}
         </Typography>
         <div style={{ display: "flex" }}>
           <MuiModels
@@ -53,16 +146,16 @@ const DraggableItem = ({ item, columnId }) => {
             show="editPipelineCase"
             button="create"
             iconSize="1rem"
-            // GetPipelines={GetPipelines}
+            GetAllPipelineDetail={GetAllPipelineDetail}
           />
           <Prompt
             heading="Delte Pipeline"
-            text={`Are you sure you want to Delete ${item?.text}?`}
-            // handleDelete={handleDelete}
-            item={item?.id}
+            text={`Are you sure you want to Delete ${item?.caseCode}?`}
+            handleDelete={handleDelete}
+            item={item?._id}
             iconSize="1rem"
           />
-          <IconButton>
+          <IconButton onClick={handleDuplicate}>
             <Difference sx={{ fontSize: "1rem" }} />
           </IconButton>
         </div>
@@ -71,7 +164,14 @@ const DraggableItem = ({ item, columnId }) => {
         <Typography
           sx={{ fontSize: FONT_SIZE_LARGE, fontFamily: "Nunito", mb: "5px" }}
         >
-          $80,000
+          {item?.caseOwner}
+        </Typography>
+      </div>
+      <div>
+        <Typography
+          sx={{ fontSize: FONT_SIZE_LARGE, fontFamily: "Nunito", mb: "5px" }}
+        >
+          ${item?.remaining}
         </Typography>
       </div>
       <div>
@@ -82,7 +182,7 @@ const DraggableItem = ({ item, columnId }) => {
             color: Colors.DIM_LIGHT_GRAY,
           }}
         >
-          50%
+          {item?.confidence}
         </Typography>
       </div>
     </div>
