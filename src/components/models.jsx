@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 
 import { Box, Button, Modal, IconButton } from "@mui/material";
 
@@ -56,11 +56,25 @@ export default function MuiModels({
   GetPipelines,
   pipelineId,
   item,
+  getSettings,
+  row,
+  maxHeight,
+  buttonText,
+  loading,
+  setLoading,
   GetAllPipelineDetail,
 }) {
   const [open, setOpen] = React.useState(false);
+
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    if (show === "froalaEditor") {
+      setFroalaEditor("");
+    }
+
+    setOpen(false);
+  };
+
   const smallScreen = useMediaQuery("(min-width:900px) and (max-width:1200px)");
   const extraSmallScreen = useMediaQuery(
     "(min-width:300px) and (max-width:900px)"
@@ -74,6 +88,7 @@ export default function MuiModels({
     bgcolor: "background.paper",
     borderRadius: 5,
     boxShadow: 24,
+    maxHeight: maxHeight,
     p: 3,
     height: height || "auto",
     overflowY: "auto",
@@ -379,9 +394,19 @@ export default function MuiModels({
             />
           ) : show === "froalaEditor" ? (
             <FroalaEditor
+              // emailTemplate={emailTemplate}
+              // setEmailTemplate={setEmailTemplate}
+              // smsTemplate={smsTemplate}
+              // setSmsTemplate={setSmsTemplate}
               froalaEditor={froalaEditor}
               setFroalaEditor={setFroalaEditor}
               templateType={templateType}
+              handleClose={handleClose}
+              getSettings={getSettings}
+              row={row}
+              buttonText={buttonText}
+              loading={loading}
+              setLoading={setLoading}
             />
           ) : show === "editPipeline" ? (
             <EditPipeline

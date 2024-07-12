@@ -95,40 +95,43 @@ export default function SettingsScreen() {
   });
   const [customFields, setCustomFields] = useState([]);
   const [templates, setTemplates] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const getSettings = async () => {
+    setLoading(true);
     const allSettings = await GetAllSettings();
     setfailedAuthorizations(
-      allSettings.data.data.paymentsAuthorizations.failedAuthorizations
+      allSettings?.data?.data?.paymentsAuthorizations?.failedAuthorizations
     );
     setSuccessfulAuthorizations(
-      allSettings.data.data.paymentsAuthorizations.successfulAuthorizations
+      allSettings?.data?.data?.paymentsAuthorizations?.successfulAuthorizations
     );
     setFailedPayments(
-      allSettings.data.data.paymentsAuthorizations.failedPayments
+      allSettings?.data?.data?.paymentsAuthorizations?.failedPayments
     );
     setSuccessPayments(
-      allSettings.data.data.paymentsAuthorizations.successPayments
+      allSettings?.data?.data?.paymentsAuthorizations?.successPayments
     );
     setUpcomingPayments(
-      allSettings.data.data.paymentsAuthorizations.upcomingPayments
+      allSettings?.data?.data?.paymentsAuthorizations?.upcomingPayments
     );
     setRetryInterval(
-      allSettings.data.data.paymentsAuthorizations.retryInterval
+      allSettings?.data?.data?.paymentsAuthorizations?.retryInterval
     );
     setAuthorizationInterval(
-      allSettings.data.data.paymentsAuthorizations.authorizationInterval
+      allSettings?.data?.data?.paymentsAuthorizations?.authorizationInterval
     );
-    setNotificationTemplates(allSettings.data.data.notificationTemplates);
-    setCustomFields(allSettings.data.data.customFields);
+    setNotificationTemplates(allSettings?.data?.data?.notificationTemplates);
+    setCustomFields(allSettings?.data?.data?.customFields);
     const result = {};
 
     for (const [key, value] of Object.entries(notificationTemplates)) {
       result[key] = value.map((template) => {
-        return { label: template.templateId, value: template.templateId };
+        return { label: template?.templateId, value: template?.templateId };
       });
     }
     setTemplates(result);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -201,6 +204,10 @@ export default function SettingsScreen() {
         />
         <NotificationTemplatesTabs
           notificationTemplates={notificationTemplates}
+          setNotificationTemplates={setNotificationTemplates}
+          getSettings={getSettings}
+          loading={loading}
+          setLoading={setLoading}
         />
         <CustomFieldsAccordion
           customFields={customFields}
