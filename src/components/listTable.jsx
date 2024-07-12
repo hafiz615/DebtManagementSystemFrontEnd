@@ -381,7 +381,7 @@ export default function ListTable({
           </div>
         ) : (
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
+            rowsPerPageOptions={[5]}
             component="div"
             count={data?.length}
             rowsPerPage={rowsPerPage}
