@@ -31,6 +31,7 @@ import AddPipeline from "./settingsScreen/addPipeline";
 import EditPipelineCase from "./pipelines/editPipelineCase";
 import ExportPipeline from "./pipelines/exportPipeline";
 import { FONT_SIZE_XL } from "../constants/appConstants";
+import CreateRole from "./settingsScreen/createRole";
 
 export default function MuiModels({
   buttonName,
@@ -246,6 +247,16 @@ export default function MuiModels({
             }}
           />
         </IconButton>
+      ) : show === "createRole" ? (
+        <TextButton
+          buttonText={extraSmallScreen ? <Add /> : "Create Role"}
+          height={extraSmallScreen ? "2rem" : "2.5rem"}
+          width={extraSmallScreen ? "2rem" : "10rem"}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+          onClick={handleOpen}
+          startIcon={extraSmallScreen ? "" : <Add />}
+        />
       ) : show === "addPipeline" ? (
         <TextButton
           buttonText={extraSmallScreen ? <Add /> : "Add Pipelines"}
@@ -432,6 +443,8 @@ export default function MuiModels({
               GetAllPipelineDetail={GetAllPipelineDetail}
               handleClose={handleClose}
             />
+          ) : show === "createRole" ? (
+            <CreateRole handleClose={handleClose} />
           ) : show === "exportPipeline" ? (
             <ExportPipeline handleClose={handleClose} data={data} />
           ) : (
