@@ -19,9 +19,10 @@ import {
 } from "../../constants/appConstants";
 import { Colors } from "../../config/default";
 import ScrollbarStyles from "../customScroll";
-import ListTable from "../listTable";
-import { Download, Email, Send } from "@mui/icons-material";
+import { Download, Email, PeopleAlt, Send } from "@mui/icons-material";
 import TextButton from "../button";
+import SettlementCards from "./settlementCards";
+import CheckboxAutocomplete from "../checkboxAutocomplete";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -60,6 +61,7 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
 
 export default function SettlementRange() {
   const [value, setValue] = useState(0);
+  const [creditors, setCreditors] = useState([]);
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const extraSmallScreen = useMediaQuery(
     "(min-width:300px) and (max-width:900px)"
@@ -95,25 +97,14 @@ export default function SettlementRange() {
       </Typography>
     </Grid>
   );
-  const headers = ["", "Recommendation1", "Recommendation2", "Recommendation3"];
-  const rows = [
-    ["Weekly Budget", "Recommendation1", "Recommendation1", "Recommendation1"],
-    ["Weekly Budget", "Recommendation1", "Recommendation1", "Recommendation1"],
-    ["Weekly Budget", "Recommendation1", "Recommendation1", "Recommendation1"],
-  ];
 
-  const scoreHeaders = [
-    "Creditor",
-    "UCC Score",
-    "Default Risk Score",
-    "Weekly Budget",
-  ];
+  const data = {
+    recommendation1: [240, 230],
+    recommendation2: [240, 230],
+    recommendation3: [240, 230],
+  };
 
-  const scoreRows = [
-    ["Weekly Budget", "Recommendation1", "Recommendation1", "Recommendation1"],
-    ["Weekly Budget", "Recommendation1", "Recommendation1", "Recommendation1"],
-    ["Weekly Budget", "Recommendation1", "Recommendation1", "Recommendation1"],
-  ];
+  const allCreditors = ["Rummaz", "Tamoor", "Usama"];
 
   return (
     <Grid
@@ -152,6 +143,7 @@ export default function SettlementRange() {
         sx={{
           marginTop: "1.5rem",
           justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
         <Typography
@@ -164,7 +156,7 @@ export default function SettlementRange() {
         >
           Settlement Range
         </Typography>
-        <div style={{ display: "flex", gap: "10px" }}>
+        <div style={{ display: "flex" }}>
           <TextButton
             buttonText={
               extraSmallScreen ? (
@@ -177,7 +169,7 @@ export default function SettlementRange() {
             }
             boxShadow="none"
             height={"2.5rem"}
-            width={extraSmallScreen ? "2rem" : "10rem"}
+            width={extraSmallScreen ? "2rem" : "9rem"}
             backgroundColor={Colors.BG_LIGHT_GRAY}
             fontColor={Colors.BLACK}
             hoverColor={Colors.BG_LIGHT_GRAY}
@@ -219,6 +211,24 @@ export default function SettlementRange() {
               )
             }
           />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <PeopleAlt
+              sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }}
+            />
+
+            <CheckboxAutocomplete
+              options={allCreditors}
+              multiSelect={creditors}
+              setMultiselect={setCreditors}
+              placeholder="All Creditors"
+              width="8rem"
+            />
+          </div>
         </div>
       </Grid>
       <Grid
@@ -231,46 +241,37 @@ export default function SettlementRange() {
         <GridItem title="Weekly True Revenue" value="273.30" />
         <GridItem title="Profitability" value="273.30" />
       </Grid>
+
       <Grid
+        container
         xs={12}
         sx={{
-          backgroundColor: Colors.WHITE,
           borderRadius: "10px",
-          height: "40vh",
           mt: "1rem",
+          justifyContent: "space-between",
         }}
       >
-        <div
-          style={{
-            marginTop: "15px",
-            marginBottom: "15px",
-            marginLeft: "25px",
-          }}
-        >
-          <Typography sx={commonTextStyles}>Settlment Range</Typography>
-        </div>
-        <ListTable data={rows} headerData={headers} />
+        <SettlementCards title="Settlement Range" data={data} />
+        <SettlementCards title="Weekly Budget" data={data} />
+        <SettlementCards title="Weekly True Revenue" data={data} />
+        <SettlementCards title="Settlement Weekly True Revenue %" data={data} />
       </Grid>
+
       <Grid
+        container
         xs={12}
         sx={{
-          backgroundColor: Colors.WHITE,
           borderRadius: "10px",
-          height: "40vh",
-          mt: "2rem",
+          mt: "1rem",
+          justifyContent: "space-between",
         }}
       >
-        <div
-          style={{
-            marginTop: "15px",
-            marginBottom: "15px",
-            marginLeft: "25px",
-          }}
-        >
-          <Typography sx={commonTextStyles}>Scores</Typography>
-        </div>
-        <ListTable data={scoreRows} headerData={scoreHeaders} />
+        <SettlementCards title="New Default Risk Score" data={data} />
+        <SettlementCards title="Weeks Till Paid" data={data} />
+        <SettlementCards title="Commission Range" data={data} />
+        <SettlementCards title="Likely to be Accepted" data={data} />
       </Grid>
+
       <Grid
         xs={12}
         sx={{

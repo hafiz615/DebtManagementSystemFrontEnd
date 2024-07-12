@@ -24,17 +24,19 @@ export default function PipelinesLists({
   ];
 
   useEffect(() => {
-    const allCases = Object.values(data).flatMap((test) =>
-      test.cases.map((c) => ({
-        lead: c?.debtor?.basicInformation?.fullName,
-        totalDebt: `$${c?.totalDebt}`,
-        confidence: c?.confidence,
-        closeDate: c?.closeDate || "-",
-        status: c?.status,
-        user: c?.caseOwner,
-        time: c?.updatedAt,
-      }))
-    );
+    const allCases =
+      data &&
+      Object?.values(data)?.flatMap((test) =>
+        test?.cases?.map((c) => ({
+          lead: c?.debtor?.basicInformation?.fullName,
+          totalDebt: `$${c?.totalDebt}`,
+          confidence: c?.confidence,
+          closeDate: c?.closeDate || "-",
+          status: c?.status,
+          user: c?.caseOwner,
+          time: c?.updatedAt,
+        }))
+      );
     setCases(allCases);
   }, [data]);
 
@@ -109,7 +111,9 @@ export default function PipelinesLists({
       <Grid item xs={12} sx={{ marginTop: "1rem" }}>
         <ListTable
           headerData={headers}
-          data={filteredCasesByDate.map(({ time, ...rest }) => rest)}
+          data={
+            data ? filteredCasesByDate?.map(({ time, ...rest }) => rest) : []
+          }
         />
       </Grid>
     </Grid>
