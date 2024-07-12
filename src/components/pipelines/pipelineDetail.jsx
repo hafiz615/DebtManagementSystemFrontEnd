@@ -35,6 +35,7 @@ import {
 import CheckboxAutocomplete from "../checkboxAutocomplete";
 import moment from "moment";
 import MuiModels from "../models";
+import { isEmpty } from "lodash";
 
 export default function PipelineDetail() {
   const [pipelineType, setPipelineType] = useState("Board");
@@ -57,8 +58,10 @@ export default function PipelineDetail() {
   };
 
   function getIdByPipelineName(pipelineName) {
-    const pipeline = pipelineNameArray.find((p) => p.pipeline === pipelineName);
-    return pipeline ? pipeline._id : null;
+    const pipeline = pipelineNameArray?.find(
+      (p) => p?.pipeline === pipelineName
+    );
+    return pipeline ? pipeline?._id : null;
   }
 
   const getUsers = async () => {
@@ -108,7 +111,7 @@ export default function PipelineDetail() {
   }, [pipelineType]);
 
   useEffect(() => {
-    if (pipelineNameArray.length > 0 && !pipelineName) {
+    if (pipelineNameArray?.length > 0 && !pipelineName) {
       setPipelineName(pipelineNameArray[0].pipeline);
     }
   }, [pipelineNameArray]);
