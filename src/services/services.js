@@ -146,23 +146,22 @@ export const UploadFiles = async (data) => {
 export const UploadFilesAi = async (data) => {
   const formData = new FormData();
   formData.append("MCA_pdf", data[0]);
-  console.log(localStorage.getItem("aiToken"), "token");
+  console.log(formData, "token");
 
   try {
     const token1 = await axios.get(
       "https://dms-ai.hpdemos.co/get-auth-token?username=test&partner_token=test"
     );
-    const response = await axios.post(
-      "https://dms-ai.hpdemos.co/extract-fields",
-      formData,
-      {
-        headers: {
-          accept: "application/json",
-          token: token1?.auth_token,
-          "Content-Type": "multipart/form-data",
-        },
+    const response = await axios({
+      method: 'post',
+      url: 'https://dms-ai.hpdemos.co/extract-fields',
+      data: formData,
+      headers: {
+        'accept': 'application/json',
+        'token': token1?.auth_token,
+        'Content-Type': 'multipart/form-data'
       }
-    );
+    });
     console.log(response.data);
   } catch (error) {
     console.error("Error uploading PDF:", error);
