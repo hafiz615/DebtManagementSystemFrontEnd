@@ -142,7 +142,6 @@ export default function SettlementRange() {
       );
 
       if (resRanges?.status === 200) {
-        console.log(resRanges);
         setApiData(resRanges?.data?.data);
         showToast(resRanges?.data?.message, "success");
         setJustifications({
@@ -348,7 +347,7 @@ export default function SettlementRange() {
             sx={{
               borderRadius: "10px",
               mt: "1rem",
-              justifyContent: "space-between",
+              gap: "2%",
             }}
           >
             <SettlementCards
