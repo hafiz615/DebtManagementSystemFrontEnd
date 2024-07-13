@@ -674,3 +674,14 @@ export const GetAllDebtors = async () => {
     return error;
   }
 };
+
+export const GetSettlementRange = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/case/getSettlementRange/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
