@@ -169,6 +169,8 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   //upload files
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [files, setFiles] = useState([]);
+  const [extractFiles, setExtractFiles] = useState("Extract Files");
+
   //Search Debtor and Creditor State
   const [debtorSearchText, setDebtorSearchText] = useState("");
   const [creditorSearchText, setCreditorSearchText] = useState("");
@@ -510,15 +512,18 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       // localStorage.setItem("aiToken", aiToken);
 
       // if (resAiToken?.status === 200) {
-      const filteredFiles = uploadedFiles?.filter((path) =>
-        /(mca|mcas)/i.test(path?.path)
-      );
-      console.log(filteredFiles, "filter");
-      const UploadAiData = await UploadFilesAi(filteredFiles);
 
-      if (UploadAiData?.status === 200) {
-        handleUploadData(UploadAiData?.data);
+      if (extractFiles === "Extract Files") {
+        const filteredFiles = uploadedFiles?.filter((path) =>
+          /(mca|mcas)/i.test(path?.path)
+        );
+        const UploadAiData = await UploadFilesAi(filteredFiles);
+
+        if (UploadAiData?.status === 200) {
+          handleUploadData(UploadAiData?.data);
+        }
       }
+
       setLoading(true);
       // }
     }
@@ -546,6 +551,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         return obj;
       });
 
+      // if (extractFiles === "Upload All Files") {
       const uploadFile = await UploadFiles(uploadedFiles);
       if (uploadFile?.status === 200) {
         const params = {
@@ -705,6 +711,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       } else {
         showToast(uploadFile?.response?.data?.message, "error");
       }
+      // }
     } else {
       let newSkipped = skipped;
       if (isStepSkipped(activeStep)) {
@@ -846,12 +853,16 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
 
         <React.Fragment>
           {activeStep === 0 ? (
-            <FileUploadComponent
-              uploadedFiles={uploadedFiles}
-              setUploadedFiles={setUploadedFiles}
-              files={files}
-              setFiles={setFiles}
-            />
+            <>
+              <FileUploadComponent
+                uploadedFiles={uploadedFiles}
+                setUploadedFiles={setUploadedFiles}
+                files={files}
+                setFiles={setFiles}
+                extractFiles={extractFiles}
+                setExtractFiles={setExtractFiles}
+              />
+            </>
           ) : activeStep === 1 ? (
             <DebtorDetails
               debtorOwnDetails={debtorOwnDetails}
