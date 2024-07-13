@@ -24,7 +24,7 @@ import { Download, Email, PeopleAlt, Send } from "@mui/icons-material";
 import TextButton from "../button";
 import SettlementCards from "./settlementCards";
 import CheckboxAutocomplete from "../checkboxAutocomplete";
-import { GetSettlementRange } from "../../services/services";
+import { GetSettlementRange, GetSummary } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import { generatePdfFromApiData } from "../../common";
 import MuiModels from "../models";
@@ -115,12 +115,6 @@ export default function SettlementRange() {
 
   //   const allCreditors = ["Rummaz", "Tamoor", "Usama"];
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      setInputValue("");
-    }
-  };
-
   const handleInputChange = (e) => {
     const { value } = e.target;
     if (value === "" || value[0] !== " ") {
@@ -128,26 +122,35 @@ export default function SettlementRange() {
     }
   };
 
-  const handleClick = () => {};
+  const handleClick = () => {
+    setInputValue("");
+    const payload = {
+      financialHealthSummary: "",
+      humanInput: inputValue,
+    };
+    const resSummary = GetSummary(payload, caseId);
+    if (resSummary?.status === 200) {
+      GetAllRanges();
+    }
+  };
 
   const GetAllRanges = async () => {
     if (caseId) {
       setLoading(true);
-      const resRanges = await GetSettlementRange(caseId);
+      const payload = {
+        additionalProps: [],
+      };
+      const resRanges = await GetSettlementRange(payload, caseId);
 
       if (resRanges?.status === 200) {
         setApiData(resRanges?.data?.data);
         showToast(resRanges?.data?.message, "success");
         setJustifications({
-          justifications1: apiData?.["get-settlement-range"]?.justification_1,
-          justifications2: apiData?.["get-settlement-range"]?.justification_2,
-          justifications3: apiData?.["get-settlement-range"]?.justification_3,
+          justifications1: apiData?.getSettlementRange?.justification_1 ?? "",
+          justifications2: apiData?.getSettlementRange?.justification_2 ?? "",
+          justifications3: apiData?.getSettlementRange?.justification_3 ?? "",
         });
-      } else {
-        // const errorMessage = resRanges?.response?.data?.message;
-        showToast("Unable To Fetch Data", "error");
       }
-
       setLoading(false);
     }
   };
@@ -160,8 +163,8 @@ export default function SettlementRange() {
     generatePdfFromApiData(apiData);
   };
 
-  const settlments = apiData?.["get-settlement-range"];
-  const scores = apiData?.["get-scores"]?.Scores;
+  const settlments = apiData?.getSettlementRange;
+  const scores = apiData?.getScores?.Scores;
 
   return (
     <Grid
@@ -230,6 +233,7 @@ export default function SettlementRange() {
             <div style={{ display: "flex" }}>
               <MuiModels show="sendEmail" />
               <TextButton
+                disabled={!apiData}
                 buttonText={"Download"}
                 boxShadow="none"
                 height={"2.5rem"}
@@ -316,20 +320,32 @@ export default function SettlementRange() {
           >
             <SettlementCards
               title="Settlement Range"
-              data={settlments?.settlement_range["Everest Businss Funding"]}
+              data={
+                settlments?.settlement_range?.["Everest Businss Funding"] ?? ""
+              }
             />
             <SettlementCards
               title="Weekly Budget %"
               data={
-                settlments?.percentage_settlement_over_weekly_budget[
+                settlments?.percentage_settlement_over_weekly_budget?.[
                   "Everest Businss Funding"
-                ]
+                ] ?? ""
               }
             />
-            <SettlementCards title="Weekly True Revenue" data={""} />
+
             <SettlementCards
               title="Settlement Weekly True Revenue %"
-              data={settlments?.settlement_range["Everest Businss Funding"]}
+              data={
+                settlments?.settlement_range?.["Everest Businss Funding"] ?? ""
+              }
+            />
+            <SettlementCards
+              title="New Default Risk Score"
+              data={
+                settlments?.new_default_risk_score?.[
+                  "Everest Businss Funding"
+                ] ?? ""
+              }
             />
           </Grid>
 
@@ -339,24 +355,21 @@ export default function SettlementRange() {
             sx={{
               borderRadius: "10px",
               mt: "1rem",
-              justifyContent: "space-between",
+              gap: "2%",
             }}
           >
             <SettlementCards
-              title="New Default Risk Score"
+              title="Weeks Till Paid"
               data={
-                settlments?.new_default_risk_score["Everest Businss Funding"]
+                settlments?.weeks_till_paid?.["Everest Businss Funding"] ?? ""
               }
             />
             <SettlementCards
-              title="Weeks Till Paid"
-              data={settlments?.weeks_till_paid["Everest Businss Funding"]}
-            />
-            <SettlementCards
               title="Commission Range"
-              data={settlments?.commission_range["Everest Businss Funding"]}
+              data={
+                settlments?.commission_range?.["Everest Businss Funding"] ?? ""
+              }
             />
-            <SettlementCards title="Likely to be Accepted" data={""} />
           </Grid>
 
           <Grid
@@ -446,7 +459,7 @@ export default function SettlementRange() {
               placeholder="Write Text..."
               value={inputValue}
               onChange={handleInputChange}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleClick}
               style={{
                 backgroundColor: Colors.WHITE,
                 color: Colors.BLACK,

@@ -180,40 +180,36 @@ export const generatePdfFromApiData = (apiData) => {
     return;
   }
 
-  if (apiData["get-scores"] && apiData["get-scores"]["Scores"]) {
+  if (apiData["getScores"] && apiData["getScores"]["Scores"]) {
     doc.setFontSize(16);
     doc.text("UCC Score:", 15, 30);
     doc.setFontSize(14);
-    doc.text(`${apiData["get-scores"]["Scores"]["UCC Score"]}`, 35, 40);
+    doc.text(`${apiData["getScores"]["Scores"]["UCC Score"]}`, 35, 40);
   } else {
     doc.setFontSize(16);
     doc.text("UCC Score: N/A", 15, 30);
   }
 
-  if (apiData["get-scores"] && apiData["get-scores"]["Scores"]) {
+  if (apiData["getScores"] && apiData["getScores"]["Scores"]) {
     doc.setFontSize(16);
-    doc.text("Default Risk Score:", 15, 55);
+    doc.text("defaultRiskScore:", 15, 55);
     doc.setFontSize(14);
-    doc.text(
-      `${apiData["get-scores"]["Scores"]["Default Risk Score"]}`,
-      55,
-      55
-    );
+    doc.text(`${apiData["getScores"]["Scores"]["defaultRiskScore"]}`, 55, 55);
   } else {
     doc.setFontSize(16);
-    doc.text("Default Risk Score: N/A", 15, 55);
+    doc.text("defaultRiskScore: N/A", 15, 55);
   }
 
   if (
-    apiData["get-scores"] &&
-    apiData["get-scores"]["Scores"] &&
-    apiData["get-scores"]["Scores"]["Weekly Budget"]
+    apiData["getScores"] &&
+    apiData["getScores"]["Scores"] &&
+    apiData["getScores"]["Scores"]["Weekly Budget"]
   ) {
     doc.setFontSize(16);
     doc.text("Weekly Budget (LCF Group):", 15, 70);
     doc.setFontSize(14);
     doc.text(
-      `${apiData["get-scores"]["Scores"]["Weekly Budget"]["LCF Group"]}`,
+      `${apiData["getScores"]["Scores"]["Weekly Budget"]["LCF Group"]}`,
       85,
       70
     );
@@ -223,17 +219,15 @@ export const generatePdfFromApiData = (apiData) => {
   }
 
   if (
-    apiData["get-settlement-range"] &&
-    apiData["get-settlement-range"]["settlement_range"] &&
-    apiData["get-settlement-range"]["settlement_range"][
-      "Everest Businss Funding"
-    ]
+    apiData["getSettlementRange"] &&
+    apiData["getSettlementRange"]["settlement_range"] &&
+    apiData["getSettlementRange"]["settlement_range"]["Everest Businss Funding"]
   ) {
     doc.setFontSize(16);
     doc.text("Settlement Range (Everest Business Funding):", 15, 85);
     doc.setFontSize(14);
     const settlementRange =
-      apiData["get-settlement-range"]["settlement_range"][
+      apiData["getSettlementRange"]["settlement_range"][
         "Everest Businss Funding"
       ];
     doc.text(

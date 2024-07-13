@@ -146,24 +146,21 @@ export const UploadFiles = async (data) => {
 export const UploadFilesAi = async (data) => {
   const formData = new FormData();
   formData.append("MCA_pdf", data[0]);
-  console.log(localStorage.getItem("aiToken"), "token");
 
   try {
-    const token1 = await axios.get(
-      "https://dms-ai.hpdemos.co/get-auth-token?username=test&partner_token=test"
-    );
-    const response = await axios.post(
-      "https://dms-ai.hpdemos.co/extract-fields",
-      formData,
-      {
-        headers: {
-          accept: "application/json",
-          token: token1?.auth_token,
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-    console.log(response.data);
+    // const token1 = await axios.get(
+    //   "https://dms-ai.hpdemos.co/get-auth-token?username=test&partner_token=test"
+    // );
+    return await axios({
+      method: "post",
+      url: "https://dms-ai.hpdemos.co/extract-fields",
+      data: formData,
+      // headers: {
+      //   accept: "application/json",
+      //   token: token1?.auth_token,
+      //   "Content-Type": "multipart/form-data",
+      // },
+    });
   } catch (error) {
     console.error("Error uploading PDF:", error);
   }
@@ -686,10 +683,11 @@ export const GetAllDebtors = async () => {
   }
 };
 
-export const GetSettlementRange = async (id) => {
+export const GetSettlementRange = async (payload, id) => {
   try {
-    return await axios.get(
+    return await axios.post(
       BASE_URL + `/v1/case/getSettlementRange/${id}`,
+      payload,
       setHeaders()
     );
   } catch (error) {
@@ -700,6 +698,18 @@ export const GetSettlementRange = async (id) => {
 export const GetAiToken = async () => {
   try {
     return await axios.get(BASE_URL + `/v1/case/getAiToken`, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetSummary = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/case/getSummary/${id}`,
+      payload,
+      setHeaders()
+    );
   } catch (error) {
     return error;
   }
