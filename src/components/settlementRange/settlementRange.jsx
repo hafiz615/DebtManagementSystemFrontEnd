@@ -27,6 +27,7 @@ import CheckboxAutocomplete from "../checkboxAutocomplete";
 import { GetSettlementRange } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import { generatePdfFromApiData } from "../../common";
+import MuiModels from "../models";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -227,25 +228,7 @@ export default function SettlementRange() {
               Settlement Range
             </Typography>
             <div style={{ display: "flex" }}>
-              <TextButton
-                buttonText={"Send Email"}
-                boxShadow="none"
-                height={"2.5rem"}
-                width={extraSmallScreen ? "2rem" : "9rem"}
-                backgroundColor={Colors.BG_LIGHT_GRAY}
-                fontColor={Colors.BLACK}
-                hoverColor={Colors.BG_LIGHT_GRAY}
-                // onClick={handleOpen}
-                startIcon={
-                  extraSmallScreen ? (
-                    ""
-                  ) : (
-                    <Email
-                      sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }}
-                    />
-                  )
-                }
-              />
+              <MuiModels show="sendEmail" />
               <TextButton
                 buttonText={"Download"}
                 boxShadow="none"

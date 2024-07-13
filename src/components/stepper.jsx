@@ -25,6 +25,7 @@ import PreviewDetails from "./caseCreation/previewDetails";
 import FileUploadComponent from "./caseCreation/uploadFiles";
 import {
   CreateCase,
+  GetAiToken,
   GetCreditorSearch,
   GetDebtorSearch,
   UploadFiles,
@@ -499,16 +500,25 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     setCreditorSearchText("");
   };
 
-  //Api call
   const handleNext = async () => {
     window.scrollTo(0, 0);
     if (activeStep === 0) {
       setLoading(true);
-      const UploadAiData = await UploadFilesAi(uploadedFiles);
-      if (UploadAiData?.status === 200) {
-        handleUploadData(UploadAiData?.data);
+
+      const resAiToken = await GetAiToken();
+      const aiToken = resAiToken?.data?.data?.auth_token;
+      localStorage.setItem("aiToken", aiToken);
+
+      if (resAiToken?.status === 200) {
+        const filteredFiles = uploadedFiles?.filter((path) =>
+          /(mca|mcas)/i.test(path?.path)
+        );
+        const UploadAiData = await UploadFilesAi(filteredFiles);
+        if (UploadAiData?.status === 200) {
+          handleUploadData(UploadAiData?.data);
+        }
+        setLoading(true);
       }
-      setLoading(true);
     }
     if (activeStep === steps.length - 1) {
       setLoading(true);

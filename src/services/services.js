@@ -1,6 +1,6 @@
 import axios from "axios";
 import { baseUrl } from "../constants/appConstants";
-import { setHeaders } from "../common";
+import { setAiHeaders, setHeaders } from "../common";
 
 const BASE_URL = baseUrl();
 
@@ -144,14 +144,13 @@ export const UploadFiles = async (data) => {
 };
 
 export const UploadFilesAi = async (data) => {
-  const formData = new FormData();
-  for (let i = 0; i < data.length; i++) {
-    formData.append("pdf", data[i]);
-  }
+  const formdata = new FormData();
+  formdata.append("pdf", data[0], "file");
   try {
     return await axios.post(
       "https://dms-ai.hpdemos.co/extract-fields",
-      formData
+      formdata,
+      setAiHeaders()
     );
   } catch (error) {
     return error;
@@ -681,6 +680,14 @@ export const GetSettlementRange = async (id) => {
       BASE_URL + `/v1/case/getSettlementRange/${id}`,
       setHeaders()
     );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetAiToken = async () => {
+  try {
+    return await axios.get(BASE_URL + `/v1/case/getAiToken`, setHeaders());
   } catch (error) {
     return error;
   }
