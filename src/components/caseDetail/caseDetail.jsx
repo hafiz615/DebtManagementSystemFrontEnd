@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -32,9 +32,12 @@ import { GetCaseById, GetCasePaymentById } from "../../services/services.js";
 import { isEmpty } from "lodash";
 import MuiModels from "../models.jsx";
 import ScrollbarStyles from "../customScroll.jsx";
+import TextButton from "../button.jsx";
+import { setCaseId } from "../../redux/action/action.js";
 
 function CaseDetail() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [value, setValue] = React.useState("Debtor");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
@@ -44,6 +47,12 @@ function CaseDetail() {
   const [caseData, setCaseData] = useState({});
   const [paymentDetails, setPaymentDetails] = useState({});
   const { id } = useParams();
+
+  useEffect(() => {
+    if (id) {
+      dispatch(setCaseId(id));
+    }
+  }, [id, dispatch]);
 
   const GetCaseDetails = async (rowId) => {
     setLoading(true);
@@ -126,17 +135,34 @@ function CaseDetail() {
             marginTop: "1.5rem",
           }}
         >
-          <Typography
-            sx={{
-              fontWeight: "600",
-              fontSize: "2rem",
-              fontFamily: "Nunito",
-              color: Colors.BLACK,
-            }}
+          <Grid
+            xs={12}
+            container
+            sx={{ justifyContent: "space-between", alignItems: "center" }}
           >
-            {caseData?.caseCode}
-          </Typography>
+            <Typography
+              sx={{
+                fontWeight: "600",
+                fontSize: "2rem",
+                fontFamily: "Nunito",
+                color: Colors.BLACK,
+              }}
+            >
+              {caseData?.caseCode}
+            </Typography>
 
+            <TextButton
+              buttonText="Get Settlement Range"
+              height="2.5rem"
+              width="14rem"
+              onClick={() => {
+                localStorage.setItem("route", "settlementRange");
+                navigate("/settlementRange");
+              }}
+              backgroundColor={Colors.SKY_BLUE}
+              hoverColor={Colors.SKY_BLUE}
+            />
+          </Grid>
           {/* remove container  */}
           <Grid item sx={{ marginTop: "1.5rem" }}>
             <Accordion
@@ -310,6 +336,7 @@ function CaseDetail() {
                 </Grid>
               </AccordionDetails>
             </Accordion>
+
             <Grid container>
               <Grid xs={12} md={3}>
                 <AnalyticsAccordion

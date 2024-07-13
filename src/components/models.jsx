@@ -23,7 +23,7 @@ import { isEmpty } from "lodash";
 import Delete from "@mui/icons-material/Delete";
 import EditStatus from "./settingsScreen/editStatus";
 import DeleteStatus from "./settingsScreen/deleteStatus";
-import { ExitToApp, MoreHorizOutlined } from "@mui/icons-material";
+import { Email, ExitToApp, MoreHorizOutlined } from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
 import EditMainPipeline from "./editMainPipeline";
@@ -31,6 +31,7 @@ import AddPipeline from "./settingsScreen/addPipeline";
 import EditPipelineCase from "./pipelines/editPipelineCase";
 import ExportPipeline from "./pipelines/exportPipeline";
 import { FONT_SIZE_XL } from "../constants/appConstants";
+import SendEmail from "./sendEmail";
 
 export default function MuiModels({
   buttonName,
@@ -301,6 +302,24 @@ export default function MuiModels({
           <AddIcon sx={{ fontSize: ".9rem" }} />
           {froalaEditorButton}
         </Button>
+      ) : show === "sendEmail" ? (
+        <TextButton
+          buttonText={"Send Email"}
+          boxShadow="none"
+          height={"2.5rem"}
+          width={extraSmallScreen ? "2rem" : "9rem"}
+          backgroundColor={Colors.BG_LIGHT_GRAY}
+          fontColor={Colors.BLACK}
+          hoverColor={Colors.BG_LIGHT_GRAY}
+          onClick={handleOpen}
+          startIcon={
+            extraSmallScreen ? (
+              ""
+            ) : (
+              <Email sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }} />
+            )
+          }
+        />
       ) : (
         <Button onClick={handleOpen}>{buttonName}</Button>
       )}
@@ -434,6 +453,8 @@ export default function MuiModels({
             />
           ) : show === "exportPipeline" ? (
             <ExportPipeline handleClose={handleClose} data={data} />
+          ) : show === "sendEmail" ? (
+            <SendEmail handleClose={handleClose} />
           ) : (
             ""
           )}
