@@ -148,18 +148,18 @@ export const UploadFilesAi = async (data) => {
   formData.append("MCA_pdf", data[0]);
 
   try {
-    const token1 = await axios.get(
-      "https://dms-ai.hpdemos.co/get-auth-token?username=test&partner_token=test"
-    );
+    // const token1 = await axios.get(
+    //   "https://dms-ai.hpdemos.co/get-auth-token?username=test&partner_token=test"
+    // );
     return await axios({
       method: "post",
       url: "https://dms-ai.hpdemos.co/extract-fields",
       data: formData,
-      headers: {
-        accept: "application/json",
-        token: token1?.auth_token,
-        "Content-Type": "multipart/form-data",
-      },
+      // headers: {
+      //   accept: "application/json",
+      //   token: token1?.auth_token,
+      //   "Content-Type": "multipart/form-data",
+      // },
     });
   } catch (error) {
     console.error("Error uploading PDF:", error);
@@ -698,6 +698,18 @@ export const GetSettlementRange = async (payload, id) => {
 export const GetAiToken = async () => {
   try {
     return await axios.get(BASE_URL + `/v1/case/getAiToken`, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetSummary = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/case/getSummary/${id}`,
+      payload,
+      setHeaders()
+    );
   } catch (error) {
     return error;
   }

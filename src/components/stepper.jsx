@@ -505,20 +505,22 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     if (activeStep === 0) {
       setLoading(true);
 
-      const resAiToken = await GetAiToken();
-      const aiToken = resAiToken?.data?.data?.auth_token;
-      localStorage.setItem("aiToken", aiToken);
+      // const resAiToken = await GetAiToken();
+      // const aiToken = resAiToken?.data?.data?.auth_token;
+      // localStorage.setItem("aiToken", aiToken);
 
-      if (resAiToken?.status === 200) {
-        const filteredFiles = uploadedFiles?.filter((path) =>
-          /(mca|mcas)/i.test(path?.path)
-        );
-        const UploadAiData = await UploadFilesAi(filteredFiles);
-        if (UploadAiData?.status === 200) {
-          handleUploadData(UploadAiData?.data);
-        }
-        setLoading(true);
+      // if (resAiToken?.status === 200) {
+      const filteredFiles = uploadedFiles?.filter((path) =>
+        /(mca|mcas)/i.test(path?.path)
+      );
+      console.log(filteredFiles, "filter");
+      const UploadAiData = await UploadFilesAi(filteredFiles);
+
+      if (UploadAiData?.status === 200) {
+        handleUploadData(UploadAiData?.data);
       }
+      setLoading(true);
+      // }
     }
     if (activeStep === steps.length - 1) {
       setLoading(true);
