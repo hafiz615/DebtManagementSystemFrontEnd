@@ -146,7 +146,7 @@ export const UploadFiles = async (data) => {
 export const UploadFilesAi = async (data) => {
   const formData = new FormData();
   formData.append("MCA_pdf", data[0]);
-  console.log(localStorage.getItem("aiToken"), "token");
+  console.log(formData, "token");
 
   try {
     const token1 = await axios.get(
