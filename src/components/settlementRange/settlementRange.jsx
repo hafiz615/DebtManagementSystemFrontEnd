@@ -133,21 +133,24 @@ export default function SettlementRange() {
   const GetAllRanges = async () => {
     if (caseId) {
       setLoading(true);
-      const resRanges = await GetSettlementRange(caseId);
+      const payload = {
+        additionalProps: [],
+      };
+      const resRanges = await GetSettlementRange(
+        payload,
+        "66913c28ec165888093ab433"
+      );
 
       if (resRanges?.status === 200) {
+        console.log(resRanges);
         setApiData(resRanges?.data?.data);
         showToast(resRanges?.data?.message, "success");
         setJustifications({
-          justifications1: apiData?.["get-settlement-range"]?.justification_1,
-          justifications2: apiData?.["get-settlement-range"]?.justification_2,
-          justifications3: apiData?.["get-settlement-range"]?.justification_3,
+          justifications1: apiData?.getSettlementRange?.justification_1,
+          justifications2: apiData?.getSettlementRange?.justification_2,
+          justifications3: apiData?.getSettlementRange?.justification_3,
         });
-      } else {
-        // const errorMessage = resRanges?.response?.data?.message;
-        showToast("Unable To Fetch Data", "error");
       }
-
       setLoading(false);
     }
   };
@@ -160,8 +163,8 @@ export default function SettlementRange() {
     generatePdfFromApiData(apiData);
   };
 
-  const settlments = apiData?.["get-settlement-range"];
-  const scores = apiData?.["get-scores"]?.Scores;
+  const settlments = apiData?.getSettlementRange;
+  const scores = apiData?.getScores?.Scores;
 
   return (
     <Grid
@@ -326,10 +329,16 @@ export default function SettlementRange() {
                 ]
               }
             />
-            <SettlementCards title="Weekly True Revenue" data={""} />
+
             <SettlementCards
               title="Settlement Weekly True Revenue %"
               data={settlments?.settlement_range["Everest Businss Funding"]}
+            />
+            <SettlementCards
+              title="New Default Risk Score"
+              data={
+                settlments?.new_default_risk_score["Everest Businss Funding"]
+              }
             />
           </Grid>
 
@@ -343,12 +352,6 @@ export default function SettlementRange() {
             }}
           >
             <SettlementCards
-              title="New Default Risk Score"
-              data={
-                settlments?.new_default_risk_score["Everest Businss Funding"]
-              }
-            />
-            <SettlementCards
               title="Weeks Till Paid"
               data={settlments?.weeks_till_paid["Everest Businss Funding"]}
             />
@@ -356,7 +359,6 @@ export default function SettlementRange() {
               title="Commission Range"
               data={settlments?.commission_range["Everest Businss Funding"]}
             />
-            <SettlementCards title="Likely to be Accepted" data={""} />
           </Grid>
 
           <Grid

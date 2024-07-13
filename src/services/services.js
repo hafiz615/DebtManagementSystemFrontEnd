@@ -686,10 +686,11 @@ export const GetAllDebtors = async () => {
   }
 };
 
-export const GetSettlementRange = async (id) => {
+export const GetSettlementRange = async (payload, id) => {
   try {
-    return await axios.get(
+    return await axios.post(
       BASE_URL + `/v1/case/getSettlementRange/${id}`,
+      payload,
       setHeaders()
     );
   } catch (error) {
