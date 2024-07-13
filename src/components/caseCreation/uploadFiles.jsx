@@ -13,8 +13,19 @@ import {
   FONT_SIZE_MEDIUM,
   FONT_SIZE_SMALL,
 } from "../../constants/appConstants";
+import Dropdown from "../dropdown";
 
-const FileUploadComponent = ({ setUploadedFiles, files, setFiles }) => {
+const menuItems = [
+  { label: "Upload All Files", value: "Upload All Files" },
+  { label: "Extract Files", value: "Extract Files" },
+];
+const FileUploadComponent = ({
+  setUploadedFiles,
+  files,
+  setFiles,
+  extractFiles,
+  setExtractFiles,
+}) => {
   const onDrop = async (acceptedFiles) => {
     setUploadedFiles(acceptedFiles);
 
@@ -96,11 +107,12 @@ const FileUploadComponent = ({ setUploadedFiles, files, setFiles }) => {
           Documents
         </Typography>
       </Grid>
+
       <Grid
         container
         item
         xs={12}
-        lg={6}
+        lg={5.5}
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -118,8 +130,18 @@ const FileUploadComponent = ({ setUploadedFiles, files, setFiles }) => {
             color: Colors.BLACK,
           }}
         >
-          Upload Documents
+          Extract Files Documents
         </Typography>
+        <Dropdown
+          menuWidth="22rem"
+          menuItems={menuItems}
+          placeholder="Type"
+          backgroundColor={Colors.BG_LIGHT_GRAY}
+          hoverColor={Colors.BG_LIGHT_GRAY}
+          width="50%"
+          selectedValue={extractFiles}
+          setSelectedValue={setExtractFiles}
+        />
         <Box
           sx={{
             backgroundColor: Colors.BG_LIGHT_GRAY,
@@ -154,6 +176,7 @@ const FileUploadComponent = ({ setUploadedFiles, files, setFiles }) => {
           </Grid>
         </Box>
       </Grid>
+
       <Grid item sx={{ marginTop: "1rem" }}>
         <Typography
           sx={{
