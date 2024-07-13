@@ -42,16 +42,6 @@ export const setHeaders = () => {
   return headerConfig;
 };
 
-export const setAiHeaders = () => {
-  const headerConfig = {
-    headers: {
-      Authorization: "Bearer " + localStorage.getItem("aiToken"),
-      Accept: "application/json",
-    },
-  };
-  return headerConfig;
-};
-
 export const fillMissingPermissions = (permissionsArray) => {
   const updatedPermissionsArray = permissionsArray?.map((permissionObj) => {
     const permissions = { ...permissionObj.permissions };
