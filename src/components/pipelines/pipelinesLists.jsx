@@ -24,8 +24,6 @@ export default function PipelinesLists({
     "User",
   ];
 
-  console.log(data);
-
   useEffect(() => {
     const allCases =
       data &&

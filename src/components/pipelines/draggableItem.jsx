@@ -10,6 +10,7 @@ import Prompt from "../prompt";
 import { FONT_SIZE_LARGE } from "../../constants/appConstants";
 import { CreateCase, DeleteCase } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
+import { useNavigate } from "react-router-dom";
 
 const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
   const { showToast } = useToast();
@@ -112,6 +113,12 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
   };
 
   const opacity = isDragging ? 0.5 : 1;
+
+  const navigate = useNavigate();
+  const handleClick = (id) => {
+    localStorage.setItem("route", "all-cases");
+    navigate(`/all-cases/${id}`);
+  };
   return (
     <div
       ref={drag}
@@ -123,6 +130,7 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
         borderRadius: "10px",
         cursor: "pointer",
       }}
+      onClick={() => handleClick(item?._id)}
     >
       <div
         style={{
