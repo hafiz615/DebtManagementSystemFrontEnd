@@ -2,7 +2,7 @@ import React from "react";
 import { useDrag } from "react-dnd";
 
 import { IconButton, Typography } from "@mui/material";
-import { Difference } from "@mui/icons-material";
+import { Difference, RemoveRedEye } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
@@ -10,6 +10,7 @@ import Prompt from "../prompt";
 import { FONT_SIZE_LARGE } from "../../constants/appConstants";
 import { CreateCase, DeleteCase } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
+import { useNavigate } from "react-router-dom";
 
 const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
   const { showToast } = useToast();
@@ -112,6 +113,12 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
   };
 
   const opacity = isDragging ? 0.5 : 1;
+
+  const navigate = useNavigate();
+  const handleClick = (id) => {
+    localStorage.setItem("route", "all-cases");
+    navigate(`/all-cases/${id}`);
+  };
   return (
     <div
       ref={drag}
@@ -157,6 +164,9 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
           />
           <IconButton onClick={handleDuplicate}>
             <Difference sx={{ fontSize: "1rem" }} />
+          </IconButton>
+          <IconButton onClick={() => handleClick(item?._id)}>
+            <RemoveRedEye sx={{ fontSize: "1rem" }} />
           </IconButton>
         </div>
       </div>

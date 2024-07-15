@@ -7,6 +7,7 @@ import Box from "@mui/material/Box";
 import { Colors } from "../config/default";
 import PaymentTabsTable from "./paymentsTabTable";
 import { FONT_SIZE_SMALL } from "../constants/appConstants";
+import { useNavigate } from "react-router-dom";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -66,6 +67,12 @@ export default function PaymentsTabs({
   }
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+  const navigate = useNavigate();
+
+  const handleRowClick = (id) => {
+    localStorage.setItem("route", "all-cases");
+    navigate(`/all-cases/${id}`);
   };
 
   return (
@@ -144,6 +151,7 @@ export default function PaymentsTabs({
       >
         {value === 0 && (
           <PaymentTabsTable
+            onRowClick={handleRowClick}
             data={data?.failedAuthorizations}
             headerData={headers}
             currentPage={currentPage}
@@ -157,6 +165,7 @@ export default function PaymentsTabs({
         )}
         {value === 1 && (
           <PaymentTabsTable
+            onRowClick={handleRowClick}
             data={data?.successAuthorizations}
             headerData={headers}
             currentPage={currentPage}
@@ -168,6 +177,7 @@ export default function PaymentsTabs({
         )}
         {value === 2 && (
           <PaymentTabsTable
+            onRowClick={handleRowClick}
             data={data?.failedPayments}
             headerData={headers}
             currentPage={currentPage}
@@ -181,6 +191,7 @@ export default function PaymentsTabs({
         )}
         {value === 3 && (
           <PaymentTabsTable
+            onRowClick={handleRowClick}
             data={data?.successPayments}
             headerData={headers}
             currentPage={currentPage}
@@ -192,6 +203,7 @@ export default function PaymentsTabs({
         )}
         {value === 4 && (
           <PaymentTabsTable
+            onRowClick={handleRowClick}
             data={data?.upcomingPayments}
             headerData={headers}
             currentPage={currentPage}
