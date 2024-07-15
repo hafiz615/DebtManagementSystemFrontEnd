@@ -13,10 +13,13 @@ import {
   DeleteUserById,
   DeleteCustomField,
   DeleteSettings,
+  DeleteRole,
+  Logout,
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import TextButton from "./button";
 import { IconButton } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiPaper-root": {
@@ -46,10 +49,16 @@ export default function Prompt({
   row,
   templateType,
   getSettings,
+  rolesId,
+  GetRoles,
+  setSelectedRole,
+  roleName,
+  permissionData,
 }) {
   const { showToast } = useToast();
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const navigate = useNavigate();
 
   const deleteCustomField = async () => {
     setLoading(true);
@@ -119,6 +128,29 @@ export default function Prompt({
     }
   };
 
+  const deleteRole = async () => {
+    setLoading(true);
+    const deleteRoles = await DeleteRole(rolesId);
+    if (deleteRoles?.status === 200) {
+      setOpen(false);
+      showToast(deleteRoles?.data?.message, "success");
+      if (roleName === permissionData) {
+        const response = await Logout();
+        if (response.status === 200) {
+          localStorage.clear();
+          navigate("/");
+        }
+      }
+      setSelectedRole(null);
+      GetRoles();
+    } else {
+      showToast(
+        deleteRoles?.response?.data?.message || deleteRoles?.data?.message,
+        "error"
+      );
+    }
+    setLoading(false);
+  };
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -138,6 +170,8 @@ export default function Prompt({
       await deleteCustomField();
     } else if (handleDelete) {
       await handleDelete();
+    } else if (deleteRole) {
+      await deleteRole();
     } else if (deleteTemplate) {
       await deleteTemplate();
     } else {

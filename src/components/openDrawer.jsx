@@ -82,6 +82,9 @@ const icons = [
 ];
 
 export default function PersistentDrawerLeft({ children }) {
+  const generalPermissions = useSelector(
+    (state) => state?.permissions?.permissions?.generalPermissions
+  );
   const theme = useTheme();
   const routeFound = localStorage.getItem("route");
   const [selectedItem, setSelectedItem] = useState(routeFound || "Home");
@@ -149,6 +152,22 @@ export default function PersistentDrawerLeft({ children }) {
 
     handleItemClick(selectedItem);
   }, [selectedItem, navigate]);
+
+  const menuItems = [
+    { text: "Home", icon: <Home /> },
+    { text: "Clients", icon: <AccountCircle /> },
+    { text: "Creditors", icon: <People /> },
+    { text: "Pipelines", icon: <Handyman /> },
+    { text: "Settings", icon: <Settings /> },
+    { text: "Analytics", icon: <Window /> },
+  ];
+
+  if (
+    generalPermissions?.viewUserListing &&
+    generalPermissions?.viewHomeScreen
+  ) {
+    menuItems.splice(5, 0, { text: "User Listing", icon: <Group /> });
+  }
 
   return (
     <Box
@@ -230,6 +249,9 @@ export default function PersistentDrawerLeft({ children }) {
           )}
         </DrawerHeader>
         <Divider />
+
+        {/* {generalPermissions?.importBulkCases &&
+          generalPermissions?.createNewCase && ( */}
         <Box
           sx={{
             marginTop: "1.5rem",
@@ -245,17 +267,10 @@ export default function PersistentDrawerLeft({ children }) {
             backgroundColor={Colors.SKY_BLUE}
           />
         </Box>
+        {/* )} */}
 
         <List>
-          {[
-            "Home",
-            "Clients",
-            "Creditors",
-            "Pipelines",
-            "Settings",
-            "User Listing",
-            "Analytics",
-          ]?.map((text, index) => (
+          {menuItems.map(({ text, icon }, index) => (
             <ListItem key={text} disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 onClick={() => setSelectedItem(text)}
@@ -280,7 +295,7 @@ export default function PersistentDrawerLeft({ children }) {
                         : Colors.DIM_LIGHT_GRAY,
                   }}
                 >
-                  {icons[index]}
+                  {icon}
                 </ListItemIcon>
 
                 <ListItemText

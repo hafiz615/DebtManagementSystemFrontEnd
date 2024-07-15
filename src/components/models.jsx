@@ -23,7 +23,7 @@ import { isEmpty } from "lodash";
 import Delete from "@mui/icons-material/Delete";
 import EditStatus from "./settingsScreen/editStatus";
 import DeleteStatus from "./settingsScreen/deleteStatus";
-import { ExitToApp, MoreHorizOutlined } from "@mui/icons-material";
+import { Difference, ExitToApp, MoreHorizOutlined } from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
 import EditMainPipeline from "./editMainPipeline";
@@ -64,6 +64,11 @@ export default function MuiModels({
   loading,
   setLoading,
   GetAllPipelineDetail,
+  GetRoles,
+  selectedRole,
+  selectedData,
+  rolesId,
+  selectedRoleData,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -190,6 +195,23 @@ export default function MuiModels({
             sx={{
               fontSize: "1.2rem",
               color: Colors.DARK_GRAY,
+              cursor: "pointer",
+            }}
+          />
+        </IconButton>
+      ) : show === "duplicateRole" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <Difference
+            sx={{
+              fontSize: "20px",
+              color:
+                selectedRole === selectedData?.name
+                  ? Colors.WHITE
+                  : Colors.DARK_GRAY,
               cursor: "pointer",
             }}
           />
@@ -444,7 +466,14 @@ export default function MuiModels({
               handleClose={handleClose}
             />
           ) : show === "createRole" ? (
-            <CreateRole handleClose={handleClose} />
+            <CreateRole handleClose={handleClose} GetRoles={GetRoles} />
+          ) : show === "duplicateRole" ? (
+            <CreateRole
+              handleClose={handleClose}
+              GetRoles={GetRoles}
+              selectedRoleData={selectedRoleData}
+              show={show}
+            />
           ) : show === "exportPipeline" ? (
             <ExportPipeline handleClose={handleClose} data={data} />
           ) : (

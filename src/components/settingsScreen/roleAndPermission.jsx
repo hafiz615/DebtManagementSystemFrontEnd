@@ -1,29 +1,31 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
 import {
   Typography,
   Grid,
   Box,
-  IconButton,
   Accordion,
   AccordionSummary,
   AccordionDetails,
   styled,
-  //   useMediaQuery,
-  //   CircularProgress,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import DifferenceIcon from "@mui/icons-material/Difference";
-import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 
-import {
-  FONT_SIZE_MEDIUM,
-  FONT_SIZE_XL,
-  FONT_SIZE_XXL,
-} from "../../constants/appConstants";
+// import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
+import Prompt from "../prompt";
+
+import { FONT_SIZE_MEDIUM, FONT_SIZE_XL } from "../../constants/appConstants";
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import Permission from "./permission";
+import {
+  GetAllRoles,
+  GetRoleByName,
+  UpdateRole,
+} from "../../services/services";
+import { useToast } from "../../toast/toastContext";
+import TextButton from "./../../components/button";
+import { useSelector, useDispatch } from "react-redux";
+import { permissions } from "../../redux/action/action";
 
 const StyledAccordion = styled(Accordion)({
   "&:before": {
@@ -55,66 +57,77 @@ const StyledTypography = styled(Typography)`
   font-weight: ${(props) => props.fontWeight || 400};
 `;
 
-const cardData = [
-  { role: "Admin", users: 4 },
-  { role: "Super User", users: 3 },
-  { role: "User", users: 5 },
-  { role: "Restricted", users: 2 },
-  { role: "Negotiator", users: 1 },
-  { role: "Williams", users: 4 },
-];
-
-const generalPermissionData = [
-  { permission: "Create New Case" },
-  { permission: "Import Bulk Cases" },
-  { permission: "View User Listing" },
-  { permission: "Add New User" },
-  { permission: "Delete a User" },
-  { permission: "Create admin user" },
-  { permission: "View Home Screen" },
-  { permission: "View Payments and Authorizations" },
-  { permission: "Retry Payment" },
-  { permission: "View Case Details" },
-  { permission: "View Clients for self" },
-  { permission: "View Clients for all Users" },
-  { permission: "View Creditors for self" },
-  { permission: "View Creditors for All Users" },
-];
-
-const settingsPermissionData = [
-  { permission: "Create admin user" },
-  { permission: "Edit Payments Notification Settings" },
-  { permission: "Edit Authorization Interval" },
-  { permission: "Edit Retry Interval" },
-  { permission: "View Clients for all Users" },
-  { permission: "View Notification Templates" },
-  { permission: "View Custom Fields" },
-  { permission: "Add Notification Template" },
-  { permission: "Edit Notification Template" },
-  { permission: "Add Custom Fields" },
-  { permission: "Delete Notification Template" },
-  { permission: "Edit Custom Fields" },
-  { permission: "Delete Custom Fields" },
-  { permission: "View Case Statuses" },
-  { permission: "Add Case Status" },
-  { permission: "Edit Case Status" },
-  { permission: "Delete Case Status" },
-  { permission: "View Pipeline" },
-  { permission: "Create Pipeline" },
-  { permission: "Edit Pipeline" },
-  { permission: "Delete Pipeline" },
-];
-
-const analyticsPermission = [
-  { permission: "View Analytics for self" },
-  { permission: "View Analytics for All Users" },
-];
 export default function RoleAndPermission() {
-  //   const [showPermissionData, setShowPermissionData] = useState(false);
+  const dispatch = useDispatch();
+  const permissionData = useSelector(
+    (state) => state?.permissions?.permissions?.name
+  );
+  const { showToast } = useToast();
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [rolesData, setRolesData] = useState([]);
+  const [roleName, setRoleName] = useState("");
+  const [generalData, setGeneralData] = useState(null);
+  const [settingData, setSettingsData] = useState(null);
+  const [analyticsData, setAnalyticsData] = useState(null);
+  const [rolesId, setRoleId] = useState("");
 
-  //   const handleClick = () => {
-  //     setShowPermissionData(true);
-  //   };
+  const GetRoles = async () => {
+    const GetRolesData = await GetAllRoles();
+
+    if (GetRolesData?.status === 200) {
+      setRolesData(GetRolesData?.data?.data || []);
+    } else {
+      const errorMessage = GetRolesData?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+  };
+
+  useEffect(() => {
+    GetRoles();
+  }, []);
+  useEffect(() => {
+    if (selectedRole) {
+      setGeneralData(
+        rolesData?.find((role) => role?.name === selectedRole)
+          ?.generalPermissions
+      );
+      setSettingsData(
+        rolesData?.find((role) => role?.name === selectedRole)?.settings
+      );
+      setAnalyticsData(
+        rolesData?.find((role) => role?.name === selectedRole)?.analytics
+      );
+      setRoleId(rolesData?.find((role) => role?.name === selectedRole)?._id);
+      setRoleName(rolesData?.find((role) => role?.name === selectedRole)?.name);
+    }
+  }, [selectedRole, rolesData]);
+  const selectedRoleData = rolesData?.find(
+    (role) => role?.name === selectedRole
+  );
+
+  const UpdateRoles = async () => {
+    const params = {
+      name: roleName,
+      generalPermissions: generalData,
+      settings: settingData,
+      analytics: analyticsData,
+    };
+    const updateRole = await UpdateRole(params, rolesId);
+    if (updateRole.status === 200) {
+      if (roleName === permissionData) {
+        const GetRoleName = await GetRoleByName(roleName);
+
+        if (GetRoleName?.status === 200) {
+          dispatch(permissions(GetRoleName?.data?.data));
+        }
+      }
+      showToast(updateRole?.data?.message, "success");
+      GetRoles();
+    } else {
+      const errorMessage = updateRole?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+  };
   return (
     <StyledAccordion sx={{ overflowX: "auto" }}>
       <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -136,13 +149,11 @@ export default function RoleAndPermission() {
             Roles & Permissions
           </Typography>
           <span onClick={(e) => e.stopPropagation()}>
-            <MuiModels show="createRole" />
+            <MuiModels show="createRole" GetRoles={GetRoles} />
           </span>
         </div>
       </StyledAccordionSummary>
-      <StyledAccordionDetails
-      // sx={{ width: { xs: "140vw", sm: "auto" } }}
-      >
+      <StyledAccordionDetails>
         <Grid container xs={12} sx={{ marginTop: "1rem" }}>
           <Typography
             sx={{
@@ -162,22 +173,27 @@ export default function RoleAndPermission() {
               marginTop: "1rem",
             }}
           >
-            {cardData?.map((data, index) => (
+            {rolesData?.map((data, index) => (
               <Grid
                 key={index}
                 item
                 xs={12}
-                md={2.8}
+                lg={2.8}
                 sx={{
                   alignItems: "center",
-                  backgroundColor: Colors.BG_LIGHT_GRAY,
+                  backgroundColor:
+                    selectedRole === data?.name
+                      ? Colors.SKY_BLUE
+                      : Colors.BG_LIGHT_GRAY,
+                  color:
+                    selectedRole === data?.name ? Colors.WHITE : Colors.BLACK,
                   borderRadius: "5px",
                   display: "flex",
                   padding: "1rem",
                   margin: "0.5rem",
                   cursor: "pointer",
                 }}
-                // onClick={handleClick}
+                onClick={() => setSelectedRole(data?.name)}
               >
                 <Box>
                   <Typography
@@ -187,7 +203,7 @@ export default function RoleAndPermission() {
                       fontWeight: "700",
                     }}
                   >
-                    {data?.role}
+                    {data?.name}
                   </Typography>
                   <StyledTypography fontWeight="400">
                     Assigned to you and{" "}
@@ -198,31 +214,77 @@ export default function RoleAndPermission() {
                         fontSize: FONT_SIZE_MEDIUM,
                       }}
                     >
-                      {data?.users} Users
+                      Users
                     </span>
                   </StyledTypography>
                 </Box>
-                <Box sx={{ marginLeft: "auto" }}>
-                  <IconButton>
-                    <DifferenceIcon sx={{ fontSize: FONT_SIZE_XXL }} />
-                  </IconButton>
-
-                  <IconButton>
-                    <DeleteForeverOutlinedIcon
-                      sx={{ fontSize: FONT_SIZE_XXL }}
+                {data.name !== "Super User" && (
+                  <Box
+                    sx={{
+                      marginLeft: "auto",
+                      display: "flex",
+                    }}
+                  >
+                    <MuiModels
+                      show="duplicateRole"
+                      GetRoles={GetRoles}
+                      selectedRole={selectedRole}
+                      selectedData={data}
+                      selectedRoleData={selectedRoleData}
                     />
-                  </IconButton>
-                </Box>
+
+                    <Prompt
+                      heading="Delete Template"
+                      text={`Are you sure you want to delete ${data?.name} ?`}
+                      rolesId={rolesId}
+                      roleName={roleName}
+                      GetRoles={GetRoles}
+                      permissionData={permissionData}
+                      iconSize="20px"
+                      // selectedRole={selectedRole}
+                      setSelectedRole={setSelectedRole}
+                      // data={data}
+                    />
+                  </Box>
+                )}
               </Grid>
             ))}
           </Grid>
         </Grid>
-        <hr></hr>
-        <Permission
-          generalPermissionData={generalPermissionData}
-          settingsPermissionData={settingsPermissionData}
-          analyticsPermission={analyticsPermission}
-        />
+        <hr />
+        {selectedRole && (
+          <>
+            <Permission
+              setGeneralData={setGeneralData}
+              setSettingsData={setSettingsData}
+              setAnalyticsData={setAnalyticsData}
+              role={selectedRole}
+              general={generalData}
+              settingsPermissions={settingData}
+              analyticsPermissions={analyticsData}
+            />
+            {selectedRole !== "Super User" && (
+              <Grid
+                container
+                xs={12}
+                sx={{
+                  justifyContent: "flex-end",
+                  marginTop: "1rem",
+                }}
+              >
+                <TextButton
+                  buttonText="UPDATE"
+                  height="2rem"
+                  marginRight="1rem"
+                  width="6rem"
+                  onClick={UpdateRoles}
+                  backgroundColor={Colors.SKY_BLUE}
+                  hoverColor={Colors.SKY_BLUE}
+                />
+              </Grid>
+            )}
+          </>
+        )}
       </StyledAccordionDetails>
     </StyledAccordion>
   );

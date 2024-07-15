@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Grid, Box, Typography } from "@mui/material";
 import TextButton from "./../../components/button";
 import { Colors } from "../../config/default";
+import { CreateRoles } from "../../services/services";
+import { useToast } from "../../toast/toastContext";
 
-function CreateRole({ handleClose }) {
+function CreateRole({ handleClose, GetRoles, show, selectedRoleData }) {
+  const { showToast } = useToast();
+  const [roleName, setRoleName] = useState("");
+
   const inputStyling = {
     backgroundColor: Colors.BG_LIGHT_GRAY,
     marginTop: "1rem",
@@ -17,16 +22,56 @@ function CreateRole({ handleClose }) {
     width: "100%",
     fontFamily: "Nunito",
   };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    if (show === "duplicateRole") {
+      const params = {
+        name: roleName,
+        generalPermissions: selectedRoleData?.generalPermissions,
+        settings: selectedRoleData?.settings,
+        analytics: selectedRoleData?.analytics,
+      };
+      const addRole = await CreateRoles(params);
+      if (addRole?.status === 200) {
+        showToast(addRole?.data?.message, "success");
+        setRoleName("");
+        GetRoles();
+      } else {
+        const errorMessage = addRole?.response?.data?.message;
+        showToast(errorMessage, "error");
+      }
+    } else {
+      const params = { name: roleName };
+      const addRole = await CreateRoles(params);
+      if (addRole?.status === 200) {
+        showToast(addRole?.data?.message, "success");
+        setRoleName();
+        GetRoles();
+      } else {
+        const errorMessage = addRole?.response?.data?.message;
+        showToast(errorMessage, "error");
+      }
+    }
+    handleClose();
+  };
+
   return (
     <Grid container xs={12}>
       <Typography
         sx={{ fontWeight: "500", fontFamily: "Nunito", color: Colors.BLACK }}
       >
-        Cretae Role
+        Create Role
       </Typography>
 
       <Grid item style={{ width: "100%" }}>
-        <input type="text" placeholder="Role Name" style={inputStyling} />
+        <input
+          type="text"
+          placeholder="Role Name"
+          style={inputStyling}
+          value={roleName}
+          onChange={(e) => setRoleName(e.target.value)}
+        />
         <Box
           sx={{
             display: "flex",
@@ -49,6 +94,7 @@ function CreateRole({ handleClose }) {
             width="6rem"
             backgroundColor={Colors.SKY_BLUE}
             hoverColor={Colors.SKY_BLUE}
+            onClick={handleSave}
           />
         </Box>
       </Grid>

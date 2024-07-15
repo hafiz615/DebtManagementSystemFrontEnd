@@ -674,3 +674,57 @@ export const GetAllDebtors = async () => {
     return error;
   }
 };
+
+export const GetAllRoles = async () => {
+  try {
+    return await axios.get(BASE_URL + "/v1/roles/getAllRoles", setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+
+export const CreateRoles = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + "/v1/roles/createRole",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const UpdateRole = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/roles/updateRole/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const DeleteRole = async (id) => {
+  try {
+    return await axios.delete(
+      BASE_URL + `/v1/roles/deleteRole/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetRoleByName = async (name) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/roles/getRoleByName?role=${name}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { sign_In } from "../redux/action/action";
+import { permissions, sign_In } from "../redux/action/action";
 
 import { Typography, TextField, Grid, FormHelperText } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
@@ -19,9 +19,10 @@ import {
   FONT_SIZE_SMALL,
   LoginPage,
 } from "../constants/appConstants";
-import { SignIn } from "../services/services";
+import { GetRoleByName, SignIn } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import Button from "./button";
+import { OneK } from "@mui/icons-material";
 
 function Login() {
   const { showToast } = useToast();
@@ -55,7 +56,17 @@ function Login() {
       dispatch(sign_In(login?.data?.data));
       const token = login?.data?.data?.token;
       localStorage.setItem("token", token);
-      navigate("/home");
+
+      const role = login?.data?.data?.user?.role;
+      const GetRoleName = await GetRoleByName(role);
+
+      if (GetRoleName?.status === 200) {
+        dispatch(permissions(GetRoleName?.data?.data));
+        navigate("/home");
+      } else {
+        const errorMessage = GetRoleName?.response?.data?.message;
+        showToast(errorMessage || GetRoleName?.message, "error");
+      }
     } else {
       const errorMessage = login?.response?.data?.message;
       showToast(errorMessage || login?.message, "error");
