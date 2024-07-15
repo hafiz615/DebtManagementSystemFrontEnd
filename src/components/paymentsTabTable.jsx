@@ -104,6 +104,7 @@ export default function PaymentTabsTable({
   value,
   getHomeData,
   loading,
+  onRowClick,
 }) {
   const { showToast } = useToast();
   const [page, setPage] = useState(0);
@@ -244,7 +245,11 @@ export default function PaymentTabsTable({
                   <StyledTableRow
                     key={id}
                     hover
-                    onClick={(event) => handleClick(event, id)}
+                    onClick={
+                      onRowClick
+                        ? () => onRowClick(row?.caseId)
+                        : (event) => handleClick(event, id)
+                    }
                     role="checkbox"
                     aria-checked={isSelected(id)}
                     tabIndex={-1}
