@@ -2,7 +2,7 @@ import React from "react";
 import { useDrag } from "react-dnd";
 
 import { IconButton, Typography } from "@mui/material";
-import { Difference } from "@mui/icons-material";
+import { Difference, RemoveRedEye } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
@@ -130,7 +130,6 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
         borderRadius: "10px",
         cursor: "pointer",
       }}
-      onClick={() => handleClick(item?._id)}
     >
       <div
         style={{
@@ -165,6 +164,9 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
           />
           <IconButton onClick={handleDuplicate}>
             <Difference sx={{ fontSize: "1rem" }} />
+          </IconButton>
+          <IconButton onClick={() => handleClick(item?._id)}>
+            <RemoveRedEye sx={{ fontSize: "1rem" }} />
           </IconButton>
         </div>
       </div>
