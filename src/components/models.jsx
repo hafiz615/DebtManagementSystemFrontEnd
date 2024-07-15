@@ -23,7 +23,12 @@ import { isEmpty } from "lodash";
 import Delete from "@mui/icons-material/Delete";
 import EditStatus from "./settingsScreen/editStatus";
 import DeleteStatus from "./settingsScreen/deleteStatus";
-import { ExitToApp, MoreHorizOutlined } from "@mui/icons-material";
+import {
+  ExitToApp,
+  MoreHorizOutlined,
+  Email,
+  Difference,
+} from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
 import EditMainPipeline from "./editMainPipeline";
