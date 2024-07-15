@@ -714,3 +714,27 @@ export const GetSummary = async (payload, id) => {
     return error;
   }
 };
+
+export const GetCreditorNames = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/case/getCreditorNames/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetScores = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/case/getScores/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
