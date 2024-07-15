@@ -39,3 +39,10 @@ export const openDrawer = () => ({
 export const closeDrawer = () => ({
   type: CLOSE_DRAWER,
 });
+
+export const SET_ID = "SET_ID";
+
+export const setCaseId = (id) => ({
+  type: SET_ID,
+  payload: id,
+});

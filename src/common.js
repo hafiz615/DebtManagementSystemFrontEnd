@@ -1,4 +1,6 @@
 import { baseUrl, NETWORK_ERROR } from "./constants/appConstants";
+import { jsPDF } from "jspdf";
+
 const BASE_URL = baseUrl();
 function buildApiEndpoint(path) {
   const url = new URL(path, BASE_URL);
@@ -165,3 +167,88 @@ export function removeDuplicates(array) {
     return !duplicate;
   });
 }
+
+export const generatePdfFromApiData = (apiData) => {
+  const doc = new jsPDF();
+  doc.setFontSize(20);
+  doc.text("Financial Report", 15, 15);
+
+  if (!apiData || Object.keys(apiData).length === 0) {
+    doc.setFontSize(14);
+    doc.text("No data available.", 15, 30);
+    doc.save("financial_report.pdf");
+    return;
+  }
+
+  if (apiData["getScores"] && apiData["getScores"]["Scores"]) {
+    doc.setFontSize(16);
+    doc.text("UCC Score:", 15, 30);
+    doc.setFontSize(14);
+    doc.text(`${apiData["getScores"]["Scores"]["UCC Score"]}`, 35, 40);
+  } else {
+    doc.setFontSize(16);
+    doc.text("UCC Score: N/A", 15, 30);
+  }
+
+  if (apiData["getScores"] && apiData["getScores"]["Scores"]) {
+    doc.setFontSize(16);
+    doc.text("defaultRiskScore:", 15, 55);
+    doc.setFontSize(14);
+    doc.text(`${apiData["getScores"]["Scores"]["defaultRiskScore"]}`, 55, 55);
+  } else {
+    doc.setFontSize(16);
+    doc.text("defaultRiskScore: N/A", 15, 55);
+  }
+
+  if (
+    apiData["getScores"] &&
+    apiData["getScores"]["Scores"] &&
+    apiData["getScores"]["Scores"]["Weekly Budget"]
+  ) {
+    doc.setFontSize(16);
+    doc.text("Weekly Budget (LCF Group):", 15, 70);
+    doc.setFontSize(14);
+    doc.text(
+      `${apiData["getScores"]["Scores"]["Weekly Budget"]["LCF Group"]}`,
+      85,
+      70
+    );
+  } else {
+    doc.setFontSize(16);
+    doc.text("Weekly Budget (LCF Group): N/A", 15, 70);
+  }
+
+  if (
+    apiData["getSettlementRange"] &&
+    apiData["getSettlementRange"]["settlement_range"] &&
+    apiData["getSettlementRange"]["settlement_range"]["Everest Businss Funding"]
+  ) {
+    doc.setFontSize(16);
+    doc.text("Settlement Range (Everest Business Funding):", 15, 85);
+    doc.setFontSize(14);
+    const settlementRange =
+      apiData["getSettlementRange"]["settlement_range"][
+        "Everest Businss Funding"
+      ];
+    doc.text(
+      `Recommendation 1: ${settlementRange["recommendation 1"][0]} - ${settlementRange["recommendation 1"][1]}`,
+      35,
+      95
+    );
+    doc.text(
+      `Recommendation 2: ${settlementRange["recommendation 2"][0]} - ${settlementRange["recommendation 2"][1]}`,
+      35,
+      105
+    );
+    doc.text(
+      `Recommendation 3: ${settlementRange["recommendation 3"][0]} - ${settlementRange["recommendation 3"][1]}`,
+      35,
+      115
+    );
+  } else {
+    doc.setFontSize(16);
+    doc.text("Settlement Range (Everest Business Funding): N/A", 15, 85);
+  }
+
+  doc.save("financial_report.pdf");
+};

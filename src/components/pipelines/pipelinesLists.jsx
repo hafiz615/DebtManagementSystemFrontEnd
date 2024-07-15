@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ScrollbarStyles from "../customScroll";
 import { Grid } from "@mui/material";
 import ListTable from "../listTable";
+import { useNavigate } from "react-router-dom";
 
 export default function PipelinesLists({
   data,
@@ -24,17 +25,20 @@ export default function PipelinesLists({
   ];
 
   useEffect(() => {
-    const allCases = Object.values(data).flatMap((test) =>
-      test.cases.map((c) => ({
-        lead: c?.debtor?.basicInformation?.fullName,
-        totalDebt: `$${c?.totalDebt}`,
-        confidence: c?.confidence,
-        closeDate: c?.closeDate || "-",
-        status: c?.status,
-        user: c?.caseOwner,
-        time: c?.updatedAt,
-      }))
-    );
+    const allCases =
+      data &&
+      Object?.values(data)?.flatMap((test) =>
+        test?.cases?.map((c) => ({
+          id: c?._id,
+          lead: c?.debtor?.basicInformation?.fullName,
+          totalDebt: `$${c?.totalDebt}`,
+          confidence: c?.confidence,
+          closeDate: c?.closeDate || "-",
+          status: c?.status,
+          user: c?.caseOwner,
+          time: c?.updatedAt,
+        }))
+      );
     setCases(allCases);
   }, [data]);
 
@@ -93,6 +97,12 @@ export default function PipelinesLists({
     return true;
   });
 
+  const navigate = useNavigate();
+  const handleRowClick = (id) => {
+    localStorage.setItem("route", "all-cases");
+    navigate(`/all-cases/${id}`);
+  };
+
   return (
     <Grid
       container
@@ -109,7 +119,10 @@ export default function PipelinesLists({
       <Grid item xs={12} sx={{ marginTop: "1rem" }}>
         <ListTable
           headerData={headers}
-          data={filteredCasesByDate.map(({ time, ...rest }) => rest)}
+          onRowClick={handleRowClick}
+          data={
+            data ? filteredCasesByDate?.map(({ time, ...rest }) => rest) : []
+          }
         />
       </Grid>
     </Grid>

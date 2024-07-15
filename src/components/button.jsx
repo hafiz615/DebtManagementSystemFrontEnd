@@ -47,6 +47,7 @@ function TextButton({
         textTransform: "none",
         "&:hover": {
           background: hoverColor || Colors.SKY_BLUE,
+          boxShadow: boxShadow,
           border: "none",
         },
       }}

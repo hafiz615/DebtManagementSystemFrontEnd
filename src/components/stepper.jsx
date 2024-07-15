@@ -25,6 +25,7 @@ import PreviewDetails from "./caseCreation/previewDetails";
 import FileUploadComponent from "./caseCreation/uploadFiles";
 import {
   CreateCase,
+  GetAiToken,
   GetCreditorSearch,
   GetDebtorSearch,
   UploadFiles,
@@ -168,6 +169,8 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   //upload files
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [files, setFiles] = useState([]);
+  const [extractFiles, setExtractFiles] = useState("Extract Files");
+
   //Search Debtor and Creditor State
   const [debtorSearchText, setDebtorSearchText] = useState("");
   const [creditorSearchText, setCreditorSearchText] = useState("");
@@ -499,16 +502,30 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     setCreditorSearchText("");
   };
 
-  //Api call
   const handleNext = async () => {
     window.scrollTo(0, 0);
     if (activeStep === 0) {
       setLoading(true);
-      const UploadAiData = await UploadFilesAi(uploadedFiles);
-      if (UploadAiData?.status === 200) {
-        handleUploadData(UploadAiData?.data);
+
+      // const resAiToken = await GetAiToken();
+      // const aiToken = resAiToken?.data?.data?.auth_token;
+      // localStorage.setItem("aiToken", aiToken);
+
+      // if (resAiToken?.status === 200) {
+
+      if (extractFiles === "Extract Files") {
+        const filteredFiles = uploadedFiles?.filter((path) =>
+          /(mca|mcas)/i.test(path?.path)
+        );
+        const UploadAiData = await UploadFilesAi(filteredFiles);
+
+        if (UploadAiData?.status === 200) {
+          handleUploadData(UploadAiData?.data);
+        }
       }
+
       setLoading(true);
+      // }
     }
     if (activeStep === steps.length - 1) {
       setLoading(true);
@@ -534,6 +551,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         return obj;
       });
 
+      // if (extractFiles === "Upload All Files") {
       const uploadFile = await UploadFiles(uploadedFiles);
       if (uploadFile?.status === 200) {
         const params = {
@@ -693,6 +711,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       } else {
         showToast(uploadFile?.response?.data?.message, "error");
       }
+      // }
     } else {
       let newSkipped = skipped;
       if (isStepSkipped(activeStep)) {
@@ -834,12 +853,16 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
 
         <React.Fragment>
           {activeStep === 0 ? (
-            <FileUploadComponent
-              uploadedFiles={uploadedFiles}
-              setUploadedFiles={setUploadedFiles}
-              files={files}
-              setFiles={setFiles}
-            />
+            <>
+              <FileUploadComponent
+                uploadedFiles={uploadedFiles}
+                setUploadedFiles={setUploadedFiles}
+                files={files}
+                setFiles={setFiles}
+                extractFiles={extractFiles}
+                setExtractFiles={setExtractFiles}
+              />
+            </>
           ) : activeStep === 1 ? (
             <DebtorDetails
               debtorOwnDetails={debtorOwnDetails}

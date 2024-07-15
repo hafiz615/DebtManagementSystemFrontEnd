@@ -75,6 +75,10 @@ export default function AccordionUsage({
   }
 
   const navigate = useNavigate();
+  const handleRowClick = (id) => {
+    localStorage.setItem("route", "all-cases");
+    navigate(`/all-cases/${id}`);
+  };
 
   return (
     <Accordion
@@ -170,6 +174,7 @@ export default function AccordionUsage({
 
       <AccordionDetails>
         <ListTable
+          onPaymentRowClick={handleRowClick}
           currentPage={currentPage}
           totalPages={totalPages}
           setCurrentPage={setCurrentPage}

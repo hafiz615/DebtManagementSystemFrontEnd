@@ -111,13 +111,13 @@ export default function PipelinesBoards({
               fontFamily: "Nunito",
               fontSize: FONT_SIZE_LARGE,
               width: "100%",
-              height: "100%",
+              height: "80%",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            No Status Exists For This Pipeline
+            No Data
           </p>
         ) : (
           filteredColumns?.map((columnId) => (

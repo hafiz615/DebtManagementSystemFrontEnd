@@ -151,15 +151,18 @@ export default function Prompt({
     }
     setLoading(false);
   };
-  const handleClickOpen = () => {
+  const handleClickOpen = (event) => {
+    event.stopPropagation();
     setOpen(true);
   };
 
-  const handleClose = () => {
+  const handleClose = (event) => {
+    event.stopPropagation();
     setOpen(false);
   };
 
-  const handleConfirm = async () => {
+  const handleConfirm = async (event) => {
+    event.stopPropagation();
     setLoading(true);
     if (handleRetry) {
       await handleRetry(item);
@@ -183,7 +186,10 @@ export default function Prompt({
 
   return (
     <React.Fragment>
-      <IconButton onClick={handleClickOpen} disabled={disabled}>
+      <IconButton
+        onClick={(event) => handleClickOpen(event)}
+        disabled={disabled}
+      >
         {show ? (
           <Replay
             sx={{
@@ -222,7 +228,7 @@ export default function Prompt({
 
       <StyledDialog
         open={open}
-        onClose={handleClose}
+        onClose={(event) => handleClose(event)}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -237,7 +243,7 @@ export default function Prompt({
         >
           <TextButton
             buttonText="Cancel"
-            onClick={handleClose}
+            onClick={(event) => handleClose(event)}
             backgroundColor={Colors.ORANGE_COLOR}
             hoverColor={Colors.ORANGE_COLOR}
             paddingLeft="2rem"
@@ -249,7 +255,7 @@ export default function Prompt({
           <TextButton
             loading={loading}
             buttonText="Confirm"
-            onClick={handleConfirm}
+            onClick={(event) => handleConfirm(event)}
             backgroundColor={Colors.SKY_BLUE}
             hoverColor={Colors.SKY_BLUE}
             paddingLeft="2rem"

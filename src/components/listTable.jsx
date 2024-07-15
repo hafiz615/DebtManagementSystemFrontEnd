@@ -87,6 +87,7 @@ export default function ListTable({
   arrayName,
   getHomeData,
   loading,
+  onPaymentRowClick,
 }) {
   const { showToast } = useToast();
   const [page, setPage] = React.useState(0);
@@ -227,7 +228,11 @@ export default function ListTable({
                   <StyledTableRow
                     key={row?.id}
                     onClick={() =>
-                      onRowClick ? onRowClick(row?.id) : undefined
+                      onRowClick
+                        ? onRowClick(row?.id)
+                        : onPaymentRowClick
+                        ? onPaymentRowClick(row?.caseId)
+                        : undefined
                     }
                   >
                     {Object.entries(row)
@@ -316,6 +321,7 @@ export default function ListTable({
                         sx={{
                           display: "flex",
                           alignItems: "center",
+                          zIndex: 999,
                         }}
                       >
                         <Prompt
@@ -381,7 +387,7 @@ export default function ListTable({
           </div>
         ) : (
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
+            rowsPerPageOptions={[5]}
             component="div"
             count={data?.length}
             rowsPerPage={rowsPerPage}
