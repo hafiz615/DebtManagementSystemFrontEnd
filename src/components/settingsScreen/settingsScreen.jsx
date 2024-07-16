@@ -11,6 +11,7 @@ import { PAGE_HEIGHT } from "../../constants/appConstants";
 import ScrollbarStyles from "../customScroll";
 import CaseStatuses from "./caseStatuses";
 import PipelineAccordion from "./pipelineAccordion";
+import RoleAndPermission from "./roleAndPermission";
 
 export default function SettingsScreen() {
   const [failedAuthorizations, setfailedAuthorizations] = useState({
@@ -216,6 +217,7 @@ export default function SettingsScreen() {
         <PasswordAccordion />
         <CaseStatuses />
         <PipelineAccordion />
+        <RoleAndPermission />
       </Grid>
     </Grid>
   );

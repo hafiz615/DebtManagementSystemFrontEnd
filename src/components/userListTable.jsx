@@ -92,6 +92,9 @@ export default function UserListTable({
   loading,
 }) {
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
+  const generalPermissions = useSelector(
+    (state) => state?.permissions?.permissions?.generalPermissions
+  );
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -195,13 +198,15 @@ export default function UserListTable({
                           GetUsers={GetUsers}
                           id={row?.id}
                         />
-                        <Prompt
-                          heading="Delete User"
-                          text={`Are you sure you want to delete ${row?.email} ?`}
-                          id={row?.id}
-                          handleUserDelete={handleUserDelete}
-                          GetUsers={GetUsers}
-                        />
+                        {generalPermissions?.deleteUser && (
+                          <Prompt
+                            heading="Delete User"
+                            text={`Are you sure you want to delete ${row?.email} ?`}
+                            id={row?.id}
+                            handleUserDelete={handleUserDelete}
+                            GetUsers={GetUsers}
+                          />
+                        )}
                       </StyledTableCell>
                     )}
                   </StyledTableRow>
