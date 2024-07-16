@@ -4,6 +4,7 @@ import TextButton from "./../../components/button";
 import { Colors } from "../../config/default";
 import { CreateRoles } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
+import { FONT_FAMILY, FONT_WEIGHT_MEDIUM } from "../../constants/appConstants";
 
 function CreateRole({ handleClose, GetRoles, show, selectedRoleData }) {
   const { showToast } = useToast();
@@ -59,7 +60,11 @@ function CreateRole({ handleClose, GetRoles, show, selectedRoleData }) {
   return (
     <Grid container xs={12}>
       <Typography
-        sx={{ fontWeight: "500", fontFamily: "Nunito", color: Colors.BLACK }}
+        sx={{
+          fontWeight: FONT_WEIGHT_MEDIUM,
+          fontFamily: FONT_FAMILY,
+          color: Colors.BLACK,
+        }}
       >
         Create Role
       </Typography>

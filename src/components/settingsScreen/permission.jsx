@@ -1,6 +1,12 @@
 import React from "react";
 import { Typography, Grid, Box } from "@mui/material";
-import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../../constants/appConstants";
+import {
+  FONT_FAMILY,
+  FONT_SIZE_LARGE,
+  FONT_SIZE_XL,
+  FONT_WEIGHT_HEADING,
+  FONT_WEIGHT_MEDIUM,
+} from "../../constants/appConstants";
 import { Colors } from "../../config/default";
 import BasicSwitches from "./basicSwitches";
 
@@ -36,8 +42,8 @@ export default function Permission({
       <Typography
         sx={{
           fontSize: FONT_SIZE_XL,
-          fontFamily: "Nunito",
-          fontWeight: "700",
+          fontFamily: FONT_FAMILY,
+          fontWeight: FONT_WEIGHT_HEADING,
         }}
       >
         {role} Permissions
@@ -47,8 +53,8 @@ export default function Permission({
         <Typography
           sx={{
             fontSize: FONT_SIZE_XL,
-            fontFamily: "Nunito",
-            fontWeight: "700",
+            fontFamily: FONT_FAMILY,
+            fontWeight: FONT_WEIGHT_HEADING,
           }}
         >
           General Permissions
@@ -73,8 +79,8 @@ export default function Permission({
                 <Box>
                   <Typography
                     sx={{
-                      fontFamily: "Nunito",
-                      fontWeight: "500",
+                      fontFamily: FONT_FAMILY,
+                      fontWeight: FONT_WEIGHT_MEDIUM,
                       fontSize: FONT_SIZE_LARGE,
                     }}
                   >
@@ -96,8 +102,8 @@ export default function Permission({
         <Typography
           sx={{
             fontSize: FONT_SIZE_XL,
-            fontFamily: "Nunito",
-            fontWeight: "700",
+            fontFamily: FONT_FAMILY,
+            fontWeight: FONT_WEIGHT_HEADING,
           }}
         >
           Settings Permissions
@@ -122,8 +128,8 @@ export default function Permission({
                 <Box>
                   <Typography
                     sx={{
-                      fontFamily: "Nunito",
-                      fontWeight: "500",
+                      fontFamily: FONT_FAMILY,
+                      fontWeight: FONT_WEIGHT_MEDIUM,
                       fontSize: FONT_SIZE_LARGE,
                     }}
                   >
@@ -145,8 +151,8 @@ export default function Permission({
         <Typography
           sx={{
             fontSize: FONT_SIZE_XL,
-            fontFamily: "Nunito",
-            fontWeight: "700",
+            fontFamily: FONT_FAMILY,
+            fontWeight: FONT_WEIGHT_HEADING,
           }}
         >
           Analytics Permissions
@@ -172,8 +178,8 @@ export default function Permission({
                   <Box>
                     <Typography
                       sx={{
-                        fontFamily: "Nunito",
-                        fontWeight: "500",
+                        fontFamily: FONT_FAMILY,
+                        fontWeight: FONT_WEIGHT_MEDIUM,
                         fontSize: FONT_SIZE_LARGE,
                       }}
                     >

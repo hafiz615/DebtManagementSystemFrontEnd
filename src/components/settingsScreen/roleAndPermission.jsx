@@ -9,11 +9,14 @@ import {
   styled,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-
-// import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import Prompt from "../prompt";
 
-import { FONT_SIZE_MEDIUM, FONT_SIZE_XL } from "../../constants/appConstants";
+import {
+  FONT_FAMILY,
+  FONT_SIZE_MEDIUM,
+  FONT_SIZE_XL,
+  FONT_WEIGHT_HEADING,
+} from "../../constants/appConstants";
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import Permission from "./permission";
@@ -142,8 +145,8 @@ export default function RoleAndPermission() {
           <Typography
             sx={{
               fontSize: FONT_SIZE_XL,
-              fontFamily: "Nunito",
-              fontWeight: "700",
+              fontFamily: FONT_FAMILY,
+              fontWeight: FONT_WEIGHT_HEADING,
             }}
           >
             Roles & Permissions
@@ -158,8 +161,8 @@ export default function RoleAndPermission() {
           <Typography
             sx={{
               fontSize: FONT_SIZE_XL,
-              fontFamily: "Nunito",
-              fontWeight: "700",
+              fontFamily: FONT_FAMILY,
+              fontWeight: FONT_WEIGHT_HEADING,
             }}
           >
             User Roles
@@ -199,8 +202,8 @@ export default function RoleAndPermission() {
                   <Typography
                     sx={{
                       fontSize: FONT_SIZE_XL,
-                      fontFamily: "Nunito",
-                      fontWeight: "700",
+                      fontFamily: FONT_FAMILY,
+                      fontWeight: FONT_WEIGHT_HEADING,
                     }}
                   >
                     {data?.name}
@@ -209,8 +212,8 @@ export default function RoleAndPermission() {
                     Assigned to you and{" "}
                     <span
                       style={{
-                        fontWeight: "700",
-                        fontFamily: "Nunito",
+                        fontFamily: FONT_FAMILY,
+                        fontWeight: FONT_WEIGHT_HEADING,
                         fontSize: FONT_SIZE_MEDIUM,
                       }}
                     >

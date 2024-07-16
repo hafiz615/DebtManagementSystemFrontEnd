@@ -71,15 +71,15 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   backgroundColor: Colors.NAVY_BLUE,
 }));
 
-const icons = [
-  <Home />,
-  <AccountCircle />,
-  <People />,
-  <Handyman />,
-  <Settings />,
-  <Group />,
-  <Window />,
-];
+// const icons = [
+//   <Home />,
+//   <AccountCircle />,
+//   <People />,
+//   <Handyman />,
+//   <Settings />,
+//   <Group />,
+//   <Window />,
+// ];
 
 export default function PersistentDrawerLeft({ children }) {
   const generalPermissions = useSelector(
