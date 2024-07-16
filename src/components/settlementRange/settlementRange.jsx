@@ -18,7 +18,7 @@ import {
 } from "../../constants/appConstants";
 import { Colors } from "../../config/default";
 import ScrollbarStyles from "../customScroll";
-import { Download, Send } from "@mui/icons-material";
+import { Download, PeopleAlt, Send } from "@mui/icons-material";
 import TextButton from "../button";
 import SettlementCards from "./settlementCards";
 import {
@@ -30,6 +30,7 @@ import {
 import { useToast } from "../../toast/toastContext";
 import { generatePdfFromApiData } from "../../common";
 import MuiModels from "../models";
+import CheckboxAutocomplete from "../checkboxAutocomplete";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -99,8 +100,8 @@ export default function SettlementRange() {
   const [loading, setLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
   const [apiData, setApiData] = useState(null);
-  const [creditorId, setCreditorId] = useState("");
   const [creditorNames, setCreditorNames] = useState([]);
+  const [creditorSelect, setCreditorSelect] = useState([]);
   const [scores, setScores] = useState(null);
   const [justifications, setJustifications] = useState({
     justifications1: "",
@@ -125,28 +126,18 @@ export default function SettlementRange() {
     }
   };
 
-  const handleClick = () => {
+  const handleClick = async () => {
     setTableLoading(true);
     const payload = {
       financialHealthSummary: "",
       humanInput: inputValue,
     };
     setInputValue("");
-    const resSummary = GetSummary(payload, caseId);
+    const resSummary = await GetSummary(payload, caseId);
     if (resSummary?.status === 200) {
       setTableLoading(false);
-      GetAllRanges();
-    }
-  };
-
-  const GetAllRanges = async () => {
-    if (caseId) {
-      setLoading(true);
       const resRanges = await GetSettlementRange("", caseId);
       if (resRanges?.status === 200) {
-        setLoading(false);
-        setApiData(resRanges?.data?.data);
-        setCreditorId(resRanges?.data?.data?.creditors_id);
         showToast(resRanges?.data?.message, "success");
         setJustifications({
           justifications1:
@@ -156,20 +147,72 @@ export default function SettlementRange() {
           justifications3:
             resRanges?.data?.data?.justifications?.justification_3 ?? "",
         });
-        const resCreditors = GetCreditorNames("", caseId);
-        if (resCreditors?.status === 200) {
-          setCreditorNames(resCreditors?.data?.data);
-          if (creditorNames) {
-            const params = {
-              creditorNames: creditorNames,
-            };
-            const resScores = GetScores(params, caseId);
-            if (resScores?.status === 200) {
-              setScores(resScores?.data?.data);
-              showToast(resScores?.data?.message, "success");
+      }
+    }
+  };
+
+  const GetAllRanges = async () => {
+    if (caseId) {
+      setLoading(true);
+      const resCreditors = await GetCreditorNames("", caseId);
+      if (resCreditors?.status === 200) {
+        const allCreditors = resCreditors?.data?.data;
+        setCreditorNames(allCreditors);
+        if (allCreditors?.length === 0) {
+          showToast("Failed To Fetch Creditors", "success");
+        }
+        if (allCreditors?.length > 0) {
+          showToast("Creditors Fetched Successfully", "success");
+          const params = {
+            creditorNames: allCreditors,
+          };
+          showToast("Fetching Scores...", "success");
+          const resScores = await GetScores(params, caseId);
+          if (resScores?.status === 200) {
+            setScores(resScores?.data?.data);
+            showToast(resScores?.data?.message, "success");
+            const resRanges = await GetSettlementRange("", caseId);
+            if (resRanges?.status === 200) {
+              setLoading(false);
+              setApiData(resRanges?.data?.data);
+              showToast(resRanges?.data?.message, "success");
+              setJustifications({
+                justifications1:
+                  resRanges?.data?.data?.justifications?.justification_1 ?? "",
+                justifications2:
+                  resRanges?.data?.data?.justifications?.justification_2 ?? "",
+                justifications3:
+                  resRanges?.data?.data?.justifications?.justification_3 ?? "",
+              });
             }
           }
         }
+      }
+    }
+  };
+
+  const handleUpdate = async () => {
+    const params = {
+      creditorNames: creditorSelect,
+    };
+    const resScores = await GetScores(params, caseId);
+    setLoading(true);
+    if (resScores?.status === 200) {
+      setScores(resScores?.data?.data);
+      showToast(resScores?.data?.message, "success");
+      const resRanges = await GetSettlementRange("", caseId);
+      if (resRanges?.status === 200) {
+        setLoading(false);
+        setApiData(resRanges?.data?.data);
+        showToast(resRanges?.data?.message, "success");
+        setJustifications({
+          justifications1:
+            resRanges?.data?.data?.justifications?.justification_1 ?? "",
+          justifications2:
+            resRanges?.data?.data?.justifications?.justification_2 ?? "",
+          justifications3:
+            resRanges?.data?.data?.justifications?.justification_3 ?? "",
+        });
       }
     }
   };
@@ -246,7 +289,7 @@ export default function SettlementRange() {
             >
               Settlement Range
             </Typography>
-            <div style={{ display: "flex" }}>
+            <div style={{ display: "flex", gap: "10px" }}>
               <MuiModels show="sendEmail" />
               <TextButton
                 disabled={!apiData}
@@ -266,6 +309,26 @@ export default function SettlementRange() {
                 }
                 onClick={handleGeneratePdf}
               />
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <PeopleAlt
+                  sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }}
+                />
+
+                <CheckboxAutocomplete
+                  options={creditorNames}
+                  multiSelect={creditorSelect}
+                  setMultiselect={setCreditorSelect}
+                  placeholder="Creditors"
+                  width="8rem"
+                  update={true}
+                  handleUpdate={handleUpdate}
+                />
+              </div>
             </div>
           </Grid>
           <Grid

@@ -6,10 +6,14 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CloseIcon from "@mui/icons-material/Close";
 import { Colors } from "../config/default";
-import { FONT_SIZE_LARGE, FONT_SIZE_MEDIUM } from "../constants/appConstants";
+import { FONT_SIZE_LARGE } from "../constants/appConstants";
+import TextButton from "./button";
+import { styled } from "@mui/material/styles";
 
 const icon = <CheckBoxOutlineBlankIcon />;
 const checkedIcon = <CheckBoxIcon />;
+
+const StyledListbox = styled("ul")(({ theme }) => ({}));
 
 export default function CheckboxAutocomplete({
   options,
@@ -17,18 +21,37 @@ export default function CheckboxAutocomplete({
   setMultiselect,
   placeholder,
   width,
+  update,
+  handleUpdate,
 }) {
   return (
     <Autocomplete
       multiple
       id="checkboxes-tags-demo"
       options={options}
-      limitTags={-1}
       disableCloseOnSelect
       value={multiSelect}
       onChange={(event, newValue) => {
         setMultiselect(newValue);
       }}
+      ListboxComponent={(props) => (
+        <StyledListbox {...props}>
+          {props.children}
+          {update && (
+            <li>
+              <TextButton
+                disabled={multiSelect?.length === 0}
+                buttonText="Update"
+                height="2rem"
+                width="100%"
+                onClick={handleUpdate}
+                backgroundColor={Colors.SKY_BLUE}
+                hoverColor={Colors.SKY_BLUE}
+              />
+            </li>
+          )}
+        </StyledListbox>
+      )}
       renderOption={(props, option, { selected }) => {
         const { key, ...optionProps } = props;
         return (
