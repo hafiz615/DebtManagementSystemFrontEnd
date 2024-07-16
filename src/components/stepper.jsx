@@ -514,10 +514,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       // if (resAiToken?.status === 200) {
 
       if (extractFiles === "Extract Files") {
-        const filteredFiles = uploadedFiles?.filter((path) =>
-          /(mca|mcas)/i.test(path?.path)
-        );
-        const UploadAiData = await UploadFilesAi(filteredFiles);
+        const UploadAiData = await UploadFilesAi(uploadedFiles);
 
         if (UploadAiData?.status === 200) {
           handleUploadData(UploadAiData?.data);
