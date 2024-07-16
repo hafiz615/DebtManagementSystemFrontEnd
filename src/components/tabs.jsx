@@ -51,6 +51,9 @@ const columns = [
 ];
 export default function CustomizedTabs() {
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
+  const generalPermissions = useSelector(
+    (state) => state?.permissions?.permissions?.generalPermissions
+  );
 
   const [rows, setRows] = useState([]);
   const [userArray, setUserArray] = useState([]);
@@ -228,13 +231,14 @@ export default function CustomizedTabs() {
             gap: "10px",
           }}
         >
-          {role === "Admin" && (
+          {generalPermissions?.addNewUser && role === "Admin" && (
             <BasicModal
               modelButton="ADD USERS"
               modalType="add"
               GetUsers={GetUsers}
             />
           )}
+
           <Box sx={{ display: "flex" }}>
             <SearchBar
               searchCheck={true}

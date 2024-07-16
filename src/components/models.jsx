@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { Box, Button, Modal, IconButton } from "@mui/material";
 
@@ -23,7 +23,12 @@ import { isEmpty } from "lodash";
 import Delete from "@mui/icons-material/Delete";
 import EditStatus from "./settingsScreen/editStatus";
 import DeleteStatus from "./settingsScreen/deleteStatus";
-import { Email, ExitToApp, MoreHorizOutlined } from "@mui/icons-material";
+import {
+  ExitToApp,
+  MoreHorizOutlined,
+  Email,
+  Difference,
+} from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
 import EditMainPipeline from "./editMainPipeline";
@@ -32,6 +37,7 @@ import EditPipelineCase from "./pipelines/editPipelineCase";
 import ExportPipeline from "./pipelines/exportPipeline";
 import { FONT_SIZE_XL } from "../constants/appConstants";
 import SendEmail from "./sendEmail";
+import CreateRole from "./settingsScreen/createRole";
 
 export default function MuiModels({
   buttonName,
@@ -64,6 +70,11 @@ export default function MuiModels({
   loading,
   setLoading,
   GetAllPipelineDetail,
+  GetRoles,
+  selectedRole,
+  selectedData,
+  rolesId,
+  selectedRoleData,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -194,6 +205,23 @@ export default function MuiModels({
             }}
           />
         </IconButton>
+      ) : show === "duplicateRole" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <Difference
+            sx={{
+              fontSize: "20px",
+              color:
+                selectedRole === selectedData?.name
+                  ? Colors.WHITE
+                  : Colors.DARK_GRAY,
+              cursor: "pointer",
+            }}
+          />
+        </IconButton>
       ) : show === "deleteStatus" ? (
         <IconButton
           onClick={() => {
@@ -247,6 +275,16 @@ export default function MuiModels({
             }}
           />
         </IconButton>
+      ) : show === "createRole" ? (
+        <TextButton
+          buttonText={extraSmallScreen ? <Add /> : "Create Role"}
+          height={extraSmallScreen ? "2rem" : "2.5rem"}
+          width={extraSmallScreen ? "2rem" : "10rem"}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+          onClick={handleOpen}
+          startIcon={extraSmallScreen ? "" : <Add />}
+        />
       ) : show === "addPipeline" ? (
         <TextButton
           buttonText={extraSmallScreen ? <Add /> : "Add Pipelines"}
@@ -450,6 +488,15 @@ export default function MuiModels({
               item={item}
               GetAllPipelineDetail={GetAllPipelineDetail}
               handleClose={handleClose}
+            />
+          ) : show === "createRole" ? (
+            <CreateRole handleClose={handleClose} GetRoles={GetRoles} />
+          ) : show === "duplicateRole" ? (
+            <CreateRole
+              handleClose={handleClose}
+              GetRoles={GetRoles}
+              selectedRoleData={selectedRoleData}
+              show={show}
             />
           ) : show === "exportPipeline" ? (
             <ExportPipeline handleClose={handleClose} data={data} />

@@ -18,6 +18,16 @@ export const get_payments = (text) => async (dispatch) => {
     return err;
   }
 };
+export const permissions = (text) => async (dispatch) => {
+  try {
+    dispatch({
+      type: "permissions",
+      payload: text,
+    });
+  } catch (err) {
+    return err;
+  }
+};
 
 export const OPEN_DRAWER = "OPEN_DRAWER";
 export const CLOSE_DRAWER = "CLOSE_DRAWER";

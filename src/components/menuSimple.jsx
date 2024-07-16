@@ -10,8 +10,12 @@ import { Modal } from "@mui/material";
 
 import { Colors } from "../config/default";
 import UploadCsv from "./uploadCsv";
+import { useSelector } from "react-redux";
 
 export default function BasicMenu({ openState, backgroundColor, width }) {
+  const generalPermissions = useSelector(
+    (state) => state?.permissions?.permissions?.generalPermissions
+  );
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
@@ -109,21 +113,25 @@ export default function BasicMenu({ openState, backgroundColor, width }) {
           "aria-labelledby": "basic-button",
         }}
       >
-        <MenuItem
-          sx={{ width: "11.9rem" }}
-          onClick={() =>
-            handleMenuItemClick("Create New Case", "/case-details")
-          }
-        >
-          Create New Case
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            setIsModalOpen(true);
-          }}
-        >
-          Import
-        </MenuItem>
+        {generalPermissions?.createNewCase && (
+          <MenuItem
+            sx={{ width: "11.9rem" }}
+            onClick={() =>
+              handleMenuItemClick("Create New Case", "/case-details")
+            }
+          >
+            Create New Case
+          </MenuItem>
+        )}
+        {generalPermissions?.importBulkCases && (
+          <MenuItem
+            onClick={() => {
+              setIsModalOpen(true);
+            }}
+          >
+            Import
+          </MenuItem>
+        )}
         <Modal open={isModalOpen} onClose={handleModalClose}>
           <UploadCsv handleModalClose={handleModalClose} />
         </Modal>
