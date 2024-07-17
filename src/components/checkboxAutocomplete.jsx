@@ -24,12 +24,25 @@ export default function CheckboxAutocomplete({
   update,
   handleUpdate,
 }) {
+  const isComplexData =
+    options.length > 0 &&
+    typeof options[0] === "object" &&
+    "creditorId" in options[0];
+
   return (
     <Autocomplete
       multiple
       id="checkboxes-tags-demo"
       options={options}
       disableCloseOnSelect
+      getOptionLabel={(option) =>
+        isComplexData ? option.creditorName : option
+      }
+      isOptionEqualToValue={(option, value) =>
+        isComplexData
+          ? option.creditorId === value.creditorId
+          : option === value
+      }
       value={multiSelect}
       onChange={(event, newValue) => {
         setMultiselect(newValue);
@@ -73,7 +86,9 @@ export default function CheckboxAutocomplete({
                 },
               }}
             />
-            <span style={{ fontSize: FONT_SIZE_LARGE }}>{option}</span>
+            <span style={{ fontSize: FONT_SIZE_LARGE }}>
+              {isComplexData ? option.creditorName : option}
+            </span>
           </li>
         );
       }}

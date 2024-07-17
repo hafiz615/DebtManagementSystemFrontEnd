@@ -10,6 +10,7 @@ import paymentsReducer from "../reducers/paymentsReducer";
 import drawerReducer from "../reducers/drawerReducer";
 import permissionReducer from "../reducers/permissionReducer";
 import caseIdReducer from "../reducers/caseIdReducer";
+import caseCreditorIdReducer from "../reducers/caseCreditorIdReducer";
 
 const middleware = [thunk];
 
@@ -19,6 +20,7 @@ const Reducer = combineReducers({
   drawer: drawerReducer,
   permissions: permissionReducer,
   caseId: caseIdReducer,
+  creditorCaseId: caseCreditorIdReducer,
 });
 const persistConfig = {
   key: "root",
