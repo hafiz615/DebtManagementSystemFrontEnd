@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { useSelector } from "react-redux";
 import {
   Grid,
@@ -85,7 +86,7 @@ const commonTextStyles = {
 };
 
 const GridItem = ({ title, value }) => (
-  <Grid xs={12} sm={5.8} md={3.8} lg={2.8} container sx={commonStyles}>
+  <Grid item xs={12} sm={5.8} md={3.8} lg={2.8} container sx={commonStyles}>
     <Typography sx={commonTextStyles}>{title}</Typography>
     <Typography sx={{ ...commonTextStyles, color: Colors.SKY_BLUE }}>
       {value}
@@ -96,11 +97,13 @@ const GridItem = ({ title, value }) => (
 export default function SettlementRange() {
   const { showToast } = useToast();
   const [value, setValue] = useState(0);
+  const [tabValue, setTabValue] = useState(0);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
   const [apiData, setApiData] = useState(null);
   const [creditorNames, setCreditorNames] = useState([]);
+  const [allCreditorNames, setAllCreditorsNames] = useState([]);
   const [creditorSelect, setCreditorSelect] = useState([]);
   const [scores, setScores] = useState(null);
   const [justifications, setJustifications] = useState({
@@ -110,6 +113,8 @@ export default function SettlementRange() {
   });
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const caseId = useSelector((state) => state.caseId.id);
+  const initialCreditorId = useSelector((state) => state.creditorCaseId.id);
+  const drawerOpen = useSelector((state) => state.drawer.open);
   const { AUTHORITY_TEXT } = UserListPage;
   const extraSmallScreen = useMediaQuery(
     "(min-width:300px) and (max-width:900px)"
@@ -117,6 +122,10 @@ export default function SettlementRange() {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
   };
 
   const handleInputChange = (e) => {
@@ -141,11 +150,11 @@ export default function SettlementRange() {
         showToast(resRanges?.data?.message, "success");
         setJustifications({
           justifications1:
-            resRanges?.data?.data?.justifications?.justification_1 ?? "",
+            resRanges?.data?.data?.justifications?.justification_gemini ?? "",
           justifications2:
-            resRanges?.data?.data?.justifications?.justification_2 ?? "",
+            resRanges?.data?.data?.justifications?.justification_gpt4_o ?? "",
           justifications3:
-            resRanges?.data?.data?.justifications?.justification_3 ?? "",
+            resRanges?.data?.data?.justifications?.justification_llama ?? "",
         });
       }
     }
@@ -158,32 +167,49 @@ export default function SettlementRange() {
       if (resCreditors?.status === 200) {
         const allCreditors = resCreditors?.data?.data;
         setCreditorNames(allCreditors);
-        if (allCreditors?.length === 0) {
-          showToast("Failed To Fetch Creditors", "success");
-        }
-        if (allCreditors?.length > 0) {
+        const creditorAccountTitles = allCreditors?.map(
+          (item) => item.creditorAccountTitle
+        );
+
+        setAllCreditorsNames(creditorAccountTitles);
+        if (!allCreditors) {
+          showToast(
+            "Recheck And Confirm That Creditor Account Title Is Matching As On Statement And Not Null",
+            "error"
+          );
+          setLoading(false);
+        } else if (allCreditors) {
           showToast("Creditors Fetched Successfully", "success");
           const params = {
-            creditorNames: allCreditors,
+            creditorNames: [initialCreditorId],
           };
           showToast("Fetching Scores...", "success");
           const resScores = await GetScores(params, caseId);
           if (resScores?.status === 200) {
-            setScores(resScores?.data?.data);
-            showToast(resScores?.data?.message, "success");
-            const resRanges = await GetSettlementRange("", caseId);
-            if (resRanges?.status === 200) {
+            if (resScores?.data?.data?.length === 0) {
+              showToast(resScores?.data?.message, "error");
               setLoading(false);
-              setApiData(resRanges?.data?.data);
-              showToast(resRanges?.data?.message, "success");
-              setJustifications({
-                justifications1:
-                  resRanges?.data?.data?.justifications?.justification_1 ?? "",
-                justifications2:
-                  resRanges?.data?.data?.justifications?.justification_2 ?? "",
-                justifications3:
-                  resRanges?.data?.data?.justifications?.justification_3 ?? "",
-              });
+            } else if (resScores?.data?.data) {
+              setScores(resScores?.data?.data);
+
+              showToast(resScores?.data?.message, "success");
+              const resRanges = await GetSettlementRange("", caseId);
+              if (resRanges?.status === 200) {
+                setLoading(false);
+                setApiData(resRanges?.data?.data);
+                showToast(resRanges?.data?.message, "success");
+                setJustifications({
+                  justifications1:
+                    resRanges?.data?.data?.justifications
+                      ?.justification_gemini ?? "",
+                  justifications2:
+                    resRanges?.data?.data?.justifications
+                      ?.justification_gpt4_o ?? "",
+                  justifications3:
+                    resRanges?.data?.data?.justifications
+                      ?.justification_llama ?? "",
+                });
+              }
             }
           }
         }
@@ -192,27 +218,35 @@ export default function SettlementRange() {
   };
 
   const handleUpdate = async () => {
+    const selectedCreditorIds = creditorSelect?.map(
+      (creditor) => creditor.creditorId
+    );
     const params = {
-      creditorNames: creditorSelect,
+      creditorNames: selectedCreditorIds,
     };
     const resScores = await GetScores(params, caseId);
     setLoading(true);
     if (resScores?.status === 200) {
-      setScores(resScores?.data?.data);
-      showToast(resScores?.data?.message, "success");
-      const resRanges = await GetSettlementRange("", caseId);
-      if (resRanges?.status === 200) {
+      if (resScores?.data?.data?.length === 0) {
+        showToast(resScores?.data?.message, "error");
         setLoading(false);
-        setApiData(resRanges?.data?.data);
-        showToast(resRanges?.data?.message, "success");
-        setJustifications({
-          justifications1:
-            resRanges?.data?.data?.justifications?.justification_1 ?? "",
-          justifications2:
-            resRanges?.data?.data?.justifications?.justification_2 ?? "",
-          justifications3:
-            resRanges?.data?.data?.justifications?.justification_3 ?? "",
-        });
+      } else if (resScores?.data?.data) {
+        setScores(resScores?.data?.data);
+        showToast(resScores?.data?.message, "success");
+        const resRanges = await GetSettlementRange("", caseId);
+        if (resRanges?.status === 200) {
+          setLoading(false);
+          setApiData(resRanges?.data?.data);
+          showToast(resRanges?.data?.message, "success");
+          setJustifications({
+            justifications1:
+              resRanges?.data?.data?.justifications?.justification_gemini ?? "",
+            justifications2:
+              resRanges?.data?.data?.justifications?.justification_gpt4_o ?? "",
+            justifications3:
+              resRanges?.data?.data?.justifications?.justification_llama ?? "",
+          });
+        }
       }
     }
   };
@@ -224,6 +258,17 @@ export default function SettlementRange() {
   const handleGeneratePdf = () => {
     generatePdfFromApiData(apiData);
   };
+
+  const widthStyling = drawerOpen
+    ? "calc(100vw - 250px - 4rem)"
+    : "calc(100vw - 70px - 4rem)";
+
+  const creditorNameWithId =
+    creditorNames &&
+    creditorNames?.map(({ name, creditorId }) => ({
+      creditorId,
+      name,
+    }));
 
   return (
     <Grid
@@ -304,7 +349,11 @@ export default function SettlementRange() {
                 borderRadius="5px"
                 startIcon={
                   extraSmallScreen ? null : (
-                    <Download sx={{ color: Colors.SKY_BLUE }} />
+                    <Download
+                      sx={{
+                        color: apiData ? Colors.BLACK : Colors.DIM_LIGHT_GRAY,
+                      }}
+                    />
                   )
                 }
                 onClick={handleGeneratePdf}
@@ -320,17 +369,54 @@ export default function SettlementRange() {
                 />
 
                 <CheckboxAutocomplete
-                  options={creditorNames}
+                  options={creditorNameWithId}
                   multiSelect={creditorSelect}
                   setMultiselect={setCreditorSelect}
                   placeholder="Creditors"
-                  width="8rem"
+                  width="10rem"
                   update={true}
                   handleUpdate={handleUpdate}
                 />
               </div>
             </div>
           </Grid>
+
+          <Grid
+            item
+            xs={12}
+            sx={{
+              width: widthStyling,
+              mt: "1rem",
+              backgroundColor: Colors.WHITE,
+            }}
+          >
+            <AntTabs
+              value={tabValue}
+              onChange={handleTabChange}
+              aria-label="ant example"
+              variant="scrollable"
+              scrollButtons="auto"
+              sx={{
+                minWidth: "100%",
+                borderTopLeftRadius: "10px",
+                borderTopRightRadius: "10px",
+              }}
+            >
+              {allCreditorNames &&
+                allCreditorNames?.map((item) => (
+                  <AntTab
+                    sx={{
+                      bgcolor: Colors.WHITE,
+                      width: "max-content",
+                      fontWeight: "600",
+                      height: "3.5rem",
+                    }}
+                    label={item}
+                  />
+                ))}
+            </AntTabs>
+          </Grid>
+
           <Grid
             container
             item
@@ -338,37 +424,44 @@ export default function SettlementRange() {
             sx={{ justifyContent: "space-between", mt: "1rem" }}
           >
             <GridItem
+              key="Weekly Profit"
               title="Weekly Profit"
               value={apiData?.weekly_profit ?? "No Data"}
             />
             <GridItem
+              key="Weekly Budget"
               title="Weekly Budget"
               value={
-                apiData?.weekly_budget?.["Everest Businss Funding"] ?? "No Data"
+                scores?.Scores?.["Weekly Budget"]?.[
+                  allCreditorNames[parseInt(tabValue)]
+                ] ?? "No Data"
               }
             />
             <GridItem
+              key="Weekly True Revenue"
               title="Weekly True Revenue"
               value={apiData?.weekly_true_revenue ?? "No Data"}
             />
             <GridItem
+              key="Profitability"
               title="Profitability"
               value={apiData?.profitability ?? "No Data"}
             />
           </Grid>
-
-          <Grid container xs={12} sx={{ gap: "2%", mt: "1rem" }}>
+          <Grid item container xs={12} sx={{ gap: "2%", mt: "1rem" }}>
             <GridItem
+              key="UCC Score"
               title="UCC Score"
-              value={scores?.["UCC Score"] ?? "No Data"}
+              value={scores?.Scores?.["UCC Score"] ?? "No Data"}
             />
             <GridItem
+              key="Default Risk Score"
               title="Default Risk Score"
-              value={scores?.["Default Risk Score"] ?? "No Data"}
+              value={scores?.Scores?.["Default Risk Score"] ?? "No Data"}
             />
           </Grid>
-
           <Grid
+            item
             container
             xs={12}
             sx={{
@@ -377,46 +470,42 @@ export default function SettlementRange() {
               justifyContent: "space-between",
             }}
           >
-            {apiData
-              ? [
-                  "recommendation 1",
-                  "recommendation 2",
-                  "recommendation 3",
-                ].map((item, index) => {
-                  return (
-                    <SettlementCards
-                      title={item}
-                      settlementRange={
-                        apiData?.settlement_range?.[
-                          "Everest Businss Funding"
-                        ] || null
-                      }
-                      commissionRange={
-                        apiData?.commission_range?.[
-                          "Everest Businss Funding"
-                        ] || null
-                      }
-                      newDefaultRiskScore={
-                        apiData?.new_default_risk_score || null
-                      }
-                      percentageSettlementOverWeeklyBudget={
-                        apiData?.percentage_settlement_over_weekly_budget?.[
-                          "Everest Businss Funding"
-                        ] || null
-                      }
-                      percentageSettlementOverWeeklyTrueRevenue={
-                        apiData
-                          ?.percentage_settlement_over_weekly_true_revenue?.[
-                          "Everest Businss Funding"
-                        ] || null
-                      }
-                    />
-                  );
-                })
-              : "No Data"}
+            {["recommendation 1", "recommendation 2", "recommendation 3"]?.map(
+              (item, index) => {
+                return (
+                  <SettlementCards
+                    key={index}
+                    title={item}
+                    settlementRange={
+                      apiData?.settlement_range?.[
+                        allCreditorNames[parseInt(tabValue)]
+                      ] || null
+                    }
+                    commissionRange={
+                      apiData?.commission_range?.[
+                        allCreditorNames[parseInt(tabValue)]
+                      ] || null
+                    }
+                    newDefaultRiskScore={
+                      apiData?.new_default_risk_score || null
+                    }
+                    percentageSettlementOverWeeklyBudget={
+                      apiData?.percentage_settlement_over_weekly_budget?.[
+                        allCreditorNames[parseInt(tabValue)]
+                      ] || null
+                    }
+                    percentageSettlementOverWeeklyTrueRevenue={
+                      apiData?.percentage_settlement_over_weekly_true_revenue?.[
+                        allCreditorNames[parseInt(tabValue)]
+                      ] || null
+                    }
+                  />
+                );
+              }
+            )}
           </Grid>
-
           <Grid
+            item
             xs={12}
             sx={{
               backgroundColor: Colors.WHITE,
@@ -439,7 +528,7 @@ export default function SettlementRange() {
               <AntTab
                 sx={{
                   bgcolor: Colors.WHITE,
-                  width: { xs: "30%", sm: "max-content" },
+                  width: "max-content",
                   fontWeight: "600",
                   height: "3.5rem",
                 }}
@@ -448,7 +537,7 @@ export default function SettlementRange() {
               <AntTab
                 sx={{
                   bgcolor: Colors.WHITE,
-                  width: { xs: "30%", sm: "max-content" },
+                  width: "max-content",
                   fontWeight: "600",
                   height: "3.5rem",
                 }}
@@ -457,16 +546,16 @@ export default function SettlementRange() {
               <AntTab
                 sx={{
                   bgcolor: Colors.WHITE,
-                  width: { xs: "30%", sm: "max-content" },
+                  width: "max-content",
                   fontWeight: "600",
                   height: "3.5rem",
                 }}
-                label="Laima"
+                label="llama"
               />
             </AntTabs>
           </Grid>
-
           <Grid
+            item
             xs={12}
             sx={{
               height: "40vh",
@@ -479,6 +568,7 @@ export default function SettlementRange() {
             {tableLoading ? (
               <Grid
                 container
+                item
                 xs={12}
                 sx={{
                   height: "37vh",
@@ -490,17 +580,14 @@ export default function SettlementRange() {
                 <CircularProgress />
               </Grid>
             ) : (
-              <div
-                style={{ color: "black" }}
-                dangerouslySetInnerHTML={{
-                  __html: justifications[`justifications${value + 1}`],
-                }}
-              />
+              <ReactMarkdown>
+                {justifications[`justifications${value + 1}`]}
+              </ReactMarkdown>
             )}
           </Grid>
-
           <Grid
             container
+            item
             xs={12}
             sx={{
               backgroundColor: Colors.WHITE,

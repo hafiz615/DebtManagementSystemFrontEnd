@@ -70,7 +70,7 @@ export default function SettlementCards({
     !percentageSettlementOverWeeklyTrueRevenue;
 
   return (
-    <Grid xs={12} sm={5.8} md={3.8} lg={3.8} container sx={commonStyles}>
+    <Grid item xs={12} sm={5.8} md={3.8} lg={3.8} container sx={commonStyles}>
       <div
         style={{
           marginLeft: "8%",
@@ -83,7 +83,7 @@ export default function SettlementCards({
       </div>
       <Box sx={lineStyle} />
       {noData ? (
-        <Typography sx={{ ...textStyles, textAlign: "center" }}>
+        <Typography sx={{ ...commonTextStyles, marginLeft: "8%" }}>
           No Data
         </Typography>
       ) : (
@@ -103,7 +103,7 @@ export default function SettlementCards({
                 >
                   Maximum
                 </div>
-                <div style={textStyles}> {item?.[title]?.[0]} </div>
+                <div style={textStyles}> {item?.[title]?.[0] || "-"}</div>
               </div>
               <div style={{ width: "100%", display: "flex" }}>
                 <div
@@ -115,7 +115,7 @@ export default function SettlementCards({
                 >
                   Minimum
                 </div>
-                <div style={textStyles}>{item?.[title]?.[1]} </div>
+                <div style={textStyles}>{item?.[title]?.[1] || "-"} </div>
               </div>
             </Grid>
           </Grid>

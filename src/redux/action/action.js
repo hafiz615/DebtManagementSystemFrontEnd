@@ -46,3 +46,10 @@ export const setCaseId = (id) => ({
   type: SET_ID,
   payload: id,
 });
+
+export const CREDITOR_ID = "CREDITOR_ID";
+
+export const setCaseCreditorId = (id) => ({
+  type: CREDITOR_ID,
+  payload: id,
+});
