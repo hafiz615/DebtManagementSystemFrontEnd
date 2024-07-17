@@ -8,6 +8,7 @@ import { Colors } from "../config/default";
 import PaymentTabsTable from "./paymentsTabTable";
 import { FONT_SIZE_SMALL } from "../constants/appConstants";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -54,17 +55,20 @@ export default function PaymentsTabs({
   getHomeData,
   loading,
 }) {
+  const generalPermissions = useSelector(
+    (state) => state?.permissions?.permissions?.generalPermissions
+  );
   const headers = ["Name", "Try Date", "Total Debt", "SSN", "Case Owner"];
 
   if (value === 4) {
     headers.push("Due Date");
   }
-  if (value === 0) {
-    headers.push("Re Try");
+  if (generalPermissions?.retryPayment) {
+    if (value === 0) {
+      headers.push("Re Try");
+    }
   }
-  if (value === 2) {
-    headers.push("Re Try");
-  }
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -151,7 +155,9 @@ export default function PaymentsTabs({
       >
         {value === 0 && (
           <PaymentTabsTable
-            onRowClick={handleRowClick}
+            onRowClick={
+              generalPermissions?.viewCaseDetails ? handleRowClick : undefined
+            }
             data={data?.failedAuthorizations}
             headerData={headers}
             currentPage={currentPage}
@@ -165,7 +171,9 @@ export default function PaymentsTabs({
         )}
         {value === 1 && (
           <PaymentTabsTable
-            onRowClick={handleRowClick}
+            onRowClick={
+              generalPermissions?.viewCaseDetails ? handleRowClick : undefined
+            }
             data={data?.successAuthorizations}
             headerData={headers}
             currentPage={currentPage}
@@ -177,7 +185,9 @@ export default function PaymentsTabs({
         )}
         {value === 2 && (
           <PaymentTabsTable
-            onRowClick={handleRowClick}
+            onRowClick={
+              generalPermissions?.viewCaseDetails ? handleRowClick : undefined
+            }
             data={data?.failedPayments}
             headerData={headers}
             currentPage={currentPage}
@@ -191,7 +201,9 @@ export default function PaymentsTabs({
         )}
         {value === 3 && (
           <PaymentTabsTable
-            onRowClick={handleRowClick}
+            onRowClick={
+              generalPermissions?.viewCaseDetails ? handleRowClick : undefined
+            }
             data={data?.successPayments}
             headerData={headers}
             currentPage={currentPage}
@@ -203,7 +215,9 @@ export default function PaymentsTabs({
         )}
         {value === 4 && (
           <PaymentTabsTable
-            onRowClick={handleRowClick}
+            onRowClick={
+              generalPermissions?.viewCaseDetails ? handleRowClick : undefined
+            }
             data={data?.upcomingPayments}
             headerData={headers}
             currentPage={currentPage}

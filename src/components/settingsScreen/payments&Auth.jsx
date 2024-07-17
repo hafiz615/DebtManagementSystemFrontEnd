@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -64,6 +65,9 @@ export default function SettingsAccordion({
     { label: "Days", value: "days" },
     { label: "Hours", value: "hours" },
   ];
+  const settings = useSelector(
+    (state) => state?.permissions?.permissions?.settings
+  );
 
   const [retryAuthIntervalUnit, setRetryAuthIntervalUnit] = useState(
     retryInterval.failedAuthorization.unit
@@ -314,7 +318,8 @@ export default function SettingsAccordion({
                   marginLeft: "1rem",
                   marginRight: "1rem",
                 }}
-                value={retryInterval.failedAuthorization.value}
+                disabled={!settings?.editAuthorizationInterval}
+                value={retryInterval?.failedAuthorization?.value}
                 onChange={(e) =>
                   handleIntervalInputChange("auth_value", e.target.value)
                 }
@@ -327,7 +332,8 @@ export default function SettingsAccordion({
                 hoverColor={Colors.BG_LIGHT_GRAY}
                 width={smallScreen ? "17%" : "15%"}
                 height="2.5rem"
-                selectedValue={retryInterval.failedAuthorization.unit}
+                selectedValue={retryInterval?.failedAuthorization?.unit}
+                disabled={!settings?.editAuthorizationInterval}
                 setSelectedValue={setRetryAuthIntervalUnit}
               />
               <Typography
@@ -354,7 +360,8 @@ export default function SettingsAccordion({
                   marginLeft: "1rem",
                   marginRight: "1rem",
                 }}
-                value={retryInterval.failedAuthorization.maxRetry}
+                disabled={!settings?.editAuthorizationInterval}
+                value={retryInterval?.failedAuthorization?.maxRetry}
                 onChange={(e) =>
                   handleIntervalInputChange("auth_retries", e.target.value)
                 }
@@ -391,7 +398,8 @@ export default function SettingsAccordion({
                   marginLeft: "1rem",
                   marginRight: "1rem",
                 }}
-                value={retryInterval.failedPayment.value}
+                disabled={!settings?.editAuthorizationInterval}
+                value={retryInterval?.failedPayment?.value}
                 onChange={(e) =>
                   handleIntervalInputChange("payment_value", e.target.value)
                 }
@@ -404,8 +412,9 @@ export default function SettingsAccordion({
                 hoverColor={Colors.BG_LIGHT_GRAY}
                 width={smallScreen ? "17%" : "15%"}
                 height="2.5rem"
-                selectedValue={retryInterval.failedPayment.unit}
+                selectedValue={retryInterval?.failedPayment?.unit}
                 setSelectedValue={setRetryPaymentIntervalUnit}
+                disabled={!settings?.editAuthorizationInterval}
               />
               <Typography
                 sx={{
@@ -431,7 +440,8 @@ export default function SettingsAccordion({
                   marginLeft: "1rem",
                   marginRight: "1rem",
                 }}
-                value={retryInterval.failedPayment.maxRetry}
+                disabled={!settings?.editAuthorizationInterval}
+                value={retryInterval?.failedPayment?.maxRetry}
                 onChange={(e) =>
                   handleIntervalInputChange("payment_retries", e.target.value)
                 }
@@ -481,7 +491,8 @@ export default function SettingsAccordion({
                   width: "10%",
                   marginLeft: "1rem",
                 }}
-                value={authorizationInterval.custom.value}
+                disabled={!settings?.editRetryInterval}
+                value={authorizationInterval?.custom?.value}
                 onChange={(e) =>
                   handleAuthIntervalInputChange("custom", e.target.value)
                 }
@@ -522,7 +533,8 @@ export default function SettingsAccordion({
                   width: "10%",
                   marginLeft: "1rem",
                 }}
-                value={authorizationInterval.fortnightly.value}
+                disabled={!settings?.editRetryInterval}
+                value={authorizationInterval?.fortnightly?.value}
                 onChange={(e) =>
                   handleAuthIntervalInputChange("fortnightly", e.target.value)
                 }
@@ -568,7 +580,8 @@ export default function SettingsAccordion({
                   width: "10%",
                   marginLeft: "1rem",
                 }}
-                value={authorizationInterval.daily.value}
+                disabled={!settings?.editRetryInterval}
+                value={authorizationInterval?.daily?.value}
                 onChange={(e) =>
                   handleAuthIntervalInputChange("daily", e.target.value)
                 }
@@ -609,7 +622,8 @@ export default function SettingsAccordion({
                   width: "10%",
                   marginLeft: "1rem",
                 }}
-                value={authorizationInterval.monthly.value}
+                disabled={!settings?.editRetryInterval}
+                value={authorizationInterval?.monthly?.value}
                 onChange={(e) =>
                   handleAuthIntervalInputChange("monthly", e.target.value)
                 }
@@ -655,7 +669,8 @@ export default function SettingsAccordion({
                   width: "10%",
                   marginLeft: "1rem",
                 }}
-                value={authorizationInterval.weekly.value}
+                disabled={!settings?.editRetryInterval}
+                value={authorizationInterval?.weekly?.value}
                 onChange={(e) =>
                   handleAuthIntervalInputChange("weekly", e.target.value)
                 }

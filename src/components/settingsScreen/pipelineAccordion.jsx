@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 import {
   Typography,
@@ -45,6 +46,9 @@ const StyledAccordionDetails = styled(AccordionDetails)({
 });
 
 export default function PipelineAccordion() {
+  const settings = useSelector(
+    (state) => state?.permissions?.permissions?.settings
+  );
   const [pipeline, setPipeline] = useState([]);
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
@@ -86,9 +90,11 @@ export default function PipelineAccordion() {
           >
             Pipelines
           </Typography>
-          <span onClick={(e) => e.stopPropagation()}>
-            <MuiModels show="addPipeline" GetPipelines={GetPipelines} />
-          </span>
+          {settings?.createPipeline && (
+            <span onClick={(e) => e.stopPropagation()}>
+              <MuiModels show="addPipeline" GetPipelines={GetPipelines} />
+            </span>
+          )}
         </div>
       </StyledAccordionSummary>
       <StyledAccordionDetails sx={{ width: { xs: "140vw", sm: "auto" } }}>

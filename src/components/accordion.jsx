@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { isEqual } from "lodash";
 
@@ -36,6 +37,9 @@ export default function AccordionUsage({
   totalData,
   getHomeData,
 }) {
+  const generalPermissions = useSelector(
+    (state) => state?.permissions?.permissions?.generalPermissions
+  );
   const [rows, setRows] = useState([]);
   useEffect(() => {
     const generatedData = rowArray?.map((item, index) => ({
@@ -156,25 +160,29 @@ export default function AccordionUsage({
                 {totalData === undefined ? "0" : totalData}
               </Typography>
             </Box>
-            <Launch
-              sx={{
-                color: Colors.DIM_LIGHT_GRAY,
-                marginLeft: "0.5rem",
-                marginRight: "0.5rem",
-                cursor: "pointer",
-              }}
-              onClick={() => {
-                localStorage.setItem("route", "authorization-details");
-                navigate("/authorization-details");
-              }}
-            />
+            {generalPermissions?.viewPaymentsAndAuthorizations && (
+              <Launch
+                sx={{
+                  color: Colors.DIM_LIGHT_GRAY,
+                  marginLeft: "0.5rem",
+                  marginRight: "0.5rem",
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  localStorage.setItem("route", "authorization-details");
+                  navigate("/authorization-details");
+                }}
+              />
+            )}
           </Grid>
         </Grid>
       </AccordionSummary>
 
       <AccordionDetails>
         <ListTable
-          onPaymentRowClick={handleRowClick}
+          onPaymentRowClick={
+            generalPermissions?.viewCaseDetails ? handleRowClick : undefined
+          }
           currentPage={currentPage}
           totalPages={totalPages}
           setCurrentPage={setCurrentPage}

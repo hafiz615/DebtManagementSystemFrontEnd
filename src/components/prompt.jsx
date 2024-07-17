@@ -14,7 +14,6 @@ import {
   DeleteCustomField,
   DeleteSettings,
   DeleteRole,
-  Logout,
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import TextButton from "./button";
@@ -129,18 +128,12 @@ export default function Prompt({
   };
 
   const deleteRole = async () => {
+    setSelectedRole(roleName);
     setLoading(true);
     const deleteRoles = await DeleteRole(rolesId);
     if (deleteRoles?.status === 200) {
       setOpen(false);
       showToast(deleteRoles?.data?.message, "success");
-      if (roleName === permissionData) {
-        const response = await Logout();
-        if (response.status === 200) {
-          localStorage.clear();
-          navigate("/");
-        }
-      }
       setSelectedRole(null);
       GetRoles();
     } else {
