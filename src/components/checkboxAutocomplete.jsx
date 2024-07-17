@@ -35,9 +35,7 @@ export default function CheckboxAutocomplete({
       id="checkboxes-tags-demo"
       options={options}
       disableCloseOnSelect
-      getOptionLabel={(option) =>
-        isComplexData ? option.creditorName : option
-      }
+      getOptionLabel={(option) => (isComplexData ? option.name : option)}
       isOptionEqualToValue={(option, value) =>
         isComplexData
           ? option.creditorId === value.creditorId
@@ -87,7 +85,7 @@ export default function CheckboxAutocomplete({
               }}
             />
             <span style={{ fontSize: FONT_SIZE_LARGE }}>
-              {isComplexData ? option.creditorName : option}
+              {isComplexData ? option.name : option}
             </span>
           </li>
         );
