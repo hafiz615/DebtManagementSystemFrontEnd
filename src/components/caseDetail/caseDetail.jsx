@@ -33,7 +33,7 @@ import { isEmpty } from "lodash";
 import MuiModels from "../models.jsx";
 import ScrollbarStyles from "../customScroll.jsx";
 import TextButton from "../button.jsx";
-import { setCaseId } from "../../redux/action/action.js";
+import { setCaseCreditorId, setCaseId } from "../../redux/action/action.js";
 
 function CaseDetail() {
   const navigate = useNavigate();
@@ -48,17 +48,13 @@ function CaseDetail() {
   const [paymentDetails, setPaymentDetails] = useState({});
   const { id } = useParams();
 
-  useEffect(() => {
-    if (id) {
-      dispatch(setCaseId(id));
-    }
-  }, [id, dispatch]);
-
   const GetCaseDetails = async (rowId) => {
     setLoading(true);
     const caseDetails = await GetCaseById(rowId);
     if (caseDetails?.status === 200) {
       setCaseData(caseDetails?.data?.data);
+      dispatch(setCaseId(id));
+      dispatch(setCaseCreditorId(caseDetails?.data?.data?.creditor?._id));
     }
     setLoading(false);
   };
