@@ -27,6 +27,7 @@ import Prompt from "./prompt";
 import { useToast } from "../toast/toastContext";
 import { RetryAuth, RetryCapture } from "../services/services";
 import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../constants/appConstants";
+import { useSelector } from "react-redux";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -106,6 +107,9 @@ export default function PaymentTabsTable({
   loading,
   onRowClick,
 }) {
+  const generalPermissions = useSelector(
+    (state) => state?.permissions?.permissions?.generalPermissions
+  );
   const { showToast } = useToast();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -277,13 +281,15 @@ export default function PaymentTabsTable({
                           padding: "0px !important",
                         }}
                       >
-                        <Prompt
-                          heading="Retry"
-                          text={`Are you sure you want to Retry?`}
-                          handlePayment={handlePayment}
-                          item={id}
-                          showPayment={true}
-                        />
+                        {generalPermissions?.retryPayment && (
+                          <Prompt
+                            heading="Retry"
+                            text={`Are you sure you want to Retry?`}
+                            handlePayment={handlePayment}
+                            item={id}
+                            showPayment={true}
+                          />
+                        )}
                       </StyledTableCell>
                     )}
                     <IconsContainer className="icons">

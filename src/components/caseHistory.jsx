@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 import { Grid, Typography, IconButton, Menu } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -23,6 +24,9 @@ function CaseHistory({
   open,
   handleClick,
 }) {
+  const generalPermissions = useSelector(
+    (state) => state?.permissions?.permissions?.generalPermissions
+  );
   const [rows, setRows] = useState([]);
   const navigate = useNavigate();
   const formatDate = (dateString) => {
@@ -137,7 +141,11 @@ function CaseHistory({
         <ListTable
           headerData={headers}
           data={rows}
-          onRowClick={(id) => navigate(`/all-cases/${id}`)}
+          onRowClick={
+            generalPermissions?.viewCaseDetails
+              ? (id) => navigate(`/all-cases/${id}`)
+              : undefined
+          }
           apiPagination={true}
           totalPages={totalPages}
           currentPage={currentPage}

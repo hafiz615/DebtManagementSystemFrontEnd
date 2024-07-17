@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useSelector } from "react-redux";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -80,6 +81,9 @@ export default function ListTableDynamic({
   setLoading,
 }) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:900px)");
+  const settings = useSelector(
+    (state) => state?.permissions?.permissions?.settings
+  );
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -121,6 +125,7 @@ export default function ListTableDynamic({
                     {header?.heading}
                   </StyledTableCell>
                 ))}
+
                 {(requiredIcons || requiredCustomFieldIcons) && (
                   <StyledTableCell
                     align="left"
@@ -183,28 +188,37 @@ export default function ListTableDynamic({
                           alignItems: "center",
                         }}
                       >
-                        <MuiModels
-                          show="froalaEditor"
-                          froalaEditor={froalaEditor}
-                          setFroalaEditor={setFroalaEditor}
-                          getSettings={getSettings}
-                          row={row}
-                          templateType={templateType}
-                          button="create"
-                          buttonText="EDIT"
-                          loading={loading}
-                          setLoading={setLoading}
-                        />
-                        <Prompt
-                          heading="Delete Template"
-                          text={`Are you sure you want to delete ${row?.name} ?`}
-                          templateType={templateType}
-                          getSettings={getSettings}
-                          row={row}
-                          iconSize="16px"
-                        />
+                        {settings?.editNotificationTemplate ? (
+                          <MuiModels
+                            show="froalaEditor"
+                            froalaEditor={froalaEditor}
+                            setFroalaEditor={setFroalaEditor}
+                            getSettings={getSettings}
+                            row={row}
+                            templateType={templateType}
+                            button="create"
+                            buttonText="EDIT"
+                            loading={loading}
+                            setLoading={setLoading}
+                          />
+                        ) : null}
+                        {settings?.deleteNotificationTemplate ? (
+                          <Prompt
+                            heading="Delete Template"
+                            text={`Are you sure you want to delete ${row?.name} ?`}
+                            templateType={templateType}
+                            getSettings={getSettings}
+                            row={row}
+                            iconSize="16px"
+                          />
+                        ) : null}
+                        {!settings?.editNotificationTemplate &&
+                          !settings?.deleteNotificationTemplate && (
+                            <span>--</span>
+                          )}
                       </StyledTableCell>
                     )}
+
                     {requiredCustomFieldIcons && (
                       <StyledTableCell
                         sx={{
@@ -213,18 +227,22 @@ export default function ListTableDynamic({
                           height: "3rem",
                         }}
                       >
-                        <MuiModels
-                          show="editField"
-                          data={row}
-                          handleModalClose={handleModalClose}
-                        />
-                        <Prompt
-                          deleting="Custom Field"
-                          heading="Delete Custom Field"
-                          text={`Are you sure you want to delete ${row?.name} ?`}
-                          id={row?._id}
-                          handleModalClose={handleModalClose}
-                        />
+                        {settings?.editCustomFields && (
+                          <MuiModels
+                            show="editField"
+                            data={row}
+                            handleModalClose={handleModalClose}
+                          />
+                        )}
+                        {settings?.deleteCustomFields && (
+                          <Prompt
+                            deleting="Custom Field"
+                            heading="Delete Custom Field"
+                            text={`Are you sure you want to delete ${row?.name} ?`}
+                            id={row?._id}
+                            handleModalClose={handleModalClose}
+                          />
+                        )}
 
                         <MoreHorizOutlinedIcon
                           sx={{

@@ -1,4 +1,5 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -33,6 +34,9 @@ const StyledAccordionDetails = styled(AccordionDetails)({
   borderTop: "none", // Remove top border
 });
 export default function CustomFieldsAccordion({ customFields, refreshData }) {
+  const settings = useSelector(
+    (state) => state?.permissions?.permissions?.settings
+  );
   const headerData = [
     { key: "name", heading: "Name", width: "15%" },
     { key: "type", heading: "Type", width: "15%" },
@@ -43,18 +47,20 @@ export default function CustomFieldsAccordion({ customFields, refreshData }) {
         Custom Fields
       </StyledAccordionSummary>
       <StyledAccordionDetails>
-        <Grid
-          container
-          item
-          sx={{ justifyContent: "flex-end", marginTop: "1rem" }}
-        >
-          <MuiModels
-            buttonName="Add Custom Fields"
-            show="addCustomField"
-            button="customField"
-            handleModalClose={refreshData}
-          />
-        </Grid>
+        {settings?.addCustomFields && (
+          <Grid
+            container
+            item
+            sx={{ justifyContent: "flex-end", marginTop: "1rem" }}
+          >
+            <MuiModels
+              buttonName="Add Custom Fields"
+              show="addCustomField"
+              button="customField"
+              handleModalClose={refreshData}
+            />
+          </Grid>
+        )}
 
         <Grid
           item

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { styled } from "@mui/material/styles";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -78,6 +79,9 @@ export default function NotificationTemplatesTabs({
     EMAIL: "Email",
     SMS: "SMS",
   };
+  const settings = useSelector(
+    (state) => state?.permissions?.permissions?.settings
+  );
   const [value, setValue] = useState(TABS?.EMAIL);
   const [froalaEditor, setFroalaEditor] = useState("");
   const [htmlData, setHtmlData] = useState(null);
@@ -178,19 +182,21 @@ export default function NotificationTemplatesTabs({
                   <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
                     Templates
                   </Typography>
+                  {settings?.addNotificationTemplate && (
+                    <MuiModels
+                      show="froalaEditor"
+                      froalaEditorButton="Add New"
+                      froalaEditor={froalaEditor}
+                      setFroalaEditor={setFroalaEditor}
+                      getSettings={getSettings}
+                      templateType="email"
+                      maxHeight="70vh"
+                      buttonText="SAVE"
+                      loading={loading}
+                      setLoading={setLoading}
+                    />
+                  )}
 
-                  <MuiModels
-                    show="froalaEditor"
-                    froalaEditorButton="Add New"
-                    froalaEditor={froalaEditor}
-                    setFroalaEditor={setFroalaEditor}
-                    getSettings={getSettings}
-                    templateType="email"
-                    maxHeight="70vh"
-                    buttonText="SAVE"
-                    loading={loading}
-                    setLoading={setLoading}
-                  />
                   <Grid
                     item
                     xs={12}

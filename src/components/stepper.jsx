@@ -564,7 +564,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               zipCode: debtorOwnDetails?.BasicZipCode,
               phone: debtorOwnDetails?.BasicPhoneNumber,
               address: debtorOwnDetails?.BasicAddress,
-              weeklyBudget: debtorOwnDetails?.BasicWeeklyBudget || "",
+              weeklyBudget: parseInt(debtorOwnDetails?.BasicWeeklyBudget) || "",
             },
             businessInformation: {
               companyName: debtorBusinessDetails?.businessCompanyName,

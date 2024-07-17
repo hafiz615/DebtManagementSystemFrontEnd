@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 import { Grid, Typography } from "@mui/material";
 import { Colors } from "../../config/default";
@@ -14,6 +15,9 @@ import PipelineAccordion from "./pipelineAccordion";
 import RoleAndPermission from "./roleAndPermission";
 
 export default function SettingsScreen() {
+  const settings = useSelector(
+    (state) => state?.permissions?.permissions?.settings
+  );
   const [failedAuthorizations, setfailedAuthorizations] = useState({
     email: false,
     sms: false,
@@ -203,20 +207,27 @@ export default function SettingsScreen() {
             setAuthorizationInterval,
           }}
         />
-        <NotificationTemplatesTabs
-          notificationTemplates={notificationTemplates}
-          setNotificationTemplates={setNotificationTemplates}
-          getSettings={getSettings}
-          loading={loading}
-          setLoading={setLoading}
-        />
-        <CustomFieldsAccordion
-          customFields={customFields}
-          refreshData={refreshData}
-        />
+        {settings?.viewNotificationTemplates && (
+          <NotificationTemplatesTabs
+            notificationTemplates={notificationTemplates}
+            setNotificationTemplates={setNotificationTemplates}
+            getSettings={getSettings}
+            loading={loading}
+            setLoading={setLoading}
+          />
+        )}
+        {settings?.viewCustomFields && (
+          <CustomFieldsAccordion
+            customFields={customFields}
+            refreshData={refreshData}
+          />
+        )}
+
         <PasswordAccordion />
-        <CaseStatuses />
-        <PipelineAccordion />
+        {settings?.viewCaseStatuses && <CaseStatuses />}
+
+        {settings?.viewPipeline && <PipelineAccordion />}
+
         <RoleAndPermission />
       </Grid>
     </Grid>

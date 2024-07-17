@@ -71,19 +71,12 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   backgroundColor: Colors.NAVY_BLUE,
 }));
 
-// const icons = [
-//   <Home />,
-//   <AccountCircle />,
-//   <People />,
-//   <Handyman />,
-//   <Settings />,
-//   <Group />,
-//   <Window />,
-// ];
-
 export default function PersistentDrawerLeft({ children }) {
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
+  );
+  const analytics = useSelector(
+    (state) => state?.permissions?.permissions?.analytics
   );
   const theme = useTheme();
   const routeFound = localStorage.getItem("route");
@@ -154,19 +147,36 @@ export default function PersistentDrawerLeft({ children }) {
   }, [selectedItem, navigate]);
 
   const menuItems = [
-    { text: "Home", icon: <Home /> },
-    { text: "Clients", icon: <AccountCircle /> },
-    { text: "Creditors", icon: <People /> },
+    // { text: "Clients", icon: <AccountCircle /> },
+    // { text: "Creditors", icon: <People /> },
     { text: "Pipelines", icon: <Handyman /> },
     { text: "Settings", icon: <Settings /> },
-    { text: "Analytics", icon: <Window /> },
+    // { text: "Analytics", icon: <Window /> },
   ];
 
+  if (generalPermissions?.viewHomeScreen) {
+    menuItems.unshift({ text: "Home", icon: <Home /> });
+  }
+
   if (
-    generalPermissions?.viewUserListing &&
-    generalPermissions?.viewHomeScreen
+    generalPermissions?.viewClientsForSelf &&
+    generalPermissions?.viewClientsForAllUsers
   ) {
+    menuItems.splice(1, 0, { text: "Clients", icon: <AccountCircle /> });
+  }
+
+  if (
+    generalPermissions?.viewCreditorsForSelf &&
+    generalPermissions?.viewCreditorsForAllUsers
+  ) {
+    menuItems.splice(2, 0, { text: "Creditors", icon: <People /> });
+  }
+
+  if (generalPermissions?.viewUserListing) {
     menuItems.splice(5, 0, { text: "User Listing", icon: <Group /> });
+  }
+  if (analytics?.viewAnalyticsForAllusers && analytics?.viewAnalyticsForSelf) {
+    menuItems.splice(6, 0, { text: "Analytics", icon: <Window /> });
   }
 
   return (
@@ -243,6 +253,7 @@ export default function PersistentDrawerLeft({ children }) {
                   padding: "0.3rem",
                   borderRadius: "50%",
                   fontSize: "2.5rem",
+                  border: "1px solid red",
                 }}
               />
             </IconButton>
@@ -250,8 +261,6 @@ export default function PersistentDrawerLeft({ children }) {
         </DrawerHeader>
         <Divider />
 
-        {/* {generalPermissions?.importBulkCases &&
-          generalPermissions?.createNewCase && ( */}
         <Box
           sx={{
             marginTop: "1.5rem",
@@ -261,13 +270,15 @@ export default function PersistentDrawerLeft({ children }) {
             justifyContent: "center",
           }}
         >
-          <BasicMenu
-            openState={open}
-            width="80%"
-            backgroundColor={Colors.SKY_BLUE}
-          />
+          {(generalPermissions?.importBulkCases ||
+            generalPermissions?.createNewCase) && (
+            <BasicMenu
+              openState={open}
+              width="80%"
+              backgroundColor={Colors.SKY_BLUE}
+            />
+          )}
         </Box>
-        {/* )} */}
 
         <List>
           {menuItems.map(({ text, icon }, index) => (

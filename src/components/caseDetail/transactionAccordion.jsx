@@ -13,6 +13,7 @@ import TransactionRow from "../transactionRow";
 
 import { Colors } from "../../config/default";
 import { isEmpty } from "lodash";
+import ScrollbarStyles from "./../customScroll";
 
 export default function TransactionAccordion({
   paymentDetails,
@@ -22,8 +23,10 @@ export default function TransactionAccordion({
   return (
     <Accordion
       sx={{
+        height: "auto",
+        marginBottom: "1rem",
         boxShadow: "none",
-        marginBottom: "10px",
+        // marginBottom: "10px",
         borderRadius: "1rem !important",
         backgroundColor: Colors.WHITE,
       }}
@@ -51,6 +54,7 @@ export default function TransactionAccordion({
       </AccordionSummary>
       <AccordionDetails
         sx={{
+          height: "35vh",
           backgroundColor: Colors.WHITE,
           boxShadow: " 0 2px 5px -3px rgba(0, 0, 0, 0.5)",
           borderBottomLeftRadius: "10px",
@@ -59,6 +63,7 @@ export default function TransactionAccordion({
       >
         {loading || isEmpty(paymentDetails) ? (
           <Grid
+            container
             item
             xs={12}
             sx={{
@@ -71,7 +76,12 @@ export default function TransactionAccordion({
             <CircularProgress size={60} sx={{ color: Colors.SKY_BLUE }} />
           </Grid>
         ) : (
-          <>
+          <Grid
+            container
+            item
+            xs={12}
+            sx={{ overflow: "auto", ...ScrollbarStyles }}
+          >
             <TransactionRow
               data={paymentDetails?.transactions?.previous}
               GetCasePaymentDetails={GetCasePaymentDetails}
@@ -81,7 +91,7 @@ export default function TransactionAccordion({
               heading="Upcoming"
               GetCasePaymentDetails={GetCasePaymentDetails}
             />
-          </>
+          </Grid>
         )}
       </AccordionDetails>
     </Accordion>

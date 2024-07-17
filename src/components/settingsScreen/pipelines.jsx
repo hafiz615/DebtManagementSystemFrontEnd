@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 import { Grid, Typography, IconButton } from "@mui/material";
 import { Add, Difference } from "@mui/icons-material";
@@ -121,6 +122,9 @@ export default function Pipelines({ item, GetPipelines }) {
       }
     }
   };
+  const settings = useSelector(
+    (state) => state?.permissions?.permissions?.settings
+  );
 
   return (
     <Grid sx={{ mb: "1rem" }}>
@@ -137,24 +141,28 @@ export default function Pipelines({ item, GetPipelines }) {
           </Typography>
         </div>
         <div style={{ display: "flex" }}>
-          <MuiModels
-            item={item}
-            show="editMainPipeline"
-            button="create"
-            iconSize="1.2rem"
-            GetPipelines={GetPipelines}
-          />
+          {settings?.editPipeline && (
+            <MuiModels
+              item={item}
+              show="editMainPipeline"
+              button="create"
+              iconSize="1.2rem"
+              GetPipelines={GetPipelines}
+            />
+          )}
+
           <IconButton onClick={handleDuplicatePipeline}>
             <Difference sx={{ fontSize: "1.2rem" }} />
           </IconButton>
-
-          <Prompt
-            heading="Delte Pipeline"
-            text={`Are you sure you want to Delete ${item?.pipeline}?`}
-            handleDelete={handleDelete}
-            item={item?.id}
-            disabled={item?.status?.length !== 0}
-          />
+          {settings?.deletePipeline && (
+            <Prompt
+              heading="Delte Pipeline"
+              text={`Are you sure you want to Delete ${item?.pipeline}?`}
+              handleDelete={handleDelete}
+              item={item?.id}
+              disabled={item?.status?.length !== 0}
+            />
+          )}
         </div>
       </Grid>
       <Grid
