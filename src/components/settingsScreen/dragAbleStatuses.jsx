@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { useSelector } from "react-redux";
 import { useDrag, useDrop } from "react-dnd";
 
 import { Colors } from "../../config/default";
@@ -53,6 +54,10 @@ const DraggableRow = ({
     },
   });
 
+  const settings = useSelector(
+    (state) => state?.permissions?.permissions?.settings
+  );
+
   const [{ isDragging }, drag] = useDrag({
     type: ItemType,
     item: { id, index },
@@ -90,13 +95,16 @@ const DraggableRow = ({
         className="dataTable"
         style={{ display: "flex", width: extraSmallScreen ? "35%" : "14.5%" }}
       >
-        <MuiModels
-          show="editStatus"
-          text={text}
-          statusId={statusId}
-          GetStatuses={GetStatuses}
-        />
-        {arrayStatus?.length > 1 && (
+        {settings?.editCaseStatus && (
+          <MuiModels
+            show="editStatus"
+            text={text}
+            statusId={statusId}
+            GetStatuses={GetStatuses}
+          />
+        )}
+
+        {arrayStatus?.length > 1 && settings?.deleteCaseStatus && (
           <MuiModels
             show="deleteStatus"
             arrayStatus={arrayStatus}

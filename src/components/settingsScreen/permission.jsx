@@ -6,6 +6,7 @@ import {
   FONT_SIZE_XL,
   FONT_WEIGHT_HEADING,
   FONT_WEIGHT_MEDIUM,
+  convertCamelCaseToTitle,
 } from "../../constants/appConstants";
 import { Colors } from "../../config/default";
 import BasicSwitches from "./basicSwitches";
@@ -37,6 +38,7 @@ export default function Permission({
       [key]: !prevData[key],
     }));
   };
+
   return (
     <>
       <Typography
@@ -66,7 +68,7 @@ export default function Permission({
                 key={index}
                 item
                 xs={12}
-                lg={3.8}
+                lg={2.8}
                 sx={{
                   alignItems: "center",
                   backgroundColor: Colors.BG_LIGHT_GRAY,
@@ -84,7 +86,7 @@ export default function Permission({
                       fontSize: FONT_SIZE_LARGE,
                     }}
                   >
-                    {key}
+                    {convertCamelCaseToTitle(key)}
                   </Typography>
                 </Box>
                 <Box sx={{ marginLeft: "auto" }}>
@@ -115,7 +117,7 @@ export default function Permission({
                 key={index}
                 item
                 xs={12}
-                lg={3.8}
+                lg={2.8}
                 sx={{
                   alignItems: "center",
                   backgroundColor: Colors.BG_LIGHT_GRAY,
@@ -133,7 +135,7 @@ export default function Permission({
                       fontSize: FONT_SIZE_LARGE,
                     }}
                   >
-                    {key}
+                    {convertCamelCaseToTitle(key)}
                   </Typography>
                 </Box>
                 <Box sx={{ marginLeft: "auto" }}>
@@ -165,7 +167,7 @@ export default function Permission({
                   key={index}
                   item
                   xs={12}
-                  lg={3.8}
+                  lg={2.8}
                   sx={{
                     alignItems: "center",
                     backgroundColor: Colors.BG_LIGHT_GRAY,
@@ -183,7 +185,7 @@ export default function Permission({
                         fontSize: FONT_SIZE_LARGE,
                       }}
                     >
-                      {key}
+                      {convertCamelCaseToTitle(key)}
                     </Typography>
                   </Box>
                   <Box sx={{ marginLeft: "auto" }}>

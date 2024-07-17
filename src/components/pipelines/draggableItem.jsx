@@ -1,5 +1,6 @@
 import React from "react";
 import { useDrag } from "react-dnd";
+import { useSelector } from "react-redux";
 
 import { IconButton, Typography } from "@mui/material";
 import { Difference, RemoveRedEye } from "@mui/icons-material";
@@ -13,6 +14,9 @@ import { useToast } from "../../toast/toastContext";
 import { useNavigate } from "react-router-dom";
 
 const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
+  const generalPermissions = useSelector(
+    (state) => state?.permissions?.permissions?.generalPermissions
+  );
   const { showToast } = useToast();
 
   const [{ isDragging }, drag] = useDrag({
@@ -165,9 +169,11 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
           <IconButton onClick={handleDuplicate}>
             <Difference sx={{ fontSize: "1rem" }} />
           </IconButton>
-          <IconButton onClick={() => handleClick(item?._id)}>
-            <RemoveRedEye sx={{ fontSize: "1rem" }} />
-          </IconButton>
+          {generalPermissions?.viewCaseDetails && (
+            <IconButton onClick={() => handleClick(item?._id)}>
+              <RemoveRedEye sx={{ fontSize: "1rem" }} />
+            </IconButton>
+          )}
         </div>
       </div>
       <div>

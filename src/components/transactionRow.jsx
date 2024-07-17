@@ -7,8 +7,12 @@ import { formatDollarAmount } from "../common";
 import { useToast } from "../toast/toastContext";
 import Prompt from "./prompt";
 import { RetryAuth, RetryCapture } from "../services/services";
+import { useSelector } from "react-redux";
 
 function TransactionRow({ data, heading, GetCasePaymentDetails }) {
+  const generalPermissions = useSelector(
+    (state) => state?.permissions?.permissions?.generalPermissions
+  );
   const { id } = useParams();
   const { showToast } = useToast();
   const formatDate = (dateString) => {
@@ -76,7 +80,6 @@ function TransactionRow({ data, heading, GetCasePaymentDetails }) {
               display: "flex",
               gap: "10px",
               alignItems: "center",
-
               color: heading ? Colors.BLACK : colorScheme,
             }}
           >
@@ -102,13 +105,15 @@ function TransactionRow({ data, heading, GetCasePaymentDetails }) {
                 item?.authorized === "Failed") ||
               (item?.type === "payment" && item?.captured === "Failed") ? (
                 <Box sx={{ cursor: "pointer" }}>
-                  <Prompt
-                    heading="Retry"
-                    text={`Are you sure you want to Retry?`}
-                    handleRetry={handleRetry}
-                    item={item}
-                    show={true}
-                  />
+                  {generalPermissions?.retryPayment && (
+                    <Prompt
+                      heading="Retry"
+                      text={`Are you sure you want to Retry?`}
+                      handleRetry={handleRetry}
+                      item={item}
+                      show={true}
+                    />
+                  )}
                 </Box>
               ) : null}
             </p>

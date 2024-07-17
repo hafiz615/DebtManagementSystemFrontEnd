@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 
 import { Grid, Typography, Box, Hidden } from "@mui/material";
 import { Colors } from "../../config/default";
@@ -15,6 +16,9 @@ function truncateTemplateName(name) {
 }
 
 export default function RowConfigForm({ title, data, setData, menuItems }) {
+  const settings = useSelector(
+    (state) => state?.permissions?.permissions?.settings
+  );
   const [smsTemplate, setSMSTemplate] = useState(data?.smsTemplate);
   const [emailTemplate, setEmailTemplate] = useState(data?.emailTemplate);
   const roles = ["Admin", "Manager", "Negotiator", "Debtor", "Creditor"];
@@ -72,7 +76,6 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
           sx={{
             display: "flex",
             flexDirection: "column",
-
             width: { xs: "15%", sm: "25%", lg: "35%" },
           }}
         >
@@ -92,12 +95,12 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            // width: "7.5%",
           }}
         >
           <Checkboxes
             checked={data.email}
             handleCheckChange={(e) => onEmailCheckChange(e.target.checked)}
+            disabled={!settings?.editPaymentsNotificationSettings}
           />
         </Box>
         <Box
@@ -111,6 +114,7 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
           <Checkboxes
             checked={data.sms}
             handleCheckChange={(e) => onSMSCheckChange(e.target.checked)}
+            disabled={!settings?.editPaymentsNotificationSettings}
           />
         </Box>
         <Box
@@ -127,8 +131,6 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
               fontFamily: "Nunito",
               fontWeight: "600",
               marginRight: "0.5rem",
-
-              // Add margin to separate the dropdowns
             }}
           >
             <Dropdown
@@ -141,6 +143,7 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
               marginBottom="0.3rem"
               selectedValue={truncateTemplateName(emailTemplate)}
               setSelectedValue={setEmailTemplate}
+              disabled={!settings?.editPaymentsNotificationSettings}
             />
           </Typography>
           <Typography
@@ -160,6 +163,7 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
               marginBottom="0.3rem"
               selectedValue={truncateTemplateName(smsTemplate)}
               setSelectedValue={setSMSTemplate}
+              disabled={!settings?.editPaymentsNotificationSettings}
             />
           </Typography>
         </Box>
@@ -191,6 +195,7 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
                 handleCheckChange={(e) =>
                   onSendToRoleChange(role, e.target.checked)
                 }
+                disabled={!settings?.editPaymentsNotificationSettings}
               />
               <Typography
                 sx={{
@@ -206,7 +211,6 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
           ))}
         </Box>
       </Grid>
-      {/* </Hidden> */}
     </Grid>
   );
 }

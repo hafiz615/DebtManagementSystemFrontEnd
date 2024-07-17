@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -39,6 +40,9 @@ const StyledAccordionDetails = styled(AccordionDetails)({
 });
 
 export default function CaseStatuses() {
+  const settings = useSelector(
+    (state) => state?.permissions?.permissions?.settings
+  );
   const { showToast } = useToast();
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:1040px)");
   const extraSmallScreen = useMediaQuery(
@@ -116,20 +120,26 @@ export default function CaseStatuses() {
               border: "none",
               outline: "none",
               borderRadius: "5px",
-              width: extraSmallScreen ? "65%" : "84.5%",
+              width: !settings?.addCaseStatus
+                ? "100%"
+                : extraSmallScreen
+                ? "65%"
+                : "84.5%",
             }}
           />
-          <TextButton
-            buttonText={smallScreen ? <Add /> : "Add Status"}
-            height="2.5rem"
-            width={"15%"}
-            backgroundColor={Colors.SKY_BLUE}
-            hoverColor={Colors.SKY_BLUE}
-            startIcon={buttonReload ? "" : smallScreen ? "" : <Add />}
-            onClick={handleAddStatus}
-            loading={buttonReload}
-            disabled={isButtonDisabled}
-          />
+          {settings?.addCaseStatus && (
+            <TextButton
+              buttonText={smallScreen ? <Add /> : "Add Status"}
+              height="2.5rem"
+              width={"15%"}
+              backgroundColor={Colors.SKY_BLUE}
+              hoverColor={Colors.SKY_BLUE}
+              startIcon={buttonReload ? "" : smallScreen ? "" : <Add />}
+              onClick={handleAddStatus}
+              loading={buttonReload}
+              disabled={isButtonDisabled}
+            />
+          )}
         </Grid>
         <Grid
           container
