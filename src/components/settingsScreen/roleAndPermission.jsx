@@ -231,15 +231,16 @@ export default function RoleAndPermission() {
                     <MuiModels
                       show="duplicateRole"
                       GetRoles={GetRoles}
-                      selectedRole={selectedRole}
                       selectedData={data}
                       selectedRoleData={selectedRoleData}
+                      selectedRole={selectedRole}
+                      setSelectedRole={setSelectedRole}
                     />
 
                     <Prompt
                       heading="Delete Template"
                       text={`Are you sure you want to delete ${data?.name} ?`}
-                      rolesId={rolesId}
+                      rolesId={data._id}
                       roleName={roleName}
                       GetRoles={GetRoles}
                       permissionData={permissionData}

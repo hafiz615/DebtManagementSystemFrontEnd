@@ -26,6 +26,8 @@ import {
   FONT_SIZE_SMALL,
   FONT_SIZE_XL,
 } from "../constants/appConstants";
+
+import { useSelector } from "react-redux";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     color: Colors.BLACK,
@@ -89,6 +91,9 @@ export default function ListTable({
   loading,
   onPaymentRowClick,
 }) {
+  const generalPermissions = useSelector(
+    (state) => state?.permissions?.permissions?.generalPermissions
+  );
   const { showToast } = useToast();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -183,19 +188,20 @@ export default function ListTable({
                     Actions
                   </StyledTableCell>
                 )}
-                {(arrayName === "failedAuthorizations" ||
-                  arrayName === "failedPayments") && (
-                  <StyledTableCell
-                    align="left"
-                    sx={{
-                      fontWeight: "700",
-                      fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
-                      paddingRight: "0.5rem !important",
-                    }}
-                  >
-                    Retry
-                  </StyledTableCell>
-                )}
+                {generalPermissions?.retryPayment &&
+                  (arrayName === "failedAuthorizations" ||
+                    arrayName === "failedPayments") && (
+                    <StyledTableCell
+                      align="left"
+                      sx={{
+                        fontWeight: "700",
+                        fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+                        paddingRight: "0.5rem !important",
+                      }}
+                    >
+                      Retry
+                    </StyledTableCell>
+                  )}{" "}
               </TableRow>
             </TableHead>
             {loading ? (
@@ -324,13 +330,15 @@ export default function ListTable({
                           zIndex: 999,
                         }}
                       >
-                        <Prompt
-                          heading="Retry"
-                          text={`Are you sure you want to Retry?`}
-                          handlePayment={handlePayment}
-                          item={row?.id}
-                          showPayment={true}
-                        />
+                        {generalPermissions?.retryPayment && (
+                          <Prompt
+                            heading="Retry"
+                            text={`Are you sure you want to Retry?`}
+                            handlePayment={handlePayment}
+                            item={row?.id}
+                            showPayment={true}
+                          />
+                        )}
                       </StyledTableCell>
                     )}
                   </StyledTableRow>

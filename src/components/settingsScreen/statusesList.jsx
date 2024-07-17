@@ -1,4 +1,5 @@
 import { DndProvider } from "react-dnd";
+import { useSelector } from "react-redux";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Grid, CircularProgress, Typography } from "@mui/material";
 import update from "immutability-helper";
@@ -48,6 +49,9 @@ const StatusLists = ({
   useEffect(() => {
     reArrangedArray();
   }, [arrayStatus, statusId]);
+  const settings = useSelector(
+    (state) => state?.permissions?.permissions?.settings
+  );
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -71,15 +75,17 @@ const StatusLists = ({
             >
               Name
             </th>
-            <th
-              style={{
-                width: extraSmallScreen ? "45%" : "15%",
-                display: "flex",
-                justifyContent: "flex-start",
-              }}
-            >
-              Actions
-            </th>
+            {(settings?.editCaseStatus || settings?.deleteCaseStatus) && (
+              <th
+                style={{
+                  width: extraSmallScreen ? "45%" : "15%",
+                  display: "flex",
+                  justifyContent: "flex-start",
+                }}
+              >
+                Actions
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>

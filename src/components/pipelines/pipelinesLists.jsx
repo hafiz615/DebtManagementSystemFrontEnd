@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import ScrollbarStyles from "../customScroll";
 import { Grid } from "@mui/material";
 import ListTable from "../listTable";
@@ -102,7 +103,9 @@ export default function PipelinesLists({
     localStorage.setItem("route", "all-cases");
     navigate(`/all-cases/${id}`);
   };
-
+  const generalPermissions = useSelector(
+    (state) => state?.permissions?.permissions?.generalPermissions
+  );
   return (
     <Grid
       container
@@ -119,7 +122,9 @@ export default function PipelinesLists({
       <Grid item xs={12} sx={{ marginTop: "1rem" }}>
         <ListTable
           headerData={headers}
-          onRowClick={handleRowClick}
+          onRowClick={
+            generalPermissions?.viewCaseDetails ? handleRowClick : undefined
+          }
           data={
             data ? filteredCasesByDate?.map(({ time, ...rest }) => rest) : []
           }

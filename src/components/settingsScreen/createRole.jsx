@@ -6,7 +6,13 @@ import { CreateRoles } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import { FONT_FAMILY, FONT_WEIGHT_MEDIUM } from "../../constants/appConstants";
 
-function CreateRole({ handleClose, GetRoles, show, selectedRoleData }) {
+function CreateRole({
+  handleClose,
+  GetRoles,
+  show,
+  selectedRoleData,
+  setSelectedRole,
+}) {
   const { showToast } = useToast();
   const [roleName, setRoleName] = useState("");
 
@@ -24,9 +30,9 @@ function CreateRole({ handleClose, GetRoles, show, selectedRoleData }) {
     fontFamily: "Nunito",
   };
 
-  const handleSave = async (e) => {
-    e.preventDefault();
+  const handleSave = async () => {
     if (show === "duplicateRole") {
+      setSelectedRole(roleName);
       const params = {
         name: roleName,
         generalPermissions: selectedRoleData?.generalPermissions,

@@ -75,6 +75,7 @@ export default function MuiModels({
   selectedData,
   rolesId,
   selectedRoleData,
+  setSelectedRole,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -496,6 +497,7 @@ export default function MuiModels({
               handleClose={handleClose}
               GetRoles={GetRoles}
               selectedRoleData={selectedRoleData}
+              setSelectedRole={setSelectedRole}
               show={show}
             />
           ) : show === "exportPipeline" ? (
