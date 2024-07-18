@@ -579,7 +579,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         documents: url || [],
       };
       const res = await GetDebtors(params);
-      console.log(res);
       if (res?.status === 200) {
         showToast(res?.data?.message, "success");
       } else {
