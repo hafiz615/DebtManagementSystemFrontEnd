@@ -19,16 +19,24 @@ const menuItems = [
   { label: "Upload All Files", value: "Upload All Files" },
   { label: "Extract Files", value: "Extract Files" },
 ];
+
 const FileUploadComponent = ({
   setUploadedFiles,
   files,
   setFiles,
-  extractFiles,
-  setExtractFiles,
+  setAllFiles,
 }) => {
-  const onDrop = async (acceptedFiles) => {
+  const handleDropForExtractFiles = async (acceptedFiles) => {
     setUploadedFiles(acceptedFiles);
+    await handleFiles(acceptedFiles, setFiles);
+  };
 
+  const handleDropForUploadFiles = async (acceptedFiles) => {
+    setAllFiles(acceptedFiles);
+    await handleFiles(acceptedFiles, setFiles);
+  };
+
+  const handleFiles = async (acceptedFiles, setFiles) => {
     await Promise.all(
       acceptedFiles.map(async (file) => {
         if (file.type === "application/zip") {
@@ -66,26 +74,34 @@ const FileUploadComponent = ({
     const file = files[index];
     const fileExtension = file.name.split(".").pop();
     const newFileName = `${newName}.${fileExtension}`;
-    const newPath = file.path.replace(file.name, newFileName); // Update the path with the new file name
+    const newPath = file.path.replace(file.name, newFileName);
     setFiles((prevFiles) =>
       prevFiles.map((f, i) =>
-        i === index
-          ? { ...f, name: newFileName, path: newPath } // Update both name and path for the edited file
-          : f
+        i === index ? { ...f, name: newFileName, path: newPath } : f
       )
     );
   };
+
   const handleDeleteFile = (index) => {
     setFiles((prevFiles) => prevFiles.filter((file, i) => i !== index));
-    setUploadedFiles((prevFiles) => prevFiles.filter((file, i) => i !== index));
   };
 
   const handleViewDocument = (path) => {
-    // Open the document in a new tab/window
     window.open(path, "_blank");
   };
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const {
+    getRootProps: getRootPropsExtract,
+    getInputProps: getInputPropsExtract,
+    isDragActive: isDragActiveExtract,
+  } = useDropzone({ onDrop: handleDropForExtractFiles });
+
+  const {
+    getRootProps: getRootPropsUpload,
+    getInputProps: getInputPropsUpload,
+    isDragActive: isDragActiveUpload,
+  } = useDropzone({ onDrop: handleDropForUploadFiles });
+
   const getTruncatedText = (text, maxLength) => {
     if (text.length > maxLength) {
       return text.slice(0, maxLength) + "...";
@@ -108,73 +124,125 @@ const FileUploadComponent = ({
         </Typography>
       </Grid>
 
-      <Grid
-        container
-        item
-        xs={12}
-        lg={5.5}
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          marginTop: "1.5rem",
-          backgroundColor: Colors.WHITE,
-          padding: "1rem",
-          borderRadius: "10px",
-        }}
-      >
-        <Typography
+      <Grid container sx={{ justifyContent: "space-between" }}>
+        <Grid
+          container
+          item
+          xs={12}
+          lg={5.5}
           sx={{
-            fontFamily: "Nunito",
-            fontWeight: "600",
-            width: "40%",
-            color: Colors.BLACK,
-          }}
-        >
-          Extract Files Documents
-        </Typography>
-        <Dropdown
-          menuWidth="22rem"
-          menuItems={menuItems}
-          placeholder="Type"
-          backgroundColor={Colors.BG_LIGHT_GRAY}
-          hoverColor={Colors.BG_LIGHT_GRAY}
-          width="50%"
-          selectedValue={extractFiles}
-          setSelectedValue={setExtractFiles}
-        />
-        <Box
-          sx={{
-            backgroundColor: Colors.BG_LIGHT_GRAY,
-            marginTop: "0.5rem",
-            paddingLeft: "1rem",
-            paddingRight: "1rem",
-            borderRadius: "10px",
-            height: "20vh",
             display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            flexDirection: "column",
+            marginTop: "1.5rem",
+            backgroundColor: Colors.WHITE,
+            padding: "1rem",
+            borderRadius: "10px",
           }}
         >
-          <Grid
-            container
-            item
-            xs={12}
+          <Typography
             sx={{
-              backgroundColor: Colors.WHITE,
-              marginTop: ".5rem",
-              marginBottom: ".5rem",
-              height: "40px",
+              fontFamily: "Nunito",
+              fontWeight: "600",
+              width: "40%",
+              color: Colors.BLACK,
+            }}
+          >
+            Extract Files Documents
+          </Typography>
+
+          <Box
+            sx={{
+              backgroundColor: Colors.BG_LIGHT_GRAY,
+              marginTop: "0.5rem",
+              paddingLeft: "1rem",
+              paddingRight: "1rem",
               borderRadius: "10px",
+              height: "20vh",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
             }}
-            {...getRootProps()}
           >
-            <input {...getInputProps()} />
-            <UploadIcon sx={{ color: Colors.DIM_LIGHT_GRAY }} />
-          </Grid>
-        </Box>
+            <Grid
+              container
+              item
+              xs={12}
+              sx={{
+                backgroundColor: Colors.WHITE,
+                marginTop: ".5rem",
+                marginBottom: ".5rem",
+                height: "40px",
+                borderRadius: "10px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              {...getRootPropsExtract()}
+            >
+              <input {...getInputPropsExtract()} />
+              <UploadIcon sx={{ color: Colors.DIM_LIGHT_GRAY }} />
+            </Grid>
+          </Box>
+        </Grid>
+        <Grid
+          container
+          item
+          xs={12}
+          lg={5.5}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            marginTop: "1.5rem",
+            backgroundColor: Colors.WHITE,
+            padding: "1rem",
+            borderRadius: "10px",
+          }}
+        >
+          <Typography
+            sx={{
+              fontFamily: "Nunito",
+              fontWeight: "600",
+              width: "40%",
+              color: Colors.BLACK,
+            }}
+          >
+            Upload Files Documents
+          </Typography>
+
+          <Box
+            sx={{
+              backgroundColor: Colors.BG_LIGHT_GRAY,
+              marginTop: "0.5rem",
+              paddingLeft: "1rem",
+              paddingRight: "1rem",
+              borderRadius: "10px",
+              height: "20vh",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Grid
+              container
+              item
+              xs={12}
+              sx={{
+                backgroundColor: Colors.WHITE,
+                marginTop: ".5rem",
+                marginBottom: ".5rem",
+                height: "40px",
+                borderRadius: "10px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              {...getRootPropsUpload()}
+            >
+              <input {...getInputPropsUpload()} />
+              <UploadIcon sx={{ color: Colors.DIM_LIGHT_GRAY }} />
+            </Grid>
+          </Box>
+        </Grid>
       </Grid>
 
       <Grid item sx={{ marginTop: "1rem" }}>

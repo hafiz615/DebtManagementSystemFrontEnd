@@ -128,7 +128,9 @@ export default function Prompt({
   };
 
   const deleteRole = async () => {
-    setSelectedRole(roleName);
+    if (setSelectedRole) {
+      setSelectedRole(roleName);
+    }
     setLoading(true);
     const deleteRoles = await DeleteRole(rolesId);
     if (deleteRoles?.status === 200) {
