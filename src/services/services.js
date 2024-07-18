@@ -792,3 +792,15 @@ export const GetScores = async (payload, id) => {
     return error;
   }
 };
+
+export const GetDebtors = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + "/v1/debtor/createDebtor",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

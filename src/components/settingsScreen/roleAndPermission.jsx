@@ -245,8 +245,9 @@ export default function RoleAndPermission() {
                       GetRoles={GetRoles}
                       permissionData={permissionData}
                       iconSize="20px"
-                      // selectedRole={selectedRole}
                       setSelectedRole={setSelectedRole}
+                      // selectedRole={selectedRole}
+
                       // data={data}
                     />
                   </Box>
