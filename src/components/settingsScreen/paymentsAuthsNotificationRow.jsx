@@ -98,7 +98,7 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
           }}
         >
           <Checkboxes
-            checked={data.email}
+            checked={data?.email}
             handleCheckChange={(e) => onEmailCheckChange(e.target.checked)}
             disabled={!settings?.editPaymentsNotificationSettings}
           />
@@ -112,7 +112,7 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
           }}
         >
           <Checkboxes
-            checked={data.sms}
+            checked={data?.sms}
             handleCheckChange={(e) => onSMSCheckChange(e.target.checked)}
             disabled={!settings?.editPaymentsNotificationSettings}
           />
@@ -135,7 +135,7 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
           >
             <Dropdown
               menuWidth={smallScreen ? "5rem" : "7rem"}
-              menuItems={menuItems.email}
+              menuItems={menuItems?.email}
               placeholder="Email"
               backgroundColor={Colors.BG_LIGHT_GRAY}
               hoverColor={Colors.BG_LIGHT_GRAY}
@@ -155,7 +155,7 @@ export default function RowConfigForm({ title, data, setData, menuItems }) {
           >
             <Dropdown
               menuWidth="7rem"
-              menuItems={menuItems.sms}
+              menuItems={menuItems?.sms}
               placeholder="SMS"
               backgroundColor={Colors.BG_LIGHT_GRAY}
               hoverColor={Colors.BG_LIGHT_GRAY}
