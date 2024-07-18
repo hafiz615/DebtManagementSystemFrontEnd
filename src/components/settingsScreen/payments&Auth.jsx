@@ -70,10 +70,10 @@ export default function SettingsAccordion({
   );
 
   const [retryAuthIntervalUnit, setRetryAuthIntervalUnit] = useState(
-    retryInterval.failedAuthorization.unit
+    retryInterval?.failedAuthorization?.unit
   );
   const [retryPaymentIntervalUnit, setRetryPaymentIntervalUnit] = useState(
-    retryInterval.failedPayment.unit
+    retryInterval?.failedPayment?.unit
   );
 
   const saveAuthsPaymentsConfig = async () => {
@@ -102,7 +102,7 @@ export default function SettingsAccordion({
       setRetryInterval((prevData) => ({
         ...prevData,
         failedAuthorization: {
-          ...prevData.failedAuthorization,
+          ...prevData?.failedAuthorization,
           value: value,
         },
       }));
@@ -110,7 +110,7 @@ export default function SettingsAccordion({
       setRetryInterval((prevData) => ({
         ...prevData,
         failedAuthorization: {
-          ...prevData.failedAuthorization,
+          ...prevData?.failedAuthorization,
           maxRetry: value,
         },
       }));
@@ -118,7 +118,7 @@ export default function SettingsAccordion({
       setRetryInterval((prevData) => ({
         ...prevData,
         failedPayment: {
-          ...prevData.failedPayment,
+          ...prevData?.failedPayment,
           value: value,
         },
       }));
@@ -126,7 +126,7 @@ export default function SettingsAccordion({
       setRetryInterval((prevData) => ({
         ...prevData,
         failedPayment: {
-          ...prevData.failedPayment,
+          ...prevData?.failedPayment,
           maxRetry: value,
         },
       }));
@@ -145,11 +145,11 @@ export default function SettingsAccordion({
   React.useEffect(() => {
     setRetryInterval((prevData) => ({
       failedAuthorization: {
-        ...prevData.failedAuthorization,
+        ...prevData?.failedAuthorization,
         unit: retryAuthIntervalUnit,
       },
       failedPayment: {
-        ...prevData.failedPayment,
+        ...prevData?.failedPayment,
         unit: retryPaymentIntervalUnit,
       },
     }));
