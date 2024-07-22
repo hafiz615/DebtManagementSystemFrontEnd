@@ -505,35 +505,58 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
 
   const handleNext = async () => {
     window.scrollTo(0, 0);
+    // if (activeStep === 0) {
+    //   setLoading(true);
+    //   const uploadPromises = uploadedFiles?.map((file) => UploadFilesAi(file));
+    //   const UploadAiData = await Promise?.race(uploadPromises);
+
+    //   if (allFiles) {
+    //     const uploadFile = await UploadFiles(allFiles);
+    //     if (uploadFile?.status === 200) {
+    //       setUrl(uploadFile?.data?.data);
+    //     }
+    //   }
+
+    //   if (UploadAiData?.status === 200) {
+    //     handleUploadData(UploadAiData?.data);
+    //   }
+    //   // }
+
+    //   setLoading(true);
+    //   // }
+    // }
     if (activeStep === 0) {
       setLoading(true);
+      try {
+        const uploadPromises = uploadedFiles?.map((file) =>
+          UploadFilesAi(file)
+        );
+        const allUploadAiData = await Promise.all(uploadPromises);
 
-      // const resAiToken = await GetAiToken();
-      // const aiToken = resAiToken?.data?.data?.auth_token;
-      // localStorage.setItem("aiToken", aiToken);
-
-      // if (resAiToken?.status === 200) {
-
-      // if (extractFiles === "Extract Files") {
-      const UploadAiData = uploadedFiles
-        ? await UploadFilesAi(uploadedFiles)
-        : [];
-
-      if (allFiles) {
-        const uploadFile = await UploadFiles(allFiles);
-        if (uploadFile?.status === 200) {
-          setUrl(uploadFile?.data?.data);
+        // Find the first non-empty response
+        const firstValidAiData = allUploadAiData.find(
+          (data) =>
+            data?.status === 200 &&
+            data?.data &&
+            data?.data?.bussiness_info["Business Legal Name"] !== ""
+        );
+        if (firstValidAiData) {
+          handleUploadData(firstValidAiData.data);
         }
-      }
 
-      if (UploadAiData?.status === 200) {
-        handleUploadData(UploadAiData?.data);
+        if (allFiles) {
+          const uploadFile = await UploadFiles(allFiles);
+          if (uploadFile?.status === 200 && uploadFile?.data?.data) {
+            setUrl(uploadFile.data.data);
+          }
+        }
+      } catch (error) {
+        return error;
+      } finally {
+        setLoading(false);
       }
-      // }
-
-      setLoading(true);
-      // }
     }
+
     if (activeStep === 1) {
       const isEmpty = (obj) => {
         return Object.values(obj)?.every(
