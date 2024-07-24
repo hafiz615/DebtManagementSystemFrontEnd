@@ -100,8 +100,8 @@ export default function CreditorDetails({
           notes: "",
           lastFundedDate: "",
           historicalRange: {
-            minimum: null,
-            maximum: null
+            minimum: 0,
+            maximum: 0
           },
           contacts: []
         },
@@ -135,8 +135,8 @@ export default function CreditorDetails({
           notes: "",
           lastFundedDate: creditor?.ContractDetails?.signing_date || "",
           historicalRange: {
-            minimum: null,
-            maximum: null
+            minimum: 0,
+            maximum: 0
           },
           contacts: []
         },
