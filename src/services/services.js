@@ -1,6 +1,7 @@
 import axios from "axios";
 import { baseUrl } from "../constants/appConstants";
 import { setHeaders } from "../common";
+import { isEmpty } from "lodash";
 
 const BASE_URL = baseUrl();
 
@@ -151,7 +152,7 @@ export const ExtractContractData = async (files) => {
 
       // Create form data
       const formData = new FormData();
-      formData.append("MCA_pdf", file.file); // Ensure file.file is a File object
+      formData.append("MCA_pdf", file.file); // Ensure file.file is a File object  
 
       // Call API
       const response = await axios.post(apiUrl, formData, {
@@ -169,36 +170,13 @@ export const ExtractContractData = async (files) => {
       return {};
     }
   };
-}
 
-
-export const UploadFilesAi = async (data) => {
-  if (!data) {
-    console.error("No data to upload");
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append("MCA_pdf", data);
-
-  try {
-    // const token1 = await axios.get(
-    //   "https://dms-ai.hpdemos.co/get-auth-token?username=test&partner_token=test"
-    // );
-    return await axios({
-      method: "post",
-      url: "https://dms-ai.hpdemos.co/extract-fields",
-      data: formData,
-      // headers: {
-      //   accept: "application/json",
-      //   token: token1?.auth_token,
-      //   "Content-Type": "multipart/form-data",
-      // },
-    });
-  } catch (error) {
-    console.error("Error uploading PDF:", error);
-    return null;
-  }
+  const results = await Promise.all(files.map((file) => {
+    if (!isEmpty(file)){
+      return processFile(file)
+    }
+  }));
+  return results; // Return the array of results
 };
 
 
