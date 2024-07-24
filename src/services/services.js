@@ -169,31 +169,8 @@ export const ExtractContractData = async (files) => {
       return {};
     }
   };
+}
 
-  const results = await Promise.all(files.map((file) => processFile(file)));
-  return results; // Return the array of results
-// export const UploadFilesAi = async (data) => {
-//   const formData = new FormData();
-//   formData.append("MCA_pdf", data[0]);
-
-//   try {
-//     // const token1 = await axios.get(
-//     //   "https://dms-ai.hpdemos.co/get-auth-token?username=test&partner_token=test"
-//     // );
-//     return await axios({
-//       method: "post",
-//       url: "https://dms-ai.hpdemos.co/extract-fields",
-//       data: formData,
-//       // headers: {
-//       //   accept: "application/json",
-//       //   token: token1?.auth_token,
-//       //   "Content-Type": "multipart/form-data",
-//       // },
-//     });
-//   } catch (error) {
-//     console.error("Error uploading PDF:", error);
-//   }
-// };
 
 export const UploadFilesAi = async (data) => {
   if (!data) {
