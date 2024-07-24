@@ -118,7 +118,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
 
   //creditor state
   const [creditors, setCreditors] = useState([]);
- 
+
   // payment state
   const [totalReceivable, setTotalReceivable] = useState(null);
   const [paidAmount, setPaidAmount] = useState(null);
@@ -146,7 +146,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   //calculation
   const [totalAmount, setTotalAmount] = useState();
   const [walletId, setWalletId] = useState("");
-  const [finalCaseData, setFinalCaseData] = useState([]); 
+  const [finalCaseData, setFinalCaseData] = useState([]);
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
 
   useEffect(() => {
@@ -600,7 +600,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         showToast(errorMessage, "error");
         setLoading(false);
       }
-    
+
 
       // const caseCreation = await CreateCase(params, false);
 
