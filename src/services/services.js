@@ -2,6 +2,7 @@ import axios from "axios";
 import { baseUrl } from "../constants/appConstants";
 import { setHeaders } from "../common";
 import { isEmpty } from "lodash";
+// import { extractContractDataResponse } from "../testData/stepper_call_response";
 
 const BASE_URL = baseUrl();
 
@@ -145,6 +146,7 @@ export const UploadFiles = async (data) => {
 };
 
 export const ExtractContractData = async (files) => {
+  // return extractContractDataResponse;
   const processFile = async (file) => {
     try {
       // Example API endpoint

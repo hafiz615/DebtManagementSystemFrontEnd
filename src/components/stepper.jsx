@@ -34,7 +34,7 @@ import {
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import { isEmpty } from "lodash";
-import { hasAnyValue, checkContacts } from "../common";
+import { hasAnyValue, checkContacts, phoneNumberFormat, sanitizeText } from "../common";
 import ScrollbarStyles from "./customScroll";
 
 const steps = ["File upload ", "Debtor", "Creditor", "Payment", "Preview"];
@@ -183,18 +183,9 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     basicPhone: "",
     emailValid: "",
   });
-  // const [creditorFieldsError, setCreditorFieldsError] = useState({
-  //   emailValidError: "",
-  //   creditorPhoneError: "",
-  // });
-
   //disable button On Empty Fields
   const [contactError, setContactErrors] = useState({});
   const [emailContactError, setEmailContactError] = useState({});
-  // const [creditorContactError, setCreditorContactError] = useState({});
-  // const [creditorContactEmailError, setCreditorContactEmailError] = useState(
-  //   {}
-  // );
   const [url, setUrl] = useState([]);
   const [debtorCaseData, setDebtorCaseData] = useState([])
 
@@ -225,20 +216,20 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         errors?.emailValid ||
         errors?.basicPhone)) ||
     (activeStep === 2 &&
-      false )||
-      // (fundedDate === "" ||
-      //   (creditorContantHasValue &&
-      //     !isEmpty(creditorContactEmailError) &&
-      //     hasAnyValue(creditorContactEmailError)) ||
-      //   checkContacts(creditorContactDetails) ||
-      //   (creditorContantHasValue &&
-      //     !isEmpty(creditorContactError) &&
-      //     hasAnyValue(creditorContactError)) ||
-      //   creditorFieldsError?.emailValidError ||
-      //   creditorFieldsError?.creditorPhoneError ||
-      //   Object.values(creditorBasicsInfo)?.some((value) => value === "") ||
-      //   Object.values(creditorBusinessDetails)?.some((value) => value === "") ||
-      //   Object.values(historicRange).some((value) => value === ""))) ||
+      false) ||
+    // (fundedDate === "" ||
+    //   (creditorContantHasValue &&
+    //     !isEmpty(creditorContactEmailError) &&
+    //     hasAnyValue(creditorContactEmailError)) ||
+    //   checkContacts(creditorContactDetails) ||
+    //   (creditorContantHasValue &&
+    //     !isEmpty(creditorContactError) &&
+    //     hasAnyValue(creditorContactError)) ||
+    //   creditorFieldsError?.emailValidError ||
+    //   creditorFieldsError?.creditorPhoneError ||
+    //   Object.values(creditorBasicsInfo)?.some((value) => value === "") ||
+    //   Object.values(creditorBusinessDetails)?.some((value) => value === "") ||
+    //   Object.values(historicRange).some((value) => value === ""))) ||
     (activeStep === 3 &&
       (totalReceivable === null ||
         totalReceivable === "" ||
@@ -279,11 +270,17 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     const creditorMap = new Map();
 
     extracted_data.forEach(item => {
-      if(isEmpty(item)) return {}
+      if (isEmpty(item)) return {}
 
       // Merge business info
       for (let key in item.bussiness_info) {
-        if (item.bussiness_info[key] !== null && item.bussiness_info[key] !== '') {
+        if (key === "Business EIN Number" && response?.BusinessInfo[key]?.length !== 9) {
+          const ein = sanitizeText(item.bussiness_info[key])
+          if (ein.length === 9) {
+            response.BusinessInfo[key] = ein;
+          }
+        }
+        else if (item.bussiness_info[key] !== null && item.bussiness_info[key] !== '') {
           response.BusinessInfo[key] = item.bussiness_info[key];
         }
       }
@@ -317,21 +314,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     const parseString = (value) =>
       value ? String(value).replace(/-/g, "") : "";
 
-    const phoneNumberFormat = (phoneNumber) => {
-      if (!phoneNumber) return "";
-
-      const cleanedPhoneNumber = phoneNumber.replace(/\D/g, ""); // Remove all non-numeric characters
-
-      if (cleanedPhoneNumber.length === 10) {
-        return "+1" + cleanedPhoneNumber;
-      } else if (cleanedPhoneNumber.length === 11) {
-        return "+" + cleanedPhoneNumber;
-      }
-      return phoneNumber.startsWith("+")
-        ? phoneNumber
-        : "+" + cleanedPhoneNumber;
-    };
-
     setDebtorOwnDetails({
       BasicFullName: (response?.DebtorInfo) ? response?.DebtorInfo["Debtor's Name"] : "",
       BasicEmailAddress: (response?.DebtorInfo) ? response?.DebtorInfo["Debtor's Email address"] : "",
@@ -341,7 +323,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       BasicCity: (response?.DebtorInfo) ? response?.DebtorInfo["Debtor's City Name"] : "",
       BasicZipCode: (response?.DebtorInfo) ? response?.DebtorInfo["Debtor's Zip code"] : "",
       BasicPhoneNumber:
-      (response?.DebtorInfo) ? phoneNumberFormat(response?.DebtorInfo["Debtor's Phone Number"]) : "",
+        (response?.DebtorInfo) ? phoneNumberFormat(response?.DebtorInfo["Debtor's Phone Number"]) : "",
       BasicAddress: (response?.DebtorInfo) ? response?.DebtorInfo["Debtor's Address"] : "",
       // BasicWeeklyBudget: response?.debtor_info["Debtor's Country Name"] || "",
     });
@@ -360,13 +342,13 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       businessCity: (response?.BusinessInfo) ? response?.BusinessInfo["Business City Name"] : "",
       businessZipCode: (response?.BusinessInfo) ? response?.BusinessInfo["Business Zip code"] : "",
       businessPhoneNumber:
-      (response?.BusinessInfo) ? phoneNumberFormat(response?.BusinessInfo["Business Phone Number"]) :
-        "",
+        (response?.BusinessInfo) ? phoneNumberFormat(response?.BusinessInfo["Business Phone Number"]) :
+          "",
       businessAddress:
-      (response?.BusinessInfo) ? response?.BusinessInfo["Business Street Address"] : "",
+        (response?.BusinessInfo) ? response?.BusinessInfo["Business Street Address"] : "",
     });
 
-    setCreditors(response?.Creditors)
+    setCreditors(response?.Creditors);
   };
 
   const handleSelect = (debtorData) => {
@@ -509,212 +491,113 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   };
 
   const handleNext = async () => {
-    setLoading(true);
-    window.scrollTo(0, 0);
-    if (activeStep === 0) {
-      const extractedDataMCAs = selectedFiles ? await ExtractContractData(selectedFiles) : [];
+    try {
+      setLoading(true);
+      window.scrollTo(0, 0);
+      if (activeStep === 0) {
+        const extractedDataMCAs = selectedFiles ? await ExtractContractData(selectedFiles) : [];
 
-      if (files) {
-        const uploadFile = await UploadFiles(files);
-        if (uploadFile?.status === 200) {
-          setUrl(uploadFile?.data?.data);
+        if (files) {
+          const uploadFile = await UploadFiles(files);
+          if (uploadFile?.status === 200) {
+            setUrl(uploadFile?.data?.data);
+          }
+        }
+
+        handleExtractedData(extractedDataMCAs);
+        setActiveStep(activeStep + 1)
+      }
+      else if (activeStep === 1) {
+        const isEmpty = (obj) => {
+          return Object.values(obj)?.every(
+            (value) => value === "" || value == null
+          );
+        };
+        const areAllObjectsEmpty = (arr) => {
+          return arr?.every(isEmpty);
+        };
+        const debtorContacts = areAllObjectsEmpty(debtorContactDetails)
+          ? []
+          : debtorContactDetails;
+
+        const params = {
+          basicInformation: {
+            fullName: debtorOwnDetails?.BasicFullName,
+            email: debtorOwnDetails?.BasicEmailAddress,
+            SSID: debtorOwnDetails?.BasicSsid,
+            status: status,
+            country: debtorOwnDetails?.BasicCountry,
+            state: debtorOwnDetails?.BasicState,
+            city: debtorOwnDetails?.BasicCity,
+            zipCode: debtorOwnDetails?.BasicZipCode,
+            phone: debtorOwnDetails?.BasicPhoneNumber,
+            address: debtorOwnDetails?.BasicAddress,
+            weeklyBudget: parseInt(debtorOwnDetails?.BasicWeeklyBudget) || "",
+          },
+          businessInformation: {
+            companyName: debtorBusinessDetails?.businessCompanyName,
+            EIN: debtorBusinessDetails?.businessEinNumber,
+            businessCategory: debtorBusinessDetails?.businessCategory,
+            description: debtorBusinessDetails?.businessDescription,
+            country: debtorBusinessDetails?.businessCountry,
+            state: debtorBusinessDetails?.businessState,
+            city: debtorBusinessDetails?.businessCity,
+            zipCode: debtorBusinessDetails?.businessZipCode,
+            phone: debtorBusinessDetails?.businessPhoneNumber,
+            address: debtorBusinessDetails?.businessAddress,
+          },
+          contacts: debtorContacts,
+          paymentToken: connectPayment?.paymentToken,
+          paymentType: connectPayment?.paymentType,
+          documents: url || [],
+        };
+        const res = await CreateDebtor(params);
+        if (res?.status === 200) {
+          showToast(res?.data?.message, "success");
+          setDebtorCaseData(res?.data?.data);
+          setActiveStep(activeStep + 1)
+        } else {
+          const errorMessage = res?.response?.data?.message;
+          showToast(errorMessage, "error");
         }
       }
+      else if (activeStep === 2) {
+        const isEmpty = (obj) => {
+          return Object.values(obj)?.every(
+            (value) => value === "" || value == null
+          );
+        };
 
-      handleExtractedData(extractedDataMCAs);
+        const res = await CreateCreditorCase({ data: finalCaseData }, debtorCaseData.debtor._id);
+
+        if (res?.status === 200 || res?.status === 201) {
+          showToast(res?.data?.message, "success");
+          navigate(`/client/list-details/${res?.data?.data?.debtor}`)
+          setDebtorCaseData(res?.data?.data);
+          setActiveStep(activeStep + 1)
+        } else {
+          const errorMessage = res?.response?.data?.message;
+          showToast(errorMessage, "error");
+        }
+      } else {
+        let newSkipped = skipped;
+        if (isStepSkipped(activeStep)) {
+          newSkipped = new Set(newSkipped.values());
+          newSkipped.delete(activeStep);
+        }
+        setCompletedSteps((prevCompletedSteps) =>
+          new Set(prevCompletedSteps)?.add(activeStep)
+        );
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setSkipped(newSkipped);
+      }
+    }
+    catch (error) {
+      console.error("An error occurred while processing business info:", error);
+    }
+    finally {
       setLoading(false);
     }
-    if (activeStep === 1) {
-      const isEmpty = (obj) => {
-        return Object.values(obj)?.every(
-          (value) => value === "" || value == null
-        );
-      };
-      const areAllObjectsEmpty = (arr) => {
-        return arr?.every(isEmpty);
-      };
-      const debtorContacts = areAllObjectsEmpty(debtorContactDetails)
-        ? []
-        : debtorContactDetails;
-
-      const params = {
-        basicInformation: {
-          fullName: debtorOwnDetails?.BasicFullName,
-          email: debtorOwnDetails?.BasicEmailAddress,
-          SSID: debtorOwnDetails?.BasicSsid,
-          status: status,
-          country: debtorOwnDetails?.BasicCountry,
-          state: debtorOwnDetails?.BasicState,
-          city: debtorOwnDetails?.BasicCity,
-          zipCode: debtorOwnDetails?.BasicZipCode,
-          phone: debtorOwnDetails?.BasicPhoneNumber,
-          address: debtorOwnDetails?.BasicAddress,
-          weeklyBudget: parseInt(debtorOwnDetails?.BasicWeeklyBudget) || "",
-        },
-        businessInformation: {
-          companyName: debtorBusinessDetails?.businessCompanyName,
-          EIN: debtorBusinessDetails?.businessEinNumber,
-          businessCategory: debtorBusinessDetails?.businessCategory,
-          description: debtorBusinessDetails?.businessDescription,
-          country: debtorBusinessDetails?.businessCountry,
-          state: debtorBusinessDetails?.businessState,
-          city: debtorBusinessDetails?.businessCity,
-          zipCode: debtorBusinessDetails?.businessZipCode,
-          phone: debtorBusinessDetails?.businessPhoneNumber,
-          address: debtorBusinessDetails?.businessAddress,
-        },
-        contacts: debtorContacts,
-        paymentToken: connectPayment?.paymentToken,
-        paymentType: connectPayment?.paymentType,
-        documents: url || [],
-      };
-      const res = await CreateDebtor(params);
-      if (res?.status === 200) {
-        showToast(res?.data?.message, "success");
-        setDebtorCaseData(res?.data?.data);
-        setLoading(false);
-      } else {
-        const errorMessage = res?.response?.data?.message;
-        showToast(errorMessage, "error");
-        setLoading(false);
-      }
-    }
-
-    if (activeStep === 2) {
-      setLoading(true);
-      const isEmpty = (obj) => {
-        return Object.values(obj)?.every(
-          (value) => value === "" || value == null
-        );
-      };
-
-      const res = await CreateCreditorCase({data: finalCaseData}, debtorCaseData.debtor._id);
-
-      if (res?.status === 200 || res?.status === 201) {
-        showToast(res?.data?.message, "success");
-        navigate(`/client/list-details/${res?.data?.data?.debtor}`)
-        setDebtorCaseData(res?.data?.data);
-        setLoading(false);
-      } else {
-        const errorMessage = res?.response?.data?.message;
-        showToast(errorMessage, "error");
-        setLoading(false);
-      }
-
-
-      // const caseCreation = await CreateCase(params, false);
-
-    //   if (caseCreation?.status === 201) {
-    //     showToast(caseCreation?.data?.message, "success");
-    //     setDebtorOwnDetails({
-    //       BasicFullName: "",
-    //       BasicEmailAddress: "",
-    //       BasicSsid: "",
-    //       BasicCountry: "",
-    //       BasicState: "",
-    //       BasicCity: "",
-    //       BasicZipCode: "",
-    //       BasicPhoneNumber: "",
-    //       BasicAddress: "",
-    //       BasicWeeklyBudget: "",
-    //     });
-    //     setDebtorBusinessDetails({
-    //       businessCompanyName: "",
-    //       businessEinNumber: "",
-    //       businessCategory: "",
-    //       businessDescription: "",
-    //       businessCountry: "",
-    //       businessState: "",
-    //       businessCity: "",
-    //       businessZipCode: "",
-    //       businessPhoneNumber: "",
-    //       businessAddress: "",
-    //     });
-    //     setDebtorContactDetails([
-    //       {
-    //         name: "",
-    //         title: "",
-    //         phone: "",
-    //         email: "",
-    //         country: "",
-    //         state: "",
-    //         city: "",
-    //         zipCode: "",
-    //         relationWithDebtor: "",
-    //       },
-    //     ]);
-    //     setChecked(false);
-    //     setStatus("Customer");
-    //     setCreditorBasicsInfo({
-    //       CreditorBasicFullName: "",
-    //       CreditorBasicEmailAddress: "",
-    //       CreditorBasicPhoneNumber: "",
-    //     });
-    //     setCreditorBusinessDetails({
-    //       businessCompanyName: "",
-    //       businessCategory: "",
-    //     });
-    //     setFundedDate("");
-    //     setCreditorNotes("");
-    //     setSecurityKey("");
-
-    //     setHistoricRange({
-    //       minimum: "",
-    //       maximum: "",
-    //     });
-    //     setDebtorDetailsStatus("");
-    //     setLastPaymentDate("");
-    //     setRemainingAmount(null);
-    //     setPaidAmount(null);
-    //     setTotalReceivable(null);
-    //     setFeePayment("");
-    //     setFiles([]);
-    //     setCompletedSteps(null);
-    //     setNewDataList([
-    //       {
-    //         amount: "",
-    //         startDate: "",
-    //         timePeriod: "",
-    //       },
-    //     ]);
-    //     setCreditorContactDetails([
-    //       {
-    //         name: "",
-    //         title: "",
-    //         phone: "",
-    //         email: "",
-    //         country: "",
-    //         state: "",
-    //         city: "",
-    //         zipCode: "",
-    //         relationWithDebtor: "",
-    //       },
-    //     ]);
-    //     setSelectedFiles([]);
-    //     setFiles([]);
-    //     setWalletId("");
-    //     setDebtorSearchText("");
-    //     setCreditorSearchText("");
-    //     setActiveStep(0);
-    //   } else {
-    //     const errorMessage = caseCreation?.response?.data?.message;
-    //     showToast(errorMessage, "error");
-    //   }
-
-    //   // }
-    } else {
-      let newSkipped = skipped;
-      if (isStepSkipped(activeStep)) {
-        newSkipped = new Set(newSkipped.values());
-        newSkipped.delete(activeStep);
-      }
-      setCompletedSteps((prevCompletedSteps) =>
-        new Set(prevCompletedSteps)?.add(activeStep)
-      );
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      setSkipped(newSkipped);
-    }
-    setLoading(false);
   };
   const handleStep = (step) => () => {
     if (
