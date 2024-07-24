@@ -114,6 +114,10 @@ export const phoneNumberFormat = (phoneNumber) => {
     ? phoneNumber
     : "+" + cleanedPhoneNumber;
 };
+export const sanitizeText = (input) => {
+  const sanitizedInput = input.replace(/[^0-9]/g, ""); // Remove non-numeric characters
+  return sanitizedInput
+};
 
 export function formatDollarAmount(amount) {
   if (amount == null) return "-";
