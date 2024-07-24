@@ -100,6 +100,21 @@ export const formatPhoneNumber = (value) => {
   }
 };
 
+export const phoneNumberFormat = (phoneNumber) => {
+  if (!phoneNumber) return "";
+
+  const cleanedPhoneNumber = phoneNumber.replace(/\D/g, ""); // Remove all non-numeric characters
+
+  if (cleanedPhoneNumber.length === 10) {
+    return "+1" + cleanedPhoneNumber;
+  } else if (cleanedPhoneNumber.length === 11) {
+    return "+" + cleanedPhoneNumber;
+  }
+  return phoneNumber.startsWith("+")
+    ? phoneNumber
+    : "+" + cleanedPhoneNumber;
+};
+
 export function formatDollarAmount(amount) {
   if (amount == null) return "-";
   return new Intl.NumberFormat("en-US", {

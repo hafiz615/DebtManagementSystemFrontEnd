@@ -16,7 +16,7 @@ function PaymentsTextFields({
   error,
   value,
   onKeyDown,
-  max,
+  max
 }) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
 

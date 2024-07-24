@@ -1,6 +1,7 @@
 import axios from "axios";
 import { baseUrl } from "../constants/appConstants";
 import { setHeaders } from "../common";
+import { isEmpty } from "lodash";
 
 const BASE_URL = baseUrl();
 
@@ -130,7 +131,7 @@ export const CreateCase = async (payload, bulk = false) => {
 export const UploadFiles = async (data) => {
   const formData = new FormData();
   for (let i = 0; i < data.length; i++) {
-    formData.append("files", data[i]);
+    formData.append("files", data[i].file);
   }
   try {
     return await axios.post(
@@ -143,28 +144,41 @@ export const UploadFiles = async (data) => {
   }
 };
 
-export const UploadFilesAi = async (data) => {
-  const formData = new FormData();
-  formData.append("MCA_pdf", data[0]);
+export const ExtractContractData = async (files) => {
+  const processFile = async (file) => {
+    try {
+      // Example API endpoint
+      const apiUrl = "https://dms-negotiation.hpdemos.co/extract-fields";
 
-  try {
-    // const token1 = await axios.get(
-    //   "https://dms-ai.hpdemos.co/get-auth-token?username=test&partner_token=test"
-    // );
-    return await axios({
-      method: "post",
-      url: "https://dms-ai.hpdemos.co/extract-fields",
-      data: formData,
-      // headers: {
-      //   accept: "application/json",
-      //   token: token1?.auth_token,
-      //   "Content-Type": "multipart/form-data",
-      // },
-    });
-  } catch (error) {
-    console.error("Error uploading PDF:", error);
-  }
+      // Create form data
+      const formData = new FormData();
+      formData.append("MCA_pdf", file.file); // Ensure file.file is a File object  
+
+      // Call API
+      const response = await axios.post(apiUrl, formData, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'multipart/form-data', // This is often auto-set by axios
+        }
+      });
+
+      // Return the result of the API call
+      return response.data;
+    } catch (error) {
+      console.error(`Error uploading ${file.name}:`, error);
+      // Return an empty object in case of failure
+      return {};
+    }
+  };
+
+  const results = await Promise.all(files.map((file) => {
+    if (!isEmpty(file)){
+      return processFile(file)
+    }
+  }));
+  return results; // Return the array of results
 };
+
 
 export const GetDebtorSearch = async (payload) => {
   try {
@@ -785,6 +799,30 @@ export const GetScores = async (payload, id) => {
   try {
     return await axios.post(
       BASE_URL + `/v1/case/getScores/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const CreateDebtor = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + "/v1/debtor/createDebtor",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const CreateCreditorCase = async (payload, debtorId) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/case/createCreditorsCases/${debtorId}`,
       payload,
       setHeaders()
     );

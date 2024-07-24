@@ -4,6 +4,7 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import { Colors } from "../config/default";
+import { Grid } from "@mui/material";
 
 // Custom Radio button with sky blue color when checked
 const SkyBlueRadio = (props) => (
@@ -28,43 +29,45 @@ export default function PaymentProcess({ feePayment, setFeePayment }) {
   };
 
   return (
-    <FormControl>
-      <RadioGroup
-        value={feePayment}
-        onChange={handleRadioChange}
-        sx={{
-          color: Colors.DIM_LIGHT_GRAY,
-          fontFamily: "Nunito !important",
-          flexDirection: "row",
-        }}
-        aria-labelledby="demo-row-radio-buttons-group-label"
-        name="row-radio-buttons-group"
-      >
-        <FormControlLabel
-          value="paidViaCash"
-          label="Via Cash"
-          control={<SkyBlueRadio />}
+    <Grid item xs={12} md={12} lg={12}>
+      <FormControl>
+        <RadioGroup
+          value={feePayment}
+          onChange={handleRadioChange}
           sx={{
-            marginRight: ".5rem",
+            color: Colors.DIM_LIGHT_GRAY,
+            fontFamily: "Nunito !important",
+            flexDirection: "row",
           }}
-        />
-        <FormControlLabel
-          value="toPay"
-          label="To Pay"
-          control={<SkyBlueRadio />}
-          sx={{
-            marginRight: ".5rem",
-          }}
-        />
-        <FormControlLabel
-          value="paidViaThirdParty"
-          label="Third Party"
-          control={<SkyBlueRadio />}
-          sx={{
-            marginRight: ".5rem",
-          }}
-        />
-      </RadioGroup>
-    </FormControl>
+          aria-labelledby="demo-row-radio-buttons-group-label"
+          name="row-radio-buttons-group"
+        >
+          <FormControlLabel
+            value="paidViaCash"
+            label="Via Cash"
+            control={<SkyBlueRadio />}
+            sx={{
+              marginRight: ".5rem",
+            }}
+          />
+          <FormControlLabel
+            value="toPay"
+            label="To Pay"
+            control={<SkyBlueRadio />}
+            sx={{
+              marginRight: ".5rem",
+            }}
+          />
+          <FormControlLabel
+            value="paidViaThirdParty"
+            label="Third Party"
+            control={<SkyBlueRadio />}
+            sx={{
+              marginRight: ".5rem",
+            }}
+          />
+        </RadioGroup>
+      </FormControl>
+    </Grid>
   );
 }
