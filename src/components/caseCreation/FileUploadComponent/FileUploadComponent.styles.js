@@ -1,0 +1,152 @@
+import { Colors } from "../../../config/default";
+import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../../../constants/appConstants";
+
+export const styles = {
+  headerText: {
+    fontFamily: "Nunito",
+    fontWeight: 600,
+    width: "100%",
+    color: Colors.BLACK,
+    fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+  },
+  listContainer: {
+    marginTop: "1rem",
+    backgroundColor: Colors.WHITE,
+    padding: "1rem",
+    borderRadius: "10px",
+    overflowX: "auto", // Add horizontal scrolling if needed
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  columnBox: {
+    display: "flex",
+    flexDirection: "column",
+    boxSizing: "border-box", // Ensure padding/border are included in width calculation
+    overflow: "hidden", // Prevent overflow within columns
+  },
+  columnHeader: {
+    fontFamily: "Nunito",
+    fontWeight: 600,
+    color: Colors.BLACK,
+    fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+    marginBottom: "0.5rem",
+  },
+  fileText: {
+    marginTop: "0.5rem",
+    fontFamily: "Nunito",
+    fontWeight: 400,
+    color: Colors.DARK_GRAY,
+    fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+    display: "flex",
+    alignItems: "center",
+    overflow: "hidden", // Prevent text overflow
+  },
+  fileName: {
+    textTransform: "none",
+    color: Colors.BLUE_COLOR,
+    fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+  },
+  icon: {
+    color: Colors.ORANGE_COLOR,
+    fontSize: { xs: FONT_SIZE_SMALL, sm: "1.2rem" },
+    cursor: "pointer",
+  },
+  checkbox: {
+    width: "40px",
+    height: "40px",
+  },
+  selectColumn: {
+    minWidth: "100px", // Adjust to desired width
+    flex: "0 0 100px", // Adjust to desired width
+  },
+  titleColumn: {
+    flex: 1, // Allow the title column to take up remaining space
+  },
+  typeColumn: {
+    flex: 1, // Allow the type column to take up remaining space
+  },
+  pathColumn: {
+    flex: 1, // Allow the path column to take up remaining space
+  },
+  actionsColumn: {
+    flex: 1, // Allow the actions column to take up remaining space
+  },
+  tableHeader: {
+    fontWeight: "bold",
+    fontSize: "1rem",
+  },
+  checkboxCell: {
+    width: "60px",
+    textAlign: "center",
+  },
+  pathCell: {
+    maxWidth: "200px",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  pathText: {
+    "&:hover": {
+      cursor: "pointer",
+    },
+  },
+  actionIcons: {
+    display: "flex",
+    gap: "0.5rem",
+    alignItems: "center",
+  },
+  viewIcon: {
+    color: Colors.GREEN_COLOR, // Or any color you prefer
+    fontSize: { xs: FONT_SIZE_SMALL, sm: "1.2rem" },
+    cursor: "pointer",
+  },
+  uploadContainer: {
+    display: "flex",
+    flexDirection: "column",
+    marginTop: "1.5rem",
+    backgroundColor: Colors.WHITE,
+    padding: "1rem",
+    borderRadius: "10px",
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dropzone: {
+    backgroundColor: Colors.WHITE,
+    marginTop: ".5rem",
+    marginBottom: ".5rem",
+    borderRadius: "10px",
+    display: "flex",
+    alignItems: "center",
+    width: '100%',
+    height: '40px',
+    justifyContent: 'center',
+    cursor: 'pointer', // Show pointer cursor to indicate clickable area
+  },
+  uploadBox: {
+    border: '2px dashed #ccc',
+    borderRadius: '4px',
+    padding: '1rem', // Adjust padding as needed
+    textAlign: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: '3rem',
+    marginBottom: '0.5rem', // Space between icon and text
+    color: Colors.DIM_LIGHT_GRAY,
+    cursor: 'pointer', // Show pointer cursor to indicate clickable area
+  },
+  uploadText: {
+    fontSize: '1rem',
+    color: Colors.DIM_LIGHT_GRAY,
+    cursor: 'pointer',
+  },
+
+  uploadIcon: {
+    fontSize: '3rem',
+    marginBottom: '0.5rem', // Space between icon and text
+    color: Colors.DIM_LIGHT_GRAY,
+    cursor: 'pointer',
+  },
+};

@@ -1,16 +1,11 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
-
-import { Box, Button } from "@mui/material";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
+import { Box, Button, Menu, MenuItem, Modal } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddchartIcon from "@mui/icons-material/Addchart";
-import { Modal } from "@mui/material";
-
+import { useSelector } from "react-redux";
 import { Colors } from "../config/default";
 import UploadCsv from "./uploadCsv";
-import { useSelector } from "react-redux";
 
 export default function BasicMenu({ openState, backgroundColor, width }) {
   const generalPermissions = useSelector(
@@ -133,7 +128,9 @@ export default function BasicMenu({ openState, backgroundColor, width }) {
           </MenuItem>
         )}
         <Modal open={isModalOpen} onClose={handleModalClose}>
-          <UploadCsv handleModalClose={handleModalClose} />
+          <Box>
+            <UploadCsv handleModalClose={handleModalClose} />
+          </Box>
         </Modal>
       </Menu>
     </>

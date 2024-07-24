@@ -1,30 +1,20 @@
 import React, { useState, useEffect } from "react";
-
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Grid } from "@mui/material";
-
 import { Colors } from "../../config/default";
 import Dropdown from "./../dropdown";
 import AmountTextField from "../amountTextField";
 import PaymentProcess from "../radioPayment";
 import { GetAllStatuses } from "../../services/services";
-import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../../constants/appConstants";
 
 export default function PaymentFields({
-  totalReceivable,
-  setTotalReceivable,
-  paidAmount,
-  setPaidAmount,
-  remainingAmount,
-  setRemainingAmount,
-  lastPaymentDate,
-  setLastPaymentDate,
-  selectedValue,
-  setSelectedValue,
-  setFeePayment,
-  feePayment,
+  thisCaseData,
+  handleCaseDataChange,
+  caseIndex,
 }) {
+  const [status, setStatus] = useState(thisCaseData.status);
+  const [feePayment, setFeePayment] = useState("To Pay")
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:1440px)");
 
   const [menuItems, setMenuItems] = useState([]);
@@ -43,12 +33,13 @@ export default function PaymentFields({
   useEffect(() => {
     GetStatuses();
   }, []);
-  // const menuItems = [
-  //   { label: "Customer", value: "Customer" },
-  //   { label: "On hold", value: "On hold" },
-  //   { label: "Canceled", value: "Canceled" },
-  //   { label: "Declared Bankrupcy", value: "Declared Bankrupcy" },
-  // ];
+  useEffect(() => {
+    handleCaseDataChange(caseIndex, "feePayment", feePayment);
+  }, [feePayment]);
+  useEffect(() => {
+    handleCaseDataChange(caseIndex, "status", status);
+  }, [status]);
+
   const handleNumberInput = (e) => {
     const invalidChars = ["e", "E", ".", "+", "-"];
     if (invalidChars.includes(e.key)) {
@@ -58,207 +49,152 @@ export default function PaymentFields({
   const today = new Date().toISOString().split("T")[0];
   return (
     <>
-      <Typography
+      <Grid
+        container
+        spacing={2}
         sx={{
-          fontFamily: "Nunito",
-          fontWeight: "600",
+          borderRadius: "10px",
+          padding: "1rem",
+          backgroundColor: Colors.WHITE,
         }}
-        gutterBottom
       >
-        Debt Details
-      </Typography>
-
-      <Grid container>
-        <Grid
-          item
-          xs={12}
-          lg={4}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "0.5rem",
-          }}
-        >
-          <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              color: Colors.DARK_GRAY,
-              marginLeft: { xs: "0", sm: "2rem" },
-              width: "50%",
-            }}
-          >
-            Total Receivable
+        <Grid item xs={12}>
+          <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
+            Debt Details
           </Typography>
-
-          <AmountTextField
-            width="60%"
-            value={totalReceivable}
-            onChange={(e) => setTotalReceivable(e.target.value)}
-            onKeyDown={handleNumberInput}
-          />
         </Grid>
+          <Grid item xs={12} md={4} lg={3}>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "500",
+                color: Colors.DARK_GRAY,
+                marginRight: "1.5rem", // Increased marginRight
+              }}
+            >
+              Total Receivable
+            </Typography>
+            <AmountTextField
+              value={parseInt(thisCaseData.totalDebt)}
+              onChange={(e) =>
+                handleCaseDataChange(caseIndex, "totalDebt", parseInt(e.target.value))
+              }
+              onKeyDown={handleNumberInput}
+            />
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "500",
+                color: Colors.DARK_GRAY,
+                marginRight: "1.5rem", // Increased marginRight
+              }}
+            >
+              Paid
+            </Typography>
+            <AmountTextField
+              value={parseInt(thisCaseData.paidAmount)}
+              onChange={(e) =>
+                handleCaseDataChange(caseIndex, "paidAmount", parseInt(e.target.value))
+              }
+              onKeyDown={handleNumberInput}
+            />
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "500",
+                color: Colors.DARK_GRAY,
+                marginRight: "1.5rem", // Increased marginRight
+              }}
+            >
+              Remaining
+            </Typography>
 
-        <Grid
-          item
-          xs={12}
-          lg={4}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "0.5rem",
-          }}
-        >
-          <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              marginLeft: { xs: "0", sm: "2rem" },
-              color: Colors.DARK_GRAY,
-              width: "50%",
-            }}
-          >
-            Paid
-          </Typography>
-          <AmountTextField
-            width="60%"
-            value={paidAmount}
-            onChange={(e) => setPaidAmount(parseInt(e.target.value))}
-            onKeyDown={handleNumberInput}
-          />
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          lg={4}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "0.5rem",
-          }}
-        >
-          <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              marginLeft: { xs: "0", sm: "2rem" },
-              color: Colors.DARK_GRAY,
-              width: "50%",
-            }}
-          >
-            Remaining
-          </Typography>
+            <AmountTextField
+              marginRight={smallScreen ? "0rem" : "2rem"}
+              value={parseInt(thisCaseData.remaining)}
+              onChange={(e) =>
+                handleCaseDataChange(caseIndex, "remaining", parseInt(e.target.value))
+              }
+              onKeyDown={handleNumberInput}
+            />
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "500",
+                color: Colors.DARK_GRAY,
+                marginRight: "1.5rem", // Increased marginRight
+              }}
+            >
+              Last Payment Date
+            </Typography>
 
-          <AmountTextField
-            marginRight={smallScreen ? "0rem" : "2rem"}
-            width="60%"
-            value={remainingAmount}
-            onChange={(e) => setRemainingAmount(e.target.value)}
-            onKeyDown={handleNumberInput}
-          />
-        </Grid>
-      </Grid>
+            <input
+              type="date"
+              placeholder="4/2/2024"
+              value={thisCaseData.lastPaymentDate}
+              onChange={(e) =>
+                handleCaseDataChange(caseIndex, "lastPaymentDate", e.target.value)
+              }
+              max={today}
+              style={{
+                backgroundColor: Colors.BG_LIGHT_GRAY,
+                height: "2.5rem",
+                color: Colors.DIM_LIGHT_GRAY,
+                paddingLeft: "1rem",
+                border: "none",
+                outline: "none",
+                borderRadius: "5px",
+                width: "100%"
+              }}
+            />
+          </Grid>
 
-      <Grid container xs={12} sx={{ marginTop: "1rem" }}>
-        <Grid
-          item
-          xs={12}
-          lg={4}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "0.5rem",
-          }}
-        >
-          <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              marginLeft: { xs: "0", sm: "2rem" },
-              color: Colors.DARK_GRAY,
-              width: "50%",
-            }}
-          >
-            Last Payment Date
-          </Typography>
+          <Grid item xs={12} md={4} lg={3}>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "500",
+                color: Colors.DARK_GRAY,
+                marginRight: "1.5rem", // Increased marginRight
+              }}
+            >
+              Status
+            </Typography>
+            <Dropdown
+              menuWidth={smallScreen ? "17rem" : "14.8rem"}
+              selectedValue={thisCaseData.status}
+              setSelectedValue={setStatus}
+              menuItems={menu}
+              placeholder="Choose Status"
+              backgroundColor={Colors.BG_LIGHT_GRAY}
+              width="100%"
+            />
+          </Grid>
 
-          <input
-            type="date"
-            placeholder="4/2/2024"
-            value={lastPaymentDate}
-            onChange={(e) => setLastPaymentDate(e.target.value)}
-            max={today}
-            style={{
-              backgroundColor: Colors.BG_LIGHT_GRAY,
-              height: "2.5rem",
-              color: Colors.DIM_LIGHT_GRAY,
-              paddingLeft: "1rem",
-              border: "none",
-              outline: "none",
-              borderRadius: "5px",
-              width: "60%",
-            }}
-          />
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          lg={4}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "0.5rem",
-          }}
-        >
-          <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              color: Colors.DARK_GRAY,
-              marginLeft: { xs: "0", sm: "2rem" },
-              width: "50%",
-            }}
-          >
-            Status
-          </Typography>
-          <Dropdown
-            menuWidth={smallScreen ? "17rem" : "14.8rem"}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-            menuItems={menu}
-            placeholder="Choose Status"
-            backgroundColor={Colors.BG_LIGHT_GRAY}
-            width="60%"
-          />
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          lg={4}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "0.5rem",
-            gap: { xs: "3px", sm: "0" },
-          }}
-        >
-          <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              color: Colors.DARK_GRAY,
-              marginLeft: { xs: "0", sm: "2rem" },
-              width: { xs: "100%", sm: "45?%" },
-            }}
-          >
-            Fee Payment
-          </Typography>
+          <Grid item xs={12} md={4} lg={3}>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "500",
+                color: Colors.DARK_GRAY,
+                marginRight: "1.5rem", // Increased marginRight
+              }}
+            >
+              Fee Payment
+            </Typography>
 
-          <PaymentProcess
-            feePayment={feePayment}
-            setFeePayment={setFeePayment}
-          />
-        </Grid>
+            <PaymentProcess
+              feePayment={thisCaseData.feePayment}
+              setFeePayment={setFeePayment}
+            />
+          </Grid>
+     
       </Grid>
     </>
   );

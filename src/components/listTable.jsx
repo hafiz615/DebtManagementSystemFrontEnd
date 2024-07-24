@@ -6,8 +6,11 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { Paper, IconButton, Typography, CircularProgress } from "@mui/material";
+import Paper from "@mui/material/Paper";
+import CircularProgress from "@mui/material/CircularProgress";
 import TablePagination from "@mui/material/TablePagination";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
 import CreateIcon from "@mui/icons-material/Create";
 import CloseIcon from "@mui/icons-material/Close";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -17,26 +20,18 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { Colors } from "../config/default";
 import MuiModels from "./models";
-import { isEmpty } from "lodash";
 import Prompt from "./prompt";
 import { useToast } from "../toast/toastContext";
 import { RetryAuth, RetryCapture } from "../services/services";
-import {
-  FONT_SIZE_LARGE,
-  FONT_SIZE_SMALL,
-  FONT_SIZE_XL,
-} from "../constants/appConstants";
-
+import { FONT_SIZE_LARGE, FONT_SIZE_SMALL, FONT_SIZE_XL } from "../constants/appConstants";
 import { useSelector } from "react-redux";
+import { isEmpty } from "lodash";
+
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     color: Colors.BLACK,
     border: "none",
-    paddingInlineStart: "0",
-    paddingInlineEnd: "0",
-    paddingTop: "16px",
-    paddingBottom: "16px",
-    paddingLeft: "1rem",
+    padding: "16px 1rem",
     fontFamily: "Nunito",
     borderTop: "1px solid #EAEBEB",
   },
@@ -44,24 +39,18 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     color: Colors.DARK_GRAY,
     fontSize: FONT_SIZE_LARGE,
     border: "none",
-    paddingInlineStart: "0",
-    paddingInlineEnd: "0",
-    paddingTop: "16px",
-    paddingBottom: "16px",
-    paddingLeft: "1rem",
+    padding: "16px 1rem",
     fontFamily: "Nunito",
     "&:not(:first-of-type)": {
       opacity: 0.7,
     },
   },
 }));
+
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: Colors.LIGHT_BLUE_COLOR,
-    paddingLeft: "1rem",
   },
-  padding: "0.5rem",
-  position: "relative",
   "&:hover": {
     backgroundColor: "#DADADA",
     cursor: "pointer",
@@ -73,6 +62,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     border: "none",
   },
 }));
+
 export default function ListTable({
   data,
   headerData,
@@ -91,25 +81,28 @@ export default function ListTable({
   loading,
   onPaymentRowClick,
 }) {
-  const generalPermissions = useSelector(
-    (state) => state?.permissions?.permissions?.generalPermissions
-  );
+  const generalPermissions = useSelector((state) => state?.permissions?.permissions?.generalPermissions);
   const { showToast } = useToast();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
+
   const backward = () => {
-    setCurrentPage(currentPage - 1);
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
+
   const forward = () => {
-    setCurrentPage(currentPage + 1);
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
+
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
   const handlePayment = async (id) => {
     let result;
     if (arrayName === "failedAuthorizations") {
@@ -121,10 +114,7 @@ export default function ListTable({
       showToast(result?.data?.message, "success");
       getHomeData(arrayName, 1);
     } else {
-      showToast(
-        result?.response?.data?.message || result?.response?.data?.message,
-        "error"
-      );
+      showToast(result?.response?.data?.message || result?.response?.data?.message, "error");
     }
   };
 
@@ -132,7 +122,7 @@ export default function ListTable({
     <Paper
       sx={{
         backgroundColor: Colors.WHITE,
-        borderRadius: "10px ",
+        borderRadius: "10px",
         width: { xs: "65vw", sm: "100%" },
         height: accordionHeight,
       }}
@@ -146,8 +136,8 @@ export default function ListTable({
       >
         <TableContainer style={{ flexGrow: 1 }}>
           <Table aria-label="customized table">
-            <TableHead sx={{ fontFamily: "Nunito" }}>
-              <TableRow sx={{ fontFamily: "Nunito" }}>
+            <TableHead>
+              <TableRow>
                 {headerData
                   ?.filter(
                     (header) =>
@@ -166,7 +156,7 @@ export default function ListTable({
                       {header}
                     </StyledTableCell>
                   ))}
-                {requiredIcons && (
+                {(requiredIcons || requiredCustomFieldIcons) && (
                   <StyledTableCell
                     align="left"
                     sx={{
@@ -177,58 +167,46 @@ export default function ListTable({
                     Actions
                   </StyledTableCell>
                 )}
-                {requiredCustomFieldIcons && (
+                {(generalPermissions?.retryPayment && (arrayName === "failedAuthorizations" || arrayName === "failedPayments")) && (
                   <StyledTableCell
                     align="left"
                     sx={{
                       fontWeight: "700",
                       fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+                      paddingRight: "0.5rem !important",
                     }}
                   >
-                    Actions
+                    Retry
                   </StyledTableCell>
                 )}
-                {generalPermissions?.retryPayment &&
-                  (arrayName === "failedAuthorizations" ||
-                    arrayName === "failedPayments") && (
-                    <StyledTableCell
-                      align="left"
-                      sx={{
-                        fontWeight: "700",
-                        fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
-                        paddingRight: "0.5rem !important",
-                      }}
-                    >
-                      Retry
-                    </StyledTableCell>
-                  )}{" "}
               </TableRow>
             </TableHead>
             {loading ? (
-              <StyledTableRow>
-                <StyledTableCell
-                  colSpan={headerData?.length + 1}
-                  align="center"
-                >
-                  <CircularProgress size={20} sx={{ color: Colors.SKY_BLUE }} />
-                </StyledTableCell>
-              </StyledTableRow>
+              <TableBody>
+                <StyledTableRow>
+                  <StyledTableCell
+                    colSpan={headerData?.length + 1}
+                    align="center"
+                  >
+                    <CircularProgress size={20} sx={{ color: Colors.SKY_BLUE }} />
+                  </StyledTableCell>
+                </StyledTableRow>
+              </TableBody>
             ) : isEmpty(data) ? (
-              <StyledTableRow>
-                <StyledTableCell
-                  colSpan={headerData?.length + 1}
-                  align="center"
-                >
-                  No data available
-                </StyledTableCell>
-              </StyledTableRow>
+              <TableBody>
+                <StyledTableRow>
+                  <StyledTableCell
+                    colSpan={headerData?.length + 1}
+                    align="center"
+                  >
+                    No data available
+                  </StyledTableCell>
+                </StyledTableRow>
+              </TableBody>
             ) : (
               <TableBody>
                 {(rowsPerPage > 0
-                  ? data?.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
+                  ? data?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   : data
                 )?.map((row) => (
                   <StyledTableRow
@@ -321,8 +299,7 @@ export default function ListTable({
                         />
                       </StyledTableCell>
                     )}
-                    {(arrayName === "failedAuthorizations" ||
-                      arrayName === "failedPayments") && (
+                    {(arrayName === "failedAuthorizations" || arrayName === "failedPayments") && (
                       <StyledTableCell
                         sx={{
                           display: "flex",
@@ -363,7 +340,7 @@ export default function ListTable({
                 fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
               }}
             >
-              Rows Per Page: 5
+              Rows Per Page: {rowsPerPage}
             </Typography>
             <Typography
               sx={{
@@ -371,24 +348,17 @@ export default function ListTable({
                 fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
               }}
             >
-              {totalPages === 0 ? 0 : isNaN(totalPages) ? 0 : currentPage} of{" "}
-              {isNaN(totalPages) ? 0 : totalPages}
+              {totalPages === 0 ? 0 : isNaN(totalPages) ? 0 : currentPage} of {isNaN(totalPages) ? 0 : totalPages}
             </Typography>
             <IconButton
               onClick={backward}
-              disabled={
-                currentPage === 1 || currentPage === 0 || isNaN(totalPages)
-              }
+              disabled={currentPage === 1 || isNaN(totalPages)}
             >
               <ArrowBackIosNewIcon sx={{ fontSize: FONT_SIZE_XL }} />
             </IconButton>
             <IconButton
               onClick={forward}
-              disabled={
-                currentPage === totalPages ||
-                totalPages === 0 ||
-                isNaN(totalPages)
-              }
+              disabled={currentPage === totalPages || isNaN(totalPages)}
             >
               <ArrowForwardIosIcon sx={{ fontSize: FONT_SIZE_XL }} />
             </IconButton>
@@ -397,7 +367,7 @@ export default function ListTable({
           <TablePagination
             rowsPerPageOptions={[5]}
             component="div"
-            count={data?.length}
+            count={data?.length || 0}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

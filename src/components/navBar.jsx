@@ -10,12 +10,30 @@ import { Logout } from "../services/services";
 
 export default function NavBar({ onClick }) {
   const navigate = useNavigate();
+  const deleteAllCookies = () => {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i];
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
+  }
+
+  // Function to clear all cache (localStorage, sessionStorage)
+  const clearAllCache = () => {
+      localStorage.clear();
+      sessionStorage.clear();
+  }
   const handleLogout = async () => {
     const response = await Logout();
     if (response.status === 200) {
       localStorage.clear();
       navigate("/");
     }
+
+    clearAllCache();
+    deleteAllCookies();
   };
 
   return (
