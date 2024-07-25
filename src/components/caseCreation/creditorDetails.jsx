@@ -129,7 +129,6 @@ export default function CreditorDetails({
 
   React.useEffect(() => {
     let processedData;
-    console.log(creditors);
 
     if (creditors.length === 0) {
       processedData = [
