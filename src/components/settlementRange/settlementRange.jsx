@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   Grid,
   Typography,
+  Button,
   styled,
   Tabs,
   Tab,
@@ -23,7 +25,7 @@ import { Download, PeopleAlt, Send } from "@mui/icons-material";
 import TextButton from "../button";
 import SettlementCards from "./settlementCards";
 import {
-  GetCreditorNames,
+  GetSettlementRangeWithScores,
   GetScores,
   GetSettlementRange,
   GetSummary,
@@ -32,6 +34,8 @@ import { useToast } from "../../toast/toastContext";
 import { generatePdfFromApiData } from "../../common";
 import MuiModels from "../models";
 import CheckboxAutocomplete from "../checkboxAutocomplete";
+import { useParams } from "react-router-dom";
+import { ErrorOutline } from '@mui/icons-material';
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -95,9 +99,12 @@ const GridItem = ({ title, value }) => (
 );
 
 export default function SettlementRange() {
+  const navigate = useNavigate();
+  const { caseId } = useParams();
   const { showToast } = useToast();
   const [value, setValue] = useState(0);
   const [tabValue, setTabValue] = useState(0);
+  const [errorMessage, setErrorMessage] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
@@ -112,8 +119,6 @@ export default function SettlementRange() {
     justifications3: "",
   });
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
-  const caseId = useSelector((state) => state.caseId.id);
-  const initialCreditorId = useSelector((state) => state.creditorCaseId.id);
   const drawerOpen = useSelector((state) => state.drawer.open);
   const { AUTHORITY_TEXT } = UserListPage;
   const extraSmallScreen = useMediaQuery(
@@ -160,61 +165,52 @@ export default function SettlementRange() {
     }
   };
 
-  const GetAllRanges = async () => {
-    if (caseId) {
-      setLoading(true);
-      const resCreditors = await GetCreditorNames("", caseId);
-      if (resCreditors?.status === 200) {
-        const allCreditors = resCreditors?.data?.data;
-        setCreditorNames(allCreditors);
-        const creditorAccountTitles = allCreditors?.map(
-          (item) => item.creditorAccountTitle
-        );
-
-        setAllCreditorsNames(creditorAccountTitles);
-        if (!allCreditors) {
-          showToast(
-            "Recheck And Confirm That Creditor Account Title Is Matching As On Statement And Not Null",
-            "error"
-          );
+  const GetAllRanges = async (creditors) => {
+    setLoading(true);
+    try {
+      if (caseId) {
+        const settlementRangeData = await GetSettlementRangeWithScores(creditors, caseId);
+        if (settlementRangeData?.status === 200) {
           setLoading(false);
-        } else if (allCreditors) {
-          showToast("Creditors Fetched Successfully", "success");
-          const params = {
-            creditorNames: [initialCreditorId],
-          };
-          showToast("Fetching Scores...", "success");
-          const resScores = await GetScores(params, caseId);
-          if (resScores?.status === 200) {
-            if (resScores?.data?.data?.length === 0) {
-              showToast(resScores?.data?.message, "error");
-              setLoading(false);
-            } else if (resScores?.data?.data) {
-              setScores(resScores?.data?.data);
-
-              showToast(resScores?.data?.message, "success");
-              const resRanges = await GetSettlementRange("", caseId);
-              if (resRanges?.status === 200) {
-                setLoading(false);
-                setApiData(resRanges?.data?.data);
-                showToast(resRanges?.data?.message, "success");
-                setJustifications({
-                  justifications1:
-                    resRanges?.data?.data?.justifications
-                      ?.justification_gemini ?? "",
-                  justifications2:
-                    resRanges?.data?.data?.justifications
-                      ?.justification_gpt4_o ?? "",
-                  justifications3:
-                    resRanges?.data?.data?.justifications
-                      ?.justification_llama ?? "",
-                });
-              }
-            }
+          if (typeof settlementRangeData?.data?.data?.getScores === "string") {
+            setScores({});
+            showToast(settlementRangeData?.data?.data?.getScores + " Couldn't fetch scores", "error");
           }
+          else {
+            setScores(settlementRangeData?.data?.data?.getScores);
+          }
+
+          setApiData(settlementRangeData?.data?.data?.settlementRange);
+          setJustifications({
+            justifications1:
+              settlementRangeData?.data?.data?.settlementRange?.justifications
+                ?.justification_gemini ?? "",
+            justifications2:
+              settlementRangeData?.data?.data?.settlementRange?.justifications
+                ?.justification_gpt4_o ?? "",
+            justifications3:
+              settlementRangeData?.data?.data?.settlementRange?.justifications
+                ?.justification_llama ?? "",
+          });
+          const allCreditors = settlementRangeData?.data?.data?.creditors;
+          setCreditorNames(allCreditors);
+          const creditorAccountTitles = allCreditors?.map(
+            (item) => item.creditorAccountTitle
+          );
+
+          setAllCreditorsNames(creditorAccountTitles);
+          showToast(settlementRangeData?.data?.message, "success");
         }
       }
     }
+    catch (err) {
+      setErrorMessage(err);
+      showToast(err, "error");
+    }
+    finally {
+      setLoading(false);
+    }
+
   };
 
   const handleUpdate = async () => {
@@ -224,35 +220,11 @@ export default function SettlementRange() {
     const params = {
       creditorNames: selectedCreditorIds,
     };
-    const resScores = await GetScores(params, caseId);
-    setLoading(true);
-    if (resScores?.status === 200) {
-      if (resScores?.data?.data?.length === 0) {
-        showToast(resScores?.data?.message, "error");
-        setLoading(false);
-      } else if (resScores?.data?.data) {
-        setScores(resScores?.data?.data);
-        showToast(resScores?.data?.message, "success");
-        const resRanges = await GetSettlementRange("", caseId);
-        if (resRanges?.status === 200) {
-          setLoading(false);
-          setApiData(resRanges?.data?.data);
-          showToast(resRanges?.data?.message, "success");
-          setJustifications({
-            justifications1:
-              resRanges?.data?.data?.justifications?.justification_gemini ?? "",
-            justifications2:
-              resRanges?.data?.data?.justifications?.justification_gpt4_o ?? "",
-            justifications3:
-              resRanges?.data?.data?.justifications?.justification_llama ?? "",
-          });
-        }
-      }
-    }
+    GetAllRanges(params);
   };
 
   useEffect(() => {
-    GetAllRanges();
+    GetAllRanges([]);
   }, []);
 
   const handleGeneratePdf = () => {
@@ -269,6 +241,35 @@ export default function SettlementRange() {
       creditorId,
       name,
     }));
+
+  if (errorMessage) {
+    // Render Error Page component if errorMessage exists
+    return (
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+        bgcolor={Colors.BG_LIGHT_GRAY} // Adjust to your color scheme
+      >
+        <Grid item textAlign="center">
+          <ErrorOutline sx={{ fontSize: 80, color: Colors.RED }} /> {/* Adjust icon size and color */}
+          <Typography variant="h4" color={Colors.DARK_GRAY} gutterBottom>
+            Oops! Something went wrong.
+          </Typography>
+          <Typography variant="body1" color={Colors.DARK_GRAY} gutterBottom>
+            {errorMessage || 'An unexpected error occurred.'}
+          </Typography>
+          <Button variant="contained" color="primary" 
+              onClick={() => {
+                navigate(`/home`);
+              }}>
+            Go to Home Page
+          </Button>
+        </Grid>
+      </Grid>
+    );
+  }
 
   return (
     <Grid
@@ -432,11 +433,13 @@ export default function SettlementRange() {
               key="Weekly Budget"
               title="Weekly Budget"
               value={
-                scores?.Scores?.["Weekly Budget"]?.[
-                  allCreditorNames[parseInt(tabValue)]
+                apiData?.weekly_budget?.[
+                allCreditorNames[parseInt(tabValue)]
                 ] ?? "No Data"
               }
             />
+
+
             <GridItem
               key="Weekly True Revenue"
               title="Weekly True Revenue"
@@ -448,18 +451,22 @@ export default function SettlementRange() {
               value={apiData?.profitability ?? "No Data"}
             />
           </Grid>
-          <Grid item container xs={12} sx={{ gap: "2%", mt: "1rem" }}>
-            <GridItem
-              key="UCC Score"
-              title="UCC Score"
-              value={scores?.Scores?.["UCC Score"] ?? "No Data"}
-            />
-            <GridItem
-              key="Default Risk Score"
-              title="Default Risk Score"
-              value={scores?.Scores?.["Default Risk Score"] ?? "No Data"}
-            />
-          </Grid>
+          {scores && (
+            <Grid item container xs={12} sx={{ gap: "2%", mt: "1rem" }}>
+              <GridItem
+                key="UCC Score"
+                title="UCC Score"
+                value={scores?.Scores?.["UCC Score"] ?? "No Data"}
+              />
+              <GridItem
+                key="Default Risk Score"
+                title="Default Risk Score"
+                value={scores?.Scores?.["Default Risk Score"] ?? "No Data"}
+              />
+            </Grid>
+          )
+          }
+
           <Grid
             item
             container
@@ -478,12 +485,12 @@ export default function SettlementRange() {
                     title={item}
                     settlementRange={
                       apiData?.settlement_range?.[
-                        allCreditorNames[parseInt(tabValue)]
+                      allCreditorNames[parseInt(tabValue)]
                       ] || null
                     }
                     commissionRange={
                       apiData?.commission_range?.[
-                        allCreditorNames[parseInt(tabValue)]
+                      allCreditorNames[parseInt(tabValue)]
                       ] || null
                     }
                     newDefaultRiskScore={
@@ -491,12 +498,12 @@ export default function SettlementRange() {
                     }
                     percentageSettlementOverWeeklyBudget={
                       apiData?.percentage_settlement_over_weekly_budget?.[
-                        allCreditorNames[parseInt(tabValue)]
+                      allCreditorNames[parseInt(tabValue)]
                       ] || null
                     }
                     percentageSettlementOverWeeklyTrueRevenue={
                       apiData?.percentage_settlement_over_weekly_true_revenue?.[
-                        allCreditorNames[parseInt(tabValue)]
+                      allCreditorNames[parseInt(tabValue)]
                       ] || null
                     }
                   />

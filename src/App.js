@@ -17,6 +17,7 @@ import SettingsPage from "./pages/settingsPage";
 import CreditorListPage from "./pages/creditorListPage";
 import PipelinesPage from "./pages/pipelinePage";
 import SettlementRangePage from "./pages/settlementRangePage";
+import SettlementRange from "./components/settlementRange/settlementRange";
 // import PaymentsCardPage from "./pages/paymentPage";
 function App() {
   return (
@@ -142,7 +143,7 @@ function App() {
 
       <Route
         exact
-        path="/settlementRange"
+        path="/settlementRange/:caseId"
         element={
           <Protected>
             <SettlementRangePage />
