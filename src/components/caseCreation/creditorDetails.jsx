@@ -1,10 +1,20 @@
 import React from "react";
-import { Grid, CircularProgress } from "@mui/material";
+import {
+  Grid,
+  CircularProgress,
+  IconButton,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
+} from "@mui/material";
 import SearchBar from "../searchBar";
 import CreditorFields from "../caseCreationFields/creditorFields";
 import { Colors } from "../../config/default";
 import { phoneNumberFormat } from "../../common";
 import CloseIcon from "@mui/icons-material/Close";
+import { Add, Delete, ExpandMore } from "@mui/icons-material";
+import { FONT_SIZE_XL } from "../../constants/appConstants";
 
 const contactFields = {
   name: "",
@@ -78,6 +88,45 @@ export default function CreditorDetails({
     setFinalCaseData(newState);
   }
 
+  const addNewCreditor = () => {
+    const newCreditorData = {
+      creditor: {
+        accountTitle: "",
+        paymentToken: "",
+        paymentType: "",
+        basicInformation: {
+          fullName: "",
+          email: "",
+          phone: "",
+        },
+        businessInformation: {
+          companyName: "",
+          businessCategory: "",
+        },
+        notes: "",
+        lastFundedDate: "",
+        historicalRange: {
+          minimum: 0,
+          maximum: 0,
+        },
+        contacts: [],
+      },
+      contractDetails: {
+        loanAmount: 0,
+        purchasedPercentage: 0,
+        repaymentAmount: 0,
+      },
+      status: "In progress",
+      totalDebt: 0,
+      lastPaymentDate: "",
+      paidAmount: 0,
+      remaining: 0,
+      feePayment: "toPay",
+    };
+
+    setFinalCaseData([...finalCaseData, newCreditorData]);
+  };
+
   React.useEffect(() => {
     let processedData;
 
@@ -108,9 +157,11 @@ export default function CreditorDetails({
           status: "In progress",
           totalDebt: 0,
           lastPaymentDate: "",
-          // principalAmount: 0,
-          // purchasedPercentage: 0,
-          // repaymentAmount: 0,
+          contractDetails: {
+            loanAmount: 0,
+            purchasedPercentage: 0,
+            repaymentAmount: 0,
+          },
           paidAmount: 0,
           remaining: 0,
           feePayment: "toPay",
@@ -149,9 +200,14 @@ export default function CreditorDetails({
               .replace(",", "")
           ) || 0,
         lastPaymentDate: "",
-        // principalAmount: parseInt(creditor?.ContractDetails?.loan_amount) || 0,
-        // purchasedPercentage: creditor?.ContractDetails?.purchased_percentage || 0,
-        // repaymentAmount: parseInt(creditor?.ContractDetails?.repayment_amount) || 0,
+        contractDetails: {
+          loanAmount: parseInt(creditor?.ContractDetails?.loanAmount) || 0,
+          purchasedPercentage:
+            creditor?.ContractDetails?.purchasedPercentage || 0,
+          repaymentAmount:
+            parseInt(creditor?.ContractDetails?.repaymentAmount) || 0,
+        },
+
         paidAmount: 0,
         remaining:
           parseInt(
@@ -191,6 +247,11 @@ export default function CreditorDetails({
           setSearchText={setSearchText}
         />
       </Grid>
+      <Grid container sx={{ justifyContent: "flex-end" }}>
+        <IconButton onClick={addNewCreditor}>
+          <Add sx={{ color: Colors.SKY_BLUE }} />
+        </IconButton>
+      </Grid>
       {loading ? (
         <Grid
           container
@@ -206,39 +267,91 @@ export default function CreditorDetails({
           <CircularProgress size={100} sx={{ color: Colors.SKY_BLUE }} />
         </Grid>
       ) : (
-        finalCaseData.map((caseEntry, index) => (
-          <Grid
-            key={index}
-            container
-            item
+        finalCaseData?.map((caseEntry, index) => (
+          <Accordion
             sx={{
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginTop: "1rem",
+              boxShadow: "none",
+              marginBottom: "10px",
+              borderRadius: "1rem !important",
+              backgroundColor: Colors.WHITE,
             }}
+            defaultExpanded
           >
-            <Grid
-              item
-              xs={12}
+            <AccordionSummary
+              expandIcon={<ExpandMore sx={{ color: Colors.WHITE }} />}
+              aria-controls="panel1-content"
+              id="panel1-header"
               sx={{
-                marginBottom: "0.5rem",
-                borderRadius: "10px",
-                backgroundColor: Colors.WHITE,
-                padding: "1rem",
-                position: "relative",
+                height: "20px",
+                backgroundColor: Colors.SKY_BLUE,
+                borderRadius: "1rem",
               }}
             >
-              <CreditorFields
-                thisCaseData={caseEntry}
-                handleCaseDataChange={handleCaseDataChange}
-                caseIndex={index}
-                setFinalCaseData={setFinalCaseData}
-                finalCaseData={finalCaseData}
-                debtorCaseData={debtorCaseData}
-                handleRemoveCase={() => handleRemoveCase(index)}
-              />
-            </Grid>
-          </Grid>
+              <Grid
+                container
+                xs={12}
+                sx={{ justifyContent: "space-between", alignItems: "center" }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: FONT_SIZE_XL,
+                    fontFamily: "Nunito",
+                    fontWeight: "700",
+                    color: Colors.WHITE,
+                  }}
+                >
+                  {caseEntry.creditor.businessInformation.companyName || ""}
+                </Typography>
+
+                <IconButton
+                  onClick={() => handleRemoveCase(index)}
+                  color="error"
+                >
+                  <Delete />
+                </IconButton>
+              </Grid>
+            </AccordionSummary>
+            <AccordionDetails
+              sx={{
+                backgroundColor: Colors.WHITE,
+                boxShadow: " 0 2px 5px -3px rgba(0, 0, 0, 0.5)",
+                borderBottomLeftRadius: "10px",
+                borderBottomRightRadius: "10px",
+              }}
+            >
+              <Grid
+                key={index}
+                container
+                item
+                sx={{
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginTop: "1rem",
+                }}
+              >
+                <Grid
+                  item
+                  xs={12}
+                  sx={{
+                    marginBottom: "0.5rem",
+                    borderRadius: "10px",
+                    backgroundColor: Colors.WHITE,
+                    padding: "1rem",
+                    position: "relative",
+                  }}
+                >
+                  <CreditorFields
+                    thisCaseData={caseEntry}
+                    handleCaseDataChange={handleCaseDataChange}
+                    caseIndex={index}
+                    setFinalCaseData={setFinalCaseData}
+                    finalCaseData={finalCaseData}
+                    debtorCaseData={debtorCaseData}
+                  />
+                </Grid>
+              </Grid>
+            </AccordionDetails>
+          </Accordion>
         ))
       )}
     </>
