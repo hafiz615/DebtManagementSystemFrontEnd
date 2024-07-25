@@ -1,27 +1,37 @@
 import React from "react";
-import { Grid, CircularProgress } from "@mui/material";
+import {
+  Grid,
+  CircularProgress,
+  IconButton,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
+} from "@mui/material";
 import SearchBar from "../searchBar";
 import CreditorFields from "../caseCreationFields/creditorFields";
 import { Colors } from "../../config/default";
-import {phoneNumberFormat} from "../../common";
-import CloseIcon from '@mui/icons-material/Close';
+import { phoneNumberFormat } from "../../common";
+import CloseIcon from "@mui/icons-material/Close";
+import { Add, Delete, ExpandMore } from "@mui/icons-material";
+import { FONT_SIZE_XL } from "../../constants/appConstants";
 
 const contactFields = {
-  "name": "",
-  "title": "",
-  "phone": "",
-  "email": "",
-  "relationWithDebtor": "",
-  "country": "",
-  "state": "",
-  "city": "",
-  "zipCode": ""
+  name: "",
+  title: "",
+  phone: "",
+  email: "",
+  relationWithDebtor: "",
+  country: "",
+  state: "",
+  city: "",
+  zipCode: "",
 };
 const intervalFields = {
-  "amount": 0,
-  "startDate": "",
-  "timePeriod": "Custom",
-  "frequency": 0
+  amount: 0,
+  startDate: "",
+  timePeriod: "Custom",
+  frequency: 0,
 };
 
 export default function CreditorDetails({
@@ -36,7 +46,7 @@ export default function CreditorDetails({
   loading,
   filteredArray,
   setFilteredArray,
-  handleSelect
+  handleSelect,
 }) {
   const handleSearchChange = (value) => {
     setSearchText(value);
@@ -45,11 +55,11 @@ export default function CreditorDetails({
 
   function handleCaseDataChange(index, fieldPath, value) {
     const newState = [...finalCaseData];
-  
+
     function updateField(obj, path, val) {
-      const keys = path.split('.');
+      const keys = path.split(".");
       const lastKey = keys.pop();
-  
+
       let current = obj;
       for (const key of keys) {
         if (!current[key]) {
@@ -57,14 +67,14 @@ export default function CreditorDetails({
         }
         current = current[key];
       }
-  
+
       current[lastKey] = val;
     }
-  
+
     if (index >= 0 && index < newState.length) {
       updateField(newState[index], fieldPath, value);
     }
-  
+
     setFinalCaseData(newState);
   }
 
@@ -78,45 +88,88 @@ export default function CreditorDetails({
     setFinalCaseData(newState);
   }
 
+  const addNewCreditor = () => {
+    const newCreditorData = {
+      creditor: {
+        accountTitle: "",
+        paymentToken: "",
+        paymentType: "",
+        basicInformation: {
+          fullName: "",
+          email: "",
+          phone: "",
+        },
+        businessInformation: {
+          companyName: "",
+          businessCategory: "",
+        },
+        notes: "",
+        lastFundedDate: "",
+        historicalRange: {
+          minimum: 0,
+          maximum: 0,
+        },
+        contacts: [],
+      },
+      contractDetails: {
+        loanAmount: 0,
+        purchasedPercentage: 0,
+        repaymentAmount: 0,
+      },
+      status: "In progress",
+      totalDebt: 0,
+      lastPaymentDate: "",
+      paidAmount: 0,
+      remaining: 0,
+      feePayment: "toPay",
+    };
+
+    setFinalCaseData([...finalCaseData, newCreditorData]);
+  };
+
   React.useEffect(() => {
     let processedData;
     console.log(creditors);
 
     if (creditors.length === 0) {
-      processedData = [{
-        creditor: {
-          accountTitle: "",
-          paymentToken: "",
-          paymentType: "",
-          basicInformation: {
-            fullName: "",
-            email: "",
-            phone: ""
+      processedData = [
+        {
+          creditor: {
+            accountTitle: "",
+            paymentToken: "",
+            paymentType: "",
+            basicInformation: {
+              fullName: "",
+              email: "",
+              phone: "",
+            },
+            businessInformation: {
+              companyName: "",
+              businessCategory: "",
+            },
+            notes: "",
+            lastFundedDate: "",
+            historicalRange: {
+              minimum: 0,
+              maximum: 0,
+            },
+            contacts: [],
           },
-          businessInformation: {
-            companyName: "",
-            businessCategory: ""
+          status: "In progress",
+          totalDebt: 0,
+          lastPaymentDate: "",
+          contractDetails: {
+            loanAmount: 0,
+            purchasedPercentage: 0,
+            repaymentAmount: 0,
           },
-          notes: "",
-          lastFundedDate: "",
-          historicalRange: {
-            minimum: 0,
-            maximum: 0
-          },
-          contacts: []
+          paidAmount: 0,
+          remaining: 0,
+          feePayment: "toPay",
+          // intervals: [],
+          // securityKey: ""
         },
-        status: "In progress",
-        totalDebt: 0,
-        lastPaymentDate: "",
-        // principalAmount: 0,
-        // purchasedPercentage: 0,
-        // repaymentAmount: 0,
-        paidAmount: 0,
-        remaining: 0,
-        feePayment: "toPay",
-        // intervals: [],
-        // securityKey: ""
-      }];
+      ];
     } else {
       processedData = creditors.map((creditor) => ({
         creditor: {
@@ -126,28 +179,43 @@ export default function CreditorDetails({
           basicInformation: {
             fullName: creditor?.Name || "",
             email: creditor?.EmailAddress || "",
-            phone: phoneNumberFormat(creditor?.PhoneNumber) || ""
+            phone: phoneNumberFormat(creditor?.PhoneNumber) || "",
           },
           businessInformation: {
             companyName: creditor?.Name || "",
-            businessCategory: ""
+            businessCategory: "",
           },
           notes: "",
           lastFundedDate: creditor?.ContractDetails?.signing_date || "",
           historicalRange: {
             minimum: 0,
-            maximum: 0
+            maximum: 0,
           },
-          contacts: []
+          contacts: [],
         },
         status: "In Process",
-        totalDebt: parseInt(creditor?.ContractDetails?.payable_amount.replace('$', '').replace(',', '')) || 0,
+        totalDebt:
+          parseInt(
+            creditor?.ContractDetails?.payable_amount
+              .replace("$", "")
+              .replace(",", "")
+          ) || 0,
         lastPaymentDate: "",
-        // principalAmount: parseInt(creditor?.ContractDetails?.loan_amount) || 0,
-        // purchasedPercentage: creditor?.ContractDetails?.purchased_percentage || 0,
-        // repaymentAmount: parseInt(creditor?.ContractDetails?.repayment_amount) || 0,
+        contractDetails: {
+          loanAmount: parseInt(creditor?.ContractDetails?.loanAmount) || 0,
+          purchasedPercentage:
+            creditor?.ContractDetails?.purchasedPercentage || 0,
+          repaymentAmount:
+            parseInt(creditor?.ContractDetails?.repaymentAmount) || 0,
+        },
+
         paidAmount: 0,
-        remaining: parseInt(creditor?.ContractDetails?.payable_amount.replace('$', '').replace(',', '')) || 0,
+        remaining:
+          parseInt(
+            creditor?.ContractDetails?.payable_amount
+              .replace("$", "")
+              .replace(",", "")
+          ) || 0,
         feePayment: "toPay",
         // intervals: [],
         // securityKey: ""
@@ -164,10 +232,10 @@ export default function CreditorDetails({
         item
         xs={12}
         sx={{
-          display: 'flex',
-          justifyContent: 'flex-start',
-          alignItems: 'center',
-          marginTop: '1rem',
+          display: "flex",
+          justifyContent: "flex-start",
+          alignItems: "center",
+          marginTop: "1rem",
         }}
       >
         <SearchBar
@@ -180,54 +248,111 @@ export default function CreditorDetails({
           setSearchText={setSearchText}
         />
       </Grid>
+      <Grid container sx={{ justifyContent: "flex-end" }}>
+        <IconButton onClick={addNewCreditor}>
+          <Add sx={{ color: Colors.SKY_BLUE }} />
+        </IconButton>
+      </Grid>
       {loading ? (
         <Grid
           container
           item
           xs={12}
           sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '46vh',
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "46vh",
           }}
         >
           <CircularProgress size={100} sx={{ color: Colors.SKY_BLUE }} />
         </Grid>
       ) : (
-        finalCaseData.map((caseEntry, index) => (
-          <Grid
-            key={index}
-            container
-            item
+        finalCaseData?.map((caseEntry, index) => (
+          <Accordion
             sx={{
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginTop: '1rem',
+              boxShadow: "none",
+              marginBottom: "10px",
+              borderRadius: "1rem !important",
+              backgroundColor: Colors.WHITE,
             }}
+            defaultExpanded
           >
-            <Grid
-              item
-              xs={12}
+            <AccordionSummary
+              expandIcon={<ExpandMore sx={{ color: Colors.WHITE }} />}
+              aria-controls="panel1-content"
+              id="panel1-header"
               sx={{
-                marginBottom: '0.5rem',
-                borderRadius: '10px',
-                backgroundColor: Colors.WHITE,
-                padding: '1rem',
-                position: 'relative'
+                height: "20px",
+                backgroundColor: Colors.SKY_BLUE,
+                borderRadius: "1rem",
               }}
             >
-              <CreditorFields
-                thisCaseData={caseEntry}
-                handleCaseDataChange={handleCaseDataChange}
-                caseIndex={index}
-                setFinalCaseData={setFinalCaseData}
-                finalCaseData={finalCaseData}
-                debtorCaseData={debtorCaseData}
-                handleRemoveCase={() => handleRemoveCase(index)}
-              />
-            </Grid>
-          </Grid>
+              <Grid
+                container
+                xs={12}
+                sx={{ justifyContent: "space-between", alignItems: "center" }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: FONT_SIZE_XL,
+                    fontFamily: "Nunito",
+                    fontWeight: "700",
+                    color: Colors.WHITE,
+                  }}
+                >
+                  {caseEntry.creditor.businessInformation.companyName || ""}
+                </Typography>
+
+                <IconButton
+                  onClick={() => handleRemoveCase(index)}
+                  color="error"
+                >
+                  <Delete />
+                </IconButton>
+              </Grid>
+            </AccordionSummary>
+            <AccordionDetails
+              sx={{
+                backgroundColor: Colors.WHITE,
+                boxShadow: " 0 2px 5px -3px rgba(0, 0, 0, 0.5)",
+                borderBottomLeftRadius: "10px",
+                borderBottomRightRadius: "10px",
+              }}
+            >
+              <Grid
+                key={index}
+                container
+                item
+                sx={{
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginTop: "1rem",
+                }}
+              >
+                <Grid
+                  item
+                  xs={12}
+                  sx={{
+                    marginBottom: "0.5rem",
+                    borderRadius: "10px",
+                    backgroundColor: Colors.WHITE,
+                    padding: "1rem",
+                    position: "relative",
+                  }}
+                >
+                  <CreditorFields
+                    thisCaseData={caseEntry}
+                    handleCaseDataChange={handleCaseDataChange}
+                    caseIndex={index}
+                    setFinalCaseData={setFinalCaseData}
+                    finalCaseData={finalCaseData}
+                    debtorCaseData={debtorCaseData}
+                  />
+                </Grid>
+              </Grid>
+            </AccordionDetails>
+          </Accordion>
         ))
       )}
     </>
