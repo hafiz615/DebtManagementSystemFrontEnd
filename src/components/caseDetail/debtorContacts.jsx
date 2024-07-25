@@ -31,39 +31,38 @@ export default function DebtorContacts({
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const [loading, setLoading] = useState(false);
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
-  const contacts = [
-    {
-      name: "",
-      title: "",
-      phone: "",
-      email: "",
-      country: "",
-      state: "",
-      city: "",
-      zipCode: "",
-      relationWithDebtor: "",
-    },
-  ];
-  const [debtorContactDetails, setDebtorContactDetails] = useState(contacts);
-  const debtorContantHasValue = debtorContactDetails?.some((contact) =>
-    hasAnyValue(contact)
-  );
+
+  const initialContact = {
+    name: "",
+    title: "",
+    phone: "",
+    email: "",
+    country: "",
+    state: "",
+    city: "",
+    zipCode: "",
+    relationWithDebtor: "",
+  };
+
+  const [debtorContactDetails, setDebtorContactDetails] =
+    useState(initialContact);
+  const debtorContantHasValue = hasAnyValue(debtorContactDetails);
 
   const [contactError, setContactErrors] = useState({});
   const [emailContactError, setEmailContactError] = useState({});
 
-  const handleInputChange = (index, field, value) => {
-    const updatedList = [...debtorContactDetails];
+  const handleInputChange = (field, value) => {
+    const updatedContact = { ...debtorContactDetails };
     if (field === "email") {
       if (!isEmailValid(value)) {
         setEmailContactError((prevErrors) => ({
           ...prevErrors,
-          [`email${index}`]: "Email must be Valid",
+          email: "Email must be Valid",
         }));
       } else {
         setEmailContactError((prevErrors) => ({
           ...prevErrors,
-          [`email${index}`]: "",
+          email: "",
         }));
       }
     }
@@ -71,23 +70,23 @@ export default function DebtorContacts({
       if (value.length !== PHONE_NO_CHARACTERS) {
         setContactErrors((prevErrors) => ({
           ...prevErrors,
-          [`phone${index}`]: PHONE_NO_ERROR,
+          phone: PHONE_NO_ERROR,
         }));
       } else {
         setContactErrors((prevErrors) => ({
           ...prevErrors,
-          [`phone${index}`]: "",
+          phone: "",
         }));
       }
     }
     if (field === "zipCode") {
       if (value === "" || /^\d*\.?\d*$/.test(value)) {
-        updatedList[index][field] = value;
-        setDebtorContactDetails(updatedList);
+        updatedContact[field] = value;
+        setDebtorContactDetails(updatedContact);
       }
     } else {
-      updatedList[index][field] = value;
-      setDebtorContactDetails(updatedList);
+      updatedContact[field] = value;
+      setDebtorContactDetails(updatedContact);
     }
   };
 
@@ -147,41 +146,25 @@ export default function DebtorContacts({
     return emailRegex.test(email);
   };
   const areRequiredFieldsFilled = () => {
-    return debtorContactDetails.every((contact) => {
-      return (
-        contact.name.trim() !== "" &&
-        contact.title.trim() !== "" &&
-        contact.phone.trim() !== "" &&
-        contact.email.trim() !== ""
-      );
-    });
+    return (
+      debtorContactDetails.name.trim() !== "" &&
+      debtorContactDetails.title.trim() !== "" &&
+      debtorContactDetails.phone.trim() !== "" &&
+      debtorContactDetails.email.trim() !== ""
+    );
   };
 
   const updateDebtorById = async () => {
     setLoading(true);
+    let contactToUpdate = { ...debtorContactDetails };
 
-    const isEmpty = (obj) => {
-      return Object.values(obj)?.every(
-        (value) => value === "" || value == null
-      );
-    };
-    const areAllObjectsEmpty = (arr) => {
-      return arr?.every(isEmpty);
-    };
-    let debtorContacts = areAllObjectsEmpty(debtorContactDetails)
-      ? []
-      : debtorContactDetails;
+    // Rename the property if show is "Creditor"
     if (show === "Creditor") {
-      debtorContacts = debtorContacts?.map((contact) => {
-        const { relationWithDebtor, ...rest } = contact;
-        return {
-          ...rest,
-          relationWithCreditor: relationWithDebtor,
-        };
-      });
+      const { relationWithDebtor, ...rest } = debtorContactDetails;
+      contactToUpdate = { ...rest, relationWithCreditor: relationWithDebtor };
     }
     const params = {
-      contacts: debtorContacts,
+      contact: contactToUpdate,
     };
     let updateDebtor;
     if (show === "Debtor") {
@@ -193,19 +176,7 @@ export default function DebtorContacts({
     if (updateDebtor?.status === 200) {
       showToast(updateDebtor?.data?.message, "success");
       GetCaseDetails(id);
-      setDebtorContactDetails([
-        {
-          name: "",
-          title: "",
-          phone: "",
-          email: "",
-          country: "",
-          state: "",
-          city: "",
-          zipCode: "",
-          relationWithDebtor: "",
-        },
-      ]);
+      setDebtorContactDetails(initialContact);
       handleClose();
     } else {
       showToast(
@@ -252,147 +223,117 @@ export default function DebtorContacts({
           container
           sx={{ overflow: "auto", ...ScrollbarStyles, height: "55vh" }}
         >
-          {debtorContactDetails &&
-            debtorContactDetails.map((item, index) => {
-              return (
-                <div key={index}>
-                  <Grid container item xs={12}>
-                    <Grid container item xs={12}>
-                      <PaymentsTextFields
-                        type="text"
-                        label="Name*"
-                        placeHolderValue="Enter Name"
-                        width={smallScreen ? "100%" : "97%"}
-                        value={item?.name}
-                        onChange={(e) =>
-                          handleInputChange(index, "name", e.target.value)
-                        }
-                      />
-                      <PaymentsTextFields
-                        type="text"
-                        label="Title*"
-                        placeHolderValue="Enter Title"
-                        width={smallScreen ? "100%" : "97%"}
-                        value={item?.title}
-                        onChange={(e) =>
-                          handleInputChange(index, "title", e.target.value)
-                        }
-                      />
+          <Grid container item xs={12}>
+            <Grid container item xs={12}>
+              <PaymentsTextFields
+                type="text"
+                label="Name*"
+                placeHolderValue="Enter Name"
+                width={smallScreen ? "100%" : "97%"}
+                value={debtorContactDetails.name}
+                onChange={(e) => handleInputChange("name", e.target.value)}
+              />
+              <PaymentsTextFields
+                type="text"
+                label="Title*"
+                placeHolderValue="Enter Title"
+                width={smallScreen ? "100%" : "97%"}
+                value={debtorContactDetails.title}
+                onChange={(e) => handleInputChange("title", e.target.value)}
+              />
 
-                      <MuiPhoneTextField
-                        label="Phone #*"
-                        value={item?.phone}
-                        onChange={(e) =>
-                          handleInputChange(
-                            index,
-                            "phone",
-                            formatPhoneNumber(e)
-                          )
-                        }
-                        onKeyDown={handleNumberInputKeyDown}
-                        error={contactError?.[`phone${index}`]}
-                      />
+              <MuiPhoneTextField
+                label="Phone #*"
+                value={debtorContactDetails.phone}
+                onChange={(e) =>
+                  handleInputChange("phone", formatPhoneNumber(e))
+                }
+                onKeyDown={handleNumberInputKeyDown}
+                error={contactError.phone}
+              />
 
-                      <PaymentsTextFields
-                        type="text"
-                        label="Enter Email*"
-                        placeHolderValue="Enter Email"
-                        width={smallScreen ? "100%" : "97%"}
-                        value={item?.email}
-                        onChange={(e) =>
-                          handleInputChange(index, "email", e.target.value)
-                        }
-                        error={emailContactError?.[`email${index}`]}
-                      />
+              <PaymentsTextFields
+                type="text"
+                label="Enter Email*"
+                placeHolderValue="Enter Email"
+                width={smallScreen ? "100%" : "97%"}
+                value={debtorContactDetails.email}
+                onChange={(e) => handleInputChange("email", e.target.value)}
+                error={emailContactError.email}
+              />
 
-                      <PaymentsTextFields
-                        type="text"
-                        label="Country (Optional)"
-                        placeHolderValue="Country Name"
-                        width={smallScreen ? "100%" : "97%"}
-                        value={item?.country}
-                        onChange={(e) =>
-                          handleInputChange(index, "country", e.target.value)
-                        }
-                      />
-                      <PaymentsTextFields
-                        type="text"
-                        label="State (Optional)"
-                        placeHolderValue="Enter State"
-                        width={smallScreen ? "100%" : "97%"}
-                        value={item?.state}
-                        onChange={(e) =>
-                          handleInputChange(index, "state", e.target.value)
-                        }
-                      />
-                      <PaymentsTextFields
-                        label="City (Optional)"
-                        placeHolderValue="Enter City"
-                        width={smallScreen ? "100%" : "97%"}
-                        value={item?.city}
-                        onChange={(e) =>
-                          handleInputChange(index, "city", e.target.value)
-                        }
-                      />
-                      <PaymentsTextFields
-                        type="number"
-                        label="Zip Code (Optional)"
-                        placeHolderValue="Enter Zip Code"
-                        width={smallScreen ? "100%" : "97%"}
-                        value={item?.zipCode}
-                        onChange={(e) =>
-                          handleInputChange(index, "zipCode", e.target.value)
-                        }
-                        onKeyDown={handleNumberInput}
-                      />
-                    </Grid>
-                    <Grid
-                      container
-                      item
-                      xs={12}
-                      md={4}
-                      sx={{ flexDirection: "column" }}
-                    >
-                      <Typography
-                        sx={{
-                          fontWeight: "500",
-                          fontFamily: "Nunito",
-                          marginLeft: "1rem",
-                          color: Colors.DARK_GRAY,
-                        }}
-                      >
-                        {show === "Debtor"
-                          ? "Relation with Debtor (Optional)"
-                          : "Relation with Creditor (Optional)"}
-                      </Typography>
-                      <input
-                        type="text"
-                        placeholder="Relation"
-                        value={item?.relationWithDebtor}
-                        onChange={(e) =>
-                          handleInputChange(
-                            index,
-                            "relationWithDebtor",
-                            e.target.value
-                          )
-                        }
-                        style={{
-                          backgroundColor: Colors.BG_LIGHT_GRAY,
-                          height: "2.5rem",
-                          color: Colors.DIM_LIGHT_GRAY,
-                          paddingLeft: "1rem",
-                          border: "none",
-                          outline: "none",
-                          borderRadius: "5px",
-                          width: smallScreen ? "100%" : "97%",
-                        }}
-                      />
-                    </Grid>
-                  </Grid>
-                  <hr></hr>
-                </div>
-              );
-            })}
+              <PaymentsTextFields
+                type="text"
+                label="Country (Optional)"
+                placeHolderValue="Country Name"
+                width={smallScreen ? "100%" : "97%"}
+                value={debtorContactDetails.country}
+                onChange={(e) => handleInputChange("country", e.target.value)}
+              />
+              <PaymentsTextFields
+                type="text"
+                label="State (Optional)"
+                placeHolderValue="Enter State"
+                width={smallScreen ? "100%" : "97%"}
+                value={debtorContactDetails.state}
+                onChange={(e) => handleInputChange("state", e.target.value)}
+              />
+              <PaymentsTextFields
+                label="City (Optional)"
+                placeHolderValue="Enter City"
+                width={smallScreen ? "100%" : "97%"}
+                value={debtorContactDetails.city}
+                onChange={(e) => handleInputChange("city", e.target.value)}
+              />
+              <PaymentsTextFields
+                type="number"
+                label="Zip Code (Optional)"
+                placeHolderValue="Enter Zip Code"
+                width={smallScreen ? "100%" : "97%"}
+                value={debtorContactDetails.zipCode}
+                onChange={(e) => handleInputChange("zipCode", e.target.value)}
+                onKeyDown={handleNumberInput}
+              />
+            </Grid>
+            <Grid
+              container
+              item
+              xs={12}
+              md={4}
+              sx={{ flexDirection: "column" }}
+            >
+              <Typography
+                sx={{
+                  fontWeight: "500",
+                  fontFamily: "Nunito",
+                  marginLeft: "1rem",
+                  color: Colors.DARK_GRAY,
+                }}
+              >
+                {show === "Debtor"
+                  ? "Relation with Debtor (Optional)"
+                  : "Relation with Creditor (Optional)"}
+              </Typography>
+              <input
+                type="text"
+                placeholder="Relation"
+                value={debtorContactDetails.relationWithDebtor}
+                onChange={(e) =>
+                  handleInputChange("relationWithDebtor", e.target.value)
+                }
+                style={{
+                  backgroundColor: Colors.BG_LIGHT_GRAY,
+                  height: "2.5rem",
+                  color: Colors.DIM_LIGHT_GRAY,
+                  paddingLeft: "1rem",
+                  border: "none",
+                  outline: "none",
+                  borderRadius: "5px",
+                  width: smallScreen ? "100%" : "97%",
+                }}
+              />
+            </Grid>
+          </Grid>
         </Grid>
         <Grid
           container
@@ -403,11 +344,6 @@ export default function DebtorContacts({
             buttonText="Add"
             height="2rem"
             width="6rem"
-            // disabled={
-            //   (isEmpty(emailContactError) && hasAnyValue(emailContactError)) ||
-            //   checkContacts(debtorContactDetails) ||
-            //   (isEmpty(contactError) && hasAnyValue(contactError))
-            // }
             disabled={
               !debtorContantHasValue ||
               loading ||
