@@ -171,26 +171,43 @@ export default function CreditorFields({
                   )
                 }
               />
-              <Grid item xs={12} md={4} lg={4}>
-                <Typography
-                  sx={{
-                    fontFamily: "Nunito",
-                    fontWeight: "500",
-                    color: Colors.DARK_GRAY,
-                    marginRight: "1.5rem", // Increased marginRight
-                  }}
-                >
-                  Account Title
-                </Typography>
-                <Dropdown
-                  selectedValue={thisCaseData.creditor.accountTitle}
-                  setSelectedValue={setAccountTitle}
-                  menuItems={accountMenuList}
-                  placeholder="Account Title"
-                  backgroundColor={Colors.BG_LIGHT_GRAY}
+              {debtorCaseData.creditorNames.length > 0 ? (
+                <Grid item xs={12} md={4} lg={4}>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontWeight: "500",
+                      color: Colors.DARK_GRAY,
+                      marginRight: "1.5rem",
+                    }}
+                  >
+                    Account Title
+                  </Typography>
+                  <Dropdown
+                    selectedValue={thisCaseData.creditor.accountTitle}
+                    setSelectedValue={setAccountTitle}
+                    menuItems={accountMenuList}
+                    placeholder="Account Title"
+                    backgroundColor={Colors.BG_LIGHT_GRAY}
+                    width="100%"
+                  />
+                </Grid>
+              ) : (
+                <PaymentsTextFields
+                  type="Account Title"
+                  label="Account Title"
+                  placeHolderValue="Enter Account Title"
                   width="100%"
+                  value={thisCaseData.creditor.accountTitle}
+                  onChange={(e) =>
+                    handleCaseDataChange(
+                      caseIndex,
+                      "creditor.accountTitle",
+                      e.target.value
+                    )
+                  }
                 />
-              </Grid>
+              )}
             </Grid>
             <Typography
               sx={{
