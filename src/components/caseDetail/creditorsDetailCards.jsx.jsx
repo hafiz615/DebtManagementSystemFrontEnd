@@ -112,6 +112,7 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             height="max-content"
             caseData={caseData}
             GetCaseDetails={GetCaseDetails}
+            maxHeight="85vh"
           />
         </div>
         <div

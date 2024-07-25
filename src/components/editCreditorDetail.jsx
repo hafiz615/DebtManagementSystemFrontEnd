@@ -10,12 +10,17 @@ import { useToast } from "../toast/toastContext";
 import MuiPhoneTextField from "./muiPhoneText";
 import { PhoneValidation } from "../constants/appConstants";
 import { formatPhoneNumber } from "../common";
+import AmountTextField from "./amountTextField";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function EditCreditorDetail({
   handleClose,
   caseData,
   GetCaseDetails,
+  maxHeight,
 }) {
+  console.log(caseData, "caseData");
+  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const { id } = useParams();
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const { showToast } = useToast();
@@ -29,6 +34,14 @@ export default function EditCreditorDetail({
   const [creditorBusinessDetails, setCreditorBusinessDetails] = useState({
     businessCompanyName: creditorBusinessInfo?.companyName || "",
     businessCategory: creditorBusinessInfo?.businessCategory || "",
+  });
+  const formattedFundedDate = caseData?.creditor?.lastFundedDate
+    ? new Date(caseData?.creditor?.lastFundedDate).toISOString().split("T")[0]
+    : "";
+  const [fundedDate, setFundedDate] = useState(formattedFundedDate || "");
+  const [historicRange, setHistoricRange] = useState({
+    minimum: caseData?.creditor?.historicalRange?.minimum || "",
+    maximum: caseData?.creditor?.historicalRange?.maximum || "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -86,6 +99,12 @@ export default function EditCreditorDetail({
       e.preventDefault();
     }
   };
+  const handleNumberInput = (e) => {
+    const invalidChars = ["e", "E", ".", "+", "-"];
+    if (invalidChars.includes(e.key)) {
+      e.preventDefault();
+    }
+  };
 
   const validateForm = () => {
     return (
@@ -95,6 +114,7 @@ export default function EditCreditorDetail({
       Object.values(creditorBusinessDetails)?.some((value) => value === "")
     );
   };
+  const today = new Date().toISOString().split("T")[0];
 
   const updateCreditorBYId = async () => {
     setLoading(true);
@@ -108,6 +128,8 @@ export default function EditCreditorDetail({
         companyName: creditorBusinessDetails?.businessCompanyName,
         businessCategory: creditorBusinessDetails?.businessCategory,
       },
+      lastFundedDate: fundedDate,
+      historicalRange: historicRange,
     };
     const updateCreditor = await UpdateCreditor(
       caseData?.creditor?._id,
@@ -134,7 +156,6 @@ export default function EditCreditorDetail({
           cursor: "pointer",
           display: "flex",
           justifyContent: "flex-end",
-          marginBottom: "1rem",
         }}
       >
         <Close />
@@ -144,6 +165,7 @@ export default function EditCreditorDetail({
         item
         xs={12}
         sx={{
+          maxHeight: maxHeight,
           borderRadius: "10px",
           marginTop: { xs: ".5rem", xl: "0rem" },
           backgroundColor: Colors.WHITE,
@@ -154,7 +176,7 @@ export default function EditCreditorDetail({
             fontFamily: "Nunito",
             fontWeight: "600",
             fontSize: 20,
-            marginBottom: "1rem",
+            marginBottom: "0.5rem",
           }}
         >
           Edit Creditor Details
@@ -188,7 +210,7 @@ export default function EditCreditorDetail({
           sx={{
             fontFamily: "Nunito",
             fontWeight: "600",
-            marginTop: "1rem",
+            marginTop: ".8rem",
           }}
         >
           Creditor Details
@@ -237,18 +259,112 @@ export default function EditCreditorDetail({
             error={creditorFieldsError?.creditorPhoneError}
           />
         </Grid>
-      </Grid>
-      <Grid container xs={12} sx={{ justifyContent: "right" }}>
-        <TextButton
-          buttonText="Save"
-          height="2rem"
-          width="8rem"
-          onClick={updateCreditorBYId}
-          disabled={validateForm()}
-          backgroundColor={Colors.SKY_BLUE}
-          hoverColor={Colors.SKY_BLUE}
-          loading={loading}
-        />
+        <Grid
+          container
+          sx={{
+            marginTop: ".8rem",
+            borderRadius: "10px",
+            backgroundColor: Colors.WHITE,
+          }}
+        >
+          <Grid item xs={12}>
+            <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
+              Funded
+            </Typography>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "500",
+                color: Colors.DARK_GRAY,
+                marginLeft: "1rem",
+              }}
+            >
+              Last Funded Date*
+            </Typography>
+            <PaymentsTextFields
+              width={smallScreen ? "100%" : "97%"}
+              type="date"
+              placeHolderValue="00/00/00"
+              value={fundedDate}
+              onChange={(e) => setFundedDate(e.target.value)}
+              max={today}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={7} lg={8}>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "600",
+                marginTop: ".8rem",
+              }}
+            >
+              Historical Range
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    color: Colors.DARK_GRAY,
+                    marginLeft: "1rem",
+                  }}
+                >
+                  Minimum*
+                </Typography>
+                <AmountTextField
+                  value={historicRange?.minimum}
+                  onChange={(e) =>
+                    setHistoricRange((prev) => ({
+                      ...prev,
+                      minimum: parseInt(e.target.value),
+                    }))
+                  }
+                  onKeyDown={handleNumberInput}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    color: Colors.DARK_GRAY,
+                    marginLeft: "1rem",
+                  }}
+                >
+                  Maximum*
+                </Typography>
+                <AmountTextField
+                  value={historicRange?.maximum}
+                  onChange={(e) =>
+                    setHistoricRange((prev) => ({
+                      ...prev,
+                      maximum: parseInt(e.target.value),
+                    }))
+                  }
+                  onKeyDown={handleNumberInput}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid container xs={12} sx={{ justifyContent: "right" }}>
+          <TextButton
+            marginBottom=".5rem"
+            buttonText="Save"
+            height="2rem"
+            width="8rem"
+            onClick={updateCreditorBYId}
+            disabled={validateForm()}
+            backgroundColor={Colors.SKY_BLUE}
+            hoverColor={Colors.SKY_BLUE}
+            loading={loading}
+          />
+        </Grid>
       </Grid>
     </>
   );
