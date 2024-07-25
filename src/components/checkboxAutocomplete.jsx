@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -24,14 +24,24 @@ export default function CheckboxAutocomplete({
   update,
   handleUpdate,
 }) {
+  const autocompleteRef = useRef(null);
+
   const isComplexData =
     options.length > 0 &&
     typeof options[0] === "object" &&
     "creditorId" in options[0];
 
+  const handleUpdateClick = () => {
+    handleUpdate();
+    if (autocompleteRef.current) {
+      autocompleteRef.current.blur();
+    }
+  };
+
   return (
     <Autocomplete
       multiple
+      ref={autocompleteRef}
       id="checkboxes-tags-demo"
       options={options}
       disableCloseOnSelect
@@ -55,7 +65,7 @@ export default function CheckboxAutocomplete({
                 buttonText="Update"
                 height="2rem"
                 width="100%"
-                onClick={handleUpdate}
+                onClick={handleUpdateClick}
                 backgroundColor={Colors.SKY_BLUE}
                 hoverColor={Colors.SKY_BLUE}
               />
