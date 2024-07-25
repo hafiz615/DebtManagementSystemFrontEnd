@@ -9,6 +9,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TablePagination from "@mui/material/TablePagination";
+import { useToast } from "../toast/toastContext";
 
 // import VisibilityIcon from "@mui/icons-material/Visibility";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
@@ -18,6 +19,7 @@ import Prompt from "./prompt";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { CircularProgress } from "@mui/material";
 import { isEmpty } from "lodash";
+import { DeleteSettings } from "../services/services";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     color: Colors.BLACK,
@@ -80,6 +82,7 @@ export default function ListTableDynamic({
   loading,
   setLoading,
 }) {
+  const { showToast } = useToast();
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:900px)");
   const settings = useSelector(
     (state) => state?.permissions?.permissions?.settings
@@ -95,6 +98,42 @@ export default function ListTableDynamic({
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  // const deleteTemplate = async () => {
+  //   const newTemplate = {
+  //     subject: row?.subject,
+  //     name: templateType === "email" ? row?.name : row?.name,
+  //     event: templateType === "email" ? row?.event : row?.event,
+  //     html: templateType === "email" ? row?.html : row?.text,
+  //     templateId: row?.templateId,
+  //   };
+
+  //   const resNotificationTemplate = await DeleteSettings(
+  //     newTemplate,
+  //     templateType
+  //   );
+  //   if (resNotificationTemplate?.status === 200) {
+  //     showToast(resNotificationTemplate?.data?.message, "success");
+  //     getSettings();
+  //     // setFroalaEditor("");
+  //     // handleClose();
+  //     // setFroalaEditor("");
+  //     // setEmailTemplate({
+  //     //   subject: "",
+  //     //   name: "",
+  //     //   event: "",
+  //     //   html: "",
+  //     // });
+  //     // setSmsTemplate({
+  //     //   name: "",
+  //     //   event: "",
+  //     //   text: "",
+  //     // });
+  //   } else {
+  //     const errorMessage = resNotificationTemplate?.response?.data?.message;
+  //     showToast(errorMessage, "error");
+  //   }
+  // };
 
   return (
     <Paper
@@ -205,6 +244,7 @@ export default function ListTableDynamic({
                         {settings?.deleteNotificationTemplate ? (
                           <Prompt
                             heading="Delete Template"
+                            deleting="delete template"
                             text={`Are you sure you want to delete ${row?.name} ?`}
                             templateType={templateType}
                             getSettings={getSettings}

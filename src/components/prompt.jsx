@@ -168,10 +168,10 @@ export default function Prompt({
       await deleteCustomField();
     } else if (handleDelete) {
       await handleDelete();
+    } else if (deleting === "delete template") {
+      await deleteTemplate();
     } else if (deleteRole) {
       await deleteRole();
-    } else if (deleteTemplate) {
-      await deleteTemplate();
     } else {
       await deleteUserById();
     }

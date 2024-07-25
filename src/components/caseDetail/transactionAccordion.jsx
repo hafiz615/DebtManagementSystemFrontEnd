@@ -26,7 +26,6 @@ export default function TransactionAccordion({
         height: "auto",
         marginBottom: "1rem",
         boxShadow: "none",
-        // marginBottom: "10px",
         borderRadius: "1rem !important",
         backgroundColor: Colors.WHITE,
       }}
@@ -61,7 +60,7 @@ export default function TransactionAccordion({
           borderBottomRightRadius: "10px",
         }}
       >
-        {loading || isEmpty(paymentDetails) ? (
+        {loading ? (
           <Grid
             container
             item
@@ -74,6 +73,28 @@ export default function TransactionAccordion({
             }}
           >
             <CircularProgress size={60} sx={{ color: Colors.SKY_BLUE }} />
+          </Grid>
+        ) : isEmpty(paymentDetails) ? (
+          <Grid
+            container
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "35vh",
+            }}
+          >
+            <Typography
+              sx={{
+                color: Colors.GRAY,
+                fontFamily: "Nunito",
+                fontWeight: "700",
+              }}
+            >
+              No transactions data
+            </Typography>
           </Grid>
         ) : (
           <Grid

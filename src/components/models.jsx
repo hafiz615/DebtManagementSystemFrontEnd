@@ -38,6 +38,7 @@ import ExportPipeline from "./pipelines/exportPipeline";
 import { FONT_SIZE_XL } from "../constants/appConstants";
 import SendEmail from "./sendEmail";
 import CreateRole from "./settingsScreen/createRole";
+import DebtorContacts from "./caseDetail/debtorContacts";
 
 export default function MuiModels({
   buttonName,
@@ -52,6 +53,7 @@ export default function MuiModels({
   width,
   height,
   caseData,
+  setCaseData,
   handleModalClose,
   GetCaseDetails,
   customFieldsData,
@@ -142,6 +144,32 @@ export default function MuiModels({
       ) : show === "editField" ? (
         <IconButton sx={{ display: "flex", alignItems: "center" }}>
           <CreateIcon
+            onClick={() => {
+              handleOpen();
+            }}
+            sx={{
+              color: Colors.DARK_GRAY,
+              cursor: "pointer",
+              fontSize: "16px",
+            }}
+          />
+        </IconButton>
+      ) : show === "debtorContacts" ? (
+        <IconButton sx={{ display: "flex", alignItems: "center" }}>
+          <AddIcon
+            onClick={() => {
+              handleOpen();
+            }}
+            sx={{
+              color: Colors.DARK_GRAY,
+              cursor: "pointer",
+              fontSize: "16px",
+            }}
+          />
+        </IconButton>
+      ) : show === "creditorContacts" ? (
+        <IconButton sx={{ display: "flex", alignItems: "center" }}>
+          <AddIcon
             onClick={() => {
               handleOpen();
             }}
@@ -502,6 +530,26 @@ export default function MuiModels({
             />
           ) : show === "exportPipeline" ? (
             <ExportPipeline handleClose={handleClose} data={data} />
+          ) : show === "debtorContacts" ? (
+            <DebtorContacts
+              // maxHeight="70vh"
+              caseData={caseData?.debtor?.contacts || []}
+              setCaseData={setCaseData}
+              handleClose={handleClose}
+              show="Debtor"
+              caseId={caseData?.debtor?._id}
+              GetCaseDetails={GetCaseDetails}
+            />
+          ) : show === "creditorContacts" ? (
+            <DebtorContacts
+              // maxHeight="70vh"
+              caseData={caseData?.creditor?.contacts || []}
+              setCaseData={setCaseData}
+              handleClose={handleClose}
+              show="Creditor"
+              caseId={caseData?.creditor?._id}
+              GetCaseDetails={GetCaseDetails}
+            />
           ) : show === "sendEmail" ? (
             <SendEmail handleClose={handleClose} />
           ) : (
