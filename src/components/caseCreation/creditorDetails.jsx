@@ -3,25 +3,25 @@ import { Grid, CircularProgress } from "@mui/material";
 import SearchBar from "../searchBar";
 import CreditorFields from "../caseCreationFields/creditorFields";
 import { Colors } from "../../config/default";
-import {phoneNumberFormat} from "../../common";
-import CloseIcon from '@mui/icons-material/Close';
+import { phoneNumberFormat } from "../../common";
+import CloseIcon from "@mui/icons-material/Close";
 
 const contactFields = {
-  "name": "",
-  "title": "",
-  "phone": "",
-  "email": "",
-  "relationWithDebtor": "",
-  "country": "",
-  "state": "",
-  "city": "",
-  "zipCode": ""
+  name: "",
+  title: "",
+  phone: "",
+  email: "",
+  relationWithDebtor: "",
+  country: "",
+  state: "",
+  city: "",
+  zipCode: "",
 };
 const intervalFields = {
-  "amount": 0,
-  "startDate": "",
-  "timePeriod": "Custom",
-  "frequency": 0
+  amount: 0,
+  startDate: "",
+  timePeriod: "Custom",
+  frequency: 0,
 };
 
 export default function CreditorDetails({
@@ -36,7 +36,7 @@ export default function CreditorDetails({
   loading,
   filteredArray,
   setFilteredArray,
-  handleSelect
+  handleSelect,
 }) {
   const handleSearchChange = (value) => {
     setSearchText(value);
@@ -45,11 +45,11 @@ export default function CreditorDetails({
 
   function handleCaseDataChange(index, fieldPath, value) {
     const newState = [...finalCaseData];
-  
+
     function updateField(obj, path, val) {
-      const keys = path.split('.');
+      const keys = path.split(".");
       const lastKey = keys.pop();
-  
+
       let current = obj;
       for (const key of keys) {
         if (!current[key]) {
@@ -57,14 +57,14 @@ export default function CreditorDetails({
         }
         current = current[key];
       }
-  
+
       current[lastKey] = val;
     }
-  
+
     if (index >= 0 && index < newState.length) {
       updateField(newState[index], fieldPath, value);
     }
-  
+
     setFinalCaseData(newState);
   }
 
@@ -80,43 +80,44 @@ export default function CreditorDetails({
 
   React.useEffect(() => {
     let processedData;
-    console.log(creditors);
 
     if (creditors.length === 0) {
-      processedData = [{
-        creditor: {
-          accountTitle: "",
-          paymentToken: "",
-          paymentType: "",
-          basicInformation: {
-            fullName: "",
-            email: "",
-            phone: ""
+      processedData = [
+        {
+          creditor: {
+            accountTitle: "",
+            paymentToken: "",
+            paymentType: "",
+            basicInformation: {
+              fullName: "",
+              email: "",
+              phone: "",
+            },
+            businessInformation: {
+              companyName: "",
+              businessCategory: "",
+            },
+            notes: "",
+            lastFundedDate: "",
+            historicalRange: {
+              minimum: 0,
+              maximum: 0,
+            },
+            contacts: [],
           },
-          businessInformation: {
-            companyName: "",
-            businessCategory: ""
-          },
-          notes: "",
-          lastFundedDate: "",
-          historicalRange: {
-            minimum: 0,
-            maximum: 0
-          },
-          contacts: []
+          status: "In progress",
+          totalDebt: 0,
+          lastPaymentDate: "",
+          // principalAmount: 0,
+          // purchasedPercentage: 0,
+          // repaymentAmount: 0,
+          paidAmount: 0,
+          remaining: 0,
+          feePayment: "toPay",
+          // intervals: [],
+          // securityKey: ""
         },
-        status: "In progress",
-        totalDebt: 0,
-        lastPaymentDate: "",
-        // principalAmount: 0,
-        // purchasedPercentage: 0,
-        // repaymentAmount: 0,
-        paidAmount: 0,
-        remaining: 0,
-        feePayment: "toPay",
-        // intervals: [],
-        // securityKey: ""
-      }];
+      ];
     } else {
       processedData = creditors.map((creditor) => ({
         creditor: {
@@ -126,28 +127,38 @@ export default function CreditorDetails({
           basicInformation: {
             fullName: creditor?.Name || "",
             email: creditor?.EmailAddress || "",
-            phone: phoneNumberFormat(creditor?.PhoneNumber) || ""
+            phone: phoneNumberFormat(creditor?.PhoneNumber) || "",
           },
           businessInformation: {
             companyName: creditor?.Name || "",
-            businessCategory: ""
+            businessCategory: "",
           },
           notes: "",
           lastFundedDate: creditor?.ContractDetails?.signing_date || "",
           historicalRange: {
             minimum: 0,
-            maximum: 0
+            maximum: 0,
           },
-          contacts: []
+          contacts: [],
         },
         status: "In Process",
-        totalDebt: parseInt(creditor?.ContractDetails?.payable_amount.replace('$', '').replace(',', '')) || 0,
+        totalDebt:
+          parseInt(
+            creditor?.ContractDetails?.payable_amount
+              .replace("$", "")
+              .replace(",", "")
+          ) || 0,
         lastPaymentDate: "",
         // principalAmount: parseInt(creditor?.ContractDetails?.loan_amount) || 0,
         // purchasedPercentage: creditor?.ContractDetails?.purchased_percentage || 0,
         // repaymentAmount: parseInt(creditor?.ContractDetails?.repayment_amount) || 0,
         paidAmount: 0,
-        remaining: parseInt(creditor?.ContractDetails?.payable_amount.replace('$', '').replace(',', '')) || 0,
+        remaining:
+          parseInt(
+            creditor?.ContractDetails?.payable_amount
+              .replace("$", "")
+              .replace(",", "")
+          ) || 0,
         feePayment: "toPay",
         // intervals: [],
         // securityKey: ""
@@ -164,10 +175,10 @@ export default function CreditorDetails({
         item
         xs={12}
         sx={{
-          display: 'flex',
-          justifyContent: 'flex-start',
-          alignItems: 'center',
-          marginTop: '1rem',
+          display: "flex",
+          justifyContent: "flex-start",
+          alignItems: "center",
+          marginTop: "1rem",
         }}
       >
         <SearchBar
@@ -186,10 +197,10 @@ export default function CreditorDetails({
           item
           xs={12}
           sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '46vh',
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "46vh",
           }}
         >
           <CircularProgress size={100} sx={{ color: Colors.SKY_BLUE }} />
@@ -201,20 +212,20 @@ export default function CreditorDetails({
             container
             item
             sx={{
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginTop: '1rem',
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginTop: "1rem",
             }}
           >
             <Grid
               item
               xs={12}
               sx={{
-                marginBottom: '0.5rem',
-                borderRadius: '10px',
+                marginBottom: "0.5rem",
+                borderRadius: "10px",
                 backgroundColor: Colors.WHITE,
-                padding: '1rem',
-                position: 'relative'
+                padding: "1rem",
+                position: "relative",
               }}
             >
               <CreditorFields

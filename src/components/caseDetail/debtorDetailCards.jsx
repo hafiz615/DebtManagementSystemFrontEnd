@@ -280,25 +280,12 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
           >
             Contacts
           </p>
-          <SearchContainer
-            sx={{
-              width: "16rem",
-              marginBottom: smallScreen ? "0.5rem" : "0rem",
-            }}
-          >
-            <SearchIconWrapper>
-              <Search
-                sx={{
-                  fontSize: "16px",
-                  color: Colors.DIM_LIGHT_GRAY,
-                }}
-              />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search Contact..."
-              inputProps={{ "aria-label": "search" }}
-            />
-          </SearchContainer>
+          <MuiModels
+            show="debtorContacts"
+            caseData={caseData}
+            GetCaseDetails={GetCaseDetails}
+          />
+
           {/* <div
             style={{
               display: "flex",
@@ -315,6 +302,28 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
               <KeyboardArrowRight sx={{ fontSize: "16px" }} />
             </IconButton>
           </div> */}
+        </Grid>
+
+        <Grid container item sx={{ marginBottom: "0.5rem" }}>
+          <SearchContainer
+            sx={{
+              width: "100%",
+              marginBottom: smallScreen ? "0.5rem" : "0rem",
+            }}
+          >
+            <SearchIconWrapper>
+              <Search
+                sx={{
+                  fontSize: "16px",
+                  color: Colors.DIM_LIGHT_GRAY,
+                }}
+              />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Search Contact..."
+              inputProps={{ "aria-label": "search" }}
+            />
+          </SearchContainer>
         </Grid>
         <Box
           sx={{
