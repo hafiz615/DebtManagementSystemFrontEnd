@@ -172,7 +172,7 @@ export default function CreditorDetails({
     } else {
       processedData = creditors.map((creditor) => ({
         creditor: {
-          accountTitle: "",
+          accountTitle: creditor?.AccountTitle || "",
           paymentToken: "",
           paymentType: "",
           basicInformation: {
@@ -201,11 +201,11 @@ export default function CreditorDetails({
           ) || 0,
         lastPaymentDate: "",
         contractDetails: {
-          loanAmount: parseInt(creditor?.ContractDetails?.loanAmount) || 0,
+          loanAmount: parseInt(creditor?.ContractDetails?.loan_amount .replace("$", "")
+          .replace(",", "")) || 0,
           purchasedPercentage:
-            creditor?.ContractDetails?.purchasedPercentage || 0,
-          repaymentAmount:
-            parseInt(creditor?.ContractDetails?.repaymentAmount) || 0,
+            creditor?.ContractDetails?.purchased_percentage || "",
+          repaymentAmount: creditor?.ContractDetails?.repayment_amount || "",
         },
 
         paidAmount: 0,

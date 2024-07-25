@@ -80,6 +80,8 @@ const FileUploadComponent = ({
 
   const handleDeleteFile = (index) => {
     setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+
   };
 
   const handleCheckboxChange = (file, checked) => {

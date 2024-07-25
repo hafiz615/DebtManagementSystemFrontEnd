@@ -91,29 +91,29 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   //Debtor-Contact-State
   const contacts = !isEmpty(caseData?.debtor?.contacts)
     ? caseData?.debtor?.contacts?.map((contact) => ({
-        name: contact?.name || "",
-        title: contact?.title || "",
-        phone: contact?.phone || "",
-        email: contact?.email || "",
-        country: contact?.country || "",
-        state: contact?.state || "",
-        city: contact?.city || "",
-        zipCode: contact?.zipCode || "",
-        relationWithDebtor: contact?.relationWithDebtor || "",
-      }))
+      name: contact?.name || "",
+      title: contact?.title || "",
+      phone: contact?.phone || "",
+      email: contact?.email || "",
+      country: contact?.country || "",
+      state: contact?.state || "",
+      city: contact?.city || "",
+      zipCode: contact?.zipCode || "",
+      relationWithDebtor: contact?.relationWithDebtor || "",
+    }))
     : [
-        {
-          name: "",
-          title: "",
-          phone: "",
-          email: "",
-          country: "",
-          state: "",
-          city: "",
-          zipCode: "",
-          relationWithDebtor: "",
-        },
-      ];
+      {
+        name: "",
+        title: "",
+        phone: "",
+        email: "",
+        country: "",
+        state: "",
+        city: "",
+        zipCode: "",
+        relationWithDebtor: "",
+      },
+    ];
 
   const [debtorContactDetails, setDebtorContactDetails] = useState(contacts);
 
@@ -300,16 +300,22 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           response.DebtorInfo[key] = item.debtor_info[key];
         }
       }
+      try {
 
-      // Process creditor info
-      if (!creditorMap.has(item.creditor_info["creditor's Name"])) {
-        creditorMap.set(item.creditor_info["creditor's Name"], {
-          Name: item.creditor_info["creditor's Name"],
-          EmailAddress: item.creditor_info["creditor's Email address"],
-          PhoneNumber: item.creditor_info["creditor's Phone Number"],
-          ContractDetails: item.contract_details,
-        });
+        // Process creditor info
+        if (!creditorMap.has(item.creditor_info["creditor's Name"])) {
+          creditorMap.set(item.creditor_info["creditor's Name"], {
+            Name: item.creditor_info["creditor's Name"],
+            EmailAddress: item.creditor_info["creditor's Email address"],
+            PhoneNumber: item.creditor_info["creditor's Phone Number"],
+            AccountTitle: item?.creditor_info["creditor's bank acc. title"] || "",
+            ContractDetails: item.contract_details,
+          });
+        }
+      } catch (error) {
+        showToast("We ran into an error in parsing", error)
       }
+
     });
 
     // Convert creditor map to an array

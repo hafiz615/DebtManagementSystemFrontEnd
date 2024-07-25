@@ -444,9 +444,9 @@ export default function CreditorFields({
             }
           />
           <PaymentsTextFields
-            type="number"
+            type="text"
             label="Purchase Percentage"
-            placeHolderValue="Enter Purchase Percentage"
+            placeHolderValue="Purchase Percentage"
             width={smallScreen ? "100%" : "97%"}
             value={thisCaseData.contractDetails.purchasedPercentage}
             onChange={(e) =>
@@ -458,9 +458,9 @@ export default function CreditorFields({
             }
           />
           <PaymentsTextFields
-            type="number"
+            type="text"
             label="Repayment Amount"
-            placeHolderValue="Enter Repayment Amount"
+            placeHolderValue="Repayment Amount"
             width={smallScreen ? "100%" : "97%"}
             value={thisCaseData.contractDetails.repaymentAmount}
             onChange={(e) =>
