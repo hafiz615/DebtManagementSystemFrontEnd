@@ -152,8 +152,7 @@ function CaseDetail() {
               height="2.5rem"
               width="14rem"
               onClick={() => {
-                localStorage.setItem("route", "settlementRange");
-                navigate("/settlementRange");
+                navigate(`/settlementRange/${id}`);
               }}
               backgroundColor={Colors.SKY_BLUE}
               hoverColor={Colors.SKY_BLUE}

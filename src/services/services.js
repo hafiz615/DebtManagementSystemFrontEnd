@@ -177,6 +177,7 @@ export const ExtractContractData = async (files) => {
     if (!isEmpty(file)){
       return processFile(file)
     }
+    return file 
   }));
   return results; // Return the array of results
 };
@@ -746,6 +747,18 @@ export const GetRoleByName = async (name) => {
   try {
     return await axios.get(
       BASE_URL + `/v1/roles/getRoleByName?role=${name}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetSettlementRangeWithScores = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/case/getScoresSettlementRange/${id}?all=${isEmpty(payload)}`,
+      payload,
       setHeaders()
     );
   } catch (error) {
