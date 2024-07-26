@@ -12,6 +12,7 @@ import {
   useMediaQuery,
   IconButton,
   CircularProgress,
+  Box,
 } from "@mui/material";
 import {
   FONT_SIZE_SMALL,
@@ -35,7 +36,7 @@ import { generatePdfFromApiData } from "../../common";
 import MuiModels from "../models";
 import CheckboxAutocomplete from "../checkboxAutocomplete";
 import { useParams } from "react-router-dom";
-import { ErrorOutline } from '@mui/icons-material';
+import { ErrorOutline } from "@mui/icons-material";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -88,11 +89,18 @@ const commonTextStyles = {
   fontFamily: "Nunito",
   fontWeight: "700",
 };
-
+const isNegative = (number) => {
+  return number < 0;
+};
 const GridItem = ({ title, value }) => (
   <Grid item xs={12} sm={5.8} md={3.8} lg={2.8} container sx={commonStyles}>
     <Typography sx={commonTextStyles}>{title}</Typography>
-    <Typography sx={{ ...commonTextStyles, color: Colors.SKY_BLUE }}>
+    <Typography
+      sx={{
+        ...commonTextStyles,
+        color: isNegative(value) ? Colors.ORANGE_COLOR : Colors.SKY_BLUE,
+      }}
+    >
       {value}
     </Typography>
   </Grid>
@@ -113,6 +121,7 @@ export default function SettlementRange() {
   const [allCreditorNames, setAllCreditorsNames] = useState([]);
   const [creditorSelect, setCreditorSelect] = useState([]);
   const [scores, setScores] = useState(null);
+  const [debtor, setDebtor] = useState({});
   const [justifications, setJustifications] = useState({
     justifications1: "",
     justifications2: "",
@@ -169,17 +178,24 @@ export default function SettlementRange() {
     setLoading(true);
     try {
       if (caseId) {
-        const settlementRangeData = await GetSettlementRangeWithScores(creditors, caseId);
+        const settlementRangeData = await GetSettlementRangeWithScores(
+          creditors,
+          caseId
+        );
+
         if (settlementRangeData?.status === 200) {
           setLoading(false);
           if (typeof settlementRangeData?.data?.data?.getScores === "string") {
             setScores({});
-            showToast(settlementRangeData?.data?.data?.getScores + " Couldn't fetch scores", "error");
-          }
-          else {
+            showToast(
+              settlementRangeData?.data?.data?.getScores +
+                " Couldn't fetch scores",
+              "error"
+            );
+          } else {
             setScores(settlementRangeData?.data?.data?.getScores);
           }
-
+          setDebtor(settlementRangeData?.data?.data?.debtor?.basicInformation);
           setApiData(settlementRangeData?.data?.data?.settlementRange);
           setJustifications({
             justifications1:
@@ -202,15 +218,12 @@ export default function SettlementRange() {
           showToast(settlementRangeData?.data?.message, "success");
         }
       }
-    }
-    catch (err) {
+    } catch (err) {
       setErrorMessage(err);
       showToast(err, "error");
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
-
   };
 
   const handleUpdate = async () => {
@@ -253,17 +266,21 @@ export default function SettlementRange() {
         bgcolor={Colors.BG_LIGHT_GRAY} // Adjust to your color scheme
       >
         <Grid item textAlign="center">
-          <ErrorOutline sx={{ fontSize: 80, color: Colors.RED }} /> {/* Adjust icon size and color */}
+          <ErrorOutline sx={{ fontSize: 80, color: Colors.RED }} />{" "}
+          {/* Adjust icon size and color */}
           <Typography variant="h4" color={Colors.DARK_GRAY} gutterBottom>
             Oops! Something went wrong.
           </Typography>
           <Typography variant="body1" color={Colors.DARK_GRAY} gutterBottom>
-            {errorMessage || 'An unexpected error occurred.'}
+            {errorMessage || "An unexpected error occurred."}
           </Typography>
-          <Button variant="contained" color="primary" 
-              onClick={() => {
-                navigate(`/home`);
-              }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              navigate(`/home`);
+            }}
+          >
             Go to Home Page
           </Button>
         </Grid>
@@ -335,6 +352,7 @@ export default function SettlementRange() {
             >
               Settlement Range
             </Typography>
+
             <div style={{ display: "flex", gap: "10px" }}>
               <MuiModels show="sendEmail" />
               <TextButton
@@ -381,7 +399,50 @@ export default function SettlementRange() {
               </div>
             </div>
           </Grid>
+          <Grid
+            container
+            item
+            xs={12}
+            lg={8}
+            sx={{ justifyContent: { xs: "left", md: "space-between" } }}
+          >
+            {Object?.keys(debtor)?.map((key) => (
+              <Grid item xs={12} lg={6}>
+                <Box
+                  key={key}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: { xs: "space-between", md: "unset" },
+                  }}
+                >
+                  <div
+                    style={{
+                      fontFamily: "Nunito",
+                      fontWeight: "600",
+                      color: Colors.DARK_GRAY,
+                      width: "10rem",
+                      marginTop: "0.5rem",
+                    }}
+                  >
+                    {key?.charAt(0)?.toUpperCase() + key?.slice(1)}
+                  </div>
 
+                  <span
+                    style={{
+                      fontFamily: "Nunito",
+                      fontWeight: "300",
+                      fontSize: "0.9rem",
+                      color: Colors.DIM_LIGHT_GRAY,
+                      marginTop: "0.5rem",
+                    }}
+                  >
+                    {debtor[key]}
+                  </span>
+                </Box>
+              </Grid>
+            ))}
+          </Grid>
           <Grid
             item
             xs={12}
@@ -434,11 +495,10 @@ export default function SettlementRange() {
               title="Weekly Budget"
               value={
                 apiData?.weekly_budget?.[
-                allCreditorNames[parseInt(tabValue)]
+                  allCreditorNames[parseInt(tabValue)]
                 ] ?? "No Data"
               }
             />
-
 
             <GridItem
               key="Weekly True Revenue"
@@ -464,8 +524,7 @@ export default function SettlementRange() {
                 value={scores?.Scores?.["Default Risk Score"] ?? "No Data"}
               />
             </Grid>
-          )
-          }
+          )}
 
           <Grid
             item
@@ -485,12 +544,12 @@ export default function SettlementRange() {
                     title={item}
                     settlementRange={
                       apiData?.settlement_range?.[
-                      allCreditorNames[parseInt(tabValue)]
+                        allCreditorNames[parseInt(tabValue)]
                       ] || null
                     }
                     commissionRange={
                       apiData?.commission_range?.[
-                      allCreditorNames[parseInt(tabValue)]
+                        allCreditorNames[parseInt(tabValue)]
                       ] || null
                     }
                     newDefaultRiskScore={
@@ -498,12 +557,12 @@ export default function SettlementRange() {
                     }
                     percentageSettlementOverWeeklyBudget={
                       apiData?.percentage_settlement_over_weekly_budget?.[
-                      allCreditorNames[parseInt(tabValue)]
+                        allCreditorNames[parseInt(tabValue)]
                       ] || null
                     }
                     percentageSettlementOverWeeklyTrueRevenue={
                       apiData?.percentage_settlement_over_weekly_true_revenue?.[
-                      allCreditorNames[parseInt(tabValue)]
+                        allCreditorNames[parseInt(tabValue)]
                       ] || null
                     }
                   />

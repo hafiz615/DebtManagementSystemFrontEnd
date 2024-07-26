@@ -69,7 +69,7 @@ export default function PaymentFields({
               fontFamily: "Nunito",
               fontWeight: "500",
               color: Colors.DARK_GRAY,
-              marginRight: "1.5rem", // Increased marginRight
+              marginLeft: "1rem",
             }}
           >
             Total Receivable
@@ -80,7 +80,7 @@ export default function PaymentFields({
               handleCaseDataChange(
                 caseIndex,
                 "totalDebt",
-                parseInt(e.target.value)
+                parseFloat(e.target.value)
               )
             }
             onKeyDown={handleNumberInput}
@@ -92,7 +92,7 @@ export default function PaymentFields({
               fontFamily: "Nunito",
               fontWeight: "500",
               color: Colors.DARK_GRAY,
-              marginRight: "1.5rem", // Increased marginRight
+              marginLeft: "1rem",
             }}
           >
             Paid
@@ -103,7 +103,7 @@ export default function PaymentFields({
               handleCaseDataChange(
                 caseIndex,
                 "paidAmount",
-                parseInt(e.target.value)
+                parseFloat(e.target.value)
               )
             }
             onKeyDown={handleNumberInput}
@@ -115,7 +115,7 @@ export default function PaymentFields({
               fontFamily: "Nunito",
               fontWeight: "500",
               color: Colors.DARK_GRAY,
-              marginRight: "1.5rem", // Increased marginRight
+              marginLeft: "1rem",
             }}
           >
             Remaining
@@ -128,7 +128,7 @@ export default function PaymentFields({
               handleCaseDataChange(
                 caseIndex,
                 "remaining",
-                parseInt(e.target.value)
+                parseFloat(e.target.value)
               )
             }
             onKeyDown={handleNumberInput}
@@ -140,7 +140,7 @@ export default function PaymentFields({
               fontFamily: "Nunito",
               fontWeight: "500",
               color: Colors.DARK_GRAY,
-              marginRight: "1.5rem", // Increased marginRight
+              marginLeft: "1rem",
             }}
           >
             Last Payment Date
@@ -173,7 +173,7 @@ export default function PaymentFields({
               fontFamily: "Nunito",
               fontWeight: "500",
               color: Colors.DARK_GRAY,
-              marginRight: "1.5rem", // Increased marginRight
+              marginLeft: "1rem",
             }}
           >
             Status
