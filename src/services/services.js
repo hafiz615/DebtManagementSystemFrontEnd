@@ -154,7 +154,12 @@ export const ExtractContractData = async (files) => {
 
       // Create form data
       const formData = new FormData();
-      formData.append("MCA_pdf", file.file); // Ensure file.file is a File object  
+      const originalFileName = file.file.name;
+      const cleanedFileName = originalFileName.replace("MCA Contracts/", "");
+      const cleanedFile = new File([file.file], cleanedFileName, { type: file.file.type });
+      console.log("cleanedFile", cleanedFile);
+      formData.append("MCA_pdf", cleanedFile);
+      // formData.append("MCA_pdf", file.file); // Ensure file.file is a File object  
 
       // Call API
       const response = await axios.post(apiUrl, formData, {

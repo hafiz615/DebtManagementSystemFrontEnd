@@ -22,7 +22,7 @@ export default function CreditorFields({
   caseIndex,
   error,
 }) {
-  const accountMenuList = debtorCaseData?.creditorNames?.map((item, index) => ({
+  const accountMenuList = debtorCaseData?.creditorNames?.creditor_names?.map((item, index) => ({
     id: index,
     value: item,
     label: item,
