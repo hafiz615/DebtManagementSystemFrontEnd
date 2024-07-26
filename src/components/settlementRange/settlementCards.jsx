@@ -103,7 +103,13 @@ export default function SettlementCards({
                 >
                   Maximum
                 </div>
-                <div style={textStyles}> {item?.[title]?.[0] || "-"}</div>
+                <div style={textStyles}>
+                  {rangeNames[index] === "New Default Risk"
+                    ? item?.[title]?.[0] || "-"
+                    : rangeNames[index]?.includes('%')
+                      ? `${item?.[title]?.[0] || "-"}%`
+                      : `$${item?.[title]?.[0] || "-"}`}
+                </div>
               </div>
               <div style={{ width: "100%", display: "flex" }}>
                 <div
@@ -115,7 +121,13 @@ export default function SettlementCards({
                 >
                   Minimum
                 </div>
-                <div style={textStyles}>{item?.[title]?.[1] || "-"} </div>
+                <div style={textStyles}>
+                  {rangeNames[index] === "New Default Risk"
+                    ? item?.[title]?.[1] || "-"
+                    : rangeNames[index]?.includes('%')
+                      ? `${item?.[title]?.[1] || "-"}%`
+                      : `$${item?.[title]?.[1] || "-"}`}
+                </div>
               </div>
             </Grid>
           </Grid>

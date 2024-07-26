@@ -47,6 +47,9 @@ const NumericFormatCustom = React.forwardRef(function NumericFormatCustom(
         });
       }}
       thousandSeparator
+      decimalSeparator="."
+      decimalScale={2}
+      fixedDecimalScale
       valueIsNumericString
       prefix="$"
     />
@@ -106,9 +109,9 @@ export default function AmountTextField({
             borderBottom: "none",
           },
         }}
-        placeholder="$"
+        placeholder={value ? "" : "$"} // Show placeholder only if value is empty
         onChange={onChange}
-        value={value}
+        value={value || ""} // Ensure value is never null or undefined
         onKeyDown={onKeyDown}
         name="numberformat"
         id="formatted-numberformat-input"
@@ -117,7 +120,7 @@ export default function AmountTextField({
         }}
         variant="standard"
       />
-      {error && value ? (
+      {error && (
         <Box
           sx={{
             color: "red",
@@ -127,13 +130,6 @@ export default function AmountTextField({
         >
           {error}
         </Box>
-      ) : (
-        <Box
-          sx={{
-            color: "red",
-            height: smallScreen ? "0.5rem" : "0.7rem",
-          }}
-        ></Box>
       )}
     </>
   );
