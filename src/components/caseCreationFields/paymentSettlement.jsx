@@ -179,7 +179,7 @@ export default function PaymentSettlement({
                 width={smallScreen ? "100%" : "60%"}
                 value={item?.amount}
                 onChange={(e) =>
-                  handleInputChange(index, "amount", parseInt(e.target.value))
+                  handleInputChange(index, "amount", parseFloat(e.target.value))
                 }
                 onKeyDown={handleNumberInput}
               />

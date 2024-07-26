@@ -152,6 +152,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   const [totalAmount, setTotalAmount] = useState();
   const [walletId, setWalletId] = useState("");
   const [finalCaseData, setFinalCaseData] = useState([]);
+
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
 
   useEffect(() => {
@@ -220,20 +221,15 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         errors?.ssn ||
         errors?.emailValid ||
         errors?.basicPhone)) ||
-    (activeStep === 2 && false) ||
-    // (fundedDate === "" ||
-    //   (creditorContantHasValue &&
-    //     !isEmpty(creditorContactEmailError) &&
-    //     hasAnyValue(creditorContactEmailError)) ||
-    //   checkContacts(creditorContactDetails) ||
-    //   (creditorContantHasValue &&
-    //     !isEmpty(creditorContactError) &&
-    //     hasAnyValue(creditorContactError)) ||
-    //   creditorFieldsError?.emailValidError ||
-    //   creditorFieldsError?.creditorPhoneError ||
-    //   Object.values(creditorBasicsInfo)?.some((value) => value === "") ||
-    //   Object.values(creditorBusinessDetails)?.some((value) => value === "") ||
-    //   Object.values(historicRange).some((value) => value === ""))) ||
+    // (activeStep === 2 &&
+    //   !finalCaseData.some((caseData) =>
+    //     Object.entries(caseData)?.some(
+    //       ([key, value]) =>
+    //         key !== "lastFundedDate" &&
+    //         key !== "lastPaymentDate" &&
+    //         (value === null || value === "")
+    //     )
+    //   )) ||
     (activeStep === 3 &&
       (totalReceivable === null ||
         totalReceivable === "" ||
@@ -242,7 +238,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         paidAmount === "" ||
         remainingAmount === null ||
         remainingAmount === "" ||
-        lastPaymentDate === "" ||
+        // lastPaymentDate === "" ||
         debtorDetailsStatus === "" ||
         parseInt(remainingAmount) !== totalAmount ||
         newDataList?.some((newData) =>
@@ -578,7 +574,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
             zipCode: debtorOwnDetails?.BasicZipCode,
             phone: debtorOwnDetails?.BasicPhoneNumber,
             address: debtorOwnDetails?.BasicAddress,
-            weeklyBudget: parseInt(debtorOwnDetails?.BasicWeeklyBudget) || "",
+            weeklyBudget: debtorOwnDetails?.BasicWeeklyBudget || "",
           },
           businessInformation: {
             companyName: debtorBusinessDetails?.businessCompanyName,
