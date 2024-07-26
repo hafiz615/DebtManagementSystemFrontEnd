@@ -92,13 +92,13 @@ const commonTextStyles = {
 const isNegative = (number) => {
   return number < 0;
 };
-const GridItem = ({ title, value }) => (
+const GridItem = ({ title, value, rawValue }) => (
   <Grid item xs={12} sm={5.8} md={3.8} lg={2.8} container sx={commonStyles}>
     <Typography sx={commonTextStyles}>{title}</Typography>
     <Typography
       sx={{
         ...commonTextStyles,
-        color: isNegative(value) ? Colors.ORANGE_COLOR : Colors.SKY_BLUE,
+        color: isNegative(rawValue) ? Colors.ORANGE_COLOR : Colors.SKY_BLUE,
       }}
     >
       {value}
@@ -488,7 +488,12 @@ export default function SettlementRange() {
             <GridItem
               key="Weekly Profit"
               title="Weekly Profit"
-              value={apiData?.weekly_profit ?? "No Data"}
+              value={
+                apiData?.weekly_profit 
+                  ? `$${new Intl.NumberFormat().format(apiData.weekly_profit)}`
+                  : "No Data"
+              }
+              rawValue={apiData?.weekly_profit}
             />
             <GridItem
               key="Weekly Budget"
@@ -496,19 +501,34 @@ export default function SettlementRange() {
               value={
                 apiData?.weekly_budget?.[
                   allCreditorNames[parseInt(tabValue)]
-                ] ?? "No Data"
+                ] 
+                  ? `$${new Intl.NumberFormat().format(apiData?.weekly_budget?.[
+                    allCreditorNames[parseInt(tabValue)]
+                  ])}`
+                  : "No Data"
               }
+              rawValue={apiData?.weekly_budget}
             />
 
             <GridItem
               key="Weekly True Revenue"
               title="Weekly True Revenue"
-              value={apiData?.weekly_true_revenue ?? "No Data"}
+              value={
+                apiData?.weekly_true_revenue 
+                  ? `$${new Intl.NumberFormat().format(apiData?.weekly_true_revenue)}`
+                  : "No Data"
+              }
+              rawValue={apiData?.weekly_true_revenue}
             />
             <GridItem
               key="Profitability"
               title="Profitability"
-              value={apiData?.profitability ?? "No Data"}
+              value={
+                apiData?.profitability 
+                  ? `${new Intl.NumberFormat().format(apiData?.profitability)}%`
+                  : "No Data"
+              }
+              rawValue={apiData?.profitability}
             />
           </Grid>
           {scores && (
@@ -517,11 +537,13 @@ export default function SettlementRange() {
                 key="UCC Score"
                 title="UCC Score"
                 value={scores?.Scores?.["UCC Score"] ?? "No Data"}
+                rawValue={scores?.Scores?.["UCC Score"]}
               />
               <GridItem
                 key="Default Risk Score"
                 title="Default Risk Score"
                 value={scores?.Scores?.["Default Risk Score"] ?? "No Data"}
+                rawValue={scores?.Scores?.["Default Risk Score"]}
               />
             </Grid>
           )}
