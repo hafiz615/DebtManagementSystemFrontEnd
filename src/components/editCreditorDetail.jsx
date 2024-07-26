@@ -19,7 +19,6 @@ export default function EditCreditorDetail({
   GetCaseDetails,
   maxHeight,
 }) {
-  console.log(caseData, "caseData");
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const { id } = useParams();
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;

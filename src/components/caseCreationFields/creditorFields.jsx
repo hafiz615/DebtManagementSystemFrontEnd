@@ -22,13 +22,13 @@ export default function CreditorFields({
   caseIndex,
   error,
 }) {
-  const accountMenuList = debtorCaseData.creditorNames.map((item, index) => ({
+  const accountMenuList = debtorCaseData?.creditorNames?.map((item, index) => ({
     id: index,
     value: item,
     label: item,
   }));
   const [accountTitle, setAccountTitle] = useState(
-    thisCaseData.creditor.accountTitle
+    thisCaseData?.creditor?.accountTitle
   );
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
@@ -52,13 +52,13 @@ export default function CreditorFields({
     };
 
     // Create a new array of contacts with the new contact added
-    const updatedFinalCaseData = finalCaseData.map((creditor, index) => {
+    const updatedFinalCaseData = finalCaseData?.map((creditor, index) => {
       if (index === caseIndex) {
         return {
           ...creditor,
           creditor: {
             ...creditor.creditor,
-            contacts: [...creditor.creditor.contacts, newContact],
+            contacts: [...creditor?.creditor?.contacts, newContact],
           },
         };
       }
@@ -71,10 +71,10 @@ export default function CreditorFields({
 
   const handleRemoveContact = (contactIndex) => {
     // Create a new array of finalCaseData with the updated contacts
-    const updatedFinalCaseData = finalCaseData.map((creditor, index) => {
+    const updatedFinalCaseData = finalCaseData?.map((creditor, index) => {
       if (index === caseIndex) {
         // Create a new array of contacts excluding the one to remove
-        const updatedContacts = creditor.creditor.contacts.filter(
+        const updatedContacts = creditor?.creditor?.contacts?.filter(
           (_, cIndex) => cIndex !== contactIndex
         );
 
@@ -146,7 +146,7 @@ export default function CreditorFields({
                 label="Company Name*"
                 placeHolderValue="Enter Company Name"
                 width={smallScreen ? "100%" : "97%"}
-                value={thisCaseData.creditor.businessInformation.companyName}
+                value={thisCaseData?.creditor?.businessInformation?.companyName}
                 onChange={(e) =>
                   handleCaseDataChange(
                     caseIndex,
@@ -161,7 +161,7 @@ export default function CreditorFields({
                 placeHolderValue="Enter Category"
                 width={smallScreen ? "100%" : "97%"}
                 value={
-                  thisCaseData.creditor.businessInformation.businessCategory
+                  thisCaseData?.creditor?.businessInformation?.businessCategory
                 }
                 onChange={(e) =>
                   handleCaseDataChange(
@@ -171,7 +171,7 @@ export default function CreditorFields({
                   )
                 }
               />
-              {debtorCaseData.creditorNames.length > 0 ? (
+              {debtorCaseData?.creditorNames?.length > 0 ? (
                 <Grid item xs={12} md={4} lg={4}>
                   <Typography
                     sx={{
@@ -184,12 +184,12 @@ export default function CreditorFields({
                     Account Title
                   </Typography>
                   <Dropdown
-                    selectedValue={thisCaseData.creditor.accountTitle}
+                    selectedValue={thisCaseData?.creditor?.accountTitle}
                     setSelectedValue={setAccountTitle}
                     menuItems={accountMenuList}
                     placeholder="Account Title"
                     backgroundColor={Colors.BG_LIGHT_GRAY}
-                    width="100%"
+                    width={smallScreen ? "100%" : "97%"}
                   />
                 </Grid>
               ) : (
@@ -198,7 +198,7 @@ export default function CreditorFields({
                   label="Account Title"
                   placeHolderValue="Enter Account Title"
                   width="100%"
-                  value={thisCaseData.creditor.accountTitle}
+                  value={thisCaseData?.creditor?.accountTitle}
                   onChange={(e) =>
                     handleCaseDataChange(
                       caseIndex,
@@ -225,7 +225,7 @@ export default function CreditorFields({
                 label="Full Name*"
                 placeHolderValue="Enter Full Name"
                 width={smallScreen ? "100%" : "97%"}
-                value={thisCaseData.creditor.basicInformation.fullName}
+                value={thisCaseData?.creditor?.basicInformation?.fullName}
                 onChange={(e) =>
                   handleCaseDataChange(
                     caseIndex,
@@ -239,7 +239,7 @@ export default function CreditorFields({
                 label="Email Address*"
                 placeHolderValue="Enter Valid Email"
                 width={smallScreen ? "100%" : "97%"}
-                value={thisCaseData.creditor.basicInformation.email}
+                value={thisCaseData?.creditor?.basicInformation?.email}
                 onChange={(e) =>
                   handleCaseDataChange(
                     caseIndex,
@@ -251,7 +251,7 @@ export default function CreditorFields({
               />
               <MuiPhoneTextField
                 label="Phone #*"
-                value={thisCaseData.creditor.basicInformation.phone}
+                value={thisCaseData?.creditor?.basicInformation?.phone}
                 onChange={(e) =>
                   handleCaseDataChange(
                     caseIndex,
@@ -276,7 +276,7 @@ export default function CreditorFields({
             <input
               type="text"
               placeholder="Notes"
-              value={thisCaseData.creditor.notes}
+              value={thisCaseData?.creditor?.notes}
               onChange={(e) =>
                 handleCaseDataChange(
                   caseIndex,
@@ -341,16 +341,16 @@ export default function CreditorFields({
               fontFamily: "Nunito",
               fontWeight: "500",
               color: Colors.DARK_GRAY,
-              marginTop: "1.5rem",
+              marginLeft: "1rem",
             }}
           >
-            Last Funded Date*
+            Last Funded Date
           </Typography>
           <PaymentsTextFields
             width={smallScreen ? "100%" : "97%"}
             type="date"
             placeHolderValue="00/00/00"
-            value={thisCaseData.creditor.lastFundedDate}
+            value={thisCaseData?.creditor?.lastFundedDate}
             onChange={(e) =>
               handleCaseDataChange(
                 caseIndex,
@@ -363,14 +363,7 @@ export default function CreditorFields({
         </Grid>
 
         <Grid item xs={12} md={7} lg={8}>
-          <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              color: Colors.DARK_GRAY,
-              marginRight: "1rem",
-            }}
-          >
+          <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
             Historical Range
           </Typography>
           <Grid container spacing={2}>
@@ -378,19 +371,20 @@ export default function CreditorFields({
               <Typography
                 sx={{
                   fontFamily: "Nunito",
-                  fontWeight: "600",
-                  marginRight: ".7rem",
+                  fontWeight: "500",
+                  color: Colors.DARK_GRAY,
+                  marginLeft: "1rem",
                 }}
               >
-                Minimum*
+                Minimum
               </Typography>
               <AmountTextField
-                value={thisCaseData.creditor.historicalRange?.minimum}
+                value={thisCaseData?.creditor?.historicalRange?.minimum}
                 onChange={(e) =>
                   handleCaseDataChange(
                     caseIndex,
                     "creditor.historicalRange.minimum",
-                    parseInt(e.target.value)
+                    parseFloat(e.target.value)
                   )
                 }
                 onKeyDown={handleNumberInput}
@@ -400,19 +394,20 @@ export default function CreditorFields({
               <Typography
                 sx={{
                   fontFamily: "Nunito",
-                  fontWeight: "600",
-                  marginRight: ".5rem",
+                  fontWeight: "500",
+                  color: Colors.DARK_GRAY,
+                  marginLeft: "1rem",
                 }}
               >
-                Maximum*
+                Maximum
               </Typography>
               <AmountTextField
-                value={thisCaseData.creditor.historicalRange?.maximum}
+                value={thisCaseData?.creditor?.historicalRange?.maximum}
                 onChange={(e) =>
                   handleCaseDataChange(
                     caseIndex,
                     "creditor.historicalRange.maximum",
-                    parseInt(e.target.value)
+                    parseFloat(e.target.value)
                   )
                 }
                 onKeyDown={handleNumberInput}
@@ -421,20 +416,25 @@ export default function CreditorFields({
           </Grid>
         </Grid>
       </Grid>
-      <div style={{ padding: "1rem" }}>
+      <Grid container style={{ padding: "1rem" }}>
         <Typography
           sx={{ fontFamily: "Nunito", fontWeight: "600" }}
           gutterBottom
         >
           Contract Detail
         </Typography>
-        <Grid container item xs={12}>
-          <PaymentsTextFields
+        <Grid
+          container
+          item
+          xs={12}
+          // sx={{ justifyContent: "space-between", marginTop: "1rem" }}
+        >
+          {/* <PaymentsTextFields
             type="number"
             label="Loan Amount"
             placeHolderValue="Enter Loan Amount"
             width={smallScreen ? "100%" : "97%"}
-            value={thisCaseData.contractDetails.loanAmount}
+            value={thisCaseData?.contractDetails?.loanAmount}
             onChange={(e) =>
               handleCaseDataChange(
                 caseIndex,
@@ -442,13 +442,37 @@ export default function CreditorFields({
                 e.target.value
               )
             }
-          />
-          <PaymentsTextFields
-            type="text"
+          /> */}
+          <Grid item xs={12} md={4}>
+            <Typography
+              sx={{
+                fontWeight: "500",
+                fontFamily: "Nunito",
+                marginLeft: "1rem",
+                color: Colors.DARK_GRAY,
+              }}
+            >
+              Loan Amount*
+            </Typography>
+            <AmountTextField
+              width={smallScreen ? "100%" : "97%"}
+              value={thisCaseData?.contractDetails?.loanAmount}
+              onChange={(e) =>
+                handleCaseDataChange(
+                  caseIndex,
+                  "contractDetails.loanAmount",
+                  e.target.value
+                )
+              }
+            />
+          </Grid>
+
+          {/* <PaymentsTextFields
+            type="number"
             label="Purchase Percentage"
-            placeHolderValue="Purchase Percentage"
+            placeHolderValue="Enter Purchase Percentage"
             width={smallScreen ? "100%" : "97%"}
-            value={thisCaseData.contractDetails.purchasedPercentage}
+            value={thisCaseData?.contractDetails?.purchasedPercentage}
             onChange={(e) =>
               handleCaseDataChange(
                 caseIndex,
@@ -456,13 +480,37 @@ export default function CreditorFields({
                 e.target.value
               )
             }
-          />
-          <PaymentsTextFields
-            type="text"
+          /> */}
+          <Grid item xs={12} md={4}>
+            <Typography
+              sx={{
+                fontWeight: "500",
+                fontFamily: "Nunito",
+                marginLeft: "1rem",
+                color: Colors.DARK_GRAY,
+              }}
+            >
+              Purchase Percentage
+            </Typography>
+            <AmountTextField
+              width={smallScreen ? "100%" : "97%"}
+              value={thisCaseData?.contractDetails?.purchasedPercentage}
+              onChange={(e) =>
+                handleCaseDataChange(
+                  caseIndex,
+                  "contractDetails.purchasedPercentage",
+                  e.target.value
+                )
+              }
+            />
+          </Grid>
+
+          {/* <PaymentsTextFields
+            type="number"
             label="Repayment Amount"
-            placeHolderValue="Repayment Amount"
+            placeHolderValue="Enter Repayment Amount"
             width={smallScreen ? "100%" : "97%"}
-            value={thisCaseData.contractDetails.repaymentAmount}
+            value={thisCaseData?.contractDetails?.repaymentAmount}
             onChange={(e) =>
               handleCaseDataChange(
                 caseIndex,
@@ -470,9 +518,32 @@ export default function CreditorFields({
                 e.target.value
               )
             }
-          />
+          /> */}
+          <Grid item xs={12} md={4}>
+            <Typography
+              sx={{
+                fontWeight: "500",
+                fontFamily: "Nunito",
+                marginLeft: "1rem",
+                color: Colors.DARK_GRAY,
+              }}
+            >
+              Repayment Amount
+            </Typography>
+            <AmountTextField
+              width={smallScreen ? "100%" : "97%"}
+              value={thisCaseData?.contractDetails?.repaymentAmount}
+              onChange={(e) =>
+                handleCaseDataChange(
+                  caseIndex,
+                  "contractDetails.repaymentAmount",
+                  e.target.value
+                )
+              }
+            />
+          </Grid>
         </Grid>
-      </div>
+      </Grid>
 
       <PaymentFields
         thisCaseData={thisCaseData}
