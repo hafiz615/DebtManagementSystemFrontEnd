@@ -113,7 +113,7 @@ export default function CreditorFields({
   React.useEffect(() => {
     handleCaseDataChange(caseIndex, "creditor.accountTitle", accountTitle);
   }, [accountTitle]);
-  
+
   return (
     <>
       <Grid
@@ -175,53 +175,106 @@ export default function CreditorFields({
                 }
               />
               {typeof debtorCaseData?.creditorNames !== 'string' && debtorCaseData?.creditorNames?.creditor_names?.length > 0 ? (
-  <Grid item xs={12} md={4} lg={4}>
-    <Typography
-      sx={{
-        fontFamily: "Nunito",
-        fontWeight: "500",
-        color: Colors.DARK_GRAY,
-        marginRight: "1.5rem",
-      }}
-    >
-      Account Title
-    </Typography>
-    <Autocomplete
-      freeSolo
-      options={accountMenuList.map(option => option.label)} // Assuming accountMenuList is an array of objects with a label property
-      value={thisCaseData?.creditor?.accountTitle}
-      onChange={(event, newValue) =>
-        handleCaseDataChange(caseIndex, "creditor.accountTitle", newValue)
-      }
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          placeholder="Account Title"
-          variant="outlined"
-          sx={{
-            backgroundColor: Colors.BG_LIGHT_GRAY,
-            width: smallScreen ? "100%" : "97%",
-          }}
-        />
-      )}
-    />
-  </Grid>
-) : (
-  <PaymentsTextFields
-    type="Account Title"
-    label="Account Title"
-    placeHolderValue="Enter Account Title"
-    width="100%"
-    value={nameTitleMapping?.[thisCaseData?.creditor?.businessInformation?.companyName] ?? ''}
-    onChange={(e) =>
-      handleCaseDataChange(
-        caseIndex,
-        "creditor.accountTitle",
-        e.target.value
-      )
-    }
-  />
-)}
+                <Grid item xs={12} md={4} lg={4}>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontWeight: "500",
+                      color: Colors.DARK_GRAY,
+                      marginRight: "1.5rem",
+                    }}
+                  >
+                    Account Title
+                  </Typography>
+                  <Autocomplete
+                    sx={{
+                      backgroundColor: Colors.BG_LIGHT_GRAY,
+                      color: Colors.DIM_LIGHT_GRAY,
+                      height: "2.5rem",
+                      marginLeft: "1rem",
+                      borderRadius: "5px",
+                      display: "flex",
+                      fontFamily: "Nunito",
+                      justifyContent: "center",
+                      border: "none !important",
+                      "& .MuiInputBase-input": {
+                        color: Colors.DIM_LIGHT_GRAY,
+                        fontSize: ".8rem",
+                        fontFamily: "Nunito",
+                        "&::placeholder": {
+                          color: "#6D6D6D",
+                        },
+                      },
+                      "& .MuiInput-underline:before": {
+                        borderBottom: "none",
+                      },
+                      "& .MuiInput-underline:after": {
+                        borderBottom: "none",
+                      },
+                      "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                        borderBottom: "none",
+                      },
+                    }}
+                    freeSolo
+                    options={accountMenuList.map(option => option.label)} // Assuming accountMenuList is an array of objects with a label property
+                    value={thisCaseData?.creditor?.accountTitle}
+                    onChange={(event, newValue) =>
+                      handleCaseDataChange(caseIndex, "creditor.accountTitle", newValue)
+                    }
+                    renderInput={(params) => (
+                      <TextField
+                        onChange={(e) =>
+                          handleCaseDataChange(
+                            caseIndex,
+                            "creditor.accountTitle",
+                            e.target.value
+                          )
+                        }
+                        {...params}
+                        placeholder="Account Title"
+                        variant="standard"
+                        sx={{
+                          backgroundColor: Colors.BG_LIGHT_GRAY,
+                          width: smallScreen ? "100%" : "97%",
+                          border: "none !important",
+                          "& .MuiInputBase-input": {
+                            color: Colors.DIM_LIGHT_GRAY,
+                            fontSize: ".8rem",
+                            fontFamily: "Nunito",
+                            "&::placeholder": {
+                              color: "#6D6D6D",
+                            },
+                          },
+                          "& .MuiInput-underline:before": {
+                            borderBottom: "none",
+                          },
+                          "& .MuiInput-underline:after": {
+                            borderBottom: "none",
+                          },
+                          "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                            borderBottom: "none",
+                          },
+                        }}
+                      />
+                    )}
+                  />
+                </Grid>
+              ) : (
+                <PaymentsTextFields
+                  type="Account Title"
+                  label="Account Title"
+                  placeHolderValue="Enter Account Title"
+                  width="100%"
+                  value={nameTitleMapping?.[thisCaseData?.creditor?.businessInformation?.companyName] ?? ''}
+                  onChange={(e) =>
+                    handleCaseDataChange(
+                      caseIndex,
+                      "creditor.accountTitle",
+                      e.target.value
+                    )
+                  }
+                />
+              )}
             </Grid>
             <Typography
               sx={{
