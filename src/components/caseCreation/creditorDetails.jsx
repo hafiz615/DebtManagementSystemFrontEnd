@@ -200,14 +200,7 @@ export default function CreditorDetails({
               .replace(",", "")
           ) || 0,
         lastPaymentDate: "",
-        contractDetails: {
-          loanAmount: parseInt(creditor?.ContractDetails?.loan_amount .replace("$", "")
-          .replace(",", "")) || 0,
-          purchasedPercentage:
-            creditor?.ContractDetails?.purchased_percentage || "",
-          repaymentAmount: creditor?.ContractDetails?.repayment_amount || "",
-        },
-
+        contractDetails: creditor?.ContractDetails,
         paidAmount: 0,
         remaining:
           parseInt(

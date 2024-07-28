@@ -3,8 +3,70 @@ import { baseUrl } from "../constants/appConstants";
 import { setHeaders } from "../common";
 import { isEmpty } from "lodash";
 // import { extractContractDataResponse } from "../testData/stepper_call_response";
+import { PDFDocument } from "pdf-lib";
 
 const BASE_URL = baseUrl();
+
+// Utility function to convert JPG to PDF
+const convertJpgToPdf = async (file) => {
+  const imgBytes = await file.arrayBuffer();
+  const pdfDoc = await PDFDocument.create();
+  const page = pdfDoc.addPage();
+  const img = await pdfDoc.embedJpg(imgBytes);
+  const { width, height } = img.scale(1);
+  page.setSize(width, height);
+  page.drawImage(img, {
+    x: 0,
+    y: 0,
+    width: width,
+    height: height,
+  });
+  const pdfBytes = await pdfDoc.save();
+  const pdfFile = new File([pdfBytes], file.name.replace(/\.[^/.]+$/, ".pdf"), { type: "application/pdf" });
+  return pdfFile;
+};
+
+export const ExtractContractData = async (files) => {
+  const processFile = async (file) => {
+    try {
+      const apiUrl = "https://dms-negotiation.hpdemos.co/extract-fields";
+
+      const formData = new FormData();
+      let processedFile = file.file;
+
+      // Check if the file is a JPG and convert to PDF if true
+      if (file.file.type === "image/jpeg") {
+        processedFile = await convertJpgToPdf(file.file);
+      }
+
+      const originalFileName = processedFile.name;
+      const cleanedFileName = originalFileName.replace("MCA Contracts/", "");
+      const cleanedFile = new File([processedFile], cleanedFileName, { type: processedFile.type });
+
+      formData.append("MCA_pdf", cleanedFile);
+
+      const response = await axios.post(apiUrl, formData, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'multipart/form-data',
+        }
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error(`Error uploading ${file.name}:`, error);
+      return {};
+    }
+  };
+
+  const results = await Promise.all(files.map((file) => {
+    if (!isEmpty(file)) {
+      return processFile(file);
+    }
+    return file;
+  }));
+  return results;
+};
 
 export const SignIn = async (payload) => {
   try {
@@ -145,42 +207,47 @@ export const UploadFiles = async (data) => {
   }
 };
 
-export const ExtractContractData = async (files) => {
-  // return extractContractDataResponse;
-  const processFile = async (file) => {
-    try {
-      // Example API endpoint
-      const apiUrl = "https://dms-negotiation.hpdemos.co/extract-fields";
+// export const ExtractContractData = async (files) => {
+//   // return extractContractDataResponse;
+//   const processFile = async (file) => {
+//     try {
+//       // Example API endpoint
+//       const apiUrl = "https://dms-negotiation.hpdemos.co/extract-fields";
 
-      // Create form data
-      const formData = new FormData();
-      formData.append("MCA_pdf", file.file); // Ensure file.file is a File object  
+//       // Create form data
+//       const formData = new FormData();
+//       const originalFileName = file.file.name;
+//       const cleanedFileName = originalFileName.replace("MCA Contracts/", "");
+//       const cleanedFile = new File([file.file], cleanedFileName, { type: file.file.type });
+//       console.log("cleanedFile", cleanedFile);
+//       formData.append("MCA_pdf", cleanedFile);
+//       // formData.append("MCA_pdf", file.file); // Ensure file.file is a File object  
 
-      // Call API
-      const response = await axios.post(apiUrl, formData, {
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'multipart/form-data', // This is often auto-set by axios
-        }
-      });
+//       // Call API
+//       const response = await axios.post(apiUrl, formData, {
+//         headers: {
+//           'Accept': 'application/json',
+//           'Content-Type': 'multipart/form-data', // This is often auto-set by axios
+//         }
+//       });
 
-      // Return the result of the API call
-      return response.data;
-    } catch (error) {
-      console.error(`Error uploading ${file.name}:`, error);
-      // Return an empty object in case of failure
-      return {};
-    }
-  };
+//       // Return the result of the API call
+//       return response.data;
+//     } catch (error) {
+//       console.error(`Error uploading ${file.name}:`, error);
+//       // Return an empty object in case of failure
+//       return {};
+//     }
+//   };
 
-  const results = await Promise.all(files.map((file) => {
-    if (!isEmpty(file)){
-      return processFile(file)
-    }
-    return file 
-  }));
-  return results; // Return the array of results
-};
+//   const results = await Promise.all(files.map((file) => {
+//     if (!isEmpty(file)){
+//       return processFile(file)
+//     }
+//     return file 
+//   }));
+//   return results; // Return the array of results
+// };
 
 
 export const GetDebtorSearch = async (payload) => {

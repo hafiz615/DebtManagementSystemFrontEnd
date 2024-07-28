@@ -1,5 +1,6 @@
 import { baseUrl, NETWORK_ERROR } from "./constants/appConstants";
 import { jsPDF } from "jspdf";
+import { parse, format, isValid } from "date-fns";
 
 const BASE_URL = baseUrl();
 function buildApiEndpoint(path) {
@@ -126,6 +127,30 @@ export function formatDollarAmount(amount) {
     currency: "USD",
   }).format(amount);
 }
+
+export const swapKeysAndValues = (obj) => {
+  const swapped = {};
+  for (const [key, value] of Object.entries(obj)) {
+    swapped[value] = key;
+  }
+  return swapped;
+};
+
+export const formatDate = (value) => {
+  if (!value) return "";
+
+  const dateFormats = ['MMM-dd-yyyy', 'MM/dd/yyyy', 'MMMM dd, yyyy', 'yyyy-MM-dd'];
+  let parsedDate;
+
+  for (const dateFormat of dateFormats) {
+    parsedDate = parse(value, dateFormat, new Date());
+    if (isValid(parsedDate)) {
+      return format(parsedDate, 'yyyy-MM-dd'); // Output format
+    }
+  }
+
+  return value; // Return original value if parsing failed
+};
 
 export function hasAnyValue(obj) {
   for (let key in obj) {

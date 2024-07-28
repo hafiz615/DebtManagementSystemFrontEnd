@@ -7,6 +7,14 @@ import { Colors } from "../config/default";
 import { Box } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
+// Custom percentage formatting function
+const parsePercentage = (value) => {
+  if (!value) return "";
+  const percentage = value.replace('%', '').trim();
+  const parsedValue = parseFloat(percentage);
+  return isNaN(parsedValue) ? value : parsedValue;
+};
+
 const USPhoneMaskCustom = React.forwardRef(function USPhoneMaskCustom(
   props,
   ref
@@ -61,6 +69,38 @@ NumericFormatCustom.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
+const PercentageFormatCustom = React.forwardRef(function PercentageFormatCustom(
+  props,
+  ref
+) {
+  const { onChange, ...other } = props;
+
+  return (
+    <NumericFormat
+      {...other}
+      getInputRef={ref}
+      onValueChange={(values) => {
+        onChange({
+          target: {
+            name: props.name,
+            value: values.value,
+          },
+        });
+      }}
+      decimalSeparator="."
+      decimalScale={2}
+      fixedDecimalScale
+      valueIsNumericString
+      suffix="%"
+    />
+  );
+});
+
+PercentageFormatCustom.propTypes = {
+  name: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+};
+
 export default function AmountTextField({
   onChange,
   error,
@@ -71,6 +111,7 @@ export default function AmountTextField({
   marginTop,
   marginLeft,
   label,
+  type
 }) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
 
@@ -109,14 +150,17 @@ export default function AmountTextField({
             borderBottom: "none",
           },
         }}
-        placeholder={value ? "" : "$"} // Show placeholder only if value is empty
+        placeholder={value ? "" : type === 'percentage' ? "%" : "$"} // Show placeholder only if value is empty
         onChange={onChange}
-        value={value || ""} // Ensure value is never null or undefined
+        value={
+          type === 'percentage' ? parsePercentage(value) :
+            value || ""
+        }
         onKeyDown={onKeyDown}
         name="numberformat"
         id="formatted-numberformat-input"
         InputProps={{
-          inputComponent: NumericFormatCustom,
+          inputComponent: type === 'percentage' ? PercentageFormatCustom : NumericFormatCustom,
         }}
         variant="standard"
       />
