@@ -7,11 +7,14 @@ import { Colors } from "../../config/default";
 import PaymentsTextFields from "../caseTextField";
 import MuiPhoneTextField from "../muiPhoneText";
 import AmountTextField from "../amountTextField";
+import IntervalTextField from "../intervalFields";
 import { PhoneValidation } from "../../constants/appConstants";
-import { phoneNumberFormat } from "../../common";
+import { phoneNumberFormat, swapKeysAndValues } from "../../common";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import PaymentFields from "../caseCreationFields/paymentFields";
 import Dropdown from "./../dropdown";
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
 
 export default function CreditorFields({
   debtorCaseData,
@@ -22,14 +25,13 @@ export default function CreditorFields({
   caseIndex,
   error,
 }) {
-  const accountMenuList = debtorCaseData?.creditorNames?.map((item, index) => ({
+  const accountMenuList = debtorCaseData?.creditorNames?.creditor_names?.map((item, index) => ({
     id: index,
     value: item,
     label: item,
   }));
-  const [accountTitle, setAccountTitle] = useState(
-    thisCaseData?.creditor?.accountTitle
-  );
+  const [accountTitle, setAccountTitle] = useState("");
+  // thisCaseData?.creditor?.accountTitle
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const isEmailValid = (email) => {
@@ -37,7 +39,7 @@ export default function CreditorFields({
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     return emailRegex.test(email);
   };
-
+  const [nameTitleMapping, setNameTitleMapping] = useState(swapKeysAndValues(debtorCaseData?.creditorNames?.mapped_data || {}))
   const handleAddNewContact = () => {
     const newContact = {
       name: "",
@@ -111,6 +113,7 @@ export default function CreditorFields({
   React.useEffect(() => {
     handleCaseDataChange(caseIndex, "creditor.accountTitle", accountTitle);
   }, [accountTitle]);
+
   return (
     <>
       <Grid
@@ -171,7 +174,7 @@ export default function CreditorFields({
                   )
                 }
               />
-              {debtorCaseData?.creditorNames?.length > 0 ? (
+              {typeof debtorCaseData?.creditorNames !== 'string' && debtorCaseData?.creditorNames?.creditor_names?.length > 0 ? (
                 <Grid item xs={12} md={4} lg={4}>
                   <Typography
                     sx={{
@@ -183,13 +186,77 @@ export default function CreditorFields({
                   >
                     Account Title
                   </Typography>
-                  <Dropdown
-                    selectedValue={thisCaseData?.creditor?.accountTitle}
-                    setSelectedValue={setAccountTitle}
-                    menuItems={accountMenuList}
-                    placeholder="Account Title"
-                    backgroundColor={Colors.BG_LIGHT_GRAY}
-                    width={smallScreen ? "100%" : "97%"}
+                  <Autocomplete
+                    sx={{
+                      backgroundColor: Colors.BG_LIGHT_GRAY,
+                      color: Colors.DIM_LIGHT_GRAY,
+                      height: "2.5rem",
+                      marginLeft: "1rem",
+                      borderRadius: "5px",
+                      display: "flex",
+                      fontFamily: "Nunito",
+                      justifyContent: "center",
+                      border: "none !important",
+                      "& .MuiInputBase-input": {
+                        color: Colors.DIM_LIGHT_GRAY,
+                        fontSize: ".8rem",
+                        fontFamily: "Nunito",
+                        "&::placeholder": {
+                          color: "#6D6D6D",
+                        },
+                      },
+                      "& .MuiInput-underline:before": {
+                        borderBottom: "none",
+                      },
+                      "& .MuiInput-underline:after": {
+                        borderBottom: "none",
+                      },
+                      "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                        borderBottom: "none",
+                      },
+                    }}
+                    freeSolo
+                    options={accountMenuList.map(option => option.label)} // Assuming accountMenuList is an array of objects with a label property
+                    value={thisCaseData?.creditor?.accountTitle}
+                    onChange={(event, newValue) =>
+                      handleCaseDataChange(caseIndex, "creditor.accountTitle", newValue)
+                    }
+                    renderInput={(params) => (
+                      <TextField
+                        onChange={(e) =>
+                          handleCaseDataChange(
+                            caseIndex,
+                            "creditor.accountTitle",
+                            e.target.value
+                          )
+                        }
+                        {...params}
+                        placeholder="Account Title"
+                        variant="standard"
+                        sx={{
+                          backgroundColor: Colors.BG_LIGHT_GRAY,
+                          width: smallScreen ? "100%" : "97%",
+                          border: "none !important",
+                          "& .MuiInputBase-input": {
+                            color: Colors.DIM_LIGHT_GRAY,
+                            fontSize: ".8rem",
+                            fontFamily: "Nunito",
+                            "&::placeholder": {
+                              color: "#6D6D6D",
+                            },
+                          },
+                          "& .MuiInput-underline:before": {
+                            borderBottom: "none",
+                          },
+                          "& .MuiInput-underline:after": {
+                            borderBottom: "none",
+                          },
+                          "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                            borderBottom: "none",
+                          },
+                        }}
+                      />
+                    )}
                   />
                 </Grid>
               ) : (
@@ -198,7 +265,7 @@ export default function CreditorFields({
                   label="Account Title"
                   placeHolderValue="Enter Account Title"
                   width="100%"
-                  value={thisCaseData?.creditor?.accountTitle}
+                  value={nameTitleMapping?.[thisCaseData?.creditor?.businessInformation?.companyName] ?? ''}
                   onChange={(e) =>
                     handleCaseDataChange(
                       caseIndex,
@@ -427,7 +494,7 @@ export default function CreditorFields({
           container
           item
           xs={12}
-          // sx={{ justifyContent: "space-between", marginTop: "1rem" }}
+        // sx={{ justifyContent: "space-between", marginTop: "1rem" }}
         >
           {/* <PaymentsTextFields
             type="number"
@@ -456,92 +523,45 @@ export default function CreditorFields({
             </Typography>
             <AmountTextField
               width={smallScreen ? "100%" : "97%"}
-              value={thisCaseData?.contractDetails?.loanAmount}
+              value={thisCaseData?.contractDetails?.loan_amount}
               onChange={(e) =>
                 handleCaseDataChange(
                   caseIndex,
-                  "contractDetails.loanAmount",
+                  "contractDetails.loan_amount",
                   e.target.value
                 )
               }
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <IntervalTextField
+              label="Purchased Percentage"
+              value={thisCaseData?.contractDetails?.purchased_percentage}
+              onChange={(e) =>
+                handleCaseDataChange(
+                  caseIndex,
+                  "contractDetails.purchased_percentage",
+                  e
+                )
+              }
+              type="percentage"
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <IntervalTextField
+              label="Repayment Amount"
+              value={thisCaseData?.contractDetails?.repayment_amount}
+              onChange={(e) =>
+                handleCaseDataChange(
+                  caseIndex,
+                  "contractDetails.repayment_amount",
+                  e
+                )
+              }
+              type="currency"
             />
           </Grid>
 
-          {/* <PaymentsTextFields
-            type="number"
-            label="Purchase Percentage"
-            placeHolderValue="Enter Purchase Percentage"
-            width={smallScreen ? "100%" : "97%"}
-            value={thisCaseData?.contractDetails?.purchasedPercentage}
-            onChange={(e) =>
-              handleCaseDataChange(
-                caseIndex,
-                "contractDetails.purchasedPercentage",
-                e.target.value
-              )
-            }
-          /> */}
-          <Grid item xs={12} md={4}>
-            <Typography
-              sx={{
-                fontWeight: "500",
-                fontFamily: "Nunito",
-                marginLeft: "1rem",
-                color: Colors.DARK_GRAY,
-              }}
-            >
-              Purchase Percentage
-            </Typography>
-            <AmountTextField
-              width={smallScreen ? "100%" : "97%"}
-              value={thisCaseData?.contractDetails?.purchasedPercentage}
-              onChange={(e) =>
-                handleCaseDataChange(
-                  caseIndex,
-                  "contractDetails.purchasedPercentage",
-                  e.target.value
-                )
-              }
-            />
-          </Grid>
-
-          {/* <PaymentsTextFields
-            type="number"
-            label="Repayment Amount"
-            placeHolderValue="Enter Repayment Amount"
-            width={smallScreen ? "100%" : "97%"}
-            value={thisCaseData?.contractDetails?.repaymentAmount}
-            onChange={(e) =>
-              handleCaseDataChange(
-                caseIndex,
-                "contractDetails.repaymentAmount",
-                e.target.value
-              )
-            }
-          /> */}
-          <Grid item xs={12} md={4}>
-            <Typography
-              sx={{
-                fontWeight: "500",
-                fontFamily: "Nunito",
-                marginLeft: "1rem",
-                color: Colors.DARK_GRAY,
-              }}
-            >
-              Repayment Amount
-            </Typography>
-            <AmountTextField
-              width={smallScreen ? "100%" : "97%"}
-              value={thisCaseData?.contractDetails?.repaymentAmount}
-              onChange={(e) =>
-                handleCaseDataChange(
-                  caseIndex,
-                  "contractDetails.repaymentAmount",
-                  e.target.value
-                )
-              }
-            />
-          </Grid>
         </Grid>
       </Grid>
 
