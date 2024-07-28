@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Typography from "@mui/material/Typography";
 import { Grid, Box } from "@mui/material";
 import { Add, Delete } from "@mui/icons-material";
@@ -13,6 +13,7 @@ import { PhoneValidation } from "../../constants/appConstants";
 import { formatPhoneNumber } from "../../common";
 import AmountTextField from "../amountTextField";
 import PaymentCardDetails from "../paymentCard";
+import { GetAllStatuses } from "../../services/services";
 
 export default function DebtorFields({
   debtorOwnDetails,
@@ -35,8 +36,24 @@ export default function DebtorFields({
   setConnectPayment,
   walletId,
 }) {
+  // const [menuItems, setMenuItems] = useState([]);
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
+  // const GetStatuses = async () => {
+  //   const AllStatuses = await GetAllStatuses();
+  //   if (AllStatuses?.status === 200) {
+  //     setMenuItems(AllStatuses?.data?.data?.status);
+  //   }
+  // };
+
+  // const menu = menuItems?.map((name) => ({
+  //   label: name,
+  //   value: name,
+  // }));
+
+  // useEffect(() => {
+  //   GetStatuses();
+  // }, []);
   const menuItems = [
     { label: "Customer", value: "Customer" },
     { label: "On hold", value: "On hold" },

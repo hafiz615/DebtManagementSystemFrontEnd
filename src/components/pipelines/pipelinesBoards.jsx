@@ -18,6 +18,7 @@ export default function PipelinesBoards({
   leads,
   startDate,
   endDate,
+  allPipelinesName,
 }) {
   const columnRef = useRef(null);
   const mobileView = useMediaQuery("(min-width:300px) and (max-width:760px)");
@@ -105,7 +106,7 @@ export default function PipelinesBoards({
           >
             <CircularProgress />
           </Grid>
-        ) : !columns ? (
+        ) : !columns || !allPipelinesName ? (
           <p
             style={{
               fontFamily: "Nunito",
@@ -117,7 +118,7 @@ export default function PipelinesBoards({
               justifyContent: "center",
             }}
           >
-            No Data
+            No Pipeline Data
           </p>
         ) : (
           filteredColumns?.map((columnId) => (
