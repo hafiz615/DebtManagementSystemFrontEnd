@@ -88,32 +88,33 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
 
   const [checked, setChecked] = React.useState(false);
   const [status, setStatus] = useState(debtorBasicInfo?.status || "");
+  const [extractedData, setExtractedData] = useState({});
   //Debtor-Contact-State
   const contacts = !isEmpty(caseData?.debtor?.contacts)
     ? caseData?.debtor?.contacts?.map((contact) => ({
-      name: contact?.name || "",
-      title: contact?.title || "",
-      phone: contact?.phone || "",
-      email: contact?.email || "",
-      country: contact?.country || "",
-      state: contact?.state || "",
-      city: contact?.city || "",
-      zipCode: contact?.zipCode || "",
-      relationWithDebtor: contact?.relationWithDebtor || "",
-    }))
+        name: contact?.name || "",
+        title: contact?.title || "",
+        phone: contact?.phone || "",
+        email: contact?.email || "",
+        country: contact?.country || "",
+        state: contact?.state || "",
+        city: contact?.city || "",
+        zipCode: contact?.zipCode || "",
+        relationWithDebtor: contact?.relationWithDebtor || "",
+      }))
     : [
-      {
-        name: "",
-        title: "",
-        phone: "",
-        email: "",
-        country: "",
-        state: "",
-        city: "",
-        zipCode: "",
-        relationWithDebtor: "",
-      },
-    ];
+        {
+          name: "",
+          title: "",
+          phone: "",
+          email: "",
+          country: "",
+          state: "",
+          city: "",
+          zipCode: "",
+          relationWithDebtor: "",
+        },
+      ];
 
   const [debtorContactDetails, setDebtorContactDetails] = useState(contacts);
 
@@ -297,21 +298,21 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         }
       }
       try {
-
         // Process creditor info
-        if (!creditorMap.has(item.creditor_info["creditor's Name"])) {
-          creditorMap.set(item.creditor_info["creditor's Name"], {
-            Name: item.creditor_info["creditor's Name"],
+        const creditorName = item.creditor_info["creditor's Name"];
+        if (!creditorMap.has(creditorName)) {
+          creditorMap.set(creditorName, {
+            Name: creditorName,
             EmailAddress: item.creditor_info["creditor's Email address"],
             PhoneNumber: item.creditor_info["creditor's Phone Number"],
-            AccountTitle: item?.creditor_info["creditor's bank acc. title"] || "",
+            AccountTitle:
+              item?.creditor_info["creditor's bank acc. title"] || "",
             ContractDetails: item.contract_details,
           });
         }
       } catch (error) {
-        showToast("We ran into an error in parsing", error)
+        showToast("We ran into an error in parsing", error);
       }
-
     });
 
     // Convert creditor map to an array
@@ -537,7 +538,10 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       window.scrollTo(0, 0);
       if (activeStep === 0) {
         const extractedDataMCAs = selectedFiles
-          ? await ExtractContractData(selectedFiles)
+          ? await ExtractContractData(selectedFiles).then((res) => {
+              setExtractedData(res);
+              return res;
+            })
           : [];
 
         if (files) {
@@ -592,6 +596,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           paymentToken: connectPayment?.paymentToken,
           paymentType: connectPayment?.paymentType,
           documents: url || [],
+          extractedFields: { extracted_fields: extractedData },
         };
         const res = await CreateDebtor(params);
         if (res?.status === 200) {

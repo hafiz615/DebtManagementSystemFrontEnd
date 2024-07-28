@@ -1,8 +1,9 @@
 import * as React from "react";
 import { Typography, Grid, Box } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-
+import { parse, format } from "date-fns";
 import { Colors } from "../config/default";
+import { formatDate } from '../common';
 
 function PaymentsTextFields({
   label,
@@ -20,9 +21,28 @@ function PaymentsTextFields({
 }) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
 
-  //   const largeScreen = useMediaQuery(
-  //     "(min-width:1600px) and (max-width:3000px)"
-  //   );
+  const handleDateChange = (e) => {
+    const inputValue = e.target.value;
+    let formattedDate = inputValue;
+
+    if (type === 'date') {
+      const dateFormats = ['MMM-dd-yyyy', 'MM/dd/yyyy', 'MMMM dd, yyyy'];
+      for (const dateFormat of dateFormats) {
+        try {
+          const parsedDate = parse(inputValue, dateFormat, new Date());
+          if (!isNaN(parsedDate)) {
+            formattedDate = format(parsedDate, 'yyyy-MM-dd');
+            break;
+          }
+        } catch (error) {
+          // Continue to the next format
+        }
+      }
+    }
+
+    onChange({ target: { value: formattedDate } });
+  };
+
   return (
     <Grid item xs={12} md={3.9}>
       <Typography
@@ -38,8 +58,8 @@ function PaymentsTextFields({
       <input
         type={type}
         placeholder={placeHolderValue}
-        onChange={onChange}
-        value={value}
+        onChange={type === 'date' ? handleDateChange : onChange}
+        value={type === 'date' ? formatDate(value) : value}
         onKeyDown={onKeyDown}
         max={max}
         style={{
