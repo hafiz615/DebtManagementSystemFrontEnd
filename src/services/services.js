@@ -29,7 +29,7 @@ const convertJpgToPdf = async (file) => {
 export const ExtractContractData = async (files) => {
   const processFile = async (file) => {
     try {
-      const apiUrl = "https://dms-negotiation.hpdemos.co/extract-fields";
+      const apiUrl = "https://dms-negotiation.hpdemos.co/extract-fields?enable_cache=true";
 
       const formData = new FormData();
       let processedFile = file.file;
