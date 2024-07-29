@@ -1,20 +1,27 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { TextField, Grid, Box, Typography, MenuItem, Select } from "@mui/material";
+import {
+  TextField,
+  Grid,
+  Box,
+  Typography,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import { Colors } from "../config/default";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { NumericFormat } from "react-number-format";
 
 const parsePercentage = (value) => {
   if (!value) return "";
-  const percentage = value.replace('%', '').trim();
+  const percentage = value.replace("%", "").trim();
   const parsedValue = parseFloat(percentage);
   return isNaN(parsedValue) ? value : parsedValue;
 };
 
 const parseCurrency = (value) => {
   if (!value) return "";
-  const parsedValue = parseFloat(value.replace(/[$,]/g, ''));
+  const parsedValue = parseFloat(value.replace(/[$,]/g, ""));
   return isNaN(parsedValue) ? value : parsedValue;
 };
 
@@ -139,14 +146,20 @@ const IntervalTextField = ({
 
   const handleIntervalChange = (event) => {
     const newInterval = event.target.value;
-    const newValue = value ? convertIntervalValue(value.split(" ")[0].replace("$", ""), interval, newInterval) : "";
+    const newValue = value
+      ? convertIntervalValue(
+          value.split(" ")[0].replace("$", ""),
+          interval,
+          newInterval
+        )
+      : "";
     setInterval(newInterval);
     onChange(`${newValue} (${newInterval})`);
   };
 
   const getParsedValue = (value, type) => {
-    if (type === 'percentage') return parsePercentage(value);
-    if (type === 'currency') return parseCurrency(value);
+    if (type === "percentage") return parsePercentage(value);
+    if (type === "currency") return parseCurrency(value);
     return value;
   };
 
@@ -160,7 +173,7 @@ const IntervalTextField = ({
         sx={{
           fontWeight: "500",
           fontFamily: "Nunito",
-          marginLeft: "1rem",
+          marginLeft: "1.8rem",
           color: Colors.DARK_GRAY,
         }}
       >
@@ -168,22 +181,25 @@ const IntervalTextField = ({
       </Typography>
       <Box
         sx={{
-          display: 'flex',
-          alignItems: 'center',
+          display: "flex",
+          alignItems: "center",
           backgroundColor: Colors.BG_LIGHT_GRAY,
-          borderRadius: '5px',
+          borderRadius: "5px",
           border: "none",
           width: width,
           marginLeft: "1rem",
-          "& .MuiOutlinedInput-notchedOutline": { border: 0 }
+          "& .MuiOutlinedInput-notchedOutline": { border: 0 },
         }}
       >
         <TextField
           value={getParsedValue(value.split(" ")[0], type)}
           onChange={(e) => onChange(`${e.target.value} (${interval})`)}
-          placeholder={type === 'percentage' ? '%' : '$'}
+          placeholder={type === "percentage" ? "%" : "$"}
           InputProps={{
-            inputComponent: type === 'percentage' ? PercentageFormatCustom : NumericFormatCustom,
+            inputComponent:
+              type === "percentage"
+                ? PercentageFormatCustom
+                : NumericFormatCustom,
             sx: {
               color: Colors.DIM_LIGHT_GRAY,
               fontSize: ".8rem",
@@ -198,7 +214,7 @@ const IntervalTextField = ({
             color: Colors.DIM_LIGHT_GRAY,
             height: "2.5rem",
             width: width,
-            marginLeft: "1rem",
+            // marginLeft: "1rem",
             borderRadius: "5px",
             display: "flex",
             fontFamily: "Nunito",
@@ -234,7 +250,7 @@ const IntervalTextField = ({
             width: smallScreen ? "60%" : "40%",
             borderRadius: "5px",
             border: "none",
-            "& .MuiOutlinedInput-notchedOutline": { border: 0 }
+            "& .MuiOutlinedInput-notchedOutline": { border: 0 },
           }}
         >
           <MenuItem value="Daily">Daily</MenuItem>
@@ -250,7 +266,7 @@ IntervalTextField.propTypes = {
   label: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
-  type: PropTypes.oneOf(['percentage', 'currency']).isRequired,
+  type: PropTypes.oneOf(["percentage", "currency"]).isRequired,
   width: PropTypes.string, // Add width to PropTypes
 };
 

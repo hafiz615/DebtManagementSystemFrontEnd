@@ -48,9 +48,9 @@ export default function CreditorDetails({
   setFilteredArray,
   handleSelect,
 }) {
-  const handleSearchChange = (value) => {
+  const handleSearchChange = (value, index) => {
     setSearchText(value);
-    SearchFields(value);
+    SearchFields(value, index); // Pass index here
   };
 
   function handleCaseDataChange(index, fieldPath, value) {
@@ -219,27 +219,6 @@ export default function CreditorDetails({
 
   return (
     <>
-      <Grid
-        container
-        item
-        xs={12}
-        sx={{
-          display: "flex",
-          justifyContent: "flex-start",
-          alignItems: "center",
-          marginTop: "1rem",
-        }}
-      >
-        <SearchBar
-          searchText={searchText}
-          onChange={handleSearchChange}
-          placeholder="Search by Email and Phone..."
-          filteredArray={filteredArray}
-          handleSelect={handleSelect}
-          setFilteredArray={setFilteredArray}
-          setSearchText={setSearchText}
-        />
-      </Grid>
       <Grid container sx={{ justifyContent: "flex-end" }}>
         <IconButton onClick={addNewCreditor}>
           <Add sx={{ color: Colors.SKY_BLUE }} />
@@ -262,6 +241,7 @@ export default function CreditorDetails({
       ) : (
         finalCaseData?.map((caseEntry, index) => (
           <Accordion
+            key={index}
             sx={{
               boxShadow: "none",
               marginBottom: "10px",
@@ -273,7 +253,7 @@ export default function CreditorDetails({
             <AccordionSummary
               expandIcon={<ExpandMore sx={{ color: Colors.WHITE }} />}
               aria-controls="panel1-content"
-              id="panel1-header"
+              id={`panel${index}-header`}
               sx={{
                 height: "20px",
                 backgroundColor: Colors.SKY_BLUE,
@@ -333,6 +313,20 @@ export default function CreditorDetails({
                     position: "relative",
                   }}
                 >
+                  <Grid item xs={12} lg={4}>
+                    <SearchBar
+                      searchText={searchText}
+                      onChange={handleSearchChange}
+                      placeholder="Search by Email and Phone..."
+                      filteredArray={filteredArray}
+                      handleSelect={handleSelect}
+                      setFilteredArray={setFilteredArray}
+                      setSearchText={setSearchText}
+                      backgroundColor={Colors.BG_LIGHT_GRAY}
+                      idx={index}
+                    />
+                  </Grid>
+
                   <CreditorFields
                     thisCaseData={caseEntry}
                     handleCaseDataChange={handleCaseDataChange}

@@ -431,6 +431,7 @@ export default function PipelineDetail() {
           leads={leads}
           startDate={startDate}
           endDate={endDate}
+          allPipelinesName={allPipelinesName}
         />
       ) : (
         <PipelinesLists

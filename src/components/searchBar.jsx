@@ -83,6 +83,8 @@ function SearchBar({
   setSearchText,
   handleKeyPress,
   clearSearchFromApi,
+  backgroundColor,
+  idx,
 }) {
   const clearSearch = () => {
     setSearchText("");
@@ -97,10 +99,10 @@ function SearchBar({
         display: "flex",
         alignItems: "center",
         borderRadius: "1rem",
-        backgroundColor: Colors.WHITE,
+        backgroundColor: backgroundColor || Colors.WHITE,
         height: { xs: "2rem", sm: "3rem" },
         "&:hover": {
-          backgroundColor: Colors.WHITE,
+          backgroundColor: backgroundColor || Colors.WHITE,
         },
       }}
     >
@@ -118,7 +120,7 @@ function SearchBar({
         value={searchCheck ? searchingText : searchText}
         onChange={(e) =>
           onChange
-            ? onChange(e.target.value)
+            ? onChange(e.target.value, idx || "")
             : searchCheck
             ? handleKeyPress(e)
             : setSearchText(e.target.value)
@@ -161,7 +163,7 @@ function SearchBar({
                   },
                 }}
                 key={index}
-                onClick={() => handleSelect(result)}
+                onClick={() => handleSelect(result, idx)}
               >
                 <div
                   style={{

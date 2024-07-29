@@ -26,7 +26,11 @@ import { formatDollarAmount } from "../common";
 import Prompt from "./prompt";
 import { useToast } from "../toast/toastContext";
 import { RetryAuth, RetryCapture } from "../services/services";
-import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../constants/appConstants";
+import {
+  FONT_SIZE_LARGE,
+  FONT_SIZE_SMALL,
+  FONT_SIZE_XL,
+} from "../constants/appConstants";
 import { useSelector } from "react-redux";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -359,7 +363,7 @@ export default function PaymentTabsTable({
               fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
             }}
           >
-            Rows Per Page: 5
+            Rows Per Page: {rowsPerPage}
           </Typography>
           <Typography
             sx={{
@@ -372,16 +376,15 @@ export default function PaymentTabsTable({
           </Typography>
           <IconButton
             onClick={backward}
-            disabled={currentPage === 1 || currentPage === 0}
+            disabled={currentPage === 1 || isNaN(totalPages)}
           >
-            <ArrowBackIosNewIcon sx={{ fontSize: FONT_SIZE_LARGE }} />
+            <ArrowBackIosNewIcon sx={{ fontSize: FONT_SIZE_XL }} />
           </IconButton>
-
           <IconButton
             onClick={forward}
-            disabled={currentPage === totalPages || totalPages === 0}
+            disabled={currentPage === totalPages || isNaN(totalPages)}
           >
-            <ArrowForwardIosIcon sx={{ fontSize: FONT_SIZE_LARGE }} />
+            <ArrowForwardIosIcon sx={{ fontSize: FONT_SIZE_XL }} />
           </IconButton>
         </div>
       ) : (

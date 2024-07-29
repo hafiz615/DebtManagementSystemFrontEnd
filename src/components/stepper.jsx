@@ -462,17 +462,40 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     setFilteredArray([]);
     setDebtorSearchText("");
   };
-  const SearchCreditorFields = async (value) => {
+  // const SearchCreditorFields = async (value) => {
+  //   if (value) {
+  //     const params = { text: value };
+  //     const getCreditorDataInSearch = await GetCreditorSearch(params);
+  //     if (getCreditorDataInSearch?.status === 200) {
+  //       const data = getCreditorDataInSearch?.data?.data;
+  //       setFilteredArray(data);
+  //     }
+  //   }
+  // };
+  const SearchCreditorFields = async (value, index) => {
     if (value) {
       const params = { text: value };
       const getCreditorDataInSearch = await GetCreditorSearch(params);
       if (getCreditorDataInSearch?.status === 200) {
         const data = getCreditorDataInSearch?.data?.data;
         setFilteredArray(data);
+        // Update fields based on the selected search result and index
       }
     }
   };
-  const handleCreditorSelect = (creditorData) => {
+  const handleCreditorSelect = (result, index) => {
+    const updatedFinalCaseData = [...finalCaseData];
+    updatedFinalCaseData[index].creditor.basicInformation = {
+      ...updatedFinalCaseData[index]?.creditor?.basicInformation,
+      ...result?.basicInformation,
+    };
+    updatedFinalCaseData[index].creditor.businessInformation = {
+      ...updatedFinalCaseData[index]?.creditor?.businessInformation,
+      ...result?.businessInformation,
+    };
+    setFinalCaseData(updatedFinalCaseData);
+    setFilteredArray([]);
+    setCreditorSearchText("");
     // setCreditorBasicsInfo({
     //   CreditorBasicFullName: creditorData?.basicInformation?.fullName || "",
     //   CreditorBasicEmailAddress: creditorData?.basicInformation?.email || "",
@@ -621,9 +644,10 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
 
         if (res?.status === 200 || res?.status === 201) {
           showToast(res?.data?.message, "success");
-          navigate(`/client/list-details/${res?.data?.data?.debtor}`);
+          localStorage.setItem("route", "list-details");
+          navigate(`/client/list-details/${res?.data?.data[0]?.debtor}`);
           setDebtorCaseData(res?.data?.data);
-          setActiveStep(activeStep + 1);
+          // setActiveStep(activeStep + 1);
         } else {
           const errorMessage = res?.response?.data?.message;
           showToast(errorMessage, "error");
