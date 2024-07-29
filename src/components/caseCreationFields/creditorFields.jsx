@@ -13,8 +13,8 @@ import { phoneNumberFormat, swapKeysAndValues } from "../../common";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import PaymentFields from "../caseCreationFields/paymentFields";
 import Dropdown from "./../dropdown";
-import Autocomplete from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField';
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
 
 export default function CreditorFields({
   debtorCaseData,
@@ -25,11 +25,13 @@ export default function CreditorFields({
   caseIndex,
   error,
 }) {
-  const accountMenuList = debtorCaseData?.creditorNames?.creditor_names?.map((item, index) => ({
-    id: index,
-    value: item,
-    label: item,
-  }));
+  const accountMenuList =
+    debtorCaseData &&
+    debtorCaseData?.creditorNames?.creditor_names?.map((item, index) => ({
+      id: index,
+      value: item,
+      label: item,
+    }));
   const [accountTitle, setAccountTitle] = useState("");
   // thisCaseData?.creditor?.accountTitle
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
@@ -39,7 +41,9 @@ export default function CreditorFields({
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     return emailRegex.test(email);
   };
-  const [nameTitleMapping, setNameTitleMapping] = useState(swapKeysAndValues(debtorCaseData?.creditorNames?.mapped_data || {}))
+  const [nameTitleMapping, setNameTitleMapping] = useState(
+    swapKeysAndValues(debtorCaseData?.creditorNames?.mapped_data || {})
+  );
   const handleAddNewContact = () => {
     const newContact = {
       name: "",
@@ -174,14 +178,15 @@ export default function CreditorFields({
                   )
                 }
               />
-              {typeof debtorCaseData?.creditorNames !== 'string' && debtorCaseData?.creditorNames?.creditor_names?.length > 0 ? (
+              {typeof debtorCaseData?.creditorNames !== "string" &&
+              debtorCaseData?.creditorNames?.creditor_names?.length > 0 ? (
                 <Grid item xs={12} md={4} lg={4}>
                   <Typography
                     sx={{
-                      fontFamily: "Nunito",
                       fontWeight: "500",
+                      fontFamily: "Nunito",
+                      marginLeft: "1.8rem",
                       color: Colors.DARK_GRAY,
-                      marginRight: "1.5rem",
                     }}
                   >
                     Account Title
@@ -191,6 +196,7 @@ export default function CreditorFields({
                       backgroundColor: Colors.BG_LIGHT_GRAY,
                       color: Colors.DIM_LIGHT_GRAY,
                       height: "2.5rem",
+                      width: smallScreen ? "100%" : "97%",
                       marginLeft: "1rem",
                       borderRadius: "5px",
                       display: "flex",
@@ -216,10 +222,14 @@ export default function CreditorFields({
                       },
                     }}
                     freeSolo
-                    options={accountMenuList.map(option => option.label)} // Assuming accountMenuList is an array of objects with a label property
+                    options={accountMenuList?.map((option) => option.label)} // Assuming accountMenuList is an array of objects with a label property
                     value={thisCaseData?.creditor?.accountTitle}
                     onChange={(event, newValue) =>
-                      handleCaseDataChange(caseIndex, "creditor.accountTitle", newValue)
+                      handleCaseDataChange(
+                        caseIndex,
+                        "creditor.accountTitle",
+                        newValue
+                      )
                     }
                     renderInput={(params) => (
                       <TextField
@@ -234,6 +244,8 @@ export default function CreditorFields({
                         placeholder="Account Title"
                         variant="standard"
                         sx={{
+                          paddingLeft: "2%",
+                          paddingTop: "2%",
                           backgroundColor: Colors.BG_LIGHT_GRAY,
                           width: smallScreen ? "100%" : "97%",
                           border: "none !important",
@@ -251,9 +263,10 @@ export default function CreditorFields({
                           "& .MuiInput-underline:after": {
                             borderBottom: "none",
                           },
-                          "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
-                            borderBottom: "none",
-                          },
+                          "& .MuiInput-underline:hover:not(.Mui-disabled):before":
+                            {
+                              borderBottom: "none",
+                            },
                         }}
                       />
                     )}
@@ -265,7 +278,11 @@ export default function CreditorFields({
                   label="Account Title"
                   placeHolderValue="Enter Account Title"
                   width="100%"
-                  value={nameTitleMapping?.[thisCaseData?.creditor?.businessInformation?.companyName] ?? ''}
+                  value={
+                    nameTitleMapping?.[
+                      thisCaseData?.creditor?.businessInformation?.companyName
+                    ] ?? ""
+                  }
                   onChange={(e) =>
                     handleCaseDataChange(
                       caseIndex,
@@ -494,7 +511,7 @@ export default function CreditorFields({
           container
           item
           xs={12}
-        // sx={{ justifyContent: "space-between", marginTop: "1rem" }}
+          // sx={{ justifyContent: "space-between", marginTop: "1rem" }}
         >
           {/* <PaymentsTextFields
             type="number"
@@ -561,7 +578,6 @@ export default function CreditorFields({
               type="currency"
             />
           </Grid>
-
         </Grid>
       </Grid>
 

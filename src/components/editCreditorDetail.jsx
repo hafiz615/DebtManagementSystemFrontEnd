@@ -281,7 +281,7 @@ export default function EditCreditorDetail({
                 marginLeft: "1rem",
               }}
             >
-              Last Funded Date*
+              Last Funded Date
             </Typography>
             <PaymentsTextFields
               width={smallScreen ? "100%" : "97%"}
@@ -313,7 +313,7 @@ export default function EditCreditorDetail({
                     marginLeft: "1rem",
                   }}
                 >
-                  Minimum*
+                  Minimum
                 </Typography>
                 <AmountTextField
                   value={historicRange?.minimum}
@@ -335,7 +335,7 @@ export default function EditCreditorDetail({
                     marginLeft: "1rem",
                   }}
                 >
-                  Maximum*
+                  Maximum
                 </Typography>
                 <AmountTextField
                   value={historicRange?.maximum}
