@@ -1,5 +1,8 @@
 import { Colors } from "../../../config/default";
-import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../../../constants/appConstants";
+import {
+  FONT_SIZE_LARGE,
+  FONT_SIZE_SMALL,
+} from "../../../constants/appConstants";
 
 export const styles = {
   headerText: {
@@ -47,11 +50,7 @@ export const styles = {
     color: Colors.BLUE_COLOR,
     fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
   },
-  icon: {
-    color: Colors.ORANGE_COLOR,
-    fontSize: { xs: FONT_SIZE_SMALL, sm: "1.2rem" },
-    cursor: "pointer",
-  },
+
   checkbox: {
     width: "40px",
     height: "40px",
@@ -96,6 +95,11 @@ export const styles = {
     gap: "0.5rem",
     alignItems: "center",
   },
+  icon: {
+    color: Colors.ORANGE_COLOR,
+    fontSize: { xs: FONT_SIZE_SMALL, sm: "1.2rem" },
+    cursor: "pointer",
+  },
   viewIcon: {
     color: Colors.GREEN_COLOR, // Or any color you prefer
     fontSize: { xs: FONT_SIZE_SMALL, sm: "1.2rem" },
@@ -108,8 +112,8 @@ export const styles = {
     backgroundColor: Colors.WHITE,
     padding: "1rem",
     borderRadius: "10px",
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   dropzone: {
     backgroundColor: Colors.WHITE,
@@ -118,35 +122,35 @@ export const styles = {
     borderRadius: "10px",
     display: "flex",
     alignItems: "center",
-    width: '100%',
-    height: '40px',
-    justifyContent: 'center',
-    cursor: 'pointer', // Show pointer cursor to indicate clickable area
+    width: "100%",
+    height: "40px",
+    justifyContent: "center",
+    cursor: "pointer", // Show pointer cursor to indicate clickable area
   },
   uploadBox: {
-    border: '2px dashed #ccc',
-    borderRadius: '4px',
-    padding: '1rem', // Adjust padding as needed
-    textAlign: 'center',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    fontSize: '3rem',
-    marginBottom: '0.5rem', // Space between icon and text
+    border: "2px dashed #ccc",
+    borderRadius: "4px",
+    padding: "1rem", // Adjust padding as needed
+    textAlign: "center",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: "3rem",
+    marginBottom: "0.5rem", // Space between icon and text
     color: Colors.DIM_LIGHT_GRAY,
-    cursor: 'pointer', // Show pointer cursor to indicate clickable area
+    cursor: "pointer", // Show pointer cursor to indicate clickable area
   },
   uploadText: {
-    fontSize: '1rem',
+    fontSize: "1rem",
     color: Colors.DIM_LIGHT_GRAY,
-    cursor: 'pointer',
+    cursor: "pointer",
   },
 
   uploadIcon: {
-    fontSize: '3rem',
-    marginBottom: '0.5rem', // Space between icon and text
+    fontSize: "3rem",
+    marginBottom: "0.5rem", // Space between icon and text
     color: Colors.DIM_LIGHT_GRAY,
-    cursor: 'pointer',
+    cursor: "pointer",
   },
 };

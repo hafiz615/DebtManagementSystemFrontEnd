@@ -46,7 +46,7 @@ export default function AlertDialog({ handleEditFileName, initialFileName }) {
         onClick={handleClickOpen}
         sx={{
           color: Colors.DARK_GRAY,
-          marginTop: "0.5rem",
+          // marginTop: "0.5rem",
           cursor: "pointer",
           fontSize: { xs: FONT_SIZE_SMALL, sm: "1.2rem" },
         }}

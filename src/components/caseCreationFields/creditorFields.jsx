@@ -278,11 +278,7 @@ export default function CreditorFields({
                   label="Account Title"
                   placeHolderValue="Enter Account Title"
                   width="100%"
-                  value={
-                    nameTitleMapping?.[
-                      thisCaseData?.creditor?.businessInformation?.companyName
-                    ] ?? ""
-                  }
+                  value={thisCaseData?.creditor?.accountTitle}
                   onChange={(e) =>
                     handleCaseDataChange(
                       caseIndex,
@@ -550,22 +546,36 @@ export default function CreditorFields({
               }
             />
           </Grid>
-          <Grid item xs={12} md={4}>
-            <IntervalTextField
-              label="Purchased Percentage"
-              value={thisCaseData?.contractDetails?.purchased_percentage}
-              onChange={(e) =>
-                handleCaseDataChange(
-                  caseIndex,
-                  "contractDetails.purchased_percentage",
-                  e
-                )
-              }
-              type="percentage"
-            />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <IntervalTextField
+          {/* <Grid item xs={12} md={4}> */}
+          {/* <IntervalTextField
+            label="Purchased Percentage"
+            value={thisCaseData?.contractDetails?.purchased_percentage}
+            onChange={(e) =>
+              handleCaseDataChange(
+                caseIndex,
+                "contractDetails.purchased_percentage",
+                e
+              )
+            }
+            type="percentage"
+          /> */}
+          {/* </Grid> */}
+          <PaymentsTextFields
+            type="text"
+            label="Purchased Percentage"
+            placeHolderValue="Enter Purchased Percentage"
+            width={smallScreen ? "100%" : "97%"}
+            value={thisCaseData?.contractDetails?.purchased_percentage}
+            onChange={(e) =>
+              handleCaseDataChange(
+                caseIndex,
+                "contractDetails.purchased_percentage",
+                e.target.value
+              )
+            }
+          />
+          {/* <Grid item xs={12} md={4}> */}
+          {/* <IntervalTextField
               label="Repayment Amount"
               value={thisCaseData?.contractDetails?.repayment_amount}
               onChange={(e) =>
@@ -576,8 +586,23 @@ export default function CreditorFields({
                 )
               }
               type="currency"
-            />
-          </Grid>
+            /> */}
+          {/* </Grid> */}
+
+          <PaymentsTextFields
+            type="text"
+            label="Repayment Amount"
+            placeHolderValue="Enter Repayment Amount"
+            width={smallScreen ? "100%" : "97%"}
+            value={thisCaseData?.contractDetails?.repayment_amount}
+            onChange={(e) =>
+              handleCaseDataChange(
+                caseIndex,
+                "contractDetails.repayment_amount",
+                e.target.value
+              )
+            }
+          />
         </Grid>
       </Grid>
 

@@ -1,6 +1,18 @@
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Grid, Box, Typography, Checkbox, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
+import {
+  Grid,
+  Box,
+  Typography,
+  Checkbox,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
 import UploadIcon from "@mui/icons-material/Upload";
 import CloseIcon from "@mui/icons-material/Close";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -10,7 +22,10 @@ import { styles } from "./FileUploadComponent.styles";
 import FileViewer from "./FileViewer";
 
 const FileUploadComponent = ({
-  files, setFiles, selectedFiles, setSelectedFiles
+  files,
+  setFiles,
+  selectedFiles,
+  setSelectedFiles,
 }) => {
   const [selectedFileForViewing, setSelectedFileForViewing] = useState(null);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
@@ -20,7 +35,11 @@ const FileUploadComponent = ({
     setFiles((prevFiles) => [...prevFiles, ...processedFiles]);
     setSelectedFiles((prevSelectedFiles) => [
       ...prevSelectedFiles,
-      ...processedFiles.filter(file => file.path.toLowerCase().includes("mca") || file.name.toLowerCase().includes("mca"))
+      ...processedFiles?.filter(
+        (file) =>
+          file?.path?.toLowerCase().includes("mca") ||
+          file?.name?.toLowerCase().includes("mca")
+      ),
     ]);
   };
 
@@ -28,16 +47,16 @@ const FileUploadComponent = ({
     const processedFiles = [];
 
     await Promise.all(
-      acceptedFiles.map(async (file) => {
-        if (file.name === '.DS_Store') return;
-        if (file.type === "application/zip") {
+      acceptedFiles?.map(async (file) => {
+        if (file?.name === ".DS_Store") return;
+        if (file?.type === "application/zip") {
           const zipFiles = await getFilesFromZip(file);
-          processedFiles.push(...zipFiles);
+          processedFiles?.push(...zipFiles);
         } else {
-          processedFiles.push({
-            name: file.name,
-            type: file.type,
-            path: file.path,
+          processedFiles?.push({
+            name: file?.name,
+            type: file?.type,
+            path: file?.path,
             file,
           });
         }
@@ -55,10 +74,10 @@ const FileUploadComponent = ({
     zipFile.forEach((relativePath, zipEntry) => {
       if (!zipEntry.dir) {
         filesArray.push({
-          name: zipEntry.name,
-          type: zipEntry.name.split(".").pop(),
+          name: zipEntry?.name,
+          type: zipEntry?.name?.split(".").pop(),
           path: relativePath,
-          file: zipEntry.asUint8Array(), // Convert zip entry to binary data
+          file: zipEntry?.asUint8Array(), // Convert zip entry to binary data
         });
       }
     });
@@ -68,27 +87,26 @@ const FileUploadComponent = ({
 
   const handleEditFileName = (index, newName) => {
     const file = files[index];
-    const fileExtension = file.name.split(".").pop();
+    const fileExtension = file?.name?.split(".").pop();
     const newFileName = `${newName}.${fileExtension}`;
-    const newPath = file.path.replace(file.name, newFileName);
+    const newPath = file?.path?.replace(file?.name, newFileName);
     setFiles((prevFiles) =>
-      prevFiles.map((f, i) =>
+      prevFiles?.map((f, i) =>
         i === index ? { ...f, name: newFileName, path: newPath } : f
       )
     );
   };
 
   const handleDeleteFile = (index) => {
-    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
-    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
-
+    setFiles((prevFiles) => prevFiles?.filter((_, i) => i !== index));
+    setSelectedFiles((prevFiles) => prevFiles?.filter((_, i) => i !== index));
   };
 
   const handleCheckboxChange = (file, checked) => {
     setSelectedFiles((prevSelectedFiles) =>
       checked
         ? [...prevSelectedFiles, file]
-        : prevSelectedFiles.filter((f) => f !== file)
+        : prevSelectedFiles?.filter((f) => f !== file)
     );
   };
 
@@ -122,19 +140,27 @@ const FileUploadComponent = ({
         <Typography sx={styles.headerText}>Upload Folder or File</Typography>
 
         <Box sx={styles.uploadBox}>
-          <Grid container item xs={12} sx={styles.dropzone} {...getRootPropsUpload()}>
-            <input 
-              {...getInputPropsUpload()} 
-              type="file" 
-              webkitdirectory="" 
-              directory="" 
+          <Grid
+            container
+            item
+            xs={12}
+            sx={styles.dropzone}
+            {...getRootPropsUpload()}
+          >
+            <input
+              {...getInputPropsUpload()}
+              type="file"
+              webkitdirectory=""
+              directory=""
               multiple // Allow selecting multiple files/folders
-              style={{ display: 'none' }} // Hide the input element
-              id="file-upload" 
+              style={{ display: "none" }} // Hide the input element
+              id="file-upload"
             />
             <label htmlFor="file-upload">
               <UploadIcon sx={styles.uploadIcon} />
-              <Typography sx={styles.uploadText}>Click or Drag to Upload</Typography>
+              <Typography sx={styles.uploadText}>
+                Click or Drag to Upload
+              </Typography>
             </label>
           </Grid>
         </Box>
@@ -142,7 +168,10 @@ const FileUploadComponent = ({
 
       <Grid item sx={{ marginTop: "1rem" }}>
         <Typography sx={styles.headerText}>List of Documents</Typography>
-        <TableContainer component={Paper} sx={{ marginTop: "1rem", overflowX: "auto" }}>
+        <TableContainer
+          component={Paper}
+          sx={{ marginTop: "1rem", overflowX: "auto" }}
+        >
           <Table>
             <TableHead>
               <TableRow>
@@ -164,33 +193,34 @@ const FileUploadComponent = ({
               </TableRow>
             </TableHead>
             <TableBody>
-              {files.map((file, index) => (
+              {files?.map((file, index) => (
                 <TableRow key={index}>
                   <TableCell sx={styles.checkboxCell}>
                     <Checkbox
-                      checked={selectedFiles.includes(file)}
-                      onChange={(e) => handleCheckboxChange(file, e.target.checked)}
+                      checked={selectedFiles?.includes(file)}
+                      onChange={(e) =>
+                        handleCheckboxChange(file, e.target.checked)
+                      }
                     />
                   </TableCell>
-                  <TableCell>{file.name}</TableCell>
-                  <TableCell>{file.type}</TableCell>
+                  <TableCell>{file?.name}</TableCell>
+                  <TableCell>{file?.type}</TableCell>
                   <TableCell sx={styles.pathCell}>
-                    <Typography
-                      sx={styles.pathText}
-                      title={file.name}
-                    >
-                      {file.path}
+                    <Typography sx={styles.pathText} title={file?.name}>
+                      {file?.path}
                     </Typography>
                   </TableCell>
                   <TableCell>
                     <Box sx={styles.actionIcons}>
                       <VisibilityIcon
-                        onClick={() => handleViewFile(file.file)}
+                        onClick={() => handleViewFile(file?.file)}
                         sx={styles.viewIcon}
                       />
                       <AlertDialog
-                        initialFileName={file.name}
-                        handleEditFileName={(newName) => handleEditFileName(index, newName)}
+                        initialFileName={file?.name}
+                        handleEditFileName={(newName) =>
+                          handleEditFileName(index, newName)
+                        }
                       />
                       <CloseIcon
                         onClick={() => handleDeleteFile(index)}
