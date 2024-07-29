@@ -550,8 +550,8 @@ export default function CreditorFields({
               }
             />
           </Grid>
-          <Grid item xs={12} md={4}>
-            <IntervalTextField
+          {/* <Grid item xs={12} md={4}> */}
+          {/* <IntervalTextField
               label="Purchased Percentage"
               value={thisCaseData?.contractDetails?.purchased_percentage}
               onChange={(e) =>
@@ -562,10 +562,24 @@ export default function CreditorFields({
                 )
               }
               type="percentage"
-            />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <IntervalTextField
+            /> */}
+          {/* </Grid> */}
+          <PaymentsTextFields
+            type="text"
+            label="Purchased Percentage"
+            placeHolderValue="Enter Company Name"
+            width={smallScreen ? "100%" : "97%"}
+            value={thisCaseData?.contractDetails?.purchased_percentage}
+            onChange={(e) =>
+              handleCaseDataChange(
+                caseIndex,
+                "creditor.businessInformation.companyName",
+                e.target.value
+              )
+            }
+          />
+          {/* <Grid item xs={12} md={4}> */}
+          {/* <IntervalTextField
               label="Repayment Amount"
               value={thisCaseData?.contractDetails?.repayment_amount}
               onChange={(e) =>
@@ -576,8 +590,23 @@ export default function CreditorFields({
                 )
               }
               type="currency"
-            />
-          </Grid>
+            /> */}
+          {/* </Grid> */}
+
+          <PaymentsTextFields
+            type="text"
+            label="Repayment Amount"
+            placeHolderValue="Enter Company Name"
+            width={smallScreen ? "100%" : "97%"}
+            value={thisCaseData?.contractDetails?.repayment_amount}
+            onChange={(e) =>
+              handleCaseDataChange(
+                caseIndex,
+                "creditor.businessInformation.companyName",
+                e.target.value
+              )
+            }
+          />
         </Grid>
       </Grid>
 
