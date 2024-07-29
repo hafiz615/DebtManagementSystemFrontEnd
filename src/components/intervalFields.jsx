@@ -148,7 +148,7 @@ const IntervalTextField = ({
     const newInterval = event.target.value;
     const newValue = value
       ? convertIntervalValue(
-          value.split(" ")[0].replace("$", ""),
+          value?.split(" ")[0]?.replace("$", ""),
           interval,
           newInterval
         )
