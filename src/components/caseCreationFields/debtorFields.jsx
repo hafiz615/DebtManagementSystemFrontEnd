@@ -36,30 +36,30 @@ export default function DebtorFields({
   setConnectPayment,
   walletId,
 }) {
-  // const [menuItems, setMenuItems] = useState([]);
+  const [menuItems, setMenuItems] = useState([]);
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
-  // const GetStatuses = async () => {
-  //   const AllStatuses = await GetAllStatuses();
-  //   if (AllStatuses?.status === 200) {
-  //     setMenuItems(AllStatuses?.data?.data?.status);
-  //   }
-  // };
+  const GetStatuses = async () => {
+    const AllStatuses = await GetAllStatuses();
+    if (AllStatuses?.status === 200) {
+      setMenuItems(AllStatuses?.data?.data?.status);
+    }
+  };
 
-  // const menu = menuItems?.map((name) => ({
-  //   label: name,
-  //   value: name,
-  // }));
+  const menu = menuItems?.map((name) => ({
+    label: name,
+    value: name,
+  }));
 
-  // useEffect(() => {
-  //   GetStatuses();
-  // }, []);
-  const menuItems = [
-    { label: "Customer", value: "Customer" },
-    { label: "On hold", value: "On hold" },
-    { label: "Canceled", value: "Canceled" },
-    { label: "Declared Bankrupcy", value: "Declared Bankrupcy" },
-  ];
+  useEffect(() => {
+    GetStatuses();
+  }, []);
+  // const menuItems = [
+  //   { label: "Customer", value: "Customer" },
+  //   { label: "On hold", value: "On hold" },
+  //   { label: "Canceled", value: "Canceled" },
+  //   { label: "Declared Bankrupcy", value: "Declared Bankrupcy" },
+  // ];
 
   const isEmailValid = (email) => {
     // Use a more robust email validation regular expression
@@ -392,7 +392,7 @@ export default function DebtorFields({
 
             <Dropdown
               height="2.5rem"
-              menuItems={menuItems}
+              menuItems={menu}
               menuWidth="11.7rem"
               placeholder="Choose Status"
               backgroundColor={Colors.BG_LIGHT_GRAY}
