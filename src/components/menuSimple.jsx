@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, Menu, MenuItem, Modal } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -8,6 +9,7 @@ import { Colors } from "../config/default";
 import UploadCsv from "./uploadCsv";
 
 export default function BasicMenu({ openState, backgroundColor, width }) {
+  const location = useLocation();
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
   );
@@ -37,8 +39,13 @@ export default function BasicMenu({ openState, backgroundColor, width }) {
   const handleMenuItemClick = (value, path) => {
     setSelectedValue(value);
     handleClose();
-    localStorage.setItem("route", value);
-    navigate(path);
+    if (location.pathname === "/case-details") {
+      localStorage.setItem("route", value);
+      window.location.reload(); // Use window.location.reload() to reload the page
+    } else {
+      localStorage.setItem("route", value);
+      navigate(path);
+    }
   };
 
   const handleModalClose = () => {

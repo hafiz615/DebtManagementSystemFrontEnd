@@ -35,10 +35,10 @@ const FileUploadComponent = ({
     setFiles((prevFiles) => [...prevFiles, ...processedFiles]);
     setSelectedFiles((prevSelectedFiles) => [
       ...prevSelectedFiles,
-      ...processedFiles.filter(
+      ...processedFiles?.filter(
         (file) =>
-          file.path.toLowerCase().includes("mca") ||
-          file.name.toLowerCase().includes("mca")
+          file?.path?.toLowerCase().includes("mca") ||
+          file?.name?.toLowerCase().includes("mca")
       ),
     ]);
   };
@@ -47,9 +47,9 @@ const FileUploadComponent = ({
     const processedFiles = [];
 
     await Promise.all(
-      acceptedFiles.map(async (file) => {
-        if (file.name === ".DS_Store") return;
-        if (file.type === "application/zip") {
+      acceptedFiles?.map(async (file) => {
+        if (file?.name === ".DS_Store") return;
+        if (file?.type === "application/zip") {
           const zipFiles = await getFilesFromZip(file);
           processedFiles?.push(...zipFiles);
         } else {
@@ -74,10 +74,10 @@ const FileUploadComponent = ({
     zipFile.forEach((relativePath, zipEntry) => {
       if (!zipEntry.dir) {
         filesArray.push({
-          name: zipEntry.name,
-          type: zipEntry.name.split(".").pop(),
+          name: zipEntry?.name,
+          type: zipEntry?.name?.split(".").pop(),
           path: relativePath,
-          file: zipEntry.asUint8Array(), // Convert zip entry to binary data
+          file: zipEntry?.asUint8Array(), // Convert zip entry to binary data
         });
       }
     });
@@ -87,26 +87,26 @@ const FileUploadComponent = ({
 
   const handleEditFileName = (index, newName) => {
     const file = files[index];
-    const fileExtension = file.name.split(".").pop();
+    const fileExtension = file?.name?.split(".").pop();
     const newFileName = `${newName}.${fileExtension}`;
-    const newPath = file.path.replace(file.name, newFileName);
+    const newPath = file?.path?.replace(file?.name, newFileName);
     setFiles((prevFiles) =>
-      prevFiles.map((f, i) =>
+      prevFiles?.map((f, i) =>
         i === index ? { ...f, name: newFileName, path: newPath } : f
       )
     );
   };
 
   const handleDeleteFile = (index) => {
-    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
-    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    setFiles((prevFiles) => prevFiles?.filter((_, i) => i !== index));
+    setSelectedFiles((prevFiles) => prevFiles?.filter((_, i) => i !== index));
   };
 
   const handleCheckboxChange = (file, checked) => {
     setSelectedFiles((prevSelectedFiles) =>
       checked
         ? [...prevSelectedFiles, file]
-        : prevSelectedFiles.filter((f) => f !== file)
+        : prevSelectedFiles?.filter((f) => f !== file)
     );
   };
 
@@ -193,31 +193,31 @@ const FileUploadComponent = ({
               </TableRow>
             </TableHead>
             <TableBody>
-              {files.map((file, index) => (
+              {files?.map((file, index) => (
                 <TableRow key={index}>
                   <TableCell sx={styles.checkboxCell}>
                     <Checkbox
-                      checked={selectedFiles.includes(file)}
+                      checked={selectedFiles?.includes(file)}
                       onChange={(e) =>
                         handleCheckboxChange(file, e.target.checked)
                       }
                     />
                   </TableCell>
-                  <TableCell>{file.name}</TableCell>
-                  <TableCell>{file.type}</TableCell>
+                  <TableCell>{file?.name}</TableCell>
+                  <TableCell>{file?.type}</TableCell>
                   <TableCell sx={styles.pathCell}>
-                    <Typography sx={styles.pathText} title={file.name}>
-                      {file.path}
+                    <Typography sx={styles.pathText} title={file?.name}>
+                      {file?.path}
                     </Typography>
                   </TableCell>
                   <TableCell>
                     <Box sx={styles.actionIcons}>
                       <VisibilityIcon
-                        onClick={() => handleViewFile(file.file)}
+                        onClick={() => handleViewFile(file?.file)}
                         sx={styles.viewIcon}
                       />
                       <AlertDialog
-                        initialFileName={file.name}
+                        initialFileName={file?.name}
                         handleEditFileName={(newName) =>
                           handleEditFileName(index, newName)
                         }

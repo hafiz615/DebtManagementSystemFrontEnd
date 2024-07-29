@@ -278,11 +278,7 @@ export default function CreditorFields({
                   label="Account Title"
                   placeHolderValue="Enter Account Title"
                   width="100%"
-                  value={
-                    nameTitleMapping?.[
-                      thisCaseData?.creditor?.businessInformation?.companyName
-                    ] ?? ""
-                  }
+                  value={thisCaseData?.creditor?.accountTitle}
                   onChange={(e) =>
                     handleCaseDataChange(
                       caseIndex,
