@@ -108,9 +108,10 @@ const GridItem = ({ title, value, rawValue }) => (
 const GridItemMessage = ({ title, value, rawValue }) => (
   <Grid item xs={12} sm={12} md={12} lg={12} container sx={commonStyles}>
     <Typography sx={commonTextStyles}>{title}</Typography>
-    <Typography sx={{
-      ...commonTextStyles
-    }}
+    <Typography
+      sx={{
+        ...commonTextStyles,
+      }}
     >
       {value}
     </Typography>
@@ -200,7 +201,7 @@ export default function SettlementRange() {
             setScores({ message: settlementRangeData?.data?.data?.getScores });
             showToast(
               settlementRangeData?.data?.data?.getScores +
-              " Couldn't fetch scores",
+                " Couldn't fetch scores",
               "error"
             );
           } else {
@@ -475,12 +476,12 @@ export default function SettlementRange() {
               key="Weekly Budget"
               title="Weekly Budget"
               value={
-                apiData?.weekly_budget?.[
-                  allCreditorNames[parseInt(tabValue)]
-                ]
-                  ? `$ ${new Intl.NumberFormat().format(apiData?.weekly_budget?.[
-                    allCreditorNames[parseInt(tabValue)]
-                  ])}`
+                apiData?.weekly_budget?.[allCreditorNames[parseInt(tabValue)]]
+                  ? `$ ${new Intl.NumberFormat().format(
+                      apiData?.weekly_budget?.[
+                        allCreditorNames[parseInt(tabValue)]
+                      ]
+                    )}`
                   : "No Data"
               }
               rawValue={apiData?.weekly_budget}
@@ -491,7 +492,9 @@ export default function SettlementRange() {
               title="Weekly True Revenue"
               value={
                 apiData?.weekly_true_revenue
-                  ? `$ ${new Intl.NumberFormat().format(apiData?.weekly_true_revenue)}`
+                  ? `$ ${new Intl.NumberFormat().format(
+                      apiData?.weekly_true_revenue
+                    )}`
                   : "No Data"
               }
               rawValue={apiData?.weekly_true_revenue}
@@ -501,13 +504,25 @@ export default function SettlementRange() {
               title="Profitability"
               value={
                 apiData?.profitability
-                  ? `${new Intl.NumberFormat().format(apiData?.profitability)} %`
+                  ? `${new Intl.NumberFormat().format(
+                      apiData?.profitability
+                    )} %`
                   : "No Data"
               }
               rawValue={apiData?.profitability}
             />
           </Grid>
-          <Grid item container xs={12} lg={12} md={12} xl={12} sm={12} sx={{ gap: "2%", mt: "1rem" }}>
+          <Grid
+            item
+            container
+            xs={12}
+            lg={12}
+            md={12}
+            xl={12}
+            sm={12}
+            sx={{ gap: "2%", mt: "1rem" }}
+          >
+            {scores?.Scores && (
               <>
                 <GridItem
                   key="UCC Score"
@@ -522,6 +537,7 @@ export default function SettlementRange() {
                   rawValue={scores?.Scores?.["Default Risk Score"]}
                 />
               </>
+            )}
           </Grid>
 
           <Grid
@@ -577,12 +593,12 @@ export default function SettlementRange() {
                     title={item}
                     settlementRange={
                       apiData?.settlement_range?.[
-                      allCreditorNames[parseInt(tabValue)]
+                        allCreditorNames[parseInt(tabValue)]
                       ] || null
                     }
                     commissionRange={
                       apiData?.commission_range?.[
-                      allCreditorNames[parseInt(tabValue)]
+                        allCreditorNames[parseInt(tabValue)]
                       ] || null
                     }
                     newDefaultRiskScore={
@@ -590,12 +606,12 @@ export default function SettlementRange() {
                     }
                     percentageSettlementOverWeeklyBudget={
                       apiData?.percentage_settlement_over_weekly_budget?.[
-                      allCreditorNames[parseInt(tabValue)]
+                        allCreditorNames[parseInt(tabValue)]
                       ] || null
                     }
                     percentageSettlementOverWeeklyTrueRevenue={
                       apiData?.percentage_settlement_over_weekly_true_revenue?.[
-                      allCreditorNames[parseInt(tabValue)]
+                        allCreditorNames[parseInt(tabValue)]
                       ] || null
                     }
                   />
@@ -603,8 +619,17 @@ export default function SettlementRange() {
               }
             )}
           </Grid>
-          <Grid item container xs={12} lg={12} md={12} xl={12} sm={12} sx={{ gap: "2%", mt: "1rem" }}>
-            {scores?.Scores && (
+          <Grid
+            item
+            container
+            xs={12}
+            lg={12}
+            md={12}
+            xl={12}
+            sm={12}
+            sx={{ gap: "2%", mt: "1rem" }}
+          >
+            {/* {scores?.Scores && (
               <>
                 <GridItem
                   key="UCC Score"
@@ -619,7 +644,7 @@ export default function SettlementRange() {
                   rawValue={scores?.Scores?.["Default Risk Score"]}
                 />
               </>
-            )}
+            )} */}
             {scores?.message && (
               <GridItemMessage
                 key="No Score Reason"

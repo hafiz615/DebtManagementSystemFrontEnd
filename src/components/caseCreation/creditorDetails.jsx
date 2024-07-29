@@ -117,7 +117,7 @@ export default function CreditorDetails({
         purchasedPercentage: 0,
         repaymentAmount: 0,
       },
-      status: "In progress",
+      status: "",
       totalDebt: 0,
       lastPaymentDate: "",
       paidAmount: 0,
@@ -155,7 +155,7 @@ export default function CreditorDetails({
             },
             contacts: [],
           },
-          status: "In progress",
+          status: "",
           totalDebt: 0,
           lastPaymentDate: "",
           contractDetails: {
