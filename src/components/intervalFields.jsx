@@ -133,12 +133,12 @@ const IntervalTextField = ({
   const [interval, setInterval] = useState("Daily");
 
   useEffect(() => {
-    const match = value.match(/\(([^)]+)\)/);
+    const match = value?.match(/\(([^)]+)\)/);
     if (match && match[1]) {
       setInterval(capitalizeFirstLetter(match[1]));
     } else {
-      const intervalMatch = value.split(" ");
-      if (intervalMatch.length > 1) {
+      const intervalMatch = value?.split(" ");
+      if (intervalMatch?.length > 1) {
         setInterval(capitalizeFirstLetter(intervalMatch[1]));
       }
     }
@@ -148,7 +148,7 @@ const IntervalTextField = ({
     const newInterval = event.target.value;
     const newValue = value
       ? convertIntervalValue(
-          value.split(" ")[0].replace("$", ""),
+          value?.split(" ")[0]?.replace("$", ""),
           interval,
           newInterval
         )
@@ -192,7 +192,7 @@ const IntervalTextField = ({
         }}
       >
         <TextField
-          value={getParsedValue(value.split(" ")[0], type)}
+          value={getParsedValue(value?.split(" ")[0], type)}
           onChange={(e) => onChange(`${e.target.value} (${interval})`)}
           placeholder={type === "percentage" ? "%" : "$"}
           InputProps={{
