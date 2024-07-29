@@ -552,28 +552,28 @@ export default function CreditorFields({
           </Grid>
           {/* <Grid item xs={12} md={4}> */}
           {/* <IntervalTextField
-              label="Purchased Percentage"
-              value={thisCaseData?.contractDetails?.purchased_percentage}
-              onChange={(e) =>
-                handleCaseDataChange(
-                  caseIndex,
-                  "contractDetails.purchased_percentage",
-                  e
-                )
-              }
-              type="percentage"
-            /> */}
+            label="Purchased Percentage"
+            value={thisCaseData?.contractDetails?.purchased_percentage}
+            onChange={(e) =>
+              handleCaseDataChange(
+                caseIndex,
+                "contractDetails.purchased_percentage",
+                e
+              )
+            }
+            type="percentage"
+          /> */}
           {/* </Grid> */}
           <PaymentsTextFields
             type="text"
             label="Purchased Percentage"
-            placeHolderValue="Enter Company Name"
+            placeHolderValue="Enter Purchased Percentage"
             width={smallScreen ? "100%" : "97%"}
             value={thisCaseData?.contractDetails?.purchased_percentage}
             onChange={(e) =>
               handleCaseDataChange(
                 caseIndex,
-                "creditor.businessInformation.companyName",
+                "contractDetails.purchased_percentage",
                 e.target.value
               )
             }
@@ -596,13 +596,13 @@ export default function CreditorFields({
           <PaymentsTextFields
             type="text"
             label="Repayment Amount"
-            placeHolderValue="Enter Company Name"
+            placeHolderValue="Enter Repayment Amount"
             width={smallScreen ? "100%" : "97%"}
             value={thisCaseData?.contractDetails?.repayment_amount}
             onChange={(e) =>
               handleCaseDataChange(
                 caseIndex,
-                "creditor.businessInformation.companyName",
+                "contractDetails.repayment_amount",
                 e.target.value
               )
             }
