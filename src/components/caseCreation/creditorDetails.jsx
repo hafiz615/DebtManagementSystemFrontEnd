@@ -78,12 +78,13 @@ export default function CreditorDetails({
     setFinalCaseData(newState);
   }
 
-  function handleRemoveCase(index) {
+  function handleRemoveCase(index, e) {
     // Remove creditor from creditors array
     // const newCreditors = creditors.filter((_, i) => i !== index);
     // setCreditors(newCreditors);
 
     // Remove case from finalCaseData
+    e.stopPropagation();
     const newState = finalCaseData.filter((_, i) => i !== index);
     setFinalCaseData(newState);
   }
@@ -277,7 +278,7 @@ export default function CreditorDetails({
                 </Typography>
 
                 <IconButton
-                  onClick={() => handleRemoveCase(index)}
+                  onClick={(e) => handleRemoveCase(index, e)}
                   color="error"
                 >
                   <Delete />
