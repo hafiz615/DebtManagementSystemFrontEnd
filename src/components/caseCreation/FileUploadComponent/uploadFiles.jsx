@@ -20,6 +20,7 @@ import JSZip from "jszip";
 import AlertDialog from "../editFileNamePopUp";
 import { styles } from "./FileUploadComponent.styles";
 import FileViewer from "./FileViewer";
+import ScrollbarStyles from "../../customScroll";
 
 const FileUploadComponent = ({
   files,
@@ -170,7 +171,12 @@ const FileUploadComponent = ({
         <Typography sx={styles.headerText}>List of Documents</Typography>
         <TableContainer
           component={Paper}
-          sx={{ marginTop: "1rem", overflowX: "auto" }}
+          sx={{
+            marginTop: "1rem",
+            height: "50vh",
+            overflow: "auto",
+            ...ScrollbarStyles,
+          }}
         >
           <Table>
             <TableHead>

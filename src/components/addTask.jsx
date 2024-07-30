@@ -1,33 +1,137 @@
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
 import { Grid, IconButton, Typography } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { Colors } from "../config/default";
 import Dropdown from "./dropdown";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import TextButton from "./button";
+import CustomTextField from "./customTextfield";
+import ResponsiveTimePickers from "../.././src/components/timeField";
+import { CreateTasks, GetAllUsers } from "../services/services";
+import dayjs from "dayjs";
+import { useToast } from "../../src/toast/toastContext";
+import { isEmpty } from "lodash";
 
-export default function AddTask({ handleClose, field, data }) {
-  const [selectedValue, setSelectedValue] = useState("3");
+export default function AddTask({
+  handleClose,
+  field,
+  data,
+  buttonName,
+  caseData,
+  getAllCaseTasks,
+  show,
+}) {
+  const [loading, setLoading] = useState(false);
+  const [userArray, setUserArray] = useState([]);
+  const [caseOwnerId, setCaseOwnerId] = useState("");
+  const [addTasks, setAddTask] = useState({
+    assignee: "",
+    title: "",
+    notes: "",
+    dueDate: "",
+    time: dayjs(),
+  });
+  const GetUsers = async () => {
+    setLoading(true);
+    let payload = {};
+    const users = await GetAllUsers(1, false, false, payload);
 
-  const menuItems = [
-    { label: "5", value: 5 },
-    { label: "7", value: 7 },
-  ];
+    if (users?.status === 200) {
+      const transformArray = (data) => {
+        return data?.map((item) => ({
+          label: item?.name,
+          value: item?.name,
+          id: item?._id,
+        }));
+      };
+
+      const transformedArray = isEmpty(users?.data?.data?.users)
+        ? []
+        : transformArray(users?.data?.data?.users);
+
+      setUserArray(transformedArray);
+    }
+    setLoading(false);
+  };
+  useEffect(() => {
+    GetUsers();
+  }, []);
   const status = [
     { label: "On Hold", value: "On Hold" },
     { label: "Blocked", value: "Blocked" },
-    { label: "To Do", value: "To Do" },
     { label: "Completed", value: "Completed" },
   ];
+
+  const assigneeItems = [
+    { label: "Manager", value: "Manager" },
+    { label: "Negotiator", value: "Negotiator" },
+  ];
+  const { showToast } = useToast();
+  const formatDateTime = (date, time) => {
+    if (!date || !time) return "";
+    const timeString = dayjs(time).format("HH:mm:ss");
+    return dayjs(`${date}T${timeString}`).toISOString();
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setAddTask((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleTimeChange = (time) => {
+    setAddTask((prevState) => ({
+      ...prevState,
+      time,
+    }));
+  };
+
+  const handleDropdownChange = (name, value) => {
+    setAddTask((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleTasksData = async () => {
+    setLoading(true);
+    const formattedDateTime = formatDateTime(addTasks?.dueDate, addTasks?.time);
+    const params = {
+      assigneeId: caseOwnerId,
+      assignee: addTasks?.assignee,
+      title: addTasks?.title,
+      notes: addTasks?.notes,
+      dueDate: formattedDateTime,
+    };
+
+    const addTasksRes = await CreateTasks(caseData?._id, params);
+
+    if (addTasksRes?.status === 200) {
+      showToast(addTasksRes?.data?.message, "success");
+      getAllCaseTasks();
+      handleClose();
+    } else {
+      const errorMessage = addTasksRes?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setLoading(false);
+  };
 
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:768px)");
 
   return (
     <Grid>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography sx={{ fontWeight: "700", fontFamily: "Nunito" }}>
-          {data ? data?.taskName : "Add Task"}
+        <Typography
+          sx={{
+            fontWeight: "700",
+            fontFamily: "Nunito",
+          }}
+        >
+          {data ? data?.taskName : buttonName ? "Edit Task" : "Add Task"}
         </Typography>
         <IconButton onClick={handleClose}>
           <Close />
@@ -50,16 +154,15 @@ export default function AddTask({ handleClose, field, data }) {
           }}
         >
           Due Date
-          <Dropdown
-            width="65%"
-            menuItems={menuItems}
-            defaultSelectedItem={"4/2/2024"}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-            backgroundColor={Colors.BG_LIGHT_GRAY}
-            hoverColor={Colors.BG_LIGHT_GRAY}
+          <CustomTextField
+            type="date"
+            name="dueDate"
+            width="15rem"
+            onChange={(e) => handleDropdownChange("dueDate", e.target.value)}
+            value={addTasks?.dueDate}
           />
         </div>
+
         <div
           style={{
             display: "flex",
@@ -69,14 +172,9 @@ export default function AddTask({ handleClose, field, data }) {
           }}
         >
           Time
-          <Dropdown
-            width="65%"
-            menuItems={menuItems}
-            defaultSelectedItem={"5:20 PM"}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-            backgroundColor={Colors.BG_LIGHT_GRAY}
-            hoverColor={Colors.BG_LIGHT_GRAY}
+          <ResponsiveTimePickers
+            value={addTasks?.time}
+            onChange={handleTimeChange}
           />
         </div>
       </div>
@@ -88,10 +186,9 @@ export default function AddTask({ handleClose, field, data }) {
           flexDirection: smallScreen ? "column" : "row",
         }}
       >
-        {field === "addTask" ? (
+        {field ? (
           <div
             style={{
-              border: "1px solid red",
               display: "flex",
               width: smallScreen ? "100%" : "50%",
               justifyContent: "space-between",
@@ -100,18 +197,21 @@ export default function AddTask({ handleClose, field, data }) {
           >
             Title
             <input
-              type="email"
-              placeholder="Title 5"
+              type="text"
+              name="title"
+              placeholder="Add Title"
               style={{
                 backgroundColor: Colors.BG_LIGHT_GRAY,
-                height: "2rem",
+                height: "2.5rem",
                 color: Colors.DIM_LIGHT_GRAY,
                 paddingLeft: "1rem",
                 border: "none",
                 outline: "none",
                 borderRadius: "5px",
-                width: "65%",
+                width: "15rem",
               }}
+              onChange={handleChange}
+              value={addTasks?.title}
             />
           </div>
         ) : (
@@ -125,11 +225,13 @@ export default function AddTask({ handleClose, field, data }) {
           >
             Status
             <Dropdown
-              width="65%"
+              width="15rem"
               menuItems={status}
               defaultSelectedItem={"Completed"}
-              selectedValue={selectedValue}
-              setSelectedValue={setSelectedValue}
+              selectedValue={addTasks?.status}
+              setSelectedValue={(value) =>
+                handleDropdownChange("status", value)
+              }
               backgroundColor={Colors.BG_LIGHT_GRAY}
               hoverColor={Colors.BG_LIGHT_GRAY}
             />
@@ -147,19 +249,25 @@ export default function AddTask({ handleClose, field, data }) {
         >
           Assignee
           <Dropdown
-            width="65%"
-            menuItems={menuItems}
+            width="15rem"
+            disabled={isEmpty(userArray)}
+            menuItems={userArray}
             defaultSelectedItem={"Assignee Name"}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
+            selectedValue={addTasks?.assignee}
+            setSelectedValue={(value) =>
+              handleDropdownChange("assignee", value)
+            }
             backgroundColor={Colors.BG_LIGHT_GRAY}
             hoverColor={Colors.BG_LIGHT_GRAY}
+            setId={setCaseOwnerId}
+            show={show}
           />
         </div>
       </div>
       <div style={{ marginTop: "1.5em", fontFamily: "Nunito" }}>
         Notes
         <textarea
+          name="notes"
           rows="6"
           style={{
             backgroundColor: Colors.BG_LIGHT_GRAY,
@@ -169,6 +277,8 @@ export default function AddTask({ handleClose, field, data }) {
             minWidth: "100%",
             maxWidth: "100%",
           }}
+          onChange={handleChange}
+          value={addTasks?.notes}
         />
       </div>
       <div style={{ marginTop: "1.5em", float: "right" }}>
@@ -176,9 +286,17 @@ export default function AddTask({ handleClose, field, data }) {
           buttonText="Save"
           height="2rem"
           width="8rem"
-          onClick={handleClose}
+          onClick={handleTasksData}
+          loading={loading}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
+          disabled={
+            addTasks?.assignee === "" ||
+            addTasks?.dueDate === "" ||
+            addTasks?.time === "" ||
+            addTasks?.title === "" ||
+            addTasks?.notes === ""
+          }
         />
       </div>
     </Grid>

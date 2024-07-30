@@ -141,7 +141,7 @@ export default function DraggablePipelineRow({
           iconSize="1.2rem"
         />
         <Prompt
-          heading="Delte Pipeline"
+          heading="Delete Pipeline"
           text={`Are you sure you want to Delete ${item?.name}?`}
           handleDelete={handleDelete}
           item={item?.id}
