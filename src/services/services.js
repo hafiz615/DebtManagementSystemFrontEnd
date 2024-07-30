@@ -22,14 +22,17 @@ const convertJpgToPdf = async (file) => {
     height: height,
   });
   const pdfBytes = await pdfDoc.save();
-  const pdfFile = new File([pdfBytes], file.name.replace(/\.[^/.]+$/, ".pdf"), { type: "application/pdf" });
+  const pdfFile = new File([pdfBytes], file.name.replace(/\.[^/.]+$/, ".pdf"), {
+    type: "application/pdf",
+  });
   return pdfFile;
 };
 
 export const ExtractContractData = async (files) => {
   const processFile = async (file) => {
     try {
-      const apiUrl = "https://dms-negotiation.hpdemos.co/extract-fields?enable_cache=false";
+      const apiUrl =
+        "https://dms-negotiation.hpdemos.co/extract-fields?enable_cache=false";
 
       const formData = new FormData();
       let processedFile = file.file;
@@ -41,15 +44,17 @@ export const ExtractContractData = async (files) => {
 
       const originalFileName = processedFile.name;
       const cleanedFileName = originalFileName.replace("MCA Contracts/", "");
-      const cleanedFile = new File([processedFile], cleanedFileName, { type: processedFile.type });
+      const cleanedFile = new File([processedFile], cleanedFileName, {
+        type: processedFile.type,
+      });
 
       formData.append("MCA_pdf", cleanedFile);
 
       const response = await axios.post(apiUrl, formData, {
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'multipart/form-data',
-        }
+          Accept: "application/json",
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       return response.data;
@@ -59,12 +64,14 @@ export const ExtractContractData = async (files) => {
     }
   };
 
-  const results = await Promise.all(files.map((file) => {
-    if (!isEmpty(file)) {
-      return processFile(file);
-    }
-    return file;
-  }));
+  const results = await Promise.all(
+    files.map((file) => {
+      if (!isEmpty(file)) {
+        return processFile(file);
+      }
+      return file;
+    })
+  );
   return results;
 };
 
@@ -221,7 +228,7 @@ export const UploadFiles = async (data) => {
 //       const cleanedFile = new File([file.file], cleanedFileName, { type: file.file.type });
 //       console.log("cleanedFile", cleanedFile);
 //       formData.append("MCA_pdf", cleanedFile);
-//       // formData.append("MCA_pdf", file.file); // Ensure file.file is a File object  
+//       // formData.append("MCA_pdf", file.file); // Ensure file.file is a File object
 
 //       // Call API
 //       const response = await axios.post(apiUrl, formData, {
@@ -244,11 +251,10 @@ export const UploadFiles = async (data) => {
 //     if (!isEmpty(file)){
 //       return processFile(file)
 //     }
-//     return file 
+//     return file
 //   }));
 //   return results; // Return the array of results
 // };
-
 
 export const GetDebtorSearch = async (payload) => {
   try {
@@ -824,7 +830,8 @@ export const GetRoleByName = async (name) => {
 export const GetSettlementRangeWithScores = async (payload, id) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/case/getScoresSettlementRange/${id}?all=${isEmpty(payload)}`,
+      BASE_URL +
+        `/v1/case/getScoresSettlementRange/${id}?all=${isEmpty(payload)}`,
       payload,
       setHeaders()
     );
@@ -905,6 +912,41 @@ export const CreateCreditorCase = async (payload, debtorId) => {
   try {
     return await axios.post(
       BASE_URL + `/v1/case/createCreditorsCases/${debtorId}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetAllTasks = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/task/getTasks?caseId=${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const CreateTasks = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/task/addTask?caseId=${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const UpdateTasks = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/task/addTask?caseId=${id}`,
       payload,
       setHeaders()
     );

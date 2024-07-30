@@ -156,7 +156,7 @@ export default function Pipelines({ item, GetPipelines }) {
           </IconButton>
           {settings?.deletePipeline && (
             <Prompt
-              heading="Delte Pipeline"
+              heading="Delete Pipeline"
               text={`Are you sure you want to Delete ${item?.pipeline}?`}
               handleDelete={handleDelete}
               item={item?.id}

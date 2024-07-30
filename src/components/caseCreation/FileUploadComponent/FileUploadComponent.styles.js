@@ -57,10 +57,11 @@ export const styles = {
   },
   selectColumn: {
     minWidth: "100px", // Adjust to desired width
-    flex: "0 0 100px", // Adjust to desired width
+    flex: "0 0 100px",
   },
   titleColumn: {
-    flex: 1, // Allow the title column to take up remaining space
+    // flex: 1,
+    // Allow the title column to take up remaining space
   },
   typeColumn: {
     flex: 1, // Allow the type column to take up remaining space
