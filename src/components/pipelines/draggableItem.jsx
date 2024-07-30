@@ -160,7 +160,7 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
             GetAllPipelineDetail={GetAllPipelineDetail}
           />
           <Prompt
-            heading="Delte Pipeline"
+            heading="Delete Pipeline"
             text={`Are you sure you want to Delete ${item?.caseCode}?`}
             handleDelete={handleDelete}
             item={item?._id}

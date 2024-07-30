@@ -342,7 +342,7 @@ function CaseDetail() {
                   caseDetails={caseData}
                   GetCaseDetails={GetCaseDetails}
                 />
-                <TaskAccordion />
+                <TaskAccordion caseData={caseData} />
                 <CustomFieldsAccordion
                   caseData={caseData}
                   GetCaseDetails={GetCaseDetails}

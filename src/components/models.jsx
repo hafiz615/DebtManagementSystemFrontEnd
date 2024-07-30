@@ -78,6 +78,7 @@ export default function MuiModels({
   rolesId,
   selectedRoleData,
   setSelectedRole,
+  getAllCaseTasks,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -402,10 +403,16 @@ export default function MuiModels({
               data={data}
               show={show}
               field={field}
+              caseData={caseData}
+              handleClose={handleClose}
+              getAllCaseTasks={getAllCaseTasks}
+            />
+          ) : show === "editTask" ? (
+            <AddTask
+              show={show}
+              buttonName={buttonName}
               handleClose={handleClose}
             />
-          ) : show === "task" ? (
-            <AddTask show={show} handleClose={handleClose} />
           ) : show === "editField" ? (
             <EditField
               show={show}
