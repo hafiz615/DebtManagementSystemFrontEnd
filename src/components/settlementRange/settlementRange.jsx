@@ -582,6 +582,15 @@ export default function SettlementRange() {
             </AntTabs>
           </Grid>
           <Grid container xs={12}>
+            <Typography
+              sx={{
+                fontWeight: "600",
+                fontFamily: "Nunito",
+                marginTop: "1rem",
+              }}
+            >
+              Creditors Contract Information
+            </Typography>
             {selectedCreditorDetails && (
               <>
                 <Grid
