@@ -404,14 +404,18 @@ export default function MuiModels({
               show={show}
               field={field}
               caseData={caseData}
+              buttonName={buttonName}
               handleClose={handleClose}
               getAllCaseTasks={getAllCaseTasks}
             />
           ) : show === "editTask" ? (
             <AddTask
+              data={data}
               show={show}
               buttonName={buttonName}
               handleClose={handleClose}
+              caseData={caseData}
+              getAllCaseTasks={getAllCaseTasks}
             />
           ) : show === "editField" ? (
             <EditField

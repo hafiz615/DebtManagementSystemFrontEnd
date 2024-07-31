@@ -12,6 +12,8 @@ import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import { GetAllTasks } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
+import Prompt from "../prompt";
+import ScrollbarStyles from "./../customScroll";
 
 export default function TaskAccordion({ caseData }) {
   const formatDate = (dateStr) => {
@@ -95,6 +97,9 @@ export default function TaskAccordion({ caseData }) {
           boxShadow: " 0 2px 5px -3px rgba(0, 0, 0, 0.5)",
           borderBottomLeftRadius: "10px",
           borderBottomRightRadius: "10px",
+          height: "35vh",
+          overflow: "auto",
+          ...ScrollbarStyles,
         }}
       >
         <Grid container>
@@ -137,7 +142,10 @@ export default function TaskAccordion({ caseData }) {
               <Grid
                 container
                 key={item._id}
-                sx={{ justifyContent: "space-between", alignItems: "center" }}
+                sx={{
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
               >
                 <Grid item xs={2}>
                   <Typography
@@ -187,14 +195,24 @@ export default function TaskAccordion({ caseData }) {
                     {formatDate(item?.dueDate)}
                   </Typography>
                 </Grid>
-                <Grid>
+                <Grid item xs={2.7} sx={{ display: "flex" }}>
                   <MuiModels
                     data={item}
                     buttonName="Edit Task"
                     show="editTask"
                     field={false}
                     button="create"
-                    iconSize="11px"
+                    iconSize="13px"
+                    caseData={caseData}
+                    getAllCaseTasks={getAllCaseTasks}
+                  />
+                  <Prompt
+                    heading="Delete Task"
+                    text={`Are you sure you want to Delete ${item?.title} ?`}
+                    iconSize="13px"
+                    data={item}
+                    getAllCaseTasks={getAllCaseTasks}
+                    deleting="Delete Tasks"
                   />
                 </Grid>
               </Grid>

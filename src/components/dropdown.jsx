@@ -43,7 +43,7 @@ export default function Dropdown({
       onChange(value);
     } else {
       setSelectedValue(value);
-      if (show === "editAbout" || show === "addTask") {
+      if (show === "editAbout" || show === "addTask" || show === "editTask") {
         setId(id);
       }
     }

@@ -14,11 +14,13 @@ import {
   DeleteCustomField,
   DeleteSettings,
   DeleteRole,
+  DeleteTasks,
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import TextButton from "./button";
 import { IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { Delete } from "@mui/icons-material";
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiPaper-root": {
@@ -53,6 +55,8 @@ export default function Prompt({
   setSelectedRole,
   roleName,
   permissionData,
+  data,
+  getAllCaseTasks,
 }) {
   const { showToast } = useToast();
   const [open, setOpen] = React.useState(false);
@@ -146,6 +150,23 @@ export default function Prompt({
     }
     setLoading(false);
   };
+
+  const deleteTasks = async () => {
+    setLoading(true);
+    const deleteTask = await DeleteTasks(data?._id);
+
+    if (deleteTask?.status === 200) {
+      setOpen(false);
+      showToast(deleteTask?.data?.message, "success");
+      getAllCaseTasks();
+    } else {
+      showToast(
+        deleteTask?.response?.data?.message || deleteTask?.data?.message,
+        "error"
+      );
+    }
+    setLoading(true);
+  };
   const handleClickOpen = (event) => {
     event.stopPropagation();
     setOpen(true);
@@ -170,6 +191,8 @@ export default function Prompt({
       await handleDelete();
     } else if (deleting === "delete template") {
       await deleteTemplate();
+    } else if (deleting === "Delete Tasks") {
+      await deleteTasks();
     } else if (deleteRole) {
       await deleteRole();
     } else {
