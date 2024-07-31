@@ -945,9 +945,20 @@ export const CreateTasks = async (id, payload) => {
 
 export const UpdateTasks = async (id, payload) => {
   try {
-    return await axios.post(
-      BASE_URL + `/v1/task/addTask?caseId=${id}`,
+    return await axios.put(
+      BASE_URL + `/v1/task/updateTask/${id}`,
       payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const DeleteTasks = async (id) => {
+  try {
+    return await axios.delete(
+      BASE_URL + `/v1/task/deleteTask/${id}`,
       setHeaders()
     );
   } catch (error) {
