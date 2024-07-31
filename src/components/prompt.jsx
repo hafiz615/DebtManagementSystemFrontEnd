@@ -193,10 +193,11 @@ export default function Prompt({
       await deleteTemplate();
     } else if (deleting === "Delete Tasks") {
       await deleteTasks();
+    } else if (deleting === "Delete User") {
+      await deleteUserById();
     } else if (deleteRole) {
       await deleteRole();
     } else {
-      await deleteUserById();
     }
     setOpen(false);
     setLoading(false);
