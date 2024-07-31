@@ -22,7 +22,7 @@ import TextButton from "./button";
 
 const headers = [
   // "Index",
-  "Name",
+  "Company Name",
   "Number of Cases",
   "Number of Debtors",
   "Total Debt",
@@ -231,7 +231,7 @@ export default function CreditorList() {
       userArray &&
       userArray?.map((item) => ({
         id: item?.id,
-        name: item?.creditorName || "-",
+        name: item?.companyName || "-",
         totalCases: item?.totalCases || "-",
         totalCreditors: item?.totalDebtors || "-",
         totalDebt: formatDollarAmount(item?.totalDebt) || "-",

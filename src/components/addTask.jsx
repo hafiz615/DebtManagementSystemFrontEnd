@@ -7,7 +7,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import TextButton from "./button";
 import CustomTextField from "./customTextfield";
 import ResponsiveTimePickers from "../.././src/components/timeField";
-import { CreateTasks, GetAllUsers } from "../services/services";
+import { CreateTasks, GetAllUsers, UpdateTasks } from "../services/services";
 import dayjs from "dayjs";
 import { useToast } from "../../src/toast/toastContext";
 import { isEmpty } from "lodash";
@@ -21,18 +21,21 @@ export default function AddTask({
   getAllCaseTasks,
   show,
 }) {
+  const initialDueDate = data?.dueDate
+    ? dayjs(data.dueDate).format("YYYY-MM-DD")
+    : "";
   const [loading, setLoading] = useState(false);
   const [userArray, setUserArray] = useState([]);
-  const [caseOwnerId, setCaseOwnerId] = useState("");
+  const [caseOwnerId, setCaseOwnerId] = useState(data?.assigneeId || "");
   const [addTasks, setAddTask] = useState({
-    assignee: "",
-    title: "",
-    notes: "",
-    dueDate: "",
-    time: dayjs(),
+    assignee: data?.assignee || "",
+    title: data?.title || "",
+    notes: data?.notes || "",
+    dueDate: initialDueDate,
+    time: dayjs(data?.dueDate) || dayjs(),
+    status: data?.status || "",
   });
   const GetUsers = async () => {
-    setLoading(true);
     let payload = {};
     const users = await GetAllUsers(1, false, false, payload);
 
@@ -48,24 +51,19 @@ export default function AddTask({
       const transformedArray = isEmpty(users?.data?.data?.users)
         ? []
         : transformArray(users?.data?.data?.users);
-
       setUserArray(transformedArray);
     }
-    setLoading(false);
   };
   useEffect(() => {
     GetUsers();
   }, []);
   const status = [
-    { label: "On Hold", value: "On Hold" },
+    { label: "To do", value: "To do" },
+    { label: "On hold", value: "On hold" },
     { label: "Blocked", value: "Blocked" },
     { label: "Completed", value: "Completed" },
   ];
 
-  const assigneeItems = [
-    { label: "Manager", value: "Manager" },
-    { label: "Negotiator", value: "Negotiator" },
-  ];
   const { showToast } = useToast();
   const formatDateTime = (date, time) => {
     if (!date || !time) return "";
@@ -99,15 +97,20 @@ export default function AddTask({
   const handleTasksData = async () => {
     setLoading(true);
     const formattedDateTime = formatDateTime(addTasks?.dueDate, addTasks?.time);
-    const params = {
+    let params = {
       assigneeId: caseOwnerId,
       assignee: addTasks?.assignee,
-      title: addTasks?.title,
       notes: addTasks?.notes,
       dueDate: formattedDateTime,
     };
-
-    const addTasksRes = await CreateTasks(caseData?._id, params);
+    let addTasksRes;
+    if (show === "editTask") {
+      params = { ...params, status: addTasks?.status };
+      addTasksRes = await UpdateTasks(data?._id, params);
+    } else {
+      params = { ...params, title: addTasks?.title };
+      addTasksRes = await CreateTasks(caseData?._id, params);
+    }
 
     if (addTasksRes?.status === 200) {
       showToast(addTasksRes?.data?.message, "success");
@@ -131,7 +134,7 @@ export default function AddTask({
             fontFamily: "Nunito",
           }}
         >
-          {data ? data?.taskName : buttonName ? "Edit Task" : "Add Task"}
+          {buttonName}
         </Typography>
         <IconButton onClick={handleClose}>
           <Close />
@@ -283,7 +286,7 @@ export default function AddTask({
       </div>
       <div style={{ marginTop: "1.5em", float: "right" }}>
         <TextButton
-          buttonText="Save"
+          buttonText={show === "editTask" ? "Edit" : "Save"}
           height="2rem"
           width="8rem"
           onClick={handleTasksData}
