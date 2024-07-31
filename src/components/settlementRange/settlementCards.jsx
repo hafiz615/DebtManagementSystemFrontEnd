@@ -2,6 +2,8 @@ import { Box, Grid, Typography } from "@mui/material";
 import React from "react";
 import { Colors } from "../../config/default";
 import { FONT_SIZE_LARGE } from "../../constants/appConstants";
+import Tooltip from "@mui/material/Tooltip";
+import InfoIcon from "@mui/icons-material/Info";
 
 export default function SettlementCards({
   title,
@@ -48,11 +50,11 @@ export default function SettlementCards({
   ];
 
   const rangeNames = [
-    "Settlement Range",
-    "Commission Range",
-    "New Default Risk",
-    "Weekly Budget %",
-    "Weekly True Revenue %",
+    { label: "Settlement Range", tooltip: "Settlement Range" },
+    { label: "Commission Range", tooltip: "Commission Range" },
+    { label: "New Default Risk", tooltip: "ew Default Risk" },
+    { label: "Weekly Budget %", tooltip: "Weekly Budget %" },
+    { label: "Weekly True Revenue %", tooltip: "Weekly True Revenue %" },
   ];
 
   function capitalizeFirstWord(text) {
@@ -88,12 +90,26 @@ export default function SettlementCards({
         </Typography>
       ) : (
         allRanges?.map((item, index) => (
-          <Grid container sx={{ width: "100%", padding: "10px 8px" }}>
+          <Grid
+            container
+            sx={{ width: "100%", padding: "10px 8px" }}
+            key={index}
+          >
             <Grid item xs={6.5} sx={{ paddingLeft: "6%" }}>
-              <Typography sx={commonTextStyles}>{rangeNames[index]}</Typography>
+              <Typography
+                sx={{
+                  ...commonTextStyles,
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                {rangeNames[index]?.label}
+                <Tooltip title={rangeNames[index]?.tooltip} placement="top-end">
+                  <InfoIcon sx={{ fontSize: "17px", color: Colors.SKY_BLUE }} />
+                </Tooltip>
+              </Typography>
             </Grid>
             <Grid item xs={5}>
-
               <div style={{ width: "100%", display: "flex" }}>
                 <div
                   style={{
@@ -105,11 +121,11 @@ export default function SettlementCards({
                   Minimum
                 </div>
                 <div style={textStyles}>
-                  {rangeNames[index] === "New Default Risk"
+                  {rangeNames[index]?.label === "New Default Risk"
                     ? item?.[title]?.[1] || "-"
-                    : rangeNames[index]?.includes('%')
-                      ? `${item?.[title]?.[0] || "-"}%`
-                      : `$${item?.[title]?.[0] || "-"}`}
+                    : rangeNames[index]?.label?.includes("%")
+                    ? `${item?.[title]?.[0] || "-"}%`
+                    : `$${item?.[title]?.[0] || "-"}`}
                 </div>
               </div>
               <div style={{ width: "100%", display: "flex" }}>
@@ -123,11 +139,11 @@ export default function SettlementCards({
                   Maximum
                 </div>
                 <div style={textStyles}>
-                  {rangeNames[index] === "New Default Risk"
+                  {rangeNames[index]?.label === "New Default Risk"
                     ? item?.[title]?.[0] || "-"
-                    : rangeNames[index]?.includes('%')
-                      ? `${item?.[title]?.[1] || "-"}%`
-                      : `$${item?.[title]?.[1] || "-"}`}
+                    : rangeNames[index]?.label?.includes("%")
+                    ? `${item?.[title]?.[1] || "-"}%`
+                    : `$${item?.[title]?.[1] || "-"}`}
                 </div>
               </div>
             </Grid>
