@@ -21,10 +21,8 @@ import {
 import TextButton from "./button";
 import CreditorDetails from "./caseCreation/creditorDetails";
 import PaymentDetails from "./caseCreation/paymentDetails";
-import PreviewDetails from "./caseCreation/previewDetails";
 import FileUploadComponent from "./caseCreation/FileUploadComponent/uploadFiles";
 import {
-  CreateCase,
   CreateCreditorCase,
   GetCreditorSearch,
   GetDebtorSearch,
@@ -955,7 +953,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
                   handleNext();
                 }}
                 marginRight={smallScreen ? "8px" : "1rem"}
-                // disabled={disableButton || loading}
+                disabled={disableButton || loading}
               />
             </Grid>
           </Grid>
