@@ -30,8 +30,9 @@ export default function CreditorDetails({
   handleSelect,
 }) {
   const [digitsList, setDigitsList] = useState(
-    finalCaseData?.map(() => Array(10).fill("")) || [""]
+    finalCaseData?.map((caseEntry) => [caseEntry?.creditor?.aggression]) || [0]
   );
+
   const handleSearchChange = (value, index) => {
     setSearchText(value);
     SearchFields(value, index);
@@ -73,6 +74,7 @@ export default function CreditorDetails({
   const addNewCreditor = () => {
     const newCreditorData = {
       creditor: {
+        aggression: 0,
         accountTitle: "",
         paymentToken: "",
         paymentType: "",
@@ -104,11 +106,10 @@ export default function CreditorDetails({
       paidAmount: 0,
       remaining: 0,
       feePayment: "toPay",
-      creditor_aggression: "",
     };
 
     setFinalCaseData([...finalCaseData, newCreditorData]);
-    setDigitsList([...digitsList, Array(10).fill("")]);
+    setDigitsList([...digitsList, [0]]);
   };
 
   const handleDigitsChange = (caseIndex, newDigits) => {
@@ -124,6 +125,7 @@ export default function CreditorDetails({
       processedData = [
         {
           creditor: {
+            aggression: 0,
             accountTitle: "",
             paymentToken: "",
             paymentType: "",
@@ -155,12 +157,12 @@ export default function CreditorDetails({
           paidAmount: 0,
           remaining: 0,
           feePayment: "toPay",
-          creditor_aggression: "",
         },
       ];
     } else {
       processedData = creditors.map((creditor) => ({
         creditor: {
+          aggression: 0,
           accountTitle: creditor?.AccountTitle || "",
           paymentToken: "",
           paymentType: "",
@@ -198,7 +200,6 @@ export default function CreditorDetails({
               .replace(",", "")
           ) || 0,
         feePayment: "toPay",
-        creditor_aggression: "",
       }));
     }
 

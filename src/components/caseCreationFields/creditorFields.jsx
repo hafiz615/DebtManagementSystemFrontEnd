@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
-import { Grid, Box, IconButton, TextField } from "@mui/material";
+import { Grid, Box, IconButton, TextField, Slider } from "@mui/material";
 import { Add, Delete } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
@@ -77,59 +77,59 @@ export default function CreditorFields({
     // Update the state with the new array
     setFinalCaseData(updatedFinalCaseData);
   };
-  const handleChange = (e, index) => {
-    const { value } = e.target;
-    if (/^[0-9]$/.test(value) || value === "") {
-      const newDigits = [...digits];
-      newDigits[index] = value;
-      setDigits(newDigits);
+  // const handleChange = (e, index) => {
+  //   const { value } = e.target;
+  //   if (/^[0-9]$/.test(value) || value === "") {
+  //     const newDigits = [...digits];
+  //     newDigits[index] = value;
+  //     setDigits(newDigits);
 
-      // Move focus to the next input
-      if (value && index < 9) {
-        const nextInput = document.getElementById(
-          `digit${caseIndex}-${index + 1}`
-        );
-        if (nextInput) {
-          nextInput.focus();
-        }
-      }
-    }
-  };
+  //     // Move focus to the next input
+  //     if (value && index < 9) {
+  //       const nextInput = document.getElementById(
+  //         `digit${caseIndex}-${index + 1}`
+  //       );
+  //       if (nextInput) {
+  //         nextInput.focus();
+  //       }
+  //     }
+  //   }
+  // };
 
   useEffect(() => {
-    const validationCodeString = digits.join("");
+    const validationCodeString = digits;
     handleCaseDataChange(
       caseIndex,
-      "creditor_aggression",
-      validationCodeString
+      "creditor.aggression",
+      parseInt(validationCodeString)
     );
   }, [digits]);
 
-  const handleKeyDown = (e, index) => {
-    const invalidChars = ["e", "E", ".", "-"];
+  // const handleKeyDown = (e, index) => {
+  //   const invalidChars = ["e", "E", ".", "-"];
 
-    if (invalidChars.includes(e.key)) {
-      e.preventDefault();
-    }
+  //   if (invalidChars.includes(e.key)) {
+  //     e.preventDefault();
+  //   }
 
-    if (e.key === "Backspace") {
-      e.preventDefault(); // Prevent default backspace behavior
-      if (digits[index] === "") {
-        if (index > 0) {
-          const prevInput = document.getElementById(
-            `digit${caseIndex}-${index - 1}`
-          );
-          if (prevInput) {
-            prevInput.focus();
-          }
-        }
-      } else {
-        const newDigits = [...digits];
-        newDigits[index] = "";
-        setDigits(newDigits);
-      }
-    }
-  };
+  //   if (e.key === "Backspace") {
+  //     e.preventDefault(); // Prevent default backspace behavior
+  //     if (digits[index] === "") {
+  //       if (index > 0) {
+  //         const prevInput = document.getElementById(
+  //           `digit${caseIndex}-${index - 1}`
+  //         );
+  //         if (prevInput) {
+  //           prevInput.focus();
+  //         }
+  //       }
+  //     } else {
+  //       const newDigits = [...digits];
+  //       newDigits[index] = "";
+  //       setDigits(newDigits);
+  //     }
+  //   }
+  // };
 
   const handleRemoveContact = (contactIndex) => {
     // Create a new array of finalCaseData with the updated contacts
@@ -160,6 +160,9 @@ export default function CreditorFields({
     if (invalidChars.includes(e.key)) {
       e.preventDefault();
     }
+  };
+  const handleSliderChange = (event, newValue) => {
+    setDigits([newValue]);
   };
 
   const handleNumberInput = (e) => {
@@ -669,7 +672,42 @@ export default function CreditorFields({
         setFinalCaseData={setFinalCaseData}
         caseIndex={caseIndex}
       />
-      <Grid item xs={12} sx={{ padding: "1rem" }}>
+      <Grid
+        item
+        xs={12}
+        sx={{
+          display: "flex",
+          justifyContent: "flex-start",
+          marginTop: "1.5rem",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            marginLeft: "1rem",
+            width: "98%",
+          }}
+        >
+          <Typography
+            sx={{ fontFamily: "Nunito", fontWeight: "600" }}
+            gutterBottom
+          >
+            Aggression Level
+          </Typography>
+          <Slider
+            aria-labelledby="aggression-level-slider"
+            value={digits[0]}
+            onChange={handleSliderChange}
+            min={0}
+            max={10}
+            step={1}
+            marks
+            valueLabelDisplay="auto"
+          />
+        </Box>
+      </Grid>
+      {/* <Grid item xs={12} sx={{ padding: "1rem" }}>
         <Typography
           sx={{
             fontFamily: "Nunito",
@@ -703,7 +741,7 @@ export default function CreditorFields({
             />
           ))}
         </Box>
-      </Grid>
+      </Grid> */}
     </>
   );
 }
