@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
-import { Grid, Box, IconButton } from "@mui/material";
+import { Grid, Box, IconButton, TextField } from "@mui/material";
 import { Add, Delete } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
@@ -14,7 +14,6 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import PaymentFields from "../caseCreationFields/paymentFields";
 import Dropdown from "./../dropdown";
 import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
 
 export default function CreditorFields({
   debtorCaseData,
@@ -24,6 +23,8 @@ export default function CreditorFields({
   finalCaseData,
   caseIndex,
   error,
+  digits,
+  setDigits,
 }) {
   const accountMenuList =
     debtorCaseData &&
@@ -32,7 +33,9 @@ export default function CreditorFields({
       value: item,
       label: item,
     }));
+
   const [accountTitle, setAccountTitle] = useState("");
+  // const [digits, setDigits] = useState(Array(10).fill(""));
   // thisCaseData?.creditor?.accountTitle
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
@@ -73,6 +76,59 @@ export default function CreditorFields({
 
     // Update the state with the new array
     setFinalCaseData(updatedFinalCaseData);
+  };
+  const handleChange = (e, index) => {
+    const { value } = e.target;
+    if (/^[0-9]$/.test(value) || value === "") {
+      const newDigits = [...digits];
+      newDigits[index] = value;
+      setDigits(newDigits);
+
+      // Move focus to the next input
+      if (value && index < 9) {
+        const nextInput = document.getElementById(
+          `digit${caseIndex}-${index + 1}`
+        );
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    const validationCodeString = digits.join("");
+    handleCaseDataChange(
+      caseIndex,
+      "creditor_aggression",
+      validationCodeString
+    );
+  }, [digits]);
+
+  const handleKeyDown = (e, index) => {
+    const invalidChars = ["e", "E", ".", "-"];
+
+    if (invalidChars.includes(e.key)) {
+      e.preventDefault();
+    }
+
+    if (e.key === "Backspace") {
+      e.preventDefault(); // Prevent default backspace behavior
+      if (digits[index] === "") {
+        if (index > 0) {
+          const prevInput = document.getElementById(
+            `digit${caseIndex}-${index - 1}`
+          );
+          if (prevInput) {
+            prevInput.focus();
+          }
+        }
+      } else {
+        const newDigits = [...digits];
+        newDigits[index] = "";
+        setDigits(newDigits);
+      }
+    }
   };
 
   const handleRemoveContact = (contactIndex) => {
@@ -613,6 +669,41 @@ export default function CreditorFields({
         setFinalCaseData={setFinalCaseData}
         caseIndex={caseIndex}
       />
+      <Grid item xs={12} sx={{ padding: "1rem" }}>
+        <Typography
+          sx={{
+            fontFamily: "Nunito",
+            fontWeight: "600",
+            marginTop: "1rem",
+          }}
+          gutterBottom
+        >
+          Creditor Agression
+        </Typography>
+        <Box display="flex" gap={1}>
+          {digits?.map((digit, index) => (
+            <TextField
+              key={index}
+              id={`digit${caseIndex}-${index}`}
+              value={digit}
+              onChange={(e) => handleChange(e, index)}
+              inputProps={{
+                maxLength: 1,
+                style: { textAlign: "center", fontSize: "1rem" },
+              }}
+              sx={{
+                width: 30,
+                height: 30,
+                "& .MuiInputBase-input": {
+                  padding: 0.5,
+                  textAlign: "center",
+                },
+              }}
+              onKeyDown={(e) => handleKeyDown(e, index)}
+            />
+          ))}
+        </Box>
+      </Grid>
     </>
   );
 }
