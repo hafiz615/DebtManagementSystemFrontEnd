@@ -55,6 +55,12 @@ function CaseDetail() {
       setCaseData(caseDetails?.data?.data);
       dispatch(setCaseId(id));
       dispatch(setCaseCreditorId(caseDetails?.data?.data?.creditor?._id));
+    } else if (
+      caseDetails?.response?.status === 401 ||
+      caseDetails?.response?.status === 403
+    ) {
+      localStorage.clear();
+      navigate("/");
     }
     setLoading(false);
   };
@@ -72,6 +78,12 @@ function CaseDetail() {
     const casePayment = await GetCasePaymentById(rowId);
     if (casePayment?.status === 200) {
       setPaymentDetails(casePayment?.data?.data);
+    } else if (
+      casePayment?.response?.status === 401 ||
+      casePayment?.response?.status === 403
+    ) {
+      localStorage.clear();
+      navigate("/");
     }
     setIsPaymentLoading(false);
   };

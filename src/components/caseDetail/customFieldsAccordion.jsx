@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import {
   Typography,
@@ -15,6 +15,7 @@ import MuiModels from "../models";
 import { GetCustomFieldsByTarget } from "../../services/services";
 
 export default function CustomFieldsAccordion({ caseData, GetCaseDetails }) {
+  const navigate = useNavigate();
   const [customFieldsData, setCustomFieldsData] = useState([]);
   const customField = caseData?.customFields;
   const { id } = useParams();
@@ -22,6 +23,12 @@ export default function CustomFieldsAccordion({ caseData, GetCaseDetails }) {
     const result = await GetCustomFieldsByTarget("case");
     if (result?.status === 200) {
       setCustomFieldsData(result?.data?.data);
+    } else if (
+      result?.response?.status === 401 ||
+      result?.response?.status === 403
+    ) {
+      localStorage.clear();
+      navigate("/");
     }
   };
   useEffect(() => {

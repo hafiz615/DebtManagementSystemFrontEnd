@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Navigate, useNavigate } from "react-router";
 import { Grid, Typography, CircularProgress } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Colors } from "../config/default";
@@ -13,6 +14,7 @@ import ScrollbarStyles from "./customScroll";
 
 function HomeDetails() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const [homeData, setHomeData] = useState({});
@@ -69,6 +71,12 @@ function HomeDetails() {
           [key]: result?.data?.data?.payments[key],
         }));
         dispatch(get_payments(result?.data?.data?.payments));
+      } else if (
+        result?.response?.status === 401 ||
+        result?.response?.status === 403
+      ) {
+        localStorage.clear();
+        navigate("/");
       }
 
       if (isInitialLoad) {

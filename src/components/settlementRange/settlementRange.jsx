@@ -189,6 +189,12 @@ export default function SettlementRange() {
             resRanges?.data?.data?.justifications?.justification_llama ?? "",
         });
       }
+    } else if (
+      resSummary?.response?.status === 401 ||
+      resSummary?.response?.status === 403
+    ) {
+      localStorage.clear();
+      navigate("/");
     }
   };
 
@@ -234,6 +240,12 @@ export default function SettlementRange() {
 
           setAllCreditorsNames(creditorAccountTitles);
           showToast(settlementRangeData?.data?.message, "success");
+        } else if (
+          settlementRangeData?.response?.status === 401 ||
+          settlementRangeData?.response?.status === 403
+        ) {
+          localStorage.clear();
+          navigate("/");
         }
       }
     } catch (err) {

@@ -7,6 +7,7 @@ import {
   Grid,
   CircularProgress,
 } from "@mui/material";
+import { useNavigate } from "react-router";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
@@ -16,6 +17,7 @@ import Prompt from "../prompt";
 import ScrollbarStyles from "./../customScroll";
 
 export default function TaskAccordion({ caseData }) {
+  const navigate = useNavigate();
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
     return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
@@ -29,6 +31,12 @@ export default function TaskAccordion({ caseData }) {
     const tasksResult = await GetAllTasks(caseData?._id);
     if (tasksResult?.status === 200) {
       setTasksList(tasksResult?.data?.data || []);
+    } else if (
+      tasksResult?.response?.status === 401 ||
+      tasksResult?.response?.status === 403
+    ) {
+      localStorage.clear();
+      navigate("/");
     } else {
       const errorMessage = tasksResult?.response?.data?.message;
       showToast(errorMessage, "error");
