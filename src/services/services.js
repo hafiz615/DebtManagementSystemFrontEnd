@@ -57,7 +57,7 @@ export const ExtractContractData = async (files) => {
         },
       });
 
-      return response.data;
+      return response?.data?.extracted_fields;
     } catch (error) {
       console.error(`Error uploading ${file.name}:`, error);
       return {};
