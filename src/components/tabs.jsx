@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useSelector } from "react-redux";
 import { useEffect, useState, useMemo } from "react";
+import { useNavigate, useNavigation } from "react-router";
 
 import { Grid, IconButton, Typography, Menu, Box } from "@mui/material";
 
@@ -50,6 +51,7 @@ const columns = [
   },
 ];
 export default function CustomizedTabs() {
+  const navigate = useNavigate();
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
@@ -106,6 +108,12 @@ export default function CustomizedTabs() {
     if (users?.status === 200) {
       setUserArray(users?.data?.data?.users);
       setTotalData(users?.data?.data?.totalUsers);
+    } else if (
+      users?.response?.status === 401 ||
+      users?.response?.status === 403
+    ) {
+      localStorage.clear();
+      navigate("/");
     }
     setLoading(false);
   };

@@ -129,6 +129,12 @@ export default function CreditorList() {
     if (getCreditors?.status === 200) {
       setUserArray(getCreditors?.data?.data?.clientDetails);
       setTotalData(getCreditors?.data?.data?.creditorsCount);
+    } else if (
+      getCreditors?.response?.status === 401 ||
+      getCreditors?.response?.status === 403
+    ) {
+      localStorage.clear();
+      navigate("/");
     }
     setLoading(false);
   };

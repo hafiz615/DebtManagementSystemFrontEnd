@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { Navigate, useNavigate } from "react-router";
 
 import { Grid, Typography, Menu, IconButton } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -14,6 +15,7 @@ import TextButton from "./button";
 import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
 
 export default function AuthorizationDetails() {
+  const navigate = useNavigate();
   const [searchText, setSearchText] = useState("");
   const [data, setData] = useState({});
   const [value, setValue] = useState(0);
@@ -202,6 +204,10 @@ export default function AuthorizationDetails() {
     );
     setData(result?.data?.data?.payments);
     setTotalData(result?.data?.data?.counts[arrayName]);
+    if (result?.response?.status === 401 || result?.response?.status === 403) {
+      localStorage.clear();
+      navigate("/");
+    }
     setLoading(false);
   };
 

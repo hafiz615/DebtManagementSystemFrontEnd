@@ -1,5 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import { Box, Grid, Typography } from "@mui/material";
@@ -38,6 +39,7 @@ import MuiModels from "../models";
 import { isEmpty } from "lodash";
 
 export default function PipelineDetail() {
+  const navigate = useNavigate();
   const [pipelineType, setPipelineType] = useState("Board");
   const [pipelineNameArray, setPipelineNameArray] = useState([]);
   const [data, setData] = useState({});
@@ -68,17 +70,34 @@ export default function PipelineDetail() {
     const res = await GetAllUsers("", false, false);
     if (res?.status === 200) {
       setUsersArray(res?.data?.data?.users);
+    } else if (res?.response?.status === 401 || res?.response?.status === 403) {
+      localStorage.clear();
+      navigate("/");
     }
   };
 
   const getAllPipelinesNames = async () => {
     const resAllPipelines = await GetAllPipelines();
     setPipelineNameArray(resAllPipelines?.data?.data);
+    if (
+      resAllPipelines?.response?.status === 401 ||
+      resAllPipelines?.response?.status === 403
+    ) {
+      localStorage.clear();
+      navigate("/");
+    }
   };
 
   const getDebtors = async () => {
     const resDebtors = await GetAllDebtors();
     setAllDebtors(resDebtors?.data?.data);
+    if (
+      resDebtors?.response?.status === 401 ||
+      resDebtors?.response?.status === 403
+    ) {
+      localStorage.clear();
+      navigate("/");
+    }
   };
 
   const GetAllPipelineDetail = async (loadingBool) => {
@@ -88,6 +107,13 @@ export default function PipelineDetail() {
       const resPipelineDetail = await GetPipelinesDetails(id);
       if (resPipelineDetail?.status === 200) {
         setData(resPipelineDetail?.data?.data);
+      }
+      if (
+        resPipelineDetail?.response?.status === 401 ||
+        resPipelineDetail?.response?.status === 403
+      ) {
+        localStorage.clear();
+        navigate("/");
       }
       setLoading(false);
     }

@@ -205,6 +205,7 @@ export default function UserListTable({
                             id={row?.id}
                             handleUserDelete={handleUserDelete}
                             GetUsers={GetUsers}
+                            deleting="Delete User"
                           />
                         )}
                       </StyledTableCell>

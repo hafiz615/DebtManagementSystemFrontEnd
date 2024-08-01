@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 
 import { Grid, Typography } from "@mui/material";
 import { Colors } from "../../config/default";
@@ -15,6 +16,7 @@ import PipelineAccordion from "./pipelineAccordion";
 import RoleAndPermission from "./roleAndPermission";
 
 export default function SettingsScreen() {
+  const navigate = useNavigate();
   const settings = useSelector(
     (state) => state?.permissions?.permissions?.settings
   );
@@ -105,6 +107,13 @@ export default function SettingsScreen() {
   const getSettings = async () => {
     setLoading(true);
     const allSettings = await GetAllSettings();
+    if (
+      allSettings?.response?.status === 401 ||
+      allSettings?.response?.status === 403
+    ) {
+      localStorage.clear();
+      navigate("/");
+    }
     setfailedAuthorizations(
       allSettings?.data?.data?.paymentsAuthorizations?.failedAuthorizations
     );
