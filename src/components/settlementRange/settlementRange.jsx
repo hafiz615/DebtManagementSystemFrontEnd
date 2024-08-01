@@ -603,129 +603,138 @@ export default function SettlementRange() {
             >
               Creditors Contract Information
             </Typography>
-            {selectedCreditorDetails && (
-              <>
-                <Grid
-                  container
-                  item
-                  xs={12}
-                  sx={{ justifyContent: "space-between", mt: "1rem" }}
-                >
+            {selectedCreditorDetails &&
+              selectedCreditorDetails?.contractDetails && (
+                <>
                   <Grid
+                    container
                     item
                     xs={12}
-                    sm={5.8}
-                    md={3.8}
-                    lg={2.8}
-                    container
-                    sx={commonStyles}
+                    sx={{ justifyContent: "space-between", mt: "1rem" }}
                   >
-                    <Typography sx={commonTextStyles}> Loan Amount</Typography>
-                    <Typography
-                      sx={{
-                        ...commonTextStyles,
-                        color: Colors.SKY_BLUE,
-                      }}
+                    <Grid
+                      item
+                      xs={12}
+                      sm={5.8}
+                      md={3.8}
+                      lg={2.8}
+                      container
+                      sx={commonStyles}
                     >
-                      $
-                      {selectedCreditorDetails?.contractDetails?.loan_amount ||
-                        "--"}
-                    </Typography>
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    sm={5.8}
-                    md={3.8}
-                    lg={2.8}
-                    container
-                    sx={commonStyles}
-                  >
-                    <Typography sx={commonTextStyles}>
-                      Payable Amount
-                    </Typography>
-                    <Typography
-                      sx={{
-                        ...commonTextStyles,
-                        color: Colors.SKY_BLUE,
-                      }}
+                      <Typography sx={commonTextStyles}>
+                        {" "}
+                        Loan Amount
+                      </Typography>
+                      <Typography
+                        sx={{
+                          ...commonTextStyles,
+                          color: Colors.SKY_BLUE,
+                        }}
+                      >
+                        {selectedCreditorDetails?.contractDetails?.loan_amount
+                          ? selectedCreditorDetails.contractDetails.loan_amount.includes(
+                              "$"
+                            )
+                            ? selectedCreditorDetails.contractDetails
+                                .loan_amount
+                            : `$${selectedCreditorDetails.contractDetails.loan_amount}`
+                          : "--"}
+                      </Typography>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      sm={5.8}
+                      md={3.8}
+                      lg={2.8}
+                      container
+                      sx={commonStyles}
                     >
-                      {selectedCreditorDetails?.contractDetails
-                        ?.payable_amount || "--"}
-                    </Typography>
-                  </Grid>
+                      <Typography sx={commonTextStyles}>
+                        Payable Amount
+                      </Typography>
+                      <Typography
+                        sx={{
+                          ...commonTextStyles,
+                          color: Colors.SKY_BLUE,
+                        }}
+                      >
+                        {selectedCreditorDetails?.contractDetails
+                          ?.payable_amount || "--"}
+                      </Typography>
+                    </Grid>
 
-                  <Grid
-                    item
-                    xs={12}
-                    sm={5.8}
-                    md={3.8}
-                    lg={2.8}
-                    container
-                    sx={commonStyles}
-                  >
-                    <Typography sx={commonTextStyles}>
-                      Purchase price
-                    </Typography>
-                    <Typography
-                      sx={{
-                        ...commonTextStyles,
-                        color: Colors.SKY_BLUE,
-                      }}
+                    <Grid
+                      item
+                      xs={12}
+                      sm={5.8}
+                      md={3.8}
+                      lg={2.8}
+                      container
+                      sx={commonStyles}
                     >
-                      {selectedCreditorDetails?.contractDetails[
-                        "purchase price"
-                      ] || "--"}
-                    </Typography>
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    sm={5.8}
-                    md={3.8}
-                    lg={2.8}
-                    container
-                    sx={commonStyles}
-                  >
-                    <Typography sx={commonTextStyles}>
-                      Purchased Percentage
-                    </Typography>
-                    <Typography
-                      sx={{
-                        ...commonTextStyles,
-                        color: Colors.SKY_BLUE,
-                      }}
+                      <Typography sx={commonTextStyles}>
+                        Purchase price
+                      </Typography>
+                      <Typography
+                        sx={{
+                          ...commonTextStyles,
+                          color: Colors.SKY_BLUE,
+                        }}
+                      >
+                        {selectedCreditorDetails?.contractDetails[
+                          "purchase price"
+                        ] || "--"}
+                      </Typography>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      sm={5.8}
+                      md={3.8}
+                      lg={2.8}
+                      container
+                      sx={commonStyles}
                     >
-                      {selectedCreditorDetails?.contractDetails
-                        ?.purchased_percentage || "--"}
-                    </Typography>
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    sm={5.8}
-                    md={3.8}
-                    lg={2.8}
-                    style={{ marginTop: "1rem" }}
-                    container
-                    sx={commonStyles}
-                  >
-                    <Typography sx={commonTextStyles}>
-                      Repayment Amount
-                    </Typography>
-                    <Typography
-                      sx={{
-                        ...commonTextStyles,
-                        color: Colors.SKY_BLUE,
-                      }}
+                      <Typography sx={commonTextStyles}>
+                        Purchased Percentage
+                      </Typography>
+                      <Typography
+                        sx={{
+                          ...commonTextStyles,
+                          color: Colors.SKY_BLUE,
+                        }}
+                      >
+                        {selectedCreditorDetails?.contractDetails
+                          ?.purchased_percentage || "--"}
+                      </Typography>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      sm={5.8}
+                      md={3.8}
+                      lg={2.8}
+                      style={{ marginTop: "1rem" }}
+                      container
+                      sx={commonStyles}
                     >
-                      {selectedCreditorDetails?.contractDetails
-                        ?.repayment_amount || "--"}
-                    </Typography>
+                      <Typography sx={commonTextStyles}>
+                        Repayment Amount
+                      </Typography>
+                      <Typography
+                        sx={{
+                          ...commonTextStyles,
+                          color: Colors.SKY_BLUE,
+                        }}
+                      >
+                        {selectedCreditorDetails?.contractDetails
+                          ?.repayment_amount || "--"}
+                      </Typography>
+                    </Grid>
                   </Grid>
-                </Grid>
-              </>
-            )}
+                </>
+              )}
           </Grid>
           <Grid
             item
