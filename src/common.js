@@ -111,13 +111,11 @@ export const phoneNumberFormat = (phoneNumber) => {
   } else if (cleanedPhoneNumber.length === 11) {
     return "+" + cleanedPhoneNumber;
   }
-  return phoneNumber.startsWith("+")
-    ? phoneNumber
-    : "+" + cleanedPhoneNumber;
+  return phoneNumber.startsWith("+") ? phoneNumber : "+" + cleanedPhoneNumber;
 };
 export const sanitizeText = (input) => {
   const sanitizedInput = input.replace(/[^0-9]/g, ""); // Remove non-numeric characters
-  return sanitizedInput
+  return sanitizedInput;
 };
 
 export function formatDollarAmount(amount) {
@@ -139,13 +137,18 @@ export const swapKeysAndValues = (obj) => {
 export const formatDate = (value) => {
   if (!value) return "";
 
-  const dateFormats = ['MMM-dd-yyyy', 'MM/dd/yyyy', 'MMMM dd, yyyy', 'yyyy-MM-dd'];
+  const dateFormats = [
+    "MMM-dd-yyyy",
+    "MM/dd/yyyy",
+    "MMMM dd, yyyy",
+    "yyyy-MM-dd",
+  ];
   let parsedDate;
 
   for (const dateFormat of dateFormats) {
     parsedDate = parse(value, dateFormat, new Date());
     if (isValid(parsedDate)) {
-      return format(parsedDate, 'yyyy-MM-dd'); // Output format
+      return format(parsedDate, "yyyy-MM-dd"); // Output format
     }
   }
 
