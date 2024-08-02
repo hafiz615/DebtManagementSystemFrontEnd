@@ -90,7 +90,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
       <Grid
         item
         xs={12}
-        lg={3.6}
+        lg={4.6}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",
@@ -176,7 +176,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
       <Grid
         item
         xs={12}
-        lg={2}
+        lg={3}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",
@@ -253,7 +253,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
       <Grid
         item
         xs={12}
-        lg={3.5}
+        lg={4}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",

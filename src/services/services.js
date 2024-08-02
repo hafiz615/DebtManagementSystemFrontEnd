@@ -201,7 +201,7 @@ export const CreateCase = async (payload, bulk = false) => {
 export const UploadFiles = async (data) => {
   const formData = new FormData();
   for (let i = 0; i < data.length; i++) {
-    formData.append("files", data[i].file);
+    formData.append("files", data[i].file || data[i]);
   }
   try {
     return await axios.post(
@@ -959,6 +959,18 @@ export const DeleteTasks = async (id) => {
   try {
     return await axios.delete(
       BASE_URL + `/v1/task/deleteTask/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const AddDocumentToDebtor = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/addDocumentsToDebtor/${id}`,
+      payload,
       setHeaders()
     );
   } catch (error) {

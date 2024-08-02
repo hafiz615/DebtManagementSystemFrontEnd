@@ -14,6 +14,7 @@ import {
   Tab,
   Box,
   CircularProgress,
+  Hidden,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -34,6 +35,7 @@ import MuiModels from "../models.jsx";
 import ScrollbarStyles from "../customScroll.jsx";
 import TextButton from "../button.jsx";
 import { setCaseCreditorId, setCaseId } from "../../redux/action/action.js";
+import CaseFileCard from "./caseFileCard.jsx";
 
 function CaseDetail() {
   const navigate = useNavigate();
@@ -215,6 +217,24 @@ function CaseDetail() {
                       label="Creditor"
                       value="Creditor"
                     />
+                    <Tab
+                      sx={{
+                        fontWeight: "600",
+                        textTransform: "none",
+                        fontFamily: "Nunito",
+                      }}
+                      label="Other Creditors"
+                      value="Other Creditors"
+                    />
+                    <Tab
+                      sx={{
+                        fontWeight: "600",
+                        textTransform: "none",
+                        fontFamily: "Nunito",
+                      }}
+                      label="Files"
+                      value="Files"
+                    />
                   </Tabs>
                 </Box>
               </AccordionSummary>
@@ -238,108 +258,141 @@ function CaseDetail() {
                       caseData={caseData}
                       GetCaseDetails={GetCaseDetails}
                     />
-                  ) : (
+                  ) : value === "Creditor" ? (
                     <CreditorsDetailCards
                       caseData={caseData}
                       GetCaseDetails={GetCaseDetails}
                     />
-                  )}
-                  <Grid
-                    item
-                    xs={12}
-                    lg={2.5}
-                    sx={{
-                      backgroundColor: Colors.WHITE,
-                      borderRadius: "10px",
-                      padding: "0px 10px",
-                      height: "13rem",
-                      marginBottom: "0.5rem",
-                      overflowY: "auto",
-                      "&::-webkit-scrollbar": {
-                        width: "5px",
-                      },
-                      "&::-webkit-scrollbar-thumb": {
-                        backgroundColor: "#E5E5E5",
-                        borderRadius: "8px",
-                      },
-                      "&::-webkit-scrollbar-track": {
+                  ) : value === "Other Creditors" ? (
+                    <Grid
+                      item
+                      xs={12}
+                      sx={{
                         backgroundColor: Colors.WHITE,
-                        borderRadius: "8px",
-                      },
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
+                        borderRadius: "10px",
+                        padding: "0px 10px",
+                        height: "13rem",
+                        marginBottom: "0.5rem",
+                        overflowY: "auto",
+                        "&::-webkit-scrollbar": {
+                          width: "5px",
+                        },
+                        "&::-webkit-scrollbar-thumb": {
+                          backgroundColor: "#E5E5E5",
+                          borderRadius: "8px",
+                        },
+                        "&::-webkit-scrollbar-track": {
+                          backgroundColor: Colors.WHITE,
+                          borderRadius: "8px",
+                        },
                       }}
                     >
-                      <p
+                      <div
                         style={{
-                          fontWeight: "600",
-                          fontSize: "13px",
-                          fontFamily: "Nunito",
+                          display: "flex",
+                          justifyContent: "space-between",
                         }}
                       >
-                        Other Creditors
-                      </p>
-                      <Box sx={{ marginTop: "0.5rem" }}>
-                        <MuiModels
-                          show="addCase"
-                          width="80vw"
-                          height="80vh"
-                          caseData={caseData}
-                        />
-                      </Box>
-                    </div>
-                    {caseData?.creditors?.map((item, index) => {
-                      return (
-                        <Grid
-                          item
-                          xs={12}
-                          key={index}
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            backgroundColor:
-                              index % 2 === 0
-                                ? Colors.WHITE
-                                : "rgba(85, 148, 242, 0.06)",
-                            "&:hover": {
-                              backgroundColor: Colors.BG_LIGHT_GRAY,
-                            },
-                            cursor: "pointer",
-                            paddingRight: ".2rem",
-                            paddingLeft: ".2rem",
-                            height: "2rem",
-                            alignItems: "center",
+                        <p
+                          style={{
+                            fontWeight: "600",
+                            fontSize: "13px",
+                            fontFamily: "Nunito",
                           }}
-                          onClick={() => navigate(`/all-cases/${item?.caseId}`)}
                         >
-                          <span
-                            style={{
-                              color: Colors.DARK_GRAY,
-                              fontWeight: "700",
-                              fontFamily: "Nunito",
-                              fontSize: "11px",
+                          Other Creditors
+                        </p>
+                        <Box sx={{ marginTop: "0.5rem" }}>
+                          <MuiModels
+                            show="addCase"
+                            width="80vw"
+                            height="80vh"
+                            caseData={caseData}
+                          />
+                        </Box>
+                      </div>
+                      {caseData?.creditors?.map((item, index) => {
+                        console.log(item, "item");
+                        return (
+                          <Grid
+                            container
+                            key={index}
+                            sx={{
+                              display: "flex",
+                              backgroundColor:
+                                index % 2 === 0
+                                  ? Colors.WHITE
+                                  : "rgba(85, 148, 242, 0.06)",
+                              "&:hover": {
+                                backgroundColor: Colors.BG_LIGHT_GRAY,
+                              },
+                              cursor: "pointer",
+                              paddingRight: ".2rem",
+                              paddingLeft: ".2rem",
+                              height: "2rem",
+                              alignItems: "center",
                             }}
+                            onClick={() =>
+                              navigate(`/all-cases/${item?.caseId}`)
+                            }
                           >
-                            {item?.name}
-                          </span>
-                          <span
-                            style={{
-                              color: Colors.DIM_LIGHT_GRAY,
-                              fontWeight: "600",
-                              fontFamily: "Nunito",
-                              fontSize: "11px",
-                            }}
-                          >
-                            {item?.caseCode}
-                          </span>
-                        </Grid>
-                      );
-                    })}
-                  </Grid>
+                            <Grid item xs={12} md={8} lg={5}>
+                              <span
+                                style={{
+                                  color: Colors.DIM_LIGHT_GRAY,
+                                  fontWeight: "700",
+                                  fontFamily: "Nunito",
+                                  fontSize: "11px",
+                                }}
+                              >
+                                <Hidden mdDown>
+                                  <span
+                                    style={{
+                                      fontWeight: "700",
+                                      color: Colors.DARK_GRAY,
+                                      marginRight: "1rem",
+                                    }}
+                                  >
+                                    Name
+                                  </span>
+                                </Hidden>
+                                {item?.name}
+                              </span>
+                            </Grid>
+                            <Hidden mdDown>
+                              <Grid item xs={3} sm={4} lg={6}>
+                                <span
+                                  style={{
+                                    color: Colors.DIM_LIGHT_GRAY,
+                                    fontWeight: "600",
+                                    fontFamily: "Nunito",
+                                    fontSize: "11px",
+                                  }}
+                                >
+                                  <span
+                                    style={{
+                                      fontWeight: "700",
+                                      color: Colors.DARK_GRAY,
+                                      marginRight: "1rem",
+                                    }}
+                                  >
+                                    Case Code
+                                  </span>
+
+                                  {item?.caseCode}
+                                </span>
+                              </Grid>
+                            </Hidden>
+                          </Grid>
+                        );
+                      })}
+                    </Grid>
+                  ) : (
+                    <CaseFileCard
+                      caseData={caseData}
+                      GetCaseDetails={GetCaseDetails}
+                    />
+                  )}
                 </Grid>
               </AccordionDetails>
             </Accordion>

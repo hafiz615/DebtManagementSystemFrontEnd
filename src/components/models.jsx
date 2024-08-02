@@ -39,6 +39,7 @@ import { FONT_SIZE_XL } from "../constants/appConstants";
 import SendEmail from "./sendEmail";
 import CreateRole from "./settingsScreen/createRole";
 import DebtorContacts from "./caseDetail/debtorContacts";
+import UploadFilePopup from "./caseDetail/uploadFilePopup";
 
 export default function MuiModels({
   buttonName,
@@ -201,7 +202,7 @@ export default function MuiModels({
             sx={{ color: Colors.WHITE, fontSize: iconSize || "16px" }}
           />
         </IconButton>
-      ) : show === "addCase" ? (
+      ) : show === "addCase" || show === "uploadFile" ? (
         <IconButton
           onClick={() => {
             handleOpen();
@@ -564,6 +565,11 @@ export default function MuiModels({
             />
           ) : show === "sendEmail" ? (
             <SendEmail handleClose={handleClose} />
+          ) : show === "uploadFile" ? (
+            <UploadFilePopup
+              handleClose={handleClose}
+              GetCaseDetails={GetCaseDetails}
+            />
           ) : (
             ""
           )}
