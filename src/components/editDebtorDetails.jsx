@@ -179,7 +179,7 @@ export default function EditDebtorDetail({
         status: status,
         phone: debtorOwnDetails?.BasicPhoneNumber,
         address: debtorOwnDetails?.BasicAddress,
-        weeklyBudget: debtorOwnDetails?.BasicWeeklyBudget,
+        weeklyBudget: debtorOwnDetails?.BasicWeeklyBudget?.toString() || "",
       },
       businessInformation: {
         companyName: debtorBusinessDetails?.businessCompanyName,
@@ -499,7 +499,7 @@ export default function EditDebtorDetail({
             onChange={(e) =>
               handleOwnDetailsChange(
                 "BasicWeeklyBudget",
-                Number(e.target.value)
+                parseFloat(e.target.value)
               )
             }
           />
