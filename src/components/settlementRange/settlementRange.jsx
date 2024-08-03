@@ -280,7 +280,7 @@ export default function SettlementRange() {
             justifications3:
               settlementRangeData?.data?.data?.settlementRange?.justifications
                 ?.justification_llama ?? "",
-            justifications3:
+            justifications4:
               settlementRangeData?.data?.data?.settlementRange?.justifications
                 ?.justification_claude ?? "",
           });
