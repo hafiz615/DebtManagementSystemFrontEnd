@@ -352,7 +352,6 @@ function CaseDetail() {
                         </Box>
                       </div>
                       {caseData?.creditors?.map((item, index) => {
-                        console.log(item, "item");
                         return (
                           <Grid
                             container

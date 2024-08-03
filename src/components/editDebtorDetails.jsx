@@ -6,7 +6,7 @@ import { Colors } from "../config/default";
 import TextButton from "./button";
 import PaymentsTextFields from "./caseTextField";
 import Dropdown from "./dropdown";
-import { UpdateDebtor } from "../services/services";
+import { GetAllStatuses, UpdateDebtor } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import MuiPhoneTextField from "./muiPhoneText";
 import { PhoneValidation } from "../constants/appConstants";
@@ -18,15 +18,31 @@ export default function EditDebtorDetail({
   caseData,
   GetCaseDetails,
 }) {
+  const [menuItems, setMenuItems] = useState([]);
   const { id } = useParams();
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const { showToast } = useToast();
-  const menuItems = [
-    { label: "Customer", value: "Customer" },
-    { label: "On hold", value: "On hold" },
-    { label: "Canceled", value: "Canceled" },
-    { label: "Declared Bankruptcy", value: "Declared Bankruptcy" },
-  ];
+  // const menuItems = [
+  //   { label: "Customer", value: "Customer" },
+  //   { label: "On hold", value: "On hold" },
+  //   { label: "Canceled", value: "Canceled" },
+  //   { label: "Declared Bankruptcy", value: "Declared Bankruptcy" },
+  // ];
+  const GetStatuses = async () => {
+    const AllStatuses = await GetAllStatuses();
+    if (AllStatuses?.status === 200) {
+      setMenuItems(AllStatuses?.data?.data?.status);
+    }
+  };
+
+  const menu = menuItems?.map((name) => ({
+    label: name,
+    value: name,
+  }));
+
+  useEffect(() => {
+    GetStatuses();
+  }, []);
 
   const debtorBasicInfo = caseData?.debtor?.basicInformation;
   const debtorBusinessInfo = caseData?.debtor?.businessInformation;
@@ -373,7 +389,7 @@ export default function EditDebtorDetail({
             Status*
           </Typography>
           <Dropdown
-            menuItems={menuItems}
+            menuItems={menu}
             placeholder="Choose Status"
             backgroundColor={Colors.BG_LIGHT_GRAY}
             hoverColor={Colors.BG_LIGHT_GRAY}
