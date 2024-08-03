@@ -44,6 +44,7 @@ export default function NavBar({ onClick }) {
         sx={{
           backgroundColor: Colors.NAVY_BLUE,
           height: "4rem",
+          zIndex:1
         }}
       >
         <Toolbar>

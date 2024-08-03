@@ -13,6 +13,7 @@ import {
   IconButton,
   CircularProgress,
   Box,
+  Paper,
 } from "@mui/material";
 import {
   FONT_SIZE_SMALL,
@@ -37,6 +38,7 @@ import MuiModels from "../models";
 import CheckboxAutocomplete from "../checkboxAutocomplete";
 import { useParams } from "react-router-dom";
 import { ErrorOutline } from "@mui/icons-material";
+import { isEmpty } from "lodash";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -44,6 +46,41 @@ const AntTabs = styled(Tabs)({
     backgroundColor: Colors.SKY_BLUE,
   },
 });
+
+const dummyData = [
+  { id: 1, sender: "bot", message: "Hello! How can I help you today?" },
+  {
+    id: 2,
+    sender: "user",
+    message: " Sure! We offer a variety ",
+ },
+  {
+    id: 3,
+    sender: "bot",
+    message: "Sure! We offer a variety of services including...",
+  },
+];
+
+const ScrollbarStyles1 = {
+  "&::-webkit-scrollbar": {
+    width: "0.4em",
+  },
+  "&::-webkit-scrollbar-track": {
+    background: "#f1f1f1",
+  },
+  "&::-webkit-scrollbar-thumb": {
+    backgroundColor: "#888",
+    borderRadius: "10px",
+    border: "3px solid #f1f1f1",
+  },
+};
+
+const Colors1 = {
+  WHITE: "#ffffff",
+  LIGHT_GREY: "#f1f1f1",
+  BOT_MESSAGE_BG: "#e1f5fe",
+  USER_MESSAGE_BG: "#c8e6c9",
+};
 
 const AntTab = styled((props) => <Tab disableRipple {...props} />)(
   ({ theme }) => ({
@@ -136,7 +173,7 @@ export default function SettlementRange() {
   const [scores, setScores] = useState(null);
   const [debtor, setDebtor] = useState({});
   const [justifications, setJustifications] = useState({
-    justifications1: "",
+    justifications1: "hello",
     justifications2: "",
     justifications3: "",
   });
@@ -146,6 +183,16 @@ export default function SettlementRange() {
   const extraSmallScreen = useMediaQuery(
     "(min-width:300px) and (max-width:900px)"
   );
+
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    // Simulate loading data
+    setTimeout(() => {
+      setMessages(dummyData);
+      setTableLoading(false);
+    }, 2000);
+  }, []);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -187,6 +234,8 @@ export default function SettlementRange() {
             resRanges?.data?.data?.justifications?.justification_gpt4_o ?? "",
           justifications3:
             resRanges?.data?.data?.justifications?.justification_llama ?? "",
+          justifications4:
+            resRanges?.data?.data?.justifications?.justification_claude ?? "",
         });
       }
     } else if (
@@ -237,7 +286,9 @@ export default function SettlementRange() {
           const creditorAccountTitles = allCreditors?.map(
             (item) => item.creditorAccountTitle
           );
-
+          if (!isEmpty(creditorAccountTitles)) {
+            creditorAccountTitles.push("Summary");
+          }
           setAllCreditorsNames(creditorAccountTitles);
           showToast(settlementRangeData?.data?.message, "success");
         } else if (
@@ -660,7 +711,14 @@ export default function SettlementRange() {
                         }}
                       >
                         {selectedCreditorDetails?.contractDetails
-                          ?.payable_amount || "--"}
+                          ?.payable_amount
+                          ? `${selectedCreditorDetails.contractDetails.payable_amount}`.includes(
+                              "$"
+                            )
+                            ? selectedCreditorDetails.contractDetails
+                                .payable_amount
+                            : `$${selectedCreditorDetails.contractDetails.payable_amount}`
+                          : "--"}
                       </Typography>
                     </Grid>
 
@@ -684,7 +742,15 @@ export default function SettlementRange() {
                       >
                         {selectedCreditorDetails?.contractDetails[
                           "purchase price"
-                        ] || "--"}
+                        ]
+                          ? `${selectedCreditorDetails.contractDetails["purchase price"]}`.includes(
+                              "$"
+                            )
+                            ? selectedCreditorDetails.contractDetails[
+                                "purchase price"
+                              ]
+                            : `$${selectedCreditorDetails.contractDetails["purchase price"]}`
+                          : "--"}
                       </Typography>
                     </Grid>
                     <Grid
@@ -752,6 +818,15 @@ export default function SettlementRange() {
                   <SettlementCards
                     key={index}
                     title={item}
+                    weeksTillPaidTitle={
+                      item === "recommendation 1"
+                        ? "Weeks remaining based on recommendation 1"
+                        : item === "recommendation 2"
+                        ? "Weeks remaining based on recommendation 2"
+                        : item === "recommendation 3"
+                        ? "Weeks remaining based on recommendation 3"
+                        : ""
+                    }
                     settlementRange={
                       apiData?.settlement_range?.[
                         allCreditorNames[parseInt(tabValue)]
@@ -772,6 +847,11 @@ export default function SettlementRange() {
                     }
                     percentageSettlementOverWeeklyTrueRevenue={
                       apiData?.percentage_settlement_over_weekly_true_revenue?.[
+                        allCreditorNames[parseInt(tabValue)]
+                      ] || null
+                    }
+                    weeksTillPaid={
+                      apiData?.weeks_till_paid?.[
                         allCreditorNames[parseInt(tabValue)]
                       ] || null
                     }
@@ -863,6 +943,16 @@ export default function SettlementRange() {
                 }}
                 label="llama"
               />
+
+              <AntTab
+                sx={{
+                  bgcolor: Colors.WHITE,
+                  width: "max-content",
+                  fontWeight: "600",
+                  height: "3.5rem",
+                }}
+                label="Claude"
+              />
             </AntTabs>
           </Grid>
           <Grid
@@ -871,8 +961,8 @@ export default function SettlementRange() {
             sx={{
               height: "40vh",
               overflowY: "auto",
-              backgroundColor: Colors.WHITE,
-              ...ScrollbarStyles,
+              backgroundColor: Colors1.WHITE,
+              ...ScrollbarStyles1,
               padding: "16px",
             }}
           >
@@ -892,8 +982,28 @@ export default function SettlementRange() {
               </Grid>
             ) : (
               <ReactMarkdown>
-                {justifications[`justifications${value + 1}`]}
-              </ReactMarkdown>
+              {justifications[`justifications${value + 1}`]}
+            </ReactMarkdown>
+              // <Grid container direction="column" spacing={2}>
+              //   {messages.map((msg) => (
+              //     <Grid item key={msg.id}>
+              //       <Paper
+              //         sx={{
+              //           padding: "10px",
+              //           backgroundColor:
+              //             msg.sender === "bot"
+              //               ? Colors1.BOT_MESSAGE_BG
+              //               : Colors1.USER_MESSAGE_BG,
+              //           alignSelf:
+              //             msg.sender === "bot" ? "flex-start" : "flex-end",
+              //           maxWidth: "80%",
+              //         }}
+              //       >
+              //         <Typography variant="body1">{msg.message}</Typography>
+              //       </Paper>
+              //     </Grid>
+              //   ))}
+              // </Grid>
             )}
           </Grid>
           <Grid
