@@ -29,14 +29,15 @@ const convertJpgToPdf = async (file) => {
 };
 
 export const ExtractContractData = async (files) => {
-  const processFile = async (file) => {
-    try {
-      const apiUrl =
-        "https://dms-negotiation.hpdemos.co/extract-fields?enable_cache=false";
+  console.log("filesfilesfiles", files);
+  try {
+    const apiUrl =
+      "https://dms-ai.hpdemos.co/extract-fields-multiple-files?enable_cache=true";
 
-      const formData = new FormData();
+    const formData = new FormData();
+
+    files.map(async (file) => {
       let processedFile = file.file;
-
       // Check if the file is a JPG and convert to PDF if true
       if (file.file.type === "image/jpeg") {
         processedFile = await convertJpgToPdf(file.file);
@@ -49,30 +50,22 @@ export const ExtractContractData = async (files) => {
       });
 
       formData.append("MCA_pdf", cleanedFile);
+    });
 
-      const response = await axios.post(apiUrl, formData, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "multipart/form-data",
-        },
-      });
+    const response = await axios.post(apiUrl, formData, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
-      return response?.data?.extracted_fields;
-    } catch (error) {
-      console.error(`Error uploading ${file.name}:`, error);
-      return {};
-    }
-  };
+    return response?.data?.extracted_fields;
+  } catch (error) {
+    console.error(`Error uploading`, error);
+    return {};
+  }
 
-  const results = await Promise.all(
-    files.map((file) => {
-      if (!isEmpty(file)) {
-        return processFile(file);
-      }
-      return file;
-    })
-  );
-  return results;
+  // return results;
 };
 
 export const SignIn = async (payload) => {
