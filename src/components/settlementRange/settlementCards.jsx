@@ -12,6 +12,8 @@ export default function SettlementCards({
   newDefaultRiskScore,
   percentageSettlementOverWeeklyBudget,
   percentageSettlementOverWeeklyTrueRevenue,
+  weeksTillPaid,
+  weeksTillPaidTitle,
 }) {
   const commonStyles = {
     backgroundColor: Colors.WHITE,
@@ -47,14 +49,25 @@ export default function SettlementCards({
     newDefaultRiskScore,
     percentageSettlementOverWeeklyBudget,
     percentageSettlementOverWeeklyTrueRevenue,
+    weeksTillPaid,
   ];
 
   const rangeNames = [
-    { label: "Settlement Range", tooltip: "Settlement Range" },
-    { label: "Commission Range", tooltip: "Commission Range" },
-    { label: "New Default Risk", tooltip: "ew Default Risk" },
+    { label: "Settlement Range", tooltip: "Suggested weekly payment amount" },
+    {
+      label: "Commission Range",
+      tooltip: "Amount that will be saved as commission",
+    },
+    {
+      label: "New Default Risk",
+      tooltip: "Clients risk score with this payment plan",
+    },
     { label: "Weekly Budget %", tooltip: "Weekly Budget %" },
     { label: "Weekly True Revenue %", tooltip: "Weekly True Revenue %" },
+    {
+      label: "Weeks Till Paid",
+      tooltip: "Number of weeks to complete payment",
+    },
   ];
 
   function capitalizeFirstWord(text) {
@@ -69,7 +82,8 @@ export default function SettlementCards({
     !commissionRange &&
     !newDefaultRiskScore &&
     !percentageSettlementOverWeeklyBudget &&
-    !percentageSettlementOverWeeklyTrueRevenue;
+    !percentageSettlementOverWeeklyTrueRevenue &&
+    !weeksTillPaid;
 
   return (
     <Grid item xs={12} sm={5.8} md={3.8} lg={3.8} container sx={commonStyles}>
@@ -121,11 +135,17 @@ export default function SettlementCards({
                   Minimum
                 </div>
                 <div style={textStyles}>
-                  {rangeNames[index]?.label === "New Default Risk"
-                    ? item?.[title]?.[1] || "-"
+                  {rangeNames[index]?.label === "Weeks Till Paid"
+                    ? rangeNames[index]?.label === "Weeks Till Paid"
+                      ? item?.[weeksTillPaidTitle]?.["max"]
+                      : ""
+                    : rangeNames[index]?.label === "New Default Risk"
+                    ? item?.[title]?.["max"] || "-"
                     : rangeNames[index]?.label?.includes("%")
-                    ? `${item?.[title]?.[0] || "-"}%`
-                    : `$${item?.[title]?.[0] || "-"}`}
+                    ? `${parseFloat(item?.[title]?.["max"].toFixed(2)) || "-"}%`
+                    : `$${
+                        parseFloat(item?.[title]?.["max"].toFixed(2)) || "-"
+                      }`}
                 </div>
               </div>
               <div style={{ width: "100%", display: "flex" }}>
@@ -139,11 +159,17 @@ export default function SettlementCards({
                   Maximum
                 </div>
                 <div style={textStyles}>
-                  {rangeNames[index]?.label === "New Default Risk"
-                    ? item?.[title]?.[0] || "-"
+                  {rangeNames[index]?.label === "Weeks Till Paid"
+                    ? rangeNames[index]?.label === "Weeks Till Paid"
+                      ? item?.[weeksTillPaidTitle]?.["min"]
+                      : ""
+                    : rangeNames[index]?.label === "New Default Risk"
+                    ? item?.[title]?.["min"] || "-"
                     : rangeNames[index]?.label?.includes("%")
-                    ? `${item?.[title]?.[1] || "-"}%`
-                    : `$${item?.[title]?.[1] || "-"}`}
+                    ? `${parseFloat(item?.[title]?.["min"].toFixed(2)) || "-"}%`
+                    : `$${
+                        parseFloat(item?.[title]?.["min"].toFixed(2)) || "-"
+                      }`}
                 </div>
               </div>
             </Grid>

@@ -977,3 +977,26 @@ export const AddDocumentToDebtor = async (id, payload) => {
     return error;
   }
 };
+
+export const AddNotesCase = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/case/addNotes/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getCaseSummaries = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/case/getCaseSummaries/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
