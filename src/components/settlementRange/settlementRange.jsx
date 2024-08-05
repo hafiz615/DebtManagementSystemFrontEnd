@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+
 import {
   Grid,
   Typography,
@@ -17,6 +18,7 @@ import {
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import {
+  FONT_SIZE_LARGE,
   FONT_SIZE_SMALL,
   FONT_SIZE_XL,
   PAGE_HEIGHT,
@@ -24,7 +26,7 @@ import {
 } from "../../constants/appConstants";
 import { Colors } from "../../config/default";
 import ScrollbarStyles from "../customScroll";
-import { Download, PeopleAlt, Send } from "@mui/icons-material";
+import { Download, PeopleAlt, Send, WifiFind } from "@mui/icons-material";
 import TextButton from "../button";
 import SettlementCards from "./settlementCards";
 import {
@@ -32,6 +34,8 @@ import {
   GetScores,
   GetSettlementRange,
   GetSummary,
+  GetLumpSumAmount,
+  GetFullProfit,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import { generatePdfFromApiData } from "../../common";
@@ -40,6 +44,9 @@ import CheckboxAutocomplete from "../checkboxAutocomplete";
 import { useParams } from "react-router-dom";
 import { ErrorOutline } from "@mui/icons-material";
 import { isEmpty } from "lodash";
+import CaseCustomField from "../caseCustomField";
+import LumpsumpCard from "./lumpsumpCard";
+import FullProfitCard from "./fullProfitCard";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -169,10 +176,16 @@ export default function SettlementRange() {
   const [apiData, setApiData] = useState(null);
   const [creditorNames, setCreditorNames] = useState([]);
   const [allCreditorNames, setAllCreditorsNames] = useState([]);
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   const [creditorSelect, setCreditorSelect] = useState([]);
   const [scores, setScores] = useState(null);
   const [debtor, setDebtor] = useState({});
+  const [debtorId, setDebtorId] = useState("");
+  const [lumpSumpData, setLumpSumpData] = useState({});
+
+  const [fullProfit, setFullProfit] = useState({});
+
   const [justifications, setJustifications] = useState({
     justifications1: "hello",
     justifications2: "",
@@ -191,9 +204,45 @@ export default function SettlementRange() {
   // const [strategyTabVal, setStrategyTabVal] = useState(0);
   const handleStrategyChange = (event, newValue) => {
     setStrategyTab(newValue);
-    console.log(`Tab ${newValue} clicked`);
+
     // Add your custom logic here
   };
+
+  useEffect(() => {
+    // Simulate loading data
+    setTimeout(() => {
+      setMessages(dummyData);
+      setTableLoading(false);
+    }, 2000);
+  }, []);
+
+  const GetLumpSumAmountData = async () => {
+    if (debtorId) {
+      const GetLumpSumDataRes = await GetLumpSumAmount(debtorId);
+
+      if (GetLumpSumDataRes?.status === 200) {
+        setLumpSumpData(GetLumpSumDataRes?.data?.data);
+      } else {
+        const errorMessage = GetLumpSumDataRes?.response?.data?.message;
+        showToast(errorMessage, "error");
+      }
+    }
+  };
+  const GetFullProfitData = async () => {
+    if (debtorId) {
+      const GetFullProfitDataRes = await GetFullProfit(debtorId);
+      if (GetFullProfitDataRes?.status === 200) {
+        setFullProfit(GetFullProfitDataRes?.data?.data);
+      } else {
+        const errorMessage = GetFullProfitDataRes?.response?.data?.message;
+        showToast(errorMessage, "error");
+      }
+    }
+  };
+  useEffect(() => {
+    GetLumpSumAmountData();
+    GetFullProfitData();
+  }, [debtorId]);
   const tabs = ["Strategy 1", "Strategy 2", "Strategy 3"];
   const recommendations = [
     "recommendation 1",
@@ -201,23 +250,33 @@ export default function SettlementRange() {
     "recommendation 3",
   ];
 
-  // const cardData = {
-  //   0: [
-  //     { id: 1, title: "Strategy 1 - Card 1", content: "Content for Card 1" },
-  //     { id: 2, title: "Strategy 1 - Card 2", content: "Content for Card 2" },
-  //     { id: 3, title: "Strategy 1 - Card 3", content: "Content for Card 3" },
-  //   ],
-  //   1: [
-  //     { id: 1, title: "Strategy 2 - Card 1", content: "Content for Card 1" },
-  //     { id: 2, title: "Strategy 2 - Card 2", content: "Content for Card 2" },
-  //     { id: 3, title: "Strategy 2 - Card 3", content: "Content for Card 3" },
-  //   ],
-  //   2: [
-  //     { id: 1, title: "Strategy 3 - Card 1", content: "Content for Card 1" },
-  //     { id: 2, title: "Strategy 3 - Card 2", content: "Content for Card 2" },
-  //     { id: 3, title: "Strategy 3 - Card 3", content: "Content for Card 3" },
-  //   ],
-  // };
+  const cardStyles = {
+    backgroundColor: Colors.WHITE,
+    borderRadius: "10px",
+    flexDirection: "column",
+    gap: "10px",
+    mb: "1rem",
+    pb: "1.2rem",
+  };
+  const commTextStyles = {
+    fontSize: FONT_SIZE_LARGE,
+    fontFamily: "Nunito",
+    fontWeight: "700",
+  };
+
+  const textStyles = {
+    fontSize: FONT_SIZE_LARGE,
+    fontFamily: "Nunito",
+    color: Colors.DARK_GRAY,
+  };
+
+  const lineStyle = {
+    width: "100%",
+    height: "1px",
+    backgroundColor: "#EAEBEB",
+    margin: "8px 0",
+  };
+
   const cardData = {
     0: recommendations?.map((item, index) => (
       // <Grid item lg={12} key={index}>
@@ -259,51 +318,14 @@ export default function SettlementRange() {
         />
       </>
     )),
-    1: [
-      { id: 1, title: "Strategy 2 - Card 1", content: "Content for Card 1" },
-      { id: 2, title: "Strategy 2 - Card 2", content: "Content for Card 2" },
-      { id: 3, title: "Strategy 2 - Card 3", content: "Content for Card 3" },
-    ].map((card) => (
-      <Grid item xs={4} key={card.id}>
-        <div
-          style={{
-            padding: "1rem",
-            backgroundColor: Colors.LIGHT_GREY,
-            borderRadius: "5px",
-          }}
-        >
-          <h3>{card?.title}</h3>
-          <p>{card?.content}</p>
-        </div>
-      </Grid>
-    )),
-    2: [
-      { id: 1, title: "Strategy 3 - Card 1", content: "Content for Card 1" },
-      { id: 2, title: "Strategy 3 - Card 2", content: "Content for Card 2" },
-      { id: 3, title: "Strategy 3 - Card 3", content: "Content for Card 3" },
-    ]?.map((card) => (
-      <Grid item xs={4} key={card.id}>
-        <div
-          style={{
-            padding: "1rem",
-            backgroundColor: Colors.LIGHT_GREY,
-            borderRadius: "5px",
-          }}
-        >
-          <h3>{card?.title}</h3>
-          <p>{card?.content}</p>
-        </div>
-      </Grid>
-    )),
-  };
+    1: (
+      <>
+        <LumpsumpCard lumpSumpData={lumpSumpData} />
+      </>
+    ),
 
-  useEffect(() => {
-    // Simulate loading data
-    setTimeout(() => {
-      setMessages(dummyData);
-      setTableLoading(false);
-    }, 2000);
-  }, []);
+    2: <FullProfitCard fullProfit={fullProfit} />,
+  };
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -358,13 +380,14 @@ export default function SettlementRange() {
     }
   };
 
-  const GetAllRanges = async (creditors) => {
+  const GetAllRanges = async (creditors, status) => {
     setLoading(true);
     try {
       if (caseId) {
         const settlementRangeData = await GetSettlementRangeWithScores(
           creditors,
-          caseId
+          caseId,
+          status
         );
 
         if (settlementRangeData?.status === 200) {
@@ -380,6 +403,7 @@ export default function SettlementRange() {
             setScores(settlementRangeData?.data?.data?.getScores);
           }
           setDebtor(settlementRangeData?.data?.data?.debtor?.basicInformation);
+          setDebtorId(settlementRangeData?.data?.data?.debtor?._id);
           setApiData(settlementRangeData?.data?.data?.settlementRange);
           setJustifications({
             justifications1:
@@ -421,18 +445,18 @@ export default function SettlementRange() {
     }
   };
 
-  const handleUpdate = async () => {
+  const handleUpdate = async (status) => {
     const selectedCreditorIds = creditorSelect?.map(
       (creditor) => creditor.creditorId
     );
     const params = {
       creditorNames: selectedCreditorIds,
     };
-    GetAllRanges(params);
+    GetAllRanges(params, status);
   };
 
   useEffect(() => {
-    GetAllRanges([]);
+    GetAllRanges([], false);
   }, []);
 
   const handleGeneratePdf = () => {
@@ -503,8 +527,15 @@ export default function SettlementRange() {
         }}
       >
         <Grid item xs={12} lg={6}>
-          <IconButton>
-            <RefreshIcon sx={{ color: Colors.SKY_BLUE, fontSize: "2rem" }} />
+          <IconButton
+            onClick={() => handleUpdate(true)}
+            disabled={buttonLoading}
+          >
+            {buttonLoading ? (
+              <CircularProgress size={24} sx={{ color: Colors.SKY_BLUE }} />
+            ) : (
+              <RefreshIcon sx={{ color: Colors.SKY_BLUE, fontSize: "2rem" }} />
+            )}
           </IconButton>
         </Grid>
         <Grid

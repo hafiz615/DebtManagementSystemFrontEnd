@@ -85,8 +85,8 @@ function CaseDetail() {
       setCaseData(caseDetails?.data?.data);
       dispatch(setCaseId(id));
       dispatch(setCaseCreditorId(caseDetails?.data?.data?.creditor?._id));
-      setCaseSummary(caseDetails?.data?.data?.notes)
-    } else if ( 
+      setCaseSummary(caseDetails?.data?.data?.notes);
+    } else if (
       caseDetails?.response?.status === 401 ||
       caseDetails?.response?.status === 403
     ) {
@@ -358,7 +358,6 @@ function CaseDetail() {
                         </Box>
                       </div>
                       {caseData?.creditors?.map((item, index) => {
-                        console.log(item, "item");
                         return (
                           <Grid
                             container
