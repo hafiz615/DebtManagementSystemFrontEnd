@@ -634,6 +634,14 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
             (value) => value === "" || value == null
           );
         };
+        finalCaseData.forEach((item) => {
+          if (
+            item.creditor.aggression === null ||
+            isNaN(item.creditor.aggression)
+          ) {
+            item.creditor.aggression = 0;
+          }
+        });
 
         const res = await CreateCreditorCase(
           { data: finalCaseData },
