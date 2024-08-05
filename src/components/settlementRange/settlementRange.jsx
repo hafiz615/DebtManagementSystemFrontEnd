@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+
 import {
   Grid,
   Typography,
@@ -15,7 +16,9 @@ import {
   Box,
   Paper,
 } from "@mui/material";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import {
+  FONT_SIZE_LARGE,
   FONT_SIZE_SMALL,
   FONT_SIZE_XL,
   PAGE_HEIGHT,
@@ -23,7 +26,7 @@ import {
 } from "../../constants/appConstants";
 import { Colors } from "../../config/default";
 import ScrollbarStyles from "../customScroll";
-import { Download, PeopleAlt, Send } from "@mui/icons-material";
+import { Download, PeopleAlt, Send, WifiFind } from "@mui/icons-material";
 import TextButton from "../button";
 import SettlementCards from "./settlementCards";
 import {
@@ -31,6 +34,8 @@ import {
   GetScores,
   GetSettlementRange,
   GetSummary,
+  GetLumpSumAmount,
+  GetFullProfit,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import { generatePdfFromApiData } from "../../common";
@@ -39,6 +44,9 @@ import CheckboxAutocomplete from "../checkboxAutocomplete";
 import { useParams } from "react-router-dom";
 import { ErrorOutline } from "@mui/icons-material";
 import { isEmpty } from "lodash";
+import CaseCustomField from "../caseCustomField";
+import LumpsumpCard from "./lumpsumpCard";
+import FullProfitCard from "./fullProfitCard";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -168,10 +176,16 @@ export default function SettlementRange() {
   const [apiData, setApiData] = useState(null);
   const [creditorNames, setCreditorNames] = useState([]);
   const [allCreditorNames, setAllCreditorsNames] = useState([]);
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   const [creditorSelect, setCreditorSelect] = useState([]);
   const [scores, setScores] = useState(null);
   const [debtor, setDebtor] = useState({});
+  const [debtorId, setDebtorId] = useState("");
+  const [lumpSumpData, setLumpSumpData] = useState({});
+
+  const [fullProfit, setFullProfit] = useState({});
+
   const [justifications, setJustifications] = useState({
     justifications1: "hello",
     justifications2: "",
@@ -186,6 +200,14 @@ export default function SettlementRange() {
 
   const [messages, setMessages] = useState([]);
 
+  const [strategyTab, setStrategyTab] = useState(0);
+  // const [strategyTabVal, setStrategyTabVal] = useState(0);
+  const handleStrategyChange = (event, newValue) => {
+    setStrategyTab(newValue);
+
+    // Add your custom logic here
+  };
+
   useEffect(() => {
     // Simulate loading data
     setTimeout(() => {
@@ -193,6 +215,117 @@ export default function SettlementRange() {
       setTableLoading(false);
     }, 2000);
   }, []);
+
+  const GetLumpSumAmountData = async () => {
+    if (debtorId) {
+      const GetLumpSumDataRes = await GetLumpSumAmount(debtorId);
+
+      if (GetLumpSumDataRes?.status === 200) {
+        setLumpSumpData(GetLumpSumDataRes?.data?.data);
+      } else {
+        const errorMessage = GetLumpSumDataRes?.response?.data?.message;
+        showToast(errorMessage, "error");
+      }
+    }
+  };
+  const GetFullProfitData = async () => {
+    if (debtorId) {
+      const GetFullProfitDataRes = await GetFullProfit(debtorId);
+      if (GetFullProfitDataRes?.status === 200) {
+        setFullProfit(GetFullProfitDataRes?.data?.data);
+      } else {
+        const errorMessage = GetFullProfitDataRes?.response?.data?.message;
+        showToast(errorMessage, "error");
+      }
+    }
+  };
+  useEffect(() => {
+    GetLumpSumAmountData();
+    GetFullProfitData();
+  }, [debtorId]);
+  const tabs = ["Strategy 1", "Strategy 2", "Strategy 3"];
+  const recommendations = [
+    "recommendation 1",
+    "recommendation 2",
+    "recommendation 3",
+  ];
+
+  const cardStyles = {
+    backgroundColor: Colors.WHITE,
+    borderRadius: "10px",
+    flexDirection: "column",
+    gap: "10px",
+    mb: "1rem",
+    pb: "1.2rem",
+  };
+  const commTextStyles = {
+    fontSize: FONT_SIZE_LARGE,
+    fontFamily: "Nunito",
+    fontWeight: "700",
+  };
+
+  const textStyles = {
+    fontSize: FONT_SIZE_LARGE,
+    fontFamily: "Nunito",
+    color: Colors.DARK_GRAY,
+  };
+
+  const lineStyle = {
+    width: "100%",
+    height: "1px",
+    backgroundColor: "#EAEBEB",
+    margin: "8px 0",
+  };
+
+  const cardData = {
+    0: recommendations?.map((item, index) => (
+      // <Grid item lg={12} key={index}>
+      <>
+        <SettlementCards
+          title={item}
+          weeksTillPaidTitle={
+            item === "recommendation 1"
+              ? "Weeks remaining based on recommendation 1"
+              : item === "recommendation 2"
+              ? "Weeks remaining based on recommendation 2"
+              : item === "recommendation 3"
+              ? "Weeks remaining based on recommendation 3"
+              : ""
+          }
+          settlementRange={
+            apiData?.settlement_range?.[allCreditorNames[parseInt(tabValue)]] ||
+            null
+          }
+          commissionRange={
+            apiData?.commission_range?.[allCreditorNames[parseInt(tabValue)]] ||
+            null
+          }
+          newDefaultRiskScore={apiData?.new_default_risk_score || null}
+          percentageSettlementOverWeeklyBudget={
+            apiData?.percentage_settlement_over_weekly_budget?.[
+              allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          percentageSettlementOverWeeklyTrueRevenue={
+            apiData?.percentage_settlement_over_weekly_true_revenue?.[
+              allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          weeksTillPaid={
+            apiData?.weeks_till_paid?.[allCreditorNames[parseInt(tabValue)]] ||
+            null
+          }
+        />
+      </>
+    )),
+    1: (
+      <>
+        <LumpsumpCard lumpSumpData={lumpSumpData} />
+      </>
+    ),
+
+    2: <FullProfitCard fullProfit={fullProfit} />,
+  };
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -247,13 +380,14 @@ export default function SettlementRange() {
     }
   };
 
-  const GetAllRanges = async (creditors) => {
+  const GetAllRanges = async (creditors, status) => {
     setLoading(true);
     try {
       if (caseId) {
         const settlementRangeData = await GetSettlementRangeWithScores(
           creditors,
-          caseId
+          caseId,
+          status
         );
 
         if (settlementRangeData?.status === 200) {
@@ -262,13 +396,14 @@ export default function SettlementRange() {
             setScores({ message: settlementRangeData?.data?.data?.getScores });
             showToast(
               settlementRangeData?.data?.data?.getScores +
-              " Couldn't fetch scores",
+                " Couldn't fetch scores",
               "error"
             );
           } else {
             setScores(settlementRangeData?.data?.data?.getScores);
           }
           setDebtor(settlementRangeData?.data?.data?.debtor?.basicInformation);
+          setDebtorId(settlementRangeData?.data?.data?.debtor?._id);
           setApiData(settlementRangeData?.data?.data?.settlementRange);
           setJustifications({
             justifications1:
@@ -310,18 +445,18 @@ export default function SettlementRange() {
     }
   };
 
-  const handleUpdate = async () => {
+  const handleUpdate = async (status) => {
     const selectedCreditorIds = creditorSelect?.map(
       (creditor) => creditor.creditorId
     );
     const params = {
       creditorNames: selectedCreditorIds,
     };
-    GetAllRanges(params);
+    GetAllRanges(params, status);
   };
 
   useEffect(() => {
-    GetAllRanges([]);
+    GetAllRanges([], false);
   }, []);
 
   const handleGeneratePdf = () => {
@@ -388,19 +523,37 @@ export default function SettlementRange() {
         xs={12}
         sx={{
           display: "flex",
-          justifyContent: { xs: "flex-start", sm: "flex-end" },
           marginTop: "1.5rem",
         }}
       >
-        <Typography
-          sx={{
-            fontFamily: "Nunito",
-            fontWeight: "500",
-            color: Colors.DARK_GRAY,
-          }}
+        <Grid item xs={12} lg={6}>
+          <IconButton
+            onClick={() => handleUpdate(true)}
+            disabled={buttonLoading}
+          >
+            {buttonLoading ? (
+              <CircularProgress size={24} sx={{ color: Colors.SKY_BLUE }} />
+            ) : (
+              <RefreshIcon sx={{ color: Colors.SKY_BLUE, fontSize: "2rem" }} />
+            )}
+          </IconButton>
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          lg={6}
+          sx={{ display: "flex", justifyContent: "flex-end" }}
         >
-          {AUTHORITY_TEXT} <span>{role}</span>
-        </Typography>
+          <Typography
+            sx={{
+              fontFamily: "Nunito",
+              fontWeight: "500",
+              color: Colors.DARK_GRAY,
+            }}
+          >
+            {AUTHORITY_TEXT} <span>{role}</span>
+          </Typography>
+        </Grid>
       </Grid>
       {loading ? (
         <Grid
@@ -550,10 +703,10 @@ export default function SettlementRange() {
               value={
                 apiData?.weekly_budget?.[allCreditorNames[parseInt(tabValue)]]
                   ? `$ ${new Intl.NumberFormat().format(
-                    apiData?.weekly_budget?.[
-                    allCreditorNames[parseInt(tabValue)]
-                    ]
-                  )}`
+                      apiData?.weekly_budget?.[
+                        allCreditorNames[parseInt(tabValue)]
+                      ]
+                    )}`
                   : "No Data"
               }
               rawValue={apiData?.weekly_budget}
@@ -565,8 +718,8 @@ export default function SettlementRange() {
               value={
                 apiData?.weekly_true_revenue
                   ? `$ ${new Intl.NumberFormat().format(
-                    apiData?.weekly_true_revenue
-                  )}`
+                      apiData?.weekly_true_revenue
+                    )}`
                   : "No Data"
               }
               rawValue={apiData?.weekly_true_revenue}
@@ -577,8 +730,8 @@ export default function SettlementRange() {
               value={
                 apiData?.profitability
                   ? `${new Intl.NumberFormat().format(
-                    apiData?.profitability
-                  )} %`
+                      apiData?.profitability
+                    )} %`
                   : "No Data"
               }
               rawValue={apiData?.profitability}
@@ -611,7 +764,45 @@ export default function SettlementRange() {
               </>
             )}
           </Grid>
-
+          <Grid
+            container
+            item
+            xs={12}
+            sx={{
+              width: widthStyling,
+              mt: "1rem",
+              backgroundColor: Colors.WHITE,
+            }}
+          >
+            <AntTabs
+              value={strategyTab}
+              onChange={handleStrategyChange}
+              aria-label="strategy tabs"
+              variant="scrollable"
+              scrollButtons="auto"
+              sx={{
+                minWidth: "100%",
+                borderTopLeftRadius: "10px",
+                borderTopRightRadius: "10px",
+              }}
+            >
+              {tabs?.map((item, index) => (
+                <AntTab
+                  key={index}
+                  sx={{
+                    bgcolor: Colors.WHITE,
+                    width: "max-content",
+                    fontWeight: "600",
+                    height: "3.5rem",
+                  }}
+                  label={item}
+                />
+              ))}
+            </AntTabs>
+          </Grid>
+          {/* <Grid container xs={12} spacing={2} sx={{ padding: "1rem" }}> */}
+          {/* <>{cardData[strategyTab]}</> */}
+          {/* </Grid> */}
           <Grid
             item
             xs={12}
@@ -687,10 +878,10 @@ export default function SettlementRange() {
                       >
                         {selectedCreditorDetails?.contractDetails?.loan_amount
                           ? selectedCreditorDetails.contractDetails.loan_amount.includes(
-                            "$"
-                          )
+                              "$"
+                            )
                             ? selectedCreditorDetails.contractDetails
-                              .loan_amount
+                                .loan_amount
                             : `$${selectedCreditorDetails.contractDetails.loan_amount}`
                           : "--"}
                       </Typography>
@@ -716,10 +907,10 @@ export default function SettlementRange() {
                         {selectedCreditorDetails?.contractDetails
                           ?.payable_amount
                           ? `${selectedCreditorDetails.contractDetails.payable_amount}`.includes(
-                            "$"
-                          )
+                              "$"
+                            )
                             ? selectedCreditorDetails.contractDetails
-                              .payable_amount
+                                .payable_amount
                             : `$${selectedCreditorDetails.contractDetails.payable_amount}`
                           : "--"}
                       </Typography>
@@ -747,11 +938,11 @@ export default function SettlementRange() {
                           "purchase price"
                         ]
                           ? `${selectedCreditorDetails.contractDetails["purchase price"]}`.includes(
-                            "$"
-                          )
+                              "$"
+                            )
                             ? selectedCreditorDetails.contractDetails[
-                            "purchase price"
-                            ]
+                                "purchase price"
+                              ]
                             : `$${selectedCreditorDetails.contractDetails["purchase price"]}`
                           : "--"}
                       </Typography>
@@ -806,8 +997,8 @@ export default function SettlementRange() {
               )}
           </Grid>
           <Grid
-            item
             container
+            item
             xs={12}
             sx={{
               borderRadius: "10px",
@@ -815,7 +1006,8 @@ export default function SettlementRange() {
               justifyContent: "space-between",
             }}
           >
-            {["recommendation 1", "recommendation 2", "recommendation 3"]?.map(
+            {cardData[strategyTab]}
+            {/* {["recommendation 1", "recommendation 2", "recommendation 3"]?.map(
               (item, index) => {
                 return (
                   <SettlementCards
@@ -825,19 +1017,19 @@ export default function SettlementRange() {
                       item === "recommendation 1"
                         ? "Weeks remaining based on recommendation 1"
                         : item === "recommendation 2"
-                          ? "Weeks remaining based on recommendation 2"
-                          : item === "recommendation 3"
-                            ? "Weeks remaining based on recommendation 3"
-                            : ""
+                        ? "Weeks remaining based on recommendation 2"
+                        : item === "recommendation 3"
+                        ? "Weeks remaining based on recommendation 3"
+                        : ""
                     }
                     settlementRange={
                       apiData?.settlement_range?.[
-                      allCreditorNames[parseInt(tabValue)]
+                        allCreditorNames[parseInt(tabValue)]
                       ] || null
                     }
                     commissionRange={
                       apiData?.commission_range?.[
-                      allCreditorNames[parseInt(tabValue)]
+                        allCreditorNames[parseInt(tabValue)]
                       ] || null
                     }
                     newDefaultRiskScore={
@@ -845,23 +1037,23 @@ export default function SettlementRange() {
                     }
                     percentageSettlementOverWeeklyBudget={
                       apiData?.percentage_settlement_over_weekly_budget?.[
-                      allCreditorNames[parseInt(tabValue)]
+                        allCreditorNames[parseInt(tabValue)]
                       ] || null
                     }
                     percentageSettlementOverWeeklyTrueRevenue={
                       apiData?.percentage_settlement_over_weekly_true_revenue?.[
-                      allCreditorNames[parseInt(tabValue)]
+                        allCreditorNames[parseInt(tabValue)]
                       ] || null
                     }
                     weeksTillPaid={
                       apiData?.weeks_till_paid?.[
-                      allCreditorNames[parseInt(tabValue)]
+                        allCreditorNames[parseInt(tabValue)]
                       ] || null
                     }
                   />
                 );
               }
-            )}
+            )} */}
           </Grid>
           <Grid
             item

@@ -62,8 +62,14 @@ export default function SettlementCards({
       label: "New Default Risk",
       tooltip: "Clients risk score with this payment plan",
     },
-    { label: "Weekly Budget %", tooltip: "Settlement shown as percentage of weekly budget" },
-    { label: "Weekly True Revenue %", tooltip: "Settlement shown as percentage of weekly true revenue" },
+    {
+      label: "Weekly Budget %",
+      tooltip: "Settlement shown as percentage of weekly budget",
+    },
+    {
+      label: "Weekly True Revenue %",
+      tooltip: "Settlement shown as percentage of weekly true revenue",
+    },
     {
       label: "Weeks Till Paid",
       tooltip: "Number of weeks to complete payment",

@@ -32,7 +32,7 @@ export default function CheckboxAutocomplete({
     "creditorId" in options[0];
 
   const handleUpdateClick = () => {
-    handleUpdate();
+    handleUpdate(false);
     if (autocompleteRef.current) {
       autocompleteRef.current.blur();
     }

@@ -29,7 +29,6 @@ const convertJpgToPdf = async (file) => {
 };
 
 export const ExtractContractData = async (files) => {
-  console.log("filesfilesfiles", files);
   try {
     const apiUrl =
       "https://dms-ai.hpdemos.co/extract-fields-multiple-files?enable_cache=true";
@@ -820,11 +819,13 @@ export const GetRoleByName = async (name) => {
   }
 };
 
-export const GetSettlementRangeWithScores = async (payload, id) => {
+export const GetSettlementRangeWithScores = async (payload, id, status) => {
   try {
     return await axios.post(
       BASE_URL +
-        `/v1/case/getScoresSettlementRange/${id}?all=${isEmpty(payload)}`,
+        `/v1/case/getScoresSettlementRange/${id}?all=${isEmpty(
+          payload
+        )}&hardReload=${status}`,
       payload,
       setHeaders()
     );
@@ -987,6 +988,28 @@ export const getCaseSummaries = async (id) => {
   try {
     return await axios.get(
       BASE_URL + `/v1/case/getCaseSummaries/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetLumpSumAmount = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/debtor/getLumpSumAmount/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetFullProfit = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/debtor/getFullProfitSettlement/${id}`,
       setHeaders()
     );
   } catch (error) {
