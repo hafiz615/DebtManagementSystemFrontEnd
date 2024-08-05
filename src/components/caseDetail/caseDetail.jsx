@@ -85,7 +85,8 @@ function CaseDetail() {
       setCaseData(caseDetails?.data?.data);
       dispatch(setCaseId(id));
       dispatch(setCaseCreditorId(caseDetails?.data?.data?.creditor?._id));
-    } else if (
+      setCaseSummary(caseDetails?.data?.data?.notes)
+    } else if ( 
       caseDetails?.response?.status === 401 ||
       caseDetails?.response?.status === 403
     ) {
