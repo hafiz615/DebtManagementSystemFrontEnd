@@ -143,14 +143,14 @@ export default function SettlementCards({
                 <div style={textStyles}>
                   {rangeNames[index]?.label === "Weeks Till Paid"
                     ? rangeNames[index]?.label === "Weeks Till Paid"
-                      ? item?.[weeksTillPaidTitle]?.["max"] || item?.[weeksTillPaidTitle][0]
+                      ? item?.[weeksTillPaidTitle]?.["min"] || item?.[weeksTillPaidTitle][1]
                       : ""
                     : rangeNames[index]?.label === "New Default Risk"
-                    ? item?.[title]?.["max"] || "-"
+                    ? item?.[title]?.["min"] || "-"
                     : rangeNames[index]?.label?.includes("%")
-                    ? `${parseFloat(item?.[title]?.["max"].toFixed(2)) || "-"}%`
+                    ? `${parseFloat(item?.[title]?.["min"].toFixed(2)) || "-"}%`
                     : `$${
-                        parseFloat(item?.[title]?.["max"].toFixed(2)) || "-"
+                        parseFloat(item?.[title]?.["min"].toFixed(2)) || "-"
                       }`}
                 </div>
               </div>
@@ -167,14 +167,14 @@ export default function SettlementCards({
                 <div style={textStyles}>
                   {rangeNames[index]?.label === "Weeks Till Paid"
                     ? rangeNames[index]?.label === "Weeks Till Paid"
-                      ? item?.[weeksTillPaidTitle]?.["min"] || item?.[weeksTillPaidTitle][1]
+                      ? item?.[weeksTillPaidTitle]?.["max"] || item?.[weeksTillPaidTitle][0]
                       : ""
                     : rangeNames[index]?.label === "New Default Risk"
-                    ? item?.[title]?.["min"] || "-"
+                    ? item?.[title]?.["max"] || "-"
                     : rangeNames[index]?.label?.includes("%")
-                    ? `${parseFloat(item?.[title]?.["min"].toFixed(2)) || "-"}%`
+                    ? `${parseFloat(item?.[title]?.["max"].toFixed(2)) || "-"}%`
                     : `$${
-                        parseFloat(item?.[title]?.["min"].toFixed(2)) || "-"
+                        parseFloat(item?.[title]?.["max"].toFixed(2)) || "-"
                       }`}
                 </div>
               </div>
