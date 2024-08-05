@@ -953,7 +953,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
                   handleNext();
                 }}
                 marginRight={smallScreen ? "8px" : "1rem"}
-                disabled={disableButton || loading}
+                // disabled={disableButton || loading}
               />
             </Grid>
           </Grid>
