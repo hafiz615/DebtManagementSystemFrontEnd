@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+
 import {
   Grid,
   Typography,
@@ -13,8 +14,11 @@ import {
   IconButton,
   CircularProgress,
   Box,
+  Paper,
 } from "@mui/material";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import {
+  FONT_SIZE_LARGE,
   FONT_SIZE_SMALL,
   FONT_SIZE_XL,
   PAGE_HEIGHT,
@@ -22,7 +26,7 @@ import {
 } from "../../constants/appConstants";
 import { Colors } from "../../config/default";
 import ScrollbarStyles from "../customScroll";
-import { Download, PeopleAlt, Send } from "@mui/icons-material";
+import { Download, PeopleAlt, Send, WifiFind } from "@mui/icons-material";
 import TextButton from "../button";
 import SettlementCards from "./settlementCards";
 import {
@@ -30,6 +34,8 @@ import {
   GetScores,
   GetSettlementRange,
   GetSummary,
+  GetLumpSumAmount,
+  GetFullProfit,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import { generatePdfFromApiData } from "../../common";
@@ -37,6 +43,10 @@ import MuiModels from "../models";
 import CheckboxAutocomplete from "../checkboxAutocomplete";
 import { useParams } from "react-router-dom";
 import { ErrorOutline } from "@mui/icons-material";
+import { isEmpty } from "lodash";
+import CaseCustomField from "../caseCustomField";
+import LumpsumpCard from "./lumpsumpCard";
+import FullProfitCard from "./fullProfitCard";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -44,6 +54,41 @@ const AntTabs = styled(Tabs)({
     backgroundColor: Colors.SKY_BLUE,
   },
 });
+
+const dummyData = [
+  { id: 1, sender: "bot", message: "Hello! How can I help you today?" },
+  {
+    id: 2,
+    sender: "user",
+    message: " Sure! We offer a variety ",
+  },
+  {
+    id: 3,
+    sender: "bot",
+    message: "Sure! We offer a variety of services including...",
+  },
+];
+
+const ScrollbarStyles1 = {
+  "&::-webkit-scrollbar": {
+    width: "0.4em",
+  },
+  "&::-webkit-scrollbar-track": {
+    background: "#f1f1f1",
+  },
+  "&::-webkit-scrollbar-thumb": {
+    backgroundColor: "#888",
+    borderRadius: "10px",
+    border: "3px solid #f1f1f1",
+  },
+};
+
+const Colors1 = {
+  WHITE: "#ffffff",
+  LIGHT_GREY: "#f1f1f1",
+  BOT_MESSAGE_BG: "#e1f5fe",
+  USER_MESSAGE_BG: "#c8e6c9",
+};
 
 const AntTab = styled((props) => <Tab disableRipple {...props} />)(
   ({ theme }) => ({
@@ -123,6 +168,10 @@ export default function SettlementRange() {
   const { caseId } = useParams();
   const { showToast } = useToast();
   const [value, setValue] = useState(0);
+  const [justificationValue, setJustificationValue] = useState(
+    "justification_gemini"
+  );
+
   const [tabValue, setTabValue] = useState(0);
   const [errorMessage, setErrorMessage] = useState(null);
   const [inputValue, setInputValue] = useState("");
@@ -131,14 +180,23 @@ export default function SettlementRange() {
   const [apiData, setApiData] = useState(null);
   const [creditorNames, setCreditorNames] = useState([]);
   const [allCreditorNames, setAllCreditorsNames] = useState([]);
+  const [buttonLoading, setButtonLoading] = useState(false);
+
   const [creditorSelect, setCreditorSelect] = useState([]);
   const [scores, setScores] = useState(null);
   const [debtor, setDebtor] = useState({});
+  const [debtorId, setDebtorId] = useState("");
+  const [lumpSumpData, setLumpSumpData] = useState({});
+
+  const [fullProfit, setFullProfit] = useState({});
+
   const [justifications, setJustifications] = useState({
-    justifications1: "",
-    justifications2: "",
-    justifications3: "",
+    justification_claude: "",
+    justification_gemini: "",
+    justification_gpt4_o: "",
+    justification_llama: ""
   });
+
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const drawerOpen = useSelector((state) => state.drawer.open);
   const { AUTHORITY_TEXT } = UserListPage;
@@ -146,6 +204,182 @@ export default function SettlementRange() {
     "(min-width:300px) and (max-width:900px)"
   );
 
+  const [messages, setMessages] = useState([]);
+
+  const [strategyTab, setStrategyTab] = useState(0);
+
+  // const [strategyTabVal, setStrategyTabVal] = useState(0);
+  const handleStrategyChange = (event, newValue) => {
+    setStrategyTab(newValue);
+    setValue(0);
+  };
+
+  useEffect(() => {
+    // Simulate loading data
+    setTimeout(() => {
+      setMessages(dummyData);
+      setTableLoading(false);
+    }, 2000);
+  }, []);
+
+  const GetLumpSumAmountData = async () => {
+    if (debtorId) {
+      const GetLumpSumDataRes = await GetLumpSumAmount(debtorId);
+
+      if (GetLumpSumDataRes?.status === 200) {
+        setLumpSumpData(GetLumpSumDataRes?.data?.data);
+      } else {
+        const errorMessage = GetLumpSumDataRes?.response?.data?.message;
+        showToast(errorMessage, "error");
+      }
+    }
+  };
+  const GetFullProfitData = async () => {
+    if (debtorId) {
+      const GetFullProfitDataRes = await GetFullProfit(debtorId);
+      if (GetFullProfitDataRes?.status === 200) {
+        setFullProfit(GetFullProfitDataRes?.data?.data);
+      } else {
+        const errorMessage = GetFullProfitDataRes?.response?.data?.message;
+        showToast(errorMessage, "error");
+      }
+    }
+  };
+  useEffect(() => {
+    GetLumpSumAmountData();
+    GetFullProfitData();
+  }, [debtorId]);
+  const tabs = ["Strategy 1", "Strategy 2", "Strategy 3"];
+  const recommendations = [
+    "recommendation 1",
+    "recommendation 2",
+    "recommendation 3",
+  ];
+  const strat3Recommendations = ["recommendation 1"]
+
+  const cardStyles = {
+    backgroundColor: Colors.WHITE,
+    borderRadius: "10px",
+    flexDirection: "column",
+    gap: "10px",
+    mb: "1rem",
+    pb: "1.2rem",
+  };
+  const commTextStyles = {
+    fontSize: FONT_SIZE_LARGE,
+    fontFamily: "Nunito",
+    fontWeight: "700",
+  };
+
+  const textStyles = {
+    fontSize: FONT_SIZE_LARGE,
+    fontFamily: "Nunito",
+    color: Colors.DARK_GRAY,
+  };
+
+  const lineStyle = {
+    width: "100%",
+    height: "1px",
+    backgroundColor: "#EAEBEB",
+    margin: "8px 0",
+  };
+
+  const cardData = {
+    0: recommendations?.map((item, index) => (
+      // <Grid item lg={12} key={index}>
+      <>
+        <SettlementCards
+          title={item}
+          weeksTillPaidTitle={
+            item === "recommendation 1"
+              ? "Weeks remaining based on recommendation 1"
+              : item === "recommendation 2"
+                ? "Weeks remaining based on recommendation 2"
+                : item === "recommendation 3"
+                  ? "Weeks remaining based on recommendation 3"
+                  : ""
+          }
+          settlementRange={
+            apiData?.settlement_range?.[allCreditorNames[parseInt(tabValue)]] ||
+            null
+          }
+          commissionRange={
+            apiData?.commission_range?.[allCreditorNames[parseInt(tabValue)]] ||
+            null
+          }
+          newDefaultRiskScore={apiData?.new_default_risk_score || null}
+          percentageSettlementOverWeeklyBudget={
+            apiData?.percentage_settlement_over_weekly_budget?.[
+            allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          percentageSettlementOverWeeklyTrueRevenue={
+            apiData?.percentage_settlement_over_weekly_true_revenue?.[
+            allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          weeksTillPaid={
+            apiData?.weeks_till_paid?.[allCreditorNames[parseInt(tabValue)]] ||
+            null
+          }
+        />
+      </>
+    )),
+    1: (
+      <>
+        <LumpsumpCard lumpSumpData={lumpSumpData} />
+      </>
+    ),
+
+    2: strat3Recommendations?.map((item, index) => (
+      <>
+        {fullProfit && <SettlementCards
+          isFullPayment={true}
+          title={item}
+          weeksTillPaidTitle={
+            item === "recommendation 1"
+              ? "Weeks remaining based on recommendation 1"
+              : ""
+          }
+          settlementRange={
+            fullProfit?.settlement_range?.[allCreditorNames[parseInt(tabValue)]] ||
+            null
+          }
+          commissionRange={
+            fullProfit?.commission_range?.[allCreditorNames[parseInt(tabValue)]] ||
+            null
+          }
+          newDefaultRiskScore={fullProfit?.new_default_risk_score || {"recommendation 1": ["-", "-"]}}
+          percentageSettlementOverWeeklyBudget={
+            fullProfit?.percentage_settlement_over_weekly_budget?.[
+            allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          percentageSettlementOverWeeklyTrueRevenue={
+            fullProfit?.percentage_settlement_over_weekly_true_revenue?.[
+            allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          weeksTillPaid={
+            fullProfit?.weeks_till_paid?.[allCreditorNames[parseInt(tabValue)]] ||
+            null
+          }
+        />
+        }
+      </>
+    ))
+  };
+  useEffect(() => {
+    if (value === 0) {
+      setJustificationValue("justification_gemini");
+    } else if (value === 1) {
+      setJustificationValue("justification_gpt4_o");
+    } else if (value === 2) {
+      setJustificationValue("justification_llama");
+    } else if (value === 3) {
+      setJustificationValue("justification_claude");
+    }
+  }, [value]);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -153,6 +387,11 @@ export default function SettlementRange() {
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
+  const currentCreditor = allCreditorNames[tabValue];
+
+  const selectedCreditorDetails = creditorNames?.find(
+    (item) => item?.creditorAccountTitle === currentCreditor
+  );
 
   const handleInputChange = (e) => {
     const { value } = e.target;
@@ -181,18 +420,27 @@ export default function SettlementRange() {
             resRanges?.data?.data?.justifications?.justification_gpt4_o ?? "",
           justifications3:
             resRanges?.data?.data?.justifications?.justification_llama ?? "",
+          justifications4:
+            resRanges?.data?.data?.justifications?.justification_claude ?? "",
         });
       }
+    } else if (
+      resSummary?.response?.status === 401 ||
+      resSummary?.response?.status === 403
+    ) {
+      localStorage.clear();
+      navigate("/");
     }
   };
 
-  const GetAllRanges = async (creditors) => {
+  const GetAllRanges = async (creditors, status) => {
     setLoading(true);
     try {
       if (caseId) {
         const settlementRangeData = await GetSettlementRangeWithScores(
           creditors,
-          caseId
+          caseId,
+          status
         );
 
         if (settlementRangeData?.status === 200) {
@@ -201,13 +449,14 @@ export default function SettlementRange() {
             setScores({ message: settlementRangeData?.data?.data?.getScores });
             showToast(
               settlementRangeData?.data?.data?.getScores +
-                " Couldn't fetch scores",
+              " Couldn't fetch scores",
               "error"
             );
           } else {
             setScores(settlementRangeData?.data?.data?.getScores);
           }
           setDebtor(settlementRangeData?.data?.data?.debtor?.basicInformation);
+          setDebtorId(settlementRangeData?.data?.data?.debtor?._id);
           setApiData(settlementRangeData?.data?.data?.settlementRange);
           setJustifications({
             justifications1:
@@ -219,15 +468,26 @@ export default function SettlementRange() {
             justifications3:
               settlementRangeData?.data?.data?.settlementRange?.justifications
                 ?.justification_llama ?? "",
+            justifications4:
+              settlementRangeData?.data?.data?.settlementRange?.justifications
+                ?.justification_claude ?? "",
           });
           const allCreditors = settlementRangeData?.data?.data?.creditors;
           setCreditorNames(allCreditors);
           const creditorAccountTitles = allCreditors?.map(
             (item) => item.creditorAccountTitle
           );
-
+          if (!isEmpty(creditorAccountTitles)) {
+            creditorAccountTitles.push("Summary");
+          }
           setAllCreditorsNames(creditorAccountTitles);
           showToast(settlementRangeData?.data?.message, "success");
+        } else if (
+          settlementRangeData?.response?.status === 401 ||
+          settlementRangeData?.response?.status === 403
+        ) {
+          localStorage.clear();
+          navigate("/");
         }
       }
     } catch (err) {
@@ -238,18 +498,18 @@ export default function SettlementRange() {
     }
   };
 
-  const handleUpdate = async () => {
+  const handleUpdate = async (status) => {
     const selectedCreditorIds = creditorSelect?.map(
       (creditor) => creditor.creditorId
     );
     const params = {
       creditorNames: selectedCreditorIds,
     };
-    GetAllRanges(params);
+    GetAllRanges(params, status);
   };
 
   useEffect(() => {
-    GetAllRanges([]);
+    GetAllRanges([], false);
   }, []);
 
   const handleGeneratePdf = () => {
@@ -316,19 +576,37 @@ export default function SettlementRange() {
         xs={12}
         sx={{
           display: "flex",
-          justifyContent: { xs: "flex-start", sm: "flex-end" },
           marginTop: "1.5rem",
         }}
       >
-        <Typography
-          sx={{
-            fontFamily: "Nunito",
-            fontWeight: "500",
-            color: Colors.DARK_GRAY,
-          }}
+        <Grid item xs={12} lg={6}>
+          <IconButton
+            onClick={() => handleUpdate(true)}
+            disabled={buttonLoading}
+          >
+            {buttonLoading ? (
+              <CircularProgress size={24} sx={{ color: Colors.SKY_BLUE }} />
+            ) : (
+              <RefreshIcon sx={{ color: Colors.SKY_BLUE, fontSize: "2rem" }} />
+            )}
+          </IconButton>
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          lg={6}
+          sx={{ display: "flex", justifyContent: "flex-end" }}
         >
-          {AUTHORITY_TEXT} <span>{role}</span>
-        </Typography>
+          <Typography
+            sx={{
+              fontFamily: "Nunito",
+              fontWeight: "500",
+              color: Colors.DARK_GRAY,
+            }}
+          >
+            {AUTHORITY_TEXT} <span>{role}</span>
+          </Typography>
+        </Grid>
       </Grid>
       {loading ? (
         <Grid
@@ -478,10 +756,10 @@ export default function SettlementRange() {
               value={
                 apiData?.weekly_budget?.[allCreditorNames[parseInt(tabValue)]]
                   ? `$ ${new Intl.NumberFormat().format(
-                      apiData?.weekly_budget?.[
-                        allCreditorNames[parseInt(tabValue)]
-                      ]
-                    )}`
+                    apiData?.weekly_budget?.[
+                    allCreditorNames[parseInt(tabValue)]
+                    ]
+                  )}`
                   : "No Data"
               }
               rawValue={apiData?.weekly_budget}
@@ -493,8 +771,8 @@ export default function SettlementRange() {
               value={
                 apiData?.weekly_true_revenue
                   ? `$ ${new Intl.NumberFormat().format(
-                      apiData?.weekly_true_revenue
-                    )}`
+                    apiData?.weekly_true_revenue
+                  )}`
                   : "No Data"
               }
               rawValue={apiData?.weekly_true_revenue}
@@ -505,8 +783,8 @@ export default function SettlementRange() {
               value={
                 apiData?.profitability
                   ? `${new Intl.NumberFormat().format(
-                      apiData?.profitability
-                    )} %`
+                    apiData?.profitability
+                  )} %`
                   : "No Data"
               }
               rawValue={apiData?.profitability}
@@ -539,7 +817,45 @@ export default function SettlementRange() {
               </>
             )}
           </Grid>
-
+          <Grid
+            container
+            item
+            xs={12}
+            sx={{
+              width: widthStyling,
+              mt: "1rem",
+              backgroundColor: Colors.WHITE,
+            }}
+          >
+            <AntTabs
+              value={strategyTab}
+              onChange={handleStrategyChange}
+              aria-label="strategy tabs"
+              variant="scrollable"
+              scrollButtons="auto"
+              sx={{
+                minWidth: "100%",
+                borderTopLeftRadius: "10px",
+                borderTopRightRadius: "10px",
+              }}
+            >
+              {tabs?.map((item, index) => (
+                <AntTab
+                  key={index}
+                  sx={{
+                    bgcolor: Colors.WHITE,
+                    width: "max-content",
+                    fontWeight: "600",
+                    height: "3.5rem",
+                  }}
+                  label={item}
+                />
+              ))}
+            </AntTabs>
+          </Grid>
+          {/* <Grid container xs={12} spacing={2} sx={{ padding: "1rem" }}> */}
+          {/* <>{cardData[strategyTab]}</> */}
+          {/* </Grid> */}
           <Grid
             item
             xs={12}
@@ -575,9 +891,167 @@ export default function SettlementRange() {
                 ))}
             </AntTabs>
           </Grid>
+          <Grid container xs={12}>
+            <Typography
+              sx={{
+                fontWeight: "600",
+                fontFamily: "Nunito",
+                marginTop: "1rem",
+              }}
+            >
+              Creditors Contract Information
+            </Typography>
+            {selectedCreditorDetails &&
+              selectedCreditorDetails?.contractDetails && (
+                <>
+                  <Grid
+                    container
+                    item
+                    xs={12}
+                    sx={{ justifyContent: "space-between", mt: "1rem" }}
+                  >
+                    <Grid
+                      item
+                      xs={12}
+                      sm={5.8}
+                      md={3.8}
+                      lg={2.8}
+                      container
+                      sx={commonStyles}
+                    >
+                      <Typography sx={commonTextStyles}>
+                        {" "}
+                        Loan Amount
+                      </Typography>
+                      <Typography
+                        sx={{
+                          ...commonTextStyles,
+                          color: Colors.SKY_BLUE,
+                        }}
+                      >
+                        {selectedCreditorDetails?.contractDetails?.loan_amount
+                          ? selectedCreditorDetails.contractDetails.loan_amount.includes(
+                            "$"
+                          )
+                            ? selectedCreditorDetails.contractDetails
+                              .loan_amount
+                            : `$${selectedCreditorDetails.contractDetails.loan_amount}`
+                          : "--"}
+                      </Typography>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      sm={5.8}
+                      md={3.8}
+                      lg={2.8}
+                      container
+                      sx={commonStyles}
+                    >
+                      <Typography sx={commonTextStyles}>
+                        Payable Amount
+                      </Typography>
+                      <Typography
+                        sx={{
+                          ...commonTextStyles,
+                          color: Colors.SKY_BLUE,
+                        }}
+                      >
+                        {selectedCreditorDetails?.contractDetails
+                          ?.payable_amount
+                          ? `${selectedCreditorDetails.contractDetails.payable_amount}`.includes(
+                            "$"
+                          )
+                            ? selectedCreditorDetails.contractDetails
+                              .payable_amount
+                            : `$${selectedCreditorDetails.contractDetails.payable_amount}`
+                          : "--"}
+                      </Typography>
+                    </Grid>
+
+                    <Grid
+                      item
+                      xs={12}
+                      sm={5.8}
+                      md={3.8}
+                      lg={2.8}
+                      container
+                      sx={commonStyles}
+                    >
+                      <Typography sx={commonTextStyles}>
+                        Purchase price
+                      </Typography>
+                      <Typography
+                        sx={{
+                          ...commonTextStyles,
+                          color: Colors.SKY_BLUE,
+                        }}
+                      >
+                        {selectedCreditorDetails?.contractDetails[
+                          "purchase price"
+                        ]
+                          ? `${selectedCreditorDetails.contractDetails["purchase price"]}`.includes(
+                            "$"
+                          )
+                            ? selectedCreditorDetails.contractDetails[
+                            "purchase price"
+                            ]
+                            : `$${selectedCreditorDetails.contractDetails["purchase price"]}`
+                          : "--"}
+                      </Typography>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      sm={5.8}
+                      md={3.8}
+                      lg={2.8}
+                      container
+                      sx={commonStyles}
+                    >
+                      <Typography sx={commonTextStyles}>
+                        Purchased Percentage
+                      </Typography>
+                      <Typography
+                        sx={{
+                          ...commonTextStyles,
+                          color: Colors.SKY_BLUE,
+                        }}
+                      >
+                        {selectedCreditorDetails?.contractDetails
+                          ?.purchased_percentage || "--"}
+                      </Typography>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      sm={5.8}
+                      md={3.8}
+                      lg={2.8}
+                      style={{ marginTop: "1rem" }}
+                      container
+                      sx={commonStyles}
+                    >
+                      <Typography sx={commonTextStyles}>
+                        Repayment Amount
+                      </Typography>
+                      <Typography
+                        sx={{
+                          ...commonTextStyles,
+                          color: Colors.SKY_BLUE,
+                        }}
+                      >
+                        {selectedCreditorDetails?.contractDetails
+                          ?.repayment_amount || "--"}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </>
+              )}
+          </Grid>
           <Grid
-            item
             container
+            item
             xs={12}
             sx={{
               borderRadius: "10px",
@@ -585,12 +1059,22 @@ export default function SettlementRange() {
               justifyContent: "space-between",
             }}
           >
-            {["recommendation 1", "recommendation 2", "recommendation 3"]?.map(
+            {cardData[strategyTab]}
+            {/* {["recommendation 1", "recommendation 2", "recommendation 3"]?.map(
               (item, index) => {
                 return (
                   <SettlementCards
                     key={index}
                     title={item}
+                    weeksTillPaidTitle={
+                      item === "recommendation 1"
+                        ? "Weeks remaining based on recommendation 1"
+                        : item === "recommendation 2"
+                        ? "Weeks remaining based on recommendation 2"
+                        : item === "recommendation 3"
+                        ? "Weeks remaining based on recommendation 3"
+                        : ""
+                    }
                     settlementRange={
                       apiData?.settlement_range?.[
                         allCreditorNames[parseInt(tabValue)]
@@ -614,10 +1098,15 @@ export default function SettlementRange() {
                         allCreditorNames[parseInt(tabValue)]
                       ] || null
                     }
+                    weeksTillPaid={
+                      apiData?.weeks_till_paid?.[
+                        allCreditorNames[parseInt(tabValue)]
+                      ] || null
+                    }
                   />
                 );
               }
-            )}
+            )} */}
           </Grid>
           <Grid
             item
@@ -702,6 +1191,16 @@ export default function SettlementRange() {
                 }}
                 label="llama"
               />
+
+              <AntTab
+                sx={{
+                  bgcolor: Colors.WHITE,
+                  width: "max-content",
+                  fontWeight: "600",
+                  height: "3.5rem",
+                }}
+                label="Claude"
+              />
             </AntTabs>
           </Grid>
           <Grid
@@ -710,8 +1209,8 @@ export default function SettlementRange() {
             sx={{
               height: "40vh",
               overflowY: "auto",
-              backgroundColor: Colors.WHITE,
-              ...ScrollbarStyles,
+              backgroundColor: Colors1.WHITE,
+              ...ScrollbarStyles1,
               padding: "16px",
             }}
           >
@@ -730,9 +1229,33 @@ export default function SettlementRange() {
                 <CircularProgress />
               </Grid>
             ) : (
+              
               <ReactMarkdown>
-                {justifications[`justifications${value + 1}`]}
+                {strategyTab === 2 ? fullProfit?.justifications[justificationValue] : strategyTab === 1
+                  ? lumpSumpData?.justifications[justificationValue]
+                  : justifications[`justifications${value + 1}`]}
               </ReactMarkdown>
+              
+              // <Grid container direction="column" spacing={2}>
+              //   {messages.map((msg) => (
+              //     <Grid item key={msg.id}>
+              //       <Paper
+              //         sx={{
+              //           padding: "10px",
+              //           backgroundColor:
+              //             msg.sender === "bot"
+              //               ? Colors1.BOT_MESSAGE_BG
+              //               : Colors1.USER_MESSAGE_BG,
+              //           alignSelf:
+              //             msg.sender === "bot" ? "flex-start" : "flex-end",
+              //           maxWidth: "80%",
+              //         }}
+              //       >
+              //         <Typography variant="body1">{msg.message}</Typography>
+              //       </Paper>
+              //     </Grid>
+              //   ))}
+              // </Grid>
             )}
           </Grid>
           <Grid

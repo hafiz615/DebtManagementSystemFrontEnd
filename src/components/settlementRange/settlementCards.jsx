@@ -2,6 +2,9 @@ import { Box, Grid, Typography } from "@mui/material";
 import React from "react";
 import { Colors } from "../../config/default";
 import { FONT_SIZE_LARGE } from "../../constants/appConstants";
+import Tooltip from "@mui/material/Tooltip";
+import InfoIcon from "@mui/icons-material/Info";
+import { isEmpty } from "lodash";
 
 export default function SettlementCards({
   title,
@@ -10,6 +13,9 @@ export default function SettlementCards({
   newDefaultRiskScore,
   percentageSettlementOverWeeklyBudget,
   percentageSettlementOverWeeklyTrueRevenue,
+  weeksTillPaid,
+  weeksTillPaidTitle,
+  isFullPayment
 }) {
   const commonStyles = {
     backgroundColor: Colors.WHITE,
@@ -45,14 +51,31 @@ export default function SettlementCards({
     newDefaultRiskScore,
     percentageSettlementOverWeeklyBudget,
     percentageSettlementOverWeeklyTrueRevenue,
+    weeksTillPaid,
   ];
 
   const rangeNames = [
-    "Settlement Range",
-    "Commission Range",
-    "New Default Risk",
-    "Weekly Budget %",
-    "Weekly True Revenue %",
+    { label: "Settlement Range", tooltip: "Suggested weekly payment amount" },
+    {
+      label: "Commission Range",
+      tooltip: "Amount that will be saved as commission",
+    },
+    {
+      label: "New Default Risk",
+      tooltip: "Clients risk score with this payment plan",
+    },
+    {
+      label: "Weekly Budget %",
+      tooltip: "Settlement shown as percentage of weekly budget",
+    },
+    {
+      label: "Weekly True Revenue %",
+      tooltip: "Settlement shown as percentage of weekly true revenue",
+    },
+    {
+      label: "Weeks Till Paid",
+      tooltip: "Number of weeks to complete payment",
+    },
   ];
 
   function capitalizeFirstWord(text) {
@@ -67,7 +90,8 @@ export default function SettlementCards({
     !commissionRange &&
     !newDefaultRiskScore &&
     !percentageSettlementOverWeeklyBudget &&
-    !percentageSettlementOverWeeklyTrueRevenue;
+    !percentageSettlementOverWeeklyTrueRevenue &&
+    !weeksTillPaid;
 
   return (
     <Grid item xs={12} sm={5.8} md={3.8} lg={3.8} container sx={commonStyles}>
@@ -88,49 +112,128 @@ export default function SettlementCards({
         </Typography>
       ) : (
         allRanges?.map((item, index) => (
-          <Grid container sx={{ width: "100%", padding: "10px 8px" }}>
+          <Grid
+            container
+            sx={{ width: "100%", padding: "10px 8px" }}
+            key={index}
+          >
             <Grid item xs={6.5} sx={{ paddingLeft: "6%" }}>
-              <Typography sx={commonTextStyles}>{rangeNames[index]}</Typography>
+              <Typography
+                sx={{
+                  ...commonTextStyles,
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                {rangeNames[index]?.label}
+                <Tooltip title={rangeNames[index]?.tooltip} placement="top-end">
+                  <InfoIcon sx={{ fontSize: "17px", color: Colors.SKY_BLUE }} />
+                </Tooltip>
+              </Typography>
             </Grid>
-            <Grid item xs={5}>
+            {isFullPayment ?
+              <>
+                <Grid item xs={5}>
+                  <div style={{ width: "100%", display: "flex" }}>
+                    <div
+                      style={{
+                        width: "75%",
+                        fontFamily: "Nunito",
+                        color: Colors.ORANGE_COLOR,
+                      }}
+                    >
+                      Minimum
+                    </div>
+                    <div style={textStyles}>
 
-              <div style={{ width: "100%", display: "flex" }}>
-                <div
-                  style={{
-                    width: "75%",
-                    fontFamily: "Nunito",
-                    color: Colors.ORANGE_COLOR,
-                  }}
-                >
-                  Minimum
-                </div>
-                <div style={textStyles}>
-                  {rangeNames[index] === "New Default Risk"
-                    ? item?.[title]?.[1] || "-"
-                    : rangeNames[index]?.includes('%')
-                      ? `${item?.[title]?.[0] || "-"}%`
-                      : `$${item?.[title]?.[0] || "-"}`}
-                </div>
-              </div>
-              <div style={{ width: "100%", display: "flex" }}>
-                <div
-                  style={{
-                    width: "75%",
-                    fontFamily: "Nunito",
-                    color: Colors.SKY_BLUE,
-                  }}
-                >
-                  Maximum
-                </div>
-                <div style={textStyles}>
-                  {rangeNames[index] === "New Default Risk"
-                    ? item?.[title]?.[0] || "-"
-                    : rangeNames[index]?.includes('%')
-                      ? `${item?.[title]?.[1] || "-"}%`
-                      : `$${item?.[title]?.[1] || "-"}`}
-                </div>
-              </div>
-            </Grid>
+                    {item?.[title][0]}
+                      {/* {rangeNames[index]?.label === "Weeks Till Paid"
+                        ? item?.[weeksTillPaidTitle][0]
+                        : rangeNames[index]?.label === "New Default Risk"
+                      ? "-"
+                      : rangeNames[index]?.label?.includes("%")
+                      ? `${parseFloat(item?.[title][0].toFixed(2)) || "-"}%`
+                      : `$${parseFloat(item?.[title][0].toFixed(2)) || "-"
+                      }`} */}
+                    </div>
+                  </div>
+                  <div style={{ width: "100%", display: "flex" }}>
+                    <div
+                      style={{
+                        width: "75%",
+                        fontFamily: "Nunito",
+                        color: Colors.SKY_BLUE,
+                      }}
+                    >
+                      Maximum
+                    </div>
+                    <div style={textStyles}>
+                    {item?.[title][1]}
+                      {/* {e.log(item?.[title], item?.[title][0], item?.[title][1])}
+                      {console.log()}
+                      {rangeNames[index]?.label === "Weeks Till Paid"
+                        ? item?.[weeksTillPaidTitle][1]
+                        : rangeNames[index]?.label === "New Default Risk"
+                      ?  "-"
+                      : rangeNames[index]?.label?.includes("%")
+                      ? `${parseFloat(item?.[title][1].toFixed(2)) || "-"}%`
+                      : `$${parseFloat(item?.[title][1].toFixed(2)) || "-"
+                      }`} */}
+                    </div>
+                  </div>
+                </Grid>
+              </> :
+              <>
+                <Grid item xs={5}>
+                  <div style={{ width: "100%", display: "flex" }}>
+                    <div
+                      style={{
+                        width: "75%",
+                        fontFamily: "Nunito",
+                        color: Colors.ORANGE_COLOR,
+                      }}
+                    >
+                      Minimum
+                    </div>
+                    <div style={textStyles}>
+                      {rangeNames[index]?.label === "Weeks Till Paid"
+                        ? rangeNames[index]?.label === "Weeks Till Paid"
+                          ? item?.[weeksTillPaidTitle]?.["min"] || item?.[weeksTillPaidTitle][0]
+                          : ""
+                        : rangeNames[index]?.label === "New Default Risk"
+                          ? item?.[title]?.["min"] || "-"
+                          : rangeNames[index]?.label?.includes("%")
+                            ? `${parseFloat(item?.[title]?.["min"].toFixed(2)) || "-"}%`
+                            : `$${parseFloat(item?.[title]?.["min"].toFixed(2)) || "-"
+                            }`}
+                    </div>
+                  </div>
+                  <div style={{ width: "100%", display: "flex" }}>
+                    <div
+                      style={{
+                        width: "75%",
+                        fontFamily: "Nunito",
+                        color: Colors.SKY_BLUE,
+                      }}
+                    >
+                      Maximum
+                    </div>
+                    <div style={textStyles}>
+                      {rangeNames[index]?.label === "Weeks Till Paid"
+                        ? rangeNames[index]?.label === "Weeks Till Paid"
+                          ? item?.[weeksTillPaidTitle]?.["max"] || item?.[weeksTillPaidTitle][1]
+                          : ""
+                        : rangeNames[index]?.label === "New Default Risk"
+                          ? item?.[title]?.["max"] || "-"
+                          : rangeNames[index]?.label?.includes("%")
+                            ? `${parseFloat(item?.[title]?.["max"].toFixed(2)) || "-"}%`
+                            : `$${parseFloat(item?.[title]?.["max"].toFixed(2)) || "-"
+                            }`}
+                    </div>
+                  </div>
+                </Grid>
+              </>}
+
           </Grid>
         ))
       )}

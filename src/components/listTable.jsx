@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useNavigate } from "react-router";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -23,7 +24,11 @@ import MuiModels from "./models";
 import Prompt from "./prompt";
 import { useToast } from "../toast/toastContext";
 import { RetryAuth, RetryCapture } from "../services/services";
-import { FONT_SIZE_LARGE, FONT_SIZE_SMALL, FONT_SIZE_XL } from "../constants/appConstants";
+import {
+  FONT_SIZE_LARGE,
+  FONT_SIZE_SMALL,
+  FONT_SIZE_XL,
+} from "../constants/appConstants";
 import { useSelector } from "react-redux";
 import { isEmpty } from "lodash";
 
@@ -81,7 +86,10 @@ export default function ListTable({
   loading,
   onPaymentRowClick,
 }) {
-  const generalPermissions = useSelector((state) => state?.permissions?.permissions?.generalPermissions);
+  const navigate = useNavigate();
+  const generalPermissions = useSelector(
+    (state) => state?.permissions?.permissions?.generalPermissions
+  );
   const { showToast } = useToast();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -113,8 +121,17 @@ export default function ListTable({
     if (result?.status === 200) {
       showToast(result?.data?.message, "success");
       getHomeData(arrayName, 1);
+    } else if (
+      result?.response?.status === 401 ||
+      result?.response?.status === 403
+    ) {
+      localStorage.clear();
+      navigate("/");
     } else {
-      showToast(result?.response?.data?.message || result?.response?.data?.message, "error");
+      showToast(
+        result?.response?.data?.message || result?.response?.data?.message,
+        "error"
+      );
     }
   };
 
@@ -167,18 +184,20 @@ export default function ListTable({
                     Actions
                   </StyledTableCell>
                 )}
-                {(generalPermissions?.retryPayment && (arrayName === "failedAuthorizations" || arrayName === "failedPayments")) && (
-                  <StyledTableCell
-                    align="left"
-                    sx={{
-                      fontWeight: "700",
-                      fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
-                      paddingRight: "0.5rem !important",
-                    }}
-                  >
-                    Retry
-                  </StyledTableCell>
-                )}
+                {generalPermissions?.retryPayment &&
+                  (arrayName === "failedAuthorizations" ||
+                    arrayName === "failedPayments") && (
+                    <StyledTableCell
+                      align="left"
+                      sx={{
+                        fontWeight: "700",
+                        fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+                        paddingRight: "0.5rem !important",
+                      }}
+                    >
+                      Retry
+                    </StyledTableCell>
+                  )}
               </TableRow>
             </TableHead>
             {loading ? (
@@ -188,7 +207,10 @@ export default function ListTable({
                     colSpan={headerData?.length + 1}
                     align="center"
                   >
-                    <CircularProgress size={20} sx={{ color: Colors.SKY_BLUE }} />
+                    <CircularProgress
+                      size={20}
+                      sx={{ color: Colors.SKY_BLUE }}
+                    />
                   </StyledTableCell>
                 </StyledTableRow>
               </TableBody>
@@ -206,7 +228,10 @@ export default function ListTable({
             ) : (
               <TableBody>
                 {(rowsPerPage > 0
-                  ? data?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  ? data?.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
                   : data
                 )?.map((row) => (
                   <StyledTableRow
@@ -299,7 +324,8 @@ export default function ListTable({
                         />
                       </StyledTableCell>
                     )}
-                    {(arrayName === "failedAuthorizations" || arrayName === "failedPayments") && (
+                    {(arrayName === "failedAuthorizations" ||
+                      arrayName === "failedPayments") && (
                       <StyledTableCell
                         sx={{
                           display: "flex",
@@ -348,7 +374,8 @@ export default function ListTable({
                 fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
               }}
             >
-              {totalPages === 0 ? 0 : isNaN(totalPages) ? 0 : currentPage} of {isNaN(totalPages) ? 0 : totalPages}
+              {totalPages === 0 ? 0 : isNaN(totalPages) ? 0 : currentPage} of{" "}
+              {isNaN(totalPages) ? 0 : totalPages}
             </Typography>
             <IconButton
               onClick={backward}

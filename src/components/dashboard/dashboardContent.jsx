@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 import { filter, isEmpty } from "lodash";
 
 import {
@@ -26,6 +27,7 @@ import {
 import ScrollbarStyles from "../customScroll";
 
 function DashboardContent() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [filterActive, setFilterActive] = useState(false);
   const [startDate, setStartDate] = useState("");
@@ -104,6 +106,12 @@ function DashboardContent() {
     const GetDashboardContent = await GetDashboard(filter, payload);
     if (GetDashboardContent?.status === 200) {
       setDashboardData(GetDashboardContent?.data?.data);
+    } else if (
+      GetDashboardContent?.response?.status === 401 ||
+      GetDashboardContent?.response?.status === 403
+    ) {
+      localStorage.clear();
+      navigate("/");
     }
     setLoading(false);
   };

@@ -129,6 +129,12 @@ export default function ClientList() {
     if (getClients?.status === 200) {
       setUserArray(getClients?.data?.data?.clientDetails);
       setTotalData(getClients?.data?.data?.debtorsCount);
+    } else if (
+      getClients?.response?.status === 401 ||
+      getClients?.response?.status === 403
+    ) {
+      localStorage.clear();
+      navigate("/");
     }
     setLoading(false);
   };

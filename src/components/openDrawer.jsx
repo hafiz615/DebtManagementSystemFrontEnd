@@ -189,6 +189,7 @@ export default function PersistentDrawerLeft({ children }) {
       <NavBar onClick={handleDrawerOpen} />
       <Drawer
         sx={{
+          zIndex:1,
           width: open ? drawerWidth : closedDrawerWidth,
           flexShrink: 0,
           transition: theme.transitions.create(["width"], {

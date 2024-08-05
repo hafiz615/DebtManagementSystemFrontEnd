@@ -10,7 +10,20 @@ import {
 } from "@mui/lab";
 import EmailIcon from "@mui/icons-material/Email";
 
-export default function TimelineData() {
+export default function TimelineData({value,date}) {
+  const formattedDate = new Date(date);
+
+// Convert the Date object to EST time zone
+const estTime = new Intl.DateTimeFormat('en-US', {
+  timeZone: 'America/New_York',
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: true
+}).format(formattedDate);
   return (
     <Timeline sx={{ padding: 0, margin: "0" }}>
       <TimelineItem>
@@ -29,41 +42,17 @@ export default function TimelineData() {
               borderRadius: "10px",
             }}
           >
-            <p
+            {date!== null && <p
               style={{
                 fontSize: "13px",
                 fontWeight: "600",
                 fontFamily: "Nunito",
               }}
             >
-              Success! You sent a payment to umair
-            </p>
+             Note added {estTime}
+            </p>}
             <Typography sx={{ fontSize: "13px", fontFamily: "Nunito" }}>
-              Lorem ipsum dolor sit amet consectetur. Lorem ipsum dolor sit amet
-              consectetur. Lorem ipsum dolor sit amet consectetur.
-            </Typography>
-          </Card>
-          <Card
-            sx={{
-              py: "10px",
-              px: "10px",
-              boxShadow: "none",
-              borderRadius: "10px",
-              mt: "10px",
-            }}
-          >
-            <p
-              style={{
-                fontSize: "13px",
-                fontWeight: "600",
-                fontFamily: "Nunito",
-              }}
-            >
-              Chase Payments
-            </p>
-            <Typography sx={{ fontSize: "13px", fontFamily: "Nunito" }}>
-              Lorem ipsum dolor sit amet consectetur. Lorem ipsum dolor sit amet
-              consectetur. Lorem ipsum dolor sit amet consectetur.
+            {value}
             </Typography>
           </Card>
         </TimelineContent>

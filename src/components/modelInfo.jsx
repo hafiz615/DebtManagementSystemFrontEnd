@@ -6,7 +6,12 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import TextButton from "./button";
 import CustomTextField from "./customTextfield";
-import { CreateUser, GetUserById, UpdateUser } from "../services/services";
+import {
+  CreateUser,
+  GetAllRoles,
+  GetUserById,
+  UpdateUser,
+} from "../services/services";
 import { useToast } from "../toast/toastContext";
 import Dropdown from "./dropdown";
 import { Colors } from "../config/default";
@@ -15,6 +20,7 @@ import { PhoneValidation } from "../constants/appConstants";
 import { formatPhoneNumber } from "../common";
 
 function ModelInfo({ modalType, setOpen, GetUsers, id }) {
+  const [menuItem, setMenuItem] = useState([]);
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const largeScreen = useMediaQuery("(min-width:1850px)");
@@ -48,11 +54,26 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
       getUser();
     }
   }, [id]);
-  const menuItems = [
-    { label: "Manager", value: "Manager" },
-    { label: "Negotiator", value: "Negotiator" },
-    // { label: "Admin", value: "Admin" },
-  ];
+  // const menuItems = [
+  //   { label: "Manager", value: "Manager" },
+  //   { label: "Negotiator", value: "Negotiator" },
+  //   // { label: "Admin", value: "Admin" },
+  // ];
+  const AllRoles = async () => {
+    const rolesRes = await GetAllRoles();
+    if (rolesRes?.status === 200) {
+      setMenuItem(rolesRes?.data?.data);
+    }
+  };
+
+  const menu = menuItem?.map((item) => ({
+    label: item?.name,
+    value: item?.name,
+  }));
+
+  useEffect(() => {
+    AllRoles();
+  }, []);
   const genderItems = [
     { label: "Male", value: "Male" },
     { label: "Female", value: "Female" },
@@ -435,7 +456,7 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
                   Role*
                 </Typography>
                 <Dropdown
-                  menuItems={menuItems}
+                  menuItems={menu}
                   menuWidth="10rem"
                   placeholder="Enter Role"
                   height="2.5rem"

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   CircularProgress,
@@ -12,27 +12,8 @@ import SearchBar from "../searchBar";
 import CreditorFields from "../caseCreationFields/creditorFields";
 import { Colors } from "../../config/default";
 import { phoneNumberFormat } from "../../common";
-import CloseIcon from "@mui/icons-material/Close";
 import { Add, Delete, ExpandMore } from "@mui/icons-material";
 import { FONT_SIZE_XL } from "../../constants/appConstants";
-
-const contactFields = {
-  name: "",
-  title: "",
-  phone: "",
-  email: "",
-  relationWithDebtor: "",
-  country: "",
-  state: "",
-  city: "",
-  zipCode: "",
-};
-const intervalFields = {
-  amount: 0,
-  startDate: "",
-  timePeriod: "Custom",
-  frequency: 0,
-};
 
 export default function CreditorDetails({
   creditors,
@@ -48,15 +29,19 @@ export default function CreditorDetails({
   setFilteredArray,
   handleSelect,
 }) {
+  const [digitsList, setDigitsList] = useState(
+    finalCaseData?.map((caseEntry) => [caseEntry?.creditor?.aggression]) || [0]
+  );
+
   const handleSearchChange = (value, index) => {
     setSearchText(value);
-    SearchFields(value, index); // Pass index here
+    SearchFields(value, index);
   };
 
-  function handleCaseDataChange(index, fieldPath, value) {
+  const handleCaseDataChange = (index, fieldPath, value) => {
     const newState = [...finalCaseData];
 
-    function updateField(obj, path, val) {
+    const updateField = (obj, path, val) => {
       const keys = path.split(".");
       const lastKey = keys.pop();
 
@@ -69,29 +54,27 @@ export default function CreditorDetails({
       }
 
       current[lastKey] = val;
-    }
+    };
 
     if (index >= 0 && index < newState.length) {
       updateField(newState[index], fieldPath, value);
     }
 
     setFinalCaseData(newState);
-  }
+  };
 
-  function handleRemoveCase(index, e) {
-    // Remove creditor from creditors array
-    // const newCreditors = creditors.filter((_, i) => i !== index);
-    // setCreditors(newCreditors);
-
-    // Remove case from finalCaseData
+  const handleRemoveCase = (index, e) => {
     e.stopPropagation();
     const newState = finalCaseData.filter((_, i) => i !== index);
+    const newDigitsList = digitsList.filter((_, i) => i !== index);
     setFinalCaseData(newState);
-  }
+    setDigitsList(newDigitsList);
+  };
 
   const addNewCreditor = () => {
     const newCreditorData = {
       creditor: {
+        aggression: 0,
         accountTitle: "",
         paymentToken: "",
         paymentType: "",
@@ -126,15 +109,23 @@ export default function CreditorDetails({
     };
 
     setFinalCaseData([...finalCaseData, newCreditorData]);
+    setDigitsList([...digitsList, [0]]);
   };
 
-  React.useEffect(() => {
+  const handleDigitsChange = (caseIndex, newDigits) => {
+    const updatedDigitsList = [...digitsList];
+    updatedDigitsList[caseIndex] = newDigits;
+    setDigitsList(updatedDigitsList);
+  };
+
+  useEffect(() => {
     let processedData;
 
     if (creditors.length === 0) {
       processedData = [
         {
           creditor: {
+            aggression: 0,
             accountTitle: "",
             paymentToken: "",
             paymentType: "",
@@ -166,13 +157,12 @@ export default function CreditorDetails({
           paidAmount: 0,
           remaining: 0,
           feePayment: "toPay",
-          // intervals: [],
-          // securityKey: ""
         },
       ];
     } else {
       processedData = creditors.map((creditor) => ({
         creditor: {
+          aggression: 0,
           accountTitle: creditor?.AccountTitle || "",
           paymentToken: "",
           paymentType: "",
@@ -210,12 +200,11 @@ export default function CreditorDetails({
               .replace(",", "")
           ) || 0,
         feePayment: "toPay",
-        // intervals: [],
-        // securityKey: ""
       }));
     }
 
     setFinalCaseData(processedData);
+    setDigitsList(processedData?.map(() => Array(10).fill("")) || []);
   }, [creditors]);
 
   return (
@@ -335,6 +324,10 @@ export default function CreditorDetails({
                     setFinalCaseData={setFinalCaseData}
                     finalCaseData={finalCaseData}
                     debtorCaseData={debtorCaseData}
+                    digits={digitsList[index]}
+                    setDigits={(newDigits) =>
+                      handleDigitsChange(index, newDigits)
+                    }
                   />
                 </Grid>
               </Grid>

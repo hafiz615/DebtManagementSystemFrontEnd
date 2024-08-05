@@ -29,14 +29,14 @@ const convertJpgToPdf = async (file) => {
 };
 
 export const ExtractContractData = async (files) => {
-  const processFile = async (file) => {
-    try {
-      const apiUrl =
-        "https://dms-negotiation.hpdemos.co/extract-fields?enable_cache=false";
+  try {
+    const apiUrl =
+      "https://dms-ai.hpdemos.co/extract-fields-multiple-files?enable_cache=true";
 
-      const formData = new FormData();
+    const formData = new FormData();
+
+    files.map(async (file) => {
       let processedFile = file.file;
-
       // Check if the file is a JPG and convert to PDF if true
       if (file.file.type === "image/jpeg") {
         processedFile = await convertJpgToPdf(file.file);
@@ -49,30 +49,22 @@ export const ExtractContractData = async (files) => {
       });
 
       formData.append("MCA_pdf", cleanedFile);
+    });
 
-      const response = await axios.post(apiUrl, formData, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "multipart/form-data",
-        },
-      });
+    const response = await axios.post(apiUrl, formData, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
-      return response?.data?.extracted_fields;
-    } catch (error) {
-      console.error(`Error uploading ${file.name}:`, error);
-      return {};
-    }
-  };
+    return response?.data?.extracted_fields;
+  } catch (error) {
+    console.error(`Error uploading`, error);
+    return {};
+  }
 
-  const results = await Promise.all(
-    files.map((file) => {
-      if (!isEmpty(file)) {
-        return processFile(file);
-      }
-      return file;
-    })
-  );
-  return results;
+  // return results;
 };
 
 export const SignIn = async (payload) => {
@@ -201,7 +193,7 @@ export const CreateCase = async (payload, bulk = false) => {
 export const UploadFiles = async (data) => {
   const formData = new FormData();
   for (let i = 0; i < data.length; i++) {
-    formData.append("files", data[i].file);
+    formData.append("files", data[i].file || data[i]);
   }
   try {
     return await axios.post(
@@ -827,11 +819,13 @@ export const GetRoleByName = async (name) => {
   }
 };
 
-export const GetSettlementRangeWithScores = async (payload, id) => {
+export const GetSettlementRangeWithScores = async (payload, id, status) => {
   try {
     return await axios.post(
       BASE_URL +
-        `/v1/case/getScoresSettlementRange/${id}?all=${isEmpty(payload)}`,
+        `/v1/case/getScoresSettlementRange/${id}?all=${isEmpty(
+          payload
+        )}&hardReload=${status}`,
       payload,
       setHeaders()
     );
@@ -959,6 +953,63 @@ export const DeleteTasks = async (id) => {
   try {
     return await axios.delete(
       BASE_URL + `/v1/task/deleteTask/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const AddDocumentToDebtor = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/addDocumentsToDebtor/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const AddNotesCase = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/case/addNotes/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getCaseSummaries = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/case/getCaseSummaries/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetLumpSumAmount = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/debtor/getLumpSumAmount/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetFullProfit = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/debtor/getFullProfitSettlement/${id}`,
       setHeaders()
     );
   } catch (error) {

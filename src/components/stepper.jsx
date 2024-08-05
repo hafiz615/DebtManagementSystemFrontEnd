@@ -21,10 +21,8 @@ import {
 import TextButton from "./button";
 import CreditorDetails from "./caseCreation/creditorDetails";
 import PaymentDetails from "./caseCreation/paymentDetails";
-import PreviewDetails from "./caseCreation/previewDetails";
 import FileUploadComponent from "./caseCreation/FileUploadComponent/uploadFiles";
 import {
-  CreateCase,
   CreateCreditorCase,
   GetCreditorSearch,
   GetDebtorSearch,
@@ -619,7 +617,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           paymentToken: connectPayment?.paymentToken,
           paymentType: connectPayment?.paymentType,
           documents: url || [],
-          extractedFields: { extracted_fields: extractedData },
+          extractedFields: extractedData,
         };
         const res = await CreateDebtor(params);
         if (res?.status === 200) {
@@ -636,6 +634,14 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
             (value) => value === "" || value == null
           );
         };
+        finalCaseData.forEach((item) => {
+          if (
+            item.creditor.aggression === null ||
+            isNaN(item.creditor.aggression)
+          ) {
+            item.creditor.aggression = 0;
+          }
+        });
 
         const res = await CreateCreditorCase(
           { data: finalCaseData },
@@ -955,7 +961,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
                   handleNext();
                 }}
                 marginRight={smallScreen ? "8px" : "1rem"}
-                disabled={disableButton || loading}
+                // disabled={disableButton || loading}
               />
             </Grid>
           </Grid>
