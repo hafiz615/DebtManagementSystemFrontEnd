@@ -168,6 +168,10 @@ export default function SettlementRange() {
   const { caseId } = useParams();
   const { showToast } = useToast();
   const [value, setValue] = useState(0);
+  const [justificationValue, setJustificationValue] = useState(
+    "justification_gemini"
+  );
+
   const [tabValue, setTabValue] = useState(0);
   const [errorMessage, setErrorMessage] = useState(null);
   const [inputValue, setInputValue] = useState("");
@@ -191,6 +195,7 @@ export default function SettlementRange() {
     justifications2: "",
     justifications3: "",
   });
+
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const drawerOpen = useSelector((state) => state.drawer.open);
   const { AUTHORITY_TEXT } = UserListPage;
@@ -205,8 +210,7 @@ export default function SettlementRange() {
   // const [strategyTabVal, setStrategyTabVal] = useState(0);
   const handleStrategyChange = (event, newValue) => {
     setStrategyTab(newValue);
-
-    // Add your custom logic here
+    setValue(0);
   };
 
   useEffect(() => {
@@ -327,7 +331,17 @@ export default function SettlementRange() {
 
     // 2: <FullProfitCard fullProfit={fullProfit} />,
   };
-
+  useEffect(() => {
+    if (value === 0) {
+      setJustificationValue("justification_gemini");
+    } else if (value === 1) {
+      setJustificationValue("justification_gpt4_o");
+    } else if (value === 2) {
+      setJustificationValue("justification_llama");
+    } else if (value === 3) {
+      setJustificationValue("justification_claude");
+    }
+  }, [value]);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -1179,7 +1193,7 @@ export default function SettlementRange() {
             ) : (
               <ReactMarkdown>
                 {strategyTab === 1
-                  ? lumpSumpData?.justifications[`justifications${value + 1}`]
+                  ? lumpSumpData?.justifications[justificationValue]
                   : justifications[`justifications${value + 1}`]}
               </ReactMarkdown>
               // <Grid container direction="column" spacing={2}>

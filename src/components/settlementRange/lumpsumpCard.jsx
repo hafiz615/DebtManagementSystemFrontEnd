@@ -44,76 +44,81 @@ function LumpsumpCard({ lumpSumpData }) {
           marginTop: "1rem",
         }}
       >
-        <Typography sx={commTextStyles}>LUMPSUMP</Typography>
+        <Typography sx={commTextStyles}>LUMP SUM</Typography>
         <Box sx={lineStyle} />
-        <Grid
-          container
-          item
-          xs={12}
-          sx={{ maxHeight: "40vh", overflowY: "auto", ...ScrollbarStyles }}
-        >
-          <Grid container item xs={12} spacing={2}>
-            {Object.keys(lumpsum_settlement).map((settlementName) => {
-              const settlementData = lumpsum_settlement[settlementName];
-              return (
-                <Grid item key={settlementName}>
-                  <Typography
-                    sx={commonTextStyles}
-                    style={{ color: Colors.SKY_BLUE }}
-                  >
-                    {settlementName}
-                  </Typography>
-                  <Typography sx={commonTextStyles}>
-                    Remaining Principle Amount
-                  </Typography>
-                  <Typography sx={commonTextStyles}>
-                    {settlementData?.remaining_principle_amount !== undefined
-                      ? `$${settlementData?.remaining_principle_amount}`
-                      : "--"}
-                  </Typography>
-                  <Typography sx={commonTextStyles}>Repaid Debt</Typography>
-                  <Typography sx={commonTextStyles}>
-                    {settlementData?.repaid_debt !== undefined
-                      ? `$${settlementData?.repaid_debt}`
-                      : "--"}
-                  </Typography>
-                </Grid>
-              );
-            })}
-          </Grid>
-        </Grid>
-        {lumpSumpData?.warning && (
-          <Grid
-            container
-            item
-            xs={8}
-            sx={{
-              display: "flex",
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: FONT_SIZE_LARGE,
-                fontFamily: "Nunito",
-                fontWeight: "700",
-                color: Colors.ORANGE_COLOR,
-                marginTop: "2rem",
-              }}
+        {!isEmpty(lumpSumpData) && (
+          <>
+            <Grid
+              container
+              item
+              xs={12}
+              sx={{ maxHeight: "40vh", overflowY: "auto", ...ScrollbarStyles }}
             >
-              Warning
-            </Typography>
-            <Typography
-              sx={{
-                fontSize: FONT_SIZE_LARGE,
-                fontFamily: "Nunito",
-                fontWeight: "400",
-                color: Colors.BLACK,
-                marginTop: "2rem",
-              }}
-            >
-              {lumpSumpData?.warning}
-            </Typography>
-          </Grid>
+              <Grid container item xs={12} spacing={2}>
+                {Object?.keys(lumpsum_settlement)?.map((settlementName) => {
+                  const settlementData = lumpsum_settlement[settlementName];
+                  return (
+                    <Grid item key={settlementName}>
+                      <Typography
+                        sx={commonTextStyles}
+                        style={{ color: Colors.SKY_BLUE }}
+                      >
+                        {settlementName}
+                      </Typography>
+                      <Typography sx={commonTextStyles}>
+                        Remaining Principle Amount
+                      </Typography>
+                      <Typography sx={commonTextStyles}>
+                        {settlementData?.remaining_principle_amount !==
+                        undefined
+                          ? `$${settlementData?.remaining_principle_amount}`
+                          : "--"}
+                      </Typography>
+                      <Typography sx={commonTextStyles}>Repaid Debt</Typography>
+                      <Typography sx={commonTextStyles}>
+                        {settlementData?.repaid_debt !== undefined
+                          ? `$${settlementData?.repaid_debt}`
+                          : "--"}
+                      </Typography>
+                    </Grid>
+                  );
+                })}
+              </Grid>
+            </Grid>
+            {lumpSumpData?.warning && (
+              <Grid
+                container
+                item
+                xs={8}
+                sx={{
+                  display: "flex",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: FONT_SIZE_LARGE,
+                    fontFamily: "Nunito",
+                    fontWeight: "700",
+                    color: Colors.ORANGE_COLOR,
+                    marginTop: "2rem",
+                  }}
+                >
+                  Warning
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: FONT_SIZE_LARGE,
+                    fontFamily: "Nunito",
+                    fontWeight: "400",
+                    color: Colors.BLACK,
+                    marginTop: "2rem",
+                  }}
+                >
+                  {lumpSumpData?.warning}
+                </Typography>
+              </Grid>
+            )}
+          </>
         )}
       </Grid>
     </Grid>
