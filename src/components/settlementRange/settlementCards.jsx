@@ -143,7 +143,7 @@ export default function SettlementCards({
                 <div style={textStyles}>
                   {rangeNames[index]?.label === "Weeks Till Paid"
                     ? rangeNames[index]?.label === "Weeks Till Paid"
-                      ? item?.[weeksTillPaidTitle]?.["max"]
+                      ? item?.[weeksTillPaidTitle]?.["max"] || item?.[weeksTillPaidTitle][1]
                       : ""
                     : rangeNames[index]?.label === "New Default Risk"
                     ? item?.[title]?.["max"] || "-"
@@ -167,7 +167,7 @@ export default function SettlementCards({
                 <div style={textStyles}>
                   {rangeNames[index]?.label === "Weeks Till Paid"
                     ? rangeNames[index]?.label === "Weeks Till Paid"
-                      ? item?.[weeksTillPaidTitle]?.["min"]
+                      ? item?.[weeksTillPaidTitle]?.["min"] || item?.[weeksTillPaidTitle][0]
                       : ""
                     : rangeNames[index]?.label === "New Default Risk"
                     ? item?.[title]?.["min"] || "-"
