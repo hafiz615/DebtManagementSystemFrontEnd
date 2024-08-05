@@ -2,6 +2,8 @@ import React from "react";
 import { Grid, Typography, Box } from "@mui/material";
 import { Colors } from "../../config/default";
 import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../../constants/appConstants";
+import { isEmpty } from "lodash";
+import ScrollbarStyles from "./../customScroll";
 const cardStyles = {
   backgroundColor: Colors.WHITE,
   borderRadius: "10px",
@@ -27,118 +29,93 @@ const commonTextStyles = {
   fontFamily: "Nunito",
   fontWeight: "700",
 };
+
 function LumpsumpCard({ lumpSumpData }) {
+  const { lumpsum_settlement } = lumpSumpData;
+
   return (
-    <Grid container item xs={8} sx={cardStyles}>
-      {lumpSumpData ? (
+    <Grid container item xs={12} sx={cardStyles}>
+      <Grid
+        container
+        item
+        xs={11}
+        sx={{
+          marginLeft: "1rem",
+          marginTop: "1rem",
+        }}
+      >
+        <Typography sx={commTextStyles}>LUMPSUMP</Typography>
+        <Box sx={lineStyle} />
         <Grid
           container
           item
-          xs={11}
-          sx={{
-            marginLeft: "1rem",
-            marginTop: "1rem",
-          }}
+          xs={12}
+          sx={{ maxHeight: "40vh", overflowY: "auto", ...ScrollbarStyles }}
         >
-          <Typography sx={commTextStyles}>LUMPSUMP</Typography>
-          <Box sx={lineStyle} />
-          <Grid container item xs={12}>
-            <Grid item xs={6}>
-              <Typography sx={commonTextStyles}>Lumpsum Settlement</Typography>
-              <Grid item>
-                <Typography
-                  sx={commonTextStyles}
-                  style={{ color: Colors.SKY_BLUE }}
-                >
-                  Remaining Principle Amount
-                </Typography>
-                <Typography sx={commonTextStyles}>
-                  $
-                  {
-                    lumpSumpData?.lumpsum_settlement["East Shore Equities"]
-                      ?.remaining_principle_amount
-                  }
-                </Typography>
-                <Typography
-                  sx={commonTextStyles}
-                  style={{ color: Colors.SKY_BLUE }}
-                >
-                  Repaid Debt
-                </Typography>
-                <Typography sx={commonTextStyles}>
-                  $
-                  {
-                    lumpSumpData?.lumpsum_settlement["East Shore Equities"]
-                      ?.repaid_debt
-                  }
-                </Typography>
-              </Grid>
-            </Grid>
-            <Grid item xs={6}>
-              <Grid item>
-                <Typography sx={commonTextStyles}>LCF Group</Typography>
-                <Grid item xs={12}>
+          <Grid container item xs={12} spacing={2}>
+            {Object.keys(lumpsum_settlement).map((settlementName) => {
+              const settlementData = lumpsum_settlement[settlementName];
+              return (
+                <Grid item key={settlementName}>
                   <Typography
                     sx={commonTextStyles}
                     style={{ color: Colors.SKY_BLUE }}
                   >
+                    {settlementName}
+                  </Typography>
+                  <Typography sx={commonTextStyles}>
                     Remaining Principle Amount
                   </Typography>
                   <Typography sx={commonTextStyles}>
-                    $
-                    {
-                      lumpSumpData?.lumpsum_settlement["LCF Group"]
-                        ?.remaining_principle_amount
-                    }
+                    {settlementData?.remaining_principle_amount !== undefined
+                      ? `$${settlementData?.remaining_principle_amount}`
+                      : "--"}
                   </Typography>
-                  <Typography
-                    sx={commonTextStyles}
-                    style={{ color: Colors.SKY_BLUE }}
-                  >
-                    Repaid Debt
-                  </Typography>
+                  <Typography sx={commonTextStyles}>Repaid Debt</Typography>
                   <Typography sx={commonTextStyles}>
-                    $
-                    {lumpSumpData?.lumpsum_settlement["LCF Group"]?.repaid_debt}
+                    {settlementData?.repaid_debt !== undefined
+                      ? `$${settlementData?.repaid_debt}`
+                      : "--"}
                   </Typography>
                 </Grid>
-              </Grid>
-            </Grid>
+              );
+            })}
           </Grid>
         </Grid>
-      ) : (
-        <Grid
-          container
-          item
-          xs={5}
-          sx={{
-            display: "flex",
-          }}
-        >
-          <Typography
+        {lumpSumpData?.warning && (
+          <Grid
+            container
+            item
+            xs={8}
             sx={{
-              fontSize: FONT_SIZE_LARGE,
-              fontFamily: "Nunito",
-              fontWeight: "700",
-              color: Colors.ORANGE_COLOR,
-              marginTop: "2rem",
+              display: "flex",
             }}
           >
-            Warning
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: FONT_SIZE_LARGE,
-              fontFamily: "Nunito",
-              fontWeight: "400",
-              color: Colors.BLACK,
-              marginTop: "2rem",
-            }}
-          >
-            {lumpSumpData?.warning}
-          </Typography>
-        </Grid>
-      )}
+            <Typography
+              sx={{
+                fontSize: FONT_SIZE_LARGE,
+                fontFamily: "Nunito",
+                fontWeight: "700",
+                color: Colors.ORANGE_COLOR,
+                marginTop: "2rem",
+              }}
+            >
+              Warning
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: FONT_SIZE_LARGE,
+                fontFamily: "Nunito",
+                fontWeight: "400",
+                color: Colors.BLACK,
+                marginTop: "2rem",
+              }}
+            >
+              {lumpSumpData?.warning}
+            </Typography>
+          </Grid>
+        )}
+      </Grid>
     </Grid>
   );
 }

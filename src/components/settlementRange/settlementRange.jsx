@@ -201,6 +201,7 @@ export default function SettlementRange() {
   const [messages, setMessages] = useState([]);
 
   const [strategyTab, setStrategyTab] = useState(0);
+
   // const [strategyTabVal, setStrategyTabVal] = useState(0);
   const handleStrategyChange = (event, newValue) => {
     setStrategyTab(newValue);
@@ -243,7 +244,7 @@ export default function SettlementRange() {
     GetLumpSumAmountData();
     GetFullProfitData();
   }, [debtorId]);
-  const tabs = ["Strategy 1", "Strategy 2", "Strategy 3"];
+  const tabs = ["Strategy 1", "Strategy 2"];
   const recommendations = [
     "recommendation 1",
     "recommendation 2",
@@ -324,7 +325,7 @@ export default function SettlementRange() {
       </>
     ),
 
-    2: <FullProfitCard fullProfit={fullProfit} />,
+    // 2: <FullProfitCard fullProfit={fullProfit} />,
   };
 
   const handleChange = (event, newValue) => {
@@ -1177,7 +1178,9 @@ export default function SettlementRange() {
               </Grid>
             ) : (
               <ReactMarkdown>
-                {justifications[`justifications${value + 1}`]}
+                {strategyTab === 1
+                  ? lumpSumpData?.justifications[`justifications${value + 1}`]
+                  : justifications[`justifications${value + 1}`]}
               </ReactMarkdown>
               // <Grid container direction="column" spacing={2}>
               //   {messages.map((msg) => (

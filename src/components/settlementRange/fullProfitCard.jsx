@@ -39,19 +39,19 @@ function FullProfitCard({ fullProfit }) {
         }}
       >
         <Typography sx={commonTextStyles}>Full Profit</Typography>
-        <Typography
-          sx={{
-            ...commonTextStyles,
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          Commission Range
-        </Typography>
       </div>
       <Box sx={lineStyle} />
       <Grid container sx={{ width: "100%", padding: "10px 8px" }}>
         <Grid item xs={6.5} sx={{ paddingLeft: "6%" }}>
+          <Typography
+            sx={{
+              ...commonTextStyles,
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            Commission Range
+          </Typography>
           <Typography
             sx={{
               ...commonTextStyles,
