@@ -44,6 +44,7 @@ import ScrollbarStyles from "../customScroll.jsx";
 import TextButton from "../button.jsx";
 import { setCaseCreditorId, setCaseId } from "../../redux/action/action.js";
 import CaseFileCard from "./caseFileCard.jsx";
+import { useToast } from "../../toast/toastContext.jsx";
 
 const style = {
   position: "absolute",
@@ -62,7 +63,7 @@ function CaseDetail() {
   const dispatch = useDispatch();
 
   const [open, setOpen] = React.useState(false);
-
+  const { showToast } = useToast();
   const [value, setValue] = React.useState("Debtor");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { AUTHORITY_TEXT } = UserListPage;
@@ -124,13 +125,17 @@ function CaseDetail() {
     setAddTaskModal(e.target.value);
   };
   const handleClicked = async () => {
-    const payload = {
-      notes: addTaskModal,
-    };
-    const resposne = await AddNotesCase(id, payload);
-    setCaseSummary(resposne?.data?.data?.notes);
-    setAddTaskModal("");
-    handleClose();
+    if (addTaskModal === "") {
+      showToast("The fields can't be empty, try again", "error");
+    } else {
+      const payload = {
+        notes: addTaskModal,
+      };
+      const resposne = await AddNotesCase(id, payload);
+      setCaseSummary(resposne?.data?.data?.notes);
+      setAddTaskModal("");
+      handleClose();
+    }
   };
 
   return (
