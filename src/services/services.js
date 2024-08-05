@@ -31,7 +31,7 @@ const convertJpgToPdf = async (file) => {
 export const ExtractContractData = async (files) => {
   try {
     const apiUrl =
-      "https://dms-ai.hpdemos.co/extract-fields-multiple-files?enable_cache=true";
+      "https://dms-negotiation.hpdemos.co/extract-fields-multiple-files?enable_cache=true";
 
     const formData = new FormData();
 
