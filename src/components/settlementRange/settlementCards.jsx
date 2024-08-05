@@ -4,6 +4,7 @@ import { Colors } from "../../config/default";
 import { FONT_SIZE_LARGE } from "../../constants/appConstants";
 import Tooltip from "@mui/material/Tooltip";
 import InfoIcon from "@mui/icons-material/Info";
+import { isEmpty } from "lodash";
 
 export default function SettlementCards({
   title,
@@ -14,6 +15,7 @@ export default function SettlementCards({
   percentageSettlementOverWeeklyTrueRevenue,
   weeksTillPaid,
   weeksTillPaidTitle,
+  isFullPayment
 }) {
   const commonStyles = {
     backgroundColor: Colors.WHITE,
@@ -129,56 +131,109 @@ export default function SettlementCards({
                 </Tooltip>
               </Typography>
             </Grid>
-            <Grid item xs={5}>
-              <div style={{ width: "100%", display: "flex" }}>
-                <div
-                  style={{
-                    width: "75%",
-                    fontFamily: "Nunito",
-                    color: Colors.ORANGE_COLOR,
-                  }}
-                >
-                  Minimum
-                </div>
-                <div style={textStyles}>
-                  {rangeNames[index]?.label === "Weeks Till Paid"
-                    ? rangeNames[index]?.label === "Weeks Till Paid"
-                      ? item?.[weeksTillPaidTitle]?.["min"] || item?.[weeksTillPaidTitle][0]
-                      : ""
-                    : rangeNames[index]?.label === "New Default Risk"
-                    ? item?.[title]?.["min"] || "-"
-                    : rangeNames[index]?.label?.includes("%")
-                    ? `${parseFloat(item?.[title]?.["min"].toFixed(2)) || "-"}%`
-                    : `$${
-                        parseFloat(item?.[title]?.["min"].toFixed(2)) || "-"
-                      }`}
-                </div>
-              </div>
-              <div style={{ width: "100%", display: "flex" }}>
-                <div
-                  style={{
-                    width: "75%",
-                    fontFamily: "Nunito",
-                    color: Colors.SKY_BLUE,
-                  }}
-                >
-                  Maximum
-                </div>
-                <div style={textStyles}>
-                  {rangeNames[index]?.label === "Weeks Till Paid"
-                    ? rangeNames[index]?.label === "Weeks Till Paid"
-                      ? item?.[weeksTillPaidTitle]?.["max"] || item?.[weeksTillPaidTitle][1]
-                      : ""
-                    : rangeNames[index]?.label === "New Default Risk"
-                    ? item?.[title]?.["max"] || "-"
-                    : rangeNames[index]?.label?.includes("%")
-                    ? `${parseFloat(item?.[title]?.["max"].toFixed(2)) || "-"}%`
-                    : `$${
-                        parseFloat(item?.[title]?.["max"].toFixed(2)) || "-"
-                      }`}
-                </div>
-              </div>
-            </Grid>
+            {isFullPayment ?
+              <>
+                <Grid item xs={5}>
+                  <div style={{ width: "100%", display: "flex" }}>
+                    <div
+                      style={{
+                        width: "75%",
+                        fontFamily: "Nunito",
+                        color: Colors.ORANGE_COLOR,
+                      }}
+                    >
+                      Minimum
+                    </div>
+                    <div style={textStyles}>
+
+                    {item?.[title][0]}
+                      {/* {rangeNames[index]?.label === "Weeks Till Paid"
+                        ? item?.[weeksTillPaidTitle][0]
+                        : rangeNames[index]?.label === "New Default Risk"
+                      ? "-"
+                      : rangeNames[index]?.label?.includes("%")
+                      ? `${parseFloat(item?.[title][0].toFixed(2)) || "-"}%`
+                      : `$${parseFloat(item?.[title][0].toFixed(2)) || "-"
+                      }`} */}
+                    </div>
+                  </div>
+                  <div style={{ width: "100%", display: "flex" }}>
+                    <div
+                      style={{
+                        width: "75%",
+                        fontFamily: "Nunito",
+                        color: Colors.SKY_BLUE,
+                      }}
+                    >
+                      Maximum
+                    </div>
+                    <div style={textStyles}>
+                    {item?.[title][1]}
+                      {/* {e.log(item?.[title], item?.[title][0], item?.[title][1])}
+                      {console.log()}
+                      {rangeNames[index]?.label === "Weeks Till Paid"
+                        ? item?.[weeksTillPaidTitle][1]
+                        : rangeNames[index]?.label === "New Default Risk"
+                      ?  "-"
+                      : rangeNames[index]?.label?.includes("%")
+                      ? `${parseFloat(item?.[title][1].toFixed(2)) || "-"}%`
+                      : `$${parseFloat(item?.[title][1].toFixed(2)) || "-"
+                      }`} */}
+                    </div>
+                  </div>
+                </Grid>
+              </> :
+              <>
+                <Grid item xs={5}>
+                  <div style={{ width: "100%", display: "flex" }}>
+                    <div
+                      style={{
+                        width: "75%",
+                        fontFamily: "Nunito",
+                        color: Colors.ORANGE_COLOR,
+                      }}
+                    >
+                      Minimum
+                    </div>
+                    <div style={textStyles}>
+                      {rangeNames[index]?.label === "Weeks Till Paid"
+                        ? rangeNames[index]?.label === "Weeks Till Paid"
+                          ? item?.[weeksTillPaidTitle]?.["min"] || item?.[weeksTillPaidTitle][0]
+                          : ""
+                        : rangeNames[index]?.label === "New Default Risk"
+                          ? item?.[title]?.["min"] || "-"
+                          : rangeNames[index]?.label?.includes("%")
+                            ? `${parseFloat(item?.[title]?.["min"].toFixed(2)) || "-"}%`
+                            : `$${parseFloat(item?.[title]?.["min"].toFixed(2)) || "-"
+                            }`}
+                    </div>
+                  </div>
+                  <div style={{ width: "100%", display: "flex" }}>
+                    <div
+                      style={{
+                        width: "75%",
+                        fontFamily: "Nunito",
+                        color: Colors.SKY_BLUE,
+                      }}
+                    >
+                      Maximum
+                    </div>
+                    <div style={textStyles}>
+                      {rangeNames[index]?.label === "Weeks Till Paid"
+                        ? rangeNames[index]?.label === "Weeks Till Paid"
+                          ? item?.[weeksTillPaidTitle]?.["max"] || item?.[weeksTillPaidTitle][1]
+                          : ""
+                        : rangeNames[index]?.label === "New Default Risk"
+                          ? item?.[title]?.["max"] || "-"
+                          : rangeNames[index]?.label?.includes("%")
+                            ? `${parseFloat(item?.[title]?.["max"].toFixed(2)) || "-"}%`
+                            : `$${parseFloat(item?.[title]?.["max"].toFixed(2)) || "-"
+                            }`}
+                    </div>
+                  </div>
+                </Grid>
+              </>}
+
           </Grid>
         ))
       )}

@@ -191,9 +191,10 @@ export default function SettlementRange() {
   const [fullProfit, setFullProfit] = useState({});
 
   const [justifications, setJustifications] = useState({
-    justifications1: "hello",
-    justifications2: "",
-    justifications3: "",
+    justification_claude: "",
+    justification_gemini: "",
+    justification_gpt4_o: "",
+    justification_llama: ""
   });
 
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
@@ -248,12 +249,13 @@ export default function SettlementRange() {
     GetLumpSumAmountData();
     GetFullProfitData();
   }, [debtorId]);
-  const tabs = ["Strategy 1", "Strategy 2"];
+  const tabs = ["Strategy 1", "Strategy 2", "Strategy 3"];
   const recommendations = [
     "recommendation 1",
     "recommendation 2",
     "recommendation 3",
   ];
+  const strat3Recommendations = ["recommendation 1"]
 
   const cardStyles = {
     backgroundColor: Colors.WHITE,
@@ -292,10 +294,10 @@ export default function SettlementRange() {
             item === "recommendation 1"
               ? "Weeks remaining based on recommendation 1"
               : item === "recommendation 2"
-              ? "Weeks remaining based on recommendation 2"
-              : item === "recommendation 3"
-              ? "Weeks remaining based on recommendation 3"
-              : ""
+                ? "Weeks remaining based on recommendation 2"
+                : item === "recommendation 3"
+                  ? "Weeks remaining based on recommendation 3"
+                  : ""
           }
           settlementRange={
             apiData?.settlement_range?.[allCreditorNames[parseInt(tabValue)]] ||
@@ -308,12 +310,12 @@ export default function SettlementRange() {
           newDefaultRiskScore={apiData?.new_default_risk_score || null}
           percentageSettlementOverWeeklyBudget={
             apiData?.percentage_settlement_over_weekly_budget?.[
-              allCreditorNames[parseInt(tabValue)]
+            allCreditorNames[parseInt(tabValue)]
             ] || null
           }
           percentageSettlementOverWeeklyTrueRevenue={
             apiData?.percentage_settlement_over_weekly_true_revenue?.[
-              allCreditorNames[parseInt(tabValue)]
+            allCreditorNames[parseInt(tabValue)]
             ] || null
           }
           weeksTillPaid={
@@ -329,7 +331,43 @@ export default function SettlementRange() {
       </>
     ),
 
-    // 2: <FullProfitCard fullProfit={fullProfit} />,
+    2: strat3Recommendations?.map((item, index) => (
+      <>
+        {fullProfit && <SettlementCards
+          isFullPayment={true}
+          title={item}
+          weeksTillPaidTitle={
+            item === "recommendation 1"
+              ? "Weeks remaining based on recommendation 1"
+              : ""
+          }
+          settlementRange={
+            fullProfit?.settlement_range?.[allCreditorNames[parseInt(tabValue)]] ||
+            null
+          }
+          commissionRange={
+            fullProfit?.commission_range?.[allCreditorNames[parseInt(tabValue)]] ||
+            null
+          }
+          newDefaultRiskScore={fullProfit?.new_default_risk_score || {"recommendation 1": ["-", "-"]}}
+          percentageSettlementOverWeeklyBudget={
+            fullProfit?.percentage_settlement_over_weekly_budget?.[
+            allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          percentageSettlementOverWeeklyTrueRevenue={
+            fullProfit?.percentage_settlement_over_weekly_true_revenue?.[
+            allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          weeksTillPaid={
+            fullProfit?.weeks_till_paid?.[allCreditorNames[parseInt(tabValue)]] ||
+            null
+          }
+        />
+        }
+      </>
+    ))
   };
   useEffect(() => {
     if (value === 0) {
@@ -411,7 +449,7 @@ export default function SettlementRange() {
             setScores({ message: settlementRangeData?.data?.data?.getScores });
             showToast(
               settlementRangeData?.data?.data?.getScores +
-                " Couldn't fetch scores",
+              " Couldn't fetch scores",
               "error"
             );
           } else {
@@ -718,10 +756,10 @@ export default function SettlementRange() {
               value={
                 apiData?.weekly_budget?.[allCreditorNames[parseInt(tabValue)]]
                   ? `$ ${new Intl.NumberFormat().format(
-                      apiData?.weekly_budget?.[
-                        allCreditorNames[parseInt(tabValue)]
-                      ]
-                    )}`
+                    apiData?.weekly_budget?.[
+                    allCreditorNames[parseInt(tabValue)]
+                    ]
+                  )}`
                   : "No Data"
               }
               rawValue={apiData?.weekly_budget}
@@ -733,8 +771,8 @@ export default function SettlementRange() {
               value={
                 apiData?.weekly_true_revenue
                   ? `$ ${new Intl.NumberFormat().format(
-                      apiData?.weekly_true_revenue
-                    )}`
+                    apiData?.weekly_true_revenue
+                  )}`
                   : "No Data"
               }
               rawValue={apiData?.weekly_true_revenue}
@@ -745,8 +783,8 @@ export default function SettlementRange() {
               value={
                 apiData?.profitability
                   ? `${new Intl.NumberFormat().format(
-                      apiData?.profitability
-                    )} %`
+                    apiData?.profitability
+                  )} %`
                   : "No Data"
               }
               rawValue={apiData?.profitability}
@@ -893,10 +931,10 @@ export default function SettlementRange() {
                       >
                         {selectedCreditorDetails?.contractDetails?.loan_amount
                           ? selectedCreditorDetails.contractDetails.loan_amount.includes(
-                              "$"
-                            )
+                            "$"
+                          )
                             ? selectedCreditorDetails.contractDetails
-                                .loan_amount
+                              .loan_amount
                             : `$${selectedCreditorDetails.contractDetails.loan_amount}`
                           : "--"}
                       </Typography>
@@ -922,10 +960,10 @@ export default function SettlementRange() {
                         {selectedCreditorDetails?.contractDetails
                           ?.payable_amount
                           ? `${selectedCreditorDetails.contractDetails.payable_amount}`.includes(
-                              "$"
-                            )
+                            "$"
+                          )
                             ? selectedCreditorDetails.contractDetails
-                                .payable_amount
+                              .payable_amount
                             : `$${selectedCreditorDetails.contractDetails.payable_amount}`
                           : "--"}
                       </Typography>
@@ -953,11 +991,11 @@ export default function SettlementRange() {
                           "purchase price"
                         ]
                           ? `${selectedCreditorDetails.contractDetails["purchase price"]}`.includes(
-                              "$"
-                            )
+                            "$"
+                          )
                             ? selectedCreditorDetails.contractDetails[
-                                "purchase price"
-                              ]
+                            "purchase price"
+                            ]
                             : `$${selectedCreditorDetails.contractDetails["purchase price"]}`
                           : "--"}
                       </Typography>
@@ -1191,11 +1229,13 @@ export default function SettlementRange() {
                 <CircularProgress />
               </Grid>
             ) : (
+              
               <ReactMarkdown>
-                {strategyTab === 1
+                {strategyTab === 2 ? fullProfit?.justifications[justificationValue] : strategyTab === 1
                   ? lumpSumpData?.justifications[justificationValue]
                   : justifications[`justifications${value + 1}`]}
               </ReactMarkdown>
+              
               // <Grid container direction="column" spacing={2}>
               //   {messages.map((msg) => (
               //     <Grid item key={msg.id}>
