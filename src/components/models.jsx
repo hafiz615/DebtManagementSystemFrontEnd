@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Box, Button, Modal, IconButton } from "@mui/material";
+import { Box, Button, Modal, IconButton, Grid } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
 import CreateIcon from "@mui/icons-material/Create";
@@ -40,6 +40,7 @@ import SendEmail from "./sendEmail";
 import CreateRole from "./settingsScreen/createRole";
 import DebtorContacts from "./caseDetail/debtorContacts";
 import UploadFilePopup from "./caseDetail/uploadFilePopup";
+import DebtorFields from "./caseCreationFields/debtorFields";
 
 export default function MuiModels({
   buttonName,
@@ -468,12 +469,25 @@ export default function MuiModels({
               caseData={caseData}
             />
           ) : show === "debtorDetail" ? (
-            <EditDebtorDetails
-              show={show}
-              handleClose={handleClose}
-              caseData={caseData}
-              GetCaseDetails={GetCaseDetails}
-            />
+            // <EditDebtorDetails
+            //   show={show}
+            //   handleClose={handleClose}
+            //   caseData={caseData}
+            //   GetCaseDetails={GetCaseDetails}
+            // />
+            <Grid
+              container
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginTop: "1rem",
+              }}
+            >
+              <DebtorFields show="Edit" />
+            </Grid>
           ) : show === "editStatus" ? (
             <EditStatus
               show={show}
