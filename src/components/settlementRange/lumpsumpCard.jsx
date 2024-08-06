@@ -3,20 +3,8 @@ import { Grid, Typography, Box } from "@mui/material";
 import { Colors } from "../../config/default";
 import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../../constants/appConstants";
 import { isEmpty } from "lodash";
-// import ScrollbarStyles from "./../customScroll";
-// const cardStyles = {
-//   backgroundColor: Colors.WHITE,
-//   borderRadius: "10px",
-//   flexDirection: "column",
-//   gap: "10px",
-//   mb: "1rem",
-//   pb: "1.2rem",
-// };
-// const commTextStyles = {
-//   fontSize: FONT_SIZE_LARGE,
-//   fontFamily: "Nunito",
-//   fontWeight: "700",
-// };
+import { LumpsumHeading } from "../../constants/appConstants";
+
 const commonStyles = {
   backgroundColor: Colors.WHITE,
   borderRadius: "10px",
@@ -44,6 +32,7 @@ const commonTextStyles = {
 
 function LumpsumpCard({ lumpSumpData }) {
   const { lumpsum_settlement } = lumpSumpData;
+  const { LUMPSUM_HEADING } = LumpsumHeading;
 
   return (
     <>
@@ -54,7 +43,7 @@ function LumpsumpCard({ lumpSumpData }) {
             marginTop: "1rem",
           }}
         >
-          <Typography sx={commonTextStyles}>Lump Sum</Typography>
+          <Typography sx={commonTextStyles}>{LUMPSUM_HEADING}</Typography>
         </div>
         <Box sx={lineStyle} />
         {isEmpty(lumpSumpData) ? (

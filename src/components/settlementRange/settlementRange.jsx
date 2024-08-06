@@ -189,7 +189,6 @@ export default function SettlementRange() {
   const [lumpSumpData, setLumpSumpData] = useState({});
 
   const [fullProfit, setFullProfit] = useState({});
-  console.log(fullProfit, "FULL PROFIT");
 
   const [justifications, setJustifications] = useState({
     justification_claude: "",
@@ -226,7 +225,6 @@ export default function SettlementRange() {
   const GetLumpSumAmountData = async () => {
     if (debtorId) {
       const GetLumpSumDataRes = await GetLumpSumAmount(debtorId);
-      console.log(GetLumpSumDataRes, "GetLumpSumDataRes");
 
       if (GetLumpSumDataRes?.status === 200) {
         setLumpSumpData(GetLumpSumDataRes?.data?.data);
@@ -239,7 +237,6 @@ export default function SettlementRange() {
   const GetFullProfitData = async () => {
     if (debtorId) {
       const GetFullProfitDataRes = await GetFullProfit(debtorId);
-      console.log(GetFullProfitDataRes, "GetFullProfitDataRes");
       if (GetFullProfitDataRes?.status === 200) {
         setFullProfit(GetFullProfitDataRes?.data?.data);
       } else {
