@@ -284,7 +284,6 @@ export default function SettlementRange() {
 
   const cardData = {
     0: recommendations?.map((item, index) => (
-      // <Grid item lg={12} key={index}>
       <>
         <SettlementCards
           title={item}

@@ -160,17 +160,7 @@ export default function SettlementCards({
                       >
                         Minimum
                       </div>
-                      <div style={textStyles}>
-                        {item?.[title][0]}
-                        {/* {rangeNames[index]?.label === "Weeks Till Paid"
-                        ? item?.[weeksTillPaidTitle][0]
-                        : rangeNames[index]?.label === "New Default Risk"
-                      ? "-"
-                      : rangeNames[index]?.label?.includes("%")
-                      ? `${parseFloat(item?.[title][0].toFixed(2)) || "-"}%`
-                      : `$${parseFloat(item?.[title][0].toFixed(2)) || "-"
-                      }`} */}
-                      </div>
+                      <div style={textStyles}>{item?.[title][0]}</div>
                     </div>
                     <div style={{ width: "100%", display: "flex" }}>
                       <div
@@ -182,19 +172,7 @@ export default function SettlementCards({
                       >
                         Maximum
                       </div>
-                      <div style={textStyles}>
-                        {item?.[title][1]}
-                        {/* {e.log(item?.[title], item?.[title][0], item?.[title][1])}
-                      {console.log()}
-                      {rangeNames[index]?.label === "Weeks Till Paid"
-                        ? item?.[weeksTillPaidTitle][1]
-                        : rangeNames[index]?.label === "New Default Risk"
-                      ?  "-"
-                      : rangeNames[index]?.label?.includes("%")
-                      ? `${parseFloat(item?.[title][1].toFixed(2)) || "-"}%`
-                      : `$${parseFloat(item?.[title][1].toFixed(2)) || "-"
-                      }`} */}
-                      </div>
+                      <div style={textStyles}>{item?.[title][1]}</div>
                     </div>
                   </Grid>
                 </>
