@@ -88,6 +88,8 @@ export default function DebtorContacts({
       updatedContact[field] = value;
       setDebtorContactDetails(updatedContact);
     }
+    handleNumberInput();
+    handleNumberInputKeyDown();
   };
 
   const handleNumberInputKeyDown = (e) => {
@@ -248,7 +250,6 @@ export default function DebtorContacts({
                 onChange={(e) =>
                   handleInputChange("phone", formatPhoneNumber(e))
                 }
-                onKeyDown={handleNumberInputKeyDown}
                 error={contactError.phone}
               />
 
@@ -292,7 +293,6 @@ export default function DebtorContacts({
                 width={smallScreen ? "100%" : "97%"}
                 value={debtorContactDetails.zipCode}
                 onChange={(e) => handleInputChange("zipCode", e.target.value)}
-                onKeyDown={handleNumberInput}
               />
             </Grid>
             <Grid
