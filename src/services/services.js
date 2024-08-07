@@ -1006,6 +1006,28 @@ export const GetLumpSumAmount = async (id) => {
   }
 };
 
+export const GetCustomVariable = async () => {
+  try {
+    return await axios.get(
+      // BASE_URL + `/v1/debtor/getFullProfitSettlement/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetEvents = async () => {
+  try {
+    return await axios.get(
+      // BASE_URL + `/v1/debtor/getFullProfitSettlement/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
 export const GetFullProfit = async (id) => {
   try {
     return await axios.get(

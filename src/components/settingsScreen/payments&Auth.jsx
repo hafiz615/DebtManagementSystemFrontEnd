@@ -164,7 +164,7 @@ export default function SettingsAccordion({
         </StyledAccordionSummary>
 
         <StyledAccordionDetails sx={{ width: { xs: "130vw", sm: "auto" } }}>
-          <Grid container item>
+          {/* <Grid container item>
             <Grid
               item
               xs={12}
@@ -273,7 +273,7 @@ export default function SettingsAccordion({
             />
           </Grid>
 
-          <hr></hr>
+          <hr></hr> */}
 
           <Grid container item sx={{ marginTop: "1rem", marginBottom: "1rem" }}>
             <Typography

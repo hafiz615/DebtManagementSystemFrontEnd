@@ -1,5 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Box, Typography, Grid } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Grid,
+  Button,
+  Menu,
+  MenuItem,
+  Popover,
+} from "@mui/material";
 import "froala-editor/css/froala_style.min.css";
 import "froala-editor/css/froala_editor.pkgd.min.css";
 import FroalaEditorComponent from "react-froala-wysiwyg";
@@ -10,9 +18,12 @@ import styled from "styled-components";
 import {
   EditSettings,
   GetAllSettings,
+  GetCustomVariable,
+  GetEvents,
   SaveSettings,
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
+import { ArrowRight } from "@mui/icons-material";
 
 const StyledSelect = styled.select`
   border: none;
@@ -81,6 +92,13 @@ export default function FroalaEditor({
     sms: [],
   });
 
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorElNew, setAnchorElNew] = useState(null);
+  const [subMenuAnchorEl, setSubMenuAnchorEl] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [allEvents, setAllEvents] = useState({});
+  const [customVariables, setCustomVariables] = useState({});
+
   const editorRef = useRef(null);
 
   useEffect(() => {
@@ -101,6 +119,23 @@ export default function FroalaEditor({
       setFroalaEditor(row?.html);
     }
   }, [row, setFroalaEditor]);
+
+  const getVariableAndEvents = async () => {
+    const resVariable = await GetCustomVariable();
+    if (resVariable?.status === 200) {
+      setCustomVariables(resVariable?.data?.data);
+      console.log("variables", resVariable?.data?.data);
+    }
+    const resEvents = await GetEvents();
+    if (resEvents?.status === 200) {
+      setAllEvents(resEvents?.data?.data);
+      console.log("events", resEvents?.data?.data);
+    }
+  };
+
+  useEffect(() => {
+    getVariableAndEvents();
+  }, []);
 
   const handleSubjectChange = (e) => {
     setEmailTemplate((prev) => ({
@@ -138,16 +173,30 @@ export default function FroalaEditor({
     setFroalaEditor(html);
   };
 
-  const handleVariableChange = (e) => {
-    const selectedVariable = e.target.value;
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+    setSubMenuAnchorEl(null);
+  };
+
+  const handleOpenSubMenu = (event, category) => {
+    setSubMenuAnchorEl(event.currentTarget);
+    setSelectedCategory(category);
+  };
+
+  const handleMenuClick = (action) => {
+    setSubMenuAnchorEl(null);
+    setAnchorEl(null);
+    const selectedVariable = action;
     if (selectedVariable) {
-      const newContent = froalaEditor + selectedVariable;
+      const newContent = froalaEditor + `{{${selectedVariable}}}`;
       setFroalaEditor(newContent);
     }
   };
 
-  const handleEventChange = (e) => {
-    const selectedEvent = e.target.value;
+  const handleEventChange = (event) => {
+    setAnchorElNew(null);
+    const selectedEvent = event.currentTarget.getAttribute("data-value");
+    console.log(selectedEvent);
     if (templateType === "email") {
       setEmailTemplate((prev) => ({
         ...prev,
@@ -238,13 +287,35 @@ export default function FroalaEditor({
 
   const isSaveDisabled =
     templateType === "email"
-      ? isFieldEmpty(emailTemplate.subject) ||
-        isFieldEmpty(emailTemplate.name) ||
-        isFieldEmpty(emailTemplate.event) ||
-        isFieldEmpty(emailTemplate.html)
-      : isFieldEmpty(smsTemplate.name) ||
-        isFieldEmpty(smsTemplate.event) ||
-        isFieldEmpty(smsTemplate.text);
+      ? isFieldEmpty(emailTemplate?.subject) ||
+        isFieldEmpty(emailTemplate?.name) ||
+        isFieldEmpty(emailTemplate?.event) ||
+        isFieldEmpty(emailTemplate?.html)
+      : isFieldEmpty(smsTemplate?.name) ||
+        isFieldEmpty(smsTemplate?.event) ||
+        isFieldEmpty(smsTemplate?.text);
+
+  const dummyEvents = {
+    PaymentSuccessful: "on_payment_success",
+    PaymentFailure: "on_payment_fail",
+    AuthorizationSuccessful: "on_auth_success",
+    AuthorizationFailure: "on_auth_fail",
+  };
+
+  const dummyVariables = {
+    Event: { Date: "date_time", Label: "label" },
+    DebtorInformation: { Name: "name", CompanyName: "company_name" },
+  };
+
+  const buttonStyling = {
+    textTransform: "none",
+    color: Colors.BLACK,
+    fontFamily: "Nunito",
+    fontSize: FONT_SIZE_LARGE,
+    textAlign: "left",
+  };
+
+  const fontStyling = { fontSize: FONT_SIZE_LARGE, fontFamily: "Nunito" };
 
   return (
     <>
@@ -310,34 +381,95 @@ export default function FroalaEditor({
         }}
       >
         <Grid item xs={6}>
-          <StyledSelect defaultValue="" onChange={handleVariableChange}>
-            <option value="" disabled>
-              Select Variable
-            </option>
-            <option value="{{clientName}}">Client Name</option>
-            <option value="{{creditorName}}">Creditor Name</option>
-            <option value="{{paymentDate}}"> Payment Date</option>
-            <option value="{{paymentAmount}}"> Payment Amount</option>
-            <option value="{{remainingAmount}}"> Remaining Debt</option>
-          </StyledSelect>
+          <div>
+            <TextButton
+              buttonText="Select Variable"
+              height="2.5rem"
+              width="98%"
+              fontColor={Colors.BLACK}
+              onClick={(e) => setAnchorEl(e.target)}
+              backgroundColor={Colors.BG_LIGHT_GRAY}
+              hoverColor={Colors.BG_LIGHT_GRAY}
+              boxShadow="none"
+            />
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleCloseMenu}
+            >
+              {Object.keys(dummyVariables)?.map((category) => (
+                <MenuItem
+                  key={category}
+                  onClick={(event) => handleOpenSubMenu(event, category)}
+                  sx={{
+                    ...fontStyling,
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  {category}
+                  <ArrowRight />
+                </MenuItem>
+              ))}
+            </Menu>
+            <Popover
+              anchorEl={subMenuAnchorEl}
+              open={Boolean(subMenuAnchorEl)}
+              onClose={() => setSubMenuAnchorEl(null)}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+            >
+              <div>
+                {selectedCategory &&
+                  Object.entries(dummyVariables[selectedCategory])?.map(
+                    ([label, action]) => (
+                      <div style={{ display: "flex", flexDirection: "column" }}>
+                        <Button
+                          sx={buttonStyling}
+                          onClick={() => handleMenuClick(action)}
+                        >
+                          {label}
+                        </Button>
+                      </div>
+                    )
+                  )}
+              </div>
+            </Popover>
+          </div>
         </Grid>
         <Grid item xs={6}>
-          <StyledSelect
-            value={
-              templateType === "email"
-                ? emailTemplate?.event
-                : smsTemplate?.event
-            }
-            onChange={handleEventChange}
+          <TextButton
+            buttonText="Select Events"
+            height="2.5rem"
+            width="98%"
+            fontColor={Colors.BLACK}
+            onClick={(e) => setAnchorElNew(e.target)}
+            backgroundColor={Colors.BG_LIGHT_GRAY}
+            hoverColor={Colors.BG_LIGHT_GRAY}
+            boxShadow="none"
+          />
+          <Menu
+            anchorEl={anchorElNew}
+            open={Boolean(anchorElNew)}
+            onClose={() => setAnchorElNew(null)}
           >
-            <option value="" disabled>
-              Select Event
-            </option>
-            <option value="success payment">Successful Payment</option>
-            <option value="failure payment">Failure Payment</option>
-            <option value="success auth">Successful Authorization</option>
-            <option value="failure auth">Failure Authorization</option>
-          </StyledSelect>
+            {Object.entries(dummyEvents)?.map(([label, action]) => (
+              <MenuItem
+                key={action}
+                data-value={action}
+                onClick={(event) => handleEventChange(event)}
+                sx={fontStyling}
+              >
+                {label}
+              </MenuItem>
+            ))}
+          </Menu>
         </Grid>
       </Grid>
 

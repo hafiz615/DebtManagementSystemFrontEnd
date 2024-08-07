@@ -14,6 +14,7 @@ import ScrollbarStyles from "../customScroll";
 import CaseStatuses from "./caseStatuses";
 import PipelineAccordion from "./pipelineAccordion";
 import RoleAndPermission from "./roleAndPermission";
+import NotificationConfiguration from "../notificationConfigure";
 
 export default function SettingsScreen() {
   const navigate = useNavigate();
@@ -225,6 +226,8 @@ export default function SettingsScreen() {
             setLoading={setLoading}
           />
         )}
+        <NotificationConfiguration data={notificationTemplates} />
+
         {settings?.viewCustomFields && (
           <CustomFieldsAccordion
             customFields={customFields}
