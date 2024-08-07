@@ -17,6 +17,7 @@ function PaymentsTextFields({
   error,
   value,
   max,
+  onKeyDown,
 }) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
 
@@ -57,6 +58,7 @@ function PaymentsTextFields({
       <input
         type={type}
         placeholder={placeHolderValue}
+        onKeyDown={onKeyDown}
         onChange={type === "date" ? handleDateChange : onChange}
         value={type === "date" ? formatDate(value) : value}
         max={max}
