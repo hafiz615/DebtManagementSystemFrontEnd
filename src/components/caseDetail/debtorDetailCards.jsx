@@ -284,6 +284,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
             show="debtorContacts"
             caseData={caseData}
             GetCaseDetails={GetCaseDetails}
+            width="70vw"
           />
 
           {/* <div

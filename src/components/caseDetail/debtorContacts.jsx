@@ -168,7 +168,7 @@ export default function DebtorContacts({
     };
     let updateDebtor;
     if (show === "Debtor") {
-      updateDebtor = await UpdateDebtor(caseId, params);
+      updateDebtor = await UpdateDebtor(caseId, params, "add");
     } else {
       updateDebtor = await UpdateCreditor(caseId, params);
     }
@@ -200,7 +200,7 @@ export default function DebtorContacts({
       >
         <Close />
       </Box>
-      <Grid container>
+      {/* <Grid container>
         <Grid
           container
           item
@@ -333,6 +333,160 @@ export default function DebtorContacts({
                 }}
               />
             </Grid>
+          </Grid>
+        </Grid>
+        <Grid
+          container
+          xs={12}
+          sx={{ justifyContent: "flex-end", marginTop: "1rem" }}
+        >
+          <TextButton
+            buttonText="Add"
+            height="2rem"
+            width="6rem"
+            disabled={
+              !debtorContantHasValue ||
+              loading ||
+              !areRequiredFieldsFilled() ||
+              Object.values(emailContactError).some((error) => error) ||
+              Object.values(contactError).some((error) => error)
+            }
+            onClick={updateDebtorById}
+            backgroundColor={Colors.SKY_BLUE}
+            hoverColor={Colors.SKY_BLUE}
+            loading={loading}
+          />
+        </Grid>
+      </Grid> */}
+
+      <Grid
+        item
+        xs={12}
+        sx={{
+          marginTop: "1rem",
+          borderRadius: "10px",
+          backgroundColor: Colors.WHITE,
+          padding: "1rem",
+        }}
+      >
+        <Grid
+          container
+          item
+          xs={12}
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography
+            sx={{ fontFamily: "Nunito", fontWeight: "600" }}
+            gutterBottom
+          >
+            Contact Details
+          </Typography>
+        </Grid>
+
+        <Grid container item xs={12}>
+          <Grid container item xs={12} md={8}>
+            <PaymentsTextFields
+              type="text"
+              label="Name"
+              placeHolderValue="Enter Name"
+              width={smallScreen ? "100%" : "97%"}
+              value={debtorContactDetails?.name}
+              onChange={(e) => handleInputChange("name", e.target.value)}
+            />
+            <PaymentsTextFields
+              type="text"
+              label="Title"
+              placeHolderValue="Enter Title"
+              width={smallScreen ? "100%" : "97%"}
+              value={debtorContactDetails?.title}
+              onChange={(e) => handleInputChange("title", e.target.value)}
+            />
+
+            <MuiPhoneTextField
+              label="Phone #"
+              value={debtorContactDetails.phone}
+              onChange={(e) => handleInputChange("phone", formatPhoneNumber(e))}
+              onKeyDown={handleNumberInputKeyDown}
+              error={contactError?.phone}
+            />
+
+            <PaymentsTextFields
+              type="text"
+              label="Enter Email"
+              placeHolderValue="Enter Email"
+              width={smallScreen ? "100%" : "97%"}
+              value={debtorContactDetails?.email}
+              onChange={(e) => handleInputChange("email", e.target.value)}
+              error={emailContactError?.email}
+            />
+
+            <PaymentsTextFields
+              type="text"
+              label="Country (Optional)"
+              placeHolderValue="Country Name"
+              width={smallScreen ? "100%" : "97%"}
+              value={debtorContactDetails?.country}
+              onChange={(e) => handleInputChange("country", e.target.value)}
+            />
+            <PaymentsTextFields
+              type="text"
+              label="State (Optional)"
+              placeHolderValue="Enter State"
+              width={smallScreen ? "100%" : "97%"}
+              value={debtorContactDetails?.state}
+              onChange={(e) => handleInputChange("state", e.target.value)}
+            />
+            <PaymentsTextFields
+              label="City (Optional)"
+              placeHolderValue="Enter City"
+              width={smallScreen ? "100%" : "97%"}
+              value={debtorContactDetails?.city}
+              onChange={(e) => handleInputChange("city", e.target.value)}
+            />
+            <PaymentsTextFields
+              type="number"
+              label="Zip Code (Optional)"
+              placeHolderValue="Enter Zip Code"
+              width={smallScreen ? "100%" : "97%"}
+              value={debtorContactDetails?.zipCode}
+              onChange={(e) => handleInputChange("zipCode", e.target.value)}
+              onKeyDown={handleNumberInput}
+            />
+          </Grid>
+          <Grid container item xs={12} md={4} sx={{ flexDirection: "column" }}>
+            <Typography
+              sx={{
+                fontWeight: "500",
+                fontFamily: "Nunito",
+                marginLeft: "1rem",
+                color: Colors.DARK_GRAY,
+              }}
+            >
+              {show === "Debtor"
+                ? "Relation with Debtor (Optional)"
+                : "Relation with Creditor (Optional)"}
+            </Typography>
+            <input
+              type="text"
+              placeholder="Relation"
+              value={debtorContactDetails?.relationWithDebtor}
+              onChange={(e) =>
+                handleInputChange("relationWithDebtor", e.target.value)
+              }
+              style={{
+                backgroundColor: Colors.BG_LIGHT_GRAY,
+                height: "2.5rem",
+                color: Colors.DIM_LIGHT_GRAY,
+                paddingLeft: "1rem",
+                border: "none",
+                outline: "none",
+                borderRadius: "5px",
+                width: smallScreen ? "100%" : "97%",
+              }}
+            />
           </Grid>
         </Grid>
         <Grid
