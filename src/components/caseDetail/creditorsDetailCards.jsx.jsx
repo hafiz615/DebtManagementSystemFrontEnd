@@ -509,7 +509,11 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
                 }}
               >
                 <span style={cellStyle}>{item?.name || "-"}</span>
-                <span style={cellStyle}>{item?.relationWithDebtor || "-"}</span>
+                <span style={cellStyle}>
+                  {item?.relationWithDebtor ||
+                    item?.relationWithCreditor ||
+                    "-"}
+                </span>
                 <span style={cellStyle}>
                   <Email sx={iconStyle} />
                   <Call sx={iconStyle} />

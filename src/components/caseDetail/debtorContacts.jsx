@@ -43,9 +43,8 @@ export default function DebtorContacts({
     zipCode: item?.zipCode || "",
     relationWithDebtor:
       item?.relationWithDebtor || item?.relationWithCreditor || "",
-    _id: caseData?._id,
+    _id: item?._id,
   };
-
   const [debtorContactDetails, setDebtorContactDetails] =
     useState(initialContact);
   const debtorContantHasValue = hasAnyValue(debtorContactDetails);
