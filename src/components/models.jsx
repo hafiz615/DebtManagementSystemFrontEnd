@@ -40,7 +40,6 @@ import SendEmail from "./sendEmail";
 import CreateRole from "./settingsScreen/createRole";
 import DebtorContacts from "./caseDetail/debtorContacts";
 import UploadFilePopup from "./caseDetail/uploadFilePopup";
-import DebtorFields from "./caseCreationFields/debtorFields";
 
 export default function MuiModels({
   buttonName,
@@ -469,25 +468,14 @@ export default function MuiModels({
               caseData={caseData}
             />
           ) : show === "debtorDetail" ? (
-            // <EditDebtorDetails
-            //   show={show}
-            //   handleClose={handleClose}
-            //   caseData={caseData}
-            //   GetCaseDetails={GetCaseDetails}
-            // />
-            <Grid
-              container
-              item
-              xs={12}
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginTop: "1rem",
-              }}
-            >
-              <DebtorFields show="Edit" />
-            </Grid>
+            <>
+              <EditDebtorDetails
+                show={show}
+                handleClose={handleClose}
+                caseData={caseData}
+                GetCaseDetails={GetCaseDetails}
+              />
+            </>
           ) : show === "editStatus" ? (
             <EditStatus
               show={show}

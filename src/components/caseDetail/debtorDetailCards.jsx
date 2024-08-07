@@ -121,7 +121,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
             button="create"
             iconColor={Colors.BLACK}
             width="80vw"
-            height="70vh"
+            height="72vh"
             caseData={caseData}
             GetCaseDetails={GetCaseDetails}
           />

@@ -56,12 +56,6 @@ export default function DebtorFields({
   useEffect(() => {
     GetStatuses();
   }, []);
-  // const menuItems = [
-  //   { label: "Customer", value: "Customer" },
-  //   { label: "On hold", value: "On hold" },
-  //   { label: "Canceled", value: "Canceled" },
-  //   { label: "Declared Bankrupcy", value: "Declared Bankrupcy" },
-  // ];
 
   const isEmailValid = (email) => {
     // Use a more robust email validation regular expression
@@ -718,24 +712,6 @@ export default function DebtorFields({
           />
         </Grid>
       </Grid>
-      {show === "Edit" && (
-        <Grid
-          container
-          xs={12}
-          sx={{ justifyContent: "right", marginRight: "1rem" }}
-        >
-          <TextButton
-            buttonText="Save"
-            height="2rem"
-            width="8rem"
-            // disabled={!isFormValid}
-            // onClick={updateDebtorById}
-            backgroundColor={Colors.SKY_BLUE}
-            hoverColor={Colors.SKY_BLUE}
-            // loading={loading}
-          />
-        </Grid>
-      )}
 
       {show !== "Edit" && (
         <Grid
