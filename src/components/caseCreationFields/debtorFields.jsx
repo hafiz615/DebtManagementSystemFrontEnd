@@ -117,6 +117,8 @@ export default function DebtorFields({
         [fieldName]: value,
       }));
     }
+    handleNumberInputKeyDown();
+    handleNumberInput();
   };
 
   const businessInfoInputChange = (fieldName, value) => {
@@ -161,6 +163,8 @@ export default function DebtorFields({
         [fieldName]: value,
       }));
     }
+    handleNumberInputKeyDown();
+    handleNumberInput();
   };
 
   const handleCheckChange = (event) => {
@@ -234,6 +238,8 @@ export default function DebtorFields({
       updatedList[index][field] = value;
       setDebtorContactDetails(updatedList);
     }
+    handleNumberInputKeyDown();
+    handleNumberInput();
   };
   const handleNumberInputKeyDown = (e) => {
     const invalidChars = ["e", "E", ".", "-"];
@@ -352,7 +358,6 @@ export default function DebtorFields({
             width="100%"
             value={debtorOwnDetails?.BasicSsid}
             onChange={(e) => basicInfoInputChange("BasicSsid", e.target.value)}
-            onKeyDown={handleNumberInput}
             error={errors?.ssn}
           />
         </Grid>
@@ -423,7 +428,6 @@ export default function DebtorFields({
               onChange={(e) =>
                 basicInfoInputChange("BasicWeeklyBudget", e.target.value)
               }
-              onKeyDown={handleNumberInput}
             />
           </Grid>
           <Grid
@@ -511,7 +515,6 @@ export default function DebtorFields({
             onChange={(e) =>
               basicInfoInputChange("BasicZipCode", e.target.value)
             }
-            onKeyDown={handleNumberInput}
           />
           <MuiPhoneTextField
             label="Phone #*"
@@ -519,7 +522,6 @@ export default function DebtorFields({
             onChange={(e) =>
               basicInfoInputChange("BasicPhoneNumber", formatPhoneNumber(e))
             }
-            onKeyDown={handleNumberInputKeyDown}
             error={errors?.basicPhone}
           />
           <PaymentsTextFields
@@ -578,7 +580,6 @@ export default function DebtorFields({
             placeHolderValue="Enter Ein Number"
             width="100%"
             value={debtorBusinessDetails?.businessEinNumber}
-            onKeyDown={handleNumberInput}
             onChange={(e) =>
               businessInfoInputChange("businessEinNumber", e.target.value)
             }
@@ -685,7 +686,6 @@ export default function DebtorFields({
             onChange={(e) =>
               businessInfoInputChange("businessZipCode", e.target.value)
             }
-            onKeyDown={handleNumberInput}
           />
 
           <MuiPhoneTextField
@@ -697,7 +697,6 @@ export default function DebtorFields({
                 formatPhoneNumber(e)
               )
             }
-            onKeyDown={handleNumberInputKeyDown}
             error={errors?.businessPhone}
           />
           <PaymentsTextFields
@@ -804,14 +803,13 @@ export default function DebtorFields({
                       <MuiPhoneTextField
                         label="Phone #"
                         value={item?.phone}
-                        onChange={(e) =>
+                        onChange={(e) => {
                           handleInputChange(
                             index,
                             "phone",
                             formatPhoneNumber(e)
-                          )
-                        }
-                        onKeyDown={handleNumberInputKeyDown}
+                          );
+                        }}
                         error={contactError?.[`phone${index}`]}
                       />
 
@@ -865,7 +863,6 @@ export default function DebtorFields({
                         onChange={(e) =>
                           handleInputChange(index, "zipCode", e.target.value)
                         }
-                        onKeyDown={handleNumberInput}
                       />
                     </Grid>
                     <Grid

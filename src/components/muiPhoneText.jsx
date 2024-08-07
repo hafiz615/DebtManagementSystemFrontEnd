@@ -56,7 +56,6 @@ export default function MuiPhoneTextField({
         disableDropdown={false}
         onChange={onChange}
         value={value}
-        onKeyDown={onKeyDown}
         preferredCountries={["us"]}
       />
       {error && value ? (

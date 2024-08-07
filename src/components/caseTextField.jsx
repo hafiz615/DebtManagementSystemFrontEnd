@@ -3,7 +3,7 @@ import { Typography, Grid, Box } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { parse, format } from "date-fns";
 import { Colors } from "../config/default";
-import { formatDate } from '../common';
+import { formatDate } from "../common";
 
 function PaymentsTextFields({
   label,
@@ -17,7 +17,7 @@ function PaymentsTextFields({
   error,
   value,
   onKeyDown,
-  max
+  max,
 }) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
 
@@ -25,13 +25,13 @@ function PaymentsTextFields({
     const inputValue = e.target.value;
     let formattedDate = inputValue;
 
-    if (type === 'date') {
-      const dateFormats = ['MMM-dd-yyyy', 'MM/dd/yyyy', 'MMMM dd, yyyy'];
+    if (type === "date") {
+      const dateFormats = ["MMM-dd-yyyy", "MM/dd/yyyy", "MMMM dd, yyyy"];
       for (const dateFormat of dateFormats) {
         try {
           const parsedDate = parse(inputValue, dateFormat, new Date());
           if (!isNaN(parsedDate)) {
-            formattedDate = format(parsedDate, 'yyyy-MM-dd');
+            formattedDate = format(parsedDate, "yyyy-MM-dd");
             break;
           }
         } catch (error) {
@@ -58,9 +58,8 @@ function PaymentsTextFields({
       <input
         type={type}
         placeholder={placeHolderValue}
-        onChange={type === 'date' ? handleDateChange : onChange}
-        value={type === 'date' ? formatDate(value) : value}
-        onKeyDown={onKeyDown}
+        onChange={type === "date" ? handleDateChange : onChange}
+        value={type === "date" ? formatDate(value) : value}
         max={max}
         style={{
           backgroundColor: Colors.BG_LIGHT_GRAY,
