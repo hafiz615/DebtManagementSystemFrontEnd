@@ -170,7 +170,7 @@ export default function DebtorContacts({
     if (show === "Debtor") {
       updateDebtor = await UpdateDebtor(caseId, params, "add");
     } else {
-      updateDebtor = await UpdateCreditor(caseId, params);
+      updateDebtor = await UpdateCreditor(caseId, params, "add");
     }
 
     if (updateDebtor?.status === 200) {
