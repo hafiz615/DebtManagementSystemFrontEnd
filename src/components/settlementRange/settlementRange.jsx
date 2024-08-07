@@ -352,7 +352,7 @@ export default function SettlementRange() {
 
     2: strat3Recommendations?.map((item, index) => (
       <>
-        {fullProfit && (
+        {!isEmpty(fullProfit) && (
           <SettlementCards
             isFullPayment={true}
             title={item}

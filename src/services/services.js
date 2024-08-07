@@ -404,10 +404,10 @@ export const CreateCustomField = async (payload) => {
   }
 };
 
-export const UpdateDebtor = async (id, payload) => {
+export const UpdateDebtor = async (id, payload, type) => {
   try {
     return await axios.put(
-      BASE_URL + `/v1/debtor/updateDebtor/${id}`,
+      BASE_URL + `/v1/debtor/updateDebtor/${id}?contact=${type}`,
       payload,
       setHeaders()
     );
@@ -415,10 +415,10 @@ export const UpdateDebtor = async (id, payload) => {
     return error;
   }
 };
-export const UpdateCreditor = async (id, payload) => {
+export const UpdateCreditor = async (id, payload, type) => {
   try {
     return await axios.put(
-      BASE_URL + `/v1/creditor/updateCreditor/${id}`,
+      BASE_URL + `/v1/creditor/updateCreditor/${id}?contact=${type}`,
       payload,
       setHeaders()
     );
