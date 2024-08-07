@@ -7,6 +7,7 @@ import {
   styled,
   InputBase,
   Box,
+  IconButton,
 } from "@mui/material";
 import {
   Search,
@@ -15,11 +16,14 @@ import {
   Call,
   Sms,
   Email,
+  Edit,
+  EditAttributes,
 } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import ScrollbarStyles from "./../customScroll";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -74,13 +78,16 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
     "description",
   ];
   const cellStyle = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     color: Colors.DIM_LIGHT_GRAY,
     fontWeight: "600",
     fontFamily: "Nunito",
     fontSize: "11px",
   };
   const iconStyle = {
-    fontSize: "15px",
+    fontSize: "13px",
     marginLeft: ".3rem",
     marginTop: ".3rem",
   };
@@ -260,6 +267,8 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
           padding: "0px 10px",
           height: "13rem",
           marginBottom: "0.5rem",
+          overflow: "auto",
+          ...ScrollbarStyles,
         }}
       >
         <Grid
@@ -286,23 +295,6 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
             GetCaseDetails={GetCaseDetails}
             width="70vw"
           />
-
-          {/* <div
-            style={{
-              display: "flex",
-              fontSize: "11px",
-              alignItems: "center",
-              fontFamily: "Nunito",
-            }}
-          >
-            <IconButton>
-              <KeyboardArrowLeft sx={{ fontSize: "16px" }} />
-            </IconButton>
-            1 of {caseData?.debtor?.contacts?.length}
-            <IconButton>
-              <KeyboardArrowRight sx={{ fontSize: "16px" }} />
-            </IconButton>
-          </div> */}
         </Grid>
 
         <Grid container item sx={{ marginBottom: "0.5rem" }}>
@@ -326,23 +318,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
             />
           </SearchContainer>
         </Grid>
-        <Box
-          sx={{
-            height: "10rem",
-            overflowY: "auto",
-            "&::-webkit-scrollbar": {
-              width: "5px",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "#E5E5E5",
-              borderRadius: "8px",
-            },
-            "&::-webkit-scrollbar-track": {
-              backgroundColor: Colors.WHITE,
-              borderRadius: "8px",
-            },
-          }}
-        >
+        <Box>
           <Grid
             item
             xs={12}
@@ -395,6 +371,13 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
                   <Email sx={iconStyle} />
                   <Call sx={iconStyle} />
                   <Sms sx={iconStyle} />
+                  <MuiModels
+                    show="editDebtorContacts"
+                    caseData={caseData}
+                    item={item}
+                    GetCaseDetails={GetCaseDetails}
+                    width="70vw"
+                  />
                 </span>
               </Grid>
             );

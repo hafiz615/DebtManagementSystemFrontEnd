@@ -307,7 +307,7 @@ export default function EditDebtorDetail({
         sx={{
           cursor: "pointer",
           display: "flex",
-          justifyContent: "flex-end",
+          justifyContent: "space-between",
           marginBottom: "1rem",
         }}
       >
