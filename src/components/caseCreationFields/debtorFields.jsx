@@ -14,6 +14,11 @@ import { formatPhoneNumber } from "../../common";
 import AmountTextField from "../amountTextField";
 import PaymentCardDetails from "../paymentCard";
 import { GetAllStatuses } from "../../services/services";
+import {
+  isEmailValid,
+  handleNumberInputKeyDown,
+  handleNumberInput,
+} from "../../constants/appConstants";
 
 export default function DebtorFields({
   debtorOwnDetails,
@@ -35,9 +40,11 @@ export default function DebtorFields({
   connectPayment,
   setConnectPayment,
   walletId,
+  show,
 }) {
   const [menuItems, setMenuItems] = useState([]);
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
+
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const GetStatuses = async () => {
     const AllStatuses = await GetAllStatuses();
@@ -54,18 +61,6 @@ export default function DebtorFields({
   useEffect(() => {
     GetStatuses();
   }, []);
-  // const menuItems = [
-  //   { label: "Customer", value: "Customer" },
-  //   { label: "On hold", value: "On hold" },
-  //   { label: "Canceled", value: "Canceled" },
-  //   { label: "Declared Bankrupcy", value: "Declared Bankrupcy" },
-  // ];
-
-  const isEmailValid = (email) => {
-    // Use a more robust email validation regular expression
-    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-    return emailRegex.test(email);
-  };
 
   const basicInfoInputChange = (fieldName, value) => {
     if (fieldName === "BasicEmailAddress") {
@@ -239,55 +234,6 @@ export default function DebtorFields({
       setDebtorContactDetails(updatedList);
     }
   };
-  const handleNumberInputKeyDown = (e) => {
-    const invalidChars = ["e", "E", ".", "-"];
-    const allowedKeys = [
-      "+",
-      "0",
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6",
-      "7",
-      "8",
-      "9",
-      "Backspace",
-      "ArrowLeft",
-      "ArrowRight",
-    ];
-    if (!allowedKeys.includes(e.key)) {
-      e.preventDefault();
-    }
-    if (invalidChars.includes(e.key)) {
-      e.preventDefault();
-    }
-  };
-  const handleNumberInput = (e) => {
-    const allowedKeys = [
-      "0",
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6",
-      "7",
-      "8",
-      "9",
-      "Backspace",
-      "ArrowLeft",
-      "ArrowRight",
-    ];
-    if (!allowedKeys.includes(e.key)) {
-      e.preventDefault();
-    }
-    const invalidChars = ["e", "E", ".", "+", "-"];
-    if (invalidChars.includes(e.key)) {
-      e.preventDefault();
-    }
-  };
 
   return (
     <>
@@ -334,7 +280,7 @@ export default function DebtorFields({
             placeHolderValue="Enter Your Name"
             width="100%"
             value={debtorOwnDetails?.BasicFullName}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               basicInfoInputChange("BasicFullName", e.target.value)
             }
           />
@@ -344,7 +290,7 @@ export default function DebtorFields({
             placeHolderValue="Enter Valid Email"
             width="100%"
             value={debtorOwnDetails?.BasicEmailAddress}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               basicInfoInputChange("BasicEmailAddress", e.target.value)
             }
             error={errors?.emailValid}
@@ -355,8 +301,10 @@ export default function DebtorFields({
             placeHolderValue="Enter SSN"
             width="100%"
             value={debtorOwnDetails?.BasicSsid}
-            onChange={(e) => basicInfoInputChange("BasicSsid", e.target.value)}
-            onKeyDown={handleNumberInput}
+            onChangeFunction={(e) => {
+              basicInfoInputChange("BasicSsid", e.target.value);
+              handleNumberInput(e);
+            }}
             error={errors?.ssn}
           />
         </Grid>
@@ -424,9 +372,9 @@ export default function DebtorFields({
               width="98%"
               marginLeft=".2rem"
               value={debtorOwnDetails?.BasicWeeklyBudget}
-              onChange={(e) =>
-                basicInfoInputChange("BasicWeeklyBudget", e.target.value)
-              }
+              onChange={(e) => {
+                basicInfoInputChange("BasicWeeklyBudget", e.target.value);
+              }}
               onKeyDown={handleNumberInput}
             />
           </Grid>
@@ -476,7 +424,7 @@ export default function DebtorFields({
             placeHolderValue="Enter Country Name"
             width="100%"
             value={debtorOwnDetails?.BasicCountry}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               basicInfoInputChange("BasicCountry", e.target.value)
             }
           />
@@ -486,14 +434,18 @@ export default function DebtorFields({
             placeHolderValue="Enter State Name"
             width="100%"
             value={debtorOwnDetails?.BasicState}
-            onChange={(e) => basicInfoInputChange("BasicState", e.target.value)}
+            onChangeFunction={(e) =>
+              basicInfoInputChange("BasicState", e.target.value)
+            }
           />
           <PaymentsTextFields
             label="City*"
             placeHolderValue="Enter City Name"
             width="100%"
             value={debtorOwnDetails?.BasicCity}
-            onChange={(e) => basicInfoInputChange("BasicCity", e.target.value)}
+            onChangeFunction={(e) =>
+              basicInfoInputChange("BasicCity", e.target.value)
+            }
           />
         </Grid>
         <Grid
@@ -507,12 +459,12 @@ export default function DebtorFields({
           }}
         >
           <PaymentsTextFields
-            type="number"
+            type="text"
             label="Zip Code*"
             placeHolderValue="Enter Zip Code"
             width="100%"
             value={debtorOwnDetails?.BasicZipCode}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               basicInfoInputChange("BasicZipCode", e.target.value)
             }
             onKeyDown={handleNumberInput}
@@ -523,7 +475,6 @@ export default function DebtorFields({
             onChange={(e) =>
               basicInfoInputChange("BasicPhoneNumber", formatPhoneNumber(e))
             }
-            onKeyDown={handleNumberInputKeyDown}
             error={errors?.basicPhone}
           />
           <PaymentsTextFields
@@ -532,7 +483,7 @@ export default function DebtorFields({
             placeHolderValue="Add Your Address"
             width="100%"
             value={debtorOwnDetails?.BasicAddress}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               basicInfoInputChange("BasicAddress", e.target.value)
             }
           />
@@ -572,7 +523,7 @@ export default function DebtorFields({
             placeHolderValue="Enter Company Name"
             width="100%"
             value={debtorBusinessDetails?.businessCompanyName}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               businessInfoInputChange("businessCompanyName", e.target.value)
             }
           />
@@ -583,7 +534,7 @@ export default function DebtorFields({
             width="100%"
             value={debtorBusinessDetails?.businessEinNumber}
             onKeyDown={handleNumberInput}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               businessInfoInputChange("businessEinNumber", e.target.value)
             }
             error={errors?.einNumber}
@@ -594,7 +545,7 @@ export default function DebtorFields({
             placeHolderValue="Enter Category"
             width="100%"
             value={debtorBusinessDetails?.businessCategory}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               businessInfoInputChange("businessCategory", e.target.value)
             }
           />
@@ -636,7 +587,7 @@ export default function DebtorFields({
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            marginTop: "1.2rem",
+            marginTop: show === "Edit" ? "0.5rem" : "1.2rem",
           }}
         >
           <PaymentsTextFields
@@ -645,7 +596,7 @@ export default function DebtorFields({
             placeHolderValue="Enter Country Name"
             width="100%"
             value={debtorBusinessDetails?.businessCountry}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               businessInfoInputChange("businessCountry", e.target.value)
             }
           />
@@ -655,7 +606,7 @@ export default function DebtorFields({
             placeHolderValue="Enter State Name"
             width="100%"
             value={debtorBusinessDetails?.businessState}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               businessInfoInputChange("businessState", e.target.value)
             }
           />
@@ -665,7 +616,7 @@ export default function DebtorFields({
             placeHolderValue="Enter City Name"
             width="100%"
             value={debtorBusinessDetails?.businessCity}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               businessInfoInputChange("businessCity", e.target.value)
             }
           />
@@ -686,7 +637,7 @@ export default function DebtorFields({
             placeHolderValue="Enter Zip Code"
             width="100%"
             value={debtorBusinessDetails?.businessZipCode}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               businessInfoInputChange("businessZipCode", e.target.value)
             }
             onKeyDown={handleNumberInput}
@@ -710,209 +661,215 @@ export default function DebtorFields({
             placeHolderValue="Add Your Address"
             width="100%"
             value={debtorBusinessDetails?.businessAddress}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               businessInfoInputChange("businessAddress", e.target.value)
             }
           />
         </Grid>
       </Grid>
 
-      <Grid
-        item
-        xs={12}
-        sx={{
-          marginTop: "1rem",
-          borderRadius: "10px",
-          backgroundColor: Colors.WHITE,
-          padding: "1rem",
-        }}
-      >
+      {show !== "Edit" && (
         <Grid
-          container
           item
           xs={12}
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
+            marginTop: "1rem",
+            borderRadius: "10px",
+            backgroundColor: Colors.WHITE,
+            padding: "1rem",
           }}
         >
-          <Typography
-            sx={{ fontFamily: "Nunito", fontWeight: "600" }}
-            gutterBottom
-          >
-            Contact Details
-          </Typography>
-          <Add
-            onClick={handleAddNewContact}
+          <Grid
+            container
+            item
+            xs={12}
             sx={{
-              backgroundColor: Colors.SKY_BLUE,
-              color: Colors.WHITE,
-              borderRadius: "50%",
-              fontSize: "2.5rem",
-              padding: ".4rem",
-              cursor: "pointer",
+              display: "flex",
+              justifyContent: "space-between",
             }}
-          />
-        </Grid>
-        {debtorContactDetails &&
-          debtorContactDetails?.map((item, index) => {
-            return (
-              <>
-                {index !== 0 && (
-                  <Box
-                    item
-                    xs={12}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "flex-end",
-                      width: "100%",
-                    }}
-                  >
-                    <Delete
-                      onClick={() => handleRemoveNewData(index)}
+          >
+            <Typography
+              sx={{ fontFamily: "Nunito", fontWeight: "600" }}
+              gutterBottom
+            >
+              Contact Details
+            </Typography>
+            <Add
+              onClick={handleAddNewContact}
+              sx={{
+                backgroundColor: Colors.SKY_BLUE,
+                color: Colors.WHITE,
+                borderRadius: "50%",
+                fontSize: "2.5rem",
+                padding: ".4rem",
+                cursor: "pointer",
+              }}
+            />
+          </Grid>
+          {debtorContactDetails &&
+            debtorContactDetails?.map((item, index) => {
+              return (
+                <>
+                  {index !== 0 && (
+                    <Box
+                      item
+                      xs={12}
                       sx={{
-                        backgroundColor: Colors.ORANGE_COLOR,
-                        color: Colors.WHITE,
-                        borderRadius: "50%",
-                        fontSize: "2.5rem",
-                        padding: ".4rem",
-                        cursor: "pointer",
-                      }}
-                    />
-                  </Box>
-                )}
-                <Grid key={index} container item xs={12}>
-                  <Grid container item xs={12} md={8}>
-                    <PaymentsTextFields
-                      type="text"
-                      label="Name"
-                      placeHolderValue="Enter Name"
-                      width={smallScreen ? "100%" : "97%"}
-                      value={item?.name}
-                      onChange={(e) =>
-                        handleInputChange(index, "name", e.target.value)
-                      }
-                    />
-                    <PaymentsTextFields
-                      type="text"
-                      label="Title"
-                      placeHolderValue="Enter Title"
-                      width={smallScreen ? "100%" : "97%"}
-                      value={item?.title}
-                      onChange={(e) =>
-                        handleInputChange(index, "title", e.target.value)
-                      }
-                    />
-
-                    <MuiPhoneTextField
-                      label="Phone #"
-                      value={item?.phone}
-                      onChange={(e) =>
-                        handleInputChange(index, "phone", formatPhoneNumber(e))
-                      }
-                      onKeyDown={handleNumberInputKeyDown}
-                      error={contactError?.[`phone${index}`]}
-                    />
-
-                    <PaymentsTextFields
-                      type="text"
-                      label="Enter Email"
-                      placeHolderValue="Enter Email"
-                      width={smallScreen ? "100%" : "97%"}
-                      value={item?.email}
-                      onChange={(e) =>
-                        handleInputChange(index, "email", e.target.value)
-                      }
-                      error={emailContactError?.[`email${index}`]}
-                    />
-
-                    <PaymentsTextFields
-                      type="text"
-                      label="Country (Optional)"
-                      placeHolderValue="Country Name"
-                      width={smallScreen ? "100%" : "97%"}
-                      value={item?.country}
-                      onChange={(e) =>
-                        handleInputChange(index, "country", e.target.value)
-                      }
-                    />
-                    <PaymentsTextFields
-                      type="text"
-                      label="State (Optional)"
-                      placeHolderValue="Enter State"
-                      width={smallScreen ? "100%" : "97%"}
-                      value={item?.state}
-                      onChange={(e) =>
-                        handleInputChange(index, "state", e.target.value)
-                      }
-                    />
-                    <PaymentsTextFields
-                      label="City (Optional)"
-                      placeHolderValue="Enter City"
-                      width={smallScreen ? "100%" : "97%"}
-                      value={item?.city}
-                      onChange={(e) =>
-                        handleInputChange(index, "city", e.target.value)
-                      }
-                    />
-                    <PaymentsTextFields
-                      type="number"
-                      label="Zip Code (Optional)"
-                      placeHolderValue="Enter Zip Code"
-                      width={smallScreen ? "100%" : "97%"}
-                      value={item?.zipCode}
-                      onChange={(e) =>
-                        handleInputChange(index, "zipCode", e.target.value)
-                      }
-                      onKeyDown={handleNumberInput}
-                    />
-                  </Grid>
-                  <Grid
-                    container
-                    item
-                    xs={12}
-                    md={4}
-                    sx={{ flexDirection: "column" }}
-                  >
-                    <Typography
-                      sx={{
-                        fontWeight: "500",
-                        fontFamily: "Nunito",
-                        marginLeft: "1rem",
-                        color: Colors.DARK_GRAY,
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        width: "100%",
                       }}
                     >
-                      Relation with Debtor (Optional)
-                    </Typography>
-                    <input
-                      type="text"
-                      placeholder="Relation"
-                      value={item?.relationWithDebtor}
-                      onChange={(e) =>
-                        handleInputChange(
-                          index,
-                          "relationWithDebtor",
-                          e.target.value
-                        )
-                      }
-                      style={{
-                        backgroundColor: Colors.BG_LIGHT_GRAY,
-                        height: "2.5rem",
-                        color: Colors.DIM_LIGHT_GRAY,
-                        paddingLeft: "1rem",
-                        border: "none",
-                        outline: "none",
-                        borderRadius: "5px",
-                        width: smallScreen ? "100%" : "97%",
-                      }}
-                    />
+                      <Delete
+                        onClick={() => handleRemoveNewData(index)}
+                        sx={{
+                          backgroundColor: Colors.ORANGE_COLOR,
+                          color: Colors.WHITE,
+                          borderRadius: "50%",
+                          fontSize: "2.5rem",
+                          padding: ".4rem",
+                          cursor: "pointer",
+                        }}
+                      />
+                    </Box>
+                  )}
+                  <Grid key={index} container item xs={12}>
+                    <Grid container item xs={12} md={8}>
+                      <PaymentsTextFields
+                        type="text"
+                        label="Name"
+                        placeHolderValue="Enter Name"
+                        width={smallScreen ? "100%" : "97%"}
+                        value={item?.name}
+                        onChangeFunction={(e) =>
+                          handleInputChange(index, "name", e.target.value)
+                        }
+                      />
+                      <PaymentsTextFields
+                        type="text"
+                        label="Title"
+                        placeHolderValue="Enter Title"
+                        width={smallScreen ? "100%" : "97%"}
+                        value={item?.title}
+                        onChangeFunction={(e) =>
+                          handleInputChange(index, "title", e.target.value)
+                        }
+                      />
+
+                      <MuiPhoneTextField
+                        label="Phone #"
+                        value={item?.phone}
+                        onChange={(e) => {
+                          handleInputChange(
+                            index,
+                            "phone",
+                            formatPhoneNumber(e)
+                          );
+                        }}
+                        onKeyDown={handleNumberInputKeyDown}
+                        error={contactError?.[`phone${index}`]}
+                      />
+
+                      <PaymentsTextFields
+                        type="text"
+                        label="Enter Email"
+                        placeHolderValue="Enter Email"
+                        width={smallScreen ? "100%" : "97%"}
+                        value={item?.email}
+                        onChangeFunction={(e) =>
+                          handleInputChange(index, "email", e.target.value)
+                        }
+                        error={emailContactError?.[`email${index}`]}
+                      />
+
+                      <PaymentsTextFields
+                        type="text"
+                        label="Country (Optional)"
+                        placeHolderValue="Country Name"
+                        width={smallScreen ? "100%" : "97%"}
+                        value={item?.country}
+                        onChange={(e) =>
+                          handleInputChange(index, "country", e.target.value)
+                        }
+                      />
+                      <PaymentsTextFields
+                        type="text"
+                        label="State (Optional)"
+                        placeHolderValue="Enter State"
+                        width={smallScreen ? "100%" : "97%"}
+                        value={item?.state}
+                        onChangeFunction={(e) =>
+                          handleInputChange(index, "state", e.target.value)
+                        }
+                      />
+                      <PaymentsTextFields
+                        label="City (Optional)"
+                        placeHolderValue="Enter City"
+                        width={smallScreen ? "100%" : "97%"}
+                        value={item?.city}
+                        onChangeFunction={(e) =>
+                          handleInputChange(index, "city", e.target.value)
+                        }
+                      />
+                      <PaymentsTextFields
+                        type="number"
+                        label="Zip Code (Optional)"
+                        placeHolderValue="Enter Zip Code"
+                        width={smallScreen ? "100%" : "97%"}
+                        value={item?.zipCode}
+                        onChangeFunction={(e) =>
+                          handleInputChange(index, "zipCode", e.target.value)
+                        }
+                        onKeyDown={handleNumberInput}
+                      />
+                    </Grid>
+                    <Grid
+                      container
+                      item
+                      xs={12}
+                      md={4}
+                      sx={{ flexDirection: "column" }}
+                    >
+                      <Typography
+                        sx={{
+                          fontWeight: "500",
+                          fontFamily: "Nunito",
+                          marginLeft: "1rem",
+                          color: Colors.DARK_GRAY,
+                        }}
+                      >
+                        Relation with Debtor (Optional)
+                      </Typography>
+                      <input
+                        type="text"
+                        placeholder="Relation"
+                        value={item?.relationWithDebtor}
+                        onChange={(e) =>
+                          handleInputChange(
+                            index,
+                            "relationWithDebtor",
+                            e.target.value
+                          )
+                        }
+                        style={{
+                          backgroundColor: Colors.BG_LIGHT_GRAY,
+                          height: "2.5rem",
+                          color: Colors.DIM_LIGHT_GRAY,
+                          paddingLeft: "1rem",
+                          border: "none",
+                          outline: "none",
+                          borderRadius: "5px",
+                          width: smallScreen ? "100%" : "97%",
+                        }}
+                      />
+                    </Grid>
                   </Grid>
-                </Grid>
-                <hr></hr>
-              </>
-            );
-          })}
-      </Grid>
+                  <hr></hr>
+                </>
+              );
+            })}
+        </Grid>
+      )}
     </>
   );
 }
