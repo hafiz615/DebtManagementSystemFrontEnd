@@ -64,11 +64,6 @@ export default function EditDebtorDetail({
     basicPhone: "",
     emailValid: "",
   });
-  const isEmailValid = (email) => {
-    // Use a more robust email validation regular expression
-    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-    return emailRegex.test(email);
-  };
 
   const [isFormValid, setIsFormValid] = useState(false);
   const validateForm = () => {
