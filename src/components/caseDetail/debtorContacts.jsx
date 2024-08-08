@@ -17,12 +17,15 @@ import TextButton from "../button";
 import { UpdateCreditor, UpdateDebtor } from "../../services/services";
 import { hasAnyValue } from "../../common";
 import ScrollbarStyles from "../customScroll";
+import {
+  isEmailValid,
+  handleNumberInput,
+  handleNumberInputKeyDown,
+} from "../../constants/appConstants";
 
 export default function DebtorContacts({
-  caseData,
   GetCaseDetails,
   handleClose,
-  maxHeight,
   show,
   caseId,
 }) {
@@ -88,63 +91,10 @@ export default function DebtorContacts({
       updatedContact[field] = value;
       setDebtorContactDetails(updatedContact);
     }
+    handleNumberInput();
+    handleNumberInputKeyDown();
   };
 
-  const handleNumberInputKeyDown = (e) => {
-    const invalidChars = ["e", "E", ".", "-"];
-    const allowedKeys = [
-      "+",
-      "0",
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6",
-      "7",
-      "8",
-      "9",
-      "Backspace",
-      "ArrowLeft",
-      "ArrowRight",
-    ];
-    if (!allowedKeys.includes(e.key)) {
-      e.preventDefault();
-    }
-    if (invalidChars.includes(e.key)) {
-      e.preventDefault();
-    }
-  };
-  const handleNumberInput = (e) => {
-    const allowedKeys = [
-      "0",
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6",
-      "7",
-      "8",
-      "9",
-      "Backspace",
-      "ArrowLeft",
-      "ArrowRight",
-    ];
-    if (!allowedKeys.includes(e.key)) {
-      e.preventDefault();
-    }
-    const invalidChars = ["e", "E", ".", "+", "-"];
-    if (invalidChars.includes(e.key)) {
-      e.preventDefault();
-    }
-  };
-
-  const isEmailValid = (email) => {
-    // Use a more robust email validation regular expression
-    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-    return emailRegex.test(email);
-  };
   const areRequiredFieldsFilled = () => {
     return (
       debtorContactDetails.name.trim() !== "" &&
@@ -231,7 +181,9 @@ export default function DebtorContacts({
                 placeHolderValue="Enter Name"
                 width={smallScreen ? "100%" : "97%"}
                 value={debtorContactDetails.name}
-                onChange={(e) => handleInputChange("name", e.target.value)}
+                onChangeFunction={(e) =>
+                  handleInputChange("name", e.target.value)
+                }
               />
               <PaymentsTextFields
                 type="text"
@@ -239,7 +191,9 @@ export default function DebtorContacts({
                 placeHolderValue="Enter Title"
                 width={smallScreen ? "100%" : "97%"}
                 value={debtorContactDetails.title}
-                onChange={(e) => handleInputChange("title", e.target.value)}
+                onChangeFunction={(e) =>
+                  handleInputChange("title", e.target.value)
+                }
               />
 
               <MuiPhoneTextField
@@ -248,7 +202,6 @@ export default function DebtorContacts({
                 onChange={(e) =>
                   handleInputChange("phone", formatPhoneNumber(e))
                 }
-                onKeyDown={handleNumberInputKeyDown}
                 error={contactError.phone}
               />
 
@@ -258,7 +211,9 @@ export default function DebtorContacts({
                 placeHolderValue="Enter Email"
                 width={smallScreen ? "100%" : "97%"}
                 value={debtorContactDetails.email}
-                onChange={(e) => handleInputChange("email", e.target.value)}
+                onChangeFunction={(e) =>
+                  handleInputChange("email", e.target.value)
+                }
                 error={emailContactError.email}
               />
 
@@ -268,7 +223,9 @@ export default function DebtorContacts({
                 placeHolderValue="Country Name"
                 width={smallScreen ? "100%" : "97%"}
                 value={debtorContactDetails.country}
-                onChange={(e) => handleInputChange("country", e.target.value)}
+                onChangeFunction={(e) =>
+                  handleInputChange("country", e.target.value)
+                }
               />
               <PaymentsTextFields
                 type="text"
@@ -276,14 +233,18 @@ export default function DebtorContacts({
                 placeHolderValue="Enter State"
                 width={smallScreen ? "100%" : "97%"}
                 value={debtorContactDetails.state}
-                onChange={(e) => handleInputChange("state", e.target.value)}
+                onChangeFunction={(e) =>
+                  handleInputChange("state", e.target.value)
+                }
               />
               <PaymentsTextFields
                 label="City (Optional)"
                 placeHolderValue="Enter City"
                 width={smallScreen ? "100%" : "97%"}
                 value={debtorContactDetails.city}
-                onChange={(e) => handleInputChange("city", e.target.value)}
+                onChangeFunction={(e) =>
+                  handleInputChange("city", e.target.value)
+                }
               />
               <PaymentsTextFields
                 type="number"
@@ -291,8 +252,9 @@ export default function DebtorContacts({
                 placeHolderValue="Enter Zip Code"
                 width={smallScreen ? "100%" : "97%"}
                 value={debtorContactDetails.zipCode}
-                onChange={(e) => handleInputChange("zipCode", e.target.value)}
-                onKeyDown={handleNumberInput}
+                onChangeFunction={(e) =>
+                  handleInputChange("zipCode", e.target.value)
+                }
               />
             </Grid>
             <Grid
