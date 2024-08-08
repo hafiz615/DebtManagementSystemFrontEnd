@@ -458,8 +458,10 @@ function CaseDetail() {
                   GetCaseDetails={GetCaseDetails}
                 />
                 <TransactionAccordion
+                  caseData={caseData}
                   loading={isPaymentLoading}
                   paymentDetails={paymentDetails}
+                  GetCaseDetails={GetCaseDetails}
                   GetCasePaymentDetails={GetCasePaymentDetails}
                 />
               </Grid>
