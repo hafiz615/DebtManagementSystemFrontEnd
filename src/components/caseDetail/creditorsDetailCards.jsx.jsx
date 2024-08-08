@@ -110,6 +110,7 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             iconColor={Colors.BLACK}
             width="80vw"
             height="max-content"
+            maxHeight="85vh"
             caseData={caseData}
             GetCaseDetails={GetCaseDetails}
           />

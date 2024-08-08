@@ -34,7 +34,9 @@ export default function CreditorFields({
       label: item,
     }));
 
-  const [accountTitle, setAccountTitle] = useState("");
+  const [accountTitle, setAccountTitle] = useState(
+    thisCaseData?.creditor?.accountTitle || ""
+  );
   // const [digits, setDigits] = useState(Array(10).fill(""));
   // thisCaseData?.creditor?.accountTitle
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
