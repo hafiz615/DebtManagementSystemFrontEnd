@@ -94,10 +94,19 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
     "phone",
     "description",
   ];
-  const cellStyle = {
+  const griRelationdStyle = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+  };
+  const gridActionStyle = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+  };
+  const cellStyle = {
+    display: "flex",
+    alignItems: "center",
     color: Colors.DIM_LIGHT_GRAY,
     fontWeight: "600",
     fontFamily: "Nunito",
@@ -344,22 +353,28 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
               justifyContent: "space-between",
               backgroundColor: Colors.SKY_BLUE,
               color: Colors.WHITE,
-              paddingRight: ".5rem",
-              paddingLeft: ".5rem",
+              paddingRight: ".2rem",
+              paddingLeft: ".2rem",
               height: "2rem",
               alignItems: "center",
             }}
           >
-            <span style={{ fontSize: "11px" }}>Name</span>
-            <span
-              style={{
-                fontSize: "11px",
-                marginRight: "1rem",
-              }}
-            >
-              Relation
-            </span>
-            <span style={{ fontSize: "11px" }}>Action</span>
+            <Grid item xs={4}>
+              <span style={{ fontSize: "11px" }}>Name</span>
+            </Grid>
+            <Grid item xs={4} sx={griRelationdStyle}>
+              <span
+                style={{
+                  fontSize: "11px",
+                  marginRight: "1rem",
+                }}
+              >
+                Relation
+              </span>
+            </Grid>
+            <Grid item xs={4} sx={gridActionStyle}>
+              <span style={{ fontSize: "11px" }}>Action</span>
+            </Grid>
           </Grid>
           <Box
             sx={{
@@ -377,7 +392,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
                   key={index}
                   sx={{
                     display: "flex",
-                    justifyContent: "space-between",
+                    justifyContent: "space-around",
                     backgroundColor:
                       index % 2 === 0
                         ? Colors.WHITE
@@ -392,22 +407,28 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
                     alignItems: "center",
                   }}
                 >
-                  <span style={cellStyle}>{item?.name || "-"}</span>
-                  <span style={cellStyle}>
-                    {item?.relationWithDebtor || "-"}
-                  </span>
-                  <span style={cellStyle}>
-                    <Email sx={iconStyle} />
-                    <Call sx={iconStyle} />
-                    <Sms sx={iconStyle} />
-                    <MuiModels
-                      show="editDebtorContacts"
-                      caseData={caseData}
-                      item={item}
-                      GetCaseDetails={GetCaseDetails}
-                      width="70vw"
-                    />
-                  </span>
+                  <Grid item xs={4}>
+                    <span style={cellStyle}>{item?.name || "--"}</span>
+                  </Grid>
+                  <Grid item xs={4} sx={griRelationdStyle}>
+                    <span style={cellStyle}>
+                      {item?.relationWithDebtor || "--"}
+                    </span>
+                  </Grid>
+                  <Grid item xs={4} sx={gridActionStyle}>
+                    <span style={cellStyle}>
+                      <Email sx={iconStyle} />
+                      <Call sx={iconStyle} />
+                      <Sms sx={iconStyle} />
+                      <MuiModels
+                        show="editDebtorContacts"
+                        caseData={caseData}
+                        item={item}
+                        GetCaseDetails={GetCaseDetails}
+                        width="70vw"
+                      />
+                    </span>
+                  </Grid>
                 </Grid>
               ))}
 

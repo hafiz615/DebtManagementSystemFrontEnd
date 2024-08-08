@@ -79,10 +79,19 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
 
     return `${month}/${day}/${year}`;
   };
-  const cellStyle = {
+  const griRelationdStyle = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+  };
+  const gridActionStyle = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+  };
+  const cellStyle = {
+    display: "flex",
+    alignItems: "center",
     color: Colors.DIM_LIGHT_GRAY,
     fontWeight: "600",
     fontFamily: "Nunito",
@@ -300,18 +309,6 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             {caseData?.creditor?.businessInformation?.businessCategory}
           </Typography>
         </div>
-        {/* <div>
-          <p style={{ fontSize: "11px", fontFamily: "Nunito" }}>Notes</p>
-          <p
-            style={{
-              fontSize: "11px",
-              color: Colors.DIM_LIGHT_GRAYm,
-              fontFamily: "Nunito",
-            }}
-          >
-            {businessDetail?.notes}
-          </p>
-        </div> */}
       </Grid>
       <Grid
         item
@@ -430,8 +427,6 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
           padding: "0px 10px",
           height: "13rem",
           marginBottom: ".5rem",
-          // overflow: "auto",
-          // ...ScrollbarStyles,
         }}
       >
         <Grid
@@ -489,17 +484,23 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
               justifyContent: "space-between",
               backgroundColor: Colors.SKY_BLUE,
               color: Colors.WHITE,
-              paddingRight: ".5rem",
-              paddingLeft: ".5rem",
+              paddingRight: ".2rem",
+              paddingLeft: ".2rem",
               height: "2rem",
               alignItems: "center",
             }}
           >
-            <span style={{ fontSize: "11px" }}>Name</span>
-            <span style={{ fontSize: "11px", marginRight: "1rem" }}>
-              Relation
-            </span>
-            <span style={{ fontSize: "11px" }}>Action</span>
+            <Grid item xs={4}>
+              <span style={{ fontSize: "11px" }}>Name</span>
+            </Grid>
+            <Grid item xs={4} sx={griRelationdStyle}>
+              <span style={{ fontSize: "11px", marginRight: "1rem" }}>
+                Relation
+              </span>
+            </Grid>
+            <Grid item xs={4} sx={gridActionStyle}>
+              <span style={{ fontSize: "11px" }}>Action</span>
+            </Grid>
           </Grid>
           <Box
             sx={{
@@ -532,24 +533,30 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
                     alignItems: "center",
                   }}
                 >
-                  <span style={cellStyle}>{item?.name || "-"}</span>
-                  <span style={cellStyle}>
-                    {item?.relationWithDebtor ||
-                      item?.relationWithCreditor ||
-                      "-"}
-                  </span>
-                  <span style={cellStyle}>
-                    <Email sx={iconStyle} />
-                    <Call sx={iconStyle} />
-                    <Sms sx={iconStyle} />
-                    <MuiModels
-                      show="editCreditorContacts"
-                      caseData={caseData}
-                      item={item}
-                      GetCaseDetails={GetCaseDetails}
-                      width="70vw"
-                    />
-                  </span>
+                  <Grid item xs={4}>
+                    <span style={cellStyle}>{item?.name || "-"}</span>
+                  </Grid>
+                  <Grid item xs={4} sx={griRelationdStyle}>
+                    <span style={cellStyle}>
+                      {item?.relationWithDebtor ||
+                        item?.relationWithCreditor ||
+                        "-"}
+                    </span>
+                  </Grid>
+                  <Grid item xs={4} sx={gridActionStyle}>
+                    <span style={cellStyle}>
+                      <Email sx={iconStyle} />
+                      <Call sx={iconStyle} />
+                      <Sms sx={iconStyle} />
+                      <MuiModels
+                        show="editCreditorContacts"
+                        caseData={caseData}
+                        item={item}
+                        GetCaseDetails={GetCaseDetails}
+                        width="70vw"
+                      />
+                    </span>
+                  </Grid>
                 </Grid>
               ))}
 
