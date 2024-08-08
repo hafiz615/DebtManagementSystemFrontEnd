@@ -12,6 +12,8 @@ import { PhoneValidation } from "../constants/appConstants";
 import { formatPhoneNumber } from "../common";
 import AmountTextField from "./amountTextField";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { isEmailValid } from "../constants/appConstants";
+import { HistoricRangeHandleNumberInput } from "../constants/appConstants";
 
 export default function EditCreditorDetail({
   handleClose,
@@ -48,11 +50,7 @@ export default function EditCreditorDetail({
     emailValidError: "",
     creditorPhoneError: "",
   });
-  const isEmailValid = (email) => {
-    // Use a more robust email validation regular expression
-    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-    return emailRegex.test(email);
-  };
+
   const basicInfoInputChange = (fieldName, value) => {
     if (fieldName === "CreditorBasicEmailAddress") {
       if (!isEmailValid(value)) {
@@ -90,19 +88,6 @@ export default function EditCreditorDetail({
       ...prevState,
       [fieldName]: value,
     }));
-  };
-
-  const handleNumberInputKeyDown = (e) => {
-    const invalidChars = ["e", "E", ".", "-"];
-    if (invalidChars.includes(e.key)) {
-      e.preventDefault();
-    }
-  };
-  const handleNumberInput = (e) => {
-    const invalidChars = ["e", "E", ".", "+", "-"];
-    if (invalidChars.includes(e.key)) {
-      e.preventDefault();
-    }
   };
 
   const validateForm = () => {
@@ -190,7 +175,7 @@ export default function EditCreditorDetail({
             placeHolderValue="Enter Company Name"
             width="97%"
             value={creditorBusinessDetails?.businessCompanyName}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               businessInfoInputChange("businessCompanyName", e.target.value)
             }
           />
@@ -200,7 +185,7 @@ export default function EditCreditorDetail({
             placeHolderValue="Enter Category"
             width="97%"
             value={creditorBusinessDetails?.businessCategory}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               businessInfoInputChange("businessCategory", e.target.value)
             }
           />
@@ -229,7 +214,7 @@ export default function EditCreditorDetail({
             placeHolderValue="Enter Full Name"
             width="100%"
             value={creditorBasicsInfo?.CreditorBasicFullName}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               basicInfoInputChange("CreditorBasicFullName", e.target.value)
             }
           />
@@ -239,7 +224,7 @@ export default function EditCreditorDetail({
             placeHolderValue="Enter Valid Email"
             width="100%"
             value={creditorBasicsInfo?.CreditorBasicEmailAddress}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               basicInfoInputChange("CreditorBasicEmailAddress", e.target.value)
             }
             error={creditorFieldsError?.emailValidError}
@@ -254,7 +239,6 @@ export default function EditCreditorDetail({
                 formatPhoneNumber(e)
               )
             }
-            onKeyDown={handleNumberInputKeyDown}
             error={creditorFieldsError?.creditorPhoneError}
           />
         </Grid>
@@ -288,7 +272,7 @@ export default function EditCreditorDetail({
               type="date"
               placeHolderValue="00/00/00"
               value={fundedDate}
-              onChange={(e) => setFundedDate(e.target.value)}
+              onChangeFunction={(e) => setFundedDate(e.target.value)}
               max={today}
             />
           </Grid>
@@ -323,7 +307,7 @@ export default function EditCreditorDetail({
                       minimum: parseInt(e.target.value),
                     }))
                   }
-                  onKeyDown={handleNumberInput}
+                  onKeyDown={HistoricRangeHandleNumberInput}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -345,7 +329,7 @@ export default function EditCreditorDetail({
                       maximum: parseInt(e.target.value),
                     }))
                   }
-                  onKeyDown={handleNumberInput}
+                  onKeyDown={HistoricRangeHandleNumberInput}
                 />
               </Grid>
             </Grid>

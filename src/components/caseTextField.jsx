@@ -12,7 +12,7 @@ function PaymentsTextFields({
   marginBottom,
   marginRight,
   marginLeft,
-  onChange,
+  onChangeFunction,
   type,
   error,
   value,
@@ -40,7 +40,7 @@ function PaymentsTextFields({
       }
     }
 
-    onChange({ target: { value: formattedDate } });
+    onChangeFunction({ target: { value: formattedDate } });
   };
 
   return (
@@ -59,7 +59,7 @@ function PaymentsTextFields({
         type={type}
         placeholder={placeHolderValue}
         onKeyDown={onKeyDown}
-        onChange={type === "date" ? handleDateChange : onChange}
+        onChange={type === "date" ? handleDateChange : onChangeFunction}
         value={type === "date" ? formatDate(value) : value}
         max={max}
         style={{

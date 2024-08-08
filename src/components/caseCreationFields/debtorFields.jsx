@@ -14,7 +14,11 @@ import { formatPhoneNumber } from "../../common";
 import AmountTextField from "../amountTextField";
 import PaymentCardDetails from "../paymentCard";
 import { GetAllStatuses } from "../../services/services";
-import TextButton from "./../button";
+import {
+  isEmailValid,
+  handleNumberInputKeyDown,
+  handleNumberInput,
+} from "../../constants/appConstants";
 
 export default function DebtorFields({
   debtorOwnDetails,
@@ -40,6 +44,7 @@ export default function DebtorFields({
 }) {
   const [menuItems, setMenuItems] = useState([]);
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
+
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const GetStatuses = async () => {
     const AllStatuses = await GetAllStatuses();
@@ -56,12 +61,6 @@ export default function DebtorFields({
   useEffect(() => {
     GetStatuses();
   }, []);
-
-  const isEmailValid = (email) => {
-    // Use a more robust email validation regular expression
-    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-    return emailRegex.test(email);
-  };
 
   const basicInfoInputChange = (fieldName, value) => {
     if (fieldName === "BasicEmailAddress") {
@@ -235,55 +234,6 @@ export default function DebtorFields({
       setDebtorContactDetails(updatedList);
     }
   };
-  const handleNumberInputKeyDown = (e) => {
-    const invalidChars = ["e", "E", ".", "-"];
-    const allowedKeys = [
-      "+",
-      "0",
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6",
-      "7",
-      "8",
-      "9",
-      "Backspace",
-      "ArrowLeft",
-      "ArrowRight",
-    ];
-    if (!allowedKeys.includes(e.key)) {
-      e.preventDefault();
-    }
-    if (invalidChars.includes(e.key)) {
-      e.preventDefault();
-    }
-  };
-  const handleNumberInput = (e) => {
-    const allowedKeys = [
-      "0",
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6",
-      "7",
-      "8",
-      "9",
-      "Backspace",
-      "ArrowLeft",
-      "ArrowRight",
-    ];
-    if (!allowedKeys.includes(e.key)) {
-      e.preventDefault();
-    }
-    const invalidChars = ["e", "E", ".", "+", "-"];
-    if (invalidChars.includes(e.key)) {
-      e.preventDefault();
-    }
-  };
 
   return (
     <>
@@ -330,7 +280,7 @@ export default function DebtorFields({
             placeHolderValue="Enter Your Name"
             width="100%"
             value={debtorOwnDetails?.BasicFullName}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               basicInfoInputChange("BasicFullName", e.target.value)
             }
           />
@@ -340,7 +290,7 @@ export default function DebtorFields({
             placeHolderValue="Enter Valid Email"
             width="100%"
             value={debtorOwnDetails?.BasicEmailAddress}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               basicInfoInputChange("BasicEmailAddress", e.target.value)
             }
             error={errors?.emailValid}
@@ -351,11 +301,10 @@ export default function DebtorFields({
             placeHolderValue="Enter SSN"
             width="100%"
             value={debtorOwnDetails?.BasicSsid}
-            onChange={(e) => {
+            onChangeFunction={(e) => {
               basicInfoInputChange("BasicSsid", e.target.value);
               handleNumberInput(e);
             }}
-            // onKeyDown={handleNumberInput}
             error={errors?.ssn}
           />
         </Grid>
@@ -475,7 +424,7 @@ export default function DebtorFields({
             placeHolderValue="Enter Country Name"
             width="100%"
             value={debtorOwnDetails?.BasicCountry}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               basicInfoInputChange("BasicCountry", e.target.value)
             }
           />
@@ -485,14 +434,18 @@ export default function DebtorFields({
             placeHolderValue="Enter State Name"
             width="100%"
             value={debtorOwnDetails?.BasicState}
-            onChange={(e) => basicInfoInputChange("BasicState", e.target.value)}
+            onChangeFunction={(e) =>
+              basicInfoInputChange("BasicState", e.target.value)
+            }
           />
           <PaymentsTextFields
             label="City*"
             placeHolderValue="Enter City Name"
             width="100%"
             value={debtorOwnDetails?.BasicCity}
-            onChange={(e) => basicInfoInputChange("BasicCity", e.target.value)}
+            onChangeFunction={(e) =>
+              basicInfoInputChange("BasicCity", e.target.value)
+            }
           />
         </Grid>
         <Grid
@@ -506,12 +459,12 @@ export default function DebtorFields({
           }}
         >
           <PaymentsTextFields
-            type="number"
+            type="text"
             label="Zip Code*"
             placeHolderValue="Enter Zip Code"
             width="100%"
             value={debtorOwnDetails?.BasicZipCode}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               basicInfoInputChange("BasicZipCode", e.target.value)
             }
             onKeyDown={handleNumberInput}
@@ -530,7 +483,7 @@ export default function DebtorFields({
             placeHolderValue="Add Your Address"
             width="100%"
             value={debtorOwnDetails?.BasicAddress}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               basicInfoInputChange("BasicAddress", e.target.value)
             }
           />
@@ -570,7 +523,7 @@ export default function DebtorFields({
             placeHolderValue="Enter Company Name"
             width="100%"
             value={debtorBusinessDetails?.businessCompanyName}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               businessInfoInputChange("businessCompanyName", e.target.value)
             }
           />
@@ -581,7 +534,7 @@ export default function DebtorFields({
             width="100%"
             value={debtorBusinessDetails?.businessEinNumber}
             onKeyDown={handleNumberInput}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               businessInfoInputChange("businessEinNumber", e.target.value)
             }
             error={errors?.einNumber}
@@ -592,7 +545,7 @@ export default function DebtorFields({
             placeHolderValue="Enter Category"
             width="100%"
             value={debtorBusinessDetails?.businessCategory}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               businessInfoInputChange("businessCategory", e.target.value)
             }
           />
@@ -643,7 +596,7 @@ export default function DebtorFields({
             placeHolderValue="Enter Country Name"
             width="100%"
             value={debtorBusinessDetails?.businessCountry}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               businessInfoInputChange("businessCountry", e.target.value)
             }
           />
@@ -653,7 +606,7 @@ export default function DebtorFields({
             placeHolderValue="Enter State Name"
             width="100%"
             value={debtorBusinessDetails?.businessState}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               businessInfoInputChange("businessState", e.target.value)
             }
           />
@@ -663,7 +616,7 @@ export default function DebtorFields({
             placeHolderValue="Enter City Name"
             width="100%"
             value={debtorBusinessDetails?.businessCity}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               businessInfoInputChange("businessCity", e.target.value)
             }
           />
@@ -684,7 +637,7 @@ export default function DebtorFields({
             placeHolderValue="Enter Zip Code"
             width="100%"
             value={debtorBusinessDetails?.businessZipCode}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               businessInfoInputChange("businessZipCode", e.target.value)
             }
             onKeyDown={handleNumberInput}
@@ -708,7 +661,7 @@ export default function DebtorFields({
             placeHolderValue="Add Your Address"
             width="100%"
             value={debtorBusinessDetails?.businessAddress}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               businessInfoInputChange("businessAddress", e.target.value)
             }
           />
@@ -788,7 +741,7 @@ export default function DebtorFields({
                         placeHolderValue="Enter Name"
                         width={smallScreen ? "100%" : "97%"}
                         value={item?.name}
-                        onChange={(e) =>
+                        onChangeFunction={(e) =>
                           handleInputChange(index, "name", e.target.value)
                         }
                       />
@@ -798,7 +751,7 @@ export default function DebtorFields({
                         placeHolderValue="Enter Title"
                         width={smallScreen ? "100%" : "97%"}
                         value={item?.title}
-                        onChange={(e) =>
+                        onChangeFunction={(e) =>
                           handleInputChange(index, "title", e.target.value)
                         }
                       />
@@ -823,7 +776,7 @@ export default function DebtorFields({
                         placeHolderValue="Enter Email"
                         width={smallScreen ? "100%" : "97%"}
                         value={item?.email}
-                        onChange={(e) =>
+                        onChangeFunction={(e) =>
                           handleInputChange(index, "email", e.target.value)
                         }
                         error={emailContactError?.[`email${index}`]}
@@ -845,7 +798,7 @@ export default function DebtorFields({
                         placeHolderValue="Enter State"
                         width={smallScreen ? "100%" : "97%"}
                         value={item?.state}
-                        onChange={(e) =>
+                        onChangeFunction={(e) =>
                           handleInputChange(index, "state", e.target.value)
                         }
                       />
@@ -854,7 +807,7 @@ export default function DebtorFields({
                         placeHolderValue="Enter City"
                         width={smallScreen ? "100%" : "97%"}
                         value={item?.city}
-                        onChange={(e) =>
+                        onChangeFunction={(e) =>
                           handleInputChange(index, "city", e.target.value)
                         }
                       />
@@ -864,7 +817,7 @@ export default function DebtorFields({
                         placeHolderValue="Enter Zip Code"
                         width={smallScreen ? "100%" : "97%"}
                         value={item?.zipCode}
-                        onChange={(e) =>
+                        onChangeFunction={(e) =>
                           handleInputChange(index, "zipCode", e.target.value)
                         }
                         onKeyDown={handleNumberInput}
