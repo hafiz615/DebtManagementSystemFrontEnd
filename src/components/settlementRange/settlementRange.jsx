@@ -44,6 +44,7 @@ import CheckboxAutocomplete from "../checkboxAutocomplete";
 import { useParams } from "react-router-dom";
 import { ErrorOutline } from "@mui/icons-material";
 import { isEmpty } from "lodash";
+import { getWeeksRemainingMessage } from "../../constants/appConstants";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -287,15 +288,7 @@ export default function SettlementRange() {
       <>
         <SettlementCards
           title={item}
-          weeksTillPaidTitle={
-            item === "recommendation 1"
-              ? "Weeks remaining based on recommendation 1"
-              : item === "recommendation 2"
-              ? "Weeks remaining based on recommendation 2"
-              : item === "recommendation 3"
-              ? "Weeks remaining based on recommendation 3"
-              : ""
-          }
+          weeksTillPaidTitle={getWeeksRemainingMessage(item)}
           settlementRange={
             apiData?.settlement_range?.[allCreditorNames[parseInt(tabValue)]] ||
             null
@@ -339,11 +332,6 @@ export default function SettlementRange() {
               ] || null
             }
             warning={lumpSumpData?.warning || ""}
-            commissionRange={null}
-            newDefaultRiskScore={null}
-            percentageSettlementOverWeeklyBudget={null}
-            percentageSettlementOverWeeklyTrueRevenue={null}
-            weeksTillPaid={null}
           />
         )}
       </>

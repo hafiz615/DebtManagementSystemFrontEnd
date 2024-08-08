@@ -49,12 +49,12 @@ export default function SettlementCards({
   };
 
   const allRanges = [
-    settlementRange,
-    commissionRange,
-    newDefaultRiskScore,
-    percentageSettlementOverWeeklyBudget,
-    percentageSettlementOverWeeklyTrueRevenue,
-    weeksTillPaid,
+    settlementRange || null,
+    commissionRange || null,
+    newDefaultRiskScore || null,
+    percentageSettlementOverWeeklyBudget || null,
+    percentageSettlementOverWeeklyTrueRevenue || null,
+    weeksTillPaid || null,
   ];
 
   const rangeNames = [
