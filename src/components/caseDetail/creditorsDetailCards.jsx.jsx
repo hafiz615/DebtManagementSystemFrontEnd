@@ -1,5 +1,5 @@
 import React from "react";
-
+import { useState } from "react";
 import {
   Grid,
   Typography,
@@ -7,6 +7,7 @@ import {
   styled,
   InputBase,
   Box,
+  IconButton,
 } from "@mui/material";
 import {
   Search,
@@ -15,6 +16,8 @@ import {
   Sms,
   Email,
   Call,
+  ChevronLeft,
+  NavigateNext,
 } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
@@ -55,6 +58,18 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
+  const [startIndex, setStartIndex] = useState(0);
+  const itemsPerPage = 2;
+  const handleNext = () => {
+    if (startIndex + itemsPerPage < caseData?.creditor?.contacts?.length) {
+      setStartIndex(startIndex + itemsPerPage);
+    }
+  };
+  const handlePrev = () => {
+    if (startIndex - itemsPerPage >= 0) {
+      setStartIndex(startIndex - itemsPerPage);
+    }
+  };
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -415,8 +430,8 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
           padding: "0px 10px",
           height: "13rem",
           marginBottom: ".5rem",
-          overflow: "auto",
-          ...ScrollbarStyles,
+          // overflow: "auto",
+          // ...ScrollbarStyles,
         }}
       >
         <Grid
@@ -486,49 +501,89 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             </span>
             <span style={{ fontSize: "11px" }}>Action</span>
           </Grid>
+          <Box
+            sx={{
+              height: "5rem",
+              overflow: "auto",
+              ...ScrollbarStyles,
+            }}
+          >
+            {caseData?.creditor?.contacts
+              ?.slice(startIndex, startIndex + itemsPerPage)
+              ?.map((item, index) => (
+                <Grid
+                  item
+                  xs={12}
+                  key={index}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    backgroundColor:
+                      index % 2 === 0
+                        ? Colors.WHITE
+                        : "rgba(85, 148, 242, 0.06)",
+                    "&:hover": {
+                      backgroundColor: Colors.BG_LIGHT_GRAY,
+                    },
+                    cursor: "pointer",
+                    paddingRight: ".2rem",
+                    paddingLeft: ".2rem",
+                    height: "2rem",
+                    alignItems: "center",
+                  }}
+                >
+                  <span style={cellStyle}>{item?.name || "-"}</span>
+                  <span style={cellStyle}>
+                    {item?.relationWithDebtor ||
+                      item?.relationWithCreditor ||
+                      "-"}
+                  </span>
+                  <span style={cellStyle}>
+                    <Email sx={iconStyle} />
+                    <Call sx={iconStyle} />
+                    <Sms sx={iconStyle} />
+                    <MuiModels
+                      show="editCreditorContacts"
+                      caseData={caseData}
+                      item={item}
+                      GetCaseDetails={GetCaseDetails}
+                      width="70vw"
+                    />
+                  </span>
+                </Grid>
+              ))}
 
-          {caseData?.creditor?.contacts?.map((item, index) => {
-            return (
-              <Grid
-                item
-                xs={12}
-                key={index}
-                sx={{
+            {caseData?.creditor?.contacts?.length > 2 && (
+              <div
+                style={{
                   display: "flex",
-                  justifyContent: "space-between",
-                  backgroundColor:
-                    index % 2 === 0 ? Colors.WHITE : "rgba(85, 148, 242, 0.06)",
-                  "&:hover": {
-                    backgroundColor: Colors.BG_LIGHT_GRAY,
-                  },
-                  cursor: "pointer",
-                  paddingRight: ".2rem",
-                  paddingLeft: ".2rem",
-                  height: "2rem",
-                  alignItems: "center",
+                  justifyContent: "flex-end",
+                  position: "absolute",
+                  right: "10px",
                 }}
               >
-                <span style={cellStyle}>{item?.name || "-"}</span>
-                <span style={cellStyle}>
-                  {item?.relationWithDebtor ||
-                    item?.relationWithCreditor ||
-                    "-"}
-                </span>
-                <span style={cellStyle}>
-                  <Email sx={iconStyle} />
-                  <Call sx={iconStyle} />
-                  <Sms sx={iconStyle} />
-                  <MuiModels
-                    show="editCreditorContacts"
-                    caseData={caseData}
-                    item={item}
-                    GetCaseDetails={GetCaseDetails}
-                    width="70vw"
-                  />
-                </span>
-              </Grid>
-            );
-          })}
+                <IconButton
+                  aria-label="prev"
+                  disabled={startIndex - itemsPerPage < 0}
+                  onClick={handlePrev}
+                  color="primary"
+                >
+                  <ChevronLeft />
+                </IconButton>
+                <IconButton
+                  aria-label="next"
+                  disabled={
+                    startIndex + itemsPerPage >=
+                    caseData?.creditor?.contacts?.length
+                  }
+                  onClick={handleNext}
+                  color="primary"
+                >
+                  <NavigateNext />
+                </IconButton>
+              </div>
+            )}
+          </Box>
         </Box>
       </Grid>
     </>

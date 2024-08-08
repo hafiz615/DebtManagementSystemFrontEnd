@@ -130,10 +130,25 @@ export default function SettingsScreen() {
       allSettings?.data?.data?.paymentsAuthorizations?.upcomingPayments
     );
     setRetryInterval(
-      allSettings?.data?.data?.paymentsAuthorizations?.retryInterval
+      allSettings?.data?.data?.paymentsAuthorizations?.retryInterval || {
+        failedAuthorization: {
+          unit: "days",
+          value: 0,
+          maxRetry: 0,
+          retryCount: 0,
+        },
+        failedPayment: { unit: "hours", value: 0, maxRetry: 0, retryCount: 0 },
+      }
     );
     setAuthorizationInterval(
-      allSettings?.data?.data?.paymentsAuthorizations?.authorizationInterval
+      allSettings?.data?.data?.paymentsAuthorizations
+        ?.authorizationInterval || {
+        custom: { unit: "hours", value: 0 },
+        daily: { unit: "hours", value: 0 },
+        weekly: { unit: "days", value: 0 },
+        fortnightly: { unit: "days", value: 0 },
+        monthly: { unit: "days", value: 0 },
+      }
     );
     setNotificationTemplates(allSettings?.data?.data?.notificationTemplates);
     setCustomFields(allSettings?.data?.data?.customFields);
