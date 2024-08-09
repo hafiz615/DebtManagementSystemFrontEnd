@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Box, Button, Modal, IconButton, Grid } from "@mui/material";
+import { Box, Button, Modal, IconButton } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
 import CreateIcon from "@mui/icons-material/Create";
@@ -128,17 +128,13 @@ export default function MuiModels({
     <div>
       {button === "icon" ? (
         <IconButton
-          onClick={() => {
-            handleOpen();
-          }}
+          onClick={handleOpen}
         >
           <AddIcon sx={{ color: Colors.WHITE, fontSize: "16px" }} />
         </IconButton>
       ) : button === "customField" ? (
         <TextButton
-          onClick={() => {
-            handleOpen();
-          }}
+          onClick={handleOpen}
           startIcon={<AddIcon />}
           buttonText="New Custom Field"
           backgroundColor={Colors.SKY_BLUE}
@@ -146,9 +142,7 @@ export default function MuiModels({
       ) : show === "editField" ? (
         <IconButton sx={{ display: "flex", alignItems: "center" }}>
           <CreateIcon
-            onClick={() => {
-              handleOpen();
-            }}
+            onClick={handleOpen}
             sx={{
               color: Colors.DARK_GRAY,
               cursor: "pointer",
@@ -159,9 +153,7 @@ export default function MuiModels({
       ) : show === "debtorContacts" ? (
         <IconButton sx={{ display: "flex", alignItems: "center" }}>
           <AddIcon
-            onClick={() => {
-              handleOpen();
-            }}
+            onClick={handleOpen}
             sx={{
               color: Colors.DARK_GRAY,
               cursor: "pointer",
@@ -172,9 +164,7 @@ export default function MuiModels({
       ) : show === "creditorContacts" ? (
         <IconButton sx={{ display: "flex", alignItems: "center" }}>
           <AddIcon
-            onClick={() => {
-              handleOpen();
-            }}
+            onClick={handleOpen}
             sx={{
               color: Colors.DARK_GRAY,
               cursor: "pointer",
@@ -184,9 +174,7 @@ export default function MuiModels({
         </IconButton>
       ) : button === "create" ? (
         <IconButton
-          onClick={() => {
-            handleOpen();
-          }}
+          onClick={handleOpen}
         >
           <EditIcon
             sx={{ color: Colors.DARK_GRAY, fontSize: iconSize || "16px" }}
@@ -194,9 +182,7 @@ export default function MuiModels({
         </IconButton>
       ) : show === "editAbout" ? (
         <IconButton
-          onClick={() => {
-            handleOpen();
-          }}
+          onClick={handleOpen}
         >
           <EditIcon
             sx={{ color: Colors.WHITE, fontSize: iconSize || "16px" }}
@@ -204,9 +190,7 @@ export default function MuiModels({
         </IconButton>
       ) : show === "addCase" || show === "uploadFile" ? (
         <IconButton
-          onClick={() => {
-            handleOpen();
-          }}
+          onClick={handleOpen}
         >
           <AddIcon
             sx={{ fontSize: "16px", color: Colors.BLACK, cursor: "pointer" }}
@@ -214,9 +198,7 @@ export default function MuiModels({
         </IconButton>
       ) : show === "CaseCustomField" ? (
         <IconButton
-          onClick={() => {
-            handleOpen();
-          }}
+          onClick={handleOpen}
         >
           <AddIcon
             sx={{ fontSize: "16px", color: Colors.WHITE, cursor: "pointer" }}
@@ -224,9 +206,7 @@ export default function MuiModels({
         </IconButton>
       ) : show === "editStatus" ? (
         <IconButton
-          onClick={() => {
-            handleOpen();
-          }}
+          onClick={handleOpen}
         >
           <EditIcon
             sx={{
@@ -238,9 +218,7 @@ export default function MuiModels({
         </IconButton>
       ) : show === "duplicateRole" ? (
         <IconButton
-          onClick={() => {
-            handleOpen();
-          }}
+          onClick={handleOpen}
         >
           <Difference
             sx={{
@@ -255,9 +233,7 @@ export default function MuiModels({
         </IconButton>
       ) : show === "deleteStatus" ? (
         <IconButton
-          onClick={() => {
-            handleOpen();
-          }}
+          onClick={handleOpen}
         >
           <Delete
             sx={{
@@ -269,9 +245,7 @@ export default function MuiModels({
         </IconButton>
       ) : show === "moreStatus" ? (
         <IconButton
-          onClick={() => {
-            handleOpen();
-          }}
+          onClick={handleOpen}
         >
           <MoreHorizOutlined
             sx={{
@@ -284,9 +258,7 @@ export default function MuiModels({
       ) : show === "EditCaseCustomField" ? (
         <IconButton
           disabled={isEmpty(customFieldsData)}
-          onClick={() => {
-            handleOpen();
-          }}
+          onClick={handleOpen}
         >
           <EditIcon
             sx={{ fontSize: "16px", color: Colors.WHITE, cursor: "pointer" }}
@@ -294,9 +266,7 @@ export default function MuiModels({
         </IconButton>
       ) : button === "delete" ? (
         <IconButton
-          onClick={() => {
-            handleOpen();
-          }}
+          onClick={handleOpen}
         >
           <Delete
             sx={{

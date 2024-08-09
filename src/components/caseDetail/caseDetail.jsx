@@ -46,6 +46,7 @@ import { setCaseCreditorId, setCaseId } from "../../redux/action/action.js";
 import CaseFileCard from "./caseFileCard.jsx";
 import { useToast } from "../../toast/toastContext.jsx";
 import DebtorFields from "../caseCreationFields/debtorFields";
+import PaymentForm from "../payments/seamlessChexPaynote";
 
 const style = {
   position: "absolute",
@@ -152,6 +153,7 @@ function CaseDetail() {
         ...ScrollbarStyles,
       }}
     >
+      <PaymentForm />
       <Grid
         item
         xs={12}
@@ -194,7 +196,7 @@ function CaseDetail() {
         >
           <Grid
             xs={12}
-            container
+            container item
             sx={{ justifyContent: "space-between", alignItems: "center" }}
           >
             <Typography
@@ -444,7 +446,7 @@ function CaseDetail() {
             </Accordion>
 
             <Grid container>
-              <Grid xs={12} md={3}>
+              <Grid item xs={12} md={3}>
                 <AnalyticsAccordion
                   loading={isPaymentLoading}
                   paymentDetails={paymentDetails}
@@ -465,7 +467,7 @@ function CaseDetail() {
                 />
               </Grid>
 
-              <Grid xs={12} md={9}>
+              <Grid container item xs={12} md={9}>
                 <span
                   style={{
                     display: "flex",

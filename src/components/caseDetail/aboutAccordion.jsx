@@ -98,9 +98,10 @@ export default function AboutAccordion({ caseDetails, GetCaseDetails }) {
         <Grid>
           {aboutData?.map((item) => (
             <Grid
-              container
+              container item
               xs={12}
               sx={{ justifyContent: "space-between", mb: "10px" }}
+              key={item.id || item.name}
             >
               <Typography
                 sx={{
