@@ -200,35 +200,30 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   });
 
   const disableButton =
-    (activeStep === 0 && files?.length === 0) ||
-    (activeStep === 1 &&
-      (status === "" ||
-        (debtorContantHasValue &&
-          !isEmpty(emailContactError) &&
-          hasAnyValue(emailContactError)) ||
-        checkContacts(debtorContactDetails) ||
-        (debtorContantHasValue &&
-          !isEmpty(contactError) &&
-          hasAnyValue(contactError)) ||
-        Object.values(debtorOwnDetails)?.some((value) => value === "") ||
-        Object.entries(debtorBusinessDetails)
-          .filter(([key]) => key !== "businessDescription")
-          .some(([key, value]) => value === "") ||
-        !!debtorBusinessDetails?.businessDescription?.trim()?.length === 0 ||
-        errors?.businessPhone ||
-        errors?.einNumber ||
-        errors?.ssn ||
-        errors?.emailValid ||
-        errors?.basicPhone)) ||
-    // (activeStep === 2 &&
-    //   !finalCaseData.some((caseData) =>
-    //     Object.entries(caseData)?.some(
-    //       ([key, value]) =>
-    //         key !== "lastFundedDate" &&
-    //         key !== "lastPaymentDate" &&
-    //         (value === null || value === "")
-    //     )
-    //   )) ||
+    // (activeStep === 0 && files?.length === 0) ||
+    // (activeStep === 1 &&
+    //   (status === "" ||
+    //     (debtorContantHasValue &&
+    //       !isEmpty(emailContactError) &&
+    //       hasAnyValue(emailContactError)) ||
+    //     checkContacts(debtorContactDetails) ||
+    //     (debtorContantHasValue &&
+    //       !isEmpty(contactError) &&
+    //       hasAnyValue(contactError)) ||
+    //     Object.values(debtorOwnDetails)?.some((value) => value === "") ||
+    //     Object.entries(debtorBusinessDetails)
+    //       .filter(([key]) => key !== "businessDescription")
+    //       .some(([key, value]) => value === "") ||
+    //     !!debtorBusinessDetails?.businessDescription?.trim()?.length === 0 ||
+    //     errors?.businessPhone ||
+    //     errors?.einNumber ||
+    //     errors?.ssn ||
+    //     errors?.emailValid ||
+    //     errors?.basicPhone)) ||
+    (activeStep === 2 &&
+      finalCaseData.some(
+        (caseData) => caseData?.creditor?.accountTitle === ""
+      )) ||
     (activeStep === 3 &&
       (totalReceivable === null ||
         totalReceivable === "" ||
@@ -961,7 +956,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
                   handleNext();
                 }}
                 marginRight={smallScreen ? "8px" : "1rem"}
-                // disabled={disableButton || loading}
+                disabled={disableButton || loading}
               />
             </Grid>
           </Grid>
