@@ -30,6 +30,10 @@ export default function EditDebtorDetail({
   const debtorBasicInfo = caseData?.debtor?.basicInformation;
   const debtorBusinessInfo = caseData?.debtor?.businessInformation;
   const [loading, setLoading] = useState(false);
+  const [connectPayment, setConnectPayment] = useState({
+    paymentToken: "",
+    paymentType: "",
+  });
   const [debtorOwnDetails, setDebtorOwnDetails] = useState({
     BasicFullName: debtorBasicInfo?.fullName || "",
     BasicEmailAddress: debtorBasicInfo?.email || "",
@@ -116,6 +120,8 @@ export default function EditDebtorDetail({
         phone: debtorBusinessDetails?.businessPhoneNumber,
         address: debtorBusinessDetails?.businessAddress,
       },
+      paymentToken: connectPayment?.paymentToken,
+      paymentType: connectPayment?.paymentType,
     };
     const updateDebtor = await UpdateDebtor(caseData?.debtor?._id, params);
     if (updateDebtor?.status === 200) {
@@ -170,6 +176,8 @@ export default function EditDebtorDetail({
           loading={loading}
           checked={checked}
           setChecked={setChecked}
+          connectPayment={connectPayment}
+          setConnectPayment={setConnectPayment}
           errors={errors}
           setErrors={setErrors}
         />

@@ -45,3 +45,10 @@ code {
 .css-1pvqfbd-MuiTableCell-root {
   line-height: normal !important;
 }
+.btn.green-btn {
+  border: none;
+  border-radius: 5px;
+  height: 2.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}

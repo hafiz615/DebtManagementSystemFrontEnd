@@ -14,7 +14,7 @@ import { Colors } from "../../config/default";
 import { phoneNumberFormat } from "../../common";
 import { Add, Delete, ExpandMore } from "@mui/icons-material";
 import { FONT_SIZE_XL } from "../../constants/appConstants";
-
+import PaymentForm from "../payments/seamlessChexPaynote";
 export default function CreditorDetails({
   creditors,
   setCreditors,
@@ -303,7 +303,16 @@ export default function CreditorDetails({
                     position: "relative",
                   }}
                 >
-                  <Grid item xs={12} lg={4}>
+                  <Grid
+                    container
+                    item
+                    xs={12}
+                    sx={{
+                      display: "flex",
+                      alignItems: "centter",
+                      justifyContent: "space-between",
+                    }}
+                  >
                     <SearchBar
                       searchText={searchText}
                       onChange={handleSearchChange}
@@ -315,6 +324,7 @@ export default function CreditorDetails({
                       backgroundColor={Colors.BG_LIGHT_GRAY}
                       idx={index}
                     />
+                    <PaymentForm />
                   </Grid>
 
                   <CreditorFields
