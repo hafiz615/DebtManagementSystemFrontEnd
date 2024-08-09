@@ -373,3 +373,8 @@ export const handleNumberInputKeyDown = (e) => {
     e.preventDefault();
   }
 };
+export const convertCamelCaseToTitle = (str) => {
+  return str
+    .replace(/([A-Z])/g, " $1") // Add space before capital letters
+    .replace(/^./, (char) => char.toUpperCase()); // Capitalize the first letter
+};
