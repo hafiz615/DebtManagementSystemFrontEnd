@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 
 import PaymentDetails from "./caseCreation/paymentDetails";
 import PaymentProcess from "./radioPayment";
@@ -9,26 +9,33 @@ import TextButton from "./button";
 import { Colors } from "../config/default";
 import { UpdateCase } from "../services/services";
 import { useToast } from "../toast/toastContext";
+import { calculateNextWeek } from "../common";
+import { FONT_SIZE_LARGE } from "../constants/appConstants";
 
 export default function PaymentPopup({
   data,
   handleClose,
   GetCaseDetails,
   GetCasePaymentDetails,
+  settlementRange,
+  weeksTillPaid,
+  caseId,
+  remainingAmount,
 }) {
-  const [feePayment, setFeePayment] = useState("toPay");
+  const [feePayment, setFeePayment] = useState(data?.feePayment || "toPay");
   const [totalAmount, setTotalAmount] = useState();
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
   const { id } = useParams();
-
+  const [nextWeekDate, setNextWeekDate] = useState(calculateNextWeek());
   const today = new Date().toISOString().split("T")[0];
+  const [isExempt, setIsExempt] = useState(data?.isExempt || false);
   const [newDataList, setNewDataList] = useState([
     {
-      amount: "",
-      startDate: today,
-      timePeriod: "Custom",
-      frequency: 1,
+      amount: settlementRange || "",
+      startDate: weeksTillPaid ? nextWeekDate : today,
+      timePeriod: settlementRange ? "Weekly" : "Custom",
+      frequency: weeksTillPaid || 1,
     },
   ]);
 
@@ -47,7 +54,7 @@ export default function PaymentPopup({
   }, [newDataList]);
 
   useEffect(() => {
-    if (data?.intervals?.length !== 0) {
+    if (data && data?.intervals?.length !== 0) {
       const filteredData = data.intervals.map(({ _id, ...rest }) => rest);
       setNewDataList(filteredData);
     }
@@ -58,13 +65,14 @@ export default function PaymentPopup({
     const params = {
       intervals: newDataList,
       feePayment: feePayment,
+      isExempt: isExempt,
     };
-    const caseId = data?._id;
-    const resCaseUpdate = await UpdateCase(params, caseId);
+    const updateCaseId = caseId || data?._id;
+    const resCaseUpdate = await UpdateCase(params, updateCaseId);
     if (resCaseUpdate?.status === 200) {
       showToast(resCaseUpdate?.data?.message, "success");
-      GetCaseDetails(id);
-      GetCasePaymentDetails(id);
+      GetCaseDetails && GetCaseDetails(id);
+      GetCasePaymentDetails && GetCasePaymentDetails(id);
       handleClose();
     } else {
       const errorMessage = resCaseUpdate?.response?.data?.message;
@@ -73,19 +81,37 @@ export default function PaymentPopup({
     setLoading(false);
   };
 
+  let remaining =
+    remainingAmount && remainingAmount.replace("$", "").replace(",", "");
+
   return (
     <div>
-      {/* <Typography>{data?.remaining}</Typography> */}
       <PaymentDetails
-        remainingAmount={data?.remaining}
+        remainingAmount={remaining || data?.remaining}
         newDataList={newDataList}
         setNewDataList={setNewDataList}
         totalAmount={totalAmount}
+        isExempt={isExempt}
       />
-      <PaymentProcess
-        feePayment={data?.feePayment || feePayment}
-        setFeePayment={setFeePayment}
-      />
+      <div style={{ display: "flex", marginBottom: "1rem" }}>
+        <input
+          type="checkbox"
+          checked={isExempt}
+          onChange={() => setIsExempt(!isExempt)}
+          style={{ appearance: "radio" }}
+        />
+        <Typography
+          sx={{
+            fontSize: FONT_SIZE_LARGE,
+            fontFamily: "Nunito",
+            fontWeight: "700",
+          }}
+        >
+          Exempt
+        </Typography>
+      </div>
+      <PaymentProcess feePayment={feePayment} setFeePayment={setFeePayment} />
+
       <Grid container xs={12} sx={{ mt: "1rem", justifyContent: "right" }}>
         <TextButton
           buttonText="Save"

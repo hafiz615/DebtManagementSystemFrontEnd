@@ -5,6 +5,7 @@ import { FONT_SIZE_LARGE } from "../../constants/appConstants";
 import Tooltip from "@mui/material/Tooltip";
 import InfoIcon from "@mui/icons-material/Info";
 import { isEmpty } from "lodash";
+import MuiModels from "../models";
 
 export default function SettlementCards({
   title,
@@ -15,7 +16,9 @@ export default function SettlementCards({
   percentageSettlementOverWeeklyTrueRevenue,
   weeksTillPaid,
   weeksTillPaidTitle,
-  isFullPayment
+  isFullPayment,
+  caseId,
+  remainingAmount,
 }) {
   const commonStyles = {
     backgroundColor: Colors.WHITE,
@@ -97,13 +100,24 @@ export default function SettlementCards({
     <Grid item xs={12} sm={5.8} md={3.8} lg={3.8} container sx={commonStyles}>
       <div
         style={{
-          marginLeft: "8%",
-          marginTop: "1rem",
+          margin: "1rem 8%",
+          display: "flex",
+          justifyContent: "space-between",
         }}
       >
         <Typography sx={commonTextStyles}>
           {capitalizeFirstWord(title)}
         </Typography>
+
+        <MuiModels
+          width="35vw"
+          show="settlmentPayment"
+          title={title}
+          settlementRange={settlementRange?.[title]}
+          weeksTillPaid={weeksTillPaid?.[weeksTillPaidTitle]}
+          remainingAmount={remainingAmount}
+          caseId={caseId}
+        />
       </div>
       <Box sx={lineStyle} />
       {noData ? (
@@ -131,7 +145,7 @@ export default function SettlementCards({
                 </Tooltip>
               </Typography>
             </Grid>
-            {isFullPayment ?
+            {isFullPayment ? (
               <>
                 <Grid item xs={5}>
                   <div style={{ width: "100%", display: "flex" }}>
@@ -145,8 +159,7 @@ export default function SettlementCards({
                       Minimum
                     </div>
                     <div style={textStyles}>
-
-                    {item?.[title][0]}
+                      {item?.[title][0]}
                       {/* {rangeNames[index]?.label === "Weeks Till Paid"
                         ? item?.[weeksTillPaidTitle][0]
                         : rangeNames[index]?.label === "New Default Risk"
@@ -168,7 +181,7 @@ export default function SettlementCards({
                       Maximum
                     </div>
                     <div style={textStyles}>
-                    {item?.[title][1]}
+                      {item?.[title][1]}
                       {/* {e.log(item?.[title], item?.[title][0], item?.[title][1])}
                       {console.log()}
                       {rangeNames[index]?.label === "Weeks Till Paid"
@@ -182,7 +195,8 @@ export default function SettlementCards({
                     </div>
                   </div>
                 </Grid>
-              </> :
+              </>
+            ) : (
               <>
                 <Grid item xs={5}>
                   <div style={{ width: "100%", display: "flex" }}>
@@ -198,14 +212,18 @@ export default function SettlementCards({
                     <div style={textStyles}>
                       {rangeNames[index]?.label === "Weeks Till Paid"
                         ? rangeNames[index]?.label === "Weeks Till Paid"
-                          ? item?.[weeksTillPaidTitle]?.["min"] || item?.[weeksTillPaidTitle][0]
+                          ? item?.[weeksTillPaidTitle]?.["min"] ||
+                            item?.[weeksTillPaidTitle][0]
                           : ""
                         : rangeNames[index]?.label === "New Default Risk"
-                          ? item?.[title]?.["min"] || "-"
-                          : rangeNames[index]?.label?.includes("%")
-                            ? `${parseFloat(item?.[title]?.["min"].toFixed(2)) || "-"}%`
-                            : `$${parseFloat(item?.[title]?.["min"].toFixed(2)) || "-"
-                            }`}
+                        ? item?.[title]?.["min"] || "-"
+                        : rangeNames[index]?.label?.includes("%")
+                        ? `${
+                            parseFloat(item?.[title]?.["min"].toFixed(2)) || "-"
+                          }%`
+                        : `$${
+                            parseFloat(item?.[title]?.["min"].toFixed(2)) || "-"
+                          }`}
                     </div>
                   </div>
                   <div style={{ width: "100%", display: "flex" }}>
@@ -221,19 +239,23 @@ export default function SettlementCards({
                     <div style={textStyles}>
                       {rangeNames[index]?.label === "Weeks Till Paid"
                         ? rangeNames[index]?.label === "Weeks Till Paid"
-                          ? item?.[weeksTillPaidTitle]?.["max"] || item?.[weeksTillPaidTitle][1]
+                          ? item?.[weeksTillPaidTitle]?.["max"] ||
+                            item?.[weeksTillPaidTitle][1]
                           : ""
                         : rangeNames[index]?.label === "New Default Risk"
-                          ? item?.[title]?.["max"] || "-"
-                          : rangeNames[index]?.label?.includes("%")
-                            ? `${parseFloat(item?.[title]?.["max"].toFixed(2)) || "-"}%`
-                            : `$${parseFloat(item?.[title]?.["max"].toFixed(2)) || "-"
-                            }`}
+                        ? item?.[title]?.["max"] || "-"
+                        : rangeNames[index]?.label?.includes("%")
+                        ? `${
+                            parseFloat(item?.[title]?.["max"].toFixed(2)) || "-"
+                          }%`
+                        : `$${
+                            parseFloat(item?.[title]?.["max"].toFixed(2)) || "-"
+                          }`}
                     </div>
                   </div>
                 </Grid>
-              </>}
-
+              </>
+            )}
           </Grid>
         ))
       )}
