@@ -44,9 +44,7 @@ import CheckboxAutocomplete from "../checkboxAutocomplete";
 import { useParams } from "react-router-dom";
 import { ErrorOutline } from "@mui/icons-material";
 import { isEmpty } from "lodash";
-import CaseCustomField from "../caseCustomField";
-import LumpsumpCard from "./lumpsumpCard";
-import FullProfitCard from "./fullProfitCard";
+import { getWeeksRemainingMessage } from "../../common";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -255,8 +253,8 @@ export default function SettlementRange() {
     "recommendation 2",
     "recommendation 3",
   ];
-  const strat2Recommendatons = ["recommendation 1"];
   const strat3Recommendations = ["recommendation 1"];
+  const strat2Recommendations = ["lump Sum"];
 
   const cardStyles = {
     backgroundColor: Colors.WHITE,
@@ -287,19 +285,10 @@ export default function SettlementRange() {
 
   const cardData = {
     0: recommendations?.map((item, index) => (
-      // <Grid item lg={12} key={index}>
       <>
         <SettlementCards
           title={item}
-          weeksTillPaidTitle={
-            item === "recommendation 1"
-              ? "Weeks remaining based on recommendation 1"
-              : item === "recommendation 2"
-              ? "Weeks remaining based on recommendation 2"
-              : item === "recommendation 3"
-              ? "Weeks remaining based on recommendation 3"
-              : ""
-          }
+          weeksTillPaidTitle={getWeeksRemainingMessage(item)}
           settlementRange={
             apiData?.settlement_range?.[allCreditorNames[parseInt(tabValue)]] ||
             null
@@ -326,11 +315,27 @@ export default function SettlementRange() {
         />
       </>
     )),
-    1: (
+    1: strat2Recommendations?.map((item, index) => (
       <>
-        <LumpsumpCard lumpSumpData={lumpSumpData} />
+        {lumpSumpData && (
+          <SettlementCards
+            isLumpSumPayment={true}
+            title={item}
+            weeksTillPaidTitle={
+              item === "lump Sum"
+                ? "Amount based on Lump Sum Recommendation"
+                : ""
+            }
+            settlementRange={
+              lumpSumpData?.lumpsum_settlement?.[
+                allCreditorNames[parseInt(tabValue)]
+              ] || null
+            }
+            warning={lumpSumpData?.warning || ""}
+          />
+        )}
       </>
-    ),
+    )),
 
     2: strat3Recommendations?.map((item, index) => (
       <>
@@ -736,7 +741,7 @@ export default function SettlementRange() {
                       marginTop: "0.5rem",
                     }}
                   >
-                    {debtor[key]}
+                    {key === "weeklyBudget" ? `$${debtor[key]}` : debtor[key]}
                   </span>
                 </Box>
               </Grid>
@@ -913,12 +918,7 @@ export default function SettlementRange() {
             {selectedCreditorDetails &&
               selectedCreditorDetails?.contractDetails && (
                 <>
-                  <Grid
-                    container
-                    item
-                    xs={12}
-                    sx={{ justifyContent: "space-between", mt: "1rem" }}
-                  >
+                  <Grid container item xs={12} sx={{ gap: "1rem", mt: "1rem" }}>
                     <Grid
                       item
                       xs={12}
@@ -1037,7 +1037,6 @@ export default function SettlementRange() {
                       sm={5.8}
                       md={3.8}
                       lg={2.8}
-                      style={{ marginTop: "1rem" }}
                       container
                       sx={commonStyles}
                     >

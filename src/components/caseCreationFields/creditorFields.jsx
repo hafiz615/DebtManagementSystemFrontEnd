@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
-import { Grid, Box, IconButton, TextField, Slider } from "@mui/material";
-import { Add, Delete } from "@mui/icons-material";
-
+import { Grid, Box, TextField, Slider } from "@mui/material";
 import { Colors } from "../../config/default";
 import PaymentsTextFields from "../caseTextField";
 import MuiPhoneTextField from "../muiPhoneText";
 import AmountTextField from "../amountTextField";
-import IntervalTextField from "../intervalFields";
-import { PhoneValidation } from "../../constants/appConstants";
+
 import { phoneNumberFormat, swapKeysAndValues } from "../../common";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import PaymentFields from "../caseCreationFields/paymentFields";
-import Dropdown from "./../dropdown";
 import Autocomplete from "@mui/material/Autocomplete";
 
 export default function CreditorFields({
@@ -22,7 +18,6 @@ export default function CreditorFields({
   setFinalCaseData,
   finalCaseData,
   caseIndex,
-  error,
   digits,
   setDigits,
 }) {
@@ -40,12 +35,6 @@ export default function CreditorFields({
   // const [digits, setDigits] = useState(Array(10).fill(""));
   // thisCaseData?.creditor?.accountTitle
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
-  const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
-  const isEmailValid = (email) => {
-    // Use a more robust email validation regular expression
-    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-    return emailRegex.test(email);
-  };
   const [nameTitleMapping, setNameTitleMapping] = useState(
     swapKeysAndValues(debtorCaseData?.creditorNames?.mapped_data || {})
   );
@@ -79,24 +68,6 @@ export default function CreditorFields({
     // Update the state with the new array
     setFinalCaseData(updatedFinalCaseData);
   };
-  // const handleChange = (e, index) => {
-  //   const { value } = e.target;
-  //   if (/^[0-9]$/.test(value) || value === "") {
-  //     const newDigits = [...digits];
-  //     newDigits[index] = value;
-  //     setDigits(newDigits);
-
-  //     // Move focus to the next input
-  //     if (value && index < 9) {
-  //       const nextInput = document.getElementById(
-  //         `digit${caseIndex}-${index + 1}`
-  //       );
-  //       if (nextInput) {
-  //         nextInput.focus();
-  //       }
-  //     }
-  //   }
-  // };
 
   useEffect(() => {
     const validationCodeString = digits;
@@ -106,32 +77,6 @@ export default function CreditorFields({
       parseInt(validationCodeString)
     );
   }, [digits]);
-
-  // const handleKeyDown = (e, index) => {
-  //   const invalidChars = ["e", "E", ".", "-"];
-
-  //   if (invalidChars.includes(e.key)) {
-  //     e.preventDefault();
-  //   }
-
-  //   if (e.key === "Backspace") {
-  //     e.preventDefault(); // Prevent default backspace behavior
-  //     if (digits[index] === "") {
-  //       if (index > 0) {
-  //         const prevInput = document.getElementById(
-  //           `digit${caseIndex}-${index - 1}`
-  //         );
-  //         if (prevInput) {
-  //           prevInput.focus();
-  //         }
-  //       }
-  //     } else {
-  //       const newDigits = [...digits];
-  //       newDigits[index] = "";
-  //       setDigits(newDigits);
-  //     }
-  //   }
-  // };
 
   const handleRemoveContact = (contactIndex) => {
     // Create a new array of finalCaseData with the updated contacts
@@ -215,7 +160,7 @@ export default function CreditorFields({
                 placeHolderValue="Enter Company Name"
                 width={smallScreen ? "100%" : "97%"}
                 value={thisCaseData?.creditor?.businessInformation?.companyName}
-                onChange={(e) =>
+                onChangeFunction={(e) =>
                   handleCaseDataChange(
                     caseIndex,
                     "creditor.businessInformation.companyName",
@@ -231,7 +176,7 @@ export default function CreditorFields({
                 value={
                   thisCaseData?.creditor?.businessInformation?.businessCategory
                 }
-                onChange={(e) =>
+                onChangeFunction={(e) =>
                   handleCaseDataChange(
                     caseIndex,
                     "creditor.businessInformation.businessCategory",
@@ -340,7 +285,7 @@ export default function CreditorFields({
                   placeHolderValue="Enter Account Title"
                   width="100%"
                   value={thisCaseData?.creditor?.accountTitle}
-                  onChange={(e) =>
+                  onChangeFunction={(e) =>
                     handleCaseDataChange(
                       caseIndex,
                       "creditor.accountTitle",
@@ -367,7 +312,7 @@ export default function CreditorFields({
                 placeHolderValue="Enter Full Name"
                 width={smallScreen ? "100%" : "97%"}
                 value={thisCaseData?.creditor?.basicInformation?.fullName}
-                onChange={(e) =>
+                onChangeFunction={(e) =>
                   handleCaseDataChange(
                     caseIndex,
                     "creditor.basicInformation.fullName",
@@ -381,7 +326,7 @@ export default function CreditorFields({
                 placeHolderValue="Enter Valid Email"
                 width={smallScreen ? "100%" : "97%"}
                 value={thisCaseData?.creditor?.basicInformation?.email}
-                onChange={(e) =>
+                onChangeFunction={(e) =>
                   handleCaseDataChange(
                     caseIndex,
                     "creditor.basicInformation.email",
@@ -436,27 +381,6 @@ export default function CreditorFields({
                 width: smallScreen ? "100%" : "97%",
               }}
             />
-            {/* <Typography sx={{ fontFamily: "Nunito", fontWeight: "600", marginTop: "0.8rem" }} gutterBottom>
-              Security Key*
-            </Typography>
-            <input
-              type="text"
-              placeholder="Enter Security Key"
-              value={thisCaseData.securityKey}
-              onChange={(e) =>
-                handleCaseDataChange(caseIndex, "securityKey", e.target.value)
-              }
-              style={{
-                backgroundColor: Colors.BG_LIGHT_GRAY,
-                height: "2.5rem",
-                color: Colors.DIM_LIGHT_GRAY,
-                paddingLeft: "1rem",
-                border: "none",
-                outline: "none",
-                borderRadius: "5px",
-                width: smallScreen ? "100%" : "97%",
-              }}
-            /> */}
           </div>
         </Grid>
       </Grid>
@@ -492,7 +416,7 @@ export default function CreditorFields({
             type="date"
             placeHolderValue="00/00/00"
             value={thisCaseData?.creditor?.lastFundedDate}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               handleCaseDataChange(
                 caseIndex,
                 "creditor.lastFundedDate",
@@ -564,26 +488,7 @@ export default function CreditorFields({
         >
           Contract Detail
         </Typography>
-        <Grid
-          container
-          item
-          xs={12}
-          // sx={{ justifyContent: "space-between", marginTop: "1rem" }}
-        >
-          {/* <PaymentsTextFields
-            type="number"
-            label="Loan Amount"
-            placeHolderValue="Enter Loan Amount"
-            width={smallScreen ? "100%" : "97%"}
-            value={thisCaseData?.contractDetails?.loanAmount}
-            onChange={(e) =>
-              handleCaseDataChange(
-                caseIndex,
-                "contractDetails.loanAmount",
-                e.target.value
-              )
-            }
-          /> */}
+        <Grid container item xs={12}>
           <Grid item xs={12} md={4}>
             <Typography
               sx={{
@@ -607,27 +512,14 @@ export default function CreditorFields({
               }
             />
           </Grid>
-          {/* <Grid item xs={12} md={4}> */}
-          {/* <IntervalTextField
-            label="Purchased Percentage"
-            value={thisCaseData?.contractDetails?.purchased_percentage}
-            onChange={(e) =>
-              handleCaseDataChange(
-                caseIndex,
-                "contractDetails.purchased_percentage",
-                e
-              )
-            }
-            type="percentage"
-          /> */}
-          {/* </Grid> */}
+
           <PaymentsTextFields
             type="text"
             label="Purchased Percentage"
             placeHolderValue="Enter Purchased Percentage"
             width={smallScreen ? "100%" : "97%"}
             value={thisCaseData?.contractDetails?.purchased_percentage}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               handleCaseDataChange(
                 caseIndex,
                 "contractDetails.purchased_percentage",
@@ -635,20 +527,6 @@ export default function CreditorFields({
               )
             }
           />
-          {/* <Grid item xs={12} md={4}> */}
-          {/* <IntervalTextField
-              label="Repayment Amount"
-              value={thisCaseData?.contractDetails?.repayment_amount}
-              onChange={(e) =>
-                handleCaseDataChange(
-                  caseIndex,
-                  "contractDetails.repayment_amount",
-                  e
-                )
-              }
-              type="currency"
-            /> */}
-          {/* </Grid> */}
 
           <PaymentsTextFields
             type="text"
@@ -656,7 +534,7 @@ export default function CreditorFields({
             placeHolderValue="Enter Repayment Amount"
             width={smallScreen ? "100%" : "97%"}
             value={thisCaseData?.contractDetails?.repayment_amount}
-            onChange={(e) =>
+            onChangeFunction={(e) =>
               handleCaseDataChange(
                 caseIndex,
                 "contractDetails.repayment_amount",
@@ -709,236 +587,6 @@ export default function CreditorFields({
           />
         </Box>
       </Grid>
-      {/* <Grid item xs={12} sx={{ padding: "1rem" }}>
-        <Typography
-          sx={{
-            fontFamily: "Nunito",
-            fontWeight: "600",
-            marginTop: "1rem",
-          }}
-          gutterBottom
-        >
-          Creditor Agression
-        </Typography>
-        <Box display="flex" gap={1}>
-          {digits?.map((digit, index) => (
-            <TextField
-              key={index}
-              id={`digit${caseIndex}-${index}`}
-              value={digit}
-              onChange={(e) => handleChange(e, index)}
-              inputProps={{
-                maxLength: 1,
-                style: { textAlign: "center", fontSize: "1rem" },
-              }}
-              sx={{
-                width: 30,
-                height: 30,
-                "& .MuiInputBase-input": {
-                  padding: 0.5,
-                  textAlign: "center",
-                },
-              }}
-              onKeyDown={(e) => handleKeyDown(e, index)}
-            />
-          ))}
-        </Box>
-      </Grid> */}
     </>
   );
 }
-
-// <Grid
-//   item
-//   xs={12}
-//   sx={{
-//     marginTop: "1rem",
-//     borderRadius: "10px",
-//     backgroundColor: Colors.WHITE,
-//     padding: "1rem",
-//   }}
-// >
-//   <Grid
-//     container
-//     item
-//     xs={12}
-//     sx={{
-//       display: "flex",
-//       justifyContent: "space-between",
-//     }}
-//   >
-//     <Typography
-//       sx={{ fontFamily: "Nunito", fontWeight: "600" }}
-//       gutterBottom
-//     >
-//       Contact Details
-//     </Typography>
-//     <Add
-//       onClick={handleAddNewContact}
-//       sx={{
-//         backgroundColor: Colors.SKY_BLUE,
-//         color: Colors.WHITE,
-//         borderRadius: "50%",
-//         fontSize: "2.5rem",
-//         padding: ".4rem",
-//         cursor: "pointer",
-//       }}
-//     />
-//   </Grid>
-//   {thisCaseData?.creditor?.contacts?.map((item, index) => {
-//     return (
-//       <>
-//         {index !== 0 && (
-//           <Box
-//             item
-//             xs={12}
-//             sx={{
-//               display: "flex",
-//               justifyContent: "flex-end",
-//               width: "100%",
-//             }}
-//           >
-//             <Delete
-//               onClick={() => handleRemoveContact(index)}
-//               sx={{
-//                 backgroundColor: Colors.ORANGE_COLOR,
-//                 color: Colors.WHITE,
-//                 borderRadius: "50%",
-//                 fontSize: "2.5rem",
-//                 padding: ".4rem",
-//                 cursor: "pointer",
-//               }}
-//             />
-//           </Box>
-//         )}
-//         {/* <Grid key={index} container item xs={12}>
-//         <Grid container item xs={12} md={8}>
-//           <PaymentsTextFields
-//             type="text"
-//             label="Name"
-//             placeHolderValue="Enter Name"
-//             width={smallScreen ? "100%" : "97%"}
-//             value={item?.name}
-//             onChange={(e) =>
-//               handleInputChange(index, "name", e.target.value)
-//             }
-//           />
-//           <PaymentsTextFields
-//             type="text"
-//             label="Title"
-//             placeHolderValue="Enter Title"
-//             width={smallScreen ? "100%" : "97%"}
-//             value={item?.title}
-//             onChange={(e) =>
-//               handleInputChange(index, "title", e.target.value)
-//             }
-//           />
-
-//           <MuiPhoneTextField
-//             label="Phone #"
-//             value={item?.phone}
-//             onChange={(e) =>
-//               handleInputChange(index, "phone", formatPhoneNumber(e))
-//             }
-//             onKeyDown={handleNumberInputKeyDown}
-//             error=""
-//           />
-//           <PaymentsTextFields
-//             type="text"
-//             label="Enter Email"
-//             placeHolderValue="Enter Email"
-//             width={smallScreen ? "100%" : "97%"}
-//             value={item?.email}
-//             onChange={(e) =>
-//               handleInputChange(index, "email", e.target.value)
-//             }
-//             error=""
-//           />
-
-//           <PaymentsTextFields
-//             type="text"
-//             label="Country (Optional)"
-//             placeHolderValue="Country Name"
-//             width={smallScreen ? "100%" : "97%"}
-//             value={item?.country}
-//             onChange={(e) =>
-//               handleInputChange(index, "country", e.target.value)
-//             }
-//           />
-//           <PaymentsTextFields
-//             type="text"
-//             label="State (Optional)"
-//             placeHolderValue="Enter State"
-//             width={smallScreen ? "100%" : "97%"}
-//             value={item?.state}
-//             onChange={(e) =>
-//               handleInputChange(index, "state", e.target.value)
-//             }
-//           />
-//           <PaymentsTextFields
-//             label="City (Optional)"
-//             placeHolderValue="Enter City"
-//             width={smallScreen ? "100%" : "97%"}
-//             value={item?.city}
-//             onChange={(e) =>
-//               handleInputChange(index, "city", e.target.value)
-//             }
-//           />
-//           <PaymentsTextFields
-//             type="number"
-//             label="Zip Code (Optional)"
-//             placeHolderValue="Enter Zip Code"
-//             width={smallScreen ? "100%" : "97%"}
-//             value={item?.zipCode}
-//             onChange={(e) =>
-//               handleInputChange(index, "zipCode", e.target.value)
-//             }
-//             onKeyDown={handleNumberInput}
-//           />
-//         </Grid>
-//         <Grid
-//           container
-//           item
-//           xs={12}
-//           md={4}
-//           sx={{ flexDirection: "column" }}
-//         >
-//           <Typography
-//             sx={{
-//               fontWeight: "500",
-//               fontFamily: "Nunito",
-//               marginLeft: "1rem",
-//               color: Colors.DARK_GRAY,
-//             }}
-//           >
-//             Relation with Debtor (Optional)
-//           </Typography>
-//           <input
-//             type="text"
-//             placeholder="Relation"
-//             onChange={(e) =>
-//               handleInputChange(
-//                 index,
-//                 "relationWithDebtor",
-//                 e.target.value
-//               )
-//             }
-//             value={item?.relationWithDebtor}
-//             style={{
-//               backgroundColor: Colors.BG_LIGHT_GRAY,
-//               height: "2.5rem",
-//               color: Colors.DIM_LIGHT_GRAY,
-//               paddingLeft: "1rem",
-//               border: "none",
-//               outline: "none",
-//               borderRadius: "5px",
-//               width: smallScreen ? "100%" : "97%",
-//             }}
-//           />
-//         </Grid>
-//       </Grid> */}
-//         <hr></hr>
-//       </>
-//     );
-//   })}
-// </Grid>

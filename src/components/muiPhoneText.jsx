@@ -5,13 +5,7 @@ import { Grid, Box } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Colors } from "../config/default";
 
-export default function MuiPhoneTextField({
-  onChange,
-  error,
-  value,
-  onKeyDown,
-  label,
-}) {
+export default function MuiPhoneTextField({ onChange, error, value, label }) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
   const country = ["us"];
   return (
@@ -56,7 +50,6 @@ export default function MuiPhoneTextField({
         disableDropdown={false}
         onChange={onChange}
         value={value}
-        onKeyDown={onKeyDown}
         preferredCountries={["us"]}
       />
       {error && value ? (

@@ -9,6 +9,9 @@ import { useToast } from "../toast/toastContext";
 import CreditorFields from "./caseCreationFields/creditorFields";
 import { phoneNumberFormat } from "../common";
 
+import { isEmailValid } from "../common";
+import { HistoricRangeHandleNumberInput } from "../common";
+
 export default function EditCreditorDetail({
   handleClose,
   caseData,
