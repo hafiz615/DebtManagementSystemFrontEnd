@@ -21,7 +21,7 @@ import {
   isEmailValid,
   handleNumberInput,
   handleNumberInputKeyDown,
-} from "../../constants/appConstants";
+} from "../../common";
 
 export default function DebtorContacts({
   GetCaseDetails,
