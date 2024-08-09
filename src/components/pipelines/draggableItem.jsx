@@ -68,8 +68,8 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
         },
         contacts: debtorContacts,
       },
-      paymentToken: item?.paymentToken,
-      paymentType: item?.paymentType,
+      // paymentToken: item?.paymentToken,
+      // paymentType: item?.paymentType,
       creditor: {
         basicInformation: {
           fullName: creditorBasicInfoItem?.fullName,
