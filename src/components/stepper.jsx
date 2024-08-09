@@ -239,7 +239,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         remainingAmount === "" ||
         // lastPaymentDate === "" ||
         debtorDetailsStatus === "" ||
-        parseInt(remainingAmount) !== totalAmount ||
+        parseInt(remainingAmount) !== parseInt(totalAmount) ||
         newDataList?.some((newData) =>
           Object.values(newData)?.some((value) => value === "")
         )));
@@ -869,6 +869,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               newDataList={newDataList}
               setNewDataList={setNewDataList}
               totalAmount={totalAmount}
+              remainingAmount={remainingAmount}
             />
           ) : activeStep === 4 ? (
             ""

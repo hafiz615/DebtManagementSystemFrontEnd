@@ -186,7 +186,7 @@ export default function PaymentSettlement({
               <Hidden smUp>
                 {index === newDataList?.length - 1 &&
                   isInteracted &&
-                  parseInt(remainingAmount) !== totalAmount && (
+                  parseInt(remainingAmount) !== parseInt(totalAmount) && (
                     <Typography
                       sx={{
                         color: "red",
@@ -348,18 +348,29 @@ export default function PaymentSettlement({
             <Hidden smDown>
               {index === newDataList?.length - 1 &&
                 isInteracted &&
-                parseInt(remainingAmount) !== totalAmount && (
+                parseInt(remainingAmount) !== parseInt(totalAmount) && (
                   <Typography
                     sx={{
                       color: "red",
                       marginLeft: smallScreen ? "0rem" : "2rem",
                       fontSize: "10px",
+                      width: "100%",
                     }}
                   >
                     Total debt must be equal to remaining amount
                   </Typography>
                 )}
             </Hidden>
+            {/* <Grid xs={12} sx={{ mt: "1rem" }}>
+              <TextButton
+                buttonText="Exempt amount difference"
+                height="2rem"
+                width="16rem"
+                // onClick={handleExemt}
+                backgroundColor={Colors.SKY_BLUE}
+                hoverColor={Colors.SKY_BLUE}
+              />
+            </Grid> */}
           </React.Fragment>
         ))}
       </Grid>
