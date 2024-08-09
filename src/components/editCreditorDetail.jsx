@@ -12,8 +12,8 @@ import { PhoneValidation } from "../constants/appConstants";
 import { formatPhoneNumber } from "../common";
 import AmountTextField from "./amountTextField";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { isEmailValid } from "../constants/appConstants";
-import { HistoricRangeHandleNumberInput } from "../constants/appConstants";
+import { isEmailValid } from "../common";
+import { HistoricRangeHandleNumberInput } from "../common";
 
 export default function EditCreditorDetail({
   handleClose,

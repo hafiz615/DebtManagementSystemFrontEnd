@@ -44,7 +44,7 @@ import CheckboxAutocomplete from "../checkboxAutocomplete";
 import { useParams } from "react-router-dom";
 import { ErrorOutline } from "@mui/icons-material";
 import { isEmpty } from "lodash";
-import { getWeeksRemainingMessage } from "../../constants/appConstants";
+import { getWeeksRemainingMessage } from "../../common";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
