@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Box, Button, Modal, IconButton } from "@mui/material";
+import { Box, Button, Modal, IconButton, Grid } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
 import CreateIcon from "@mui/icons-material/Create";
@@ -496,12 +496,14 @@ export default function MuiModels({
               caseData={caseData}
             />
           ) : show === "debtorDetail" ? (
-            <EditDebtorDetails
-              show={show}
-              handleClose={handleClose}
-              caseData={caseData}
-              GetCaseDetails={GetCaseDetails}
-            />
+            <>
+              <EditDebtorDetails
+                show={show}
+                handleClose={handleClose}
+                caseData={caseData}
+                GetCaseDetails={GetCaseDetails}
+              />
+            </>
           ) : show === "editStatus" ? (
             <EditStatus
               show={show}

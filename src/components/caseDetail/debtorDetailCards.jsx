@@ -20,6 +20,7 @@ import {
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import DebtorFields from "../caseCreationFields/debtorFields";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -120,7 +121,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
             button="create"
             iconColor={Colors.BLACK}
             width="80vw"
-            height="70vh"
+            height="72vh"
             caseData={caseData}
             GetCaseDetails={GetCaseDetails}
           />
@@ -250,6 +251,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
           })}
         </Box>
       </Grid>
+
       <Grid
         item
         xs={12}

@@ -45,6 +45,7 @@ import TextButton from "../button.jsx";
 import { setCaseCreditorId, setCaseId } from "../../redux/action/action.js";
 import CaseFileCard from "./caseFileCard.jsx";
 import { useToast } from "../../toast/toastContext.jsx";
+import DebtorFields from "../caseCreationFields/debtorFields";
 
 const style = {
   position: "absolute",
