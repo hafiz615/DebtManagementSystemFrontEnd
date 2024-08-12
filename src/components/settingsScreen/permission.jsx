@@ -6,10 +6,10 @@ import {
   FONT_SIZE_XL,
   FONT_WEIGHT_HEADING,
   FONT_WEIGHT_MEDIUM,
-  convertCamelCaseToTitle,
 } from "../../constants/appConstants";
 import { Colors } from "../../config/default";
 import BasicSwitches from "./basicSwitches";
+import { convertCamelCaseToTitle } from "../../common";
 
 export default function Permission({
   role,
