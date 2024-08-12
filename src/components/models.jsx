@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Box, Button, Modal, IconButton } from "@mui/material";
+import { Box, Button, Modal, IconButton, Grid } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
 import CreateIcon from "@mui/icons-material/Create";
@@ -18,6 +18,7 @@ import FroalaEditor from "./froalaEditor";
 import CaseModel from "./caseModel";
 import CaseCustomField from "./caseCustomField";
 import EditCaseCustomField from "./editCaseCustomField";
+import PaymentsPopup from "./paymentPopup";
 import EditAbout from "./editAbout";
 import { isEmpty } from "lodash";
 import Delete from "@mui/icons-material/Delete";
@@ -80,6 +81,7 @@ export default function MuiModels({
   selectedRoleData,
   setSelectedRole,
   getAllCaseTasks,
+  GetCasePaymentDetails,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -212,7 +214,7 @@ export default function MuiModels({
             sx={{ fontSize: "16px", color: Colors.BLACK, cursor: "pointer" }}
           />
         </IconButton>
-      ) : show === "CaseCustomField" ? (
+      ) : show === "CaseCustomField" || show === "payments" ? (
         <IconButton
           onClick={() => {
             handleOpen();
@@ -468,12 +470,14 @@ export default function MuiModels({
               caseData={caseData}
             />
           ) : show === "debtorDetail" ? (
-            <EditDebtorDetails
-              show={show}
-              handleClose={handleClose}
-              caseData={caseData}
-              GetCaseDetails={GetCaseDetails}
-            />
+            <>
+              <EditDebtorDetails
+                show={show}
+                handleClose={handleClose}
+                caseData={caseData}
+                GetCaseDetails={GetCaseDetails}
+              />
+            </>
           ) : show === "editStatus" ? (
             <EditStatus
               show={show}
@@ -569,6 +573,13 @@ export default function MuiModels({
             <UploadFilePopup
               handleClose={handleClose}
               GetCaseDetails={GetCaseDetails}
+            />
+          ) : show === "payments" ? (
+            <PaymentsPopup
+              data={data}
+              handleClose={handleClose}
+              GetCaseDetails={GetCaseDetails}
+              GetCasePaymentDetails={GetCasePaymentDetails}
             />
           ) : (
             ""
