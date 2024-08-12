@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Box, Button, Modal, IconButton, Grid } from "@mui/material";
+import { Box, Button, Modal, IconButton } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
 import CreateIcon from "@mui/icons-material/Create";
@@ -41,6 +41,7 @@ import SendEmail from "./sendEmail";
 import CreateRole from "./settingsScreen/createRole";
 import DebtorContacts from "./caseDetail/debtorContacts";
 import UploadFilePopup from "./caseDetail/uploadFilePopup";
+import ScrollbarStyles from "./../components/customScroll";
 
 export default function MuiModels({
   buttonName,
@@ -111,19 +112,7 @@ export default function MuiModels({
     p: 3,
     height: height || "auto",
     overflowY: "auto",
-    "&::-webkit-scrollbar": {
-      width: "10px",
-    },
-    "&::-webkit-scrollbar-thumb": {
-      backgroundColor: "#E5E5E5",
-      borderRadius: "8px",
-    },
-    "&::-webkit-scrollbar-track": {
-      backgroundColor: Colors.WHITE,
-      borderRadius: "8px",
-      marginTop: ".5rem",
-      marginBottom: ".5rem",
-    },
+    ...ScrollbarStyles,
   };
 
   return (
@@ -146,11 +135,13 @@ export default function MuiModels({
           backgroundColor={Colors.SKY_BLUE}
         />
       ) : show === "editField" ? (
-        <IconButton sx={{ display: "flex", alignItems: "center" }}>
+        <IconButton
+          sx={{ display: "flex", alignItems: "center" }}
+          onClick={() => {
+            handleOpen();
+          }}
+        >
           <CreateIcon
-            onClick={() => {
-              handleOpen();
-            }}
             sx={{
               color: Colors.DARK_GRAY,
               cursor: "pointer",
@@ -159,11 +150,13 @@ export default function MuiModels({
           />
         </IconButton>
       ) : show === "debtorContacts" ? (
-        <IconButton sx={{ display: "flex", alignItems: "center" }}>
+        <IconButton
+          sx={{ display: "flex", alignItems: "center" }}
+          onClick={() => {
+            handleOpen();
+          }}
+        >
           <AddIcon
-            onClick={() => {
-              handleOpen();
-            }}
             sx={{
               color: Colors.DARK_GRAY,
               cursor: "pointer",
@@ -172,11 +165,13 @@ export default function MuiModels({
           />
         </IconButton>
       ) : show === "creditorContacts" ? (
-        <IconButton sx={{ display: "flex", alignItems: "center" }}>
+        <IconButton
+          sx={{ display: "flex", alignItems: "center" }}
+          onClick={() => {
+            handleOpen();
+          }}
+        >
           <AddIcon
-            onClick={() => {
-              handleOpen();
-            }}
             sx={{
               color: Colors.DARK_GRAY,
               cursor: "pointer",

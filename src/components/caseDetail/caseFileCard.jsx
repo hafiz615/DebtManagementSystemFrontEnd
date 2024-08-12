@@ -3,6 +3,7 @@ import { Grid, Box, Button } from "@mui/material";
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import { RemoveRedEye } from "@mui/icons-material";
+import ScrollbarStyles from "../customScroll";
 
 function CaseFileCard({ caseData, GetCaseDetails }) {
   const [url, setUrl] = useState("");
@@ -29,17 +30,7 @@ function CaseFileCard({ caseData, GetCaseDetails }) {
         height: "13rem",
         marginBottom: "0.5rem",
         overflowY: "auto",
-        "&::-webkit-scrollbar": {
-          width: "5px",
-        },
-        "&::-webkit-scrollbar-thumb": {
-          backgroundColor: "#E5E5E5",
-          borderRadius: "8px",
-        },
-        "&::-webkit-scrollbar-track": {
-          backgroundColor: Colors.WHITE,
-          borderRadius: "8px",
-        },
+        ...ScrollbarStyles,
       }}
     >
       <div

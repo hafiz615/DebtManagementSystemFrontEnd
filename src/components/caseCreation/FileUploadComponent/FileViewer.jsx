@@ -30,7 +30,6 @@ const FileViewer = ({ file, onClose }) => {
         justifyContent: "center",
         zIndex: 1000,
         padding: "1rem",
-        border: "1px solid red",
       }}
     >
       <Button

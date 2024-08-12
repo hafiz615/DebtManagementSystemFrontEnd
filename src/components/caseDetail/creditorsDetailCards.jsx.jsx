@@ -3,24 +3,19 @@ import React from "react";
 import {
   Grid,
   Typography,
-  // IconButton,
+  Tooltip,
   styled,
   InputBase,
   Box,
 } from "@mui/material";
-import {
-  Search,
-  // KeyboardArrowLeft,
-  // KeyboardArrowRight,
-  Sms,
-  Email,
-  Call,
-} from "@mui/icons-material";
+import { Search, Sms, Email, Call } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import { formatDollarAmount } from "../../common";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { getTruncatedText } from "../../common";
+import ScrollbarStyles from "./../customScroll";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -54,6 +49,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
+  const creditorPeronsalDetails = "Personal Details";
+  const creditorBusinessDetails = "Business Details";
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -88,114 +85,81 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
           marginBottom: "0.5rem",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <p
+        <>
+          <div
             style={{
-              fontWeight: "600",
-              fontSize: "13px",
-              fontFamily: "Nunito",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
-            Personal Details
-          </p>
-          <MuiModels
-            show="creditorDetail"
-            button="create"
-            iconColor={Colors.BLACK}
-            width="80vw"
-            height="max-content"
-            caseData={caseData}
-            GetCaseDetails={GetCaseDetails}
-          />
-        </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: "8px",
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: smallScreen ? "11px" : "13px",
-              fontFamily: "Nunito",
-              color: Colors.DARK_GRAY,
-              fontWeight: "700",
-            }}
-          >
-            Full Name
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: smallScreen ? "11px" : "13px",
-              color: Colors.DIM_LIGHT_GRAY,
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              textAlign: "right",
-            }}
-          >
-            {caseData?.creditor?.basicInformation?.fullName}
-          </Typography>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: "8px",
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: smallScreen ? "11px" : "13px",
-              fontSize: "11px",
-              fontFamily: "Nunito",
-              color: Colors.DARK_GRAY,
-              fontWeight: "700",
-            }}
-          >
-            Email
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: smallScreen ? "11px" : "13px",
-              color: Colors.DIM_LIGHT_GRAY,
-              fontFamily: "Nunito",
-              textAlign: "right",
-              fontWeight: "500",
-            }}
-          >
-            {caseData?.creditor?.basicInformation?.email}
-          </Typography>
-        </div>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography
-            sx={{
-              fontSize: smallScreen ? "11px" : "13px",
-              fontFamily: "Nunito",
-              color: Colors.DARK_GRAY,
-              fontWeight: "700",
-            }}
-          >
-            Phone #
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: smallScreen ? "11px" : "13px",
-              color: Colors.DIM_LIGHT_GRAY,
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              textAlign: "right",
-            }}
-          >
-            {caseData?.creditor?.basicInformation?.phone}
-          </Typography>
-        </div>
+            <p
+              style={{
+                fontWeight: "600",
+                fontSize: "13px",
+                fontFamily: "Nunito",
+              }}
+            >
+              {creditorPeronsalDetails}
+            </p>
+            <MuiModels
+              show="creditorDetail"
+              button="create"
+              iconColor={Colors.BLACK}
+              width="80vw"
+              height="max-content"
+              caseData={caseData}
+              GetCaseDetails={GetCaseDetails}
+            />
+          </div>
+          {[
+            {
+              label: "Full Name",
+              value: caseData?.creditor?.basicInformation?.fullName,
+            },
+            {
+              label: "Email",
+              value: caseData?.creditor?.basicInformation?.email,
+            },
+            {
+              label: "Phone #",
+              value: caseData?.creditor?.basicInformation?.phone,
+            },
+          ]?.map((item, index) => (
+            <div
+              key={index}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginBottom: "8px",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: smallScreen ? "11px" : "13px",
+                  fontFamily: "Nunito",
+                  color: Colors.DARK_GRAY,
+                  fontWeight: "700",
+                }}
+              >
+                {item?.label}
+              </Typography>
+              <Tooltip title={item?.value || ""} placement="top-end">
+                <Typography
+                  sx={{
+                    fontSize: smallScreen ? "11px" : "13px",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    textAlign: "right",
+                  }}
+                >
+                  {getTruncatedText(item?.value, 15)}
+                </Typography>
+              </Tooltip>
+            </div>
+          ))}
+        </>
       </Grid>
       <Grid
         item
@@ -216,83 +180,53 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             fontFamily: "Nunito",
           }}
         >
-          Business Details
+          {creditorBusinessDetails}
         </p>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: "8px",
-            gap: "10%",
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: smallScreen ? "11px" : "13px",
-              fontFamily: "Nunito",
-              fontWeight: "700",
-              color: Colors.DARK_GRAY,
-              width: "45%",
-            }}
-          >
-            Company
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: smallScreen ? "11px" : "13px",
-              color: Colors.DIM_LIGHT_GRAY,
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              textAlign: "500",
-              wordBreak: "break-word",
-            }}
-          >
-            {caseData?.creditor?.businessInformation?.companyName}
-          </Typography>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            gap: "10%",
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: smallScreen ? "11px" : "13px",
-              fontFamily: "Nunito",
-              fontWeight: "700",
-              color: Colors.DARK_GRAY,
-              width: "45%",
-            }}
-          >
-            Category
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: smallScreen ? "11px" : "13px",
-              color: Colors.DIM_LIGHT_GRAY,
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              textAlign: "right",
-              wordBreak: "break-word",
-            }}
-          >
-            {caseData?.creditor?.businessInformation?.businessCategory}
-          </Typography>
-        </div>
-        {/* <div>
-          <p style={{ fontSize: "11px", fontFamily: "Nunito" }}>Notes</p>
-          <p
+        {[
+          {
+            label: "Company",
+            value: caseData?.creditor?.businessInformation?.companyName,
+          },
+          {
+            label: "Category",
+            value: caseData?.creditor?.businessInformation?.businessCategory,
+          },
+        ]?.map((item, index) => (
+          <div
+            key={index}
             style={{
-              fontSize: "11px",
-              color: Colors.DIM_LIGHT_GRAYm,
-              fontFamily: "Nunito",
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: index === 0 ? "8px" : "0",
             }}
           >
-            {businessDetail?.notes}
-          </p>
-        </div> */}
+            <Typography
+              sx={{
+                fontSize: smallScreen ? "11px" : "13px",
+                fontFamily: "Nunito",
+                fontWeight: "700",
+                color: Colors.DARK_GRAY,
+                width: "45%",
+              }}
+            >
+              {item?.label}
+            </Typography>
+            <Tooltip title={item?.value || ""} placement="top-end">
+              <Typography
+                sx={{
+                  fontSize: smallScreen ? "11px" : "13px",
+                  color: Colors.DIM_LIGHT_GRAY,
+                  fontFamily: "Nunito",
+                  fontWeight: "500",
+                  textAlign: "right",
+                  wordBreak: "break-word",
+                }}
+              >
+                {getTruncatedText(item?.value, 15)}
+              </Typography>
+            </Tooltip>
+          </div>
+        ))}
       </Grid>
       <Grid
         item
@@ -437,20 +371,6 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             GetCaseDetails={GetCaseDetails}
             width="70vw"
           />
-
-          {/* <div
-            style={{ display: "flex", fontSize: "11px", alignItems: "center" }}
-          >
-            <IconButton>
-              <KeyboardArrowLeft
-                sx={{ fontSize: "16px", fontFamily: "Nunito" }}
-              />
-            </IconButton>
-            1 of {caseData?.creditor?.contacts?.length}
-            <IconButton>
-              <KeyboardArrowRight sx={{ fontSize: "16px" }} />
-            </IconButton>
-          </div> */}
         </Grid>
         <Grid container item sx={{ marginBottom: "0.5rem" }}>
           <SearchContainer
@@ -477,17 +397,7 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
           style={{
             height: "10rem",
             overflowY: "auto",
-            "&::-webkit-scrollbar": {
-              width: "5px",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "#E5E5E5",
-              borderRadius: "8px",
-            },
-            "&::-webkit-scrollbar-track": {
-              backgroundColor: Colors.WHITE,
-              borderRadius: "8px",
-            },
+            ...ScrollbarStyles,
           }}
         >
           <Grid

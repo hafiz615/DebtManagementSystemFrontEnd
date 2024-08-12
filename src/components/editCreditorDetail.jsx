@@ -335,7 +335,7 @@ export default function EditCreditorDetail({
             </Grid>
           </Grid>
         </Grid>
-        <Grid container xs={12} sx={{ justifyContent: "right" }}>
+        <Grid container sx={{ justifyContent: "right" }}>
           <TextButton
             marginBottom=".5rem"
             buttonText="Save"

@@ -39,7 +39,7 @@ export default function AboutAccordion({ caseDetails, GetCaseDetails }) {
     {
       name: "Paid Debt",
       value: formatDollarAmount(caseDetails?.paidAmount) || "-",
-    }
+    },
   ];
   return (
     <Accordion
@@ -96,11 +96,11 @@ export default function AboutAccordion({ caseDetails, GetCaseDetails }) {
         }}
       >
         <Grid>
-          {aboutData?.map((item) => (
+          {aboutData?.map((item, index) => (
             <Grid
               container
-              xs={12}
               sx={{ justifyContent: "space-between", mb: "10px" }}
+              key={index}
             >
               <Typography
                 sx={{
