@@ -14,7 +14,7 @@ export default function PaymentFields({
   caseIndex,
 }) {
   const [status, setStatus] = useState(thisCaseData.status);
-  const [feePayment, setFeePayment] = useState("toPay");
+  const [feePayment, setFeePayment] = useState(thisCaseData?.feePayment || "");
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:1440px)");
 
   const [menuItems, setMenuItems] = useState([]);

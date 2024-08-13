@@ -300,6 +300,17 @@ export const generatePdfFromApiData = (apiData) => {
   doc.save("financial_report.pdf");
 };
 
+export const calculateNextWeek = () => {
+  const today = new Date();
+  const nextWeek = new Date(today);
+  nextWeek.setDate(today.getDate() + 7);
+
+  const year = nextWeek.getFullYear();
+  const month = String(nextWeek.getMonth() + 1).padStart(2, "0");
+  const day = String(nextWeek.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
 export function getWeeksRemainingMessage(item) {
   switch (item) {
     case "recommendation 1":

@@ -106,7 +106,7 @@ export default function EditDebtorDetail({
         address: debtorBusinessDetails?.businessAddress,
       },
     };
-    const updateDebtor = await UpdateDebtor(caseData?.debtor?._id, params);
+    const updateDebtor = await UpdateDebtor(caseData?._id, params);
     if (updateDebtor?.status === 200) {
       showToast(updateDebtor?.data?.message, "success");
       handleClose();
