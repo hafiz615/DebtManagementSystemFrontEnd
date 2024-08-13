@@ -1038,3 +1038,15 @@ export const GetFullProfit = async (id) => {
     return error;
   }
 };
+
+export const UpdateCaseCreditor = async (id, payload) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/case/updateCase/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

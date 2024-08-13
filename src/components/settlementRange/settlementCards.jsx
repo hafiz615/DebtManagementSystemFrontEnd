@@ -5,6 +5,7 @@ import { FONT_SIZE_LARGE } from "../../constants/appConstants";
 import Tooltip from "@mui/material/Tooltip";
 import InfoIcon from "@mui/icons-material/Info";
 import { isEmpty } from "lodash";
+import MuiModels from "../models";
 import ScrollbarStyles from "./../customScroll";
 
 export default function SettlementCards({
@@ -17,6 +18,8 @@ export default function SettlementCards({
   weeksTillPaid,
   weeksTillPaidTitle,
   isFullPayment,
+  caseId,
+  remainingAmount,
   isLumpSumPayment,
   warning,
 }) {
@@ -101,13 +104,24 @@ export default function SettlementCards({
       <Grid item xs={12} sm={5.8} md={3.8} lg={3.8} container sx={commonStyles}>
         <div
           style={{
-            marginLeft: "8%",
-            marginTop: "1rem",
+            margin: "1rem 8%",
+            display: "flex",
+            justifyContent: "space-between",
           }}
         >
           <Typography sx={commonTextStyles}>
             {capitalizeFirstWord(title)}
           </Typography>
+
+          <MuiModels
+            width="35vw"
+            show="settlmentPayment"
+            title={title}
+            settlementRange={settlementRange?.[title]}
+            weeksTillPaid={weeksTillPaid?.[weeksTillPaidTitle]}
+            remainingAmount={remainingAmount}
+            caseId={caseId}
+          />
         </div>
         <Box sx={lineStyle} />
         {noData ? (

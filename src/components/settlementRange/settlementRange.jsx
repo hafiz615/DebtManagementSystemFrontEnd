@@ -282,11 +282,38 @@ export default function SettlementRange() {
     backgroundColor: "#EAEBEB",
     margin: "8px 0",
   };
+  useEffect(() => {
+    if (value === 0) {
+      setJustificationValue("justification_gemini");
+    } else if (value === 1) {
+      setJustificationValue("justification_gpt4_o");
+    } else if (value === 2) {
+      setJustificationValue("justification_llama");
+    } else if (value === 3) {
+      setJustificationValue("justification_claude");
+    }
+  }, [value]);
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+  const currentCreditor = allCreditorNames[tabValue];
+
+  const selectedCreditorDetails = creditorNames?.find(
+    (item) => item?.creditorAccountTitle === currentCreditor
+  );
 
   const cardData = {
     0: recommendations?.map((item, index) => (
       <>
         <SettlementCards
+          remainingAmount={
+            selectedCreditorDetails?.contractDetails?.loan_amount
+          }
+          caseId={caseId}
           title={item}
           weeksTillPaidTitle={getWeeksRemainingMessage(item)}
           settlementRange={
@@ -341,6 +368,10 @@ export default function SettlementRange() {
       <>
         {!isEmpty(fullProfit) && (
           <SettlementCards
+            remainingAmount={
+              selectedCreditorDetails?.contractDetails?.loan_amount
+            }
+            caseId={caseId}
             isFullPayment={true}
             title={item}
             weeksTillPaidTitle={
@@ -383,29 +414,6 @@ export default function SettlementRange() {
       </>
     )),
   };
-  useEffect(() => {
-    if (value === 0) {
-      setJustificationValue("justification_gemini");
-    } else if (value === 1) {
-      setJustificationValue("justification_gpt4_o");
-    } else if (value === 2) {
-      setJustificationValue("justification_llama");
-    } else if (value === 3) {
-      setJustificationValue("justification_claude");
-    }
-  }, [value]);
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
-  const currentCreditor = allCreditorNames[tabValue];
-
-  const selectedCreditorDetails = creditorNames?.find(
-    (item) => item?.creditorAccountTitle === currentCreditor
-  );
 
   const handleInputChange = (e) => {
     const { value } = e.target;
@@ -536,10 +544,16 @@ export default function SettlementRange() {
 
   const creditorNameWithId =
     creditorNames &&
-    creditorNames?.map(({ name, creditorId }) => ({
+    creditorNames?.map(({ creditorAccountTitle, creditorId }) => ({
+      creditorAccountTitle,
       creditorId,
-      name,
     }));
+
+  useEffect(() => {
+    if (creditorNames) {
+      setCreditorSelect(creditorNameWithId);
+    }
+  }, [creditorNames]);
 
   if (errorMessage) {
     // Render Error Page component if errorMessage exists
@@ -891,8 +905,8 @@ export default function SettlementRange() {
                 borderTopRightRadius: "10px",
               }}
             >
-              {allCreditorNames &&
-                allCreditorNames?.map((item) => (
+              {creditorSelect &&
+                creditorSelect?.map((item) => (
                   <AntTab
                     sx={{
                       bgcolor: Colors.WHITE,
@@ -900,9 +914,18 @@ export default function SettlementRange() {
                       fontWeight: "600",
                       height: "3.5rem",
                     }}
-                    label={item}
+                    label={item?.creditorAccountTitle}
                   />
                 ))}
+              <AntTab
+                sx={{
+                  bgcolor: Colors.WHITE,
+                  width: "max-content",
+                  fontWeight: "600",
+                  height: "3.5rem",
+                }}
+                label="Summary"
+              />
             </AntTabs>
           </Grid>
           <Grid container xs={12}>

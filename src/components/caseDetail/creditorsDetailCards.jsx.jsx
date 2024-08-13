@@ -1,5 +1,5 @@
 import React from "react";
-
+import { useState } from "react";
 import {
   Grid,
   Typography,
@@ -7,6 +7,7 @@ import {
   styled,
   InputBase,
   Box,
+  IconButton,
 } from "@mui/material";
 import {
   Search,
@@ -15,12 +16,15 @@ import {
   Sms,
   Email,
   Call,
+  ChevronLeft,
+  NavigateNext,
 } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import { formatDollarAmount } from "../../common";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import ScrollbarStyles from "./../customScroll";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -54,6 +58,18 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
+  const [startIndex, setStartIndex] = useState(0);
+  const itemsPerPage = 2;
+  const handleNext = () => {
+    if (startIndex + itemsPerPage < caseData?.creditor?.contacts?.length) {
+      setStartIndex(startIndex + itemsPerPage);
+    }
+  };
+  const handlePrev = () => {
+    if (startIndex - itemsPerPage >= 0) {
+      setStartIndex(startIndex - itemsPerPage);
+    }
+  };
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -63,14 +79,26 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
 
     return `${month}/${day}/${year}`;
   };
+  const griRelationdStyle = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  };
+  const gridActionStyle = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+  };
   const cellStyle = {
+    display: "flex",
+    alignItems: "center",
     color: Colors.DIM_LIGHT_GRAY,
     fontWeight: "600",
     fontFamily: "Nunito",
     fontSize: "11px",
   };
   const iconStyle = {
-    fontSize: "15px",
+    fontSize: "13px",
     marginLeft: ".3rem",
     marginTop: ".3rem",
   };
@@ -110,6 +138,7 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             iconColor={Colors.BLACK}
             width="80vw"
             height="max-content"
+            maxHeight="85vh"
             caseData={caseData}
             GetCaseDetails={GetCaseDetails}
           />
@@ -281,18 +310,6 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             {caseData?.creditor?.businessInformation?.businessCategory}
           </Typography>
         </div>
-        {/* <div>
-          <p style={{ fontSize: "11px", fontFamily: "Nunito" }}>Notes</p>
-          <p
-            style={{
-              fontSize: "11px",
-              color: Colors.DIM_LIGHT_GRAYm,
-              fontFamily: "Nunito",
-            }}
-          >
-            {businessDetail?.notes}
-          </p>
-        </div> */}
       </Grid>
       <Grid
         item
@@ -437,20 +454,6 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             GetCaseDetails={GetCaseDetails}
             width="70vw"
           />
-
-          {/* <div
-            style={{ display: "flex", fontSize: "11px", alignItems: "center" }}
-          >
-            <IconButton>
-              <KeyboardArrowLeft
-                sx={{ fontSize: "16px", fontFamily: "Nunito" }}
-              />
-            </IconButton>
-            1 of {caseData?.creditor?.contacts?.length}
-            <IconButton>
-              <KeyboardArrowRight sx={{ fontSize: "16px" }} />
-            </IconButton>
-          </div> */}
         </Grid>
         <Grid container item sx={{ marginBottom: "0.5rem" }}>
           <SearchContainer
@@ -473,23 +476,7 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             />
           </SearchContainer>
         </Grid>
-        <Box
-          style={{
-            height: "10rem",
-            overflowY: "auto",
-            "&::-webkit-scrollbar": {
-              width: "5px",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "#E5E5E5",
-              borderRadius: "8px",
-            },
-            "&::-webkit-scrollbar-track": {
-              backgroundColor: Colors.WHITE,
-              borderRadius: "8px",
-            },
-          }}
-        >
+        <Box>
           <Grid
             item
             xs={12}
@@ -498,50 +485,113 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
               justifyContent: "space-between",
               backgroundColor: Colors.SKY_BLUE,
               color: Colors.WHITE,
-              paddingRight: ".5rem",
-              paddingLeft: ".5rem",
+              paddingRight: ".2rem",
+              paddingLeft: ".2rem",
               height: "2rem",
               alignItems: "center",
             }}
           >
-            <span style={{ fontSize: "11px" }}>Name</span>
-            <span style={{ fontSize: "11px", marginRight: "1rem" }}>
-              Relation
-            </span>
-            <span style={{ fontSize: "11px" }}>Action</span>
+            <Grid item xs={4}>
+              <span style={{ fontSize: "11px" }}>Name</span>
+            </Grid>
+            <Grid item xs={4} sx={griRelationdStyle}>
+              <span style={{ fontSize: "11px", marginRight: "1rem" }}>
+                Relation
+              </span>
+            </Grid>
+            <Grid item xs={4} sx={gridActionStyle}>
+              <span style={{ fontSize: "11px" }}>Action</span>
+            </Grid>
           </Grid>
+          <Box
+            sx={{
+              height: "5rem",
+              overflow: "auto",
+              ...ScrollbarStyles,
+            }}
+          >
+            {caseData?.creditor?.contacts
+              ?.slice(startIndex, startIndex + itemsPerPage)
+              ?.map((item, index) => (
+                <Grid
+                  item
+                  xs={12}
+                  key={index}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    backgroundColor:
+                      index % 2 === 0
+                        ? Colors.WHITE
+                        : "rgba(85, 148, 242, 0.06)",
+                    "&:hover": {
+                      backgroundColor: Colors.BG_LIGHT_GRAY,
+                    },
+                    cursor: "pointer",
+                    paddingRight: ".2rem",
+                    paddingLeft: ".2rem",
+                    height: "2rem",
+                    alignItems: "center",
+                  }}
+                >
+                  <Grid item xs={4}>
+                    <span style={cellStyle}>{item?.name || "-"}</span>
+                  </Grid>
+                  <Grid item xs={4} sx={griRelationdStyle}>
+                    <span style={cellStyle}>
+                      {item?.relationWithDebtor ||
+                        item?.relationWithCreditor ||
+                        "-"}
+                    </span>
+                  </Grid>
+                  <Grid item xs={4} sx={gridActionStyle}>
+                    <span style={cellStyle}>
+                      <Email sx={iconStyle} />
+                      <Call sx={iconStyle} />
+                      <Sms sx={iconStyle} />
+                      <MuiModels
+                        show="editCreditorContacts"
+                        caseData={caseData}
+                        item={item}
+                        GetCaseDetails={GetCaseDetails}
+                        width="70vw"
+                      />
+                    </span>
+                  </Grid>
+                </Grid>
+              ))}
 
-          {caseData?.creditor?.contacts?.map((item, index) => {
-            return (
-              <Grid
-                item
-                xs={12}
-                key={index}
-                sx={{
+            {caseData?.creditor?.contacts?.length > 2 && (
+              <div
+                style={{
                   display: "flex",
-                  justifyContent: "space-between",
-                  backgroundColor:
-                    index % 2 === 0 ? Colors.WHITE : "rgba(85, 148, 242, 0.06)",
-                  "&:hover": {
-                    backgroundColor: Colors.BG_LIGHT_GRAY,
-                  },
-                  cursor: "pointer",
-                  paddingRight: ".2rem",
-                  paddingLeft: ".2rem",
-                  height: "2rem",
-                  alignItems: "center",
+                  justifyContent: "flex-end",
+                  position: "absolute",
+                  right: "10px",
                 }}
               >
-                <span style={cellStyle}>{item?.name || "-"}</span>
-                <span style={cellStyle}>{item?.relationWithDebtor || "-"}</span>
-                <span style={cellStyle}>
-                  <Email sx={iconStyle} />
-                  <Call sx={iconStyle} />
-                  <Sms sx={iconStyle} />
-                </span>
-              </Grid>
-            );
-          })}
+                <IconButton
+                  aria-label="prev"
+                  disabled={startIndex - itemsPerPage < 0}
+                  onClick={handlePrev}
+                  color="primary"
+                >
+                  <ChevronLeft />
+                </IconButton>
+                <IconButton
+                  aria-label="next"
+                  disabled={
+                    startIndex + itemsPerPage >=
+                    caseData?.creditor?.contacts?.length
+                  }
+                  onClick={handleNext}
+                  color="primary"
+                >
+                  <NavigateNext />
+                </IconButton>
+              </div>
+            )}
+          </Box>
         </Box>
       </Grid>
     </>
