@@ -102,12 +102,10 @@ export default function Prompt({
       event: templateType === "email" ? row?.event : row?.event,
       html: templateType === "email" ? row?.html : row?.text,
       templateId: row?.templateId,
+      type: templateType,
     };
 
-    const resNotificationTemplate = await DeleteSettings(
-      newTemplate,
-      templateType
-    );
+    const resNotificationTemplate = await DeleteSettings(newTemplate);
     if (resNotificationTemplate?.status === 200) {
       showToast(resNotificationTemplate?.data?.message, "success");
       getSettings();

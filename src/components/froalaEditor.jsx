@@ -79,34 +79,24 @@ export default function FroalaEditor({
     name: row?.name || "",
     event: row?.event || "",
     html: row?.html || "",
+    type: "email",
   });
 
   const [smsTemplate, setSmsTemplate] = useState({
     name: row?.name || "",
     event: row?.event || "",
     text: row?.text || "",
+    type: "sms",
   });
-
-  const [notificationTemplates, setNotificationTemplates] = useState([]);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [anchorElNew, setAnchorElNew] = useState(null);
   const [subMenuAnchorEl, setSubMenuAnchorEl] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [allEvents, setAllEvents] = useState({});
+  const [allEvents, setAllEvents] = useState([]);
   const [customVariables, setCustomVariables] = useState({});
 
   const editorRef = useRef(null);
-
-  useEffect(() => {
-    const getTemplateSettings = async () => {
-      const resSetting = await GetAllSettings();
-      if (resSetting?.status === 200) {
-        setNotificationTemplates(resSetting?.data?.data?.notificationTemplates);
-      }
-    };
-    getTemplateSettings();
-  }, [templateType]);
 
   useEffect(() => {
     if (row?.html) {
@@ -118,12 +108,10 @@ export default function FroalaEditor({
     const resVariable = await GetCustomVariable();
     if (resVariable?.status === 200) {
       setCustomVariables(resVariable?.data?.data);
-      console.log("variables", resVariable?.data?.data);
     }
-    const resEvents = await GetEvents();
+    const resEvents = await GetEvents("all");
     if (resEvents?.status === 200) {
       setAllEvents(resEvents?.data?.data);
-      console.log("events", resEvents?.data?.data);
     }
   };
 
@@ -190,7 +178,6 @@ export default function FroalaEditor({
   const handleEventChange = (event) => {
     setAnchorElNew(null);
     const selectedEvent = event.currentTarget.getAttribute("data-value");
-    console.log(selectedEvent);
     if (templateType === "email") {
       setEmailTemplate((prev) => ({
         ...prev,
@@ -211,45 +198,38 @@ export default function FroalaEditor({
       name: templateType === "email" ? emailTemplate.name : smsTemplate.name,
       event: templateType === "email" ? emailTemplate.event : smsTemplate.event,
       html: templateType === "email" ? emailTemplate.html : smsTemplate.text,
+      type: templateType,
     };
-
-    const updatedTemplates =
-      templateType === "email"
-        ? {
-            ...notificationTemplates,
-            email: [...notificationTemplates?.email, newTemplate],
-          }
-        : {
-            ...notificationTemplates,
-            sms: [...notificationTemplates?.sms, newTemplate],
-          };
-
-    setNotificationTemplates(updatedTemplates);
-
-    const params = { notificationTemplates: updatedTemplates };
-    const resNotificationTemplate = await SaveSettings(params);
-    if (resNotificationTemplate?.status === 200) {
-      showToast(resNotificationTemplate?.data?.message, "success");
-      getSettings();
-      setFroalaEditor("");
-      handleClose();
-      setEmailTemplate({
-        subject: "",
-        name: "",
-        event: "",
-        html: "",
-      });
-      setSmsTemplate({
-        name: "",
-        event: "",
-        text: "",
-      });
-    } else {
-      const errorMessage = resNotificationTemplate?.response?.data?.message;
-      showToast(errorMessage, "error");
+    const resSetting = await GetAllSettings();
+    if (resSetting?.status === 200) {
+      const templates = resSetting?.data?.data?.notificationTemplates;
+      templates.push(newTemplate);
+      const params = { notificationTemplates: templates };
+      const resNotificationTemplate = await SaveSettings(params);
+      if (resNotificationTemplate?.status === 200) {
+        showToast(resNotificationTemplate?.data?.message, "success");
+        getSettings();
+        setFroalaEditor("");
+        handleClose();
+        setEmailTemplate({
+          subject: "",
+          name: "",
+          event: "",
+          html: "",
+        });
+        setSmsTemplate({
+          name: "",
+          event: "",
+          text: "",
+        });
+      } else {
+        const errorMessage = resNotificationTemplate?.response?.data?.message;
+        showToast(errorMessage, "error");
+      }
     }
     setLoading(false);
   };
+
   const handleEdit = async () => {
     setLoading(true);
     const newTemplate = {
@@ -258,12 +238,10 @@ export default function FroalaEditor({
       event: templateType === "email" ? emailTemplate.event : smsTemplate.event,
       html: templateType === "email" ? emailTemplate.html : smsTemplate.text,
       templateId: row?.templateId,
+      type: templateType,
     };
 
-    const resNotificationTemplate = await EditSettings(
-      newTemplate,
-      templateType
-    );
+    const resNotificationTemplate = await EditSettings(newTemplate);
     if (resNotificationTemplate?.status === 200) {
       showToast(resNotificationTemplate?.data?.message, "success");
       getSettings();
@@ -288,18 +266,6 @@ export default function FroalaEditor({
       : isFieldEmpty(smsTemplate?.name) ||
         isFieldEmpty(smsTemplate?.event) ||
         isFieldEmpty(smsTemplate?.text);
-
-  const dummyEvents = {
-    PaymentSuccessful: "on_payment_success",
-    PaymentFailure: "on_payment_fail",
-    AuthorizationSuccessful: "on_auth_success",
-    AuthorizationFailure: "on_auth_fail",
-  };
-
-  const dummyVariables = {
-    Event: { Date: "date_time", Label: "label" },
-    DebtorInformation: { Name: "name", CompanyName: "company_name" },
-  };
 
   const buttonStyling = {
     textTransform: "none",
@@ -391,7 +357,7 @@ export default function FroalaEditor({
               open={Boolean(anchorEl)}
               onClose={handleCloseMenu}
             >
-              {Object.keys(dummyVariables)?.map((category) => (
+              {Object.keys(customVariables)?.map((category) => (
                 <MenuItem
                   key={category}
                   onClick={(event) => handleOpenSubMenu(event, category)}
@@ -419,21 +385,21 @@ export default function FroalaEditor({
                 horizontal: "left",
               }}
             >
-              <div>
+              <Grid sx={{ maxHeight: "300px", overflowY: "auto" }}>
                 {selectedCategory &&
-                  Object.entries(dummyVariables[selectedCategory])?.map(
+                  Object.entries(customVariables[selectedCategory])?.map(
                     ([label, action]) => (
                       <div style={{ display: "flex", flexDirection: "column" }}>
                         <Button
                           sx={buttonStyling}
-                          onClick={() => handleMenuClick(action)}
+                          onClick={() => handleMenuClick(label)}
                         >
                           {label}
                         </Button>
                       </div>
                     )
                   )}
-              </div>
+              </Grid>
             </Popover>
           </div>
         </Grid>
@@ -452,15 +418,21 @@ export default function FroalaEditor({
             anchorEl={anchorElNew}
             open={Boolean(anchorElNew)}
             onClose={() => setAnchorElNew(null)}
+            PaperProps={{
+              sx: {
+                maxHeight: 300,
+                overflowY: "auto",
+              },
+            }}
           >
-            {Object.entries(dummyEvents)?.map(([label, action]) => (
+            {allEvents?.map((item) => (
               <MenuItem
-                key={action}
-                data-value={action}
+                key={item?.label}
+                data-value={item?.value}
                 onClick={(event) => handleEventChange(event)}
                 sx={fontStyling}
               >
-                {label}
+                {item?.label}
               </MenuItem>
             ))}
           </Menu>

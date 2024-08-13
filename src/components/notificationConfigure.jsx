@@ -6,11 +6,23 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { styled } from "@mui/material/styles";
 import { Colors } from "../config/default";
-import { Box, Grid, Typography } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Grid,
+  Menu,
+  MenuItem,
+  Typography,
+} from "@mui/material";
 import Dropdown from "./dropdown";
 import Checkboxes from "./checkBox";
 import { FONT_SIZE_LARGE } from "../constants/appConstants";
 import TextButton from "./button";
+import {
+  GetEvents,
+  UpdateNotificationConfiguration,
+} from "../services/services";
+import { useToast } from "../toast/toastContext";
 
 const StyledAccordion = styled(Accordion)({
   "&:before": {
@@ -38,63 +50,67 @@ const StyledAccordionDetails = styled(AccordionDetails)({
 
 export default function NotificationConfiguration({ data }) {
   const [selectedValue, setSelectedValue] = useState("");
-  const userConfig = {
-    admin: {
-      emailTemplate: "",
-      smsTemplate: "",
-      emailChecked: false,
-      smsChecked: false,
-    },
-    negotiator: {
-      emailTemplate: "",
-      smsTemplate: "",
-      emailChecked: false,
-      smsChecked: false,
-    },
-    user: {
-      emailTemplate: "",
-      smsTemplate: "",
-      emailChecked: false,
-      smsChecked: false,
-    },
-    asdahjhsd: {
-      emailTemplate: "",
-      smsTemplate: "",
-      emailChecked: false,
-      smsChecked: false,
-    },
+  const [allEvents, setAllEvents] = useState([]);
+  const [anchorElNew, setAnchorElNew] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
+  const { showToast } = useToast();
+
+  const [userSettings, setUserSettings] = useState([]);
+
+  const getEvents = async () => {
+    const resEvents = await GetEvents("all");
+    if (resEvents?.status === 200) {
+      setAllEvents(resEvents?.data?.data);
+    }
   };
 
-  const allUserTypes = Object.entries(userConfig)?.map(([key, value]) => key);
+  const allExistingEvents =
+    allEvents &&
+    allEvents.map((item) => ({
+      label: item?.label
+        ? item.label.charAt(0).toUpperCase() + item.label.slice(1)
+        : "",
+      value: item?.value,
+    }));
 
-  const [userSettings, setUserSettings] = useState(
-    allUserTypes?.reduce((userType, index) => {
-      userType[index] = {
-        emailTemplate: "",
-        smsTemplate: "",
-        emailChecked: false,
-        smsChecked: false,
-      };
-      return userType;
-    }, {})
-  );
+  const getConfiguration = async () => {
+    if (selectedValue) {
+      setLoading(true);
+      const params = selectedValue;
+      const resNotificationConf = await GetEvents(params);
+      if (resNotificationConf?.status === 200) {
+        setUserSettings(resNotificationConf?.data?.data?.userPermission);
+        showToast(resNotificationConf?.data?.message, "success");
+      } else {
+        const errorMessage = resNotificationConf?.response?.data?.message;
+        showToast(errorMessage, "error");
+      }
+      setLoading(false);
+    }
+  };
 
-  const allEvents = [
-    { label: "Payment Successful", value: "Payment Successful" },
-    { label: "Payment Failure", value: "Payment Failure" },
-    { label: "Authorization Successful", value: "Authorization Successful" },
-    { label: "Authorization Failure", value: "Authorization Failure" },
-  ];
+  useEffect(() => {
+    getEvents();
+  }, []);
 
-  const allEmailTemplates = data?.email?.map((item) => ({
-    label: item?.templateId,
-    value: item?.templateId,
-  }));
+  useEffect(() => {
+    getConfiguration();
+  }, [selectedValue]);
 
-  const allSmsTemplates = data?.email?.map((item) => ({
-    label: item?.templateId,
-    value: item?.templateId,
-  }));
+  const allEmailTemplates = data
+    ?.filter((item) => item?.type === "email")
+    ?.map((item) => ({
+      label: item?.templateId,
+      value: item?.templateId,
+    }));
+
+  const allSmsTemplates = data
+    ?.filter((item) => item?.type === "sms")
+    ?.map((item) => ({
+      label: item?.templateId,
+      value: item?.templateId,
+    }));
 
   const fontStyling = {
     fontSize: FONT_SIZE_LARGE,
@@ -105,40 +121,52 @@ export default function NotificationConfiguration({ data }) {
 
   const boxStyling = { display: "flex", alignItems: "center" };
 
-  const handleEmailTemplateChange = (userType, value) => {
-    setUserSettings((prevSettings) => ({
-      ...prevSettings,
-      [userType]: { ...prevSettings[userType], emailTemplate: value },
-    }));
+  const handleEmailTemplateChange = (role, value) => {
+    setUserSettings((prevSettings) =>
+      prevSettings.map((setting) =>
+        setting.role === role ? { ...setting, email_template: value } : setting
+      )
+    );
   };
 
-  const handleSmsTemplateChange = (userType, value) => {
-    setUserSettings((prevSettings) => ({
-      ...prevSettings,
-      [userType]: { ...prevSettings[userType], smsTemplate: value },
-    }));
+  const handleSmsTemplateChange = (role, value) => {
+    setUserSettings((prevSettings) =>
+      prevSettings.map((setting) =>
+        setting.role === role ? { ...setting, sms_template: value } : setting
+      )
+    );
   };
 
-  const handleEmailCheckChange = (userType, checked) => {
-    setUserSettings((prevSettings) => ({
-      ...prevSettings,
-      [userType]: { ...prevSettings[userType], emailChecked: checked },
-    }));
+  const handleEmailCheckChange = (role, checked) => {
+    setUserSettings((prevSettings) =>
+      prevSettings.map((setting) =>
+        setting.role === role ? { ...setting, email_allowed: checked } : setting
+      )
+    );
   };
 
-  const handleSmsCheckChange = (userType, checked) => {
-    setUserSettings((prevSettings) => ({
-      ...prevSettings,
-      [userType]: { ...prevSettings[userType], smsChecked: checked },
-    }));
+  const handleSmsCheckChange = (role, checked) => {
+    setUserSettings((prevSettings) =>
+      prevSettings.map((setting) =>
+        setting.role === role ? { ...setting, sms_allowed: checked } : setting
+      )
+    );
   };
 
-  useEffect(() => {
-    console.log(selectedValue);
-  }, [selectedValue]);
-
-  const handleSave = () => {
-    console.log(userSettings);
+  const handleSave = async () => {
+    setButtonLoading(true);
+    const payload = {
+      value: selectedValue,
+      userPermission: userSettings,
+    };
+    const resSave = await UpdateNotificationConfiguration(payload);
+    if (resSave?.status === 200) {
+      showToast(resSave?.data?.message, "success");
+    } else {
+      const errorMessage = resSave?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setButtonLoading(false);
   };
 
   return (
@@ -147,89 +175,103 @@ export default function NotificationConfiguration({ data }) {
         Notification Configuration
       </StyledAccordionSummary>
       <StyledAccordionDetails>
-        <Grid xs={12} sx={{ mt: "1rem" }}>
-          <Dropdown
-            menuWidth="16rem"
-            menuItems={allEvents}
-            placeholder="Events"
-            backgroundColor={Colors.BG_LIGHT_GRAY}
-            hoverColor={Colors.BG_LIGHT_GRAY}
-            width="16rem"
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-          />
-          {allUserTypes?.map((userType) => (
-            <Grid
-              key={userType}
-              container
-              xs={12}
-              sx={{ mt: "4px", gap: "2rem", alignItems: "center" }}
-            >
-              <Typography sx={{ ...fontStyling, width: "20%" }}>
-                {userType}
-              </Typography>
-              <Box sx={boxStyling}>
-                <Checkboxes
-                  checked={userSettings[userType]?.emailChecked}
-                  handleCheckChange={(e) =>
-                    handleEmailCheckChange(userType, e.target.checked)
-                  }
-                />
-                <Typography sx={fontStyling}>Email</Typography>
-              </Box>
-              <Dropdown
-                menuWidth="16rem"
-                menuItems={allEmailTemplates}
-                placeholder="Templates"
-                backgroundColor={Colors.BG_LIGHT_GRAY}
-                hoverColor={Colors.BG_LIGHT_GRAY}
-                width="16rem"
-                selectedValue={userSettings[userType]?.emailTemplate}
-                setSelectedValue={(value) =>
-                  handleEmailTemplateChange(userType, value)
-                }
-              />
-
-              <Box sx={boxStyling}>
-                <Checkboxes
-                  checked={userSettings[userType]?.smsChecked}
-                  handleCheckChange={(e) =>
-                    handleSmsCheckChange(userType, e.target.checked)
-                  }
-                />
-                <Typography sx={fontStyling}>SMS</Typography>
-              </Box>
-              <Dropdown
-                menuWidth="16rem"
-                menuItems={allSmsTemplates}
-                placeholder="Templates"
-                backgroundColor={Colors.BG_LIGHT_GRAY}
-                hoverColor={Colors.BG_LIGHT_GRAY}
-                width="16rem"
-                selectedValue={userSettings[userType]?.smsTemplate}
-                setSelectedValue={(value) =>
-                  handleSmsTemplateChange(userType, value)
-                }
-              />
-            </Grid>
-          ))}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "right",
-              marginTop: "1rem",
+        {loading ? (
+          <Grid
+            container
+            sx={{
+              justifyContent: "center",
+              alignItems: "center",
+              height: "30vh",
             }}
           >
-            <TextButton
-              buttonText="Save"
-              height="2rem"
-              width="8rem"
-              onClick={handleSave}
-              backgroundColor={Colors.SKY_BLUE}
-              hoverColor={Colors.SKY_BLUE}
+            <CircularProgress />
+          </Grid>
+        ) : (
+          <Grid xs={12} sx={{ mt: "1rem" }}>
+            <Dropdown
+              menuWidth="16rem"
+              menuItems={allExistingEvents}
+              placeholder="Events"
+              backgroundColor={Colors.BG_LIGHT_GRAY}
+              hoverColor={Colors.BG_LIGHT_GRAY}
+              width="16rem"
+              selectedValue={selectedValue}
+              setSelectedValue={setSelectedValue}
             />
-          </div>
-        </Grid>
+            {userSettings?.map((item) => (
+              <Grid
+                key={item.role}
+                container
+                xs={12}
+                sx={{ mt: "10px", gap: "2rem", alignItems: "center" }}
+              >
+                <Typography sx={{ ...fontStyling, width: "20%" }}>
+                  {item?.role}
+                </Typography>
+                <Box sx={boxStyling}>
+                  <Checkboxes
+                    checked={item?.email_allowed}
+                    handleCheckChange={(e) =>
+                      handleEmailCheckChange(item.role, e.target.checked)
+                    }
+                  />
+                  <Typography sx={fontStyling}>Email</Typography>
+                </Box>
+                <Dropdown
+                  menuWidth="16rem"
+                  menuItems={allEmailTemplates}
+                  placeholder="Templates"
+                  backgroundColor={Colors.BG_LIGHT_GRAY}
+                  hoverColor={Colors.BG_LIGHT_GRAY}
+                  width="16rem"
+                  selectedValue={item?.email_template}
+                  setSelectedValue={(value) =>
+                    handleEmailTemplateChange(item.role, value)
+                  }
+                />
+
+                <Box sx={boxStyling}>
+                  <Checkboxes
+                    checked={item?.sms_allowed}
+                    handleCheckChange={(e) =>
+                      handleSmsCheckChange(item.role, e.target.checked)
+                    }
+                  />
+                  <Typography sx={fontStyling}>SMS</Typography>
+                </Box>
+                <Dropdown
+                  menuWidth="16rem"
+                  menuItems={allSmsTemplates}
+                  placeholder="Templates"
+                  backgroundColor={Colors.BG_LIGHT_GRAY}
+                  hoverColor={Colors.BG_LIGHT_GRAY}
+                  width="16rem"
+                  selectedValue={item?.sms_template}
+                  setSelectedValue={(value) =>
+                    handleSmsTemplateChange(item.role, value)
+                  }
+                />
+              </Grid>
+            ))}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "right",
+                marginTop: "1rem",
+              }}
+            >
+              <TextButton
+                buttonText="Save"
+                height="2rem"
+                width="8rem"
+                onClick={handleSave}
+                backgroundColor={Colors.SKY_BLUE}
+                hoverColor={Colors.SKY_BLUE}
+                loading={buttonLoading}
+              />
+            </div>
+          </Grid>
+        )}
       </StyledAccordionDetails>
     </StyledAccordion>
   );

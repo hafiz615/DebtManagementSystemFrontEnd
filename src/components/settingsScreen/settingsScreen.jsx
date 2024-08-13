@@ -99,7 +99,6 @@ export default function SettingsScreen() {
   });
   const [notificationTemplates, setNotificationTemplates] = useState([]);
   const [customFields, setCustomFields] = useState([]);
-  const [templates, setTemplates] = useState({});
   const [loading, setLoading] = useState(false);
 
   const getSettings = async () => {
@@ -150,14 +149,7 @@ export default function SettingsScreen() {
     );
     setNotificationTemplates(allSettings?.data?.data?.notificationTemplates);
     setCustomFields(allSettings?.data?.data?.customFields);
-    const result = {};
 
-    for (const [key, value] of Object.entries(notificationTemplates)) {
-      result[key] = value.map((template) => {
-        return { label: template?.templateId, value: template?.templateId };
-      });
-    }
-    setTemplates(result);
     setLoading(false);
   };
 
@@ -217,7 +209,6 @@ export default function SettingsScreen() {
           upcomingPayments={upcomingPayments}
           retryInterval={retryInterval}
           authorizationInterval={authorizationInterval}
-          templates={templates}
           {...{
             setfailedAuthorizations,
             setSuccessfulAuthorizations,
