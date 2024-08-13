@@ -87,10 +87,7 @@ export default function FroalaEditor({
     text: row?.text || "",
   });
 
-  const [notificationTemplates, setNotificationTemplates] = useState({
-    email: [],
-    sms: [],
-  });
+  const [notificationTemplates, setNotificationTemplates] = useState([]);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [anchorElNew, setAnchorElNew] = useState(null);
@@ -103,12 +100,9 @@ export default function FroalaEditor({
 
   useEffect(() => {
     const getTemplateSettings = async () => {
-      const getSetting = await GetAllSettings();
-      if (getSetting?.status === 200) {
-        setNotificationTemplates({
-          email: getSetting?.data?.data?.notificationTemplates?.email,
-          sms: getSetting?.data?.data?.notificationTemplates?.sms,
-        });
+      const resSetting = await GetAllSettings();
+      if (resSetting?.status === 200) {
+        setNotificationTemplates(resSetting?.data?.data?.notificationTemplates);
       }
     };
     getTemplateSettings();

@@ -97,10 +97,7 @@ export default function SettingsScreen() {
     fortnightly: { unit: "days", value: 0 },
     monthly: { unit: "days", value: 0 },
   });
-  const [notificationTemplates, setNotificationTemplates] = useState({
-    email: [],
-    sms: [],
-  });
+  const [notificationTemplates, setNotificationTemplates] = useState([]);
   const [customFields, setCustomFields] = useState([]);
   const [templates, setTemplates] = useState({});
   const [loading, setLoading] = useState(false);
@@ -205,7 +202,6 @@ export default function SettingsScreen() {
           upcomingPayments={upcomingPayments}
           retryInterval={retryInterval}
           authorizationInterval={authorizationInterval}
-          notificationTemplates={notificationTemplates}
           templates={templates}
           {...{
             setfailedAuthorizations,

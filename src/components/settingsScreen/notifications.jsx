@@ -212,7 +212,9 @@ export default function NotificationTemplatesTabs({
                     <ListTableDynamic
                       headerData={headerData}
                       getSettings={getSettings}
-                      data={notificationTemplates?.email}
+                      // data={notificationTemplates
+                      //   ?.filter((item) => item?.type === "email")
+                      //   ?.map((item) => item)}
                       requiredIcons={true}
                       onRowClick={renderEmailTemplate}
                       show="email_template"
@@ -339,7 +341,9 @@ export default function NotificationTemplatesTabs({
                   >
                     <ListTableDynamic
                       headerData={headerData}
-                      data={notificationTemplates?.sms}
+                      // data={notificationTemplates
+                      //   ?.filter((item) => item?.type === "sms")
+                      //   ?.map((item) => item)}
                       getSettings={getSettings}
                       requiredIcons={true}
                       onRowClick={renderSmsTemplate}

@@ -49,13 +49,6 @@ export default function SettingsAccordion({
   upcomingPayments,
   retryInterval,
   authorizationInterval,
-  notificationTemplates,
-  templates,
-  setfailedAuthorizations,
-  setSuccessfulAuthorizations,
-  setFailedPayments,
-  setSuccessPayments,
-  setUpcomingPayments,
   setRetryInterval,
   setAuthorizationInterval,
 }) {
@@ -164,117 +157,6 @@ export default function SettingsAccordion({
         </StyledAccordionSummary>
 
         <StyledAccordionDetails sx={{ width: { xs: "130vw", sm: "auto" } }}>
-          {/* <Grid container item>
-            <Grid
-              item
-              xs={12}
-              lg={6.5}
-              sx={{
-                display: "flex",
-                justifyContent: { xs: "space-between", sm: "space-evenly" },
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  width: { xs: "18%", lg: "35%" },
-                }}
-              >
-                <Typography sx={{ fontFamily: "Nunito", fontWeight: "700" }}>
-                  Notifications
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  width: "7.5%",
-                }}
-              >
-                <Typography sx={{ fontFamily: "Nunito", fontWeight: "700" }}>
-                  Email
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  width: "7.5%",
-                }}
-              >
-                <Typography sx={{ fontFamily: "Nunito", fontWeight: "700" }}>
-                  SMS
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  width: "35%",
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontFamily: "Nunito",
-                    fontWeight: "700",
-                  }}
-                >
-                  Template
-                </Typography>
-              </Box>
-            </Grid>
-            <Hidden lgDown>
-              <Grid item xs={12} lg={5}>
-                <Typography
-                  sx={{
-                    fontFamily: "Nunito",
-                    fontWeight: "700",
-                  }}
-                >
-                  Send To
-                </Typography>
-              </Grid>
-            </Hidden>
-          </Grid>
-          <Grid container item sx={{ marginTop: "1rem" }}>
-            <RowConfigForm
-              title={"Failed Authorizations"}
-              data={failedAuthorizations}
-              setData={setfailedAuthorizations}
-              menuItems={templates}
-            />
-            <RowConfigForm
-              title={"Successful Authorizations"}
-              data={successfulAuthorizations}
-              setData={setSuccessfulAuthorizations}
-              menuItems={templates}
-            />
-            <RowConfigForm
-              title={"Failed Payments"}
-              data={failedPayments}
-              setData={setFailedPayments}
-              menuItems={templates}
-            />
-            <RowConfigForm
-              title={"Successful Payments"}
-              data={successPayments}
-              setData={setSuccessPayments}
-              menuItems={templates}
-            />
-            <RowConfigForm
-              title={"Upcoming Payments"}
-              data={upcomingPayments}
-              setData={setUpcomingPayments}
-              menuItems={templates}
-            />
-          </Grid>
-
-          <hr></hr> */}
-
           <Grid container item sx={{ marginTop: "1rem", marginBottom: "1rem" }}>
             <Typography
               sx={{
