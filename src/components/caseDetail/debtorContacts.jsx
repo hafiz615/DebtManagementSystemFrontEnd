@@ -16,7 +16,6 @@ import TextButton from "../button";
 
 import { UpdateCreditor, UpdateDebtor } from "../../services/services";
 import { hasAnyValue } from "../../common";
-import ScrollbarStyles from "../customScroll";
 import {
   isEmailValid,
   handleNumberInput,

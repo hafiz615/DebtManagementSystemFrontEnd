@@ -376,13 +376,19 @@ export default function PaymentTabsTable({
           </Typography>
           <IconButton
             onClick={backward}
-            disabled={currentPage === 1 || isNaN(totalPages)}
+            disabled={
+              currentPage === 1 || isNaN(totalPages) || totalPages === 0
+            }
           >
             <ArrowBackIosNewIcon sx={{ fontSize: FONT_SIZE_XL }} />
           </IconButton>
           <IconButton
             onClick={forward}
-            disabled={currentPage === totalPages || isNaN(totalPages)}
+            disabled={
+              currentPage === totalPages ||
+              isNaN(totalPages) ||
+              totalPages === 0
+            }
           >
             <ArrowForwardIosIcon sx={{ fontSize: FONT_SIZE_XL }} />
           </IconButton>
