@@ -41,6 +41,7 @@ import SendEmail from "./sendEmail";
 import CreateRole from "./settingsScreen/createRole";
 import DebtorContacts from "./caseDetail/debtorContacts";
 import UploadFilePopup from "./caseDetail/uploadFilePopup";
+import SettlementPayment from "./settlementPlan";
 
 export default function MuiModels({
   buttonName,
@@ -82,6 +83,11 @@ export default function MuiModels({
   setSelectedRole,
   getAllCaseTasks,
   GetCasePaymentDetails,
+  title,
+  settlementRange,
+  weeksTillPaid,
+  caseId,
+  remainingAmount,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -214,7 +220,7 @@ export default function MuiModels({
             sx={{ fontSize: "16px", color: Colors.BLACK, cursor: "pointer" }}
           />
         </IconButton>
-      ) : show === "CaseCustomField" || show === "payments" ? (
+      ) : show === "CaseCustomField" || buttonName === "payments" ? (
         <IconButton
           onClick={() => {
             handleOpen();
@@ -308,6 +314,15 @@ export default function MuiModels({
             }}
           />
         </IconButton>
+      ) : buttonName === "setPaymentPlan" ? (
+        <TextButton
+          buttonText="Set Payment Plan"
+          height="2rem"
+          width="12rem"
+          onClick={handleOpen}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
       ) : show === "createRole" ? (
         <TextButton
           buttonText={extraSmallScreen ? <Add /> : "Create Role"}
@@ -390,6 +405,17 @@ export default function MuiModels({
               <Email sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }} />
             )
           }
+        />
+      ) : show === "settlmentPayment" ? (
+        <TextButton
+          buttonText="Choose Plan"
+          boxShadow="none"
+          height="2.5rem"
+          width="9rem"
+          backgroundColor={Colors.SKY_BLUE}
+          fontColor={Colors.WHITE}
+          hoverColor={Colors.SKY_BLUE}
+          onClick={handleOpen}
         />
       ) : (
         <Button onClick={handleOpen}>{buttonName}</Button>
@@ -580,6 +606,19 @@ export default function MuiModels({
               handleClose={handleClose}
               GetCaseDetails={GetCaseDetails}
               GetCasePaymentDetails={GetCasePaymentDetails}
+              settlementRange={settlementRange}
+              weeksTillPaid={weeksTillPaid}
+              caseId={caseId}
+              remainingAmount={remainingAmount}
+            />
+          ) : show === "settlmentPayment" ? (
+            <SettlementPayment
+              title={title}
+              handleClose={handleClose}
+              settlementRange={settlementRange}
+              weeksTillPaid={weeksTillPaid}
+              caseId={caseId}
+              remainingAmount={remainingAmount}
             />
           ) : (
             ""

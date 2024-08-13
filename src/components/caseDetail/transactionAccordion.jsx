@@ -62,8 +62,9 @@ export default function TransactionAccordion({
           </Typography>
 
           <MuiModels
-            width="75vw"
+            width="70vw"
             show="payments"
+            buttonName="payments"
             data={caseData}
             GetCaseDetails={GetCaseDetails}
             GetCasePaymentDetails={GetCasePaymentDetails}
