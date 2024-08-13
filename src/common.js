@@ -389,3 +389,9 @@ export const convertCamelCaseToTitle = (str) => {
     .replace(/([A-Z])/g, " $1") // Add space before capital letters
     .replace(/^./, (char) => char.toUpperCase()); // Capitalize the first letter
 };
+export const getTruncatedText = (text, maxLength) => {
+  if (text.length > maxLength) {
+    return text.slice(0, maxLength) + "...";
+  }
+  return text;
+};

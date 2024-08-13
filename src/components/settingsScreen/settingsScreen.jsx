@@ -155,7 +155,7 @@ export default function SettingsScreen() {
     const result = {};
 
     for (const [key, value] of Object.entries(notificationTemplates)) {
-      result[key] = value.map((template) => {
+      result[key] = value?.map((template) => {
         return { label: template?.templateId, value: template?.templateId };
       });
     }

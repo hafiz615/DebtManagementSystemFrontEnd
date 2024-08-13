@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-import { Grid, Typography, IconButton, Menu } from "@mui/material";
-import CircularProgress from "@mui/material/CircularProgress";
+import { Grid, Typography, IconButton } from "@mui/material";
 import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
 
 import { Colors } from "../config/default";
@@ -24,6 +23,7 @@ function CaseHistory({
   open,
   handleClick,
 }) {
+  const caseHistory = "Case History";
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
   );
@@ -101,7 +101,7 @@ function CaseHistory({
               justifyContent: "center",
             }}
           >
-            Case History
+            {caseHistory}
           </Typography>
           <div style={{ display: "flex" }}>
             <SearchBar

@@ -1,25 +1,18 @@
 import React, { useState } from "react";
 
 import {
-  Grid,
-  Typography,
-  // IconButton,
   styled,
   InputBase,
   Box,
+  Grid,
+  Typography,
   IconButton,
 } from "@mui/material";
 import {
   Search,
-  // KeyboardArrowLeft,
-  // KeyboardArrowRight,
   Call,
   Sms,
   Email,
-  Edit,
-  EditAttributes,
-  ArrowBack,
-  ArrowForward,
   ChevronLeft,
   NavigateNext,
 } from "@mui/icons-material";
@@ -27,8 +20,9 @@ import {
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import Tooltip from "@mui/material/Tooltip";
+import { getTruncatedText } from "../../common";
 import ScrollbarStyles from "./../customScroll";
-import DebtorFields from "../caseCreationFields/debtorFields";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -62,6 +56,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
+  const debtorPeronsalDetails = "Personal Details";
+  const debtorBusinessDetails = "Business Details";
+
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 2;
   const handleNext = () => {
@@ -77,17 +74,11 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
 
   const formatKeys = (keys) => {
     const formattedKeys = keys
-      ?.replace(/([A-Z])/g, " $1") // Add a space before each uppercase letter
-      ?.replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
+      ?.replace(/([A-Z])/g, " $1")
+      ?.replace(/^./, (str) => str.toUpperCase());
     return formattedKeys;
   };
 
-  const getTruncatedText = (text, maxLength) => {
-    if (text.length > maxLength) {
-      return text.slice(0, maxLength) + "...";
-    }
-    return text;
-  };
   const desiredKeys = [
     "companyName",
     "businessCategory",
@@ -147,7 +138,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
               fontFamily: "Nunito",
             }}
           >
-            Personal Details
+            {debtorPeronsalDetails}
           </p>
           <MuiModels
             show="debtorDetail"
@@ -188,20 +179,23 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
                   >
                     {key === "SSID" ? "SSN" : formatKeys(key)}
                   </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: smallScreen ? "11px" : "13px",
-                      color: Colors.DIM_LIGHT_GRAY,
-                      fontFamily: "Nunito",
-                      fontWeight: "500",
-                      textAlign: "right",
-                      flexWrap: "wrap",
-                      maxWidth: "80%",
-                      wordBreak: "break-word",
-                    }}
-                  >
-                    {getTruncatedText(value, 17)}
-                  </Typography>
+
+                  <Tooltip title={value} placement="top-end">
+                    <Typography
+                      sx={{
+                        fontSize: smallScreen ? "11px" : "13px",
+                        color: Colors.DIM_LIGHT_GRAY,
+                        fontFamily: "Nunito",
+                        fontWeight: "500",
+                        textAlign: "right",
+                        flexWrap: "wrap",
+                        maxWidth: "80%",
+                        wordBreak: "break-word",
+                      }}
+                    >
+                      {getTruncatedText(value, 15)}
+                    </Typography>
+                  </Tooltip>
                 </div>
               )
           )}
@@ -222,7 +216,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
         <p
           style={{ fontWeight: "600", fontSize: "13px", fontFamily: "Nunito" }}
         >
-          Business Details
+          {debtorBusinessDetails}
         </p>
         <Box
           sx={{
@@ -242,7 +236,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
             },
           }}
         >
-          {desiredKeys.map((key) => {
+          {desiredKeys?.map((key) => {
             const value = caseData?.debtor?.businessInformation[key];
             if (value) {
               return (
@@ -266,17 +260,19 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
                   >
                     {key === "EIN" ? key : formatKeys(key)}
                   </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: smallScreen ? "11px" : "13px",
-                      color: Colors.DIM_LIGHT_GRAY,
-                      fontFamily: "Nunito",
-                      fontWeight: "500",
-                      textAlign: "right",
-                    }}
-                  >
-                    {getTruncatedText(value, 20)}
-                  </Typography>
+                  <Tooltip title={value} placement="top-end">
+                    <Typography
+                      sx={{
+                        fontSize: smallScreen ? "11px" : "13px",
+                        color: Colors.DIM_LIGHT_GRAY,
+                        fontFamily: "Nunito",
+                        fontWeight: "500",
+                        textAlign: "right",
+                      }}
+                    >
+                      {getTruncatedText(value, 15)}
+                    </Typography>
+                  </Tooltip>
                 </div>
               );
             }

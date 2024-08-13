@@ -189,7 +189,7 @@ export default function PersistentDrawerLeft({ children }) {
       <NavBar onClick={handleDrawerOpen} />
       <Drawer
         sx={{
-          zIndex:1,
+          zIndex: 1,
           width: open ? drawerWidth : closedDrawerWidth,
           flexShrink: 0,
           transition: theme.transitions.create(["width"], {
@@ -254,7 +254,6 @@ export default function PersistentDrawerLeft({ children }) {
                   padding: "0.3rem",
                   borderRadius: "50%",
                   fontSize: "2.5rem",
-                  border: "1px solid red",
                 }}
               />
             </IconButton>
