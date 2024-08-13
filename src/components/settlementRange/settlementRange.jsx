@@ -536,10 +536,16 @@ export default function SettlementRange() {
 
   const creditorNameWithId =
     creditorNames &&
-    creditorNames?.map(({ name, creditorId }) => ({
+    creditorNames?.map(({ creditorAccountTitle, creditorId }) => ({
+      creditorAccountTitle,
       creditorId,
-      name,
     }));
+
+  useEffect(() => {
+    if (creditorNames) {
+      setCreditorSelect(creditorNameWithId);
+    }
+  }, [creditorNames]);
 
   if (errorMessage) {
     // Render Error Page component if errorMessage exists
@@ -891,8 +897,8 @@ export default function SettlementRange() {
                 borderTopRightRadius: "10px",
               }}
             >
-              {allCreditorNames &&
-                allCreditorNames?.map((item) => (
+              {creditorSelect &&
+                creditorSelect?.map((item) => (
                   <AntTab
                     sx={{
                       bgcolor: Colors.WHITE,
@@ -900,9 +906,18 @@ export default function SettlementRange() {
                       fontWeight: "600",
                       height: "3.5rem",
                     }}
-                    label={item}
+                    label={item?.creditorAccountTitle}
                   />
                 ))}
+              <AntTab
+                sx={{
+                  bgcolor: Colors.WHITE,
+                  width: "max-content",
+                  fontWeight: "600",
+                  height: "3.5rem",
+                }}
+                label="Summary"
+              />
             </AntTabs>
           </Grid>
           <Grid container xs={12}>
