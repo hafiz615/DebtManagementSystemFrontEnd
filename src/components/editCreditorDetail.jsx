@@ -147,7 +147,15 @@ export default function EditCreditorDetail({
           setDigits={(newDigits) => handleDigitsChange(index, newDigits)}
         />
       ))}
-      <Grid container sx={{ justifyContent: "right" }}>
+      <Grid
+        container
+        sx={{
+          justifyContent: "flex-end",
+          position: "sticky",
+          bottom: 0, // Ensures it sticks to the bottom when scrolling up
+          zIndex: 1, // Ensures the button stays above other content
+        }}
+      >
         <TextButton
           marginBottom=".5rem"
           buttonText="Save"

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import {
   Grid,
@@ -137,7 +137,7 @@ const FileUploadComponent = ({
         <Typography sx={styles.headerText}>Documents</Typography>
       </Grid>
 
-      <Grid container item xs={12} lg={5.5} sx={styles.uploadContainer}>
+      <Grid container item xs={10} md={12} lg={5.5} sx={styles.uploadContainer}>
         <Typography sx={styles.headerText}>Upload Folder or File</Typography>
 
         <Box sx={styles.uploadBox}>
@@ -169,76 +169,83 @@ const FileUploadComponent = ({
 
       <Grid item sx={{ marginTop: "1rem" }}>
         <Typography sx={styles.headerText}>List of Documents</Typography>
-        <TableContainer
-          component={Paper}
+        <Paper
           sx={{
-            marginTop: "1rem",
-            height: "50vh",
-            overflow: "auto",
-            ...ScrollbarStyles,
+            borderRadius: "10px",
+            width: { xs: "65vw", md: "100%" },
           }}
         >
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell sx={styles.selectColumn}>
-                  <Typography sx={styles.tableHeader}>Select</Typography>
-                </TableCell>
-                <TableCell sx={styles.titleColumn}>
-                  <Typography sx={styles.tableHeader}>Title</Typography>
-                </TableCell>
-                <TableCell sx={styles.typeColumn}>
-                  <Typography sx={styles.tableHeader}>Type</Typography>
-                </TableCell>
-                <TableCell sx={styles.pathColumn}>
-                  <Typography sx={styles.tableHeader}>Path</Typography>
-                </TableCell>
-                <TableCell sx={styles.actionsColumn}>
-                  <Typography sx={styles.tableHeader}>Actions</Typography>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {files?.map((file, index) => (
-                <TableRow key={index}>
-                  <TableCell sx={styles.checkboxCell}>
-                    <Checkbox
-                      checked={selectedFiles?.includes(file)}
-                      onChange={(e) =>
-                        handleCheckboxChange(file, e.target.checked)
-                      }
-                    />
+          <TableContainer
+            component={Paper}
+            sx={{
+              marginTop: "1rem",
+              height: "50vh",
+              overflow: "auto",
+              ...ScrollbarStyles,
+            }}
+          >
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={styles.selectColumn}>
+                    <Typography sx={styles.tableHeader}>Select</Typography>
                   </TableCell>
-                  <TableCell>{file?.name}</TableCell>
-                  <TableCell>{file?.type}</TableCell>
-                  <TableCell sx={styles.pathCell}>
-                    <Typography sx={styles.pathText} title={file?.name}>
-                      {file?.path}
-                    </Typography>
+                  <TableCell sx={styles.titleColumn}>
+                    <Typography sx={styles.tableHeader}>Title</Typography>
                   </TableCell>
-                  <TableCell>
-                    <Box sx={styles.actionIcons}>
-                      <VisibilityIcon
-                        onClick={() => handleViewFile(file?.file)}
-                        sx={styles.viewIcon}
-                      />
-                      <AlertDialog
-                        initialFileName={file?.name}
-                        handleEditFileName={(newName) =>
-                          handleEditFileName(index, newName)
-                        }
-                      />
-                      <CloseIcon
-                        onClick={() => handleDeleteFile(index)}
-                        sx={styles.icon}
-                      />
-                    </Box>
+                  <TableCell sx={styles.typeColumn}>
+                    <Typography sx={styles.tableHeader}>Type</Typography>
+                  </TableCell>
+                  <TableCell sx={styles.pathColumn}>
+                    <Typography sx={styles.tableHeader}>Path</Typography>
+                  </TableCell>
+                  <TableCell sx={styles.actionsColumn}>
+                    <Typography sx={styles.tableHeader}>Actions</Typography>
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {files?.map((file, index) => (
+                  <TableRow key={index}>
+                    <TableCell sx={styles.checkboxCell}>
+                      <Checkbox
+                        checked={selectedFiles?.includes(file)}
+                        onChange={(e) =>
+                          handleCheckboxChange(file, e.target.checked)
+                        }
+                      />
+                    </TableCell>
+                    <TableCell sx={styles.pathFontSize}>{file?.name}</TableCell>
+                    <TableCell sx={styles.pathFontSize}>{file?.type}</TableCell>
+                    <TableCell sx={styles.pathCell}>
+                      <Typography sx={styles.pathText} title={file?.name}>
+                        {file?.path}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Box sx={styles.actionIcons}>
+                        <VisibilityIcon
+                          onClick={() => handleViewFile(file?.file)}
+                          sx={styles.viewIcon}
+                        />
+                        <AlertDialog
+                          initialFileName={file?.name}
+                          handleEditFileName={(newName) =>
+                            handleEditFileName(index, newName)
+                          }
+                        />
+                        <CloseIcon
+                          onClick={() => handleDeleteFile(index)}
+                          sx={styles.icon}
+                        />
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
       </Grid>
 
       {isViewerOpen && (

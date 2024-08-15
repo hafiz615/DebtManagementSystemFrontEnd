@@ -58,19 +58,37 @@ export const styles = {
   selectColumn: {
     minWidth: "100px",
     flex: "0 0 100px",
+    position: "sticky",
+    top: 0,
+    zIndex: 1,
+    backgroundColor: "background.paper",
   },
   titleColumn: {
-    // flex: 1,
-    // Allow the title column to take up remaining space
+    position: "sticky",
+    top: 0,
+    zIndex: 1,
+    backgroundColor: "background.paper",
   },
   typeColumn: {
     flex: 1,
+    position: "sticky",
+    top: 0,
+    zIndex: 1,
+    backgroundColor: "background.paper",
   },
   pathColumn: {
     flex: 1,
+    position: "sticky",
+    top: 0,
+    zIndex: 1,
+    backgroundColor: "background.paper",
   },
   actionsColumn: {
     flex: 1,
+    position: "sticky",
+    top: 0,
+    zIndex: 1,
+    backgroundColor: "background.paper",
   },
   tableHeader: {
     fontWeight: "bold",
@@ -85,8 +103,13 @@ export const styles = {
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
+    fontSize: { xs: FONT_SIZE_SMALL, lg: FONT_SIZE_LARGE },
+  },
+  pathFontSize: {
+    fontSize: { xs: FONT_SIZE_SMALL, lg: FONT_SIZE_LARGE },
   },
   pathText: {
+    fontSize: { xs: FONT_SIZE_SMALL, lg: FONT_SIZE_LARGE },
     "&:hover": {
       cursor: "pointer",
     },
