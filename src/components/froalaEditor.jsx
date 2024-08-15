@@ -1,5 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Box, Typography, Grid } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Grid,
+  Button,
+  Menu,
+  MenuItem,
+  Popover,
+} from "@mui/material";
 import "froala-editor/css/froala_style.min.css";
 import "froala-editor/css/froala_editor.pkgd.min.css";
 import FroalaEditorComponent from "react-froala-wysiwyg";
@@ -10,9 +18,12 @@ import styled from "styled-components";
 import {
   EditSettings,
   GetAllSettings,
+  GetCustomVariable,
+  GetEvents,
   SaveSettings,
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
+import { ArrowRight } from "@mui/icons-material";
 
 const StyledSelect = styled.select`
   border: none;
@@ -68,39 +79,45 @@ export default function FroalaEditor({
     name: row?.name || "",
     event: row?.event || "",
     html: row?.html || "",
+    type: "email",
   });
 
   const [smsTemplate, setSmsTemplate] = useState({
     name: row?.name || "",
     event: row?.event || "",
     text: row?.text || "",
+    type: "sms",
   });
 
-  const [notificationTemplates, setNotificationTemplates] = useState({
-    email: [],
-    sms: [],
-  });
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorElNew, setAnchorElNew] = useState(null);
+  const [subMenuAnchorEl, setSubMenuAnchorEl] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [allEvents, setAllEvents] = useState([]);
+  const [customVariables, setCustomVariables] = useState({});
 
   const editorRef = useRef(null);
-
-  useEffect(() => {
-    const getTemplateSettings = async () => {
-      const getSetting = await GetAllSettings();
-      if (getSetting?.status === 200) {
-        setNotificationTemplates({
-          email: getSetting?.data?.data?.notificationTemplates?.email,
-          sms: getSetting?.data?.data?.notificationTemplates?.sms,
-        });
-      }
-    };
-    getTemplateSettings();
-  }, [templateType]);
 
   useEffect(() => {
     if (row?.html) {
       setFroalaEditor(row?.html);
     }
   }, [row, setFroalaEditor]);
+
+  const getVariableAndEvents = async () => {
+    const resVariable = await GetCustomVariable();
+    if (resVariable?.status === 200) {
+      setCustomVariables(resVariable?.data?.data);
+    }
+    const resEvents = await GetEvents("all");
+    if (resEvents?.status === 200) {
+      setAllEvents(resEvents?.data?.data);
+    }
+  };
+
+  useEffect(() => {
+    getVariableAndEvents();
+  }, []);
 
   const handleSubjectChange = (e) => {
     setEmailTemplate((prev) => ({
@@ -138,16 +155,29 @@ export default function FroalaEditor({
     setFroalaEditor(html);
   };
 
-  const handleVariableChange = (e) => {
-    const selectedVariable = e.target.value;
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+    setSubMenuAnchorEl(null);
+  };
+
+  const handleOpenSubMenu = (event, category) => {
+    setSubMenuAnchorEl(event.currentTarget);
+    setSelectedCategory(category);
+  };
+
+  const handleMenuClick = (action) => {
+    setSubMenuAnchorEl(null);
+    setAnchorEl(null);
+    const selectedVariable = action;
     if (selectedVariable) {
-      const newContent = froalaEditor + selectedVariable;
+      const newContent = froalaEditor + `{{${selectedVariable}}}`;
       setFroalaEditor(newContent);
     }
   };
 
-  const handleEventChange = (e) => {
-    const selectedEvent = e.target.value;
+  const handleEventChange = (event) => {
+    setAnchorElNew(null);
+    const selectedEvent = event.currentTarget.getAttribute("data-value");
     if (templateType === "email") {
       setEmailTemplate((prev) => ({
         ...prev,
@@ -168,45 +198,38 @@ export default function FroalaEditor({
       name: templateType === "email" ? emailTemplate.name : smsTemplate.name,
       event: templateType === "email" ? emailTemplate.event : smsTemplate.event,
       html: templateType === "email" ? emailTemplate.html : smsTemplate.text,
+      type: templateType,
     };
-
-    const updatedTemplates =
-      templateType === "email"
-        ? {
-            ...notificationTemplates,
-            email: [...notificationTemplates?.email, newTemplate],
-          }
-        : {
-            ...notificationTemplates,
-            sms: [...notificationTemplates?.sms, newTemplate],
-          };
-
-    setNotificationTemplates(updatedTemplates);
-
-    const params = { notificationTemplates: updatedTemplates };
-    const resNotificationTemplate = await SaveSettings(params);
-    if (resNotificationTemplate?.status === 200) {
-      showToast(resNotificationTemplate?.data?.message, "success");
-      getSettings();
-      setFroalaEditor("");
-      handleClose();
-      setEmailTemplate({
-        subject: "",
-        name: "",
-        event: "",
-        html: "",
-      });
-      setSmsTemplate({
-        name: "",
-        event: "",
-        text: "",
-      });
-    } else {
-      const errorMessage = resNotificationTemplate?.response?.data?.message;
-      showToast(errorMessage, "error");
+    const resSetting = await GetAllSettings();
+    if (resSetting?.status === 200) {
+      const templates = resSetting?.data?.data?.notificationTemplates;
+      templates.push(newTemplate);
+      const params = { notificationTemplates: templates };
+      const resNotificationTemplate = await SaveSettings(params);
+      if (resNotificationTemplate?.status === 200) {
+        showToast(resNotificationTemplate?.data?.message, "success");
+        getSettings();
+        setFroalaEditor("");
+        handleClose();
+        setEmailTemplate({
+          subject: "",
+          name: "",
+          event: "",
+          html: "",
+        });
+        setSmsTemplate({
+          name: "",
+          event: "",
+          text: "",
+        });
+      } else {
+        const errorMessage = resNotificationTemplate?.response?.data?.message;
+        showToast(errorMessage, "error");
+      }
     }
     setLoading(false);
   };
+
   const handleEdit = async () => {
     setLoading(true);
     const newTemplate = {
@@ -215,12 +238,10 @@ export default function FroalaEditor({
       event: templateType === "email" ? emailTemplate.event : smsTemplate.event,
       html: templateType === "email" ? emailTemplate.html : smsTemplate.text,
       templateId: row?.templateId,
+      type: templateType,
     };
 
-    const resNotificationTemplate = await EditSettings(
-      newTemplate,
-      templateType
-    );
+    const resNotificationTemplate = await EditSettings(newTemplate);
     if (resNotificationTemplate?.status === 200) {
       showToast(resNotificationTemplate?.data?.message, "success");
       getSettings();
@@ -238,13 +259,23 @@ export default function FroalaEditor({
 
   const isSaveDisabled =
     templateType === "email"
-      ? isFieldEmpty(emailTemplate.subject) ||
-        isFieldEmpty(emailTemplate.name) ||
-        isFieldEmpty(emailTemplate.event) ||
-        isFieldEmpty(emailTemplate.html)
-      : isFieldEmpty(smsTemplate.name) ||
-        isFieldEmpty(smsTemplate.event) ||
-        isFieldEmpty(smsTemplate.text);
+      ? isFieldEmpty(emailTemplate?.subject) ||
+        isFieldEmpty(emailTemplate?.name) ||
+        isFieldEmpty(emailTemplate?.event) ||
+        isFieldEmpty(emailTemplate?.html)
+      : isFieldEmpty(smsTemplate?.name) ||
+        isFieldEmpty(smsTemplate?.event) ||
+        isFieldEmpty(smsTemplate?.text);
+
+  const buttonStyling = {
+    textTransform: "none",
+    color: Colors.BLACK,
+    fontFamily: "Nunito",
+    fontSize: FONT_SIZE_LARGE,
+    textAlign: "left",
+  };
+
+  const fontStyling = { fontSize: FONT_SIZE_LARGE, fontFamily: "Nunito" };
 
   return (
     <>
@@ -310,34 +341,101 @@ export default function FroalaEditor({
         }}
       >
         <Grid item xs={6}>
-          <StyledSelect defaultValue="" onChange={handleVariableChange}>
-            <option value="" disabled>
-              Select Variable
-            </option>
-            <option value="{{clientName}}">Client Name</option>
-            <option value="{{creditorName}}">Creditor Name</option>
-            <option value="{{paymentDate}}"> Payment Date</option>
-            <option value="{{paymentAmount}}"> Payment Amount</option>
-            <option value="{{remainingAmount}}"> Remaining Debt</option>
-          </StyledSelect>
+          <div>
+            <TextButton
+              buttonText="Select Variable"
+              height="2.5rem"
+              width="98%"
+              fontColor={Colors.BLACK}
+              onClick={(e) => setAnchorEl(e.target)}
+              backgroundColor={Colors.BG_LIGHT_GRAY}
+              hoverColor={Colors.BG_LIGHT_GRAY}
+              boxShadow="none"
+            />
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleCloseMenu}
+            >
+              {Object.keys(customVariables)?.map((category) => (
+                <MenuItem
+                  key={category}
+                  onClick={(event) => handleOpenSubMenu(event, category)}
+                  sx={{
+                    ...fontStyling,
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  {category}
+                  <ArrowRight />
+                </MenuItem>
+              ))}
+            </Menu>
+            <Popover
+              anchorEl={subMenuAnchorEl}
+              open={Boolean(subMenuAnchorEl)}
+              onClose={() => setSubMenuAnchorEl(null)}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+            >
+              <Grid sx={{ maxHeight: "300px", overflowY: "auto" }}>
+                {selectedCategory &&
+                  Object.entries(customVariables[selectedCategory])?.map(
+                    ([label, action]) => (
+                      <div style={{ display: "flex", flexDirection: "column" }}>
+                        <Button
+                          sx={buttonStyling}
+                          onClick={() => handleMenuClick(label)}
+                        >
+                          {label}
+                        </Button>
+                      </div>
+                    )
+                  )}
+              </Grid>
+            </Popover>
+          </div>
         </Grid>
         <Grid item xs={6}>
-          <StyledSelect
-            value={
-              templateType === "email"
-                ? emailTemplate?.event
-                : smsTemplate?.event
-            }
-            onChange={handleEventChange}
+          <TextButton
+            buttonText="Select Events"
+            height="2.5rem"
+            width="98%"
+            fontColor={Colors.BLACK}
+            onClick={(e) => setAnchorElNew(e.target)}
+            backgroundColor={Colors.BG_LIGHT_GRAY}
+            hoverColor={Colors.BG_LIGHT_GRAY}
+            boxShadow="none"
+          />
+          <Menu
+            anchorEl={anchorElNew}
+            open={Boolean(anchorElNew)}
+            onClose={() => setAnchorElNew(null)}
+            PaperProps={{
+              sx: {
+                maxHeight: 300,
+                overflowY: "auto",
+              },
+            }}
           >
-            <option value="" disabled>
-              Select Event
-            </option>
-            <option value="success payment">Successful Payment</option>
-            <option value="failure payment">Failure Payment</option>
-            <option value="success auth">Successful Authorization</option>
-            <option value="failure auth">Failure Authorization</option>
-          </StyledSelect>
+            {allEvents?.map((item) => (
+              <MenuItem
+                key={item?.label}
+                data-value={item?.value}
+                onClick={(event) => handleEventChange(event)}
+                sx={fontStyling}
+              >
+                {item?.label}
+              </MenuItem>
+            ))}
+          </Menu>
         </Grid>
       </Grid>
 

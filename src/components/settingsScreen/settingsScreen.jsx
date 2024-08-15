@@ -14,6 +14,7 @@ import ScrollbarStyles from "../customScroll";
 import CaseStatuses from "./caseStatuses";
 import PipelineAccordion from "./pipelineAccordion";
 import RoleAndPermission from "./roleAndPermission";
+import NotificationConfiguration from "../notificationConfigure";
 
 export default function SettingsScreen() {
   const navigate = useNavigate();
@@ -96,12 +97,8 @@ export default function SettingsScreen() {
     fortnightly: { unit: "days", value: 0 },
     monthly: { unit: "days", value: 0 },
   });
-  const [notificationTemplates, setNotificationTemplates] = useState({
-    email: [],
-    sms: [],
-  });
+  const [notificationTemplates, setNotificationTemplates] = useState([]);
   const [customFields, setCustomFields] = useState([]);
-  const [templates, setTemplates] = useState({});
   const [loading, setLoading] = useState(false);
 
   const getSettings = async () => {
@@ -152,14 +149,7 @@ export default function SettingsScreen() {
     );
     setNotificationTemplates(allSettings?.data?.data?.notificationTemplates);
     setCustomFields(allSettings?.data?.data?.customFields);
-    const result = {};
 
-    for (const [key, value] of Object.entries(notificationTemplates)) {
-      result[key] = value?.map((template) => {
-        return { label: template?.templateId, value: template?.templateId };
-      });
-    }
-    setTemplates(result);
     setLoading(false);
   };
 
@@ -219,8 +209,6 @@ export default function SettingsScreen() {
           upcomingPayments={upcomingPayments}
           retryInterval={retryInterval}
           authorizationInterval={authorizationInterval}
-          notificationTemplates={notificationTemplates}
-          templates={templates}
           {...{
             setfailedAuthorizations,
             setSuccessfulAuthorizations,
@@ -240,6 +228,8 @@ export default function SettingsScreen() {
             setLoading={setLoading}
           />
         )}
+        <NotificationConfiguration data={notificationTemplates} />
+
         {settings?.viewCustomFields && (
           <CustomFieldsAccordion
             customFields={customFields}

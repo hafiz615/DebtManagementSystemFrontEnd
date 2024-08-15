@@ -23,6 +23,8 @@ export default function CheckboxAutocomplete({
   width,
   update,
   handleUpdate,
+  backgroundColor,
+  paddingLeft,
 }) {
   const autocompleteRef = useRef(null);
 
@@ -110,6 +112,10 @@ export default function CheckboxAutocomplete({
           sx={{
             color: Colors.BLACK,
             width: width || "6.5rem",
+            backgroundColor: backgroundColor || "",
+            borderRadius: "5px",
+            paddingLeft: paddingLeft,
+            fontFamily: "Nunito",
             "& .MuiOutlinedInput-root": {
               padding: 0,
               fontSize: FONT_SIZE_LARGE,
