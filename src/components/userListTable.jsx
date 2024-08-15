@@ -184,21 +184,24 @@ export default function UserListTable({
                           : row[column?.field]}
                       </StyledTableCell>
                     ))}
-                    {requiredCustomFieldIcons && role === "Admin" && (
-                      <StyledTableCell
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          height: "3rem",
-                        }}
-                      >
+
+                    <StyledTableCell
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        height: "3rem",
+                      }}
+                    >
+                      {requiredCustomFieldIcons && role === "Admin" && (
                         <BasicModal
                           modelButton="ADD USERS"
                           modalType="edit"
                           GetUsers={GetUsers}
                           id={row?.id}
                         />
-                        {generalPermissions?.deleteUser && (
+                      )}
+                      {requiredCustomFieldIcons &&
+                        generalPermissions?.deleteUser && (
                           <Prompt
                             heading="Delete User"
                             text={`Are you sure you want to delete ${row?.email} ?`}
@@ -208,8 +211,7 @@ export default function UserListTable({
                             deleting="Delete User"
                           />
                         )}
-                      </StyledTableCell>
-                    )}
+                    </StyledTableCell>
                   </StyledTableRow>
                 ))}
               </TableBody>

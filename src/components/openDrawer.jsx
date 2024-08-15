@@ -159,14 +159,14 @@ export default function PersistentDrawerLeft({ children }) {
   }
 
   if (
-    generalPermissions?.viewClientsForSelf &&
+    generalPermissions?.viewClientsForSelf ||
     generalPermissions?.viewClientsForAllUsers
   ) {
     menuItems.splice(1, 0, { text: "Clients", icon: <AccountCircle /> });
   }
 
   if (
-    generalPermissions?.viewCreditorsForSelf &&
+    generalPermissions?.viewCreditorsForSelf ||
     generalPermissions?.viewCreditorsForAllUsers
   ) {
     menuItems.splice(2, 0, { text: "Creditors", icon: <People /> });
@@ -175,7 +175,7 @@ export default function PersistentDrawerLeft({ children }) {
   if (generalPermissions?.viewUserListing) {
     menuItems.splice(5, 0, { text: "User Listing", icon: <Group /> });
   }
-  if (analytics?.viewAnalyticsForAllusers && analytics?.viewAnalyticsForSelf) {
+  if (analytics?.viewAnalyticsForAllusers || analytics?.viewAnalyticsForSelf) {
     menuItems.splice(6, 0, { text: "Analytics", icon: <Window /> });
   }
 

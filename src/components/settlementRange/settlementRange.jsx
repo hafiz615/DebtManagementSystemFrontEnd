@@ -183,8 +183,9 @@ export default function SettlementRange() {
   const [debtor, setDebtor] = useState({});
   const [debtorId, setDebtorId] = useState("");
   const [lumpSumpData, setLumpSumpData] = useState({});
-
+  const [errorLumpSumMessage, setErrorLumSumtMessage] = useState("");
   const [fullProfit, setFullProfit] = useState({});
+  const [errorfullProfitMessage, setErrorFullProfitMessage] = useState("");
 
   const [justifications, setJustifications] = useState({
     justification_claude: "",
@@ -226,6 +227,7 @@ export default function SettlementRange() {
         setLumpSumpData(GetLumpSumDataRes?.data?.data);
       } else {
         const errorMessage = GetLumpSumDataRes?.response?.data?.message;
+        setErrorLumSumtMessage(errorMessage);
         showToast(errorMessage, "error");
       }
     }
@@ -237,6 +239,7 @@ export default function SettlementRange() {
         setFullProfit(GetFullProfitDataRes?.data?.data);
       } else {
         const errorMessage = GetFullProfitDataRes?.response?.data?.message;
+        setErrorFullProfitMessage(errorMessage);
         showToast(errorMessage, "error");
       }
     }
@@ -316,7 +319,7 @@ export default function SettlementRange() {
     )),
     1: strat2Recommendations?.map((item, index) => (
       <>
-        {lumpSumpData && (
+        {!isEmpty(lumpSumpData) ? (
           <SettlementCards
             isLumpSumPayment={true}
             title={item}
@@ -332,6 +335,19 @@ export default function SettlementRange() {
             }
             warning={lumpSumpData?.warning || ""}
           />
+        ) : (
+          <Grid
+            item
+            xs={12}
+            container
+            sx={{
+              backgroundColor: Colors.WHITE,
+              padding: "1rem",
+              borderRadius: "10px",
+            }}
+          >
+            {errorLumpSumMessage}
+          </Grid>
         )}
       </>
     )),
@@ -386,9 +402,6 @@ export default function SettlementRange() {
           <Grid
             item
             xs={12}
-            sm={5.8}
-            md={3.8}
-            lg={3.8}
             container
             sx={{
               backgroundColor: Colors.WHITE,
@@ -396,7 +409,7 @@ export default function SettlementRange() {
               borderRadius: "10px",
             }}
           >
-            No data available for Strategy 3
+            {errorfullProfitMessage}
           </Grid>
         )}
       </>
