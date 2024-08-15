@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-import { Box, Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import {
   Window,
   Handyman,
@@ -11,7 +11,6 @@ import {
   PeopleAlt,
   DonutLarge,
   CalendarMonth,
-  ExitToApp,
 } from "@mui/icons-material/";
 
 import {
@@ -20,6 +19,7 @@ import {
   FONT_SIZE_XL,
   PAGE_HEIGHT,
   UserListPage,
+  pipelinesHeading,
 } from "../../constants/appConstants";
 import { Colors } from "../../config/default";
 import SearchBar from "../searchBar";
@@ -36,7 +36,6 @@ import {
 import CheckboxAutocomplete from "../checkboxAutocomplete";
 import moment from "moment";
 import MuiModels from "../models";
-import { isEmpty } from "lodash";
 
 export default function PipelineDetail() {
   const navigate = useNavigate();
@@ -283,7 +282,7 @@ export default function PipelineDetail() {
             color: Colors.BLACK,
           }}
         >
-          Pipelines
+          {pipelinesHeading}
         </Typography>
         <SearchBar
           searchCheck={true}

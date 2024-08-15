@@ -10,6 +10,7 @@ import { phoneNumberFormat, swapKeysAndValues } from "../../common";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import PaymentFields from "../caseCreationFields/paymentFields";
 import Autocomplete from "@mui/material/Autocomplete";
+import { handleNumberInput, handleNumberInputKeyDown } from "../../common";
 
 export default function CreditorFields({
   debtorCaseData,
@@ -32,8 +33,7 @@ export default function CreditorFields({
   const [accountTitle, setAccountTitle] = useState(
     thisCaseData?.creditor?.accountTitle || ""
   );
-  // const [digits, setDigits] = useState(Array(10).fill(""));
-  // thisCaseData?.creditor?.accountTitle
+
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const [nameTitleMapping, setNameTitleMapping] = useState(
     swapKeysAndValues(debtorCaseData?.creditorNames?.mapped_data || {})
@@ -102,21 +102,8 @@ export default function CreditorFields({
     setFinalCaseData(updatedFinalCaseData);
   };
 
-  const handleNumberInputKeyDown = (e) => {
-    const invalidChars = ["e", "E", ".", "-"];
-    if (invalidChars.includes(e.key)) {
-      e.preventDefault();
-    }
-  };
   const handleSliderChange = (event, newValue) => {
     setDigits([newValue]);
-  };
-
-  const handleNumberInput = (e) => {
-    const invalidChars = ["e", "E", ".", "+", "-"];
-    if (invalidChars.includes(e.key)) {
-      e.preventDefault();
-    }
   };
 
   const today = new Date().toISOString().split("T")[0];

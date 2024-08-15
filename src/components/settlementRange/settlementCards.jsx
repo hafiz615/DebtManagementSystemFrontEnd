@@ -4,7 +4,6 @@ import { Colors } from "../../config/default";
 import { FONT_SIZE_LARGE } from "../../constants/appConstants";
 import Tooltip from "@mui/material/Tooltip";
 import InfoIcon from "@mui/icons-material/Info";
-import { isEmpty } from "lodash";
 import MuiModels from "../models";
 import ScrollbarStyles from "./../customScroll";
 
@@ -124,7 +123,7 @@ export default function SettlementCards({
           />
         </div>
         <Box sx={lineStyle} />
-        {noData ? (
+        {noData || isFullPayment ? (
           <Typography sx={{ ...commonTextStyles, marginLeft: "8%" }}>
             No Data
           </Typography>

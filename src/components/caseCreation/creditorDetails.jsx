@@ -17,7 +17,6 @@ import { FONT_SIZE_XL } from "../../constants/appConstants";
 
 export default function CreditorDetails({
   creditors,
-  setCreditors,
   debtorCaseData,
   finalCaseData,
   setFinalCaseData,
@@ -121,7 +120,7 @@ export default function CreditorDetails({
   useEffect(() => {
     let processedData;
 
-    if (creditors.length === 0) {
+    if (creditors?.length === 0) {
       processedData = [
         {
           creditor: {
@@ -252,7 +251,6 @@ export default function CreditorDetails({
             >
               <Grid
                 container
-                xs={12}
                 sx={{ justifyContent: "space-between", alignItems: "center" }}
               >
                 <Typography
