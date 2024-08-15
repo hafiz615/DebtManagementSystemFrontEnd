@@ -5,6 +5,7 @@ import { Colors } from "../../config/default";
 import { CreateRoles } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import { FONT_FAMILY, FONT_WEIGHT_MEDIUM } from "../../constants/appConstants";
+import Close from "@mui/icons-material/Close";
 
 function CreateRole({
   handleClose,
@@ -64,52 +65,64 @@ function CreateRole({
   };
 
   return (
-    <Grid container xs={12}>
-      <Typography
+    <>
+      <Box
+        onClick={handleClose}
         sx={{
-          fontWeight: FONT_WEIGHT_MEDIUM,
-          fontFamily: FONT_FAMILY,
-          color: Colors.BLACK,
+          cursor: "pointer",
+          display: "flex",
+          justifyContent: "right",
         }}
       >
-        Create Role
-      </Typography>
-
-      <Grid item style={{ width: "100%" }}>
-        <input
-          type="text"
-          placeholder="Role Name"
-          style={inputStyling}
-          value={roleName}
-          onChange={(e) => setRoleName(e.target.value)}
-        />
-        <Box
+        <Close sx={{ marginRight: "1rem" }} />
+      </Box>
+      <Grid container>
+        <Typography
           sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginTop: "1rem",
+            fontWeight: FONT_WEIGHT_MEDIUM,
+            fontFamily: FONT_FAMILY,
+            color: Colors.BLACK,
           }}
         >
-          <TextButton
-            buttonText="CANCEL"
-            height="2rem"
-            marginRight="1rem"
-            width="6rem"
-            onClick={handleClose}
-            backgroundColor={Colors.ORANGE_COLOR}
-            hoverColor={Colors.ORANGE_COLOR}
+          Create Role
+        </Typography>
+
+        <Grid item style={{ width: "100%" }}>
+          <input
+            type="text"
+            placeholder="Role Name"
+            style={inputStyling}
+            value={roleName}
+            onChange={(e) => setRoleName(e.target.value)}
           />
-          <TextButton
-            buttonText="SAVE"
-            height="2rem"
-            width="6rem"
-            backgroundColor={Colors.SKY_BLUE}
-            hoverColor={Colors.SKY_BLUE}
-            onClick={handleSave}
-          />
-        </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginTop: "1rem",
+            }}
+          >
+            <TextButton
+              buttonText="CANCEL"
+              height="2rem"
+              marginRight="1rem"
+              width="6rem"
+              onClick={handleClose}
+              backgroundColor={Colors.ORANGE_COLOR}
+              hoverColor={Colors.ORANGE_COLOR}
+            />
+            <TextButton
+              buttonText="SAVE"
+              height="2rem"
+              width="6rem"
+              backgroundColor={Colors.SKY_BLUE}
+              hoverColor={Colors.SKY_BLUE}
+              onClick={handleSave}
+            />
+          </Box>
+        </Grid>
       </Grid>
-    </Grid>
+    </>
   );
 }
 

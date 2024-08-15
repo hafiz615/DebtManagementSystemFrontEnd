@@ -157,7 +157,7 @@ export default function RoleAndPermission() {
         </div>
       </StyledAccordionSummary>
       <StyledAccordionDetails>
-        <Grid container xs={12} sx={{ marginTop: "1rem" }}>
+        <Grid container sx={{ marginTop: "1rem" }}>
           <Typography
             sx={{
               fontSize: FONT_SIZE_XL,
@@ -178,10 +178,10 @@ export default function RoleAndPermission() {
           >
             {rolesData?.map((data, index) => (
               <Grid
-                key={index}
                 item
                 xs={12}
                 lg={2.8}
+                key={index}
                 sx={{
                   alignItems: "center",
                   backgroundColor:
@@ -221,7 +221,7 @@ export default function RoleAndPermission() {
                     </span>
                   </StyledTypography>
                 </Box>
-                {data.name !== "Super User" && (
+                {data?.name !== "Super User" && (
                   <Box
                     sx={{
                       marginLeft: "auto",
@@ -246,9 +246,6 @@ export default function RoleAndPermission() {
                       permissionData={permissionData}
                       iconSize="20px"
                       setSelectedRole={setSelectedRole}
-                      // selectedRole={selectedRole}
-
-                      // data={data}
                     />
                   </Box>
                 )}
@@ -271,7 +268,6 @@ export default function RoleAndPermission() {
             {selectedRole !== "Super User" && (
               <Grid
                 container
-                xs={12}
                 sx={{
                   justifyContent: "flex-end",
                   marginTop: "1rem",

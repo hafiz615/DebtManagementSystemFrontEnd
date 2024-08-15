@@ -10,6 +10,11 @@ import {
 import { Colors } from "../../config/default";
 import BasicSwitches from "./basicSwitches";
 import { convertCamelCaseToTitle } from "../../common";
+import {
+  generalPermissionsHeading,
+  settingsPermissionsHeading,
+  analyticsPermissionsHeading,
+} from "../../constants/appConstants";
 
 export default function Permission({
   role,
@@ -51,7 +56,7 @@ export default function Permission({
         {role} Permissions
       </Typography>
 
-      <Grid container xs={12} sx={{ marginTop: "1rem" }}>
+      <Grid container sx={{ marginTop: "1rem" }}>
         <Typography
           sx={{
             fontSize: FONT_SIZE_XL,
@@ -59,9 +64,9 @@ export default function Permission({
             fontWeight: FONT_WEIGHT_HEADING,
           }}
         >
-          General Permissions
+          {generalPermissionsHeading}
         </Typography>
-        <Grid container item xs={12}>
+        <Grid container item>
           {general &&
             Object?.entries(general)?.map(([key, value], index) => (
               <Grid
@@ -100,7 +105,7 @@ export default function Permission({
         </Grid>
       </Grid>
 
-      <Grid container xs={12} sx={{ marginTop: "1rem" }}>
+      <Grid container sx={{ marginTop: "1rem" }}>
         <Typography
           sx={{
             fontSize: FONT_SIZE_XL,
@@ -108,9 +113,9 @@ export default function Permission({
             fontWeight: FONT_WEIGHT_HEADING,
           }}
         >
-          Settings Permissions
+          {settingsPermissionsHeading}
         </Typography>
-        <Grid container item xs={12}>
+        <Grid container item>
           {settingsPermissions &&
             Object?.entries(settingsPermissions)?.map(([key, value], index) => (
               <Grid
@@ -149,7 +154,7 @@ export default function Permission({
         </Grid>
       </Grid>
 
-      <Grid container xs={12} sx={{ marginTop: "1rem" }}>
+      <Grid container sx={{ marginTop: "1rem" }}>
         <Typography
           sx={{
             fontSize: FONT_SIZE_XL,
@@ -157,17 +162,17 @@ export default function Permission({
             fontWeight: FONT_WEIGHT_HEADING,
           }}
         >
-          Analytics Permissions
+          {analyticsPermissionsHeading}
         </Typography>
         <Grid container item xs={12}>
           {analyticsPermissions &&
             Object?.entries(analyticsPermissions)?.map(
               ([key, value], index) => (
                 <Grid
-                  key={index}
                   item
                   xs={12}
                   lg={2.8}
+                  key={index}
                   sx={{
                     alignItems: "center",
                     backgroundColor: Colors.BG_LIGHT_GRAY,
