@@ -1,28 +1,27 @@
 import React, { useEffect, useState } from "react";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-import { styled } from "@mui/material/styles";
-import { Colors } from "../config/default";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Box,
   CircularProgress,
   Grid,
-  Menu,
-  MenuItem,
   Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  styled,
 } from "@mui/material";
+
 import Dropdown from "./dropdown";
 import Checkboxes from "./checkBox";
 import { FONT_SIZE_LARGE } from "../constants/appConstants";
 import TextButton from "./button";
+import { useToast } from "../toast/toastContext";
+import { Colors } from "../config/default";
 import {
   GetEvents,
   UpdateNotificationConfiguration,
 } from "../services/services";
-import { useToast } from "../toast/toastContext";
 
 const StyledAccordion = styled(Accordion)({
   "&:before": {
@@ -51,7 +50,6 @@ const StyledAccordionDetails = styled(AccordionDetails)({
 export default function NotificationConfiguration({ data }) {
   const [selectedValue, setSelectedValue] = useState("");
   const [allEvents, setAllEvents] = useState([]);
-  const [anchorElNew, setAnchorElNew] = useState(null);
   const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
   const { showToast } = useToast();
@@ -67,7 +65,7 @@ export default function NotificationConfiguration({ data }) {
 
   const allExistingEvents =
     allEvents &&
-    allEvents.map((item) => ({
+    allEvents?.map((item) => ({
       label: item?.label
         ? item.label.charAt(0).toUpperCase() + item.label.slice(1)
         : "",
@@ -175,103 +173,106 @@ export default function NotificationConfiguration({ data }) {
         Notification Configuration
       </StyledAccordionSummary>
       <StyledAccordionDetails>
-        {loading ? (
-          <Grid
-            container
-            sx={{
-              justifyContent: "center",
-              alignItems: "center",
-              height: "30vh",
-            }}
-          >
-            <CircularProgress />
-          </Grid>
-        ) : (
-          <Grid xs={12} sx={{ mt: "1rem" }}>
-            <Dropdown
-              menuWidth="16rem"
-              menuItems={allExistingEvents}
-              placeholder="Events"
-              backgroundColor={Colors.BG_LIGHT_GRAY}
-              hoverColor={Colors.BG_LIGHT_GRAY}
-              width="16rem"
-              selectedValue={selectedValue}
-              setSelectedValue={setSelectedValue}
-            />
-            {userSettings?.map((item) => (
-              <Grid
-                key={item.role}
-                container
-                xs={12}
-                sx={{ mt: "10px", gap: "2rem", alignItems: "center" }}
-              >
-                <Typography sx={{ ...fontStyling, width: "20%" }}>
-                  {item?.role}
-                </Typography>
-                <Box sx={boxStyling}>
-                  <Checkboxes
-                    checked={item?.email_allowed}
-                    handleCheckChange={(e) =>
-                      handleEmailCheckChange(item.role, e.target.checked)
-                    }
-                  />
-                  <Typography sx={fontStyling}>Email</Typography>
-                </Box>
-                <Dropdown
-                  menuWidth="16rem"
-                  menuItems={allEmailTemplates}
-                  placeholder="Templates"
-                  backgroundColor={Colors.BG_LIGHT_GRAY}
-                  hoverColor={Colors.BG_LIGHT_GRAY}
-                  width="16rem"
-                  selectedValue={item?.email_template}
-                  setSelectedValue={(value) =>
-                    handleEmailTemplateChange(item.role, value)
-                  }
-                />
-
-                <Box sx={boxStyling}>
-                  <Checkboxes
-                    checked={item?.sms_allowed}
-                    handleCheckChange={(e) =>
-                      handleSmsCheckChange(item.role, e.target.checked)
-                    }
-                  />
-                  <Typography sx={fontStyling}>SMS</Typography>
-                </Box>
-                <Dropdown
-                  menuWidth="16rem"
-                  menuItems={allSmsTemplates}
-                  placeholder="Templates"
-                  backgroundColor={Colors.BG_LIGHT_GRAY}
-                  hoverColor={Colors.BG_LIGHT_GRAY}
-                  width="16rem"
-                  selectedValue={item?.sms_template}
-                  setSelectedValue={(value) =>
-                    handleSmsTemplateChange(item.role, value)
-                  }
-                />
-              </Grid>
-            ))}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "right",
-                marginTop: "1rem",
+        <Grid xs={12} sx={{ mt: "1rem" }}>
+          <Dropdown
+            menuWidth="16rem"
+            menuItems={allExistingEvents}
+            placeholder="Events"
+            backgroundColor={Colors.BG_LIGHT_GRAY}
+            hoverColor={Colors.BG_LIGHT_GRAY}
+            width="16rem"
+            selectedValue={selectedValue}
+            setSelectedValue={setSelectedValue}
+          />
+          {loading ? (
+            <Grid
+              container
+              sx={{
+                justifyContent: "center",
+                alignItems: "center",
+                height: "30vh",
               }}
             >
-              <TextButton
-                buttonText="Save"
-                height="2rem"
-                width="8rem"
-                onClick={handleSave}
-                backgroundColor={Colors.SKY_BLUE}
-                hoverColor={Colors.SKY_BLUE}
-                loading={buttonLoading}
-              />
-            </div>
-          </Grid>
-        )}
+              <CircularProgress />
+            </Grid>
+          ) : (
+            <>
+              {userSettings?.map((item) => (
+                <Grid
+                  key={item.role}
+                  container
+                  xs={12}
+                  sx={{ mt: "10px", gap: "2rem", alignItems: "center" }}
+                >
+                  <Typography sx={{ ...fontStyling, width: "20%" }}>
+                    {item?.role}
+                  </Typography>
+                  <Box sx={boxStyling}>
+                    <Checkboxes
+                      checked={item?.email_allowed}
+                      handleCheckChange={(e) =>
+                        handleEmailCheckChange(item.role, e.target.checked)
+                      }
+                    />
+                    <Typography sx={fontStyling}>Email</Typography>
+                  </Box>
+                  <Dropdown
+                    menuWidth="16rem"
+                    menuItems={allEmailTemplates}
+                    placeholder="Templates"
+                    backgroundColor={Colors.BG_LIGHT_GRAY}
+                    hoverColor={Colors.BG_LIGHT_GRAY}
+                    width="16rem"
+                    selectedValue={item?.email_template}
+                    setSelectedValue={(value) =>
+                      handleEmailTemplateChange(item.role, value)
+                    }
+                  />
+                  <Box sx={boxStyling}>
+                    <Checkboxes
+                      checked={item?.sms_allowed}
+                      handleCheckChange={(e) =>
+                        handleSmsCheckChange(item.role, e.target.checked)
+                      }
+                    />
+                    <Typography sx={fontStyling}>SMS</Typography>
+                  </Box>
+                  <Dropdown
+                    menuWidth="16rem"
+                    menuItems={allSmsTemplates}
+                    placeholder="Templates"
+                    backgroundColor={Colors.BG_LIGHT_GRAY}
+                    hoverColor={Colors.BG_LIGHT_GRAY}
+                    width="16rem"
+                    selectedValue={item?.sms_template}
+                    setSelectedValue={(value) =>
+                      handleSmsTemplateChange(item.role, value)
+                    }
+                  />
+                </Grid>
+              ))}
+              {selectedValue && (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "right",
+                    marginTop: "1rem",
+                  }}
+                >
+                  <TextButton
+                    buttonText="Save"
+                    height="2rem"
+                    width="8rem"
+                    onClick={handleSave}
+                    backgroundColor={Colors.SKY_BLUE}
+                    hoverColor={Colors.SKY_BLUE}
+                    loading={buttonLoading}
+                  />
+                </div>
+              )}
+            </>
+          )}
+        </Grid>
       </StyledAccordionDetails>
     </StyledAccordion>
   );

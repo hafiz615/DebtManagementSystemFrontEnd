@@ -23,32 +23,7 @@ import {
   SaveSettings,
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
-import { ArrowRight } from "@mui/icons-material";
-
-const StyledSelect = styled.select`
-  border: none;
-  padding: 0.5rem;
-  height: 2.5rem;
-  width: 98%;
-  background-color: ${Colors.BG_LIGHT_GRAY};
-  color: ${Colors.DARK_GRAY};
-  font-family: "Nunito";
-  border-radius: 5px;
-  text-transform: none;
-
-  &:hover {
-    background-color: ${Colors.BG_LIGHT_GRAY};
-  }
-
-  & option {
-    background-color: ${Colors.BG_LIGHT_GRAY};
-    color: ${Colors.DARK_GRAY};
-  }
-  & option:checked {
-    background-color: #cccccc;
-    color: #ffffff;
-  }
-`;
+import { ArrowRight, ExpandMore } from "@mui/icons-material";
 
 const StyledInput = styled.input`
   font-family: "Nunito";
@@ -78,14 +53,14 @@ export default function FroalaEditor({
     subject: row?.subject || "",
     name: row?.name || "",
     event: row?.event || "",
-    html: row?.html || "",
+    content: row?.content || "",
     type: "email",
   });
 
   const [smsTemplate, setSmsTemplate] = useState({
     name: row?.name || "",
     event: row?.event || "",
-    text: row?.text || "",
+    content: row?.content || "",
     type: "sms",
   });
 
@@ -99,8 +74,8 @@ export default function FroalaEditor({
   const editorRef = useRef(null);
 
   useEffect(() => {
-    if (row?.html) {
-      setFroalaEditor(row?.html);
+    if (row?.content) {
+      setFroalaEditor(row?.content);
     }
   }, [row, setFroalaEditor]);
 
@@ -140,19 +115,19 @@ export default function FroalaEditor({
     }
   };
 
-  const handleChange = (html) => {
+  const handleChange = (content) => {
     if (templateType === "email") {
       setEmailTemplate((prev) => ({
         ...prev,
-        html: html,
+        content: content,
       }));
     } else {
       setSmsTemplate((prev) => ({
         ...prev,
-        text: html,
+        content: content,
       }));
     }
-    setFroalaEditor(html);
+    setFroalaEditor(content);
   };
 
   const handleCloseMenu = () => {
@@ -165,12 +140,13 @@ export default function FroalaEditor({
     setSelectedCategory(category);
   };
 
-  const handleMenuClick = (action) => {
+  const handleMenuClick = (action, selectedCategory) => {
     setSubMenuAnchorEl(null);
     setAnchorEl(null);
     const selectedVariable = action;
     if (selectedVariable) {
-      const newContent = froalaEditor + `{{${selectedVariable}}}`;
+      const newContent =
+        froalaEditor + `{{${selectedCategory}.${selectedVariable}}}`;
       setFroalaEditor(newContent);
     }
   };
@@ -197,7 +173,8 @@ export default function FroalaEditor({
       subject: emailTemplate.subject,
       name: templateType === "email" ? emailTemplate.name : smsTemplate.name,
       event: templateType === "email" ? emailTemplate.event : smsTemplate.event,
-      html: templateType === "email" ? emailTemplate.html : smsTemplate.text,
+      content:
+        templateType === "email" ? emailTemplate.content : smsTemplate.content,
       type: templateType,
     };
     const resSetting = await GetAllSettings();
@@ -215,12 +192,12 @@ export default function FroalaEditor({
           subject: "",
           name: "",
           event: "",
-          html: "",
+          content: "",
         });
         setSmsTemplate({
           name: "",
           event: "",
-          text: "",
+          content: "",
         });
       } else {
         const errorMessage = resNotificationTemplate?.response?.data?.message;
@@ -236,7 +213,8 @@ export default function FroalaEditor({
       subject: emailTemplate.subject,
       name: templateType === "email" ? emailTemplate.name : smsTemplate.name,
       event: templateType === "email" ? emailTemplate.event : smsTemplate.event,
-      html: templateType === "email" ? emailTemplate.html : smsTemplate.text,
+      content:
+        templateType === "email" ? emailTemplate.content : smsTemplate.content,
       templateId: row?.templateId,
       type: templateType,
     };
@@ -262,10 +240,10 @@ export default function FroalaEditor({
       ? isFieldEmpty(emailTemplate?.subject) ||
         isFieldEmpty(emailTemplate?.name) ||
         isFieldEmpty(emailTemplate?.event) ||
-        isFieldEmpty(emailTemplate?.html)
+        isFieldEmpty(emailTemplate?.content)
       : isFieldEmpty(smsTemplate?.name) ||
         isFieldEmpty(smsTemplate?.event) ||
-        isFieldEmpty(smsTemplate?.text);
+        isFieldEmpty(smsTemplate?.content);
 
   const buttonStyling = {
     textTransform: "none",
@@ -276,6 +254,19 @@ export default function FroalaEditor({
   };
 
   const fontStyling = { fontSize: FONT_SIZE_LARGE, fontFamily: "Nunito" };
+  const divStyling = {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: Colors.BG_LIGHT_GRAY,
+    borderRadius: "5px",
+    height: "2.5rem",
+    cursor: "pointer",
+    fontSize: FONT_SIZE_LARGE,
+    fontFamily: "Nunito",
+    padding: "0px 10px",
+    width: "98%",
+  };
 
   return (
     <>
@@ -342,16 +333,16 @@ export default function FroalaEditor({
       >
         <Grid item xs={6}>
           <div>
-            <TextButton
-              buttonText="Select Variable"
-              height="2.5rem"
-              width="98%"
-              fontColor={Colors.BLACK}
-              onClick={(e) => setAnchorEl(e.target)}
-              backgroundColor={Colors.BG_LIGHT_GRAY}
-              hoverColor={Colors.BG_LIGHT_GRAY}
-              boxShadow="none"
-            />
+            <div
+              style={divStyling}
+              onClick={(e) => setAnchorEl(e.currentTarget)}
+            >
+              <span>Select Variable</span>
+              <span style={{ marginTop: "5px" }}>
+                <ExpandMore />
+              </span>
+            </div>
+
             <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
@@ -367,7 +358,7 @@ export default function FroalaEditor({
                     justifyContent: "space-between",
                   }}
                 >
-                  {category}
+                  {category?.charAt(0).toUpperCase() + category?.slice(1)}
                   <ArrowRight />
                 </MenuItem>
               ))}
@@ -392,9 +383,11 @@ export default function FroalaEditor({
                       <div style={{ display: "flex", flexDirection: "column" }}>
                         <Button
                           sx={buttonStyling}
-                          onClick={() => handleMenuClick(label)}
+                          onClick={() =>
+                            handleMenuClick(label, selectedCategory)
+                          }
                         >
-                          {label}
+                          {action}
                         </Button>
                       </div>
                     )
@@ -404,16 +397,12 @@ export default function FroalaEditor({
           </div>
         </Grid>
         <Grid item xs={6}>
-          <TextButton
-            buttonText="Select Events"
-            height="2.5rem"
-            width="98%"
-            fontColor={Colors.BLACK}
-            onClick={(e) => setAnchorElNew(e.target)}
-            backgroundColor={Colors.BG_LIGHT_GRAY}
-            hoverColor={Colors.BG_LIGHT_GRAY}
-            boxShadow="none"
-          />
+          <div style={divStyling} onClick={(e) => setAnchorElNew(e.target)}>
+            <span>Select Events</span>
+            <span style={{ marginTop: "5px" }}>
+              <ExpandMore />
+            </span>
+          </div>
           <Menu
             anchorEl={anchorElNew}
             open={Boolean(anchorElNew)}
@@ -432,7 +421,7 @@ export default function FroalaEditor({
                 onClick={(event) => handleEventChange(event)}
                 sx={fontStyling}
               >
-                {item?.label}
+                {item?.label.charAt(0).toUpperCase() + item?.label.slice(1)}
               </MenuItem>
             ))}
           </Menu>
