@@ -6,18 +6,17 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-import { Grid, Typography, Box, Hidden } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { Colors } from "../../config/default";
 import Dropdown from "../dropdown";
 import TextButton from "../button";
-import RowConfigForm from "./paymentsAuthsNotificationRow";
 
 import { SaveSettings } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { styled } from "@mui/material/styles";
-import { handleNumberInput, handleNumberInputKeyDown } from "../../common";
+import { handleNumberInput } from "../../common";
 const StyledAccordion = styled(Accordion)({
   "&:before": {
     display: "none", // Remove the default line
