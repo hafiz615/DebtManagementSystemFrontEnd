@@ -21,71 +21,7 @@ export default function SettingsScreen() {
   const settings = useSelector(
     (state) => state?.permissions?.permissions?.settings
   );
-  const [failedAuthorizations, setfailedAuthorizations] = useState({
-    email: false,
-    sms: false,
-    emailTemplate: "",
-    smsTemplate: "",
-    sendTo: {
-      admin: false,
-      manager: false,
-      negotiator: false,
-      debtor: false,
-      creditor: false,
-    },
-  });
-  const [successfulAuthorizations, setSuccessfulAuthorizations] = useState({
-    email: false,
-    sms: false,
-    emailTemplate: "",
-    smsTemplate: "",
-    sendTo: {
-      admin: false,
-      manager: false,
-      negotiator: false,
-      debtor: false,
-      creditor: false,
-    },
-  });
-  const [failedPayments, setFailedPayments] = useState({
-    email: false,
-    sms: false,
-    emailTemplate: "",
-    smsTemplate: "",
-    sendTo: {
-      admin: false,
-      manager: false,
-      negotiator: false,
-      debtor: false,
-      creditor: false,
-    },
-  });
-  const [successPayments, setSuccessPayments] = useState({
-    email: false,
-    sms: false,
-    emailTemplate: "",
-    smsTemplate: "",
-    sendTo: {
-      admin: false,
-      manager: false,
-      negotiator: false,
-      debtor: false,
-      creditor: false,
-    },
-  });
-  const [upcomingPayments, setUpcomingPayments] = useState({
-    email: false,
-    sms: false,
-    emailTemplate: "",
-    smsTemplate: "",
-    sendTo: {
-      admin: false,
-      manager: false,
-      negotiator: false,
-      debtor: false,
-      creditor: false,
-    },
-  });
+
   const [retryInterval, setRetryInterval] = useState({
     failedAuthorization: { unit: "days", value: 0, maxRetry: 0, retryCount: 0 },
     failedPayment: { unit: "hours", value: 0, maxRetry: 0, retryCount: 0 },
@@ -111,21 +47,6 @@ export default function SettingsScreen() {
       localStorage.clear();
       navigate("/");
     }
-    setfailedAuthorizations(
-      allSettings?.data?.data?.paymentsAuthorizations?.failedAuthorizations
-    );
-    setSuccessfulAuthorizations(
-      allSettings?.data?.data?.paymentsAuthorizations?.successfulAuthorizations
-    );
-    setFailedPayments(
-      allSettings?.data?.data?.paymentsAuthorizations?.failedPayments
-    );
-    setSuccessPayments(
-      allSettings?.data?.data?.paymentsAuthorizations?.successPayments
-    );
-    setUpcomingPayments(
-      allSettings?.data?.data?.paymentsAuthorizations?.upcomingPayments
-    );
     setRetryInterval(
       allSettings?.data?.data?.paymentsAuthorizations?.retryInterval || {
         failedAuthorization: {
@@ -202,19 +123,9 @@ export default function SettingsScreen() {
         }}
       >
         <SettingsAccordion
-          failedAuthorizations={failedAuthorizations}
-          successfulAuthorizations={successfulAuthorizations}
-          failedPayments={failedPayments}
-          successPayments={successPayments}
-          upcomingPayments={upcomingPayments}
           retryInterval={retryInterval}
           authorizationInterval={authorizationInterval}
           {...{
-            setfailedAuthorizations,
-            setSuccessfulAuthorizations,
-            setFailedPayments,
-            setSuccessPayments,
-            setUpcomingPayments,
             setRetryInterval,
             setAuthorizationInterval,
           }}

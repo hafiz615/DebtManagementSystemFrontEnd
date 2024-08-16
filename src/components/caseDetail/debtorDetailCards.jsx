@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   styled,
@@ -58,7 +58,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
   const debtorPeronsalDetails = "Personal Details";
   const debtorBusinessDetails = "Business Details";
-
+  const [searchText, setSearchText] = useState("");
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 2;
   const handleNext = () => {
@@ -110,6 +110,18 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
     marginTop: ".3rem",
   };
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
+  const filteredContacts = caseData?.debtor?.contacts?.filter((item) =>
+    item?.name?.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  useEffect(() => {
+    setStartIndex(0);
+  }, [searchText]);
+
+  const paginatedContacts = filteredContacts?.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
   return (
     <>
       <Grid
@@ -339,6 +351,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
             <StyledInputBase
               placeholder="Search Contact..."
               inputProps={{ "aria-label": "search" }}
+              onChange={(e) => setSearchText(e.target.value)}
             />
           </SearchContainer>
         </Grid>
@@ -351,8 +364,9 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
               justifyContent: "space-between",
               backgroundColor: Colors.SKY_BLUE,
               color: Colors.WHITE,
-              paddingRight: ".2rem",
-              paddingLeft: ".2rem",
+              paddingRight: ".4rem",
+              paddingLeft: ".4rem",
+              borderRadius: ".4rem",
               height: "2rem",
               alignItems: "center",
             }}
@@ -381,56 +395,49 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
               ...ScrollbarStyles,
             }}
           >
-            {caseData?.debtor?.contacts
-              ?.slice(startIndex, startIndex + itemsPerPage)
-              ?.map((item, index) => (
-                <Grid
-                  item
-                  xs={12}
-                  key={index}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-around",
-                    backgroundColor:
-                      index % 2 === 0
-                        ? Colors.WHITE
-                        : "rgba(85, 148, 242, 0.06)",
-                    "&:hover": {
-                      backgroundColor: Colors.BG_LIGHT_GRAY,
-                    },
-                    cursor: "pointer",
-                    paddingRight: ".2rem",
-                    paddingLeft: ".2rem",
-                    height: "2rem",
-                    alignItems: "center",
-                  }}
-                >
-                  <Grid item xs={4}>
-                    <span style={cellStyle}>{item?.name || "--"}</span>
-                  </Grid>
-                  <Grid item xs={4} sx={griRelationdStyle}>
-                    <span style={cellStyle}>
-                      {item?.relationWithDebtor || "--"}
-                    </span>
-                  </Grid>
-                  <Grid item xs={4} sx={gridActionStyle}>
-                    <span style={cellStyle}>
-                      <Email sx={iconStyle} />
-                      <Call sx={iconStyle} />
-                      <Sms sx={iconStyle} />
-                      <MuiModels
-                        show="editDebtorContacts"
-                        caseData={caseData}
-                        item={item}
-                        GetCaseDetails={GetCaseDetails}
-                        width="70vw"
-                      />
-                    </span>
-                  </Grid>
+            {paginatedContacts?.map((item, index) => (
+              <Grid
+                item
+                xs={12}
+                key={index}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-around",
+                  backgroundColor:
+                    index % 2 === 0 ? Colors.WHITE : "rgba(85, 148, 242, 0.06)",
+                  "&:hover": {
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                  },
+                  cursor: "pointer",
+                  paddingRight: ".4rem",
+                  paddingLeft: ".4rem",
+                  height: "2rem",
+                  alignItems: "center",
+                }}
+              >
+                <Grid item xs={4}>
+                  <span style={cellStyle}>{item?.name || "--"}</span>
                 </Grid>
-              ))}
+                <Grid item xs={4} sx={griRelationdStyle}>
+                  <span style={cellStyle}>
+                    {item?.relationWithDebtor || "--"}
+                  </span>
+                </Grid>
+                <Grid item xs={4} sx={gridActionStyle}>
+                  <span style={cellStyle}>
+                    <MuiModels
+                      show="editDebtorContacts"
+                      caseData={caseData}
+                      item={item}
+                      GetCaseDetails={GetCaseDetails}
+                      width="70vw"
+                    />
+                  </span>
+                </Grid>
+              </Grid>
+            ))}
 
-            {caseData?.debtor?.contacts?.length > 2 && (
+            {filteredContacts?.length > itemsPerPage && (
               <div
                 style={{
                   display: "flex",
@@ -450,8 +457,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
                 <IconButton
                   aria-label="next"
                   disabled={
-                    startIndex + itemsPerPage >=
-                    caseData?.debtor?.contacts?.length
+                    startIndex + itemsPerPage >= filteredContacts?.length
                   }
                   onClick={handleNext}
                   color="primary"

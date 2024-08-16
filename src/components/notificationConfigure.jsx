@@ -1,28 +1,27 @@
 import React, { useEffect, useState } from "react";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-import { styled } from "@mui/material/styles";
-import { Colors } from "../config/default";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Box,
   CircularProgress,
   Grid,
-  Menu,
-  MenuItem,
   Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  styled,
 } from "@mui/material";
+
 import Dropdown from "./dropdown";
 import Checkboxes from "./checkBox";
 import { FONT_SIZE_LARGE } from "../constants/appConstants";
 import TextButton from "./button";
+import { useToast } from "../toast/toastContext";
+import { Colors } from "../config/default";
 import {
   GetEvents,
   UpdateNotificationConfiguration,
 } from "../services/services";
-import { useToast } from "../toast/toastContext";
 
 const StyledAccordion = styled(Accordion)({
   "&:before": {
@@ -51,7 +50,6 @@ const StyledAccordionDetails = styled(AccordionDetails)({
 export default function NotificationConfiguration({ data }) {
   const [selectedValue, setSelectedValue] = useState("");
   const [allEvents, setAllEvents] = useState([]);
-  const [anchorElNew, setAnchorElNew] = useState(null);
   const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
   const { showToast } = useToast();
@@ -67,7 +65,7 @@ export default function NotificationConfiguration({ data }) {
 
   const allExistingEvents =
     allEvents &&
-    allEvents.map((item) => ({
+    allEvents?.map((item) => ({
       label: item?.label
         ? item.label.charAt(0).toUpperCase() + item.label.slice(1)
         : "",
@@ -253,23 +251,25 @@ export default function NotificationConfiguration({ data }) {
                 />
               </Grid>
             ))}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "right",
-                marginTop: "1rem",
-              }}
-            >
-              <TextButton
-                buttonText="Save"
-                height="2rem"
-                width="8rem"
-                onClick={handleSave}
-                backgroundColor={Colors.SKY_BLUE}
-                hoverColor={Colors.SKY_BLUE}
-                loading={buttonLoading}
-              />
-            </div>
+            {selectedValue && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "right",
+                  marginTop: "1rem",
+                }}
+              >
+                <TextButton
+                  buttonText="Save"
+                  height="2rem"
+                  width="8rem"
+                  onClick={handleSave}
+                  backgroundColor={Colors.SKY_BLUE}
+                  hoverColor={Colors.SKY_BLUE}
+                  loading={buttonLoading}
+                />
+              </div>
+            )}
           </Grid>
         )}
       </StyledAccordionDetails>

@@ -99,11 +99,10 @@ export default function ListTable({
   };
 
   const backward = () => {
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
+    setCurrentPage(currentPage - 1);
   };
-
   const forward = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+    setCurrentPage(currentPage + 1);
   };
 
   const handleChangeRowsPerPage = (event) => {

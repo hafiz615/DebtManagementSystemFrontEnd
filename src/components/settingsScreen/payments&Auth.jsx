@@ -42,11 +42,6 @@ const StyledAccordionDetails = styled(AccordionDetails)({
 });
 
 export default function SettingsAccordion({
-  failedAuthorizations,
-  successfulAuthorizations,
-  failedPayments,
-  successPayments,
-  upcomingPayments,
   retryInterval,
   authorizationInterval,
   setRetryInterval,
@@ -72,11 +67,6 @@ export default function SettingsAccordion({
   const saveAuthsPaymentsConfig = async () => {
     const settings = {
       paymentsAuthorizations: {
-        failedAuthorizations: failedAuthorizations,
-        successfulAuthorizations: successfulAuthorizations,
-        failedPayments: failedPayments,
-        successPayments: successPayments,
-        upcomingPayments: upcomingPayments,
         retryInterval: retryInterval,
         authorizationInterval: authorizationInterval,
       },

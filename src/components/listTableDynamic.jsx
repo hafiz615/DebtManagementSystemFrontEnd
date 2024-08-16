@@ -170,7 +170,7 @@ export default function ListTableDynamic({
                     key={row?.id}
                     onClick={() =>
                       onRowClick
-                        ? onRowClick(row?.templateId, row?.html || row?.text)
+                        ? onRowClick(row?.templateId, row?.content)
                         : undefined
                     }
                   >
