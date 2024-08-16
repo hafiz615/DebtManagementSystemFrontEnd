@@ -75,8 +75,6 @@ export default function CreditorDetails({
       creditor: {
         aggression: 0,
         accountTitle: "",
-        paymentToken: "",
-        paymentType: "",
         basicInformation: {
           fullName: "",
           email: "",
@@ -126,8 +124,6 @@ export default function CreditorDetails({
           creditor: {
             aggression: 0,
             accountTitle: "",
-            paymentToken: "",
-            paymentType: "",
             basicInformation: {
               fullName: "",
               email: "",
@@ -163,8 +159,6 @@ export default function CreditorDetails({
         creditor: {
           aggression: 0,
           accountTitle: creditor?.AccountTitle || "",
-          paymentToken: "",
-          paymentType: "",
           basicInformation: {
             fullName: creditor?.Name || "",
             email: creditor?.EmailAddress || "",
