@@ -87,6 +87,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   const [checked, setChecked] = React.useState(false);
   const [status, setStatus] = useState(debtorBasicInfo?.status || "");
   const [extractedData, setExtractedData] = useState({});
+  const [inputKey, setInputKey] = useState(Date.now());
   //Debtor-Contact-State
   const contacts = !isEmpty(caseData?.debtor?.contacts)
     ? caseData?.debtor?.contacts?.map((contact) => ({
@@ -669,6 +670,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       setFiles([]);
       setSelectedFiles([]);
       setExtractedData({});
+      setInputKey(Date.now());
     } else if (activeStep === 1) {
       clearDebtor();
     } else if (activeStep === 2) {
@@ -695,6 +697,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     setFiles([]);
     setSelectedFiles([]);
     setExtractedData({});
+    setInputKey(Date.now());
     clearDebtor();
     setFinalCaseData([]);
     setNewDataList([
@@ -826,6 +829,8 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
                 setFiles={setFiles}
                 selectedFiles={selectedFiles}
                 setSelectedFiles={setSelectedFiles}
+                setInputKey={setInputKey}
+                inputKey={inputKey}
               />
             </>
           ) : activeStep === 1 ? (

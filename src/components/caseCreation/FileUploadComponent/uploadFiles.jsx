@@ -27,6 +27,8 @@ const FileUploadComponent = ({
   setFiles,
   selectedFiles,
   setSelectedFiles,
+  setInputKey,
+  inputKey,
 }) => {
   const [selectedFileForViewing, setSelectedFileForViewing] = useState(null);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
@@ -147,6 +149,7 @@ const FileUploadComponent = ({
             xs={12}
             sx={styles.dropzone}
             {...getRootPropsUpload()}
+            key={inputKey}
           >
             <input
               {...getInputPropsUpload()}
