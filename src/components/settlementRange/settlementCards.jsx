@@ -103,7 +103,7 @@ export default function SettlementCards({
 
   return (
     <>
-      <Grid item xs={12} sm={12} md={5.8} lg={3.8} container sx={commonStyles}>
+      <Grid item xs={12} md={5.8} lg={3.8} container sx={commonStyles}>
         <div
           style={{
             margin: "1rem 8%",
@@ -320,7 +320,6 @@ export default function SettlementCards({
         <Grid
           item
           xs={12}
-          sm={12}
           md={5.8}
           lg={8}
           sx={{
