@@ -220,8 +220,8 @@ export default function SettlementRange() {
   }, []);
 
   const GetLumpSumAmountData = async () => {
-    if (debtorId) {
-      const GetLumpSumDataRes = await GetLumpSumAmount(debtorId);
+    if (caseId) {
+      const GetLumpSumDataRes = await GetLumpSumAmount(caseId);
 
       if (GetLumpSumDataRes?.status === 200) {
         setLumpSumpData(GetLumpSumDataRes?.data?.data);
@@ -233,8 +233,8 @@ export default function SettlementRange() {
     }
   };
   const GetFullProfitData = async () => {
-    if (debtorId) {
-      const GetFullProfitDataRes = await GetFullProfit(debtorId);
+    if (caseId) {
+      const GetFullProfitDataRes = await GetFullProfit(caseId);
       if (GetFullProfitDataRes?.status === 200) {
         setFullProfit(GetFullProfitDataRes?.data?.data);
       } else {
