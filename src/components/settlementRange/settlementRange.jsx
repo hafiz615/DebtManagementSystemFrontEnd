@@ -14,11 +14,10 @@ import {
   IconButton,
   CircularProgress,
   Box,
-  Paper,
+  Tooltip,
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import {
-  FONT_SIZE_LARGE,
   FONT_SIZE_SMALL,
   FONT_SIZE_XL,
   PAGE_HEIGHT,
@@ -26,12 +25,11 @@ import {
 } from "../../constants/appConstants";
 import { Colors } from "../../config/default";
 import ScrollbarStyles from "../customScroll";
-import { Download, PeopleAlt, Send, WifiFind } from "@mui/icons-material";
+import { Download, PeopleAlt, Send } from "@mui/icons-material";
 import TextButton from "../button";
 import SettlementCards from "./settlementCards";
 import {
   GetSettlementRangeWithScores,
-  GetScores,
   GetSettlementRange,
   GetSummary,
   GetLumpSumAmount,
@@ -185,8 +183,9 @@ export default function SettlementRange() {
   const [debtor, setDebtor] = useState({});
   const [debtorId, setDebtorId] = useState("");
   const [lumpSumpData, setLumpSumpData] = useState({});
-
+  const [errorLumpSumMessage, setErrorLumSumtMessage] = useState("");
   const [fullProfit, setFullProfit] = useState({});
+  const [errorfullProfitMessage, setErrorFullProfitMessage] = useState("");
 
   const [justifications, setJustifications] = useState({
     justification_claude: "",
@@ -221,24 +220,26 @@ export default function SettlementRange() {
   }, []);
 
   const GetLumpSumAmountData = async () => {
-    if (debtorId) {
-      const GetLumpSumDataRes = await GetLumpSumAmount(debtorId);
+    if (caseId) {
+      const GetLumpSumDataRes = await GetLumpSumAmount(caseId);
 
       if (GetLumpSumDataRes?.status === 200) {
         setLumpSumpData(GetLumpSumDataRes?.data?.data);
       } else {
         const errorMessage = GetLumpSumDataRes?.response?.data?.message;
+        setErrorLumSumtMessage(errorMessage);
         showToast(errorMessage, "error");
       }
     }
   };
   const GetFullProfitData = async () => {
-    if (debtorId) {
-      const GetFullProfitDataRes = await GetFullProfit(debtorId);
+    if (caseId) {
+      const GetFullProfitDataRes = await GetFullProfit(caseId);
       if (GetFullProfitDataRes?.status === 200) {
         setFullProfit(GetFullProfitDataRes?.data?.data);
       } else {
         const errorMessage = GetFullProfitDataRes?.response?.data?.message;
+        setErrorFullProfitMessage(errorMessage);
         showToast(errorMessage, "error");
       }
     }
@@ -256,32 +257,6 @@ export default function SettlementRange() {
   const strat3Recommendations = ["recommendation 1"];
   const strat2Recommendations = ["lump Sum"];
 
-  const cardStyles = {
-    backgroundColor: Colors.WHITE,
-    borderRadius: "10px",
-    flexDirection: "column",
-    gap: "10px",
-    mb: "1rem",
-    pb: "1.2rem",
-  };
-  const commTextStyles = {
-    fontSize: FONT_SIZE_LARGE,
-    fontFamily: "Nunito",
-    fontWeight: "700",
-  };
-
-  const textStyles = {
-    fontSize: FONT_SIZE_LARGE,
-    fontFamily: "Nunito",
-    color: Colors.DARK_GRAY,
-  };
-
-  const lineStyle = {
-    width: "100%",
-    height: "1px",
-    backgroundColor: "#EAEBEB",
-    margin: "8px 0",
-  };
   useEffect(() => {
     if (value === 0) {
       setJustificationValue("justification_gemini");
@@ -344,7 +319,7 @@ export default function SettlementRange() {
     )),
     1: strat2Recommendations?.map((item, index) => (
       <>
-        {lumpSumpData && (
+        {!isEmpty(lumpSumpData) ? (
           <SettlementCards
             isLumpSumPayment={true}
             title={item}
@@ -360,13 +335,26 @@ export default function SettlementRange() {
             }
             warning={lumpSumpData?.warning || ""}
           />
+        ) : (
+          <Grid
+            item
+            xs={12}
+            container
+            sx={{
+              backgroundColor: Colors.WHITE,
+              padding: "1rem",
+              borderRadius: "10px",
+            }}
+          >
+            {errorLumpSumMessage}
+          </Grid>
         )}
       </>
     )),
 
     2: strat3Recommendations?.map((item, index) => (
       <>
-        {!isEmpty(fullProfit) && (
+        {!isEmpty(fullProfit) ? (
           <SettlementCards
             remainingAmount={
               selectedCreditorDetails?.contractDetails?.loan_amount
@@ -410,6 +398,19 @@ export default function SettlementRange() {
               ] || null
             }
           />
+        ) : (
+          <Grid
+            item
+            xs={12}
+            container
+            sx={{
+              backgroundColor: Colors.WHITE,
+              padding: "1rem",
+              borderRadius: "10px",
+            }}
+          >
+            {errorfullProfitMessage}
+          </Grid>
         )}
       </>
     )),
@@ -587,6 +588,31 @@ export default function SettlementRange() {
       </Grid>
     );
   }
+  const creditorDetails = [
+    {
+      label: "Loan Amount",
+      value: selectedCreditorDetails?.contractDetails?.loan_amount,
+      formatCurrency: true,
+    },
+    {
+      label: "Payable Amount",
+      value: selectedCreditorDetails?.contractDetails?.payable_amount,
+      formatCurrency: true,
+    },
+    {
+      label: "Purchase price",
+      value: selectedCreditorDetails?.contractDetails["purchase price"],
+      formatCurrency: true,
+    },
+    {
+      label: "Purchased Percentage",
+      value: selectedCreditorDetails?.contractDetails?.purchased_percentage,
+    },
+    {
+      label: "Repayment Amount",
+      value: selectedCreditorDetails?.contractDetails?.repayment_amount,
+    },
+  ];
 
   return (
     <Grid
@@ -638,7 +664,6 @@ export default function SettlementRange() {
       </Grid>
       {loading ? (
         <Grid
-          xs={12}
           container
           sx={{
             height: "inherit",
@@ -725,9 +750,8 @@ export default function SettlementRange() {
             sx={{ justifyContent: { xs: "left", md: "space-between" } }}
           >
             {Object?.keys(debtor)?.map((key) => (
-              <Grid item xs={12} lg={6}>
+              <Grid item xs={12} lg={6} key={key}>
                 <Box
-                  key={key}
                   sx={{
                     display: "flex",
                     alignItems: "center",
@@ -746,17 +770,25 @@ export default function SettlementRange() {
                     {key?.charAt(0)?.toUpperCase() + key?.slice(1)}
                   </div>
 
-                  <span
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "300",
-                      fontSize: "0.9rem",
-                      color: Colors.DIM_LIGHT_GRAY,
-                      marginTop: "0.5rem",
-                    }}
-                  >
-                    {key === "weeklyBudget" ? `$${debtor[key]}` : debtor[key]}
-                  </span>
+                  <Tooltip title={debtor[key]?.toString()} placement="top-end">
+                    <span
+                      style={{
+                        fontFamily: "Nunito",
+                        fontWeight: "300",
+                        fontSize: "0.9rem",
+                        color: Colors.DIM_LIGHT_GRAY,
+                        marginTop: "0.5rem",
+                      }}
+                    >
+                      {key === "weeklyBudget"
+                        ? `$${debtor[key]?.toString().slice(0, 15)}${
+                            debtor[key]?.toString().length > 15 ? "..." : ""
+                          }`
+                        : `${debtor[key]?.toString().slice(0, 15)}${
+                            debtor[key]?.toString().length > 15 ? "..." : ""
+                          }`}
+                    </span>
+                  </Tooltip>
                 </Box>
               </Grid>
             ))}
@@ -881,9 +913,7 @@ export default function SettlementRange() {
               ))}
             </AntTabs>
           </Grid>
-          {/* <Grid container xs={12} spacing={2} sx={{ padding: "1rem" }}> */}
-          {/* <>{cardData[strategyTab]}</> */}
-          {/* </Grid> */}
+
           <Grid
             item
             xs={12}
@@ -906,8 +936,9 @@ export default function SettlementRange() {
               }}
             >
               {creditorSelect &&
-                creditorSelect?.map((item) => (
+                creditorSelect?.map((item, i) => (
                   <AntTab
+                    key={i}
                     sx={{
                       bgcolor: Colors.WHITE,
                       width: "max-content",
@@ -928,7 +959,7 @@ export default function SettlementRange() {
               />
             </AntTabs>
           </Grid>
-          <Grid container xs={12}>
+          <Grid container>
             <Typography
               sx={{
                 fontWeight: "600",
@@ -942,140 +973,39 @@ export default function SettlementRange() {
               selectedCreditorDetails?.contractDetails && (
                 <>
                   <Grid container item xs={12} sx={{ gap: "1rem", mt: "1rem" }}>
-                    <Grid
-                      item
-                      xs={12}
-                      sm={5.8}
-                      md={3.8}
-                      lg={2.8}
-                      container
-                      sx={commonStyles}
-                    >
-                      <Typography sx={commonTextStyles}>
-                        {" "}
-                        Loan Amount
-                      </Typography>
-                      <Typography
-                        sx={{
-                          ...commonTextStyles,
-                          color: Colors.SKY_BLUE,
-                        }}
-                      >
-                        {selectedCreditorDetails?.contractDetails?.loan_amount
-                          ? selectedCreditorDetails.contractDetails.loan_amount.includes(
-                              "$"
-                            )
-                            ? selectedCreditorDetails.contractDetails
-                                .loan_amount
-                            : `$${selectedCreditorDetails.contractDetails.loan_amount}`
-                          : "--"}
-                      </Typography>
-                    </Grid>
-                    <Grid
-                      item
-                      xs={12}
-                      sm={5.8}
-                      md={3.8}
-                      lg={2.8}
-                      container
-                      sx={commonStyles}
-                    >
-                      <Typography sx={commonTextStyles}>
-                        Payable Amount
-                      </Typography>
-                      <Typography
-                        sx={{
-                          ...commonTextStyles,
-                          color: Colors.SKY_BLUE,
-                        }}
-                      >
-                        {selectedCreditorDetails?.contractDetails
-                          ?.payable_amount
-                          ? `${selectedCreditorDetails.contractDetails.payable_amount}`.includes(
-                              "$"
-                            )
-                            ? selectedCreditorDetails.contractDetails
-                                .payable_amount
-                            : `$${selectedCreditorDetails.contractDetails.payable_amount}`
-                          : "--"}
-                      </Typography>
-                    </Grid>
+                    {creditorDetails?.map((detail, index) => {
+                      const formattedValue = detail?.value
+                        ? detail?.formatCurrency &&
+                          !detail?.value?.includes("$")
+                          ? `$${detail?.value}`
+                          : detail?.value
+                        : "--";
 
-                    <Grid
-                      item
-                      xs={12}
-                      sm={5.8}
-                      md={3.8}
-                      lg={2.8}
-                      container
-                      sx={commonStyles}
-                    >
-                      <Typography sx={commonTextStyles}>
-                        Purchase price
-                      </Typography>
-                      <Typography
-                        sx={{
-                          ...commonTextStyles,
-                          color: Colors.SKY_BLUE,
-                        }}
-                      >
-                        {selectedCreditorDetails?.contractDetails[
-                          "purchase price"
-                        ]
-                          ? `${selectedCreditorDetails.contractDetails["purchase price"]}`.includes(
-                              "$"
-                            )
-                            ? selectedCreditorDetails.contractDetails[
-                                "purchase price"
-                              ]
-                            : `$${selectedCreditorDetails.contractDetails["purchase price"]}`
-                          : "--"}
-                      </Typography>
-                    </Grid>
-                    <Grid
-                      item
-                      xs={12}
-                      sm={5.8}
-                      md={3.8}
-                      lg={2.8}
-                      container
-                      sx={commonStyles}
-                    >
-                      <Typography sx={commonTextStyles}>
-                        Purchased Percentage
-                      </Typography>
-                      <Typography
-                        sx={{
-                          ...commonTextStyles,
-                          color: Colors.SKY_BLUE,
-                        }}
-                      >
-                        {selectedCreditorDetails?.contractDetails
-                          ?.purchased_percentage || "--"}
-                      </Typography>
-                    </Grid>
-                    <Grid
-                      item
-                      xs={12}
-                      sm={5.8}
-                      md={3.8}
-                      lg={2.8}
-                      container
-                      sx={commonStyles}
-                    >
-                      <Typography sx={commonTextStyles}>
-                        Repayment Amount
-                      </Typography>
-                      <Typography
-                        sx={{
-                          ...commonTextStyles,
-                          color: Colors.SKY_BLUE,
-                        }}
-                      >
-                        {selectedCreditorDetails?.contractDetails
-                          ?.repayment_amount || "--"}
-                      </Typography>
-                    </Grid>
+                      return (
+                        <Grid
+                          key={index}
+                          item
+                          xs={12}
+                          sm={5.8}
+                          md={3.8}
+                          lg={2.8}
+                          container
+                          sx={commonStyles}
+                        >
+                          <Typography sx={commonTextStyles}>
+                            {detail?.label}
+                          </Typography>
+                          <Typography
+                            sx={{
+                              ...commonTextStyles,
+                              color: Colors.SKY_BLUE,
+                            }}
+                          >
+                            {formattedValue}
+                          </Typography>
+                        </Grid>
+                      );
+                    })}
                   </Grid>
                 </>
               )}
@@ -1091,57 +1021,10 @@ export default function SettlementRange() {
             }}
           >
             {cardData[strategyTab]}
-            {/* {["recommendation 1", "recommendation 2", "recommendation 3"]?.map(
-              (item, index) => {
-                return (
-                  <SettlementCards
-                    key={index}
-                    title={item}
-                    weeksTillPaidTitle={
-                      item === "recommendation 1"
-                        ? "Weeks remaining based on recommendation 1"
-                        : item === "recommendation 2"
-                        ? "Weeks remaining based on recommendation 2"
-                        : item === "recommendation 3"
-                        ? "Weeks remaining based on recommendation 3"
-                        : ""
-                    }
-                    settlementRange={
-                      apiData?.settlement_range?.[
-                        allCreditorNames[parseInt(tabValue)]
-                      ] || null
-                    }
-                    commissionRange={
-                      apiData?.commission_range?.[
-                        allCreditorNames[parseInt(tabValue)]
-                      ] || null
-                    }
-                    newDefaultRiskScore={
-                      apiData?.new_default_risk_score || null
-                    }
-                    percentageSettlementOverWeeklyBudget={
-                      apiData?.percentage_settlement_over_weekly_budget?.[
-                        allCreditorNames[parseInt(tabValue)]
-                      ] || null
-                    }
-                    percentageSettlementOverWeeklyTrueRevenue={
-                      apiData?.percentage_settlement_over_weekly_true_revenue?.[
-                        allCreditorNames[parseInt(tabValue)]
-                      ] || null
-                    }
-                    weeksTillPaid={
-                      apiData?.weeks_till_paid?.[
-                        allCreditorNames[parseInt(tabValue)]
-                      ] || null
-                    }
-                  />
-                );
-              }
-            )} */}
           </Grid>
           <Grid
-            item
             container
+            item
             xs={12}
             lg={12}
             md={12}
@@ -1149,22 +1032,6 @@ export default function SettlementRange() {
             sm={12}
             sx={{ gap: "2%", mt: "1rem" }}
           >
-            {/* {scores?.Scores && (
-              <>
-                <GridItem
-                  key="UCC Score"
-                  title="UCC Score"
-                  value={scores?.Scores?.["UCC Score"] ?? "No Data"}
-                  rawValue={scores?.Scores?.["UCC Score"]}
-                />
-                <GridItem
-                  key="Default Risk Score"
-                  title="Default Risk Score"
-                  value={scores?.Scores?.["Default Risk Score"] ?? "No Data"}
-                  rawValue={scores?.Scores?.["Default Risk Score"]}
-                />
-              </>
-            )} */}
             {scores?.message && (
               <GridItemMessage
                 key="No Score Reason"
@@ -1270,27 +1137,6 @@ export default function SettlementRange() {
                   : justifications?.[`justifications${value + 1}`] ||
                     "No justifications available"}
               </ReactMarkdown>
-
-              // <Grid container direction="column" spacing={2}>
-              //   {messages.map((msg) => (
-              //     <Grid item key={msg.id}>
-              //       <Paper
-              //         sx={{
-              //           padding: "10px",
-              //           backgroundColor:
-              //             msg.sender === "bot"
-              //               ? Colors1.BOT_MESSAGE_BG
-              //               : Colors1.USER_MESSAGE_BG,
-              //           alignSelf:
-              //             msg.sender === "bot" ? "flex-start" : "flex-end",
-              //           maxWidth: "80%",
-              //         }}
-              //       >
-              //         <Typography variant="body1">{msg.message}</Typography>
-              //       </Paper>
-              //     </Grid>
-              //   ))}
-              // </Grid>
             )}
           </Grid>
           <Grid

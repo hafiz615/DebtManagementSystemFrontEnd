@@ -90,6 +90,7 @@ const StatusLists = ({
         </thead>
         <tbody>
           <Grid
+            item
             sx={{
               height: "40vh",
               overflowY: "auto",
@@ -111,7 +112,6 @@ const StatusLists = ({
             {loading ? (
               <Grid
                 container
-                xs={12}
                 sx={{
                   justifyContent: "center",
                   alignItems: "center",

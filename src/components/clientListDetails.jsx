@@ -24,6 +24,7 @@ import { formatDollarAmount } from "../common";
 import TextButton from "./button";
 import CustomTextField from "./customTextfield";
 import ScrollbarStyles from "./customScroll";
+import { truncateText } from "../common";
 
 export default function ClientListDetails() {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
@@ -362,13 +363,6 @@ export default function ClientListDetails() {
     upcomingPaymentDateMin,
     upcomingPaymentDateMax,
   ]);
-
-  const truncateText = (text, length) => {
-    if (text?.length > length) {
-      return text.substring(0, length) + "...";
-    }
-    return text;
-  };
 
   const { AUTHORITY_TEXT } = UserListPage;
   const dataUser = clientData?.debtor || clientData?.creditor;

@@ -24,6 +24,10 @@ import { formatDollarAmount } from "../../common";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { getTruncatedText } from "../../common";
 import ScrollbarStyles from "./../customScroll";
+import {
+  creditorBusinessDetails,
+  creditorPeronsalDetails,
+} from "../../constants/appConstants";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -69,8 +73,7 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
       setStartIndex(startIndex - itemsPerPage);
     }
   };
-  const creditorPeronsalDetails = "Personal Details";
-  const creditorBusinessDetails = "Business Details";
+
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const formatDate = (dateString) => {
     const date = new Date(dateString);

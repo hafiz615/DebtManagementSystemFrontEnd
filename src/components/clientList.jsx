@@ -9,6 +9,7 @@ import {
   FONT_SIZE_LARGE,
   FONT_SIZE_XL,
   UserListPage,
+  clientsListHeading,
 } from "../constants/appConstants";
 import { Colors } from "../config/default";
 import SearchBar from "./searchBar";
@@ -21,7 +22,6 @@ import Menu from "@mui/material/Menu";
 import { formatDollarAmount } from "../common";
 import TextButton from "./button";
 const headers = [
-  // "Index",
   "Company Name",
   "Number of Cases",
   "Number of Creditors",
@@ -295,7 +295,7 @@ export default function ClientList() {
             color: Colors.BLACK,
           }}
         >
-          Clients
+          {clientsListHeading}
         </Typography>
       </Grid>
       <Grid container sx={{ alignItems: "center" }}>

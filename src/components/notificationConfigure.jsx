@@ -173,105 +173,106 @@ export default function NotificationConfiguration({ data }) {
         Notification Configuration
       </StyledAccordionSummary>
       <StyledAccordionDetails>
-        {loading ? (
-          <Grid
-            container
-            sx={{
-              justifyContent: "center",
-              alignItems: "center",
-              height: "30vh",
-            }}
-          >
-            <CircularProgress />
-          </Grid>
-        ) : (
-          <Grid xs={12} sx={{ mt: "1rem" }}>
-            <Dropdown
-              menuWidth="16rem"
-              menuItems={allExistingEvents}
-              placeholder="Events"
-              backgroundColor={Colors.BG_LIGHT_GRAY}
-              hoverColor={Colors.BG_LIGHT_GRAY}
-              width="16rem"
-              selectedValue={selectedValue}
-              setSelectedValue={setSelectedValue}
-            />
-            {userSettings?.map((item) => (
-              <Grid
-                key={item.role}
-                container
-                xs={12}
-                sx={{ mt: "10px", gap: "2rem", alignItems: "center" }}
-              >
-                <Typography sx={{ ...fontStyling, width: "20%" }}>
-                  {item?.role}
-                </Typography>
-                <Box sx={boxStyling}>
-                  <Checkboxes
-                    checked={item?.email_allowed}
-                    handleCheckChange={(e) =>
-                      handleEmailCheckChange(item.role, e.target.checked)
+        <Grid xs={12} sx={{ mt: "1rem" }}>
+          <Dropdown
+            menuWidth="16rem"
+            menuItems={allExistingEvents}
+            placeholder="Events"
+            backgroundColor={Colors.BG_LIGHT_GRAY}
+            hoverColor={Colors.BG_LIGHT_GRAY}
+            width="16rem"
+            selectedValue={selectedValue}
+            setSelectedValue={setSelectedValue}
+          />
+          {loading ? (
+            <Grid
+              container
+              sx={{
+                justifyContent: "center",
+                alignItems: "center",
+                height: "30vh",
+              }}
+            >
+              <CircularProgress />
+            </Grid>
+          ) : (
+            <>
+              {userSettings?.map((item) => (
+                <Grid
+                  key={item.role}
+                  container
+                  xs={12}
+                  sx={{ mt: "10px", gap: "2rem", alignItems: "center" }}
+                >
+                  <Typography sx={{ ...fontStyling, width: "20%" }}>
+                    {item?.role}
+                  </Typography>
+                  <Box sx={boxStyling}>
+                    <Checkboxes
+                      checked={item?.email_allowed}
+                      handleCheckChange={(e) =>
+                        handleEmailCheckChange(item.role, e.target.checked)
+                      }
+                    />
+                    <Typography sx={fontStyling}>Email</Typography>
+                  </Box>
+                  <Dropdown
+                    menuWidth="16rem"
+                    menuItems={allEmailTemplates}
+                    placeholder="Templates"
+                    backgroundColor={Colors.BG_LIGHT_GRAY}
+                    hoverColor={Colors.BG_LIGHT_GRAY}
+                    width="16rem"
+                    selectedValue={item?.email_template}
+                    setSelectedValue={(value) =>
+                      handleEmailTemplateChange(item.role, value)
                     }
                   />
-                  <Typography sx={fontStyling}>Email</Typography>
-                </Box>
-                <Dropdown
-                  menuWidth="16rem"
-                  menuItems={allEmailTemplates}
-                  placeholder="Templates"
-                  backgroundColor={Colors.BG_LIGHT_GRAY}
-                  hoverColor={Colors.BG_LIGHT_GRAY}
-                  width="16rem"
-                  selectedValue={item?.email_template}
-                  setSelectedValue={(value) =>
-                    handleEmailTemplateChange(item.role, value)
-                  }
-                />
-
-                <Box sx={boxStyling}>
-                  <Checkboxes
-                    checked={item?.sms_allowed}
-                    handleCheckChange={(e) =>
-                      handleSmsCheckChange(item.role, e.target.checked)
+                  <Box sx={boxStyling}>
+                    <Checkboxes
+                      checked={item?.sms_allowed}
+                      handleCheckChange={(e) =>
+                        handleSmsCheckChange(item.role, e.target.checked)
+                      }
+                    />
+                    <Typography sx={fontStyling}>SMS</Typography>
+                  </Box>
+                  <Dropdown
+                    menuWidth="16rem"
+                    menuItems={allSmsTemplates}
+                    placeholder="Templates"
+                    backgroundColor={Colors.BG_LIGHT_GRAY}
+                    hoverColor={Colors.BG_LIGHT_GRAY}
+                    width="16rem"
+                    selectedValue={item?.sms_template}
+                    setSelectedValue={(value) =>
+                      handleSmsTemplateChange(item.role, value)
                     }
                   />
-                  <Typography sx={fontStyling}>SMS</Typography>
-                </Box>
-                <Dropdown
-                  menuWidth="16rem"
-                  menuItems={allSmsTemplates}
-                  placeholder="Templates"
-                  backgroundColor={Colors.BG_LIGHT_GRAY}
-                  hoverColor={Colors.BG_LIGHT_GRAY}
-                  width="16rem"
-                  selectedValue={item?.sms_template}
-                  setSelectedValue={(value) =>
-                    handleSmsTemplateChange(item.role, value)
-                  }
-                />
-              </Grid>
-            ))}
-            {selectedValue && (
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "right",
-                  marginTop: "1rem",
-                }}
-              >
-                <TextButton
-                  buttonText="Save"
-                  height="2rem"
-                  width="8rem"
-                  onClick={handleSave}
-                  backgroundColor={Colors.SKY_BLUE}
-                  hoverColor={Colors.SKY_BLUE}
-                  loading={buttonLoading}
-                />
-              </div>
-            )}
-          </Grid>
-        )}
+                </Grid>
+              ))}
+              {selectedValue && (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "right",
+                    marginTop: "1rem",
+                  }}
+                >
+                  <TextButton
+                    buttonText="Save"
+                    height="2rem"
+                    width="8rem"
+                    onClick={handleSave}
+                    backgroundColor={Colors.SKY_BLUE}
+                    hoverColor={Colors.SKY_BLUE}
+                    loading={buttonLoading}
+                  />
+                </div>
+              )}
+            </>
+          )}
+        </Grid>
       </StyledAccordionDetails>
     </StyledAccordion>
   );

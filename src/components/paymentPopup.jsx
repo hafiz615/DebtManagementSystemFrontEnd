@@ -27,7 +27,7 @@ export default function PaymentPopup({
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
   const { id } = useParams();
-  const [nextWeekDate, setNextWeekDate] = useState(calculateNextWeek());
+  const nextWeekDate = useState(calculateNextWeek());
   const today = new Date().toISOString().split("T")[0];
   const [isExempt, setIsExempt] = useState(data?.isExempt || false);
   const [newDataList, setNewDataList] = useState([
@@ -112,7 +112,7 @@ export default function PaymentPopup({
       </div>
       <PaymentProcess feePayment={feePayment} setFeePayment={setFeePayment} />
 
-      <Grid container xs={12} sx={{ mt: "1rem", justifyContent: "right" }}>
+      <Grid container sx={{ mt: "1rem", justifyContent: "right" }}>
         <TextButton
           buttonText="Save"
           height="2rem"

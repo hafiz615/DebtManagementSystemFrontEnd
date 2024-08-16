@@ -10,6 +10,7 @@ import { Colors } from "../config/default";
 import SearchBar from "./searchBar";
 import ListTable from "./listTable";
 import { formatDollarAmount } from "../common";
+import { caseHistoryHeading } from "../constants/appConstants";
 
 function CaseHistory({
   tableLoading,
@@ -23,7 +24,6 @@ function CaseHistory({
   open,
   handleClick,
 }) {
-  const caseHistory = "Case History";
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
   );
@@ -101,7 +101,7 @@ function CaseHistory({
               justifyContent: "center",
             }}
           >
-            {caseHistory}
+            {caseHistoryHeading}
           </Typography>
           <div style={{ display: "flex" }}>
             <SearchBar

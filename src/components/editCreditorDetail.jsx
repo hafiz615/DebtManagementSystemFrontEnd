@@ -4,13 +4,10 @@ import { Grid, Box } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { Colors } from "../config/default";
 import TextButton from "./button";
-import { UpdateCaseCreditor, UpdateCreditor } from "../services/services";
+import { UpdateCaseCreditor } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import CreditorFields from "./caseCreationFields/creditorFields";
 import { phoneNumberFormat } from "../common";
-
-import { isEmailValid } from "../common";
-import { HistoricRangeHandleNumberInput } from "../common";
 
 export default function EditCreditorDetail({
   handleClose,
@@ -150,7 +147,15 @@ export default function EditCreditorDetail({
           setDigits={(newDigits) => handleDigitsChange(index, newDigits)}
         />
       ))}
-      <Grid container xs={12} sx={{ justifyContent: "right" }}>
+      <Grid
+        container
+        sx={{
+          justifyContent: "flex-end",
+          position: "sticky",
+          bottom: 0, // Ensures it sticks to the bottom when scrolling up
+          zIndex: 1, // Ensures the button stays above other content
+        }}
+      >
         <TextButton
           marginBottom=".5rem"
           buttonText="Save"

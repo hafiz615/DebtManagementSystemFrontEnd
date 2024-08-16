@@ -23,6 +23,10 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import Tooltip from "@mui/material/Tooltip";
 import { getTruncatedText } from "../../common";
 import ScrollbarStyles from "./../customScroll";
+import {
+  debtorBusinessDetails,
+  debtorPeronsalDetails,
+} from "../../constants/appConstants";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -56,8 +60,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
-  const debtorPeronsalDetails = "Personal Details";
-  const debtorBusinessDetails = "Business Details";
   const [searchText, setSearchText] = useState("");
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 2;

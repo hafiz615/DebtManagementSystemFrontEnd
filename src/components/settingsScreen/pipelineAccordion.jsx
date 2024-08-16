@@ -8,7 +8,6 @@ import {
   AccordionSummary,
   AccordionDetails,
   styled,
-  // useMediaQuery,
   CircularProgress,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -52,7 +51,6 @@ export default function PipelineAccordion() {
   const [pipeline, setPipeline] = useState([]);
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
-  // const smallScreen = useMediaQuery("(min-width:315px) and (max-width:900px)");
 
   const GetPipelines = async () => {
     setLoading(true);
@@ -101,7 +99,6 @@ export default function PipelineAccordion() {
         {loading ? (
           <Grid
             container
-            xs={12}
             sx={{
               justifyContent: "center",
               alignItems: "center",
@@ -121,9 +118,9 @@ export default function PipelineAccordion() {
             No Pipeline Exist...
           </p>
         ) : (
-          pipeline?.map((item) => {
+          pipeline?.map((item, index) => {
             return (
-              <Grid>
+              <Grid item key={index}>
                 <Pipelines GetPipelines={GetPipelines} item={item} />
               </Grid>
             );

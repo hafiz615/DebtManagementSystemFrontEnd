@@ -9,7 +9,7 @@ import NotificationTemplatesTabs from "./notifications";
 import CustomFieldsAccordion from "./customFields";
 import PasswordAccordion from "./passwordAccord";
 import { GetAllSettings } from "../../services/services";
-import { PAGE_HEIGHT } from "../../constants/appConstants";
+import { PAGE_HEIGHT, settingsHeading } from "../../constants/appConstants";
 import ScrollbarStyles from "../customScroll";
 import CaseStatuses from "./caseStatuses";
 import PipelineAccordion from "./pipelineAccordion";
@@ -109,7 +109,7 @@ export default function SettingsScreen() {
             color: Colors.BLACK,
           }}
         >
-          Settings
+          {settingsHeading}
         </Typography>
       </Grid>
       <Grid

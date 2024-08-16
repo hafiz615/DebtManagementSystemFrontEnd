@@ -165,9 +165,9 @@ export default function ListTableDynamic({
                       page * rowsPerPage + rowsPerPage
                     )
                   : data
-                )?.map((row) => (
+                )?.map((row, i) => (
                   <StyledTableRow
-                    key={row?.id}
+                    key={i}
                     onClick={() =>
                       onRowClick
                         ? onRowClick(row?.templateId, row?.content)
@@ -264,7 +264,7 @@ export default function ListTableDynamic({
         <TablePagination
           rowsPerPageOptions={[5]}
           component="div"
-          count={data?.length}
+          count={data?.length || 0}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
