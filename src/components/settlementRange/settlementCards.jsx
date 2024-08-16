@@ -6,6 +6,7 @@ import Tooltip from "@mui/material/Tooltip";
 import InfoIcon from "@mui/icons-material/Info";
 import MuiModels from "../models";
 import ScrollbarStyles from "./../customScroll";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function SettlementCards({
   title,
@@ -82,7 +83,9 @@ export default function SettlementCards({
       tooltip: "Number of weeks to complete payment",
     },
   ];
-
+  const mediumScreen = useMediaQuery(
+    "(min-width:899px) and (max-width:1400px)"
+  );
   function capitalizeFirstWord(text) {
     if (!text) return text;
     const words = text.split(" ");
@@ -100,7 +103,7 @@ export default function SettlementCards({
 
   return (
     <>
-      <Grid item xs={12} sm={5.8} md={3.8} lg={3.8} container sx={commonStyles}>
+      <Grid item xs={12} sm={12} md={5.8} lg={3.8} container sx={commonStyles}>
         <div
           style={{
             margin: "1rem 8%",
@@ -163,7 +166,12 @@ export default function SettlementCards({
               {isFullPayment ? (
                 <>
                   <Grid item xs={5}>
-                    <div style={{ width: "100%", display: "flex" }}>
+                    <div
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                      }}
+                    >
                       <div
                         style={{
                           width: "75%",
@@ -171,7 +179,9 @@ export default function SettlementCards({
                           color: Colors.ORANGE_COLOR,
                         }}
                       >
-                        Minimum
+                        <Tooltip title={"Minimum"} placement="top-end">
+                          {mediumScreen ? "Min" : "Minimum"}
+                        </Tooltip>
                       </div>
                       <div style={textStyles}>{item?.[title][0]}</div>
                     </div>
@@ -183,7 +193,9 @@ export default function SettlementCards({
                           color: Colors.SKY_BLUE,
                         }}
                       >
-                        Maximum
+                        <Tooltip title={"Maximum"} placement="top-end">
+                          {mediumScreen ? "Max" : "Maximum"}
+                        </Tooltip>
                       </div>
                       <div style={textStyles}>{item?.[title][1]}</div>
                     </div>
@@ -197,6 +209,7 @@ export default function SettlementCards({
                       xs={12}
                       sx={{
                         paddingLeft: "6%",
+                        paddingRight: "6%",
                       }}
                     >
                       <div style={{ width: "100%", display: "flex" }}>
@@ -241,7 +254,9 @@ export default function SettlementCards({
                           color: Colors.ORANGE_COLOR,
                         }}
                       >
-                        Minimum
+                        <Tooltip title={"Minimum"} placement="top-end">
+                          {mediumScreen ? "Min" : "Minimum"}
+                        </Tooltip>
                       </div>
                       <div style={textStyles}>
                         {rangeNames[index]?.label === "Weeks Till Paid"
@@ -270,7 +285,9 @@ export default function SettlementCards({
                           color: Colors.SKY_BLUE,
                         }}
                       >
-                        Maximum
+                        <Tooltip title={"Maximum"} placement="top-end">
+                          {mediumScreen ? "Max" : "Maximum"}
+                        </Tooltip>
                       </div>
                       <div style={textStyles}>
                         {rangeNames[index]?.label === "Weeks Till Paid"
@@ -303,7 +320,8 @@ export default function SettlementCards({
         <Grid
           item
           xs={12}
-          sm={7.8}
+          sm={12}
+          md={5.8}
           lg={8}
           sx={{
             display: "flex",
