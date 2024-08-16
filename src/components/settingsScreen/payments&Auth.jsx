@@ -6,17 +6,17 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-import { Grid, Typography, Box, Hidden } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { Colors } from "../../config/default";
 import Dropdown from "../dropdown";
 import TextButton from "../button";
-import RowConfigForm from "./paymentsAuthsNotificationRow";
 
 import { SaveSettings } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { styled } from "@mui/material/styles";
+import { handleNumberInput } from "../../common";
 const StyledAccordion = styled(Accordion)({
   "&:before": {
     display: "none", // Remove the default line
@@ -205,6 +205,7 @@ export default function SettingsAccordion({
                 onChange={(e) =>
                   handleIntervalInputChange("auth_value", e.target.value)
                 }
+                onKeyDown={handleNumberInput}
               />
               <Dropdown
                 menuWidth="11.3rem"
@@ -247,6 +248,7 @@ export default function SettingsAccordion({
                 onChange={(e) =>
                   handleIntervalInputChange("auth_retries", e.target.value)
                 }
+                onKeyDown={handleNumberInput}
               />
             </Grid>
             <Grid
@@ -285,6 +287,7 @@ export default function SettingsAccordion({
                 onChange={(e) =>
                   handleIntervalInputChange("payment_value", e.target.value)
                 }
+                onKeyDown={handleNumberInput}
               />
               <Dropdown
                 menuWidth="11.3rem"
@@ -327,6 +330,7 @@ export default function SettingsAccordion({
                 onChange={(e) =>
                   handleIntervalInputChange("payment_retries", e.target.value)
                 }
+                onKeyDown={handleNumberInput}
               />
             </Grid>
           </Grid>
@@ -378,6 +382,7 @@ export default function SettingsAccordion({
                 onChange={(e) =>
                   handleAuthIntervalInputChange("custom", e.target.value)
                 }
+                onKeyDown={handleNumberInput}
               />
 
               <Typography
@@ -420,6 +425,7 @@ export default function SettingsAccordion({
                 onChange={(e) =>
                   handleAuthIntervalInputChange("fortnightly", e.target.value)
                 }
+                onKeyDown={handleNumberInput}
               />
               <Typography
                 sx={{
@@ -467,6 +473,7 @@ export default function SettingsAccordion({
                 onChange={(e) =>
                   handleAuthIntervalInputChange("daily", e.target.value)
                 }
+                onKeyDown={handleNumberInput}
               />
 
               <Typography
@@ -509,6 +516,7 @@ export default function SettingsAccordion({
                 onChange={(e) =>
                   handleAuthIntervalInputChange("monthly", e.target.value)
                 }
+                onKeyDown={handleNumberInput}
               />
               <Typography
                 sx={{
@@ -556,6 +564,7 @@ export default function SettingsAccordion({
                 onChange={(e) =>
                   handleAuthIntervalInputChange("weekly", e.target.value)
                 }
+                onKeyDown={handleNumberInput}
               />
 
               <Typography
