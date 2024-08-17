@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import {
+  FONT_SIZE_LARGE,
   FONT_SIZE_SMALL,
   FONT_SIZE_XL,
   PAGE_HEIGHT,
@@ -34,6 +35,7 @@ import {
   GetSummary,
   GetLumpSumAmount,
   GetFullProfit,
+  UpdateCommission,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import { generatePdfFromApiData } from "../../common";
@@ -186,6 +188,7 @@ export default function SettlementRange() {
   const [errorLumpSumMessage, setErrorLumSumtMessage] = useState("");
   const [fullProfit, setFullProfit] = useState({});
   const [errorfullProfitMessage, setErrorFullProfitMessage] = useState("");
+  const [commissionPercentage, setCommissionPercentage] = useState("");
 
   const [justifications, setJustifications] = useState({
     justification_claude: "",
@@ -244,10 +247,7 @@ export default function SettlementRange() {
       }
     }
   };
-  useEffect(() => {
-    GetLumpSumAmountData();
-    GetFullProfitData();
-  }, [debtorId]);
+
   const tabs = ["Strategy 1", "Strategy 2", "Strategy 3"];
   const recommendations = [
     "recommendation 1",
@@ -456,6 +456,77 @@ export default function SettlementRange() {
     }
   };
 
+  const handleCommissionUpdate = async () => {
+    try {
+      setLoading(true);
+      const selectedCreditorIds = creditorSelect?.map(
+        (creditor) => creditor.creditorId
+      );
+      if (caseId) {
+        const payload = {
+          commissionPercentage: commissionPercentage,
+          creditorNames: selectedCreditorIds,
+        };
+        const resCommission = await UpdateCommission(payload, caseId, false);
+        if (resCommission?.status === 200) {
+          setLoading(false);
+          if (typeof resCommission?.data?.data?.getScores === "string") {
+            setScores({ message: resCommission?.data?.data?.getScores });
+            showToast(
+              resCommission?.data?.data?.getScores + " Couldn't fetch scores",
+              "error"
+            );
+          } else {
+            setScores(resCommission?.data?.data?.getScores);
+          }
+          setDebtor(resCommission?.data?.data?.debtor?.basicInformation);
+          setDebtorId(resCommission?.data?.data?.debtor?._id);
+          setApiData(resCommission?.data?.data?.settlementRange);
+          setCommissionPercentage(
+            resCommission?.data?.data?.debtor?.commissionPercentage
+          );
+          setJustifications({
+            justifications1:
+              resCommission?.data?.data?.settlementRange?.justifications
+                ?.justification_gemini ?? "",
+            justifications2:
+              resCommission?.data?.data?.settlementRange?.justifications
+                ?.justification_gpt4_o ?? "",
+            justifications3:
+              resCommission?.data?.data?.settlementRange?.justifications
+                ?.justification_llama ?? "",
+            justifications4:
+              resCommission?.data?.data?.settlementRange?.justifications
+                ?.justification_claude ?? "",
+          });
+          const allCreditors = resCommission?.data?.data?.creditors;
+          setCreditorNames(allCreditors);
+          const creditorAccountTitles = allCreditors?.map(
+            (item) => item.creditorAccountTitle
+          );
+          if (!isEmpty(creditorAccountTitles)) {
+            creditorAccountTitles.push("Summary");
+          }
+          setAllCreditorsNames(creditorAccountTitles);
+          showToast(resCommission?.data?.message, "success");
+          GetLumpSumAmountData();
+          GetFullProfitData();
+        } else if (
+          resCommission?.response?.status === 401 ||
+          resCommission?.response?.status === 403
+        ) {
+          localStorage.clear();
+          navigate("/");
+        }
+      }
+    } catch (err) {
+      setErrorMessage(err);
+      showToast(err, "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const GetAllRanges = async (creditors, status) => {
     setLoading(true);
     try {
@@ -481,6 +552,9 @@ export default function SettlementRange() {
           setDebtor(settlementRangeData?.data?.data?.debtor?.basicInformation);
           setDebtorId(settlementRangeData?.data?.data?.debtor?._id);
           setApiData(settlementRangeData?.data?.data?.settlementRange);
+          setCommissionPercentage(
+            settlementRangeData?.data?.data?.debtor?.commissionPercentage
+          );
           setJustifications({
             justifications1:
               settlementRangeData?.data?.data?.settlementRange?.justifications
@@ -505,6 +579,8 @@ export default function SettlementRange() {
           }
           setAllCreditorsNames(creditorAccountTitles);
           showToast(settlementRangeData?.data?.message, "success");
+          GetLumpSumAmountData();
+          GetFullProfitData();
         } else if (
           settlementRangeData?.response?.status === 401 ||
           settlementRangeData?.response?.status === 403
@@ -613,6 +689,20 @@ export default function SettlementRange() {
       value: selectedCreditorDetails?.contractDetails?.repayment_amount,
     },
   ];
+
+  const inputStyles = {
+    width: "12rem",
+    padding: "7px 5px",
+    borderRadius: "5px",
+    marginRight: "10px",
+    marginTop: "10px",
+    backgroundColor: Colors.LIGHT_GREY,
+    border: "none",
+    outline: "none",
+    fontSize: FONT_SIZE_LARGE,
+    fontFamily: "Nunito",
+    color: Colors.BLACK,
+  };
 
   return (
     <Grid
@@ -792,6 +882,35 @@ export default function SettlementRange() {
                 </Box>
               </Grid>
             ))}
+          </Grid>
+          <Grid xs={12}>
+            <Typography
+              sx={{
+                fontWeight: "600",
+                fontFamily: "Nunito",
+                marginTop: "1rem",
+              }}
+            >
+              Update Commission Percentage
+            </Typography>
+            <input
+              min={0}
+              max={100}
+              style={inputStyles}
+              type="number"
+              placeholder="Commission Percentage"
+              value={commissionPercentage}
+              onChange={(e) => setCommissionPercentage(e.target.value)}
+            />
+            <TextButton
+              buttonText="Update"
+              height="2rem"
+              width="8rem"
+              onClick={handleCommissionUpdate}
+              backgroundColor={Colors.SKY_BLUE}
+              hoverColor={Colors.SKY_BLUE}
+              disabled={!commissionPercentage || commissionPercentage < 0}
+            />
           </Grid>
 
           <Grid
