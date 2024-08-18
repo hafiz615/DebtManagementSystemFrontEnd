@@ -108,9 +108,8 @@ export default function PaymentSettlement({
   };
 
   // Calculate the first day of the current month
-  const firstDayOfMonth = new Date();
-  firstDayOfMonth.setDate(1);
-  const minDate = firstDayOfMonth.toISOString().split("T")[0];
+  const today = new Date();
+  const minDate = today.toISOString().split("T")[0];
 
   return (
     <>
@@ -155,26 +154,6 @@ export default function PaymentSettlement({
               >
                 Debt
               </Typography>
-              {/* <input
-                type="number"
-                placeholder="$ Debt Amount"
-                value={item?.amount}
-                onChange={(e) =>
-                  handleInputChange(index, "amount", parseInt(e.target.value))
-                }
-                onKeyDown={handleNumberInput}
-                min="0"
-                style={{
-                  backgroundColor: Colors.BG_LIGHT_GRAY,
-                  height: "2.5rem",
-                  color: Colors.DIM_LIGHT_GRAY,
-                  paddingLeft: "1rem",
-                  border: "none",
-                  outline: "none",
-                  borderRadius: "5px",
-                  width: "60%",
-                }}
-              /> */}
 
               <AmountTextField
                 width={smallScreen ? "100%" : "10rem"}

@@ -16,6 +16,7 @@ export default function SettlementPayment({
   settlementRange,
   weeksTillPaid,
   caseId,
+  handleClose,
   remainingAmount,
 }) {
   const [selectedField, setSelectedField] = useState("Minimum");
@@ -72,6 +73,7 @@ export default function SettlementPayment({
               : weeksTillPaid?.max
           }
           remainingAmount={remainingAmount}
+          closePopup={handleClose}
         />
       </Grid>
     </div>

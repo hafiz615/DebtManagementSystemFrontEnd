@@ -21,6 +21,7 @@ export default function PaymentPopup({
   weeksTillPaid,
   caseId,
   remainingAmount,
+  closePopup,
 }) {
   const [feePayment, setFeePayment] = useState(data?.feePayment || "toPay");
   const [totalAmount, setTotalAmount] = useState();
@@ -74,6 +75,7 @@ export default function PaymentPopup({
       GetCaseDetails && GetCaseDetails(id);
       GetCasePaymentDetails && GetCasePaymentDetails(id);
       handleClose();
+      closePopup();
     } else {
       const errorMessage = resCaseUpdate?.response?.data?.message;
       showToast(errorMessage, "error");

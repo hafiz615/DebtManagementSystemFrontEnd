@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import {
+  FONT_SIZE_LARGE,
   FONT_SIZE_SMALL,
   FONT_SIZE_XL,
   PAGE_HEIGHT,
@@ -124,11 +125,27 @@ const commonStyles = {
   gap: "10px",
   mb: { xs: "10px", lg: "0" },
 };
+const rangeStyles = {
+  backgroundColor: Colors.WHITE,
+  height: "15vh",
+  borderRadius: "10px",
+  paddingLeft: "2%",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  // gap: "10px",
+  // mb: { xs: "10px", lg: "0" },
+};
 
 const commonTextStyles = {
   fontSize: FONT_SIZE_XL,
   fontFamily: "Nunito",
   fontWeight: "700",
+};
+const textStyles = {
+  fontSize: FONT_SIZE_LARGE,
+  fontFamily: "Nunito",
+  color: Colors.DARK_GRAY,
 };
 const isNegative = (number) => {
   return number < 0;
@@ -181,7 +198,7 @@ export default function SettlementRange() {
   const [creditorSelect, setCreditorSelect] = useState([]);
   const [scores, setScores] = useState(null);
   const [debtor, setDebtor] = useState({});
-  const [debtorId, setDebtorId] = useState("");
+  // const [debtorId, setDebtorId] = useState("");
   const [lumpSumpData, setLumpSumpData] = useState({});
   const [errorLumpSumMessage, setErrorLumSumtMessage] = useState("");
   const [fullProfit, setFullProfit] = useState({});
@@ -204,8 +221,11 @@ export default function SettlementRange() {
   const [messages, setMessages] = useState([]);
 
   const [strategyTab, setStrategyTab] = useState(0);
-
-  // const [strategyTabVal, setStrategyTabVal] = useState(0);
+  const [rangeTab, setRangeTab] = useState(0);
+  const handleRangeChange = (event, newValue) => {
+    setRangeTab(newValue);
+  };
+  const [settlementData, setSettlementData] = useState({});
   const handleStrategyChange = (event, newValue) => {
     setStrategyTab(newValue);
     setValue(0);
@@ -247,7 +267,7 @@ export default function SettlementRange() {
   useEffect(() => {
     GetLumpSumAmountData();
     GetFullProfitData();
-  }, [debtorId]);
+  }, [caseId]);
   const tabs = ["Strategy 1", "Strategy 2", "Strategy 3"];
   const recommendations = [
     "recommendation 1",
@@ -433,6 +453,7 @@ export default function SettlementRange() {
     const resSummary = await GetSummary(payload, caseId);
     if (resSummary?.status === 200) {
       setTableLoading(false);
+      setSettlementData(resSummary?.data?.data);
       const resRanges = await GetSettlementRange("", caseId);
       if (resRanges?.status === 200) {
         showToast(resRanges?.data?.message, "success");
@@ -479,7 +500,7 @@ export default function SettlementRange() {
             setScores(settlementRangeData?.data?.data?.getScores);
           }
           setDebtor(settlementRangeData?.data?.data?.debtor?.basicInformation);
-          setDebtorId(settlementRangeData?.data?.data?.debtor?._id);
+          // setDebtorId(settlementRangeData?.data?.data?.debtor?._id);
           setApiData(settlementRangeData?.data?.data?.settlementRange);
           setJustifications({
             justifications1:
@@ -505,6 +526,8 @@ export default function SettlementRange() {
           }
           setAllCreditorsNames(creditorAccountTitles);
           showToast(settlementRangeData?.data?.message, "success");
+          // GetLumpSumAmountData();
+          // GetFullProfitData();
         } else if (
           settlementRangeData?.response?.status === 401 ||
           settlementRangeData?.response?.status === 403
@@ -634,16 +657,25 @@ export default function SettlementRange() {
         }}
       >
         <Grid item xs={12} lg={6}>
-          <IconButton
-            onClick={() => handleUpdate(true)}
-            disabled={buttonLoading}
-          >
-            {buttonLoading ? (
-              <CircularProgress size={24} sx={{ color: Colors.SKY_BLUE }} />
-            ) : (
-              <RefreshIcon sx={{ color: Colors.SKY_BLUE, fontSize: "2rem" }} />
-            )}
-          </IconButton>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <IconButton
+              onClick={() => handleUpdate(true)}
+              disabled={buttonLoading}
+            >
+              {buttonLoading ? (
+                <CircularProgress size={24} sx={{ color: Colors.SKY_BLUE }} />
+              ) : (
+                <RefreshIcon
+                  sx={{ color: Colors.SKY_BLUE, fontSize: "2rem" }}
+                />
+              )}
+            </IconButton>
+            <Typography
+              sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
+            >
+              Reload Settlement Range
+            </Typography>
+          </Box>
         </Grid>
         <Grid
           item
@@ -1041,6 +1073,120 @@ export default function SettlementRange() {
               />
             )}
           </Grid>
+          {!isEmpty(settlementData) && (
+            <>
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  backgroundColor: Colors.WHITE,
+                  borderRadius: "10px",
+                  mt: "2rem",
+                }}
+              >
+                <AntTabs
+                  value={rangeTab}
+                  onChange={handleRangeChange}
+                  variant="scrollable"
+                  scrollButtons="auto"
+                  sx={{
+                    width: "100%",
+                    borderTopLeftRadius: "10px",
+                    borderTopRightRadius: "10px",
+                  }}
+                >
+                  <AntTab
+                    sx={{
+                      bgcolor: Colors.WHITE,
+                      width: "max-content",
+                      fontWeight: "600",
+                      height: "3.5rem",
+                    }}
+                    label="Settlement Range 1"
+                  />
+                  <AntTab
+                    sx={{
+                      bgcolor: Colors.WHITE,
+                      width: "max-content",
+                      fontWeight: "600",
+                      height: "3.5rem",
+                    }}
+                    label="Settlement Range 2"
+                  />
+                  <AntTab
+                    sx={{
+                      bgcolor: Colors.WHITE,
+                      width: "max-content",
+                      fontWeight: "600",
+                      height: "3.5rem",
+                    }}
+                    label="Settlement Range 3"
+                  />
+                </AntTabs>
+              </Grid>
+              <Grid container item xs={12} sx={{ gap: "1rem", mt: "1.5rem" }}>
+                <Grid
+                  container
+                  item
+                  xs={12}
+                  sx={{
+                    gap: "1rem",
+                  }}
+                >
+                  <Grid item xs={12} lg={5.8} sx={rangeStyles}>
+                    <Typography sx={commonTextStyles}>
+                      Lower Bound:{" "}
+                      <span style={textStyles}>
+                        {`$${
+                          settlementData[`settlement_range_${rangeTab + 1}`]
+                            ?.lower_bound ||
+                          settlementData[`settlement_range_${rangeTab + 1}`]
+                            ?.weekly_payment_range?.[0]
+                        }` || "--"}
+                      </span>
+                    </Typography>
+                    <Typography sx={commonTextStyles}>
+                      Weeks to Payoff (Lower):{" "}
+                      <span style={textStyles}>
+                        {`${
+                          settlementData[`settlement_range_${rangeTab + 1}`]
+                            ?.weeks_to_payoff_lower_bound ||
+                          settlementData[`settlement_range_${rangeTab + 1}`]
+                            ?.weeks_to_pay_off_lower_bound
+                        }%` || "--"}
+                      </span>
+                    </Typography>
+                  </Grid>
+
+                  <Grid item xs={12} lg={5.8} sx={rangeStyles}>
+                    <Typography sx={commonTextStyles}>
+                      Upper Bound:{" "}
+                      <span style={textStyles}>
+                        {`$${
+                          settlementData[`settlement_range_${rangeTab + 1}`]
+                            ?.upper_bound ||
+                          settlementData[`settlement_range_${rangeTab + 1}`]
+                            ?.weekly_payment_range?.[1]
+                        }` || "--"}
+                      </span>
+                    </Typography>
+                    <Typography sx={commonTextStyles}>
+                      Weeks to Payoff (Upper):{" "}
+                      <span style={textStyles}>
+                        {`${
+                          settlementData[`settlement_range_${rangeTab + 1}`]
+                            ?.weeks_to_payoff_upper_bound ||
+                          settlementData[`settlement_range_${rangeTab + 1}`]
+                            ?.weeks_to_pay_off_upper_bound
+                        }%` || "--"}
+                      </span>
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </>
+          )}
+
           <Grid
             item
             xs={12}
@@ -1101,6 +1247,7 @@ export default function SettlementRange() {
               />
             </AntTabs>
           </Grid>
+
           <Grid
             item
             xs={12}
@@ -1128,14 +1275,19 @@ export default function SettlementRange() {
               </Grid>
             ) : (
               <ReactMarkdown>
-                {strategyTab === 2
-                  ? fullProfit?.justifications?.[justificationValue] ||
-                    "No justifications available"
-                  : strategyTab === 1
-                  ? lumpSumpData?.justifications?.[justificationValue] ||
-                    "No justifications available"
-                  : justifications?.[`justifications${value + 1}`] ||
-                    "No justifications available"}
+                {`${
+                  strategyTab === 2
+                    ? fullProfit?.justifications?.[justificationValue] ||
+                      "No justifications available"
+                    : strategyTab === 1
+                    ? lumpSumpData?.justifications?.[justificationValue] ||
+                      "No justifications available"
+                    : justifications?.[`justifications${value + 1}`] ||
+                      "No justifications available"
+                }\n\n### Reason:\n\n${
+                  settlementData[`settlement_range_${rangeTab + 1}`]?.reason ||
+                  "No reason available"
+                }`}
               </ReactMarkdown>
             )}
           </Grid>
@@ -1157,6 +1309,11 @@ export default function SettlementRange() {
               placeholder="Write Text..."
               value={inputValue}
               onChange={(e) => handleInputChange(e)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && inputValue) {
+                  handleClick();
+                }
+              }}
               style={{
                 backgroundColor: Colors.WHITE,
                 color: Colors.BLACK,

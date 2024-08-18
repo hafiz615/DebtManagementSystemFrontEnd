@@ -99,17 +99,16 @@ export const styles = {
     textAlign: "center",
   },
   pathCell: {
-    maxWidth: "200px",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
     fontSize: { xs: FONT_SIZE_SMALL, lg: FONT_SIZE_LARGE },
   },
-  pathFontSize: {
-    fontSize: { xs: FONT_SIZE_SMALL, lg: FONT_SIZE_LARGE },
+  pathDataCell: {
+    maxWidth: "300px",
   },
+
   pathText: {
-    fontSize: { xs: FONT_SIZE_SMALL, lg: FONT_SIZE_LARGE },
+    overflowWrap: "break-word",
+    wordWrap: "break-word",
+    fontSize: { xs: FONT_SIZE_LARGE },
     "&:hover": {
       cursor: "pointer",
     },
@@ -119,16 +118,7 @@ export const styles = {
     gap: "0.5rem",
     alignItems: "center",
   },
-  icon: {
-    color: Colors.ORANGE_COLOR,
-    fontSize: { xs: FONT_SIZE_SMALL, sm: "1.2rem" },
-    cursor: "pointer",
-  },
-  viewIcon: {
-    color: Colors.GREEN_COLOR,
-    fontSize: { xs: FONT_SIZE_SMALL, sm: "1.2rem" },
-    cursor: "pointer",
-  },
+
   uploadContainer: {
     display: "flex",
     flexDirection: "column",
