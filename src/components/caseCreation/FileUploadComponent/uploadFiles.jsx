@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import {
   Grid,
@@ -21,6 +21,9 @@ import AlertDialog from "../editFileNamePopUp";
 import { styles } from "./FileUploadComponent.styles";
 import FileViewer from "./FileViewer";
 import ScrollbarStyles from "../../customScroll";
+import { Colors } from "../../../config/default";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { truncateText } from "../../../common";
 
 const FileUploadComponent = ({
   files,
@@ -133,6 +136,11 @@ const FileUploadComponent = ({
     setSelectedFileForViewing(null);
   };
 
+  const smallScreen = useMediaQuery("(min-width:756px) and (max-width:898px)");
+  const smallToMediumScreen = useMediaQuery(
+    "(min-width:290px) and (max-width:1020px)"
+  );
+  const truncateValue = smallToMediumScreen ? 20 : 70;
   return (
     <>
       <Grid container>
@@ -175,7 +183,7 @@ const FileUploadComponent = ({
         <Paper
           sx={{
             borderRadius: "10px",
-            width: { xs: "65vw", md: "100%" },
+            width: smallScreen ? "80%" : { xs: "65vw", md: "90%", lg: "100%" },
           }}
         >
           <TableContainer
@@ -193,9 +201,9 @@ const FileUploadComponent = ({
                   <TableCell sx={styles.selectColumn}>
                     <Typography sx={styles.tableHeader}>Select</Typography>
                   </TableCell>
-                  <TableCell sx={styles.titleColumn}>
+                  {/* <TableCell sx={styles.titleColumn}>
                     <Typography sx={styles.tableHeader}>Title</Typography>
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell sx={styles.typeColumn}>
                     <Typography sx={styles.tableHeader}>Type</Typography>
                   </TableCell>
@@ -218,18 +226,32 @@ const FileUploadComponent = ({
                         }
                       />
                     </TableCell>
-                    <TableCell sx={styles.pathFontSize}>{file?.name}</TableCell>
-                    <TableCell sx={styles.pathFontSize}>{file?.type}</TableCell>
-                    <TableCell sx={styles.pathCell}>
+                    {/* <TableCell sx={styles.pathCell}>
                       <Typography sx={styles.pathText} title={file?.name}>
-                        {file?.path}
+                        {truncateText(file?.name, truncateValue)}
+                      </Typography>
+                    </TableCell> */}
+
+                    <TableCell sx={styles.pathCell}>
+                      <Typography sx={styles.pathText} title={file?.type}>
+                        {truncateText(file?.type, truncateValue)}
+                      </Typography>
+                    </TableCell>
+
+                    <TableCell sx={styles.pathDataCell}>
+                      <Typography sx={styles.pathText} title={file?.path}>
+                        {truncateText(file?.path, truncateValue)}
                       </Typography>
                     </TableCell>
                     <TableCell>
                       <Box sx={styles.actionIcons}>
                         <VisibilityIcon
+                          sx={{
+                            fontSize: "1.2rem",
+                            cursor: "pointer",
+                            color: Colors.DARK_GRAY,
+                          }}
                           onClick={() => handleViewFile(file?.file)}
-                          sx={styles.viewIcon}
                         />
                         <AlertDialog
                           initialFileName={file?.name}
@@ -239,7 +261,12 @@ const FileUploadComponent = ({
                         />
                         <CloseIcon
                           onClick={() => handleDeleteFile(index)}
-                          sx={styles.icon}
+                          sx={{
+                            fontSize: "1.2rem",
+
+                            cursor: "pointer",
+                            color: Colors.ORANGE_COLOR,
+                          }}
                         />
                       </Box>
                     </TableCell>

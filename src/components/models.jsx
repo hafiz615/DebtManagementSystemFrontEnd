@@ -90,6 +90,7 @@ export default function MuiModels({
   weeksTillPaid,
   caseId,
   remainingAmount,
+  closePopup,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -644,6 +645,7 @@ export default function MuiModels({
             <PaymentsPopup
               data={data}
               handleClose={handleClose}
+              closePopup={closePopup}
               GetCaseDetails={GetCaseDetails}
               GetCasePaymentDetails={GetCasePaymentDetails}
               settlementRange={settlementRange}

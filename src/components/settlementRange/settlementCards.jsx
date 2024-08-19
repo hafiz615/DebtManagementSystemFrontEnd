@@ -109,6 +109,7 @@ export default function SettlementCards({
             margin: "1rem 8%",
             display: "flex",
             justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
           <Typography sx={commonTextStyles}>

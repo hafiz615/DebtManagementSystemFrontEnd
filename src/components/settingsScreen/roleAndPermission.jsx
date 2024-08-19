@@ -65,6 +65,7 @@ export default function RoleAndPermission() {
   const permissionData = useSelector(
     (state) => state?.permissions?.permissions?.name
   );
+  const crrentRole = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { showToast } = useToast();
   const [selectedRole, setSelectedRole] = useState(null);
   const [rolesData, setRolesData] = useState([]);
@@ -107,6 +108,11 @@ export default function RoleAndPermission() {
   const selectedRoleData = rolesData?.find(
     (role) => role?.name === selectedRole
   );
+
+  const filteredRolesData =
+    crrentRole === "Super User"
+      ? rolesData?.filter((role) => role?.name !== "Super User")
+      : rolesData?.filter((role) => role?.name === crrentRole);
 
   const UpdateRoles = async () => {
     const params = {
@@ -176,7 +182,7 @@ export default function RoleAndPermission() {
               marginTop: "1rem",
             }}
           >
-            {rolesData?.map((data, index) => (
+            {filteredRolesData?.map((data, index) => (
               <Grid
                 item
                 xs={12}
