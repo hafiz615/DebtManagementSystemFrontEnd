@@ -298,7 +298,6 @@ export default function SettlementRange() {
   const selectedCreditorDetails = creditorNames?.find(
     (item) => item?.creditorAccountTitle === currentCreditor
   );
-
   const cardData = {
     0: recommendations?.map((item, index) => (
       <>
