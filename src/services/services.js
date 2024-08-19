@@ -1065,3 +1065,16 @@ export const UpdateCaseCreditor = async (id, payload) => {
     return error;
   }
 };
+
+export const UpdateCommission = async (payload, id, status) => {
+  try {
+    return await axios.post(
+      BASE_URL +
+        `/v1/case/getScoresSettlementByCommPercentage/${id}?all=${status}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
