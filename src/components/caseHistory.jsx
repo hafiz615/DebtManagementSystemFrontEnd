@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-import { Grid, Typography, IconButton, Menu } from "@mui/material";
-import CircularProgress from "@mui/material/CircularProgress";
+import { Grid, Typography, IconButton } from "@mui/material";
 import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
 
 import { Colors } from "../config/default";
 import SearchBar from "./searchBar";
 import ListTable from "./listTable";
 import { formatDollarAmount } from "../common";
+import { caseHistoryHeading } from "../constants/appConstants";
 
 function CaseHistory({
   tableLoading,
@@ -101,7 +101,7 @@ function CaseHistory({
               justifyContent: "center",
             }}
           >
-            Case History
+            {caseHistoryHeading}
           </Typography>
           <div style={{ display: "flex" }}>
             <SearchBar

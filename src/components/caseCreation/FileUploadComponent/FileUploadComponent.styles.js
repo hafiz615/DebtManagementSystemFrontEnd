@@ -17,7 +17,7 @@ export const styles = {
     backgroundColor: Colors.WHITE,
     padding: "1rem",
     borderRadius: "10px",
-    overflowX: "auto", // Add horizontal scrolling if needed
+    overflowX: "auto",
     display: "flex",
     flexDirection: "row",
     flexWrap: "wrap",
@@ -25,8 +25,8 @@ export const styles = {
   columnBox: {
     display: "flex",
     flexDirection: "column",
-    boxSizing: "border-box", // Ensure padding/border are included in width calculation
-    overflow: "hidden", // Prevent overflow within columns
+    boxSizing: "border-box",
+    overflow: "hidden",
   },
   columnHeader: {
     fontFamily: "Nunito",
@@ -43,7 +43,7 @@ export const styles = {
     fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
     display: "flex",
     alignItems: "center",
-    overflow: "hidden", // Prevent text overflow
+    overflow: "hidden",
   },
   fileName: {
     textTransform: "none",
@@ -56,21 +56,39 @@ export const styles = {
     height: "40px",
   },
   selectColumn: {
-    minWidth: "100px", // Adjust to desired width
+    minWidth: "100px",
     flex: "0 0 100px",
+    position: "sticky",
+    top: 0,
+    zIndex: 1,
+    backgroundColor: "background.paper",
   },
   titleColumn: {
-    // flex: 1,
-    // Allow the title column to take up remaining space
+    position: "sticky",
+    top: 0,
+    zIndex: 1,
+    backgroundColor: "background.paper",
   },
   typeColumn: {
-    flex: 1, // Allow the type column to take up remaining space
+    flex: 1,
+    position: "sticky",
+    top: 0,
+    zIndex: 1,
+    backgroundColor: "background.paper",
   },
   pathColumn: {
-    flex: 1, // Allow the path column to take up remaining space
+    flex: 1,
+    position: "sticky",
+    top: 0,
+    zIndex: 1,
+    backgroundColor: "background.paper",
   },
   actionsColumn: {
-    flex: 1, // Allow the actions column to take up remaining space
+    flex: 1,
+    position: "sticky",
+    top: 0,
+    zIndex: 1,
+    backgroundColor: "background.paper",
   },
   tableHeader: {
     fontWeight: "bold",
@@ -81,12 +99,16 @@ export const styles = {
     textAlign: "center",
   },
   pathCell: {
-    maxWidth: "200px",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
+    fontSize: { xs: FONT_SIZE_SMALL, lg: FONT_SIZE_LARGE },
   },
+  pathDataCell: {
+    maxWidth: "300px",
+  },
+
   pathText: {
+    overflowWrap: "break-word",
+    wordWrap: "break-word",
+    fontSize: { xs: FONT_SIZE_LARGE },
     "&:hover": {
       cursor: "pointer",
     },
@@ -96,16 +118,7 @@ export const styles = {
     gap: "0.5rem",
     alignItems: "center",
   },
-  icon: {
-    color: Colors.ORANGE_COLOR,
-    fontSize: { xs: FONT_SIZE_SMALL, sm: "1.2rem" },
-    cursor: "pointer",
-  },
-  viewIcon: {
-    color: Colors.GREEN_COLOR, // Or any color you prefer
-    fontSize: { xs: FONT_SIZE_SMALL, sm: "1.2rem" },
-    cursor: "pointer",
-  },
+
   uploadContainer: {
     display: "flex",
     flexDirection: "column",
@@ -126,21 +139,21 @@ export const styles = {
     width: "100%",
     height: "40px",
     justifyContent: "center",
-    cursor: "pointer", // Show pointer cursor to indicate clickable area
+    cursor: "pointer",
   },
   uploadBox: {
     border: "2px dashed #ccc",
     borderRadius: "4px",
-    padding: "1rem", // Adjust padding as needed
+    padding: "1rem",
     textAlign: "center",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     fontSize: "3rem",
-    marginBottom: "0.5rem", // Space between icon and text
+    marginBottom: "0.5rem",
     color: Colors.DIM_LIGHT_GRAY,
-    cursor: "pointer", // Show pointer cursor to indicate clickable area
+    cursor: "pointer",
   },
   uploadText: {
     fontSize: "1rem",
@@ -150,7 +163,7 @@ export const styles = {
 
   uploadIcon: {
     fontSize: "3rem",
-    marginBottom: "0.5rem", // Space between icon and text
+    marginBottom: "0.5rem",
     color: Colors.DIM_LIGHT_GRAY,
     cursor: "pointer",
   },

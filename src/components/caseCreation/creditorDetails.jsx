@@ -17,7 +17,6 @@ import { FONT_SIZE_XL } from "../../constants/appConstants";
 
 export default function CreditorDetails({
   creditors,
-  setCreditors,
   debtorCaseData,
   finalCaseData,
   setFinalCaseData,
@@ -76,8 +75,6 @@ export default function CreditorDetails({
       creditor: {
         aggression: 0,
         accountTitle: "",
-        // paymentToken: "",
-        // paymentType: "",
         basicInformation: {
           fullName: "",
           email: "",
@@ -121,14 +118,12 @@ export default function CreditorDetails({
   useEffect(() => {
     let processedData;
 
-    if (creditors.length === 0) {
+    if (creditors?.length === 0) {
       processedData = [
         {
           creditor: {
             aggression: 0,
             accountTitle: "",
-            // paymentToken: "",
-            // paymentType: "",
             basicInformation: {
               fullName: "",
               email: "",
@@ -164,8 +159,6 @@ export default function CreditorDetails({
         creditor: {
           aggression: 0,
           accountTitle: creditor?.AccountTitle || "",
-          // paymentToken: "",
-          // paymentType: "",
           basicInformation: {
             fullName: creditor?.Name || "",
             email: creditor?.EmailAddress || "",
@@ -183,7 +176,7 @@ export default function CreditorDetails({
           },
           contacts: [],
         },
-        status: "In Process",
+        status: "",
         totalDebt:
           parseInt(
             creditor?.ContractDetails?.payable_amount
@@ -252,7 +245,6 @@ export default function CreditorDetails({
             >
               <Grid
                 container
-                xs={12}
                 sx={{ justifyContent: "space-between", alignItems: "center" }}
               >
                 <Typography

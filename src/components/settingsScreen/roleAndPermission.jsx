@@ -65,6 +65,10 @@ export default function RoleAndPermission() {
   const permissionData = useSelector(
     (state) => state?.permissions?.permissions?.name
   );
+  const settings = useSelector(
+    (state) => state?.permissions?.permissions?.settings
+  );
+  const crrentRole = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { showToast } = useToast();
   const [selectedRole, setSelectedRole] = useState(null);
   const [rolesData, setRolesData] = useState([]);
@@ -75,7 +79,7 @@ export default function RoleAndPermission() {
   const [rolesId, setRoleId] = useState("");
 
   const GetRoles = async () => {
-    const GetRolesData = await GetAllRoles();
+    const GetRolesData = await GetAllRoles(false);
 
     if (GetRolesData?.status === 200) {
       setRolesData(GetRolesData?.data?.data || []);
@@ -107,6 +111,15 @@ export default function RoleAndPermission() {
   const selectedRoleData = rolesData?.find(
     (role) => role?.name === selectedRole
   );
+
+  const filteredRolesData =
+    crrentRole === "Super User"
+      ? rolesData?.filter((role) => role?.name !== "Super User")
+      : crrentRole === "Admin"
+      ? rolesData?.filter(
+          (role) => role?.name !== "Admin" && role?.name !== "Super User"
+        )
+      : rolesData?.filter((role) => role?.name === crrentRole);
 
   const UpdateRoles = async () => {
     const params = {
@@ -151,13 +164,15 @@ export default function RoleAndPermission() {
           >
             Roles & Permissions
           </Typography>
-          <span onClick={(e) => e.stopPropagation()}>
-            <MuiModels show="createRole" GetRoles={GetRoles} />
-          </span>
+          {settings?.addRole && (
+            <span onClick={(e) => e.stopPropagation()}>
+              <MuiModels show="createRole" GetRoles={GetRoles} />
+            </span>
+          )}
         </div>
       </StyledAccordionSummary>
       <StyledAccordionDetails>
-        <Grid container xs={12} sx={{ marginTop: "1rem" }}>
+        <Grid container sx={{ marginTop: "1rem" }}>
           <Typography
             sx={{
               fontSize: FONT_SIZE_XL,
@@ -176,12 +191,12 @@ export default function RoleAndPermission() {
               marginTop: "1rem",
             }}
           >
-            {rolesData?.map((data, index) => (
+            {filteredRolesData?.map((data, index) => (
               <Grid
-                key={index}
                 item
                 xs={12}
                 lg={2.8}
+                key={index}
                 sx={{
                   alignItems: "center",
                   backgroundColor:
@@ -221,7 +236,7 @@ export default function RoleAndPermission() {
                     </span>
                   </StyledTypography>
                 </Box>
-                {data.name !== "Super User" && (
+                {data?.name !== "Super User" && (
                   <Box
                     sx={{
                       marginLeft: "auto",
@@ -236,20 +251,18 @@ export default function RoleAndPermission() {
                       selectedRole={selectedRole}
                       setSelectedRole={setSelectedRole}
                     />
-
-                    <Prompt
-                      heading="Delete Template"
-                      text={`Are you sure you want to delete ${data?.name} ?`}
-                      rolesId={data._id}
-                      roleName={roleName}
-                      GetRoles={GetRoles}
-                      permissionData={permissionData}
-                      iconSize="20px"
-                      setSelectedRole={setSelectedRole}
-                      // selectedRole={selectedRole}
-
-                      // data={data}
-                    />
+                    {settings?.deleteRole && (
+                      <Prompt
+                        heading="Delete Template"
+                        text={`Are you sure you want to delete ${data?.name} ?`}
+                        rolesId={data._id}
+                        roleName={roleName}
+                        GetRoles={GetRoles}
+                        permissionData={permissionData}
+                        iconSize="20px"
+                        setSelectedRole={setSelectedRole}
+                      />
+                    )}
                   </Box>
                 )}
               </Grid>
@@ -267,11 +280,16 @@ export default function RoleAndPermission() {
               general={generalData}
               settingsPermissions={settingData}
               analyticsPermissions={analyticsData}
+              disableToggleButtons={
+                !(crrentRole === "Admin" || crrentRole === "Super User") &&
+                !settings?.editRole
+              }
             />
-            {selectedRole !== "Super User" && (
+            {(crrentRole === "Admin" ||
+              crrentRole === "Super User" ||
+              settings?.editRole) && (
               <Grid
                 container
-                xs={12}
                 sx={{
                   justifyContent: "flex-end",
                   marginTop: "1rem",

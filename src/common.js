@@ -299,3 +299,106 @@ export const generatePdfFromApiData = (apiData) => {
 
   doc.save("financial_report.pdf");
 };
+
+export const calculateNextWeek = () => {
+  const today = new Date();
+  const nextWeek = new Date(today);
+  nextWeek.setDate(today.getDate() + 7);
+
+  const year = nextWeek.getFullYear();
+  const month = String(nextWeek.getMonth() + 1).padStart(2, "0");
+  const day = String(nextWeek.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+export function getWeeksRemainingMessage(item) {
+  switch (item) {
+    case "recommendation 1":
+      return "Weeks remaining based on recommendation 1";
+    case "recommendation 2":
+      return "Weeks remaining based on recommendation 2";
+    case "recommendation 3":
+      return "Weeks remaining based on recommendation 3";
+    default:
+      return "";
+  }
+}
+
+export const isEmailValid = (email) => {
+  // Use a more robust email validation regular expression
+  const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+  return emailRegex.test(email);
+};
+export const HistoricRangeHandleNumberInput = (e) => {
+  const invalidChars = ["e", "E", ".", "+", "-"];
+  if (invalidChars.includes(e.key)) {
+    e.preventDefault();
+  }
+};
+export const handleNumberInput = (e) => {
+  const allowedKeys = [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "Backspace",
+    "ArrowLeft",
+    "ArrowRight",
+  ];
+  if (!allowedKeys.includes(e.key)) {
+    e.preventDefault();
+  }
+  const invalidChars = ["e", "E", ".", "+", "-"];
+  if (invalidChars.includes(e.key)) {
+    e.preventDefault();
+  }
+};
+export const handleNumberInputKeyDown = (e) => {
+  const invalidChars = ["e", "E", ".", "-"];
+  const allowedKeys = [
+    "+",
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "Backspace",
+    "ArrowLeft",
+    "ArrowRight",
+  ];
+  if (!allowedKeys.includes(e.key)) {
+    e.preventDefault();
+  }
+  if (invalidChars.includes(e.key)) {
+    e.preventDefault();
+  }
+};
+export const convertCamelCaseToTitle = (str) => {
+  return str
+    .replace(/([A-Z])/g, " $1") // Add space before capital letters
+    .replace(/^./, (char) => char.toUpperCase()); // Capitalize the first letter
+};
+export const getTruncatedText = (text, maxLength) => {
+  if (text.length > maxLength) {
+    return text.slice(0, maxLength) + "...";
+  }
+  return text;
+};
+
+export const truncateText = (text, length) => {
+  if (text?.length > length) {
+    return text.substring(0, length) + "...";
+  }
+  return text;
+};

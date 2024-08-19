@@ -87,6 +87,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   const [checked, setChecked] = React.useState(false);
   const [status, setStatus] = useState(debtorBasicInfo?.status || "");
   const [extractedData, setExtractedData] = useState({});
+  const [inputKey, setInputKey] = useState(Date.now());
   //Debtor-Contact-State
   const contacts = !isEmpty(caseData?.debtor?.contacts)
     ? caseData?.debtor?.contacts?.map((contact) => ({
@@ -234,7 +235,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         remainingAmount === "" ||
         // lastPaymentDate === "" ||
         debtorDetailsStatus === "" ||
-        parseInt(remainingAmount) !== totalAmount ||
+        parseInt(remainingAmount) !== parseInt(totalAmount) ||
         newDataList?.some((newData) =>
           Object.values(newData)?.some((value) => value === "")
         )));
@@ -455,16 +456,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     setFilteredArray([]);
     setDebtorSearchText("");
   };
-  // const SearchCreditorFields = async (value) => {
-  //   if (value) {
-  //     const params = { text: value };
-  //     const getCreditorDataInSearch = await GetCreditorSearch(params);
-  //     if (getCreditorDataInSearch?.status === 200) {
-  //       const data = getCreditorDataInSearch?.data?.data;
-  //       setFilteredArray(data);
-  //     }
-  //   }
-  // };
+
   const SearchCreditorFields = async (value, index) => {
     if (value) {
       const params = { text: value };
@@ -489,63 +481,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     setFinalCaseData(updatedFinalCaseData);
     setFilteredArray([]);
     setCreditorSearchText("");
-    // setCreditorBasicsInfo({
-    //   CreditorBasicFullName: creditorData?.basicInformation?.fullName || "",
-    //   CreditorBasicEmailAddress: creditorData?.basicInformation?.email || "",
-    //   CreditorBasicPhoneNumber: creditorData?.basicInformation?.phone || "",
-    // });
-    // setCreditorContactError({});
-    // setCreditorContactEmailError({});
-    // setCreditorFieldsError({
-    //   emailValidError: "",
-    //   creditorPhoneError: "",
-    // });
-    // setCreditorBusinessDetails({
-    //   businessCompanyName: creditorData?.businessInformation?.companyName || "",
-    //   businessCategory:
-    //     creditorData?.businessInformation?.businessCategory || "",
-    // });
-    // setCreditorNotes(creditorData?.notes || "");
-    // setSecurityKey(creditorData?.creditorSecurityKey || "");
-    // const formattedFundedDate = creditorData?.lastFundedDate
-    //   ? new Date(creditorData.lastFundedDate).toISOString().split("T")[0]
-    //   : "";
-    // setFundedDate(formattedFundedDate || "");
-    // setHistoricRange({
-    //   minimum: creditorData?.historicalRange?.minimum || "",
-    //   maximum: creditorData?.historicalRange?.maximum || "",
-    // });
-    // if (!isEmpty(creditorData?.contacts)) {
-    //   setCreditorContactDetails(
-    //     creditorData?.contacts?.map((contact) => ({
-    //       name: contact?.name || "",
-    //       title: contact?.title || "",
-    //       phone: contact?.phone || "",
-    //       email: contact?.email || "",
-    //       country: contact?.country || "",
-    //       state: contact?.state || "",
-    //       city: contact?.city || "",
-    //       zipCode: contact?.zipCode || "",
-    //       relationWithDebtor: contact?.relationWithDebtor || "",
-    //     }))
-    //   );
-    // } else {
-    //   setCreditorContactDetails([
-    //     {
-    //       name: "",
-    //       title: "",
-    //       phone: "",
-    //       email: "",
-    //       country: "",
-    //       state: "",
-    //       city: "",
-    //       zipCode: "",
-    //       relationWithDebtor: "",
-    //     },
-    //   ]);
-    // }
-    // setFilteredArray([]);
-    // setCreditorSearchText("");
   };
 
   const handleNext = async () => {
@@ -555,11 +490,15 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       if (activeStep === 0) {
         const extractedDataMCAs = selectedFiles
           ? await ExtractContractData(selectedFiles).then((res) => {
-              setExtractedData(res);
-              return res;
+              if (isEmpty(res)) {
+                showToast("Could not extract data from files", "error");
+                setActiveStep(activeStep + 1);
+              } else {
+                setExtractedData(res);
+                return res;
+              }
             })
           : [];
-
         if (files) {
           const uploadFile = await UploadFiles(files);
           if (uploadFile?.status === 200) {
@@ -612,7 +551,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           paymentToken: connectPayment?.paymentToken,
           paymentType: connectPayment?.paymentType,
           documents: url || [],
-          extractedFields: extractedData,
+          extractedFields: isEmpty(extractedData) ? [] : extractedData,
         };
         const res = await CreateDebtor(params);
         if (res?.status === 200) {
@@ -684,13 +623,98 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     window.scrollTo(0, 0);
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
-
+  const clearDebtor = () => {
+    setDebtorOwnDetails({
+      BasicFullName: "",
+      BasicEmailAddress: "",
+      BasicSsid: "",
+      BasicCountry: "",
+      BasicState: "",
+      BasicCity: "",
+      BasicZipCode: "",
+      BasicPhoneNumber: "",
+      BasicAddress: "",
+      BasicWeeklyBudget: "",
+    });
+    setDebtorBusinessDetails({
+      businessCompanyName: "",
+      businessEinNumber: "",
+      businessCategory: "",
+      businessDescription: "",
+      businessCountry: "",
+      businessState: "",
+      businessCity: "",
+      businessZipCode: "",
+      businessPhoneNumber: "",
+      businessAddress: "",
+    });
+    setWalletId("");
+    setStatus("");
+    setDebtorContactDetails([
+      {
+        name: "",
+        title: "",
+        phone: "",
+        email: "",
+        country: "",
+        state: "",
+        city: "",
+        zipCode: "",
+        relationWithDebtor: "",
+      },
+    ]);
+  };
   const handleReset = () => {
-    setActiveStep(0);
+    if (activeStep === 0) {
+      setFiles([]);
+      setSelectedFiles([]);
+      setExtractedData({});
+      setInputKey(Date.now());
+    } else if (activeStep === 1) {
+      clearDebtor();
+    } else if (activeStep === 2) {
+      setFinalCaseData([]);
+    } else if (activeStep === 3) {
+      setNewDataList([
+        {
+          amount: "",
+          startDate: today,
+          timePeriod: "Custom",
+          frequency: 1,
+        },
+      ]);
+    }
+    setErrors({
+      phone: "",
+      einNumber: "",
+      ssn: "",
+      basicPhone: "",
+      emailValid: "",
+    });
   };
   const resetAll = () => {
-    localStorage.setItem("route", "home");
-    navigate("/home");
+    setFiles([]);
+    setSelectedFiles([]);
+    setExtractedData({});
+    setInputKey(Date.now());
+    clearDebtor();
+    setFinalCaseData([]);
+    setNewDataList([
+      {
+        amount: "",
+        startDate: today,
+        timePeriod: "Custom",
+        frequency: 1,
+      },
+    ]);
+    setErrors({
+      phone: "",
+      einNumber: "",
+      ssn: "",
+      basicPhone: "",
+      emailValid: "",
+    });
+    setActiveStep(0);
   };
 
   return (
@@ -804,6 +828,8 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
                 setFiles={setFiles}
                 selectedFiles={selectedFiles}
                 setSelectedFiles={setSelectedFiles}
+                setInputKey={setInputKey}
+                inputKey={inputKey}
               />
             </>
           ) : activeStep === 1 ? (
@@ -864,6 +890,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               newDataList={newDataList}
               setNewDataList={setNewDataList}
               totalAmount={totalAmount}
+              remainingAmount={remainingAmount}
             />
           ) : activeStep === 4 ? (
             ""

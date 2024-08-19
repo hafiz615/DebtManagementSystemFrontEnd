@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { filter, isEmpty } from "lodash";
+import { isEmpty } from "lodash";
 
 import {
   Grid,
@@ -229,7 +229,7 @@ function DashboardContent() {
             </Grid>
           </Grid>
 
-          <Grid container xs={12} sx={{ mt: "1rem" }}>
+          <Grid container sx={{ mt: "1rem" }}>
             <Grid item xs={12} lg={8}>
               <Card
                 sx={{
@@ -272,7 +272,6 @@ function DashboardContent() {
                 <hr style={{ background: "lightgrey" }} />
                 <Grid
                   container
-                  xs={12}
                   sx={{
                     marginTop: "1rem",
                     height: "16rem",
@@ -302,10 +301,6 @@ function DashboardContent() {
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          // display: { xs: "flex", md: "unset" },
-                          // flexDirection: { xs: "column", md: "unset" },
-                          // alignItems: { xs: "center", md: "center" },
-                          // justifyContent: { xs: "center", md: "center" },
                         }}
                       >
                         <SpinnerWithPercentage
@@ -337,10 +332,6 @@ function DashboardContent() {
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          // display: { xs: "flex", md: "unset" },
-                          // flexDirection: { xs: "column", md: "unset" },
-                          // alignItems: { xs: "center", md: "center" },
-                          // justifyContent: { xs: "center", md: "center" },
                         }}
                       >
                         <SpinnerWithPercentage
@@ -371,10 +362,6 @@ function DashboardContent() {
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          // display: { xs: "flex", md: "unset" },
-                          // flexDirection: { xs: "column", md: "unset" },
-                          // alignItems: { xs: "center", md: "unset" },
-                          // justifyContent: { xs: "center", md: "unset" },
                         }}
                       >
                         <SpinnerWithPercentage
@@ -402,10 +389,6 @@ function DashboardContent() {
                         xs={12}
                         md={3}
                         sx={{
-                          // display: { xs: "flex", md: "unset" },
-                          // flexDirection: { xs: "column", md: "unset" },
-                          // alignItems: { xs: "center", md: "center" },
-                          // justifyContent: { xs: "center", md: "center" },
                           flexDirection: "column",
                           display: "flex",
                           alignItems: "center",
@@ -509,7 +492,7 @@ function DashboardContent() {
             </Grid>
           </Grid>
 
-          <Grid container xs={12} sx={{ m: "1rem 0rem" }}>
+          <Grid container sx={{ m: "1rem 0rem" }}>
             <Grid item xs={12} lg={8} sx={{ mt: { xs: "1rem", lg: "0" } }}>
               <Card
                 sx={{

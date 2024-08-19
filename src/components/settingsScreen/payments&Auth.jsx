@@ -6,17 +6,17 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-import { Grid, Typography, Box, Hidden } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { Colors } from "../../config/default";
 import Dropdown from "../dropdown";
 import TextButton from "../button";
-import RowConfigForm from "./paymentsAuthsNotificationRow";
 
 import { SaveSettings } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { styled } from "@mui/material/styles";
+import { handleNumberInput } from "../../common";
 const StyledAccordion = styled(Accordion)({
   "&:before": {
     display: "none", // Remove the default line
@@ -42,20 +42,8 @@ const StyledAccordionDetails = styled(AccordionDetails)({
 });
 
 export default function SettingsAccordion({
-  failedAuthorizations,
-  successfulAuthorizations,
-  failedPayments,
-  successPayments,
-  upcomingPayments,
   retryInterval,
   authorizationInterval,
-  notificationTemplates,
-  templates,
-  setfailedAuthorizations,
-  setSuccessfulAuthorizations,
-  setFailedPayments,
-  setSuccessPayments,
-  setUpcomingPayments,
   setRetryInterval,
   setAuthorizationInterval,
 }) {
@@ -79,11 +67,6 @@ export default function SettingsAccordion({
   const saveAuthsPaymentsConfig = async () => {
     const settings = {
       paymentsAuthorizations: {
-        failedAuthorizations: failedAuthorizations,
-        successfulAuthorizations: successfulAuthorizations,
-        failedPayments: failedPayments,
-        successPayments: successPayments,
-        upcomingPayments: upcomingPayments,
         retryInterval: retryInterval,
         authorizationInterval: authorizationInterval,
       },
@@ -164,117 +147,6 @@ export default function SettingsAccordion({
         </StyledAccordionSummary>
 
         <StyledAccordionDetails sx={{ width: { xs: "130vw", sm: "auto" } }}>
-          <Grid container item>
-            <Grid
-              item
-              xs={12}
-              lg={6.5}
-              sx={{
-                display: "flex",
-                justifyContent: { xs: "space-between", sm: "space-evenly" },
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  width: { xs: "18%", lg: "35%" },
-                }}
-              >
-                <Typography sx={{ fontFamily: "Nunito", fontWeight: "700" }}>
-                  Notifications
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  width: "7.5%",
-                }}
-              >
-                <Typography sx={{ fontFamily: "Nunito", fontWeight: "700" }}>
-                  Email
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  width: "7.5%",
-                }}
-              >
-                <Typography sx={{ fontFamily: "Nunito", fontWeight: "700" }}>
-                  SMS
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  width: "35%",
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontFamily: "Nunito",
-                    fontWeight: "700",
-                  }}
-                >
-                  Template
-                </Typography>
-              </Box>
-            </Grid>
-            <Hidden lgDown>
-              <Grid item xs={12} lg={5}>
-                <Typography
-                  sx={{
-                    fontFamily: "Nunito",
-                    fontWeight: "700",
-                  }}
-                >
-                  Send To
-                </Typography>
-              </Grid>
-            </Hidden>
-          </Grid>
-          <Grid container item sx={{ marginTop: "1rem" }}>
-            <RowConfigForm
-              title={"Failed Authorizations"}
-              data={failedAuthorizations}
-              setData={setfailedAuthorizations}
-              menuItems={templates}
-            />
-            <RowConfigForm
-              title={"Successful Authorizations"}
-              data={successfulAuthorizations}
-              setData={setSuccessfulAuthorizations}
-              menuItems={templates}
-            />
-            <RowConfigForm
-              title={"Failed Payments"}
-              data={failedPayments}
-              setData={setFailedPayments}
-              menuItems={templates}
-            />
-            <RowConfigForm
-              title={"Successful Payments"}
-              data={successPayments}
-              setData={setSuccessPayments}
-              menuItems={templates}
-            />
-            <RowConfigForm
-              title={"Upcoming Payments"}
-              data={upcomingPayments}
-              setData={setUpcomingPayments}
-              menuItems={templates}
-            />
-          </Grid>
-
-          <hr></hr>
-
           <Grid container item sx={{ marginTop: "1rem", marginBottom: "1rem" }}>
             <Typography
               sx={{
@@ -318,11 +190,12 @@ export default function SettingsAccordion({
                   marginLeft: "1rem",
                   marginRight: "1rem",
                 }}
-                disabled={!settings?.editAuthorizationInterval}
+                disabled={!settings?.editRetryInterval}
                 value={retryInterval?.failedAuthorization?.value}
                 onChange={(e) =>
                   handleIntervalInputChange("auth_value", e.target.value)
                 }
+                onKeyDown={handleNumberInput}
               />
               <Dropdown
                 menuWidth="11.3rem"
@@ -333,7 +206,7 @@ export default function SettingsAccordion({
                 width={smallScreen ? "17%" : "15%"}
                 height="2.5rem"
                 selectedValue={retryInterval?.failedAuthorization?.unit}
-                disabled={!settings?.editAuthorizationInterval}
+                disabled={!settings?.editRetryInterval}
                 setSelectedValue={setRetryAuthIntervalUnit}
               />
               <Typography
@@ -360,11 +233,12 @@ export default function SettingsAccordion({
                   marginLeft: "1rem",
                   marginRight: "1rem",
                 }}
-                disabled={!settings?.editAuthorizationInterval}
+                disabled={!settings?.editRetryInterval}
                 value={retryInterval?.failedAuthorization?.maxRetry}
                 onChange={(e) =>
                   handleIntervalInputChange("auth_retries", e.target.value)
                 }
+                onKeyDown={handleNumberInput}
               />
             </Grid>
             <Grid
@@ -398,11 +272,12 @@ export default function SettingsAccordion({
                   marginLeft: "1rem",
                   marginRight: "1rem",
                 }}
-                disabled={!settings?.editAuthorizationInterval}
+                disabled={!settings?.editRetryInterval}
                 value={retryInterval?.failedPayment?.value}
                 onChange={(e) =>
                   handleIntervalInputChange("payment_value", e.target.value)
                 }
+                onKeyDown={handleNumberInput}
               />
               <Dropdown
                 menuWidth="11.3rem"
@@ -414,7 +289,7 @@ export default function SettingsAccordion({
                 height="2.5rem"
                 selectedValue={retryInterval?.failedPayment?.unit}
                 setSelectedValue={setRetryPaymentIntervalUnit}
-                disabled={!settings?.editAuthorizationInterval}
+                disabled={!settings?.editRetryInterval}
               />
               <Typography
                 sx={{
@@ -440,11 +315,12 @@ export default function SettingsAccordion({
                   marginLeft: "1rem",
                   marginRight: "1rem",
                 }}
-                disabled={!settings?.editAuthorizationInterval}
+                disabled={!settings?.editRetryInterval}
                 value={retryInterval?.failedPayment?.maxRetry}
                 onChange={(e) =>
                   handleIntervalInputChange("payment_retries", e.target.value)
                 }
+                onKeyDown={handleNumberInput}
               />
             </Grid>
           </Grid>
@@ -491,11 +367,12 @@ export default function SettingsAccordion({
                   width: "10%",
                   marginLeft: "1rem",
                 }}
-                disabled={!settings?.editRetryInterval}
+                disabled={!settings?.editAuthorizationInterval}
                 value={authorizationInterval?.custom?.value}
                 onChange={(e) =>
                   handleAuthIntervalInputChange("custom", e.target.value)
                 }
+                onKeyDown={handleNumberInput}
               />
 
               <Typography
@@ -533,11 +410,12 @@ export default function SettingsAccordion({
                   width: "10%",
                   marginLeft: "1rem",
                 }}
-                disabled={!settings?.editRetryInterval}
+                disabled={!settings?.editAuthorizationInterval}
                 value={authorizationInterval?.fortnightly?.value}
                 onChange={(e) =>
                   handleAuthIntervalInputChange("fortnightly", e.target.value)
                 }
+                onKeyDown={handleNumberInput}
               />
               <Typography
                 sx={{
@@ -580,11 +458,12 @@ export default function SettingsAccordion({
                   width: "10%",
                   marginLeft: "1rem",
                 }}
-                disabled={!settings?.editRetryInterval}
+                disabled={!settings?.editAuthorizationInterval}
                 value={authorizationInterval?.daily?.value}
                 onChange={(e) =>
                   handleAuthIntervalInputChange("daily", e.target.value)
                 }
+                onKeyDown={handleNumberInput}
               />
 
               <Typography
@@ -622,11 +501,12 @@ export default function SettingsAccordion({
                   width: "10%",
                   marginLeft: "1rem",
                 }}
-                disabled={!settings?.editRetryInterval}
+                disabled={!settings?.editAuthorizationInterval}
                 value={authorizationInterval?.monthly?.value}
                 onChange={(e) =>
                   handleAuthIntervalInputChange("monthly", e.target.value)
                 }
+                onKeyDown={handleNumberInput}
               />
               <Typography
                 sx={{
@@ -669,11 +549,12 @@ export default function SettingsAccordion({
                   width: "10%",
                   marginLeft: "1rem",
                 }}
-                disabled={!settings?.editRetryInterval}
+                disabled={!settings?.editAuthorizationInterval}
                 value={authorizationInterval?.weekly?.value}
                 onChange={(e) =>
                   handleAuthIntervalInputChange("weekly", e.target.value)
                 }
+                onKeyDown={handleNumberInput}
               />
 
               <Typography

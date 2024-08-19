@@ -23,6 +23,8 @@ export default function CheckboxAutocomplete({
   width,
   update,
   handleUpdate,
+  backgroundColor,
+  paddingLeft,
 }) {
   const autocompleteRef = useRef(null);
 
@@ -45,7 +47,9 @@ export default function CheckboxAutocomplete({
       id="checkboxes-tags-demo"
       options={options}
       disableCloseOnSelect
-      getOptionLabel={(option) => (isComplexData ? option.name : option)}
+      getOptionLabel={(option) =>
+        isComplexData ? option.creditorAccountTitle : option
+      }
       isOptionEqualToValue={(option, value) =>
         isComplexData
           ? option.creditorId === value.creditorId
@@ -95,7 +99,7 @@ export default function CheckboxAutocomplete({
               }}
             />
             <span style={{ fontSize: FONT_SIZE_LARGE }}>
-              {isComplexData ? option.name : option}
+              {isComplexData ? option.creditorAccountTitle : option}
             </span>
           </li>
         );
@@ -108,6 +112,10 @@ export default function CheckboxAutocomplete({
           sx={{
             color: Colors.BLACK,
             width: width || "6.5rem",
+            backgroundColor: backgroundColor || "",
+            borderRadius: "5px",
+            paddingLeft: paddingLeft,
+            fontFamily: "Nunito",
             "& .MuiOutlinedInput-root": {
               padding: 0,
               fontSize: FONT_SIZE_LARGE,

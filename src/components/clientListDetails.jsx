@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { Grid, Typography, Box, CircularProgress, Menu } from "@mui/material";
+import {
+  Grid,
+  Typography,
+  Box,
+  CircularProgress,
+  Menu,
+  Tooltip,
+} from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import {
   FONT_SIZE_MEDIUM,
@@ -17,6 +24,7 @@ import { formatDollarAmount } from "../common";
 import TextButton from "./button";
 import CustomTextField from "./customTextfield";
 import ScrollbarStyles from "./customScroll";
+import { truncateText } from "../common";
 
 export default function ClientListDetails() {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
@@ -356,15 +364,32 @@ export default function ClientListDetails() {
     upcomingPaymentDateMax,
   ]);
 
-  const truncateText = (text, length) => {
-    if (text?.length > length) {
-      return text.substring(0, length) + "...";
-    }
-    return text;
-  };
-
   const { AUTHORITY_TEXT } = UserListPage;
   const dataUser = clientData?.debtor || clientData?.creditor;
+  const infoItems = [
+    { label: "Email", value: truncateText(dataUser?.email, 25) },
+    { label: "Total Debt", value: formatDollarAmount(dataUser?.totalDebt) },
+  ];
+
+  if (userRole === "client") {
+    infoItems.push(
+      { label: "SSN", value: dataUser?.SSN },
+      { label: "Address", value: dataUser?.address }
+    );
+  }
+  const financialInfo = [
+    {
+      label: "Outstanding Balance",
+      value: formatDollarAmount(dataUser?.outstandingDebt),
+    },
+  ];
+
+  if (userRole === "client") {
+    financialInfo.push(
+      { label: "Organization Name", value: dataUser?.companyName },
+      { label: "Account Status", value: dataUser?.status }
+    );
+  }
   return (
     <Grid
       container
@@ -445,239 +470,85 @@ export default function ClientListDetails() {
               item
               xs={12}
               lg={6}
-              sx={{ justifyContent: { xs: "left", md: "space-evenly" } }}
+              sx={{
+                justifyContent: {
+                  xs: "left",
+                  md: "space-evenly",
+                },
+              }}
             >
               <Grid item xs={12} lg={5.5}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: { xs: "space-between", md: "unset" },
-                  }}
-                >
-                  <div
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "600",
-                      color: Colors.DARK_GRAY,
-                      width: "6rem",
-                      marginTop: "0.5rem",
+                {infoItems?.map((item, index) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: { xs: "space-between", md: "unset" },
+                      marginBottom: "8px",
                     }}
                   >
-                    Email
-                  </div>
-
-                  <span
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "300",
-                      fontSize: "0.9rem",
-                      color: Colors.DIM_LIGHT_GRAY,
-                      marginTop: "0.5rem",
-                    }}
-                  >
-                    {truncateText(dataUser?.email, 25)}
-                  </span>
-                </Box>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: { xs: "space-between", md: "unset" },
-                  }}
-                >
-                  <div
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "600",
-                      color: Colors.DARK_GRAY,
-                      width: "6rem",
-                      marginTop: "0.5rem",
-                    }}
-                  >
-                    Total Debt
-                  </div>
-
-                  <span
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "300",
-                      fontSize: "0.9rem",
-                      color: Colors.DIM_LIGHT_GRAY,
-                      marginTop: "0.5rem",
-                    }}
-                  >
-                    {formatDollarAmount(dataUser?.totalDebt)}
-                  </span>
-                </Box>
-                {userRole === "client" && (
-                  <>
-                    <Box
+                    <Typography
                       sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: { xs: "space-between", md: "unset" },
+                        fontFamily: "Nunito",
+                        fontWeight: "600",
+                        color: Colors.DARK_GRAY,
+                        width: "6rem",
                       }}
                     >
-                      <div
-                        style={{
-                          fontFamily: "Nunito",
-                          fontWeight: "600",
-                          color: Colors.DARK_GRAY,
-                          width: "6rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        SSN
-                      </div>
-
+                      {item?.label}
+                    </Typography>
+                    <Tooltip title={item?.value || ""} placement="top-end">
                       <span
                         style={{
                           fontFamily: "Nunito",
                           fontWeight: "300",
                           fontSize: "0.9rem",
                           color: Colors.DIM_LIGHT_GRAY,
-                          marginTop: "0.5rem",
                         }}
                       >
-                        {dataUser?.SSN}
+                        {truncateText(item?.value, 20)}
                       </span>
-                    </Box>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: { xs: "space-between", md: "unset" },
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontFamily: "Nunito",
-                          fontWeight: "600",
-                          color: Colors.DARK_GRAY,
-                          width: "6rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        Address
-                      </div>
-
-                      <span
-                        style={{
-                          fontFamily: "Nunito",
-                          fontWeight: "300",
-                          fontSize: "0.9rem",
-                          color: Colors.DIM_LIGHT_GRAY,
-                          marginTop: "0.5rem",
-                          wordBreak: "break-word",
-                        }}
-                      >
-                        {truncateText(dataUser?.address, 40)}
-                      </span>
-                    </Box>
-                  </>
-                )}
+                    </Tooltip>
+                  </Box>
+                ))}
               </Grid>
 
               <Grid item xs={12} lg={6}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: { xs: "space-between", md: "unset" },
-                  }}
-                >
-                  <div
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "600",
-                      color: Colors.DARK_GRAY,
-                      width: "10rem",
-                      marginTop: "0.5rem",
+                {financialInfo?.map((item, index) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: { xs: "space-between", md: "unset" },
+                      marginBottom: "8px",
                     }}
                   >
-                    Outstanding Debt
-                  </div>
-
-                  <span
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "300",
-                      fontSize: "0.9rem",
-                      color: Colors.DIM_LIGHT_GRAY,
-                      marginTop: "0.5rem",
-                    }}
-                  >
-                    {formatDollarAmount(dataUser?.outstandingDebt)}
-                  </span>
-                </Box>
-                {userRole === "client" && (
-                  <>
-                    <Box
+                    <Typography
                       sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: { xs: "space-between", md: "unset" },
+                        fontFamily: "Nunito",
+                        fontWeight: "600",
+                        color: Colors.DARK_GRAY,
+                        width: "10rem",
                       }}
                     >
-                      <div
-                        style={{
-                          fontFamily: "Nunito",
-                          fontWeight: "600",
-                          color: Colors.DARK_GRAY,
-                          width: "10rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        Company Name
-                      </div>
-
+                      {item?.label}
+                    </Typography>
+                    <Tooltip title={item?.value || ""} placement="top-end">
                       <span
                         style={{
                           fontFamily: "Nunito",
                           fontWeight: "300",
                           fontSize: "0.9rem",
                           color: Colors.DIM_LIGHT_GRAY,
-                          marginTop: "0.5rem",
                         }}
                       >
-                        {dataUser?.companyName}
+                        {truncateText(item?.value, 20)}
                       </span>
-                    </Box>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: { xs: "space-between", md: "unset" },
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontFamily: "Nunito",
-                          fontWeight: "600",
-                          color: Colors.DARK_GRAY,
-                          width: "10rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        Status
-                      </div>
-
-                      <span
-                        style={{
-                          fontFamily: "Nunito",
-                          fontWeight: "300",
-                          fontSize: "0.9rem",
-                          color: Colors.DIM_LIGHT_GRAY,
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {dataUser?.status}
-                      </span>
-                    </Box>
-                  </>
-                )}
+                    </Tooltip>
+                  </Box>
+                ))}
               </Grid>
             </Grid>
 

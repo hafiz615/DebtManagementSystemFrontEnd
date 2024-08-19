@@ -9,7 +9,7 @@ const FileViewer = ({ file, onClose }) => {
       if (file) {
         const reader = new FileReader();
         reader.onload = () => setFileContent(reader.result);
-        reader.readAsDataURL(file); // or reader.readAsText(file) for text files
+        reader.readAsDataURL(file);
       }
     };
     loadFile();
@@ -23,14 +23,13 @@ const FileViewer = ({ file, onClose }) => {
         left: 0,
         width: "100%",
         height: "100%",
-        backgroundColor: "rgba(0, 0, 0, 0.8)", // Semi-transparent background
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
         zIndex: 1000,
         padding: "1rem",
-        border: "1px solid red",
       }}
     >
       <Button
@@ -44,7 +43,7 @@ const FileViewer = ({ file, onClose }) => {
           borderRadius: "4px",
           padding: "0.5rem",
           cursor: "pointer",
-          zIndex: 1100, // Ensure the button is above the file viewer
+          zIndex: 1100,
         }}
       >
         Close

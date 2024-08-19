@@ -350,10 +350,10 @@ export const SaveSettings = async (payload) => {
   }
 };
 
-export const EditSettings = async (payload, type) => {
+export const EditSettings = async (payload) => {
   try {
     return await axios.put(
-      BASE_URL + `/v1/settings/editNotificationTemplate?type=${type} `,
+      BASE_URL + `/v1/settings/editNotificationTemplate`,
       payload,
       setHeaders()
     );
@@ -361,10 +361,10 @@ export const EditSettings = async (payload, type) => {
     return error;
   }
 };
-export const DeleteSettings = async (payload, type) => {
+export const DeleteSettings = async (payload) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/settings/deleteNotificationTemplate?type=${type} `,
+      BASE_URL + `/v1/settings/deleteNotificationTemplate`,
       payload,
       setHeaders()
     );
@@ -404,10 +404,10 @@ export const CreateCustomField = async (payload) => {
   }
 };
 
-export const UpdateDebtor = async (id, payload) => {
+export const UpdateDebtor = async (id, payload, type) => {
   try {
     return await axios.put(
-      BASE_URL + `/v1/debtor/updateDebtor/${id}`,
+      BASE_URL + `/v1/debtor/updateDebtor/${id}?contact=${type}`,
       payload,
       setHeaders()
     );
@@ -415,10 +415,10 @@ export const UpdateDebtor = async (id, payload) => {
     return error;
   }
 };
-export const UpdateCreditor = async (id, payload) => {
+export const UpdateCreditor = async (id, payload, type) => {
   try {
     return await axios.put(
-      BASE_URL + `/v1/creditor/updateCreditor/${id}`,
+      BASE_URL + `/v1/creditor/updateCreditor/${id}?contact=${type}`,
       payload,
       setHeaders()
     );
@@ -765,9 +765,12 @@ export const GetAllDebtors = async () => {
   }
 };
 
-export const GetAllRoles = async () => {
+export const GetAllRoles = async (type) => {
   try {
-    return await axios.get(BASE_URL + "/v1/roles/getAllRoles", setHeaders());
+    return await axios.get(
+      BASE_URL + `/v1/roles/getAllRoles?usersPage=${type}`,
+      setHeaders()
+    );
   } catch (error) {
     return error;
   }
@@ -1006,10 +1009,69 @@ export const GetLumpSumAmount = async (id) => {
   }
 };
 
+export const GetCustomVariable = async () => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/settings/getSystemTemplate`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetEvents = async (type) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/settings/getNotificationConfiguration?type=${type}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const UpdateNotificationConfiguration = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/settings/addNotificationConfiguration`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
 export const GetFullProfit = async (id) => {
   try {
     return await axios.get(
       BASE_URL + `/v1/debtor/getFullProfitSettlement/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const UpdateCaseCreditor = async (id, payload) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/case/updateCase/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const UpdateCommission = async (payload, id, status) => {
+  try {
+    return await axios.post(
+      BASE_URL +
+        `/v1/case/getScoresSettlementByCommPercentage/${id}?all=${status}`,
+      payload,
       setHeaders()
     );
   } catch (error) {

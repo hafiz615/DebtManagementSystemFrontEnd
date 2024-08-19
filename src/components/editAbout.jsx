@@ -36,12 +36,6 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
   useEffect(() => {
     GetStatuses();
   }, []);
-  // const statusMenuItems = [
-  //   { label: "Customer", value: "Customer" },
-  //   { label: "On hold", value: "On hold" },
-  //   { label: "Canceled", value: "Canceled" },
-  //   { label: "Declared Bankrupcy", value: "Declared Bankrupcy" },
-  // ];
 
   const [caseOwner, setCaseOwner] = useState(data?.caseOwner || "");
   const [manager, setManager] = useState(data?.manager || "");
@@ -259,7 +253,6 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
             </Grid>
             <Grid
               container
-              xs={12}
               sx={{
                 marginTop: "1.5rem",
                 marginBottom: "1rem",

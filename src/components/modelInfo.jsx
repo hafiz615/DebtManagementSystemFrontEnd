@@ -17,7 +17,7 @@ import Dropdown from "./dropdown";
 import { Colors } from "../config/default";
 import MuiPhoneNumber from "material-ui-phone-number";
 import { PhoneValidation } from "../constants/appConstants";
-import { formatPhoneNumber } from "../common";
+import { formatPhoneNumber, isEmailValid } from "../common";
 
 function ModelInfo({ modalType, setOpen, GetUsers, id }) {
   const [menuItem, setMenuItem] = useState([]);
@@ -60,7 +60,7 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
   //   // { label: "Admin", value: "Admin" },
   // ];
   const AllRoles = async () => {
-    const rolesRes = await GetAllRoles();
+    const rolesRes = await GetAllRoles(true);
     if (rolesRes?.status === 200) {
       setMenuItem(rolesRes?.data?.data);
     }
@@ -137,12 +137,6 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
         [field]: value,
       });
     }
-  };
-
-  const isEmailValid = (email) => {
-    // Use a more robust email validation regular expression
-    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-    return emailRegex.test(email);
   };
 
   const handleSubmit = async () => {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Navigate, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 import { Grid, Typography, Menu, IconButton } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -240,6 +240,7 @@ export default function AuthorizationDetails() {
   }, [filterActive, searchActive]);
 
   const totalPages = Math.ceil(totalData / 5);
+  const paymentAuthHeading = "Payments Authorization";
 
   return (
     <Grid
@@ -287,7 +288,7 @@ export default function AuthorizationDetails() {
             color: Colors.BLACK,
           }}
         >
-          Payments Authorization
+          {paymentAuthHeading}
         </Typography>
         <div style={{ display: "flex", alignItems: "center" }}>
           <SearchBar

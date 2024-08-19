@@ -9,19 +9,18 @@ import {
   FONT_SIZE_LARGE,
   FONT_SIZE_XL,
   UserListPage,
+  creditorListHeading,
 } from "../constants/appConstants";
 import { Colors } from "../config/default";
 import SearchBar from "./searchBar";
 import ListTable from "./listTable";
 import { GetAllCreditors } from "../services/services";
-import CircularProgress from "@mui/material/CircularProgress";
 import { formatDollarAmount } from "../common";
 import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
 import Menu from "@mui/material/Menu";
 import TextButton from "./button";
 
 const headers = [
-  // "Index",
   "Company Name",
   "Number of Cases",
   "Number of Debtors",
@@ -295,7 +294,7 @@ export default function CreditorList() {
             color: Colors.BLACK,
           }}
         >
-          Creditors
+          {creditorListHeading}
         </Typography>
       </Grid>
       <Grid container sx={{ alignItems: "center" }}>

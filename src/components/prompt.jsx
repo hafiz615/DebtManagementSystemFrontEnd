@@ -97,34 +97,18 @@ export default function Prompt({
   };
   const deleteTemplate = async () => {
     const newTemplate = {
-      subject: row?.subject,
-      name: templateType === "email" ? row?.name : row?.name,
-      event: templateType === "email" ? row?.event : row?.event,
-      html: templateType === "email" ? row?.html : row?.text,
+      name: row?.name,
+      event: row?.event,
+      content: row?.content,
       templateId: row?.templateId,
+      type: templateType,
+      ...(templateType === "email" && { subject: row?.subject }),
     };
 
-    const resNotificationTemplate = await DeleteSettings(
-      newTemplate,
-      templateType
-    );
+    const resNotificationTemplate = await DeleteSettings(newTemplate);
     if (resNotificationTemplate?.status === 200) {
       showToast(resNotificationTemplate?.data?.message, "success");
       getSettings();
-      // setFroalaEditor("");
-      // handleClose();
-      // setFroalaEditor("");
-      // setEmailTemplate({
-      //   subject: "",
-      //   name: "",
-      //   event: "",
-      //   html: "",
-      // });
-      // setSmsTemplate({
-      //   name: "",
-      //   event: "",
-      //   text: "",
-      // });
     } else {
       const errorMessage = resNotificationTemplate?.response?.data?.message;
       showToast(errorMessage, "error");

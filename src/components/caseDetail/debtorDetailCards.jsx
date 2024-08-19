@@ -1,25 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import {
-  Grid,
-  Typography,
-  // IconButton,
   styled,
   InputBase,
   Box,
+  Grid,
+  Typography,
+  IconButton,
 } from "@mui/material";
 import {
   Search,
-  // KeyboardArrowLeft,
-  // KeyboardArrowRight,
   Call,
   Sms,
   Email,
+  ChevronLeft,
+  NavigateNext,
 } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import Tooltip from "@mui/material/Tooltip";
+import { getTruncatedText } from "../../common";
+import ScrollbarStyles from "./../customScroll";
+import {
+  debtorBusinessDetails,
+  debtorPeronsalDetails,
+} from "../../constants/appConstants";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -53,19 +60,27 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
+  const [searchText, setSearchText] = useState("");
+  const [startIndex, setStartIndex] = useState(0);
+  const itemsPerPage = 2;
+  const handleNext = () => {
+    if (startIndex + itemsPerPage < caseData?.debtor?.contacts?.length) {
+      setStartIndex(startIndex + itemsPerPage);
+    }
+  };
+  const handlePrev = () => {
+    if (startIndex - itemsPerPage >= 0) {
+      setStartIndex(startIndex - itemsPerPage);
+    }
+  };
+
   const formatKeys = (keys) => {
     const formattedKeys = keys
-      ?.replace(/([A-Z])/g, " $1") // Add a space before each uppercase letter
-      ?.replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
+      ?.replace(/([A-Z])/g, " $1")
+      ?.replace(/^./, (str) => str.toUpperCase());
     return formattedKeys;
   };
 
-  const getTruncatedText = (text, maxLength) => {
-    if (text.length > maxLength) {
-      return text.slice(0, maxLength) + "...";
-    }
-    return text;
-  };
   const desiredKeys = [
     "companyName",
     "businessCategory",
@@ -73,18 +88,42 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
     "phone",
     "description",
   ];
+  const griRelationdStyle = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  };
+  const gridActionStyle = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+  };
   const cellStyle = {
+    display: "flex",
+    alignItems: "center",
     color: Colors.DIM_LIGHT_GRAY,
     fontWeight: "600",
     fontFamily: "Nunito",
     fontSize: "11px",
   };
   const iconStyle = {
-    fontSize: "15px",
+    fontSize: "13px",
     marginLeft: ".3rem",
     marginTop: ".3rem",
   };
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
+  const filteredContacts = caseData?.debtor?.contacts?.filter((item) =>
+    item?.name?.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  useEffect(() => {
+    setStartIndex(0);
+  }, [searchText]);
+
+  const paginatedContacts = filteredContacts?.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
   return (
     <>
       <Grid
@@ -113,14 +152,14 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
               fontFamily: "Nunito",
             }}
           >
-            Personal Details
+            {debtorPeronsalDetails}
           </p>
           <MuiModels
             show="debtorDetail"
             button="create"
             iconColor={Colors.BLACK}
             width="80vw"
-            height="70vh"
+            height="72vh"
             caseData={caseData}
             GetCaseDetails={GetCaseDetails}
           />
@@ -154,20 +193,23 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
                   >
                     {key === "SSID" ? "SSN" : formatKeys(key)}
                   </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: smallScreen ? "11px" : "13px",
-                      color: Colors.DIM_LIGHT_GRAY,
-                      fontFamily: "Nunito",
-                      fontWeight: "500",
-                      textAlign: "right",
-                      flexWrap: "wrap",
-                      maxWidth: "80%",
-                      wordBreak: "break-word",
-                    }}
-                  >
-                    {getTruncatedText(value, 17)}
-                  </Typography>
+
+                  <Tooltip title={value} placement="top-end">
+                    <Typography
+                      sx={{
+                        fontSize: smallScreen ? "11px" : "13px",
+                        color: Colors.DIM_LIGHT_GRAY,
+                        fontFamily: "Nunito",
+                        fontWeight: "500",
+                        textAlign: "right",
+                        flexWrap: "wrap",
+                        maxWidth: "80%",
+                        wordBreak: "break-word",
+                      }}
+                    >
+                      {getTruncatedText(value, 15)}
+                    </Typography>
+                  </Tooltip>
                 </div>
               )
           )}
@@ -188,7 +230,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
         <p
           style={{ fontWeight: "600", fontSize: "13px", fontFamily: "Nunito" }}
         >
-          Business Details
+          {debtorBusinessDetails}
         </p>
         <Box
           sx={{
@@ -208,7 +250,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
             },
           }}
         >
-          {desiredKeys.map((key) => {
+          {desiredKeys?.map((key) => {
             const value = caseData?.debtor?.businessInformation[key];
             if (value) {
               return (
@@ -232,17 +274,19 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
                   >
                     {key === "EIN" ? key : formatKeys(key)}
                   </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: smallScreen ? "11px" : "13px",
-                      color: Colors.DIM_LIGHT_GRAY,
-                      fontFamily: "Nunito",
-                      fontWeight: "500",
-                      textAlign: "right",
-                    }}
-                  >
-                    {getTruncatedText(value, 20)}
-                  </Typography>
+                  <Tooltip title={value} placement="top-end">
+                    <Typography
+                      sx={{
+                        fontSize: smallScreen ? "11px" : "13px",
+                        color: Colors.DIM_LIGHT_GRAY,
+                        fontFamily: "Nunito",
+                        fontWeight: "500",
+                        textAlign: "right",
+                      }}
+                    >
+                      {getTruncatedText(value, 15)}
+                    </Typography>
+                  </Tooltip>
                 </div>
               );
             }
@@ -250,6 +294,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
           })}
         </Box>
       </Grid>
+
       <Grid
         item
         xs={12}
@@ -260,6 +305,8 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
           padding: "0px 10px",
           height: "13rem",
           marginBottom: "0.5rem",
+          // overflow: "auto",
+          // ...ScrollbarStyles,
         }}
       >
         <Grid
@@ -284,24 +331,8 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
             show="debtorContacts"
             caseData={caseData}
             GetCaseDetails={GetCaseDetails}
+            width="70vw"
           />
-
-          {/* <div
-            style={{
-              display: "flex",
-              fontSize: "11px",
-              alignItems: "center",
-              fontFamily: "Nunito",
-            }}
-          >
-            <IconButton>
-              <KeyboardArrowLeft sx={{ fontSize: "16px" }} />
-            </IconButton>
-            1 of {caseData?.debtor?.contacts?.length}
-            <IconButton>
-              <KeyboardArrowRight sx={{ fontSize: "16px" }} />
-            </IconButton>
-          </div> */}
         </Grid>
 
         <Grid container item sx={{ marginBottom: "0.5rem" }}>
@@ -322,26 +353,11 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
             <StyledInputBase
               placeholder="Search Contact..."
               inputProps={{ "aria-label": "search" }}
+              onChange={(e) => setSearchText(e.target.value)}
             />
           </SearchContainer>
         </Grid>
-        <Box
-          sx={{
-            height: "10rem",
-            overflowY: "auto",
-            "&::-webkit-scrollbar": {
-              width: "5px",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "#E5E5E5",
-              borderRadius: "8px",
-            },
-            "&::-webkit-scrollbar-track": {
-              backgroundColor: Colors.WHITE,
-              borderRadius: "8px",
-            },
-          }}
-        >
+        <Box>
           <Grid
             item
             xs={12}
@@ -350,54 +366,109 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
               justifyContent: "space-between",
               backgroundColor: Colors.SKY_BLUE,
               color: Colors.WHITE,
-              paddingRight: ".5rem",
-              paddingLeft: ".5rem",
+              paddingRight: ".4rem",
+              paddingLeft: ".4rem",
+              borderRadius: ".4rem",
               height: "2rem",
               alignItems: "center",
             }}
           >
-            <span style={{ fontSize: "11px" }}>Name</span>
-            <span
-              style={{
-                fontSize: "11px",
-                marginRight: "1rem",
-              }}
-            >
-              Relation
-            </span>
-            <span style={{ fontSize: "11px" }}>Action</span>
+            <Grid item xs={4}>
+              <span style={{ fontSize: "11px" }}>Name</span>
+            </Grid>
+            <Grid item xs={4} sx={griRelationdStyle}>
+              <span
+                style={{
+                  fontSize: "11px",
+                  marginRight: "1rem",
+                }}
+              >
+                Relation
+              </span>
+            </Grid>
+            <Grid item xs={4} sx={gridActionStyle}>
+              <span style={{ fontSize: "11px" }}>Action</span>
+            </Grid>
           </Grid>
-          {caseData?.debtor?.contacts?.map((item, index) => {
-            return (
+          <Box
+            sx={{
+              height: "5rem",
+              overflow: "auto",
+              ...ScrollbarStyles,
+            }}
+          >
+            {paginatedContacts?.map((item, index) => (
               <Grid
                 item
                 xs={12}
                 key={index}
                 sx={{
                   display: "flex",
-                  justifyContent: "space-between",
+                  justifyContent: "space-around",
                   backgroundColor:
                     index % 2 === 0 ? Colors.WHITE : "rgba(85, 148, 242, 0.06)",
                   "&:hover": {
                     backgroundColor: Colors.BG_LIGHT_GRAY,
                   },
                   cursor: "pointer",
-                  paddingRight: ".2rem",
-                  paddingLeft: ".2rem",
+                  paddingRight: ".4rem",
+                  paddingLeft: ".4rem",
                   height: "2rem",
                   alignItems: "center",
                 }}
               >
-                <span style={cellStyle}>{item?.name || "-"}</span>
-                <span style={cellStyle}>{item?.relationWithDebtor || "-"}</span>
-                <span style={cellStyle}>
-                  <Email sx={iconStyle} />
-                  <Call sx={iconStyle} />
-                  <Sms sx={iconStyle} />
-                </span>
+                <Grid item xs={4}>
+                  <span style={cellStyle}>{item?.name || "--"}</span>
+                </Grid>
+                <Grid item xs={4} sx={griRelationdStyle}>
+                  <span style={cellStyle}>
+                    {item?.relationWithDebtor || "--"}
+                  </span>
+                </Grid>
+                <Grid item xs={4} sx={gridActionStyle}>
+                  <span style={cellStyle}>
+                    <MuiModels
+                      show="editDebtorContacts"
+                      caseData={caseData}
+                      item={item}
+                      GetCaseDetails={GetCaseDetails}
+                      width="70vw"
+                    />
+                  </span>
+                </Grid>
               </Grid>
-            );
-          })}
+            ))}
+
+            {filteredContacts?.length > itemsPerPage && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  position: "absolute",
+                  right: "10px",
+                }}
+              >
+                <IconButton
+                  aria-label="prev"
+                  disabled={startIndex - itemsPerPage < 0}
+                  onClick={handlePrev}
+                  color="primary"
+                >
+                  <ChevronLeft />
+                </IconButton>
+                <IconButton
+                  aria-label="next"
+                  disabled={
+                    startIndex + itemsPerPage >= filteredContacts?.length
+                  }
+                  onClick={handleNext}
+                  color="primary"
+                >
+                  <NavigateNext />
+                </IconButton>
+              </div>
+            )}
+          </Box>
         </Box>
       </Grid>
     </>

@@ -159,14 +159,14 @@ export default function PersistentDrawerLeft({ children }) {
   }
 
   if (
-    generalPermissions?.viewClientsForSelf &&
+    generalPermissions?.viewClientsForSelf ||
     generalPermissions?.viewClientsForAllUsers
   ) {
     menuItems.splice(1, 0, { text: "Clients", icon: <AccountCircle /> });
   }
 
   if (
-    generalPermissions?.viewCreditorsForSelf &&
+    generalPermissions?.viewCreditorsForSelf ||
     generalPermissions?.viewCreditorsForAllUsers
   ) {
     menuItems.splice(2, 0, { text: "Creditors", icon: <People /> });
@@ -175,7 +175,7 @@ export default function PersistentDrawerLeft({ children }) {
   if (generalPermissions?.viewUserListing) {
     menuItems.splice(5, 0, { text: "User Listing", icon: <Group /> });
   }
-  if (analytics?.viewAnalyticsForAllusers && analytics?.viewAnalyticsForSelf) {
+  if (analytics?.viewAnalyticsForAllusers || analytics?.viewAnalyticsForSelf) {
     menuItems.splice(6, 0, { text: "Analytics", icon: <Window /> });
   }
 
@@ -189,7 +189,7 @@ export default function PersistentDrawerLeft({ children }) {
       <NavBar onClick={handleDrawerOpen} />
       <Drawer
         sx={{
-          zIndex:1,
+          zIndex: 1,
           width: open ? drawerWidth : closedDrawerWidth,
           flexShrink: 0,
           transition: theme.transitions.create(["width"], {
@@ -254,7 +254,6 @@ export default function PersistentDrawerLeft({ children }) {
                   padding: "0.3rem",
                   borderRadius: "50%",
                   fontSize: "2.5rem",
-                  border: "1px solid red",
                 }}
               />
             </IconButton>

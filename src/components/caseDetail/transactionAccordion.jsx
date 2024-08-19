@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import {
   Grid,
@@ -14,12 +14,21 @@ import TransactionRow from "../transactionRow";
 import { Colors } from "../../config/default";
 import { isEmpty } from "lodash";
 import ScrollbarStyles from "./../customScroll";
+import MuiModels from "../models";
 
 export default function TransactionAccordion({
+  caseData,
   paymentDetails,
   loading,
   GetCasePaymentDetails,
+  GetCaseDetails,
 }) {
+  const divStyles = {
+    width: "100%",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  };
   return (
     <Accordion
       sx={{
@@ -41,23 +50,36 @@ export default function TransactionAccordion({
           borderRadius: "1rem",
         }}
       >
-        <Typography
-          sx={{
-            color: Colors.WHITE,
-            fontFamily: "Nunito",
-            fontWeight: "700",
-          }}
-        >
-          TRANSACTIONS
-        </Typography>
+        <div style={divStyles} onClick={(e) => e.stopPropagation()}>
+          <Typography
+            sx={{
+              color: Colors.WHITE,
+              fontFamily: "Nunito",
+              fontWeight: "700",
+            }}
+          >
+            TRANSACTIONS
+          </Typography>
+
+          <MuiModels
+            width="70vw"
+            show="payments"
+            buttonName="payments"
+            data={caseData}
+            GetCaseDetails={GetCaseDetails}
+            GetCasePaymentDetails={GetCasePaymentDetails}
+          />
+        </div>
       </AccordionSummary>
       <AccordionDetails
         sx={{
-          height: "35vh",
+          maxHeight: "35vh",
           backgroundColor: Colors.WHITE,
           boxShadow: " 0 2px 5px -3px rgba(0, 0, 0, 0.5)",
           borderBottomLeftRadius: "10px",
           borderBottomRightRadius: "10px",
+          overflowY: "auto",
+          ...ScrollbarStyles,
         }}
       >
         {loading ? (
@@ -83,7 +105,7 @@ export default function TransactionAccordion({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              height: "35vh",
+              height: "30vh",
             }}
           >
             <Typography
@@ -97,12 +119,7 @@ export default function TransactionAccordion({
             </Typography>
           </Grid>
         ) : (
-          <Grid
-            container
-            item
-            xs={12}
-            sx={{ overflow: "auto", ...ScrollbarStyles }}
-          >
+          <Grid container item xs={12}>
             <TransactionRow
               data={paymentDetails?.transactions?.previous}
               GetCasePaymentDetails={GetCasePaymentDetails}

@@ -15,8 +15,9 @@ export default function PaymentSettlement({
   setNewDataList,
   remainingAmount,
   totalAmount,
+  isExempt,
 }) {
-  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:1440px)");
+  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:1240px)");
   const menuItems = [
     { label: "Custom", value: "Custom" },
     { label: "Daily", value: "Daily" },
@@ -107,9 +108,8 @@ export default function PaymentSettlement({
   };
 
   // Calculate the first day of the current month
-  const firstDayOfMonth = new Date();
-  firstDayOfMonth.setDate(1);
-  const minDate = firstDayOfMonth.toISOString().split("T")[0];
+  const today = new Date();
+  const minDate = today.toISOString().split("T")[0];
 
   return (
     <>
@@ -135,8 +135,8 @@ export default function PaymentSettlement({
               container
               item
               xs={12}
-              md={6}
-              lg={3}
+              md={3}
+              // lg={3}
               sx={{
                 display: "flex",
                 justifyContent: { xs: "space-between", md: "center" },
@@ -154,58 +154,40 @@ export default function PaymentSettlement({
               >
                 Debt
               </Typography>
-              {/* <input
-                type="number"
-                placeholder="$ Debt Amount"
-                value={item?.amount}
-                onChange={(e) =>
-                  handleInputChange(index, "amount", parseInt(e.target.value))
-                }
-                onKeyDown={handleNumberInput}
-                min="0"
-                style={{
-                  backgroundColor: Colors.BG_LIGHT_GRAY,
-                  height: "2.5rem",
-                  color: Colors.DIM_LIGHT_GRAY,
-                  paddingLeft: "1rem",
-                  border: "none",
-                  outline: "none",
-                  borderRadius: "5px",
-                  width: "60%",
-                }}
-              /> */}
 
               <AmountTextField
-                width={smallScreen ? "100%" : "60%"}
+                width={smallScreen ? "100%" : "10rem"}
                 value={item?.amount}
                 onChange={(e) =>
                   handleInputChange(index, "amount", parseFloat(e.target.value))
                 }
                 onKeyDown={handleNumberInput}
               />
-              <Hidden smUp>
-                {index === newDataList?.length - 1 &&
-                  isInteracted &&
-                  parseInt(remainingAmount) !== totalAmount && (
-                    <Typography
-                      sx={{
-                        color: "red",
-                        marginLeft: smallScreen ? "0rem" : "2rem",
-                        fontSize: "10px",
-                      }}
-                    >
-                      Total debt must be equal to remaining amount
-                    </Typography>
-                  )}
-              </Hidden>
+              {!isExempt && (
+                <Hidden smUp>
+                  {index === newDataList?.length - 1 &&
+                    isInteracted &&
+                    parseInt(remainingAmount) !== parseInt(totalAmount) && (
+                      <Typography
+                        sx={{
+                          color: "red",
+                          marginLeft: smallScreen ? "0rem" : "2rem",
+                          fontSize: "10px",
+                        }}
+                      >
+                        Total debt must be equal to remaining amount
+                      </Typography>
+                    )}
+                </Hidden>
+              )}
             </Grid>
 
             <Grid
               container
               item
               xs={12}
-              md={6}
-              lg={3}
+              md={3}
+              // lg={3}
               sx={{
                 display: "flex",
                 justifyContent: { xs: "space-between", md: "center" },
@@ -225,11 +207,11 @@ export default function PaymentSettlement({
               </Typography>
               <Dropdown
                 // placeholder="Choose Time Period"
-                menuWidth="11.5rem"
+                menuWidth="10rem"
                 initialValue={item?.timePeriod}
                 menuItems={menuItems}
                 backgroundColor={Colors.BG_LIGHT_GRAY}
-                width={smallScreen ? "100%" : "60%"}
+                width={smallScreen ? "100%" : "7rem"}
                 height="2.5rem"
                 value={item?.timePeriod}
                 onChange={(value) =>
@@ -242,8 +224,8 @@ export default function PaymentSettlement({
               container
               item
               xs={12}
-              // md={6}
-              lg={3}
+              md={3}
+              // lg={3}
               sx={{
                 display: "flex",
                 justifyContent: { xs: "space-between", md: "center" },
@@ -278,7 +260,7 @@ export default function PaymentSettlement({
                   border: "none",
                   outline: "none",
                   borderRadius: "5px",
-                  width: smallScreen ? "100%" : "60%",
+                  width: smallScreen ? "100%" : "10rem",
                 }}
               />
             </Grid>
@@ -287,8 +269,8 @@ export default function PaymentSettlement({
               container
               item
               xs={12}
-              md={6}
-              lg={3}
+              md={3}
+              // lg={3}
               sx={{
                 display: "flex",
                 justifyContent: { xs: "space-between", md: "flex-start" },
@@ -325,7 +307,7 @@ export default function PaymentSettlement({
                       border: "none",
                       outline: "none",
                       borderRadius: "5px",
-                      width: "20%",
+                      width: "3rem",
                       marginRight: "0.5rem",
                     }}
                   />
@@ -345,21 +327,35 @@ export default function PaymentSettlement({
                 </>
               )}
             </Grid>
-            <Hidden smDown>
-              {index === newDataList?.length - 1 &&
-                isInteracted &&
-                parseInt(remainingAmount) !== totalAmount && (
-                  <Typography
-                    sx={{
-                      color: "red",
-                      marginLeft: smallScreen ? "0rem" : "2rem",
-                      fontSize: "10px",
-                    }}
-                  >
-                    Total debt must be equal to remaining amount
-                  </Typography>
-                )}
-            </Hidden>
+            {!isExempt && (
+              <Hidden smDown>
+                {index === newDataList?.length - 1 &&
+                  isInteracted &&
+                  parseInt(remainingAmount) !== parseInt(totalAmount) && (
+                    <Typography
+                      sx={{
+                        color: "red",
+                        marginLeft: smallScreen ? "0rem" : "2rem",
+                        fontSize: "10px",
+                        width: "100%",
+                      }}
+                    >
+                      Total debt must be equal to remaining amount
+                    </Typography>
+                  )}
+              </Hidden>
+            )}
+
+            {/* <Grid xs={12} sx={{ mt: "1rem" }}>
+              <TextButton
+                buttonText="Exempt amount difference"
+                height="2rem"
+                width="16rem"
+                // onClick={handleExemt}
+                backgroundColor={Colors.SKY_BLUE}
+                hoverColor={Colors.SKY_BLUE}
+              />
+            </Grid> */}
           </React.Fragment>
         ))}
       </Grid>
