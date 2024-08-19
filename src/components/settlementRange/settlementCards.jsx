@@ -50,7 +50,6 @@ export default function SettlementCards({
     backgroundColor: "#EAEBEB",
     margin: "8px 0",
   };
-
   const allRanges = [
     settlementRange || null,
     commissionRange || null,
@@ -100,7 +99,6 @@ export default function SettlementCards({
     !percentageSettlementOverWeeklyBudget &&
     !percentageSettlementOverWeeklyTrueRevenue &&
     !weeksTillPaid;
-
   return (
     <>
       <Grid item xs={12} md={5.8} lg={3.8} container sx={commonStyles}>
@@ -127,7 +125,7 @@ export default function SettlementCards({
           />
         </div>
         <Box sx={lineStyle} />
-        {noData || isFullPayment ? (
+        {noData ? (
           <Typography sx={{ ...commonTextStyles, marginLeft: "8%" }}>
             No Data
           </Typography>
@@ -269,11 +267,11 @@ export default function SettlementCards({
                           ? item?.[title]?.["min"] || "-"
                           : rangeNames[index]?.label?.includes("%")
                           ? `${
-                              parseFloat(item?.[title]?.["min"].toFixed(2)) ||
+                              parseFloat(item?.[title]?.["min"]?.toFixed(2)) ||
                               "-"
                             }%`
                           : `$${
-                              parseFloat(item?.[title]?.["min"].toFixed(2)) ||
+                              parseFloat(item?.[title]?.["min"]?.toFixed(2)) ||
                               "-"
                             }`}
                       </div>
@@ -300,11 +298,11 @@ export default function SettlementCards({
                           ? item?.[title]?.["max"] || "-"
                           : rangeNames[index]?.label?.includes("%")
                           ? `${
-                              parseFloat(item?.[title]?.["max"].toFixed(2)) ||
+                              parseFloat(item?.[title]?.["max"]?.toFixed(2)) ||
                               "-"
                             }%`
                           : `$${
-                              parseFloat(item?.[title]?.["max"].toFixed(2)) ||
+                              parseFloat(item?.[title]?.["max"]?.toFixed(2)) ||
                               "-"
                             }`}
                       </div>
