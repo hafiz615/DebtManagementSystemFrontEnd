@@ -54,6 +54,7 @@ export default function FroalaEditor({
     name: row?.name || "",
     event: row?.event || "",
     content: row?.content || "",
+    from: row?.from || "",
     type: "email",
   });
 
@@ -98,6 +99,13 @@ export default function FroalaEditor({
     setEmailTemplate((prev) => ({
       ...prev,
       subject: e.target.value,
+    }));
+  };
+
+  const handleFromChange = (e) => {
+    setEmailTemplate((prev) => ({
+      ...prev,
+      from: e.target.value,
     }));
   };
 
@@ -176,6 +184,7 @@ export default function FroalaEditor({
       content:
         templateType === "email" ? emailTemplate.content : smsTemplate.content,
       type: templateType,
+      ...(templateType === "email" && { from: emailTemplate.from }),
     };
     const resSetting = await GetAllSettings();
     if (resSetting?.status === 200) {
@@ -215,8 +224,9 @@ export default function FroalaEditor({
       event: templateType === "email" ? emailTemplate.event : smsTemplate.event,
       content:
         templateType === "email" ? emailTemplate.content : smsTemplate.content,
-      templateId: row?.templateId,
       type: templateType,
+      templateId: row?.templateId,
+      ...(templateType === "email" && { from: emailTemplate.from }),
     };
 
     const resNotificationTemplate = await EditSettings(newTemplate);
@@ -240,7 +250,8 @@ export default function FroalaEditor({
       ? isFieldEmpty(emailTemplate?.subject) ||
         isFieldEmpty(emailTemplate?.name) ||
         isFieldEmpty(emailTemplate?.event) ||
-        isFieldEmpty(emailTemplate?.content)
+        isFieldEmpty(emailTemplate?.content) ||
+        isFieldEmpty(emailTemplate?.from)
       : isFieldEmpty(smsTemplate?.name) ||
         isFieldEmpty(smsTemplate?.event) ||
         isFieldEmpty(smsTemplate?.content);
@@ -316,6 +327,28 @@ export default function FroalaEditor({
                 placeholder="Add Subject"
                 value={emailTemplate?.subject}
                 onChange={handleSubjectChange}
+              />
+            </>
+          )}
+        </Grid>
+        <Grid xs={6}>
+          {templateType === "email" && (
+            <>
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontWeight: "600",
+                  color: Colors.DARK_GRAY,
+                  fontSize: FONT_SIZE_LARGE,
+                }}
+              >
+                from
+              </Typography>
+              <StyledInput
+                type="text"
+                placeholder="Add Email"
+                value={emailTemplate?.from}
+                onChange={handleFromChange}
               />
             </>
           )}
