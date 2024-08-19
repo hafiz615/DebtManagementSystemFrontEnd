@@ -65,6 +65,9 @@ export default function RoleAndPermission() {
   const permissionData = useSelector(
     (state) => state?.permissions?.permissions?.name
   );
+  const settings = useSelector(
+    (state) => state?.permissions?.permissions?.settings
+  );
   const crrentRole = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { showToast } = useToast();
   const [selectedRole, setSelectedRole] = useState(null);
@@ -76,7 +79,7 @@ export default function RoleAndPermission() {
   const [rolesId, setRoleId] = useState("");
 
   const GetRoles = async () => {
-    const GetRolesData = await GetAllRoles();
+    const GetRolesData = await GetAllRoles(false);
 
     if (GetRolesData?.status === 200) {
       setRolesData(GetRolesData?.data?.data || []);
@@ -112,6 +115,10 @@ export default function RoleAndPermission() {
   const filteredRolesData =
     crrentRole === "Super User"
       ? rolesData?.filter((role) => role?.name !== "Super User")
+      : crrentRole === "Admin"
+      ? rolesData?.filter(
+          (role) => role?.name !== "Admin" && role?.name !== "Super User"
+        )
       : rolesData?.filter((role) => role?.name === crrentRole);
 
   const UpdateRoles = async () => {
@@ -157,9 +164,11 @@ export default function RoleAndPermission() {
           >
             Roles & Permissions
           </Typography>
-          <span onClick={(e) => e.stopPropagation()}>
-            <MuiModels show="createRole" GetRoles={GetRoles} />
-          </span>
+          {settings?.addRole && (
+            <span onClick={(e) => e.stopPropagation()}>
+              <MuiModels show="createRole" GetRoles={GetRoles} />
+            </span>
+          )}
         </div>
       </StyledAccordionSummary>
       <StyledAccordionDetails>
@@ -242,17 +251,18 @@ export default function RoleAndPermission() {
                       selectedRole={selectedRole}
                       setSelectedRole={setSelectedRole}
                     />
-
-                    <Prompt
-                      heading="Delete Template"
-                      text={`Are you sure you want to delete ${data?.name} ?`}
-                      rolesId={data._id}
-                      roleName={roleName}
-                      GetRoles={GetRoles}
-                      permissionData={permissionData}
-                      iconSize="20px"
-                      setSelectedRole={setSelectedRole}
-                    />
+                    {settings?.deleteRole && (
+                      <Prompt
+                        heading="Delete Template"
+                        text={`Are you sure you want to delete ${data?.name} ?`}
+                        rolesId={data._id}
+                        roleName={roleName}
+                        GetRoles={GetRoles}
+                        permissionData={permissionData}
+                        iconSize="20px"
+                        setSelectedRole={setSelectedRole}
+                      />
+                    )}
                   </Box>
                 )}
               </Grid>
@@ -270,8 +280,14 @@ export default function RoleAndPermission() {
               general={generalData}
               settingsPermissions={settingData}
               analyticsPermissions={analyticsData}
+              disableToggleButtons={
+                !(crrentRole === "Admin" || crrentRole === "Super User") &&
+                !settings?.editRole
+              }
             />
-            {selectedRole !== "Super User" && (
+            {(crrentRole === "Admin" ||
+              crrentRole === "Super User" ||
+              settings?.editRole) && (
               <Grid
                 container
                 sx={{

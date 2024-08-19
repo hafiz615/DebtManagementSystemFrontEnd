@@ -24,6 +24,7 @@ export default function Permission({
   setGeneralData,
   setSettingsData,
   setAnalyticsData,
+  disableToggleButtons,
 }) {
   const handleGeneralToggle = (key) => {
     setGeneralData((prevData) => ({
@@ -98,6 +99,7 @@ export default function Permission({
                   <BasicSwitches
                     checked={value}
                     onChange={() => handleGeneralToggle(key)}
+                    disableToggleButtons={disableToggleButtons}
                   />
                 </Box>
               </Grid>
@@ -147,6 +149,7 @@ export default function Permission({
                   <BasicSwitches
                     checked={value}
                     onChange={() => handleSettingsToggle(key)}
+                    disableToggleButtons={disableToggleButtons}
                   />
                 </Box>
               </Grid>
@@ -197,6 +200,7 @@ export default function Permission({
                     <BasicSwitches
                       checked={value}
                       onChange={() => handleAnalyticsToggle(key)}
+                      disableToggleButtons={disableToggleButtons}
                     />
                   </Box>
                 </Grid>

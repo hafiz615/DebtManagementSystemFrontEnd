@@ -556,7 +556,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           paymentToken: connectPayment?.paymentToken,
           paymentType: connectPayment?.paymentType,
           documents: url || [],
-          extractedFields: extractedData,
+          extractedFields: isEmpty(extractedData) ? [] : extractedData,
         };
         const res = await CreateDebtor(params);
         if (res?.status === 200) {
