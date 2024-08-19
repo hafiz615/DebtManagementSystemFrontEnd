@@ -65,6 +65,10 @@ export default function RoleAndPermission() {
   const permissionData = useSelector(
     (state) => state?.permissions?.permissions?.name
   );
+  const settings = useSelector(
+    (state) => state?.permissions?.permissions?.settings
+  );
+  console.log(settings, "settings");
   const crrentRole = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { showToast } = useToast();
   const [selectedRole, setSelectedRole] = useState(null);
@@ -112,6 +116,10 @@ export default function RoleAndPermission() {
   const filteredRolesData =
     crrentRole === "Super User"
       ? rolesData?.filter((role) => role?.name !== "Super User")
+      : crrentRole === "Admin"
+      ? rolesData?.filter(
+          (role) => role?.name !== "Admin" && role?.name !== "Super User"
+        )
       : rolesData?.filter((role) => role?.name === crrentRole);
 
   const UpdateRoles = async () => {
@@ -138,6 +146,162 @@ export default function RoleAndPermission() {
     }
   };
   return (
+    // <StyledAccordion sx={{ overflowX: "auto" }}>
+    //   <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
+    //     <div
+    //       style={{
+    //         width: "98%",
+    //         display: "flex",
+    //         alignItems: "center",
+    //         justifyContent: "space-between",
+    //       }}
+    //     >
+    //       <Typography
+    //         sx={{
+    //           fontSize: FONT_SIZE_XL,
+    //           fontFamily: FONT_FAMILY,
+    //           fontWeight: FONT_WEIGHT_HEADING,
+    //         }}
+    //       >
+    //         Roles & Permissions
+    //       </Typography>
+    //       <span onClick={(e) => e.stopPropagation()}>
+    //         <MuiModels show="createRole" GetRoles={GetRoles} />
+    //       </span>
+    //     </div>
+    //   </StyledAccordionSummary>
+    //   <StyledAccordionDetails>
+    //     <Grid container sx={{ marginTop: "1rem" }}>
+    //       <Typography
+    //         sx={{
+    //           fontSize: FONT_SIZE_XL,
+    //           fontFamily: FONT_FAMILY,
+    //           fontWeight: FONT_WEIGHT_HEADING,
+    //         }}
+    //       >
+    //         User Roles
+    //       </Typography>
+
+    //       <Grid
+    //         container
+    //         item
+    //         xs={12}
+    //         sx={{
+    //           marginTop: "1rem",
+    //         }}
+    //       >
+    //         {filteredRolesData?.map((data, index) => (
+    //           <Grid
+    //             item
+    //             xs={12}
+    //             lg={2.8}
+    //             key={index}
+    //             sx={{
+    //               alignItems: "center",
+    //               backgroundColor:
+    //                 selectedRole === data?.name
+    //                   ? Colors.SKY_BLUE
+    //                   : Colors.BG_LIGHT_GRAY,
+    //               color:
+    //                 selectedRole === data?.name ? Colors.WHITE : Colors.BLACK,
+    //               borderRadius: "5px",
+    //               display: "flex",
+    //               padding: "1rem",
+    //               margin: "0.5rem",
+    //               cursor: "pointer",
+    //             }}
+    //             onClick={() => setSelectedRole(data?.name)}
+    //           >
+    //             <Box>
+    //               <Typography
+    //                 sx={{
+    //                   fontSize: FONT_SIZE_XL,
+    //                   fontFamily: FONT_FAMILY,
+    //                   fontWeight: FONT_WEIGHT_HEADING,
+    //                 }}
+    //               >
+    //                 {data?.name}
+    //               </Typography>
+    //               <StyledTypography fontWeight="400">
+    //                 Assigned to you and{" "}
+    //                 <span
+    //                   style={{
+    //                     fontFamily: FONT_FAMILY,
+    //                     fontWeight: FONT_WEIGHT_HEADING,
+    //                     fontSize: FONT_SIZE_MEDIUM,
+    //                   }}
+    //                 >
+    //                   Users
+    //                 </span>
+    //               </StyledTypography>
+    //             </Box>
+    //             {data?.name !== "Super User" && (
+    //               <Box
+    //                 sx={{
+    //                   marginLeft: "auto",
+    //                   display: "flex",
+    //                 }}
+    //               >
+    //                 <MuiModels
+    //                   show="duplicateRole"
+    //                   GetRoles={GetRoles}
+    //                   selectedData={data}
+    //                   selectedRoleData={selectedRoleData}
+    //                   selectedRole={selectedRole}
+    //                   setSelectedRole={setSelectedRole}
+    //                 />
+
+    //                 <Prompt
+    //                   heading="Delete Template"
+    //                   text={`Are you sure you want to delete ${data?.name} ?`}
+    //                   rolesId={data._id}
+    //                   roleName={roleName}
+    //                   GetRoles={GetRoles}
+    //                   permissionData={permissionData}
+    //                   iconSize="20px"
+    //                   setSelectedRole={setSelectedRole}
+    //                 />
+    //               </Box>
+    //             )}
+    //           </Grid>
+    //         ))}
+    //       </Grid>
+    //     </Grid>
+    //     <hr />
+    //     {selectedRole && (
+    //       <>
+    //         <Permission
+    //           setGeneralData={setGeneralData}
+    //           setSettingsData={setSettingsData}
+    //           setAnalyticsData={setAnalyticsData}
+    //           role={selectedRole}
+    //           general={generalData}
+    //           settingsPermissions={settingData}
+    //           analyticsPermissions={analyticsData}
+    //         />
+    //         {selectedRole !== "Super User" && (
+    //           <Grid
+    //             container
+    //             sx={{
+    //               justifyContent: "flex-end",
+    //               marginTop: "1rem",
+    //             }}
+    //           >
+    //             <TextButton
+    //               buttonText="UPDATE"
+    //               height="2rem"
+    //               marginRight="1rem"
+    //               width="6rem"
+    //               onClick={UpdateRoles}
+    //               backgroundColor={Colors.SKY_BLUE}
+    //               hoverColor={Colors.SKY_BLUE}
+    //             />
+    //           </Grid>
+    //         )}
+    //       </>
+    //     )}
+    //   </StyledAccordionDetails>
+    // </StyledAccordion>
     <StyledAccordion sx={{ overflowX: "auto" }}>
       <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
         <div
@@ -270,8 +434,11 @@ export default function RoleAndPermission() {
               general={generalData}
               settingsPermissions={settingData}
               analyticsPermissions={analyticsData}
+              disableToggleButtons={
+                !(crrentRole === "Admin" || crrentRole === "Super User")
+              }
             />
-            {selectedRole !== "Super User" && (
+            {crrentRole === "Admin" || crrentRole === "Super User" ? (
               <Grid
                 container
                 sx={{
@@ -289,7 +456,7 @@ export default function RoleAndPermission() {
                   hoverColor={Colors.SKY_BLUE}
                 />
               </Grid>
-            )}
+            ) : null}
           </>
         )}
       </StyledAccordionDetails>
