@@ -60,7 +60,7 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
   //   // { label: "Admin", value: "Admin" },
   // ];
   const AllRoles = async () => {
-    const rolesRes = await GetAllRoles();
+    const rolesRes = await GetAllRoles(true);
     if (rolesRes?.status === 200) {
       setMenuItem(rolesRes?.data?.data);
     }

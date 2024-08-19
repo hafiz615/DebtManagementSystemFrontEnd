@@ -76,7 +76,7 @@ export default function RoleAndPermission() {
   const [rolesId, setRoleId] = useState("");
 
   const GetRoles = async () => {
-    const GetRolesData = await GetAllRoles();
+    const GetRolesData = await GetAllRoles(false);
 
     if (GetRolesData?.status === 200) {
       setRolesData(GetRolesData?.data?.data || []);

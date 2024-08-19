@@ -765,9 +765,12 @@ export const GetAllDebtors = async () => {
   }
 };
 
-export const GetAllRoles = async () => {
+export const GetAllRoles = async (type) => {
   try {
-    return await axios.get(BASE_URL + "/v1/roles/getAllRoles", setHeaders());
+    return await axios.get(
+      BASE_URL + `/v1/roles/getAllRoles?usersPage=${type}`,
+      setHeaders()
+    );
   } catch (error) {
     return error;
   }

@@ -1153,7 +1153,7 @@ export default function SettlementRange() {
                             ?.weeks_to_payoff_lower_bound ||
                           settlementData[`settlement_range_${rangeTab + 1}`]
                             ?.weeks_to_pay_off_lower_bound
-                        }%` || "--"}
+                        }` || "--"}
                       </span>
                     </Typography>
                   </Grid>
@@ -1178,7 +1178,7 @@ export default function SettlementRange() {
                             ?.weeks_to_payoff_upper_bound ||
                           settlementData[`settlement_range_${rangeTab + 1}`]
                             ?.weeks_to_pay_off_upper_bound
-                        }%` || "--"}
+                        }` || "--"}
                       </span>
                     </Typography>
                   </Grid>
