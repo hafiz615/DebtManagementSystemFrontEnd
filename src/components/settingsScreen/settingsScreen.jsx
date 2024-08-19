@@ -76,7 +76,7 @@ export default function SettingsScreen() {
 
   useEffect(() => {
     getSettings();
-  }, []);
+  }, [settings]);
 
   const refreshData = () => {
     getSettings();

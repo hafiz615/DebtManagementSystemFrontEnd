@@ -176,7 +176,7 @@ export default function CreditorDetails({
           },
           contacts: [],
         },
-        status: "In Process",
+        status: "",
         totalDebt:
           parseInt(
             creditor?.ContractDetails?.payable_amount
