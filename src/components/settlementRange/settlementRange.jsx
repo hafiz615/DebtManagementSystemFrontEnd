@@ -1349,7 +1349,7 @@ export default function SettlementRange() {
                 label="llama"
               />
 
-              <AntTab
+              {/* <AntTab
                 sx={{
                   bgcolor: Colors.WHITE,
                   width: "max-content",
@@ -1357,7 +1357,7 @@ export default function SettlementRange() {
                   height: "3.5rem",
                 }}
                 label="Claude"
-              />
+              /> */}
             </AntTabs>
           </Grid>
 
