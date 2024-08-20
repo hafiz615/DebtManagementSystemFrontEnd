@@ -28,7 +28,7 @@ export default function MuiPhoneTextField({ onChange, error, value, label }) {
           borderRadius: "5px",
           display: "flex",
           justifyContent: "center",
-          border: "none !important",
+          border: error && value ? "1px solid red" : "1px solid transparent",
           "& .MuiInputBase-input": {
             color: Colors.DIM_LIGHT_GRAY,
             fontSize: ".8rem",

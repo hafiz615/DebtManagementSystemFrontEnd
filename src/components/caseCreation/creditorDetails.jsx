@@ -14,6 +14,8 @@ import { Colors } from "../../config/default";
 import { phoneNumberFormat } from "../../common";
 import { Add, Delete, ExpandMore } from "@mui/icons-material";
 import { FONT_SIZE_XL } from "../../constants/appConstants";
+import { isEmailValid } from "../../common";
+import { PhoneValidation } from "../../constants/appConstants";
 
 export default function CreditorDetails({
   creditors,
@@ -27,11 +29,13 @@ export default function CreditorDetails({
   filteredArray,
   setFilteredArray,
   handleSelect,
+  errors,
+  setErrors,
 }) {
   const [digitsList, setDigitsList] = useState(
     finalCaseData?.map((caseEntry) => [caseEntry?.creditor?.aggression]) || [0]
   );
-
+  const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const handleSearchChange = (value, index) => {
     setSearchText(value);
     SearchFields(value, index);
@@ -60,6 +64,33 @@ export default function CreditorDetails({
     }
 
     setFinalCaseData(newState);
+
+    if (fieldPath === "creditor.basicInformation.email") {
+      if (!isEmailValid(value)) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          emailValid: "Email must be valid",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          emailValid: "",
+        }));
+      }
+    }
+    if (fieldPath === "creditor.basicInformation.phone") {
+      if (value?.length !== PHONE_NO_CHARACTERS) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          basicPhone: PHONE_NO_ERROR,
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          basicPhone: "",
+        }));
+      }
+    }
   };
 
   const handleRemoveCase = (index, e) => {
@@ -320,6 +351,8 @@ export default function CreditorDetails({
                     setDigits={(newDigits) =>
                       handleDigitsChange(index, newDigits)
                     }
+                    errors={errors}
+                    setErrors={setErrors}
                   />
                 </Grid>
               </Grid>

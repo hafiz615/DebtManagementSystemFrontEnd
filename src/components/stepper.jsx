@@ -32,12 +32,7 @@ import {
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import { isEmpty } from "lodash";
-import {
-  hasAnyValue,
-  checkContacts,
-  phoneNumberFormat,
-  sanitizeText,
-} from "../common";
+import { hasAnyValue, phoneNumberFormat, sanitizeText } from "../common";
 import ScrollbarStyles from "./customScroll";
 
 const steps = ["File upload ", "Debtor", "Creditor", "Payment", "Preview"];
@@ -876,6 +871,8 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               handleSelect={handleCreditorSelect}
               filteredArray={filteredArray}
               setFilteredArray={setFilteredArray}
+              errors={errors}
+              setErrors={setErrors}
             />
           ) : activeStep === 3 ? (
             <PaymentDetails
