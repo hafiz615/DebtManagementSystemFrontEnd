@@ -48,7 +48,7 @@ export default function CustomTextField({
           height: "2.5rem",
           color: Colors.DIM_LIGHT_GRAY,
           paddingLeft: paddingLeft || "1rem",
-          border: "none",
+          border: error && value ? "1px solid red" : "1px solid transparent",
           outline: "none",
           borderRadius: "5px",
           width: width
