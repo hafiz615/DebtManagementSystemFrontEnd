@@ -6,6 +6,7 @@ import { isEmpty } from "lodash";
 import { PDFDocument } from "pdf-lib";
 
 const BASE_URL = baseUrl();
+const URL = process.env.REACT_APP_AI_URL;
 
 // Utility function to convert JPG to PDF
 const convertJpgToPdf = async (file) => {
@@ -30,9 +31,7 @@ const convertJpgToPdf = async (file) => {
 
 export const ExtractContractData = async (files) => {
   try {
-    const apiUrl =
-      "https://dms-negotiation.hpdemos.co/extract-fields-multiple-files?enable_cache=true";
-
+    const apiUrl = `${URL}/extract-fields-multiple-files?enable_cache=true`;
     const formData = new FormData();
 
     files.map(async (file) => {
