@@ -75,7 +75,7 @@ export default function PaymentPopup({
       GetCaseDetails && GetCaseDetails(id);
       GetCasePaymentDetails && GetCasePaymentDetails(id);
       handleClose();
-      closePopup();
+      closePopup && closePopup();
     } else {
       const errorMessage = resCaseUpdate?.response?.data?.message;
       showToast(errorMessage, "error");
