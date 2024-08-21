@@ -32,7 +32,7 @@ function PaymentCardDetails({ setConnectPayment }) {
   }, [type]);
 
   return (
-    <Grid item sx={{ zIndex: "9999" }}>
+    <Grid item sx={{ zIndex: "1" }}>
       <ToggleButtonGroup
         style={{ height: "2.5rem", fontFamily: "Nunito" }}
         color="primary"
