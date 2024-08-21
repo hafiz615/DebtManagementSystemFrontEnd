@@ -258,11 +258,6 @@ export default function DebtorFields({
             Debtor Details
           </Typography>
           {/* {walletId === "" && ( */}
-          <PaymentCardDetails
-            connectPayment={connectPayment}
-            setConnectPayment={setConnectPayment}
-          />
-          {/* )} */}
         </Grid>
 
         <Grid

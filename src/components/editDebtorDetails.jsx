@@ -12,6 +12,8 @@ export default function EditDebtorDetail({
   handleClose,
   caseData,
   GetCaseDetails,
+  connectPayment,
+  setConnectPayment
 }) {
   const { id } = useParams();
   const { showToast } = useToast();
@@ -19,10 +21,6 @@ export default function EditDebtorDetail({
   const debtorBasicInfo = caseData?.debtor?.basicInformation;
   const debtorBusinessInfo = caseData?.debtor?.businessInformation;
   const [loading, setLoading] = useState(false);
-  const [connectPayment, setConnectPayment] = useState({
-    paymentToken: "",
-    paymentType: "",
-  });
   const [debtorOwnDetails, setDebtorOwnDetails] = useState({
     BasicFullName: debtorBasicInfo?.fullName || "",
     BasicEmailAddress: debtorBasicInfo?.email || "",

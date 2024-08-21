@@ -93,6 +93,8 @@ export default function MuiModels({
   closePopup,
   commissionRange,
   getFields,
+  connectPayment,
+  setConnectPayment
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -528,6 +530,8 @@ export default function MuiModels({
                 handleClose={handleClose}
                 caseData={caseData}
                 GetCaseDetails={GetCaseDetails}
+                connectPayment={connectPayment}
+                setConnectPayment={setConnectPayment}
               />
             </>
           ) : show === "editStatus" ? (
