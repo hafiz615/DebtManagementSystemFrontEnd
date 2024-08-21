@@ -150,8 +150,8 @@ export default function PaymentPopup({
           marginBottom: "10px",
         }}
       >
-        Total amount after given interval:{" "}
-        {isNaN(totalAmount) ? 0 : totalAmount}
+        Total amount after given interval: $
+        {isNaN(totalAmount) ? 0 : totalAmount?.toFixed(2)}
       </Typography>
       {saveDisabled && feePayment === "toPay" && (
         <Typography
@@ -163,7 +163,8 @@ export default function PaymentPopup({
             marginBottom: "10px",
           }}
         >
-          Commission is calculated using this percentage: {commissionPercentage}
+          Commission is calculated using this percentage:
+          {commissionPercentage}%
         </Typography>
       )}
 
