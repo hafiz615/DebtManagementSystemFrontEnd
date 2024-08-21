@@ -22,6 +22,7 @@ export default function SettlementCards({
   remainingAmount,
   isLumpSumPayment,
   warning,
+  strategy,
 }) {
   const commonStyles = {
     backgroundColor: Colors.WHITE,
@@ -113,16 +114,26 @@ export default function SettlementCards({
           <Typography sx={commonTextStyles}>
             {capitalizeFirstWord(title)}
           </Typography>
-
-          <MuiModels
-            width="35vw"
-            show="settlmentPayment"
-            title={title}
-            settlementRange={settlementRange?.[title]}
-            weeksTillPaid={weeksTillPaid?.[weeksTillPaidTitle]}
-            remainingAmount={remainingAmount}
-            caseId={caseId}
-          />
+          {strategy === "strategy2" ? (
+            <MuiModels
+              width="70vw"
+              show="payments"
+              buttonName="settlmentPayment"
+              settlementRange={settlementRange?.remaining_principle_amount}
+              caseId={caseId}
+            />
+          ) : (
+            <MuiModels
+              width="35vw"
+              show="settlmentPayment"
+              title={title}
+              settlementRange={settlementRange?.[title]}
+              weeksTillPaid={weeksTillPaid?.[weeksTillPaidTitle]}
+              commissionRange={commissionRange?.[title]}
+              remainingAmount={remainingAmount}
+              caseId={caseId}
+            />
+          )}
         </div>
         <Box sx={lineStyle} />
         {noData ? (
@@ -182,7 +193,7 @@ export default function SettlementCards({
                           {mediumScreen ? "Min" : "Minimum"}
                         </Tooltip>
                       </div>
-                      <div style={textStyles}>{item?.[title][0]}</div>
+                      <div style={textStyles}>{item?.[title]["min"]}</div>
                     </div>
                     <div style={{ width: "100%", display: "flex" }}>
                       <div
@@ -196,7 +207,7 @@ export default function SettlementCards({
                           {mediumScreen ? "Max" : "Maximum"}
                         </Tooltip>
                       </div>
-                      <div style={textStyles}>{item?.[title][1]}</div>
+                      <div style={textStyles}>{item?.[title]["max"]}</div>
                     </div>
                   </Grid>
                 </>
