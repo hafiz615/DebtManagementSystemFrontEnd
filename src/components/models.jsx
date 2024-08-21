@@ -91,6 +91,7 @@ export default function MuiModels({
   caseId,
   remainingAmount,
   closePopup,
+  commissionRange,
   getFields,
 }) {
   const [open, setOpen] = React.useState(false);
@@ -430,7 +431,7 @@ export default function MuiModels({
             )
           }
         />
-      ) : show === "settlmentPayment" ? (
+      ) : show === "settlmentPayment" || buttonName === "settlmentPayment" ? (
         <TextButton
           buttonText="Choose Plan"
           boxShadow="none"
@@ -654,6 +655,7 @@ export default function MuiModels({
               weeksTillPaid={weeksTillPaid}
               caseId={caseId}
               remainingAmount={remainingAmount}
+              commissionRange={commissionRange}
             />
           ) : show === "settlmentPayment" ? (
             <SettlementPayment
@@ -663,6 +665,7 @@ export default function MuiModels({
               weeksTillPaid={weeksTillPaid}
               caseId={caseId}
               remainingAmount={remainingAmount}
+              commissionRange={commissionRange}
             />
           ) : (
             ""

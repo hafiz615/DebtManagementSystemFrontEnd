@@ -340,6 +340,7 @@ export default function SettlementRange() {
           <SettlementCards
             isLumpSumPayment={true}
             title={item}
+            strategy="strategy2"
             weeksTillPaidTitle={
               item === "lump Sum"
                 ? "Amount based on Lump Sum Recommendation"
@@ -351,6 +352,7 @@ export default function SettlementRange() {
               ] || null
             }
             warning={lumpSumpData?.warning || ""}
+            caseId={caseId}
           />
         ) : (
           <Grid

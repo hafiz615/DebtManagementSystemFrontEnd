@@ -1077,3 +1077,15 @@ export const UpdateCommission = async (payload, id, status) => {
     return error;
   }
 };
+
+export const GetWeeklyAndTotalCommission = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/case/getWeeklyAndTotalCommission/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

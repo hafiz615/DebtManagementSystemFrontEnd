@@ -107,21 +107,11 @@ export default function PaymentSettlement({
     }
   };
 
-  // Calculate the first day of the current month
   const today = new Date();
   const minDate = today.toISOString().split("T")[0];
 
   return (
     <>
-      <Typography
-        sx={{
-          fontFamily: "Nunito",
-          fontWeight: "600",
-        }}
-      >
-        Settlement Plan Automation
-      </Typography>
-
       <Grid
         container
         item
@@ -136,7 +126,6 @@ export default function PaymentSettlement({
               item
               xs={12}
               md={3}
-              // lg={3}
               sx={{
                 display: "flex",
                 justifyContent: { xs: "space-between", md: "center" },
@@ -187,7 +176,6 @@ export default function PaymentSettlement({
               item
               xs={12}
               md={3}
-              // lg={3}
               sx={{
                 display: "flex",
                 justifyContent: { xs: "space-between", md: "center" },
@@ -206,7 +194,6 @@ export default function PaymentSettlement({
                 Time Period
               </Typography>
               <Dropdown
-                // placeholder="Choose Time Period"
                 menuWidth="10rem"
                 initialValue={item?.timePeriod}
                 menuItems={menuItems}
@@ -225,7 +212,6 @@ export default function PaymentSettlement({
               item
               xs={12}
               md={3}
-              // lg={3}
               sx={{
                 display: "flex",
                 justifyContent: { xs: "space-between", md: "center" },
@@ -250,8 +236,7 @@ export default function PaymentSettlement({
                 onChange={(e) =>
                   handleInputChange(index, "startDate", e.target.value)
                 }
-                min={minDate} // Set min date to the first day of the current month
-                // max={today} // Set max date to today
+                min={minDate}
                 style={{
                   backgroundColor: Colors.BG_LIGHT_GRAY,
                   height: "2.5rem",
@@ -345,17 +330,6 @@ export default function PaymentSettlement({
                   )}
               </Hidden>
             )}
-
-            {/* <Grid xs={12} sx={{ mt: "1rem" }}>
-              <TextButton
-                buttonText="Exempt amount difference"
-                height="2rem"
-                width="16rem"
-                // onClick={handleExemt}
-                backgroundColor={Colors.SKY_BLUE}
-                hoverColor={Colors.SKY_BLUE}
-              />
-            </Grid> */}
           </React.Fragment>
         ))}
       </Grid>
