@@ -26,7 +26,7 @@ import {
 } from "../../constants/appConstants";
 import { Colors } from "../../config/default";
 import ScrollbarStyles from "../customScroll";
-import { Download, PeopleAlt, Send } from "@mui/icons-material";
+import { Download, Info, PeopleAlt, Send } from "@mui/icons-material";
 import TextButton from "../button";
 import SettlementCards from "./settlementCards";
 import {
@@ -151,17 +151,19 @@ const textStyles = {
 const isNegative = (number) => {
   return number < 0;
 };
-const GridItem = ({ title, value, rawValue }) => (
+const GridItem = ({ title, value, rawValue, tooltip }) => (
   <Grid item xs={12} sm={5.8} md={3.8} lg={2.8} container sx={commonStyles}>
-    <Typography sx={commonTextStyles}>{title}</Typography>
-    <Typography
-      sx={{
-        ...commonTextStyles,
-        color: isNegative(rawValue) ? Colors.ORANGE_COLOR : Colors.SKY_BLUE,
-      }}
-    >
-      {value}
-    </Typography>
+    <Tooltip title={tooltip} placement="top-start">
+      <Typography sx={commonTextStyles}>{title}</Typography>
+      <Typography
+        sx={{
+          ...commonTextStyles,
+          color: isNegative(rawValue) ? Colors.ORANGE_COLOR : Colors.SKY_BLUE,
+        }}
+      >
+        {value}
+      </Typography>
+    </Tooltip>
   </Grid>
 );
 const GridItemMessage = ({ title, value, rawValue }) => (
@@ -484,7 +486,7 @@ export default function SettlementRange() {
       );
       if (caseId) {
         const payload = {
-          commissionPercentage: commissionPercentage,
+          commissionPercentage: parseInt(commissionPercentage),
           creditorNames: selectedCreditorIds,
         };
         const resCommission = await UpdateCommission(payload, caseId, false);
@@ -937,7 +939,7 @@ export default function SettlementRange() {
               onClick={handleCommissionUpdate}
               backgroundColor={Colors.SKY_BLUE}
               hoverColor={Colors.SKY_BLUE}
-              disabled={!commissionPercentage || commissionPercentage < 0}
+              disabled={!commissionPercentage || commissionPercentage < 20}
             />
           </Grid>
 
@@ -950,6 +952,7 @@ export default function SettlementRange() {
             <GridItem
               key="Weekly Profit"
               title="Weekly Profit"
+              tooltip="Weekly Profit With Payment"
               value={
                 apiData?.weekly_profit
                   ? `$ ${new Intl.NumberFormat().format(apiData.weekly_profit)}`
@@ -960,6 +963,7 @@ export default function SettlementRange() {
             <GridItem
               key="Weekly Budget"
               title="Weekly Budget"
+              tooltip="Weekly Profit Without Payments"
               value={
                 apiData?.weekly_budget?.[allCreditorNames[parseInt(tabValue)]]
                   ? `$ ${new Intl.NumberFormat().format(
