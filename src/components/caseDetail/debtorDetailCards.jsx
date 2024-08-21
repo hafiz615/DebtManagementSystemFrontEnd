@@ -20,6 +20,7 @@ import {
   debtorBusinessDetails,
   debtorPeronsalDetails,
 } from "../../constants/appConstants";
+import PaymentCardDetails from "../paymentCard";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -105,6 +106,11 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
     item?.name?.toLowerCase().includes(searchText.toLowerCase())
   );
 
+  const [connectPayment, setConnectPayment] = useState({
+    paymentToken: "",
+    paymentType: "",
+  });
+
   useEffect(() => {
     setStartIndex(0);
   }, [searchText]);
@@ -143,21 +149,29 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
           >
             {debtorPeronsalDetails}
           </p>
-          <MuiModels
-            show="debtorDetail"
-            button="create"
-            iconColor={Colors.BLACK}
-            width="80vw"
-            height="72vh"
-            caseData={caseData}
-            GetCaseDetails={GetCaseDetails}
-          />
+          <span style={{ display: "flex", justifyContent: "end" }}>
+            <MuiModels
+              show="debtorDetail"
+              button="create"
+              iconColor={Colors.BLACK}
+              width="80vw"
+              height="72vh"
+              caseData={caseData}
+              GetCaseDetails={GetCaseDetails}
+              connectPayment={connectPayment}
+              setConnectPayment={setConnectPayment}
+            />
+            <PaymentCardDetails
+              setConnectPayment={setConnectPayment}
+            />
+          </span>
         </div>
         <div
           style={{
             display: "flex",
             flexWrap: "wrap",
             gap: "6%",
+            height: "100px",
           }}
         >
           {Object.entries(caseData?.debtor?.basicInformation)?.map(
@@ -204,6 +218,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
           )}
         </div>
       </Grid>
+
       <Grid
         item
         xs={12}
