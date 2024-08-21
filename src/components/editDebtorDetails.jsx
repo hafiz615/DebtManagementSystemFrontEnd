@@ -4,7 +4,7 @@ import { Grid, Box, Typography } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { Colors } from "../config/default";
 import TextButton from "./button";
-import { GetAllStatuses, UpdateDebtor } from "../services/services";
+import { UpdateDebtor } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import DebtorFields from "./caseCreationFields/debtorFields";
 
@@ -13,19 +13,8 @@ export default function EditDebtorDetail({
   caseData,
   GetCaseDetails,
 }) {
-  const [menuItems, setMenuItems] = useState([]);
   const { id } = useParams();
   const { showToast } = useToast();
-  const GetStatuses = async () => {
-    const AllStatuses = await GetAllStatuses();
-    if (AllStatuses?.status === 200) {
-      setMenuItems(AllStatuses?.data?.data?.status);
-    }
-  };
-
-  useEffect(() => {
-    GetStatuses();
-  }, []);
 
   const debtorBasicInfo = caseData?.debtor?.basicInformation;
   const debtorBusinessInfo = caseData?.debtor?.businessInformation;
@@ -123,7 +112,7 @@ export default function EditDebtorDetail({
       paymentToken: connectPayment?.paymentToken,
       paymentType: connectPayment?.paymentType,
     };
-    const updateDebtor = await UpdateDebtor(caseData?.debtor?._id, params);
+    const updateDebtor = await UpdateDebtor(caseData?._id, params);
     if (updateDebtor?.status === 200) {
       showToast(updateDebtor?.data?.message, "success");
       handleClose();
@@ -182,7 +171,7 @@ export default function EditDebtorDetail({
           setErrors={setErrors}
         />
       </Grid>
-      <Grid container xs={12} sx={{ justifyContent: "right" }}>
+      <Grid container sx={{ justifyContent: "right" }}>
         <TextButton
           buttonText="Save"
           height="2rem"

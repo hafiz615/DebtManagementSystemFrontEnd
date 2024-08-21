@@ -294,6 +294,7 @@ export default function Pipelines({ item, GetPipelines }) {
                       item={item}
                       index={index}
                       id={index}
+                      key={index}
                       GetPipelines={GetPipelines}
                       pipelineId={pipelineId}
                     />

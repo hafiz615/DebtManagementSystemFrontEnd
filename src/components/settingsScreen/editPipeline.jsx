@@ -48,14 +48,14 @@ export default function EditPipeline({
     setLoading(false);
     handleClose();
   };
-
+  const editPipelineStatus = "Edit Pipeline Status";
   return (
     <>
       <Grid item>
         <Typography
           sx={{ fontWeight: "500", fontFamily: "Nunito", color: Colors.BLACK }}
         >
-          Edit Pipeline Status
+          {editPipelineStatus}
         </Typography>
         <Box sx={lineStyle} />
       </Grid>

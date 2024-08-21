@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useSelector } from "react-redux";
 import { useEffect, useState, useMemo } from "react";
-import { useNavigate, useNavigation } from "react-router";
+import { useNavigate } from "react-router";
 
 import { Grid, IconButton, Typography, Menu, Box } from "@mui/material";
 
@@ -52,7 +52,6 @@ const columns = [
 ];
 export default function CustomizedTabs() {
   const navigate = useNavigate();
-  const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
   );
@@ -239,14 +238,13 @@ export default function CustomizedTabs() {
             gap: "10px",
           }}
         >
-          {generalPermissions?.addNewUser && role === "Admin" && (
+          {generalPermissions?.addNewUser && (
             <BasicModal
               modelButton="ADD USERS"
               modalType="add"
               GetUsers={GetUsers}
             />
           )}
-
           <Box sx={{ display: "flex" }}>
             <SearchBar
               searchCheck={true}

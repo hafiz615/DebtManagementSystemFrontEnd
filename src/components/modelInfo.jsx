@@ -17,7 +17,7 @@ import Dropdown from "./dropdown";
 import { Colors } from "../config/default";
 import MuiPhoneNumber from "material-ui-phone-number";
 import { PhoneValidation } from "../constants/appConstants";
-import { formatPhoneNumber } from "../common";
+import { formatPhoneNumber, isEmailValid } from "../common";
 
 function ModelInfo({ modalType, setOpen, GetUsers, id }) {
   const [menuItem, setMenuItem] = useState([]);
@@ -60,7 +60,7 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
   //   // { label: "Admin", value: "Admin" },
   // ];
   const AllRoles = async () => {
-    const rolesRes = await GetAllRoles();
+    const rolesRes = await GetAllRoles(true);
     if (rolesRes?.status === 200) {
       setMenuItem(rolesRes?.data?.data);
     }
@@ -91,9 +91,9 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
 
   const [errors, setErrors] = useState({
     phone: "",
+    email: "",
     ssid: "",
   });
-
   const [loading, setLoading] = useState(false);
 
   const handleInputChange = (field, value, event) => {
@@ -123,6 +123,19 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
         }));
       }
     }
+    if (field === "email") {
+      if (!isEmailValid(value)) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          email: "Invalid email address",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          email: "",
+        }));
+      }
+    }
     if (field === "ssid") {
       const inputValue = value;
       if (inputValue === "" || /^\d*\.?\d*$/.test(inputValue)) {
@@ -137,12 +150,6 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
         [field]: value,
       });
     }
-  };
-
-  const isEmailValid = (email) => {
-    // Use a more robust email validation regular expression
-    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-    return emailRegex.test(email);
   };
 
   const handleSubmit = async () => {
@@ -316,17 +323,9 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
               placeHolderValue="Enter Valid Email"
               onChange={(e) => handleInputChange("email", e.target.value, e)}
               value={formData?.email}
+              error={errors?.email}
             />
-            {/* <CustomTextField
-              label="Phone #*"
-              type="number"
-              width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
-              placeHolderValue="Enter Phone"
-              onChange={(e) => handleInputChange("phone", e.target.value, e)}
-              error={errors?.phone}
-              value={formData?.phone}
-              onKeyDown={handleNumberInputKeyDown}
-            /> */}
+
             <Box>
               <Typography
                 sx={{
@@ -351,7 +350,9 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
                     : largeScreen
                     ? "20rem"
                     : "10rem",
-                  border: "none !important",
+                  border: errors?.phone
+                    ? "1px solid red"
+                    : "1px solid transparent",
                   "& .MuiInputBase-input": {
                     color: Colors.DIM_LIGHT_GRAY,
                     fontSize: ".8rem",

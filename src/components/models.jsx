@@ -18,6 +18,7 @@ import FroalaEditor from "./froalaEditor";
 import CaseModel from "./caseModel";
 import CaseCustomField from "./caseCustomField";
 import EditCaseCustomField from "./editCaseCustomField";
+import PaymentsPopup from "./paymentPopup";
 import EditAbout from "./editAbout";
 import { isEmpty } from "lodash";
 import Delete from "@mui/icons-material/Delete";
@@ -28,6 +29,7 @@ import {
   MoreHorizOutlined,
   Email,
   Difference,
+  Edit,
 } from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
@@ -40,6 +42,8 @@ import SendEmail from "./sendEmail";
 import CreateRole from "./settingsScreen/createRole";
 import DebtorContacts from "./caseDetail/debtorContacts";
 import UploadFilePopup from "./caseDetail/uploadFilePopup";
+import ScrollbarStyles from "./../components/customScroll";
+import SettlementPayment from "./settlementPlan";
 
 export default function MuiModels({
   buttonName,
@@ -80,6 +84,15 @@ export default function MuiModels({
   selectedRoleData,
   setSelectedRole,
   getAllCaseTasks,
+  GetCasePaymentDetails,
+  title,
+  settlementRange,
+  weeksTillPaid,
+  caseId,
+  remainingAmount,
+  closePopup,
+  commissionRange,
+  getFields,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -109,38 +122,36 @@ export default function MuiModels({
     p: 3,
     height: height || "auto",
     overflowY: "auto",
-    "&::-webkit-scrollbar": {
-      width: "10px",
-    },
-    "&::-webkit-scrollbar-thumb": {
-      backgroundColor: "#E5E5E5",
-      borderRadius: "8px",
-    },
-    "&::-webkit-scrollbar-track": {
-      backgroundColor: Colors.WHITE,
-      borderRadius: "8px",
-      marginTop: ".5rem",
-      marginBottom: ".5rem",
-    },
+    ...ScrollbarStyles,
   };
 
   return (
     <div>
       {button === "icon" ? (
-        <IconButton onClick={handleOpen}>
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
           <AddIcon sx={{ color: Colors.WHITE, fontSize: "16px" }} />
         </IconButton>
       ) : button === "customField" ? (
         <TextButton
-          onClick={handleOpen}
+          onClick={() => {
+            handleOpen();
+          }}
           startIcon={<AddIcon />}
-          buttonText="New Custom Field"
+          buttonText={buttonText}
           backgroundColor={Colors.SKY_BLUE}
         />
       ) : show === "editField" ? (
-        <IconButton sx={{ display: "flex", alignItems: "center" }}>
+        <IconButton
+          sx={{ display: "flex", alignItems: "center" }}
+          onClick={() => {
+            handleOpen();
+          }}
+        >
           <CreateIcon
-            onClick={handleOpen}
             sx={{
               color: Colors.DARK_GRAY,
               cursor: "pointer",
@@ -149,9 +160,13 @@ export default function MuiModels({
           />
         </IconButton>
       ) : show === "debtorContacts" ? (
-        <IconButton sx={{ display: "flex", alignItems: "center" }}>
+        <IconButton
+          sx={{ display: "flex", alignItems: "center" }}
+          onClick={() => {
+            handleOpen();
+          }}
+        >
           <AddIcon
-            onClick={handleOpen}
             sx={{
               color: Colors.DARK_GRAY,
               cursor: "pointer",
@@ -159,10 +174,40 @@ export default function MuiModels({
             }}
           />
         </IconButton>
+      ) : show === "editDebtorContacts" ? (
+        <Edit
+          onClick={() => {
+            handleOpen();
+          }}
+          sx={{
+            color: Colors.DIM_LIGHT_GRAY,
+            cursor: "pointer",
+            fontSize: "13px",
+            marginLeft: ".3rem",
+            marginTop: ".3rem",
+          }}
+        />
+      ) : show === "editCreditorContacts" ? (
+        <Edit
+          onClick={() => {
+            handleOpen();
+          }}
+          sx={{
+            color: Colors.DIM_LIGHT_GRAY,
+            cursor: "pointer",
+            fontSize: "13px",
+            marginLeft: ".3rem",
+            marginTop: ".3rem",
+          }}
+        />
       ) : show === "creditorContacts" ? (
-        <IconButton sx={{ display: "flex", alignItems: "center" }}>
+        <IconButton
+          sx={{ display: "flex", alignItems: "center" }}
+          onClick={() => {
+            handleOpen();
+          }}
+        >
           <AddIcon
-            onClick={handleOpen}
             sx={{
               color: Colors.DARK_GRAY,
               cursor: "pointer",
@@ -171,31 +216,51 @@ export default function MuiModels({
           />
         </IconButton>
       ) : button === "create" ? (
-        <IconButton onClick={handleOpen}>
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
           <EditIcon
             sx={{ color: Colors.DARK_GRAY, fontSize: iconSize || "16px" }}
           />
         </IconButton>
       ) : show === "editAbout" ? (
-        <IconButton onClick={handleOpen}>
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
           <EditIcon
             sx={{ color: Colors.WHITE, fontSize: iconSize || "16px" }}
           />
         </IconButton>
       ) : show === "addCase" || show === "uploadFile" ? (
-        <IconButton onClick={handleOpen}>
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
           <AddIcon
             sx={{ fontSize: "16px", color: Colors.BLACK, cursor: "pointer" }}
           />
         </IconButton>
-      ) : show === "CaseCustomField" ? (
-        <IconButton onClick={handleOpen}>
+      ) : show === "CaseCustomField" || buttonName === "payments" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
           <AddIcon
             sx={{ fontSize: "16px", color: Colors.WHITE, cursor: "pointer" }}
           />
         </IconButton>
       ) : show === "editStatus" ? (
-        <IconButton onClick={handleOpen}>
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
           <EditIcon
             sx={{
               fontSize: "1.2rem",
@@ -205,7 +270,11 @@ export default function MuiModels({
           />
         </IconButton>
       ) : show === "duplicateRole" ? (
-        <IconButton onClick={handleOpen}>
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
           <Difference
             sx={{
               fontSize: "20px",
@@ -218,7 +287,11 @@ export default function MuiModels({
           />
         </IconButton>
       ) : show === "deleteStatus" ? (
-        <IconButton onClick={handleOpen}>
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
           <Delete
             sx={{
               fontSize: "1.2rem",
@@ -228,7 +301,11 @@ export default function MuiModels({
           />
         </IconButton>
       ) : show === "moreStatus" ? (
-        <IconButton onClick={handleOpen}>
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
           <MoreHorizOutlined
             sx={{
               fontSize: "1.2rem",
@@ -238,13 +315,22 @@ export default function MuiModels({
           />
         </IconButton>
       ) : show === "EditCaseCustomField" ? (
-        <IconButton disabled={isEmpty(customFieldsData)} onClick={handleOpen}>
+        <IconButton
+          disabled={isEmpty(customFieldsData)}
+          onClick={() => {
+            handleOpen();
+          }}
+        >
           <EditIcon
             sx={{ fontSize: "16px", color: Colors.WHITE, cursor: "pointer" }}
           />
         </IconButton>
       ) : button === "delete" ? (
-        <IconButton onClick={handleOpen}>
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
           <Delete
             sx={{
               fontSize: iconSize,
@@ -253,6 +339,15 @@ export default function MuiModels({
             }}
           />
         </IconButton>
+      ) : buttonName === "setPaymentPlan" ? (
+        <TextButton
+          buttonText="Set Payment Plan"
+          height="2rem"
+          width="12rem"
+          onClick={handleOpen}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
       ) : show === "createRole" ? (
         <TextButton
           buttonText={extraSmallScreen ? <Add /> : "Create Role"}
@@ -336,15 +431,21 @@ export default function MuiModels({
             )
           }
         />
+      ) : show === "settlmentPayment" || buttonName === "settlmentPayment" ? (
+        <TextButton
+          buttonText="Choose Plan"
+          boxShadow="none"
+          height="2.5rem"
+          width="9rem"
+          backgroundColor={Colors.SKY_BLUE}
+          fontColor={Colors.WHITE}
+          hoverColor={Colors.SKY_BLUE}
+          onClick={handleOpen}
+        />
       ) : (
         <Button onClick={handleOpen}>{buttonName}</Button>
       )}
       <Modal
-        PaperProps={{
-          sx: {
-            zIndex: 1200, // Set this to a lower value if you have other popups
-          },
-        }}
         open={open}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
@@ -389,6 +490,7 @@ export default function MuiModels({
               handleClose={handleClose}
               customFieldsData={customFieldsData}
               GetCaseDetails={GetCaseDetails}
+              getFields={getFields}
             />
           ) : show === "EditCaseCustomField" ? (
             <EditCaseCustomField
@@ -499,21 +601,39 @@ export default function MuiModels({
             <ExportPipeline handleClose={handleClose} data={data} />
           ) : show === "debtorContacts" ? (
             <DebtorContacts
-              // maxHeight="70vh"
               caseData={caseData?.debtor?.contacts || []}
               setCaseData={setCaseData}
               handleClose={handleClose}
               show="Debtor"
-              caseId={caseData?.debtor?._id}
+              caseId={caseData?._id}
+              GetCaseDetails={GetCaseDetails}
+            />
+          ) : show === "editDebtorContacts" ? (
+            <DebtorContacts
+              caseData={caseData}
+              setCaseData={setCaseData}
+              handleClose={handleClose}
+              item={item}
+              show="EditDebtor"
+              caseId={caseData?._id}
               GetCaseDetails={GetCaseDetails}
             />
           ) : show === "creditorContacts" ? (
             <DebtorContacts
-              // maxHeight="70vh"
               caseData={caseData?.creditor?.contacts || []}
               setCaseData={setCaseData}
               handleClose={handleClose}
               show="Creditor"
+              caseId={caseData?.creditor?._id}
+              GetCaseDetails={GetCaseDetails}
+            />
+          ) : show === "editCreditorContacts" ? (
+            <DebtorContacts
+              caseData={caseData}
+              setCaseData={setCaseData}
+              handleClose={handleClose}
+              show="EditCreditor"
+              item={item}
               caseId={caseData?.creditor?._id}
               GetCaseDetails={GetCaseDetails}
             />
@@ -523,6 +643,29 @@ export default function MuiModels({
             <UploadFilePopup
               handleClose={handleClose}
               GetCaseDetails={GetCaseDetails}
+            />
+          ) : show === "payments" ? (
+            <PaymentsPopup
+              data={data}
+              handleClose={handleClose}
+              closePopup={closePopup}
+              GetCaseDetails={GetCaseDetails}
+              GetCasePaymentDetails={GetCasePaymentDetails}
+              settlementRange={settlementRange}
+              weeksTillPaid={weeksTillPaid}
+              caseId={caseId}
+              remainingAmount={remainingAmount}
+              commissionRange={commissionRange}
+            />
+          ) : show === "settlmentPayment" ? (
+            <SettlementPayment
+              title={title}
+              handleClose={handleClose}
+              settlementRange={settlementRange}
+              weeksTillPaid={weeksTillPaid}
+              caseId={caseId}
+              remainingAmount={remainingAmount}
+              commissionRange={commissionRange}
             />
           ) : (
             ""

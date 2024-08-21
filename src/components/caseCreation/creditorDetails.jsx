@@ -14,10 +14,11 @@ import { Colors } from "../../config/default";
 import { phoneNumberFormat } from "../../common";
 import { Add, Delete, ExpandMore } from "@mui/icons-material";
 import { FONT_SIZE_XL } from "../../constants/appConstants";
-import PaymentForm from "../payments/seamlessChexPaynote";
+import { isEmailValid } from "../../common";
+import { PhoneValidation } from "../../constants/appConstants";
+
 export default function CreditorDetails({
   creditors,
-  setCreditors,
   debtorCaseData,
   finalCaseData,
   setFinalCaseData,
@@ -28,11 +29,13 @@ export default function CreditorDetails({
   filteredArray,
   setFilteredArray,
   handleSelect,
+  errors,
+  setErrors,
 }) {
   const [digitsList, setDigitsList] = useState(
     finalCaseData?.map((caseEntry) => [caseEntry?.creditor?.aggression]) || [0]
   );
-
+  const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const handleSearchChange = (value, index) => {
     setSearchText(value);
     SearchFields(value, index);
@@ -61,6 +64,33 @@ export default function CreditorDetails({
     }
 
     setFinalCaseData(newState);
+
+    if (fieldPath === "creditor.basicInformation.email") {
+      if (!isEmailValid(value)) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          emailValid: "Email must be valid",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          emailValid: "",
+        }));
+      }
+    }
+    if (fieldPath === "creditor.basicInformation.phone") {
+      if (value?.length !== PHONE_NO_CHARACTERS) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          basicPhone: PHONE_NO_ERROR,
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          basicPhone: "",
+        }));
+      }
+    }
   };
 
   const handleRemoveCase = (index, e) => {
@@ -76,8 +106,6 @@ export default function CreditorDetails({
       creditor: {
         aggression: 0,
         accountTitle: "",
-        paymentToken: "",
-        paymentType: "",
         basicInformation: {
           fullName: "",
           email: "",
@@ -121,14 +149,12 @@ export default function CreditorDetails({
   useEffect(() => {
     let processedData;
 
-    if (creditors.length === 0) {
+    if (creditors?.length === 0) {
       processedData = [
         {
           creditor: {
             aggression: 0,
             accountTitle: "",
-            paymentToken: "",
-            paymentType: "",
             basicInformation: {
               fullName: "",
               email: "",
@@ -164,8 +190,6 @@ export default function CreditorDetails({
         creditor: {
           aggression: 0,
           accountTitle: creditor?.AccountTitle || "",
-          paymentToken: "",
-          paymentType: "",
           basicInformation: {
             fullName: creditor?.Name || "",
             email: creditor?.EmailAddress || "",
@@ -183,7 +207,7 @@ export default function CreditorDetails({
           },
           contacts: [],
         },
-        status: "In Process",
+        status: "",
         totalDebt:
           parseInt(
             creditor?.ContractDetails?.payable_amount
@@ -252,7 +276,6 @@ export default function CreditorDetails({
             >
               <Grid
                 container
-                xs={12}
                 sx={{ justifyContent: "space-between", alignItems: "center" }}
               >
                 <Typography
@@ -303,16 +326,7 @@ export default function CreditorDetails({
                     position: "relative",
                   }}
                 >
-                  <Grid
-                    container
-                    item
-                    xs={12}
-                    sx={{
-                      display: "flex",
-                      alignItems: "centter",
-                      justifyContent: "space-between",
-                    }}
-                  >
+                  <Grid item xs={12} lg={4}>
                     <SearchBar
                       searchText={searchText}
                       onChange={handleSearchChange}
@@ -324,7 +338,6 @@ export default function CreditorDetails({
                       backgroundColor={Colors.BG_LIGHT_GRAY}
                       idx={index}
                     />
-                    <PaymentForm />
                   </Grid>
 
                   <CreditorFields
@@ -338,6 +351,8 @@ export default function CreditorDetails({
                     setDigits={(newDigits) =>
                       handleDigitsChange(index, newDigits)
                     }
+                    errors={errors}
+                    setErrors={setErrors}
                   />
                 </Grid>
               </Grid>

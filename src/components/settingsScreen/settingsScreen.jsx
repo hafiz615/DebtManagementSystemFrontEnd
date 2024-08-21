@@ -9,82 +9,19 @@ import NotificationTemplatesTabs from "./notifications";
 import CustomFieldsAccordion from "./customFields";
 import PasswordAccordion from "./passwordAccord";
 import { GetAllSettings } from "../../services/services";
-import { PAGE_HEIGHT } from "../../constants/appConstants";
+import { PAGE_HEIGHT, settingsHeading } from "../../constants/appConstants";
 import ScrollbarStyles from "../customScroll";
 import CaseStatuses from "./caseStatuses";
 import PipelineAccordion from "./pipelineAccordion";
 import RoleAndPermission from "./roleAndPermission";
+import NotificationConfiguration from "../notificationConfigure";
 
 export default function SettingsScreen() {
   const navigate = useNavigate();
   const settings = useSelector(
     (state) => state?.permissions?.permissions?.settings
   );
-  const [failedAuthorizations, setfailedAuthorizations] = useState({
-    email: false,
-    sms: false,
-    emailTemplate: "",
-    smsTemplate: "",
-    sendTo: {
-      admin: false,
-      manager: false,
-      negotiator: false,
-      debtor: false,
-      creditor: false,
-    },
-  });
-  const [successfulAuthorizations, setSuccessfulAuthorizations] = useState({
-    email: false,
-    sms: false,
-    emailTemplate: "",
-    smsTemplate: "",
-    sendTo: {
-      admin: false,
-      manager: false,
-      negotiator: false,
-      debtor: false,
-      creditor: false,
-    },
-  });
-  const [failedPayments, setFailedPayments] = useState({
-    email: false,
-    sms: false,
-    emailTemplate: "",
-    smsTemplate: "",
-    sendTo: {
-      admin: false,
-      manager: false,
-      negotiator: false,
-      debtor: false,
-      creditor: false,
-    },
-  });
-  const [successPayments, setSuccessPayments] = useState({
-    email: false,
-    sms: false,
-    emailTemplate: "",
-    smsTemplate: "",
-    sendTo: {
-      admin: false,
-      manager: false,
-      negotiator: false,
-      debtor: false,
-      creditor: false,
-    },
-  });
-  const [upcomingPayments, setUpcomingPayments] = useState({
-    email: false,
-    sms: false,
-    emailTemplate: "",
-    smsTemplate: "",
-    sendTo: {
-      admin: false,
-      manager: false,
-      negotiator: false,
-      debtor: false,
-      creditor: false,
-    },
-  });
+
   const [retryInterval, setRetryInterval] = useState({
     failedAuthorization: { unit: "days", value: 0, maxRetry: 0, retryCount: 0 },
     failedPayment: { unit: "hours", value: 0, maxRetry: 0, retryCount: 0 },
@@ -96,12 +33,8 @@ export default function SettingsScreen() {
     fortnightly: { unit: "days", value: 0 },
     monthly: { unit: "days", value: 0 },
   });
-  const [notificationTemplates, setNotificationTemplates] = useState({
-    email: [],
-    sms: [],
-  });
+  const [notificationTemplates, setNotificationTemplates] = useState([]);
   const [customFields, setCustomFields] = useState([]);
-  const [templates, setTemplates] = useState({});
   const [loading, setLoading] = useState(false);
 
   const getSettings = async () => {
@@ -114,43 +47,36 @@ export default function SettingsScreen() {
       localStorage.clear();
       navigate("/");
     }
-    setfailedAuthorizations(
-      allSettings?.data?.data?.paymentsAuthorizations?.failedAuthorizations
-    );
-    setSuccessfulAuthorizations(
-      allSettings?.data?.data?.paymentsAuthorizations?.successfulAuthorizations
-    );
-    setFailedPayments(
-      allSettings?.data?.data?.paymentsAuthorizations?.failedPayments
-    );
-    setSuccessPayments(
-      allSettings?.data?.data?.paymentsAuthorizations?.successPayments
-    );
-    setUpcomingPayments(
-      allSettings?.data?.data?.paymentsAuthorizations?.upcomingPayments
-    );
     setRetryInterval(
-      allSettings?.data?.data?.paymentsAuthorizations?.retryInterval
+      allSettings?.data?.data?.paymentsAuthorizations?.retryInterval || {
+        failedAuthorization: {
+          unit: "days",
+          value: 0,
+          maxRetry: 0,
+          retryCount: 0,
+        },
+        failedPayment: { unit: "hours", value: 0, maxRetry: 0, retryCount: 0 },
+      }
     );
     setAuthorizationInterval(
-      allSettings?.data?.data?.paymentsAuthorizations?.authorizationInterval
+      allSettings?.data?.data?.paymentsAuthorizations
+        ?.authorizationInterval || {
+        custom: { unit: "hours", value: 0 },
+        daily: { unit: "hours", value: 0 },
+        weekly: { unit: "days", value: 0 },
+        fortnightly: { unit: "days", value: 0 },
+        monthly: { unit: "days", value: 0 },
+      }
     );
     setNotificationTemplates(allSettings?.data?.data?.notificationTemplates);
     setCustomFields(allSettings?.data?.data?.customFields);
-    const result = {};
 
-    for (const [key, value] of Object.entries(notificationTemplates)) {
-      result[key] = value.map((template) => {
-        return { label: template?.templateId, value: template?.templateId };
-      });
-    }
-    setTemplates(result);
     setLoading(false);
   };
 
   useEffect(() => {
     getSettings();
-  }, []);
+  }, [settings]);
 
   const refreshData = () => {
     getSettings();
@@ -183,7 +109,7 @@ export default function SettingsScreen() {
             color: Colors.BLACK,
           }}
         >
-          Settings
+          {settingsHeading}
         </Typography>
       </Grid>
       <Grid
@@ -197,21 +123,9 @@ export default function SettingsScreen() {
         }}
       >
         <SettingsAccordion
-          failedAuthorizations={failedAuthorizations}
-          successfulAuthorizations={successfulAuthorizations}
-          failedPayments={failedPayments}
-          successPayments={successPayments}
-          upcomingPayments={upcomingPayments}
           retryInterval={retryInterval}
           authorizationInterval={authorizationInterval}
-          notificationTemplates={notificationTemplates}
-          templates={templates}
           {...{
-            setfailedAuthorizations,
-            setSuccessfulAuthorizations,
-            setFailedPayments,
-            setSuccessPayments,
-            setUpcomingPayments,
             setRetryInterval,
             setAuthorizationInterval,
           }}
@@ -225,6 +139,8 @@ export default function SettingsScreen() {
             setLoading={setLoading}
           />
         )}
+        <NotificationConfiguration data={notificationTemplates} />
+
         {settings?.viewCustomFields && (
           <CustomFieldsAccordion
             customFields={customFields}

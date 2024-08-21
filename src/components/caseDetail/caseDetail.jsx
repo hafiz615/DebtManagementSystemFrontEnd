@@ -45,8 +45,6 @@ import TextButton from "../button.jsx";
 import { setCaseCreditorId, setCaseId } from "../../redux/action/action.js";
 import CaseFileCard from "./caseFileCard.jsx";
 import { useToast } from "../../toast/toastContext.jsx";
-import DebtorFields from "../caseCreationFields/debtorFields";
-// import PaymentForm from "../payments/seamlessChexPaynote";
 
 const style = {
   position: "absolute",
@@ -153,9 +151,6 @@ function CaseDetail() {
         ...ScrollbarStyles,
       }}
     >
-      {/* <div style={{ marginTop: "1rem" }}>
-        <PaymentForm />
-      </div> */}
       <Grid
         item
         xs={12}
@@ -197,9 +192,7 @@ function CaseDetail() {
           }}
         >
           <Grid
-            xs={12}
             container
-            item
             sx={{ justifyContent: "space-between", alignItems: "center" }}
           >
             <Typography
@@ -224,7 +217,7 @@ function CaseDetail() {
               hoverColor={Colors.SKY_BLUE}
             />
           </Grid>
-          {/* remove container  */}
+
           <Grid item sx={{ marginTop: "1.5rem" }}>
             <Accordion
               sx={{
@@ -326,17 +319,7 @@ function CaseDetail() {
                         height: "13rem",
                         marginBottom: "0.5rem",
                         overflowY: "auto",
-                        "&::-webkit-scrollbar": {
-                          width: "5px",
-                        },
-                        "&::-webkit-scrollbar-thumb": {
-                          backgroundColor: "#E5E5E5",
-                          borderRadius: "8px",
-                        },
-                        "&::-webkit-scrollbar-track": {
-                          backgroundColor: Colors.WHITE,
-                          borderRadius: "8px",
-                        },
+                        ...ScrollbarStyles,
                       }}
                     >
                       <div
@@ -464,13 +447,15 @@ function CaseDetail() {
                   GetCaseDetails={GetCaseDetails}
                 />
                 <TransactionAccordion
+                  caseData={caseData}
                   loading={isPaymentLoading}
                   paymentDetails={paymentDetails}
+                  GetCaseDetails={GetCaseDetails}
                   GetCasePaymentDetails={GetCasePaymentDetails}
                 />
               </Grid>
 
-              <Grid container item xs={12} md={9}>
+              <Grid item xs={12} md={9}>
                 <span
                   style={{
                     display: "flex",

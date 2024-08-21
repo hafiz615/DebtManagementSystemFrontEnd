@@ -86,7 +86,6 @@ export default function AnalyticsAccordion({ loading, paymentDetails }) {
                 justifyContent: "center",
                 height: "90vh",
               }}
-              key="Circular-icon"
             >
               <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
             </Grid>
@@ -94,10 +93,9 @@ export default function AnalyticsAccordion({ loading, paymentDetails }) {
             <>
               {analyticsData?.map((item) => (
                 <Grid
-                  container item
+                  container
                   xs={12}
                   sx={{ justifyContent: "space-between", mb: "10px" }}
-                  key={item.id || item.name} // Add a unique key prop
                 >
                   <Typography
                     sx={{

@@ -99,11 +99,10 @@ export default function ListTable({
   };
 
   const backward = () => {
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
+    setCurrentPage(currentPage - 1);
   };
-
   const forward = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+    setCurrentPage(currentPage + 1);
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -379,13 +378,19 @@ export default function ListTable({
             </Typography>
             <IconButton
               onClick={backward}
-              disabled={currentPage === 1 || isNaN(totalPages)}
+              disabled={
+                currentPage === 1 || isNaN(totalPages) || totalPages === 0
+              }
             >
               <ArrowBackIosNewIcon sx={{ fontSize: FONT_SIZE_XL }} />
             </IconButton>
             <IconButton
               onClick={forward}
-              disabled={currentPage === totalPages || isNaN(totalPages)}
+              disabled={
+                currentPage === totalPages ||
+                isNaN(totalPages) ||
+                totalPages === 0
+              }
             >
               <ArrowForwardIosIcon sx={{ fontSize: FONT_SIZE_XL }} />
             </IconButton>

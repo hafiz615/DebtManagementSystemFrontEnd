@@ -41,10 +41,11 @@ export default function CustomFieldsAccordion({ customFields, refreshData }) {
     { key: "name", heading: "Name", width: "15%" },
     { key: "type", heading: "Type", width: "15%" },
   ];
+  const customFieldHeading = "Custom Fields";
   return (
     <StyledAccordion>
       <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
-        Custom Fields
+        {customFieldHeading}
       </StyledAccordionSummary>
       <StyledAccordionDetails>
         {settings?.addCustomFields && (
@@ -57,6 +58,7 @@ export default function CustomFieldsAccordion({ customFields, refreshData }) {
               buttonName="Add Custom Fields"
               show="addCustomField"
               button="customField"
+              buttonText="New Custom Field"
               handleModalClose={refreshData}
             />
           </Grid>

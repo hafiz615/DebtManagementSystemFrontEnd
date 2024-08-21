@@ -6,10 +6,11 @@ import PaymentsTextFields from "../caseTextField";
 import MuiPhoneTextField from "../muiPhoneText";
 import AmountTextField from "../amountTextField";
 
-import { phoneNumberFormat, swapKeysAndValues } from "../../common";
+import { formatPhoneNumber, swapKeysAndValues } from "../../common";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import PaymentFields from "../caseCreationFields/paymentFields";
 import Autocomplete from "@mui/material/Autocomplete";
+import { handleNumberInput, handleNumberInputKeyDown } from "../../common";
 
 export default function CreditorFields({
   debtorCaseData,
@@ -20,6 +21,7 @@ export default function CreditorFields({
   caseIndex,
   digits,
   setDigits,
+  errors,
 }) {
   const accountMenuList =
     debtorCaseData &&
@@ -29,7 +31,9 @@ export default function CreditorFields({
       label: item,
     }));
 
-  const [accountTitle, setAccountTitle] = useState("");
+  const [accountTitle, setAccountTitle] = useState(
+    thisCaseData?.creditor?.accountTitle || ""
+  );
 
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const [nameTitleMapping, setNameTitleMapping] = useState(
@@ -99,21 +103,8 @@ export default function CreditorFields({
     setFinalCaseData(updatedFinalCaseData);
   };
 
-  const handleNumberInputKeyDown = (e) => {
-    const invalidChars = ["e", "E", ".", "-"];
-    if (invalidChars.includes(e.key)) {
-      e.preventDefault();
-    }
-  };
   const handleSliderChange = (event, newValue) => {
     setDigits([newValue]);
-  };
-
-  const handleNumberInput = (e) => {
-    const invalidChars = ["e", "E", ".", "+", "-"];
-    if (invalidChars.includes(e.key)) {
-      e.preventDefault();
-    }
   };
 
   const today = new Date().toISOString().split("T")[0];
@@ -330,7 +321,7 @@ export default function CreditorFields({
                     e.target.value
                   )
                 }
-                error=""
+                error={errors?.emailValid}
               />
               <MuiPhoneTextField
                 label="Phone #*"
@@ -339,11 +330,11 @@ export default function CreditorFields({
                   handleCaseDataChange(
                     caseIndex,
                     "creditor.basicInformation.phone",
-                    phoneNumberFormat(e)
+                    formatPhoneNumber(e)
                   )
                 }
                 onKeyDown={handleNumberInputKeyDown}
-                error=""
+                error={errors?.basicPhone}
               />
             </Grid>
             <Typography

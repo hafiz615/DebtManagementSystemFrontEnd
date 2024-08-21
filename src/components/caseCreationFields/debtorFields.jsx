@@ -14,11 +14,12 @@ import { formatPhoneNumber } from "../../common";
 import AmountTextField from "../amountTextField";
 import PaymentCardDetails from "../paymentCard";
 import { GetAllStatuses } from "../../services/services";
+
 import {
   isEmailValid,
-  handleNumberInputKeyDown,
   handleNumberInput,
-} from "../../constants/appConstants";
+  handleNumberInputKeyDown,
+} from "../../common";
 
 export default function DebtorFields({
   debtorOwnDetails,
