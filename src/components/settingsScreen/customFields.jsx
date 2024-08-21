@@ -58,6 +58,7 @@ export default function CustomFieldsAccordion({ customFields, refreshData }) {
               buttonName="Add Custom Fields"
               show="addCustomField"
               button="customField"
+              buttonText="New Custom Field"
               handleModalClose={refreshData}
             />
           </Grid>

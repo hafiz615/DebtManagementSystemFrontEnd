@@ -92,6 +92,7 @@ export default function MuiModels({
   remainingAmount,
   closePopup,
   commissionRange,
+  getFields,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -140,7 +141,7 @@ export default function MuiModels({
             handleOpen();
           }}
           startIcon={<AddIcon />}
-          buttonText="New Custom Field"
+          buttonText={buttonText}
           backgroundColor={Colors.SKY_BLUE}
         />
       ) : show === "editField" ? (
@@ -489,6 +490,7 @@ export default function MuiModels({
               handleClose={handleClose}
               customFieldsData={customFieldsData}
               GetCaseDetails={GetCaseDetails}
+              getFields={getFields}
             />
           ) : show === "EditCaseCustomField" ? (
             <EditCaseCustomField
