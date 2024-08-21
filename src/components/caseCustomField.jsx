@@ -9,11 +9,13 @@ import { useToast } from "../toast/toastContext";
 import { useParams } from "react-router-dom";
 import { isEmpty } from "lodash";
 import { removeDuplicates } from "../common";
+import MuiModels from "../../src/components/models";
 
 export default function CaseCustomField({
   handleClose,
   customFieldsData,
   GetCaseDetails,
+  getFields,
 }) {
   const { id } = useParams();
   const { showToast } = useToast();
@@ -69,10 +71,22 @@ export default function CaseCustomField({
             fontWeight: "600",
             color: Colors.BLACK,
             fontSize: "1rem",
+            display: "flex",
+            alignItems: "center",
           }}
         >
           Add Custom Fields
+          <span style={{ marginLeft: "1rem" }}>
+            <MuiModels
+              buttonName="Add Custom Fields"
+              show="addCustomField"
+              button="customField"
+              buttonText="Add Title"
+              handleModalClose={getFields}
+            />
+          </span>
         </Typography>
+
         <Box
           onClick={handleClose}
           sx={{

@@ -7,17 +7,23 @@ import TextButton from "./button";
 import { UpdateCaseCreditor } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import CreditorFields from "./caseCreationFields/creditorFields";
-import { phoneNumberFormat } from "../common";
+import { phoneNumberFormat, isEmailValid } from "../common";
+import { PhoneValidation } from ".././constants/appConstants";
 
 export default function EditCreditorDetail({
   handleClose,
   caseData,
   GetCaseDetails,
 }) {
+  const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const { id } = useParams();
   const { showToast } = useToast();
   const creditors = caseData?.creditor;
   const [finalCaseData, setFinalCaseData] = useState([]);
+  const [errors, setErrors] = useState({
+    basicPhone: "",
+    emailValid: "",
+  });
 
   const [digitsList, setDigitsList] = useState(
     [caseData?.creditor?.aggression] || [0]
@@ -44,6 +50,32 @@ export default function EditCreditorDetail({
       updateField(newState[index], fieldPath, value);
     }
     setFinalCaseData(newState);
+    if (fieldPath === "creditor.basicInformation.email") {
+      if (!isEmailValid(value)) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          emailValid: "Email must be valid",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          emailValid: "",
+        }));
+      }
+    }
+    if (fieldPath === "creditor.basicInformation.phone") {
+      if (value?.length !== PHONE_NO_CHARACTERS) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          basicPhone: PHONE_NO_ERROR,
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          basicPhone: "",
+        }));
+      }
+    }
   };
 
   const handleDigitsChange = (caseIndex, newDigits) => {
@@ -145,6 +177,8 @@ export default function EditCreditorDetail({
           debtorCaseData={creditors?.accountTitleMapping}
           digits={digitsList[index]}
           setDigits={(newDigits) => handleDigitsChange(index, newDigits)}
+          errors={errors}
+          setErrors={setErrors}
         />
       ))}
       <Grid

@@ -8,14 +8,7 @@ import {
   Typography,
   IconButton,
 } from "@mui/material";
-import {
-  Search,
-  Call,
-  Sms,
-  Email,
-  ChevronLeft,
-  NavigateNext,
-} from "@mui/icons-material";
+import { Search, ChevronLeft, NavigateNext } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
@@ -106,11 +99,7 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
     fontFamily: "Nunito",
     fontSize: "11px",
   };
-  const iconStyle = {
-    fontSize: "13px",
-    marginLeft: ".3rem",
-    marginTop: ".3rem",
-  };
+
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const filteredContacts = caseData?.debtor?.contacts?.filter((item) =>
     item?.name?.toLowerCase().includes(searchText.toLowerCase())
