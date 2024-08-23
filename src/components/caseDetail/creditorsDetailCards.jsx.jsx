@@ -84,7 +84,7 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
     script.defer = true;
     // Define a function to initialize the PAYNOTE iframe
     let casedataName = caseData?.creditor?.basicInformation?.fullName;
-    const parts = casedataName.split(",");
+    const parts = casedataName.split(" ");
     const firstPart = parts[0].trim(); // "Funding Metrics"
     const secondPart = parts[1] ? parts[1].trim() : "";
 
@@ -271,7 +271,9 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             </div>
           ))}
         </>
-        <span style={{display:"flex",justifyContent:"center"}}><div className="wrapper-pay-buttons" /></span>
+        <span style={{ display: "flex", justifyContent: "center" }}>
+          <div className="wrapper-pay-buttons" />
+        </span>
       </Grid>
       <Grid
         item

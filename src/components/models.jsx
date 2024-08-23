@@ -94,7 +94,10 @@ export default function MuiModels({
   commissionRange,
   getFields,
   connectPayment,
-  setConnectPayment
+  setConnectPayment,
+  payableAmount,
+  debtorInfo,
+  creditorInfo,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -642,7 +645,12 @@ export default function MuiModels({
               GetCaseDetails={GetCaseDetails}
             />
           ) : show === "sendEmail" ? (
-            <SendEmail handleClose={handleClose} />
+            <SendEmail
+              handleClose={handleClose}
+              payableAmount={payableAmount}
+              debtorInfo={debtorInfo}
+              creditorInfo={creditorInfo}
+            />
           ) : show === "uploadFile" ? (
             <UploadFilePopup
               handleClose={handleClose}

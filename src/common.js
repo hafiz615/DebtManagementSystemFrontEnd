@@ -215,88 +215,86 @@ export function removeDuplicates(array) {
   });
 }
 
-export const generatePdfFromApiData = (apiData) => {
+export const generatePdfFromApiData = (selectedCreditorDetails, debtorInfo) => {
   const doc = new jsPDF();
-  doc.setFontSize(20);
-  doc.text("Financial Report", 15, 15);
+  doc.setFontSize(16);
+  doc.text("Settlement Agreement", 15, 15);
+  doc.setFontSize(10);
+  const currentDate = new Date();
+  const options = {
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  };
+  const formattedDate = currentDate.toLocaleDateString("en-US", options);
 
-  if (!apiData || Object.keys(apiData).length === 0) {
-    doc.setFontSize(14);
-    doc.text("No data available.", 15, 30);
-    doc.save("financial_report.pdf");
-    return;
-  }
+  const agreementText = `
+This Debt Settlement Agreement (the "Agreement") is entered into as of ${formattedDate}.
+The parties to this Agreement are as follows:
 
-  if (apiData["getScores"] && apiData["getScores"]["Scores"]) {
-    doc.setFontSize(16);
-    doc.text("UCC Score:", 15, 30);
-    doc.setFontSize(14);
-    doc.text(`${apiData["getScores"]["Scores"]["UCC Score"]}`, 35, 40);
-  } else {
-    doc.setFontSize(16);
-    doc.text("UCC Score: N/A", 15, 30);
-  }
+Debtor Company: ${debtorInfo?.companyName}
+Company Address: ${debtorInfo?.address}
 
-  if (apiData["getScores"] && apiData["getScores"]["Scores"]) {
-    doc.setFontSize(16);
-    doc.text("defaultRiskScore:", 15, 55);
-    doc.setFontSize(14);
-    doc.text(`${apiData["getScores"]["Scores"]["defaultRiskScore"]}`, 55, 55);
-  } else {
-    doc.setFontSize(16);
-    doc.text("defaultRiskScore: N/A", 15, 55);
-  }
+Creditor Company: ${selectedCreditorDetails?.name}
+Company Address:
 
-  if (
-    apiData["getScores"] &&
-    apiData["getScores"]["Scores"] &&
-    apiData["getScores"]["Scores"]["Weekly Budget"]
-  ) {
-    doc.setFontSize(16);
-    doc.text("Weekly Budget (LCF Group):", 15, 70);
-    doc.setFontSize(14);
-    doc.text(
-      `${apiData["getScores"]["Scores"]["Weekly Budget"]["LCF Group"]}`,
-      85,
-      70
-    );
-  } else {
-    doc.setFontSize(16);
-    doc.text("Weekly Budget (LCF Group): N/A", 15, 70);
-  }
+The Creditor and Debtor(s) agree to negotiate and settle the debt under the following terms and conditions.
+The Creditor and Debtor(s) agree that the current outstanding debt is $${selectedCreditorDetails?.contractDetails?.payable_amount}.
+All parties agree that the Creditor will accept a payment of ___________________ towards 
+settlement of the debt in full. 
+The Creditor agrees to compromise the debt under the condition 
+that they will receive the payment by _____________________.
+This Agreement for debt settlement shall be binding upon the Creditor, Debtor(s), and their 
+successors and assignees.
+The parties have agreed to settle finally and forever any and all claims between them of any 
+nature whatsoever from any and all liability or damages of any kind, known or unknown, in 
+contract or in tort.
+The parties agree that the terms of this Agreement are the result of negotiations between the 
+parties, and constitute a final accord and satisfaction concerning all disputes between them.
+All settlement terms herein are dependent upon receipt of final payment 
+via ACH in the amount of _____________________ to the Creditor's account.
+Except only to enforce the terms of this Agreement, each party agrees not to bring any claim of 
+any kind against the other party to this Agreement concerning any matter released by this 
+Agreement. Each party further agrees that this Agreement constitutes a bar to any such future 
+claim.
+All parties agree that the other parties are free of any liability or 
+wrongdoing. Any liability or wrongdoing is expressly denied. Furthermore, the parties each agree that neither 
+shall disparage the other to any third party at any time.
+No modification to any provisions contained in this Agreement shall be binding upon any party 
+unless made in writing and signed by all parties.
+If any provision of this Agreement is held to be unenforceable for any reason, the remaining 
+parts of the Agreement shall remain in full force and effect.
+Each party represents that he/she/it has not assigned any portion of the claims released under this 
+Agreement to any third party.
+This Agreement constitutes a single, integrated written contract expressing the entire agreement 
+of the parties to this Agreement. Any other agreements, discussions, promises, and 
+representations have been and are integrated into and superseded by this Agreement.
+Each party represents that he/she/it has the authority to enter into this Agreement on behalf 
+of him/her/itself or his/her/its respective organization.
+Upon receipt and subsequent clearance of the agreed upon payment, all parties release each 
+other from any further claim or liability.
 
-  if (
-    apiData["getSettlementRange"] &&
-    apiData["getSettlementRange"]["settlement_range"] &&
-    apiData["getSettlementRange"]["settlement_range"]["Everest Businss Funding"]
-  ) {
-    doc.setFontSize(16);
-    doc.text("Settlement Range (Everest Business Funding):", 15, 85);
-    doc.setFontSize(14);
-    const settlementRange =
-      apiData["getSettlementRange"]["settlement_range"][
-        "Everest Businss Funding"
-      ];
-    doc.text(
-      `Recommendation 1: ${settlementRange["recommendation 1"][0]} - ${settlementRange["recommendation 1"][1]}`,
-      35,
-      95
-    );
-    doc.text(
-      `Recommendation 2: ${settlementRange["recommendation 2"][0]} - ${settlementRange["recommendation 2"][1]}`,
-      35,
-      105
-    );
-    doc.text(
-      `Recommendation 3: ${settlementRange["recommendation 3"][0]} - ${settlementRange["recommendation 3"][1]}`,
-      35,
-      115
-    );
-  } else {
-    doc.setFontSize(16);
-    doc.text("Settlement Range (Everest Business Funding): N/A", 15, 85);
-  }
+Printed Name: _____________________________
+Signature: _____________________________ Date: ___________________________
 
+Printed Name: _____________________________
+Signature: _____________________________ Date: ___________________________`;
+
+  const agreementLines = agreementText.split("\n");
+  let yCoordinate = 35;
+  const lineHeight = 10;
+  const pageHeight = doc.internal.pageSize.height;
+  const marginBottom = 20;
+
+  agreementLines.forEach((line) => {
+    if (yCoordinate + lineHeight > pageHeight - marginBottom) {
+      doc.addPage();
+      yCoordinate = 20;
+    }
+    doc.text(line, 15, yCoordinate);
+    yCoordinate += lineHeight;
+  });
   doc.save("financial_report.pdf");
 };
 
