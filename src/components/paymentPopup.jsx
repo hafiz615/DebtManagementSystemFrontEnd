@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 
 import PaymentDetails from "./caseCreation/paymentDetails";
 import PaymentProcess from "./radioPayment";
@@ -11,6 +11,24 @@ import { GetWeeklyAndTotalCommission, UpdateCase } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import { calculateNextWeek } from "../common";
 import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../constants/appConstants";
+
+const lineStyle = {
+  width: "100%",
+  height: "1px",
+  backgroundColor: "#EAEBEB",
+  margin: "1rem 0",
+};
+
+const inputStyling = {
+  backgroundColor: Colors.BG_LIGHT_GRAY,
+  height: "2.5rem",
+  color: Colors.DIM_LIGHT_GRAY,
+  paddingLeft: "1rem",
+  border: "none",
+  outline: "none",
+  borderRadius: "5px",
+  width: "10rem",
+};
 
 export default function PaymentPopup({
   data,
@@ -44,6 +62,11 @@ export default function PaymentPopup({
       frequency: weeksTillPaid || 1,
     },
   ]);
+  // const prevFrequenciesRef = useRef(
+  //   newDataList?.map((item) => item?.frequency)
+  // );
+
+  let remaining = remainingAmount && remainingAmount;
 
   const calculateTotalAmount = (data) => {
     let total = 0;
@@ -53,18 +76,6 @@ export default function PaymentPopup({
     });
     return total;
   };
-
-  useEffect(() => {
-    const newTotal = calculateTotalAmount(newDataList);
-    setTotalAmount(newTotal);
-  }, [newDataList]);
-
-  useEffect(() => {
-    if (data && data?.intervals?.length !== 0) {
-      const filteredData = data.intervals.map(({ _id, ...rest }) => rest);
-      setNewDataList(filteredData);
-    }
-  }, [data]);
 
   const calculateTotalCommission = async () => {
     setCommissionLoading(true);
@@ -117,19 +128,29 @@ export default function PaymentPopup({
     setLoading(false);
   };
 
-  let remaining =
-    remainingAmount && remainingAmount.replace("$", "").replace(",", "");
+  useEffect(() => {
+    const newTotal = calculateTotalAmount(newDataList);
+    setTotalAmount(newTotal);
+  }, [newDataList]);
 
-  const inputStyling = {
-    backgroundColor: Colors.BG_LIGHT_GRAY,
-    height: "2.5rem",
-    color: Colors.DIM_LIGHT_GRAY,
-    paddingLeft: "1rem",
-    border: "none",
-    outline: "none",
-    borderRadius: "5px",
-    width: "12rem",
-  };
+  useEffect(() => {
+    if (data && data?.intervals?.length !== 0) {
+      const filteredData = data.intervals.map(({ _id, ...rest }) => rest);
+      setNewDataList(filteredData);
+    }
+  }, [data]);
+
+  // useEffect(() => {
+  //   const currentFrequencies = newDataList?.map((item) => item.frequency);
+  //   const prevFrequencies = prevFrequenciesRef.current;
+  //   const hasFrequencyChanged = currentFrequencies?.some(
+  //     (freq, index) => freq !== prevFrequencies[index]
+  //   );
+  //   if (hasFrequencyChanged) {
+  //     calculateTotalCommission();
+  //   }
+  //   prevFrequenciesRef.current = currentFrequencies;
+  // }, [newDataList]);
 
   return (
     <div>
@@ -137,34 +158,43 @@ export default function PaymentPopup({
         sx={{
           fontFamily: "Nunito",
           fontWeight: "600",
+          fontSize: FONT_SIZE_XL,
         }}
       >
         Settlement Plan Automation
+      </Typography>
+      <Box sx={lineStyle} />
+
+      <Typography
+        sx={{
+          fontSize: FONT_SIZE_LARGE,
+          fontFamily: "Nunito",
+          margin: "10px 0px",
+        }}
+      >
+        Remaining Amount:
+        <b> ${isNaN(remaining) ? 0 : remaining}</b>
       </Typography>
       <Typography
         sx={{
           fontSize: FONT_SIZE_LARGE,
           fontFamily: "Nunito",
-          marginRight: "10px",
-          marginTop: "10px",
-          marginBottom: "10px",
+          margin: "10px 0px",
         }}
       >
-        Total amount after given interval: $
-        {isNaN(totalAmount) ? 0 : totalAmount?.toFixed(2)}
+        Total amount after given interval:
+        <b> ${isNaN(totalAmount) ? 0 : totalAmount?.toFixed(2)}</b>
       </Typography>
       {saveDisabled && feePayment === "toPay" && (
         <Typography
           sx={{
             fontSize: FONT_SIZE_LARGE,
             fontFamily: "Nunito",
-            marginRight: "10px",
-            marginTop: "10px",
-            marginBottom: "10px",
+            margin: "10px 0px",
           }}
         >
           Commission is calculated using this percentage:
-          {commissionPercentage}%
+          <b> {commissionPercentage}%</b>
         </Typography>
       )}
 
@@ -181,60 +211,62 @@ export default function PaymentPopup({
             display: "flex",
             alignItems: "center",
             gap: "10px",
-            marginLeft: "4%",
+            padding: "0px 1rem",
             marginTop: "10px",
           }}
         >
-          <Typography
-            sx={{
-              fontSize: FONT_SIZE_XL,
-              fontFamily: "Nunito",
-              marginRight: "10px",
-            }}
-          >
-            Total Commission
-          </Typography>
-          <input
-            type="text"
-            placeholder="Total Commission"
-            style={inputStyling}
-            value={
-              totalCommission !== null && totalCommission !== undefined
-                ? `$${totalCommission}`
-                : "$0"
-            }
-            onChange={(e) => {
-              const value = e.target.value.replace(/[^0-9.]/g, "");
-              setTotalCommission(value);
-            }}
-          />
-          <Typography
-            sx={{
-              fontSize: FONT_SIZE_XL,
-              fontFamily: "Nunito",
-              marginRight: "10px",
-            }}
-          >
-            Weekly Commission
-          </Typography>
-          <input
-            type="text"
-            placeholder="Commission"
-            style={inputStyling}
-            value={
-              commission !== null && commission !== undefined
-                ? `$${commission}`
-                : "$0"
-            }
-            onChange={(e) => {
-              const value = e.target.value.replace(/[^0-9.]/g, "");
-              setCommission(value);
-            }}
-          />
+          <div style={{ width: "24%" }}>
+            <Typography
+              sx={{
+                fontSize: FONT_SIZE_LARGE,
+                fontFamily: "Nunito",
+              }}
+            >
+              Total Commission
+            </Typography>
+            <input
+              type="text"
+              placeholder="Total Commission"
+              style={inputStyling}
+              value={
+                totalCommission !== null && totalCommission !== undefined
+                  ? `$${totalCommission}`
+                  : "$0"
+              }
+              onChange={(e) => {
+                const value = e.target.value.replace(/[^0-9.]/g, "");
+                setTotalCommission(value);
+              }}
+            />
+          </div>
+          <div>
+            <Typography
+              sx={{
+                fontSize: FONT_SIZE_LARGE,
+                fontFamily: "Nunito",
+              }}
+            >
+              Weekly Commission
+            </Typography>
+            <input
+              type="text"
+              placeholder="Commission"
+              style={inputStyling}
+              value={
+                commission !== null && commission !== undefined
+                  ? `$${commission}`
+                  : "$0"
+              }
+              onChange={(e) => {
+                const value = e.target.value.replace(/[^0-9.]/g, "");
+                setCommission(value);
+              }}
+            />
+          </div>
         </div>
       )}
 
-      <div style={{ display: "flex", marginBottom: "1rem" }}>
+      <div style={{ display: "flex", margin: "1rem 0rem" }}>
         <input
           type="checkbox"
           checked={isExempt}

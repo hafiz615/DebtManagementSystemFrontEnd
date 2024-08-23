@@ -1089,3 +1089,15 @@ export const GetWeeklyAndTotalCommission = async (payload, id) => {
     return error;
   }
 };
+
+export const SendSettlementEmail = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/case/sendSettlementEmail`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

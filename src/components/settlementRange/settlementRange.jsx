@@ -201,6 +201,7 @@ export default function SettlementRange() {
   const [creditorSelect, setCreditorSelect] = useState([]);
   const [scores, setScores] = useState(null);
   const [debtor, setDebtor] = useState({});
+  const [debtorInfo, setDebtorInfo] = useState({});
   const [lumpSumpData, setLumpSumpData] = useState({});
   const [errorLumpSumMessage, setErrorLumSumtMessage] = useState("");
   const [fullProfit, setFullProfit] = useState({});
@@ -502,6 +503,7 @@ export default function SettlementRange() {
             setScores(resCommission?.data?.data?.getScores);
           }
           setDebtor(resCommission?.data?.data?.debtor?.basicInformation);
+          setDebtorInfo(resCommission?.data?.data?.debtor?.businessInformation);
           setApiData(resCommission?.data?.data?.settlementRange);
           setCommissionPercentage(
             resCommission?.data?.data?.debtor?.commissionPercentage
@@ -571,7 +573,9 @@ export default function SettlementRange() {
             setScores(settlementRangeData?.data?.data?.getScores);
           }
           setDebtor(settlementRangeData?.data?.data?.debtor?.basicInformation);
-          // setDebtorId(settlementRangeData?.data?.data?.debtor?._id);
+          setDebtorInfo(
+            settlementRangeData?.data?.data?.debtor?.businessInformation
+          );
           setApiData(settlementRangeData?.data?.data?.settlementRange);
           setCommissionPercentage(
             settlementRangeData?.data?.data?.debtor?.commissionPercentage
@@ -633,7 +637,7 @@ export default function SettlementRange() {
   }, []);
 
   const handleGeneratePdf = () => {
-    generatePdfFromApiData(apiData);
+    generatePdfFromApiData(selectedCreditorDetails, debtorInfo);
   };
 
   const widthStyling = drawerOpen
@@ -817,7 +821,14 @@ export default function SettlementRange() {
             </Typography>
 
             <div style={{ display: "flex", gap: "10px" }}>
-              <MuiModels show="sendEmail" />
+              <MuiModels
+                show="sendEmail"
+                creditorInfo={selectedCreditorDetails}
+                debtorInfo={debtorInfo}
+                payableAmount={
+                  selectedCreditorDetails?.contractDetails?.payable_amount
+                }
+              />
               <TextButton
                 disabled={!apiData}
                 buttonText={"Download"}

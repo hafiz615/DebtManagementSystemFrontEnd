@@ -85,7 +85,7 @@ function TransactionRow({ data, heading, GetCasePaymentDetails }) {
           >
             <p style={typographyStyle}>{formatDate(item?.dueDate) || "-"}</p>
             <p style={typographyStyle}>
-              {formatDollarAmount(item?.totalDebt) || "-"}
+              {formatDollarAmount(item?.amount) || "-"}
             </p>
             <p
               style={{

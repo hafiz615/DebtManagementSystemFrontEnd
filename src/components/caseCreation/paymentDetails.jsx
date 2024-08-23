@@ -2,8 +2,8 @@ import React from "react";
 
 import { Grid } from "@mui/material";
 
-import { Colors } from "../../config/default";
 import PaymentSettlement from "../caseCreationFields/paymentSettlement";
+import ScrollbarStyles from "../customScroll";
 
 function PaymentDetails({
   remainingAmount,
@@ -20,26 +20,22 @@ function PaymentDetails({
       sx={{
         display: "flex",
         alignItems: "center",
+        border: "1px solid #EAEBEB",
+        padding: "1rem",
+        maxHeight: "30vh",
+        overflowY: "auto",
+        borderRadius: "10px",
         marginTop: "1rem",
+        ...ScrollbarStyles,
       }}
     >
-      <Grid
-        item
-        xs={12}
-        sx={{
-          borderRadius: "10px",
-          backgroundColor: Colors.WHITE,
-          padding: "1rem",
-        }}
-      >
-        <PaymentSettlement
-          newDataList={newDataList}
-          setNewDataList={setNewDataList}
-          totalAmount={totalAmount}
-          remainingAmount={remainingAmount}
-          isExempt={isExempt}
-        />
-      </Grid>
+      <PaymentSettlement
+        newDataList={newDataList}
+        setNewDataList={setNewDataList}
+        totalAmount={totalAmount}
+        remainingAmount={remainingAmount}
+        isExempt={isExempt}
+      />
     </Grid>
   );
 }

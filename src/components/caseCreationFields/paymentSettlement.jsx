@@ -9,6 +9,7 @@ import Dropdown from "./../dropdown";
 import AmountTextField from "../amountTextField";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Hidden from "@mui/material/Hidden";
+import { FONT_SIZE_LARGE } from "../../constants/appConstants";
 
 export default function PaymentSettlement({
   newDataList,
@@ -112,36 +113,24 @@ export default function PaymentSettlement({
 
   return (
     <>
-      <Grid
-        container
-        item
-        sx={{
-          marginTop: "1rem",
-        }}
-      >
+      <Grid container>
         {newDataList?.map((item, index) => (
-          <React.Fragment key={index}>
-            <Grid
-              container
-              item
-              xs={12}
-              md={3}
-              sx={{
-                display: "flex",
-                justifyContent: { xs: "space-between", md: "center" },
-                alignItems: "center",
-                mt: { xs: "0.5rem", md: ".5rem" },
-              }}
-            >
+          <Grid
+            key={index}
+            xs={12}
+            container
+            sx={{ alignItems: "center", mb: "1rem" }}
+          >
+            <Grid xs={3}>
               <Typography
                 sx={{
                   fontFamily: "Nunito",
                   fontWeight: "500",
-                  marginRight: ".5rem",
                   color: Colors.DARK_GRAY,
+                  fontSize: FONT_SIZE_LARGE,
                 }}
               >
-                Debt
+                Weekly Payment
               </Typography>
 
               <AmountTextField
@@ -160,35 +149,23 @@ export default function PaymentSettlement({
                       <Typography
                         sx={{
                           color: "red",
-                          marginLeft: smallScreen ? "0rem" : "2rem",
                           fontSize: "10px",
                         }}
                       >
-                        Total debt must be equal to remaining amount
+                        Weekly Payment must be equal to remaining amount
                       </Typography>
                     )}
                 </Hidden>
               )}
             </Grid>
 
-            <Grid
-              container
-              item
-              xs={12}
-              md={3}
-              sx={{
-                display: "flex",
-                justifyContent: { xs: "space-between", md: "center" },
-                alignItems: "center",
-                mt: { xs: "0.5rem", md: ".5rem" },
-              }}
-            >
+            <Grid xs={3}>
               <Typography
                 sx={{
                   fontFamily: "Nunito",
                   fontWeight: "500",
-                  marginRight: ".5rem",
                   color: Colors.DARK_GRAY,
+                  fontSize: FONT_SIZE_LARGE,
                 }}
               >
                 Time Period
@@ -198,7 +175,7 @@ export default function PaymentSettlement({
                 initialValue={item?.timePeriod}
                 menuItems={menuItems}
                 backgroundColor={Colors.BG_LIGHT_GRAY}
-                width={smallScreen ? "100%" : "7rem"}
+                width={smallScreen ? "100%" : "10rem"}
                 height="2.5rem"
                 value={item?.timePeriod}
                 onChange={(value) =>
@@ -207,23 +184,12 @@ export default function PaymentSettlement({
               />
             </Grid>
 
-            <Grid
-              container
-              item
-              xs={12}
-              md={3}
-              sx={{
-                display: "flex",
-                justifyContent: { xs: "space-between", md: "center" },
-                alignItems: "center",
-                mt: { xs: "0.5rem", md: ".5rem" },
-              }}
-            >
+            <Grid xs={3}>
               <Typography
                 sx={{
                   fontFamily: "Nunito",
                   fontWeight: "500",
-                  marginRight: ".5rem",
+                  fontSize: FONT_SIZE_LARGE,
                   color: Colors.DARK_GRAY,
                 }}
               >
@@ -250,26 +216,15 @@ export default function PaymentSettlement({
               />
             </Grid>
 
-            <Grid
-              container
-              item
-              xs={12}
-              md={3}
-              // lg={3}
-              sx={{
-                display: "flex",
-                justifyContent: { xs: "space-between", md: "flex-start" },
-                alignItems: "center",
-              }}
-            >
+            <Grid xs={3}>
               {item?.timePeriod !== "Custom" && (
                 <>
                   <Typography
                     sx={{
                       fontFamily: "Nunito",
                       fontWeight: "500",
-                      marginRight: ".5rem",
                       color: Colors.DARK_GRAY,
+                      fontSize: FONT_SIZE_LARGE,
                     }}
                   >
                     Frequency
@@ -292,8 +247,8 @@ export default function PaymentSettlement({
                       border: "none",
                       outline: "none",
                       borderRadius: "5px",
-                      width: "3rem",
-                      marginRight: "0.5rem",
+                      width: "4rem",
+                      marginRight: "1rem",
                     }}
                   />
                 </>
@@ -320,17 +275,16 @@ export default function PaymentSettlement({
                     <Typography
                       sx={{
                         color: "red",
-                        marginLeft: smallScreen ? "0rem" : "2rem",
                         fontSize: "10px",
                         width: "100%",
                       }}
                     >
-                      Total debt must be equal to remaining amount
+                      Weekly Payment must be equal to remaining amount
                     </Typography>
                   )}
               </Hidden>
             )}
-          </React.Fragment>
+          </Grid>
         ))}
       </Grid>
     </>
