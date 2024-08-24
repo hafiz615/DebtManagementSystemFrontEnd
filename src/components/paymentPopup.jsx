@@ -62,9 +62,10 @@ export default function PaymentPopup({
       frequency: weeksTillPaid || 1,
     },
   ]);
-  // const prevFrequenciesRef = useRef(
-  //   newDataList?.map((item) => item?.frequency)
-  // );
+
+  const prevFrequenciesRef = useRef(
+    newDataList?.map((item) => item?.frequency)
+  );
 
   let remaining = remainingAmount && remainingAmount;
 
@@ -140,17 +141,27 @@ export default function PaymentPopup({
     }
   }, [data]);
 
-  // useEffect(() => {
-  //   const currentFrequencies = newDataList?.map((item) => item.frequency);
-  //   const prevFrequencies = prevFrequenciesRef.current;
-  //   const hasFrequencyChanged = currentFrequencies?.some(
-  //     (freq, index) => freq !== prevFrequencies[index]
-  //   );
-  //   if (hasFrequencyChanged) {
-  //     calculateTotalCommission();
-  //   }
-  //   prevFrequenciesRef.current = currentFrequencies;
-  // }, [newDataList]);
+  useEffect(() => {
+    const currentFrequencies = newDataList?.map((item) => item.frequency);
+    const prevFrequencies = prevFrequenciesRef.current;
+    const hasFrequencyChanged = currentFrequencies?.some(
+      (freq, index) => freq !== prevFrequencies[index]
+    );
+    if (hasFrequencyChanged) {
+      const updatedDataList = newDataList.map((item, index) => {
+        const changedFrequency = currentFrequencies[index];
+        if (changedFrequency !== prevFrequencies[index]) {
+          return {
+            ...item,
+            amount: remainingAmount / changedFrequency,
+          };
+        }
+        return item;
+      });
+      setNewDataList(updatedDataList);
+    }
+    prevFrequenciesRef.current = currentFrequencies;
+  }, [newDataList, remainingAmount]);
 
   return (
     <div>
@@ -283,6 +294,9 @@ export default function PaymentPopup({
           Exempt
         </Typography>
       </div>
+      <Typography sx={{ fontWeight: "600", fontFamily: "Nunito" }}>
+        Commission Payment
+      </Typography>
       <PaymentProcess feePayment={feePayment} setFeePayment={setFeePayment} />
 
       <Grid container sx={{ mt: "1rem", justifyContent: "right", gap: "10px" }}>

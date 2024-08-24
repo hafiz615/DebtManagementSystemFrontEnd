@@ -216,6 +216,8 @@ export function removeDuplicates(array) {
 }
 
 export const generatePdfFromApiData = (selectedCreditorDetails, debtorInfo) => {
+  const value = selectedCreditorDetails?.contractDetails?.payable_amount;
+  const formatedValue = value && value?.includes("$") ? value : `$${value}`;
   const doc = new jsPDF();
   doc.setFontSize(16);
   doc.text("Settlement Agreement", 15, 15);
@@ -240,7 +242,7 @@ Creditor Company: ${selectedCreditorDetails?.name}
 Company Address:
 
 The Creditor and Debtor(s) agree to negotiate and settle the debt under the following terms and conditions.
-The Creditor and Debtor(s) agree that the current outstanding debt is $${selectedCreditorDetails?.contractDetails?.payable_amount}.
+The Creditor and Debtor(s) agree that the current outstanding debt is ${formatedValue}.
 All parties agree that the Creditor will accept a payment of ___________________ towards 
 settlement of the debt in full. 
 The Creditor agrees to compromise the debt under the condition 
