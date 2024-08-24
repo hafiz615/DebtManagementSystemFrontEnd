@@ -194,6 +194,7 @@ export default function SettlementRange() {
   const [loading, setLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
   const [apiData, setApiData] = useState(null);
+
   const [creditorNames, setCreditorNames] = useState([]);
   const [allCreditorNames, setAllCreditorsNames] = useState([]);
   const [buttonLoading, setButtonLoading] = useState(false);
@@ -207,6 +208,7 @@ export default function SettlementRange() {
   const [fullProfit, setFullProfit] = useState({});
   const [errorfullProfitMessage, setErrorFullProfitMessage] = useState("");
   const [commissionPercentage, setCommissionPercentage] = useState("");
+  const [summaryAmount, setSummaryAmount] = useState({});
 
   const [justifications, setJustifications] = useState({
     justification_claude: "",
@@ -502,6 +504,9 @@ export default function SettlementRange() {
           } else {
             setScores(resCommission?.data?.data?.getScores);
           }
+          setSummaryAmount(
+            resCommission?.data?.data?.creditorsContractDetailsSum
+          );
           setDebtor(resCommission?.data?.data?.debtor?.basicInformation);
           setDebtorInfo(resCommission?.data?.data?.debtor?.businessInformation);
           setApiData(resCommission?.data?.data?.settlementRange);
@@ -579,6 +584,9 @@ export default function SettlementRange() {
           setApiData(settlementRangeData?.data?.data?.settlementRange);
           setCommissionPercentage(
             settlementRangeData?.data?.data?.debtor?.commissionPercentage
+          );
+          setSummaryAmount(
+            settlementRangeData?.data?.data?.creditorsContractDetailsSum
           );
           setJustifications({
             justifications1:
@@ -714,7 +722,19 @@ export default function SettlementRange() {
       value: selectedCreditorDetails?.contractDetails?.repayment_amount,
     },
   ];
-
+  const financialDetails = [
+    {
+      label: "Loan Amount",
+      value: summaryAmount?.loanAmount,
+      formatCurrency: true,
+    },
+    {
+      label: "Payable Amount",
+      value: summaryAmount?.payableAmount,
+      formatCurrency: true,
+    },
+    // You can add more details here if needed
+  ];
   const inputStyles = {
     width: "12rem",
     padding: "7px 5px",
@@ -1129,7 +1149,9 @@ export default function SettlementRange() {
                 marginTop: "1rem",
               }}
             >
-              Creditors Contract Information
+              {allCreditorNames[tabValue] === "Summary"
+                ? "Summary Contract Information"
+                : "Creditors Contract Information"}
             </Typography>
             {selectedCreditorDetails &&
               selectedCreditorDetails?.contractDetails && (
@@ -1171,6 +1193,36 @@ export default function SettlementRange() {
                   </Grid>
                 </>
               )}
+            {allCreditorNames[tabValue] === "Summary" && (
+              <Grid container item xs={12} sx={{ gap: "1rem", mt: "1rem" }}>
+                {financialDetails?.map((detail, index) => {
+                  return (
+                    <Grid
+                      key={index}
+                      item
+                      xs={12}
+                      sm={5.8}
+                      md={3.8}
+                      lg={2.8}
+                      container
+                      sx={commonStyles}
+                    >
+                      <Typography sx={commonTextStyles}>
+                        {detail?.label}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          ...commonTextStyles,
+                          color: Colors.SKY_BLUE,
+                        }}
+                      >
+                        ${detail?.value || "--"}
+                      </Typography>
+                    </Grid>
+                  );
+                })}
+              </Grid>
+            )}
           </Grid>
           <Grid
             container
