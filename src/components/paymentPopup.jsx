@@ -67,7 +67,8 @@ export default function PaymentPopup({
     newDataList?.map((item) => item?.frequency)
   );
 
-  let remaining = remainingAmount && remainingAmount;
+  let remaining =
+    remainingAmount && remainingAmount.replace("$", "").replace(",", "");
 
   const calculateTotalAmount = (data) => {
     let total = 0;
@@ -144,20 +145,21 @@ export default function PaymentPopup({
   useEffect(() => {
     const currentFrequencies = newDataList?.map((item) => item.frequency);
     const prevFrequencies = prevFrequenciesRef.current;
+    const hasLengthChanged =
+      currentFrequencies?.length !== prevFrequencies?.length;
     const hasFrequencyChanged = currentFrequencies?.some(
       (freq, index) => freq !== prevFrequencies[index]
     );
-    if (hasFrequencyChanged) {
-      const updatedDataList = newDataList.map((item, index) => {
-        const changedFrequency = currentFrequencies[index];
-        if (changedFrequency !== prevFrequencies[index]) {
-          return {
-            ...item,
-            amount: remainingAmount / changedFrequency,
-          };
-        }
-        return item;
-      });
+    if (hasFrequencyChanged || hasLengthChanged) {
+      const totalFrequency = currentFrequencies.reduce(
+        (acc, freq) => acc + freq,
+        0
+      );
+      const newAmount = remainingAmount / totalFrequency;
+      const updatedDataList = newDataList.map((item) => ({
+        ...item,
+        amount: newAmount,
+      }));
       setNewDataList(updatedDataList);
     }
     prevFrequenciesRef.current = currentFrequencies;

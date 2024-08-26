@@ -308,7 +308,9 @@ export default function SettlementRange() {
       <>
         <SettlementCards
           remainingAmount={
-            selectedCreditorDetails?.contractDetails?.loan_amount
+            allCreditorNames[tabValue] === "Summary"
+              ? summaryAmount?.loanAmount.toString()
+              : selectedCreditorDetails?.contractDetails?.loan_amount
           }
           caseId={caseId}
           title={item}
@@ -343,6 +345,11 @@ export default function SettlementRange() {
       <>
         {!isEmpty(lumpSumpData) ? (
           <SettlementCards
+            remainingAmount={
+              allCreditorNames[tabValue] === "Summary"
+                ? summaryAmount?.loanAmount.toString()
+                : selectedCreditorDetails?.contractDetails?.loan_amount
+            }
             isLumpSumPayment={true}
             title={item}
             strategy="strategy2"
@@ -381,7 +388,9 @@ export default function SettlementRange() {
         {!isEmpty(fullProfit) ? (
           <SettlementCards
             remainingAmount={
-              selectedCreditorDetails?.contractDetails?.loan_amount
+              allCreditorNames[tabValue] === "Summary"
+                ? summaryAmount?.loanAmount.toString()
+                : selectedCreditorDetails?.contractDetails?.loan_amount
             }
             caseId={caseId}
             isFullPayment={true}
@@ -645,7 +654,19 @@ export default function SettlementRange() {
   }, []);
 
   const handleGeneratePdf = () => {
-    generatePdfFromApiData(selectedCreditorDetails, debtorInfo);
+    const credDetail =
+      allCreditorNames[tabValue] === "Summary"
+        ? "Summary"
+        : selectedCreditorDetails?.name;
+
+    const summaryPayable = summaryAmount?.payableAmount;
+
+    generatePdfFromApiData(
+      selectedCreditorDetails,
+      credDetail,
+      debtorInfo,
+      summaryPayable
+    );
   };
 
   const widthStyling = drawerOpen
@@ -843,10 +864,16 @@ export default function SettlementRange() {
             <div style={{ display: "flex", gap: "10px" }}>
               <MuiModels
                 show="sendEmail"
-                creditorInfo={selectedCreditorDetails}
+                creditorInfo={
+                  allCreditorNames[tabValue] === "Summary"
+                    ? "Summary"
+                    : selectedCreditorDetails?.name
+                }
                 debtorInfo={debtorInfo}
                 payableAmount={
-                  selectedCreditorDetails?.contractDetails?.payable_amount
+                  allCreditorNames[tabValue] === "Summary"
+                    ? summaryAmount?.payableAmount
+                    : selectedCreditorDetails?.contractDetails?.payable_amount
                 }
               />
               <TextButton

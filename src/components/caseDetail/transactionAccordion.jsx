@@ -65,7 +65,7 @@ export default function TransactionAccordion({
             width="70vw"
             show="payments"
             buttonName="payments"
-            remainingAmount={caseData?.remaining}
+            remainingAmount={caseData?.remaining.toString()}
             data={caseData}
             GetCaseDetails={GetCaseDetails}
             GetCasePaymentDetails={GetCasePaymentDetails}
