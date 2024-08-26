@@ -78,6 +78,7 @@ export default function ListTableDynamic({
   getSettings,
   loading,
   setLoading,
+  show,
 }) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:900px)");
   const settings = useSelector(
@@ -101,7 +102,8 @@ export default function ListTableDynamic({
         backgroundColor: Colors.WHITE,
         borderRadius: "10px ",
         width: "100%",
-        height: "55vh",
+        height: show ? "35vh" : "55vh",
+        overflowY: !show ? "auto" : "visible",
       }}
     >
       <div
@@ -111,7 +113,13 @@ export default function ListTableDynamic({
           height: "100%",
         }}
       >
-        <TableContainer style={{ flexGrow: 1 }}>
+        <TableContainer
+          style={{
+            flexGrow: 1,
+            overflowY: !show ? "auto" : "visible",
+            maxHeight: !show ? "calc(100% - 48px)" : "none",
+          }}
+        >
           <Table aria-label="customized table">
             <TableHead sx={{ fontFamily: "Nunito" }}>
               <TableRow sx={{ fontFamily: "Nunito" }}>
@@ -260,21 +268,22 @@ export default function ListTableDynamic({
             </TableBody>
           </Table>
         </TableContainer>
-
-        <TablePagination
-          rowsPerPageOptions={[5]}
-          component="div"
-          count={data?.length || 0}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          style={{
-            alignSelf: smallScreen ? "center" : "flex-end",
-            marginBottom: ".5rem",
-            width: smallScreen ? "70%" : "auto",
-          }}
-        />
+        {!show && (
+          <TablePagination
+            rowsPerPageOptions={[5]}
+            component="div"
+            count={data?.length || 0}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            style={{
+              alignSelf: smallScreen ? "center" : "flex-end",
+              marginBottom: ".5rem",
+              width: smallScreen ? "70%" : "auto",
+            }}
+          />
+        )}
       </div>
     </Paper>
   );
