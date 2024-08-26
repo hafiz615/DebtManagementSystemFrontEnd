@@ -161,17 +161,14 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
               connectPayment={connectPayment}
               setConnectPayment={setConnectPayment}
             />
-            <PaymentCardDetails
-              setConnectPayment={setConnectPayment}
-            />
+            <PaymentCardDetails setConnectPayment={setConnectPayment} />
           </span>
         </div>
         <div
           style={{
             display: "flex",
             flexWrap: "wrap",
-            gap: "6%",
-            height: "100px",
+            justifyContent: "space-between",
           }}
         >
           {Object.entries(caseData?.debtor?.basicInformation)?.map(

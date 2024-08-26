@@ -1101,3 +1101,14 @@ export const SendSettlementEmail = async (payload) => {
     return error;
   }
 };
+
+export const GetLogs = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/case/caseHistory/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

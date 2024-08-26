@@ -37,6 +37,7 @@ import {
   AddNotesCase,
   GetCaseById,
   GetCasePaymentById,
+  GetLogs,
 } from "../../services/services.js";
 import { isEmpty } from "lodash";
 import MuiModels from "../models.jsx";
@@ -73,6 +74,7 @@ function CaseDetail() {
   const [paymentDetails, setPaymentDetails] = useState({});
   const [addTaskModal, setAddTaskModal] = useState("");
   const [caseSummary, setCaseSummary] = useState([]);
+  const [logs, setLogs] = useState([]);
   const { id } = useParams();
   const handleOpen = async () => {
     setOpen(true);
@@ -82,6 +84,7 @@ function CaseDetail() {
     setLoading(true);
     const caseDetails = await GetCaseById(rowId);
     if (caseDetails?.status === 200) {
+      GetLogsById(rowId);
       setCaseData(caseDetails?.data?.data);
       dispatch(setCaseId(id));
       dispatch(setCaseCreditorId(caseDetails?.data?.data?.creditor?._id));
@@ -118,6 +121,14 @@ function CaseDetail() {
     }
     setIsPaymentLoading(false);
   };
+
+  const GetLogsById = async (id) => {
+    const resLogs = await GetLogs(id);
+    if (resLogs?.status === 200) {
+      setLogs(resLogs?.data?.data);
+    }
+  };
+
   useEffect(() => {
     GetCasePaymentDetails(id);
   }, [id]);
@@ -441,7 +452,7 @@ function CaseDetail() {
                   caseDetails={caseData}
                   GetCaseDetails={GetCaseDetails}
                 />
-                <TaskAccordion caseData={caseData} />
+                <TaskAccordion GetLogsById={GetLogsById} caseData={caseData} />
                 <CustomFieldsAccordion
                   caseData={caseData}
                   GetCaseDetails={GetCaseDetails}
@@ -517,19 +528,21 @@ function CaseDetail() {
                     </Box>
                   </Modal>
                 </span>
-                {!isEmpty(caseSummary) ? (
-                  caseSummary
-                    .sort(
-                      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-                    )
-                    .map((item) => (
-                      <TimelineData
-                        value={item?.value}
-                        date={item?.createdAt}
-                      />
-                    ))
+                {caseSummary
+                  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                  .map((item) => (
+                    <TimelineData
+                      value={item?.value}
+                      date={item?.createdAt}
+                      notes={true}
+                    />
+                  ))}
+                {logs?.length > 0 ? (
+                  logs?.map((item) => (
+                    <TimelineData notes={false} value={item} date={null} />
+                  ))
                 ) : (
-                  <TimelineData value={"No Data Found"} date={null} />
+                  <TimelineData notes={true} value={"No Data"} date={null} />
                 )}
               </Grid>
             </Grid>

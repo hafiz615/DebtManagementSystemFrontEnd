@@ -67,6 +67,8 @@ export default function PaymentPopup({
     newDataList?.map((item) => item?.frequency)
   );
 
+  const prevAmountsRef = useRef(newDataList?.map((item) => item?.amount));
+
   let remaining =
     remainingAmount && remainingAmount.replace("$", "").replace(",", "");
 
@@ -148,23 +150,42 @@ export default function PaymentPopup({
     const hasLengthChanged =
       currentFrequencies?.length !== prevFrequencies?.length;
     const hasFrequencyChanged = currentFrequencies?.some(
-      (freq, index) => freq !== prevFrequencies[index]
+      (freq, index) => freq !== prevFrequencies?.[index]
     );
     if (hasFrequencyChanged || hasLengthChanged) {
-      const totalFrequency = currentFrequencies.reduce(
-        (acc, freq) => acc + freq,
-        0
-      );
-      const newAmount = remainingAmount / totalFrequency;
+      const totalFrequency = currentFrequencies.reduce((acc, freq) => {
+        return freq !== 0 ? acc + freq : acc;
+      }, 0);
+      const newAmount = totalFrequency ? remaining / totalFrequency : 0;
       const updatedDataList = newDataList.map((item) => ({
         ...item,
-        amount: newAmount,
+        amount: item.frequency !== 0 ? newAmount : 0,
       }));
       setNewDataList(updatedDataList);
     }
     prevFrequenciesRef.current = currentFrequencies;
-  }, [newDataList, remainingAmount]);
+  }, [newDataList, remaining]);
 
+  useEffect(() => {
+    const currentAmounts = newDataList?.map((item) => item.amount);
+    const prevAmounts = prevAmountsRef.current;
+    const hasLengthChanged = currentAmounts?.length !== prevAmounts?.length;
+    const hasAmountChanged = currentAmounts?.some(
+      (amount, index) => amount !== prevAmounts?.[index]
+    );
+    if (hasAmountChanged || hasLengthChanged) {
+      const totalAmount = currentAmounts.reduce((acc, amo) => {
+        return amo !== 0 ? acc + amo : acc;
+      }, 0);
+      const newFrequency = totalAmount ? remaining / totalAmount : 0;
+      const updatedDataList = newDataList.map((item) => ({
+        ...item,
+        frequency: item.amount !== 0 ? Math.round(newFrequency) : 0,
+      }));
+      setNewDataList(updatedDataList);
+    }
+    prevAmountsRef.current = currentAmounts;
+  }, [newDataList, remaining]);
   return (
     <div>
       <Typography
