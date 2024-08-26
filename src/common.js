@@ -215,7 +215,19 @@ export function removeDuplicates(array) {
   });
 }
 
-export const generatePdfFromApiData = (selectedCreditorDetails, debtorInfo) => {
+export const generatePdfFromApiData = (
+  selectedCreditorDetails,
+  credDetail,
+  debtorInfo,
+  summaryPayable
+) => {
+  const value = selectedCreditorDetails?.contractDetails?.payable_amount;
+  const formatedValue =
+    credDetail === "Summary"
+      ? `$${summaryPayable}`
+      : value?.includes("$")
+      ? value
+      : `$${value}`;
   const doc = new jsPDF();
   doc.setFontSize(16);
   doc.text("Settlement Agreement", 15, 15);
@@ -236,11 +248,11 @@ The parties to this Agreement are as follows:
 Debtor Company: ${debtorInfo?.companyName}
 Company Address: ${debtorInfo?.address}
 
-Creditor Company: ${selectedCreditorDetails?.name}
+Creditor Company: ${credDetail}
 Company Address:
 
 The Creditor and Debtor(s) agree to negotiate and settle the debt under the following terms and conditions.
-The Creditor and Debtor(s) agree that the current outstanding debt is $${selectedCreditorDetails?.contractDetails?.payable_amount}.
+The Creditor and Debtor(s) agree that the current outstanding debt is ${formatedValue}.
 All parties agree that the Creditor will accept a payment of ___________________ towards 
 settlement of the debt in full. 
 The Creditor agrees to compromise the debt under the condition 

@@ -62,11 +62,13 @@ export default function PaymentPopup({
       frequency: weeksTillPaid || 1,
     },
   ]);
-  // const prevFrequenciesRef = useRef(
-  //   newDataList?.map((item) => item?.frequency)
-  // );
 
-  let remaining = remainingAmount && remainingAmount;
+  const prevFrequenciesRef = useRef(
+    newDataList?.map((item) => item?.frequency)
+  );
+
+  let remaining =
+    remainingAmount && remainingAmount.replace("$", "").replace(",", "");
 
   const calculateTotalAmount = (data) => {
     let total = 0;
@@ -140,17 +142,28 @@ export default function PaymentPopup({
     }
   }, [data]);
 
-  // useEffect(() => {
-  //   const currentFrequencies = newDataList?.map((item) => item.frequency);
-  //   const prevFrequencies = prevFrequenciesRef.current;
-  //   const hasFrequencyChanged = currentFrequencies?.some(
-  //     (freq, index) => freq !== prevFrequencies[index]
-  //   );
-  //   if (hasFrequencyChanged) {
-  //     calculateTotalCommission();
-  //   }
-  //   prevFrequenciesRef.current = currentFrequencies;
-  // }, [newDataList]);
+  useEffect(() => {
+    const currentFrequencies = newDataList?.map((item) => item.frequency);
+    const prevFrequencies = prevFrequenciesRef.current;
+    const hasLengthChanged =
+      currentFrequencies?.length !== prevFrequencies?.length;
+    const hasFrequencyChanged = currentFrequencies?.some(
+      (freq, index) => freq !== prevFrequencies[index]
+    );
+    if (hasFrequencyChanged || hasLengthChanged) {
+      const totalFrequency = currentFrequencies.reduce(
+        (acc, freq) => acc + freq,
+        0
+      );
+      const newAmount = remainingAmount / totalFrequency;
+      const updatedDataList = newDataList.map((item) => ({
+        ...item,
+        amount: newAmount,
+      }));
+      setNewDataList(updatedDataList);
+    }
+    prevFrequenciesRef.current = currentFrequencies;
+  }, [newDataList, remainingAmount]);
 
   return (
     <div>
@@ -283,6 +296,9 @@ export default function PaymentPopup({
           Exempt
         </Typography>
       </div>
+      <Typography sx={{ fontWeight: "600", fontFamily: "Nunito" }}>
+        Commission Payment
+      </Typography>
       <PaymentProcess feePayment={feePayment} setFeePayment={setFeePayment} />
 
       <Grid container sx={{ mt: "1rem", justifyContent: "right", gap: "10px" }}>

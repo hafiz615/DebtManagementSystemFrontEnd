@@ -130,7 +130,7 @@ export default function PaymentSettlement({
                   fontSize: FONT_SIZE_LARGE,
                 }}
               >
-                Weekly Payment
+                Payment Amount
               </Typography>
 
               <AmountTextField
@@ -152,7 +152,7 @@ export default function PaymentSettlement({
                           fontSize: "10px",
                         }}
                       >
-                        Weekly Payment must be equal to remaining amount
+                        Payment Amount must be equal to remaining amount
                       </Typography>
                     )}
                 </Hidden>
@@ -279,7 +279,7 @@ export default function PaymentSettlement({
                         width: "100%",
                       }}
                     >
-                      Weekly Payment must be equal to remaining amount
+                      Payment Amount must be equal to remaining amount
                     </Typography>
                   )}
               </Hidden>

@@ -120,6 +120,7 @@ export default function SettlementCards({
               show="payments"
               buttonName="settlmentPayment"
               settlementRange={settlementRange?.remaining_principle_amount}
+              remainingAmount={remainingAmount}
               caseId={caseId}
             />
           ) : (
