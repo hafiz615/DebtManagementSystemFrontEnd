@@ -15,6 +15,7 @@ import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../constants/appConstants";
 import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
 import TextButton from "./button";
 import CustomTextField from "./customTextfield";
+import Dropdown from "./dropdown";
 
 const columns = [
   {
@@ -49,6 +50,10 @@ const columns = [
     field: "address",
     headerName: "Address",
   },
+  {
+    field: "active",
+    headerName: "Status",
+  },
 ];
 export default function CustomizedTabs() {
   const navigate = useNavigate();
@@ -59,6 +64,7 @@ export default function CustomizedTabs() {
   const [rows, setRows] = useState([]);
   const [userArray, setUserArray] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [active, setActive] = useState("");
   const [totalData, setTotalData] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(totalData / 5);
@@ -77,6 +83,11 @@ export default function CustomizedTabs() {
     return date.toISOString().split(".")[0] + ".000Z";
   };
 
+  const activeStatusOptions = [
+    { label: "Active", value: "Active" },
+    { label: "Inactive", value: "Inactive" },
+  ];
+
   const createFilterObject = (dateOfBirthStart, dateOfBirthEnd) => {
     const filter = {};
     if (
@@ -89,6 +100,9 @@ export default function CustomizedTabs() {
         start: formatDate(dateOfBirthStart),
         end: formatDate(dateOfBirthEnd),
       };
+    }
+    if (active != null) {
+      filter.isActive = active === "Active" ? true : false;
     }
 
     return filter;
@@ -154,23 +168,27 @@ export default function CustomizedTabs() {
   const handleClear = () => {
     setDateOfBirthStart("");
     setDateOfBirthEnd("");
+    setActive("");
     setFilterActive(false);
     handleClose();
     GetUsers(searchActive, false);
   };
 
-  const disabled = !dateOfBirthStart && !dateOfBirthEnd;
+  const disabled = !dateOfBirthStart && !dateOfBirthEnd && !active;
 
   const isPairComplete = (min, max) => {
     return (min !== "" && max !== "") || (min === "" && max === "");
   };
 
   useEffect(() => {
-    const allPairsValid = isPairComplete(dateOfBirthStart, dateOfBirthEnd);
-    const anyPairFilled = dateOfBirthStart !== "" && dateOfBirthEnd !== "";
+    const allPairsValid =
+      isPairComplete(dateOfBirthStart, dateOfBirthEnd) &&
+      isPairComplete(active);
+    const anyPairFilled =
+      (dateOfBirthStart !== "" && dateOfBirthEnd !== "") || active !== "";
 
     setApplyDisabled(!(allPairsValid && anyPairFilled));
-  }, [dateOfBirthStart, dateOfBirthEnd]);
+  }, [dateOfBirthStart, dateOfBirthEnd, active]);
 
   const generatedData = useMemo(() => {
     return userArray?.map((item, index) => ({
@@ -183,6 +201,7 @@ export default function CustomizedTabs() {
       role: item?.role || "-",
       phone: item?.phone || "-",
       address: item?.address || "-",
+      active: item?.isActive ? "Active" : "Inactive",
     }));
   }, [userArray]);
 
@@ -342,6 +361,16 @@ export default function CustomizedTabs() {
               paddingLeft="4px"
               onChange={(e) => setDateOfBirthEnd(e.target.value)}
               value={dateOfBirthEnd}
+            />
+            <Dropdown
+              menuWidth="10rem"
+              menuItems={activeStatusOptions}
+              placeholder="Status"
+              backgroundColor={Colors.BG_LIGHT_GRAY}
+              hoverColor={Colors.BG_LIGHT_GRAY}
+              width="100%"
+              selectedValue={active}
+              setSelectedValue={setActive}
             />
 
             <div
