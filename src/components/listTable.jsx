@@ -39,6 +39,10 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     padding: "16px 1rem",
     fontFamily: "Nunito",
     borderTop: "1px solid #EAEBEB",
+    position: "sticky",
+    top: 0,
+    backgroundColor: Colors.WHITE, // Ensure the background is solid when sticky
+    zIndex: theme.zIndex.appBar,
   },
   [`&.${tableCellClasses.body}`]: {
     color: Colors.DARK_GRAY,
@@ -46,6 +50,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     border: "none",
     padding: "16px 1rem",
     fontFamily: "Nunito",
+
     "&:not(:first-of-type)": {
       opacity: 0.7,
     },
@@ -140,7 +145,8 @@ export default function ListTable({
         backgroundColor: Colors.WHITE,
         borderRadius: "10px",
         width: { xs: "65vw", sm: "100%" },
-        height: accordionHeight,
+        border: "1px solid red",
+        // height: accordionHeight,
       }}
     >
       <div
@@ -150,7 +156,7 @@ export default function ListTable({
           height: "100%",
         }}
       >
-        <TableContainer style={{ flexGrow: 1 }}>
+        <TableContainer style={{ flexGrow: 1, overflowY: "auto" }}>
           <Table aria-label="customized table">
             <TableHead>
               <TableRow>
@@ -200,7 +206,7 @@ export default function ListTable({
               </TableRow>
             </TableHead>
             {loading ? (
-              <TableBody>
+              <TableBody style={{ border: "1px solid red" }}>
                 <StyledTableRow>
                   <StyledTableCell
                     colSpan={headerData?.length + 1}
@@ -397,7 +403,7 @@ export default function ListTable({
           </div>
         ) : (
           <TablePagination
-            rowsPerPageOptions={[5]}
+            rowsPerPageOptions={[5, 10, 30]}
             component="div"
             count={data?.length || 0}
             rowsPerPage={rowsPerPage}
