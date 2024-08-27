@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import ListTableDynamic from "../listTableDynamic";
 
 import {
   Grid,
@@ -45,6 +46,7 @@ import { useParams } from "react-router-dom";
 import { ErrorOutline } from "@mui/icons-material";
 import { isEmpty } from "lodash";
 import { getWeeksRemainingMessage } from "../../common";
+import DataSummaryTable from "../dataSummaryTable";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -726,6 +728,19 @@ export default function SettlementRange() {
       </Grid>
     );
   }
+  const inputStyles = {
+    width: "12rem",
+    padding: "7px 5px",
+    borderRadius: "5px",
+    marginRight: "10px",
+    marginTop: "10px",
+    backgroundColor: Colors.LIGHT_GREY,
+    border: "none",
+    outline: "none",
+    fontSize: FONT_SIZE_LARGE,
+    fontFamily: "Nunito",
+    color: Colors.BLACK,
+  };
   const creditorDetails = [
     {
       label: "Loan Amount",
@@ -758,32 +773,80 @@ export default function SettlementRange() {
     },
   ];
 
-  const financialDetails = [
+  const headerData = [
+    { key: "creditorName", heading: "Creditors", width: "15%" },
+    { key: "loanAmount", heading: "Loan Amount", width: "15%" },
+    { key: "payableAmount", heading: "Payable Amount", width: "15%" },
+    { key: "weeklyBudget", heading: "Weekly Budget", width: "15%" },
     {
-      label: "Loan Amount",
-      value: summaryAmount?.loanAmount,
-      formatCurrency: true,
+      key: "purchased_percentage",
+      heading: "Purchased Percentage",
+      width: "15%",
     },
     {
-      label: "Payable Amount",
-      value: summaryAmount?.payableAmount,
-      formatCurrency: true,
+      key: "repayment_amount",
+      heading: "Repayment Amount",
+      width: "15%",
     },
-    // You can add more details here if needed
   ];
-  const inputStyles = {
-    width: "12rem",
-    padding: "7px 5px",
-    borderRadius: "5px",
-    marginRight: "10px",
-    marginTop: "10px",
-    backgroundColor: Colors.LIGHT_GREY,
-    border: "none",
-    outline: "none",
-    fontSize: FONT_SIZE_LARGE,
-    fontFamily: "Nunito",
-    color: Colors.BLACK,
+  const formatSummaryCurrency = (value) => {
+    if (value === "--" || typeof value !== "string") return value;
+    return !value.startsWith("$") ? `$${value}` : value;
   };
+  const formatSummary = (value) => {
+    if (typeof value === "number") {
+      return `$${value.toFixed(2)}`;
+    }
+    if (typeof value === "string" && !value.includes("$")) {
+      return `$${parseFloat(value).toFixed(2)}`;
+    }
+    return value || "--";
+  };
+  const creditorNamesDetails = creditorNames?.map((creditor) => {
+    const weeklyBudget =
+      apiData?.weekly_budget?.[
+        creditor?.accountTitleMapping[0]?.accountTitle
+      ] != null
+        ? `$${new Intl.NumberFormat().format(
+            apiData?.weekly_budget?.[
+              creditor?.accountTitleMapping[0]?.accountTitle
+            ]
+          )}`
+        : "--";
+    const loanAmount = formatSummaryCurrency(
+      creditor?.contractDetails?.loan_amount || "--"
+    );
+    const payableAmount = formatSummaryCurrency(
+      creditor?.contractDetails?.payable_amount || "--"
+    );
+    const purchased_percentage =
+      creditor?.contractDetails?.purchased_percentage || "--";
+    const repayment_amount =
+      creditor?.contractDetails?.repayment_amount || "--";
+
+    return {
+      creditorName: creditor?.accountTitleMapping[0]?.accountTitle,
+      loanAmount,
+      payableAmount,
+      weeklyBudget,
+      purchased_percentage,
+      repayment_amount,
+    };
+  });
+
+  const summaryDetails = {
+    creditorName: "Summary",
+    loanAmount: formatSummary(summaryAmount?.loanAmount),
+    payableAmount: formatSummary(summaryAmount?.payableAmount),
+    weeklyBudget: formatSummary(apiData?.weekly_budget?.Summary),
+    purchased_percentage: "--",
+    repayment_amount: "--",
+  };
+
+  const updatedCreditorNamesDetails = [...creditorNamesDetails, summaryDetails];
+  const filteredData = updatedCreditorNamesDetails.filter(
+    (item) => item.creditorName !== "Summary"
+  );
 
   return (
     <Grid
@@ -1206,34 +1269,16 @@ export default function SettlementRange() {
                 </>
               )}
             {allCreditorNames[tabValue] === "Summary" && (
-              <Grid container item xs={12} sx={{ gap: "1rem", mt: "1rem" }}>
-                {financialDetails?.map((detail, index) => {
-                  return (
-                    <Grid
-                      key={index}
-                      item
-                      xs={12}
-                      sm={5.8}
-                      md={3.8}
-                      lg={2.8}
-                      container
-                      sx={commonStyles}
-                    >
-                      <Typography sx={commonTextStyles}>
-                        {detail?.label}
-                      </Typography>
-                      <Typography
-                        sx={{
-                          ...commonTextStyles,
-                          color: Colors.SKY_BLUE,
-                        }}
-                      >
-                        ${detail?.value || "--"}
-                      </Typography>
-                    </Grid>
-                  );
-                })}
-              </Grid>
+              <>
+                <Grid item xs={12} sx={{ mt: "1rem" }}>
+                  <DataSummaryTable
+                    headerData={headerData}
+                    data={filteredData}
+                    show={true}
+                    summaryDetails={summaryDetails}
+                  />
+                </Grid>
+              </>
             )}
           </Grid>
           <Grid
