@@ -209,7 +209,7 @@ export default function PaymentTabsTable({
       sx={{
         backgroundColor: Colors.WHITE,
         borderRadius: "10px",
-        width: { xs: "65vw", sm: "100%" },
+        // width: { xs: "65vw", sm: "100%" },
         height: "55vh",
       }}
     >
