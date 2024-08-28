@@ -36,6 +36,7 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
   );
   const allDocuments = item?.documents?.map((item) => item);
   const debtorContacts = item?.debtor?.contacts?.map((item) => item);
+
   const creditorContacts = item?.creditor?.contacts?.map((item) => item);
 
   const handleDuplicate = async () => {
@@ -181,6 +182,13 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
           sx={{ fontSize: FONT_SIZE_LARGE, fontFamily: "Nunito", mb: "5px" }}
         >
           {item?.caseOwner}
+        </Typography>
+      </div>
+      <div>
+        <Typography
+          sx={{ fontSize: FONT_SIZE_LARGE, fontFamily: "Nunito", mb: "5px" }}
+        >
+          {debtorbusinessInfoItem?.companyName}
         </Typography>
       </div>
       <div>
