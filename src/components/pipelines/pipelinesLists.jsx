@@ -4,6 +4,7 @@ import ScrollbarStyles from "../customScroll";
 import { Grid } from "@mui/material";
 import ListTable from "../listTable";
 import { useNavigate } from "react-router-dom";
+import PipelineListTable from "./pipelineListTable";
 
 export default function PipelinesLists({
   data,
@@ -13,6 +14,8 @@ export default function PipelinesLists({
   statuses,
   startDate,
   endDate,
+  page,
+  setPage,
 }) {
   const [cases, setCases] = useState([]);
 
@@ -120,7 +123,7 @@ export default function PipelinesLists({
       }}
     >
       <Grid item xs={12} sx={{ marginTop: "1rem" }}>
-        <ListTable
+        <PipelineListTable
           defaultHeight="55vh"
           headerData={headers}
           onRowClick={
@@ -129,6 +132,8 @@ export default function PipelinesLists({
           data={
             data ? filteredCasesByDate?.map(({ time, ...rest }) => rest) : []
           }
+          page={page}
+          setPage={setPage}
         />
       </Grid>
     </Grid>
