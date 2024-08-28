@@ -32,8 +32,8 @@ export default function CreditorList() {
   const [searchText, setSearchText] = useState("");
   const [totalData, setTotalData] = useState();
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(totalData / 5);
-  const [limit, setLimit] = useState(5);
+  const [paginationRows, setPaginationRows] = useState("5");
+  const totalPages = Math.ceil(totalData / paginationRows);
   const [searchActive, setSearchActive] = useState(false);
   const [filterActive, setFilterActive] = useState(false);
   const [totalDebtMin, setTotalDebtMin] = useState("");
@@ -103,7 +103,6 @@ export default function CreditorList() {
   const GetCreditors = async (search, filter) => {
     setLoading(true);
     let payload = {};
-    setLimit(5);
 
     const filterObj = createFilterObject(
       totalDebtMin,
@@ -118,6 +117,7 @@ export default function CreditorList() {
       filter: filter ? filterObj : {},
     };
     let page = currentPage;
+    let limit = paginationRows;
     const getCreditors = await GetAllCreditors({
       search,
       filter,
@@ -251,6 +251,10 @@ export default function CreditorList() {
     localStorage.setItem("route", "list-details");
     navigate(`/creditor/list-details/${id}`);
   };
+  useEffect(() => {
+    setCurrentPage(1);
+    GetCreditors("", "");
+  }, [paginationRows]);
   return (
     <Grid
       container
@@ -576,6 +580,9 @@ export default function CreditorList() {
             setCurrentPage={setCurrentPage}
             totalPages={totalPages}
             loading={loading}
+            defaultHeight="55vh"
+            paginationRows={paginationRows}
+            setPaginationRows={setPaginationRows}
           />
         </>
       </Grid>

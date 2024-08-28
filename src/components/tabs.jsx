@@ -61,7 +61,8 @@ export default function CustomizedTabs() {
   const [loading, setLoading] = useState(false);
   const [totalData, setTotalData] = useState();
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(totalData / 5);
+  const [paginationRows, setPaginationRows] = useState("5");
+  const totalPages = Math.ceil(totalData / paginationRows);
   const [searchText, setSearchText] = useState("");
   const [searchActive, setSearchActive] = useState(false);
   const [filterActive, setFilterActive] = useState(false);
@@ -103,7 +104,13 @@ export default function CustomizedTabs() {
       filter: filter ? filterObj : {},
     };
     let page = currentPage;
-    const users = await GetAllUsers(page, search, filter, payload);
+    const users = await GetAllUsers(
+      page,
+      paginationRows,
+      search,
+      filter,
+      payload
+    );
     if (users?.status === 200) {
       setUserArray(users?.data?.data?.users);
       setTotalData(users?.data?.data?.totalUsers);
@@ -116,6 +123,7 @@ export default function CustomizedTabs() {
     }
     setLoading(false);
   };
+
   useEffect(() => {
     if (!searchText) {
       setSearchActive(false);
@@ -188,12 +196,18 @@ export default function CustomizedTabs() {
 
   useEffect(() => {
     setRows(generatedData);
-  }, [generatedData]);
+  }, [generatedData, userArray]);
+
   const handleUserDelete = (deletedUserId) => {
     setUserArray((prevUserArray) =>
       prevUserArray.filter((user) => user._id !== deletedUserId)
     );
   };
+
+  useEffect(() => {
+    setCurrentPage(1);
+    GetUsers("", "");
+  }, [paginationRows]);
 
   return (
     <>
@@ -292,6 +306,8 @@ export default function CustomizedTabs() {
             handleUserDelete={handleUserDelete}
             GetUsers={GetUsers}
             loading={loading}
+            setPaginationRows={setPaginationRows}
+            paginationRows={paginationRows}
           />
           {/* <DataTable rows={rows} columns={columns} /> */}
         </>

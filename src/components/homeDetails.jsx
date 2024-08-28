@@ -19,6 +19,13 @@ function HomeDetails() {
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const [homeData, setHomeData] = useState({});
   const [loading, setLoading] = useState(false);
+  const [paginationRows, setPaginationRows] = useState({
+    failedAuthorizations: "5",
+    failedPayments: "5",
+    successAuthorizations: "5",
+    upcomingPayments: "5",
+    successPayments: "5",
+  });
   const [totalData, setTotalData] = useState({});
   const [selectedValue, setSelectedValue] = useState(3);
   const [currentPage, setCurrentPage] = useState({
@@ -59,8 +66,13 @@ function HomeDetails() {
       if (isInitialLoad) {
         setLoading(true);
       }
-
-      const result = await GetHomePayments(selectedValue, pageNumber, key);
+      let limit = paginationRows[key];
+      const result = await GetHomePayments(
+        selectedValue,
+        pageNumber,
+        limit,
+        key
+      );
       if (result?.status === 200) {
         setTotalData((prev) => ({
           ...prev,
@@ -91,6 +103,17 @@ function HomeDetails() {
     });
   }, [selectedValue]);
 
+  useEffect(() => {
+    accordionData.forEach((data) => {
+      setCurrentPage((prevState) => ({
+        ...prevState,
+        [data?.key]: 1,
+      }));
+
+      getHomeData(data?.key, 1, false);
+    });
+  }, [paginationRows]);
+
   const handlePageChange = (key, page) => {
     setCurrentPage((prev) => ({ ...prev, [key]: page }));
     getHomeData(key, page);
@@ -99,8 +122,15 @@ function HomeDetails() {
   const renderAccordion = (data, index) => (
     <Grid item xs={12} lg={6} sx={{ marginBottom: "0.5rem" }} key={data.key}>
       <AccordionUsage
+        paginationRows={paginationRows[data?.key]}
+        setPaginationRows={(newRows) =>
+          setPaginationRows((prevState) => ({
+            ...prevState,
+            [data?.key]: newRows,
+          }))
+        }
         index={index}
-        totalPages={Math.ceil(totalData[data?.key] / 5)}
+        totalPages={Math.ceil(totalData[data?.key] / paginationRows[data?.key])}
         totalData={totalData[data?.key]}
         arrayName={data?.key}
         currentPage={currentPage[data?.key]}

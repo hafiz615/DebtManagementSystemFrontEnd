@@ -28,6 +28,10 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     paddingLeft: "1rem",
     fontFamily: "Nunito",
     borderTop: "1px solid #EAEBEB",
+    position: "sticky",
+    top: 0,
+    backgroundColor: Colors.WHITE,
+    zIndex: theme.zIndex.appBar,
   },
   [`&.${tableCellClasses.body}`]: {
     color: Colors.DARK_GRAY,
@@ -262,7 +266,7 @@ export default function ListTableDynamic({
         </TableContainer>
 
         <TablePagination
-          rowsPerPageOptions={[5]}
+          rowsPerPageOptions={[5, 10, 30]}
           component="div"
           count={data?.length || 0}
           rowsPerPage={rowsPerPage}
@@ -271,7 +275,7 @@ export default function ListTableDynamic({
           onRowsPerPageChange={handleChangeRowsPerPage}
           style={{
             alignSelf: smallScreen ? "center" : "flex-end",
-            marginBottom: ".5rem",
+            minHeight: "5rem",
             width: smallScreen ? "70%" : "auto",
           }}
         />

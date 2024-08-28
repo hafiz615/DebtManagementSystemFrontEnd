@@ -54,6 +54,8 @@ export default function PaymentsTabs({
   totalPages,
   getHomeData,
   loading,
+  paginationRows,
+  setPaginationRows,
 }) {
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
@@ -167,6 +169,8 @@ export default function PaymentsTabs({
             value={value}
             getHomeData={getHomeData}
             loading={loading}
+            paginationRows={paginationRows}
+            setPaginationRows={setPaginationRows}
           />
         )}
         {value === 1 && (
@@ -181,6 +185,8 @@ export default function PaymentsTabs({
             totalPages={totalPages}
             apiPagination={true}
             loading={loading}
+            paginationRows={paginationRows}
+            setPaginationRows={setPaginationRows}
           />
         )}
         {value === 2 && (
@@ -197,6 +203,8 @@ export default function PaymentsTabs({
             value={value}
             getHomeData={getHomeData}
             loading={loading}
+            paginationRows={paginationRows}
+            setPaginationRows={setPaginationRows}
           />
         )}
         {value === 3 && (
@@ -211,6 +219,8 @@ export default function PaymentsTabs({
             totalPages={totalPages}
             apiPagination={true}
             loading={loading}
+            paginationRows={paginationRows}
+            setPaginationRows={setPaginationRows}
           />
         )}
         {value === 4 && (
@@ -226,6 +236,8 @@ export default function PaymentsTabs({
             apiPagination={true}
             value={value}
             loading={loading}
+            paginationRows={paginationRows}
+            setPaginationRows={setPaginationRows}
           />
         )}
       </Box>

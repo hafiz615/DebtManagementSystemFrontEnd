@@ -121,6 +121,7 @@ export default function PipelinesLists({
     >
       <Grid item xs={12} sx={{ marginTop: "1rem" }}>
         <ListTable
+          defaultHeight="55vh"
           headerData={headers}
           onRowClick={
             generalPermissions?.viewCaseDetails ? handleRowClick : undefined
