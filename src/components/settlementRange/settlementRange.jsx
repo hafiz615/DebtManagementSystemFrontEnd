@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import ListTableDynamic from "../listTableDynamic";
 
 import {
   Grid,
@@ -45,6 +46,7 @@ import { useParams } from "react-router-dom";
 import { ErrorOutline } from "@mui/icons-material";
 import { isEmpty } from "lodash";
 import { getWeeksRemainingMessage } from "../../common";
+import DataSummaryTable from "../dataSummaryTable";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -152,7 +154,15 @@ const isNegative = (number) => {
   return number < 0;
 };
 const GridItem = ({ title, value, rawValue, tooltip }) => (
-  <Grid item xs={12} sm={5.8} md={3.8} lg={2.8} container sx={commonStyles}>
+  <Grid
+    item
+    xs={12}
+    sm={5.8}
+    md={3.8}
+    lg={2.8}
+    container
+    sx={{ ...commonStyles, mb: "1rem" }}
+  >
     <Tooltip title={tooltip} placement="top-start">
       <Typography sx={commonTextStyles}>{title}</Typography>
       <Typography
@@ -718,44 +728,6 @@ export default function SettlementRange() {
       </Grid>
     );
   }
-  const creditorDetails = [
-    {
-      label: "Loan Amount",
-      value: selectedCreditorDetails?.contractDetails?.loan_amount,
-      formatCurrency: true,
-    },
-    {
-      label: "Payable Amount",
-      value: selectedCreditorDetails?.contractDetails?.payable_amount,
-      formatCurrency: true,
-    },
-    {
-      label: "Purchase price",
-      value: selectedCreditorDetails?.contractDetails["purchase price"],
-      formatCurrency: true,
-    },
-    {
-      label: "Purchased Percentage",
-      value: selectedCreditorDetails?.contractDetails?.purchased_percentage,
-    },
-    {
-      label: "Repayment Amount",
-      value: selectedCreditorDetails?.contractDetails?.repayment_amount,
-    },
-  ];
-  const financialDetails = [
-    {
-      label: "Loan Amount",
-      value: summaryAmount?.loanAmount,
-      formatCurrency: true,
-    },
-    {
-      label: "Payable Amount",
-      value: summaryAmount?.payableAmount,
-      formatCurrency: true,
-    },
-    // You can add more details here if needed
-  ];
   const inputStyles = {
     width: "12rem",
     padding: "7px 5px",
@@ -769,6 +741,112 @@ export default function SettlementRange() {
     fontFamily: "Nunito",
     color: Colors.BLACK,
   };
+  const creditorDetails = [
+    {
+      label: "Loan Amount",
+      value: selectedCreditorDetails?.contractDetails?.loan_amount,
+      formatCurrency: true,
+    },
+    {
+      label: "Payable Amount",
+      value: selectedCreditorDetails?.contractDetails?.payable_amount,
+      formatCurrency: true,
+    },
+    {
+      label: "Weekly Budget",
+      value: (() => {
+        const weeklyBudget =
+          apiData?.weekly_budget?.[allCreditorNames[parseInt(tabValue)]];
+        return weeklyBudget != null
+          ? `$${new Intl.NumberFormat().format(weeklyBudget)}`
+          : "--";
+      })(),
+      formatCurrency: false,
+    },
+    {
+      label: "Purchased Percentage",
+      value: selectedCreditorDetails?.contractDetails?.purchased_percentage,
+    },
+    {
+      label: "Repayment Amount",
+      value: selectedCreditorDetails?.contractDetails?.repayment_amount,
+    },
+  ];
+
+  const headerData = [
+    { key: "creditorName", heading: "Creditors", width: "15%" },
+    { key: "loanAmount", heading: "Loan Amount", width: "15%" },
+    { key: "payableAmount", heading: "Payable Amount", width: "15%" },
+    { key: "weeklyBudget", heading: "Weekly Budget", width: "15%" },
+    {
+      key: "purchased_percentage",
+      heading: "Purchased Percentage",
+      width: "15%",
+    },
+    {
+      key: "repayment_amount",
+      heading: "Repayment Amount",
+      width: "15%",
+    },
+  ];
+  const formatSummaryCurrency = (value) => {
+    if (value === "--" || typeof value !== "string") return value;
+    return !value.startsWith("$") ? `$${value}` : value;
+  };
+  const formatSummary = (value) => {
+    if (typeof value === "number") {
+      return `$${value.toFixed(2)}`;
+    }
+    if (typeof value === "string" && !value.includes("$")) {
+      return `$${parseFloat(value).toFixed(2)}`;
+    }
+    return value || "--";
+  };
+  const creditorNamesDetails = creditorNames?.map((creditor) => {
+    const weeklyBudget =
+      apiData?.weekly_budget?.[
+        creditor?.accountTitleMapping[0]?.accountTitle
+      ] != null
+        ? `$${new Intl.NumberFormat().format(
+            apiData?.weekly_budget?.[
+              creditor?.accountTitleMapping[0]?.accountTitle
+            ]
+          )}`
+        : "--";
+    const loanAmount = formatSummaryCurrency(
+      creditor?.contractDetails?.loan_amount || "--"
+    );
+    const payableAmount = formatSummaryCurrency(
+      creditor?.contractDetails?.payable_amount || "--"
+    );
+    const purchased_percentage =
+      creditor?.contractDetails?.purchased_percentage || "--";
+    const repayment_amount =
+      creditor?.contractDetails?.repayment_amount || "--";
+
+    return {
+      creditorName: creditor?.accountTitleMapping[0]?.accountTitle,
+      loanAmount,
+      payableAmount,
+      weeklyBudget,
+      purchased_percentage,
+      repayment_amount,
+    };
+  });
+
+  const summaryDetails = {
+    creditorName: "Summary",
+    loanAmount: formatSummary(summaryAmount?.loanAmount),
+    payableAmount: formatSummary(summaryAmount?.payableAmount),
+    weeklyBudget: formatSummary(apiData?.weekly_budget?.Summary),
+    purchased_percentage: "--",
+    repayment_amount: "--",
+  };
+
+  const updatedCreditorNamesDetails = [...creditorNamesDetails, summaryDetails];
+  const filteredData = updatedCreditorNamesDetails.filter(
+    (item) => item.creditorName !== "Summary"
+  );
 
   return (
     <Grid
@@ -1001,12 +1079,7 @@ export default function SettlementRange() {
             />
           </Grid>
 
-          <Grid
-            container
-            item
-            xs={12}
-            sx={{ justifyContent: "space-between", mt: "1rem" }}
-          >
+          <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
             <GridItem
               key="Weekly Profit"
               title="Weekly Profit"
@@ -1017,21 +1090,6 @@ export default function SettlementRange() {
                   : "No Data"
               }
               rawValue={apiData?.weekly_profit}
-            />
-            <GridItem
-              key="Weekly Budget"
-              title="Weekly Budget"
-              tooltip="Weekly Profit Without Payments"
-              value={
-                apiData?.weekly_budget?.[allCreditorNames[parseInt(tabValue)]]
-                  ? `$ ${new Intl.NumberFormat().format(
-                      apiData?.weekly_budget?.[
-                        allCreditorNames[parseInt(tabValue)]
-                      ]
-                    )}`
-                  : "No Data"
-              }
-              rawValue={apiData?.weekly_budget}
             />
 
             <GridItem
@@ -1058,17 +1116,6 @@ export default function SettlementRange() {
               }
               rawValue={apiData?.profitability}
             />
-          </Grid>
-          <Grid
-            item
-            container
-            xs={12}
-            lg={12}
-            md={12}
-            xl={12}
-            sm={12}
-            sx={{ gap: "2%", mt: "1rem" }}
-          >
             {scores?.Scores && (
               <>
                 <GridItem
@@ -1086,6 +1133,7 @@ export default function SettlementRange() {
               </>
             )}
           </Grid>
+
           <Grid
             container
             item
@@ -1221,34 +1269,16 @@ export default function SettlementRange() {
                 </>
               )}
             {allCreditorNames[tabValue] === "Summary" && (
-              <Grid container item xs={12} sx={{ gap: "1rem", mt: "1rem" }}>
-                {financialDetails?.map((detail, index) => {
-                  return (
-                    <Grid
-                      key={index}
-                      item
-                      xs={12}
-                      sm={5.8}
-                      md={3.8}
-                      lg={2.8}
-                      container
-                      sx={commonStyles}
-                    >
-                      <Typography sx={commonTextStyles}>
-                        {detail?.label}
-                      </Typography>
-                      <Typography
-                        sx={{
-                          ...commonTextStyles,
-                          color: Colors.SKY_BLUE,
-                        }}
-                      >
-                        ${detail?.value || "--"}
-                      </Typography>
-                    </Grid>
-                  );
-                })}
-              </Grid>
+              <>
+                <Grid item xs={12} sx={{ mt: "1rem" }}>
+                  <DataSummaryTable
+                    headerData={headerData}
+                    data={filteredData}
+                    show={true}
+                    summaryDetails={summaryDetails}
+                  />
+                </Grid>
+              </>
             )}
           </Grid>
           <Grid

@@ -70,10 +70,10 @@ function CaseDetail() {
   const { AUTHORITY_TEXT } = UserListPage;
   const [loading, setLoading] = useState(false);
   const [isPaymentLoading, setIsPaymentLoading] = useState(false);
+  const [notesLoading, setNotesLoading] = useState(false);
   const [caseData, setCaseData] = useState({});
   const [paymentDetails, setPaymentDetails] = useState({});
   const [addTaskModal, setAddTaskModal] = useState("");
-  const [caseSummary, setCaseSummary] = useState([]);
   const [logs, setLogs] = useState([]);
   const { id } = useParams();
   const handleOpen = async () => {
@@ -88,7 +88,6 @@ function CaseDetail() {
       setCaseData(caseDetails?.data?.data);
       dispatch(setCaseId(id));
       dispatch(setCaseCreditorId(caseDetails?.data?.data?.creditor?._id));
-      setCaseSummary(caseDetails?.data?.data?.notes);
     } else if (
       caseDetails?.response?.status === 401 ||
       caseDetails?.response?.status === 403
@@ -137,14 +136,19 @@ function CaseDetail() {
     setAddTaskModal(e.target.value);
   };
   const handleClicked = async () => {
+    setNotesLoading(true);
     if (addTaskModal === "") {
+      setNotesLoading(false);
       showToast("The fields can't be empty, try again", "error");
     } else {
       const payload = {
         notes: addTaskModal,
       };
       const resposne = await AddNotesCase(id, payload);
-      setCaseSummary(resposne?.data?.data?.notes);
+      if (resposne?.status === 201) {
+        setNotesLoading(false);
+        GetLogsById(id);
+      }
       setAddTaskModal("");
       handleClose();
     }
@@ -513,30 +517,23 @@ function CaseDetail() {
                         }}
                         placeholder="Please enter case notes"
                       />
-                      <Button
-                        variant="contained"
-                        onClick={handleClicked}
-                        sx={{
-                          marginTop: "1em",
-                          background: Colors.SKY_BLUE,
-                          color: "white",
-                          justifyContent: "end",
-                        }}
+                      <div
+                        style={{ display: "flex", justifyContent: "flex-end" }}
                       >
-                        Submit
-                      </Button>
+                        <TextButton
+                          buttonText="Submit"
+                          height="2rem"
+                          width="8rem"
+                          onClick={handleClicked}
+                          loading={notesLoading}
+                          backgroundColor={Colors.SKY_BLUE}
+                          hoverColor={Colors.SKY_BLUE}
+                        />
+                      </div>
                     </Box>
                   </Modal>
                 </span>
-                {caseSummary
-                  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                  .map((item) => (
-                    <TimelineData
-                      value={item?.value}
-                      date={item?.createdAt}
-                      notes={true}
-                    />
-                  ))}
+
                 {logs?.length > 0 ? (
                   logs?.map((item) => (
                     <TimelineData notes={false} value={item} date={null} />
