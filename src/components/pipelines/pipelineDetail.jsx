@@ -53,6 +53,7 @@ export default function PipelineDetail() {
   const [searchText, setSearchText] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [page, setPage] = useState(0);
 
   const handleKeyPress = (e) => {
     setSearchText(e.target.value);
@@ -234,6 +235,10 @@ export default function PipelineDetail() {
 
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { AUTHORITY_TEXT } = UserListPage;
+
+  useEffect(() => {
+    setPage(0);
+  }, [pipelineType, pipelineName, leads, users, statuses, byTime, searchText]);
 
   return (
     <Grid
@@ -467,6 +472,8 @@ export default function PipelineDetail() {
           leads={leads}
           startDate={startDate}
           endDate={endDate}
+          page={page}
+          setPage={setPage}
         />
       )}
     </Grid>
