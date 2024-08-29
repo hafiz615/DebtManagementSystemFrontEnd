@@ -12,6 +12,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  CircularProgress, // Import CircularProgress
 } from "@mui/material";
 import UploadIcon from "@mui/icons-material/Upload";
 import CloseIcon from "@mui/icons-material/Close";
@@ -24,6 +25,7 @@ import ScrollbarStyles from "../../customScroll";
 import { Colors } from "../../../config/default";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { truncateText } from "../../../common";
+import CircularProgressWithLabel from "./circularLabel";
 
 const FileUploadComponent = ({
   files,
@@ -32,6 +34,9 @@ const FileUploadComponent = ({
   setSelectedFiles,
   setInputKey,
   inputKey,
+  progress,
+  setProgress, // Assuming you are using this for progress indicator
+  loading, // Pass loading as a prop
 }) => {
   const [selectedFileForViewing, setSelectedFileForViewing] = useState(null);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
@@ -141,142 +146,164 @@ const FileUploadComponent = ({
     "(min-width:290px) and (max-width:1020px)"
   );
   const truncateValue = smallToMediumScreen ? 20 : 70;
+
   return (
     <>
-      <Grid container>
-        <Typography sx={styles.headerText}>Documents</Typography>
-      </Grid>
+      {loading ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "55vh",
+          }}
+        >
+          <CircularProgressWithLabel
+            variant="determinate"
+            value={progress}
+            progress={progress}
+            setProgress={setProgress}
+          />
+        </Box>
+      ) : (
+        <>
+          <Grid container>
+            <Typography sx={styles.headerText}>Documents</Typography>
+          </Grid>
 
-      <Grid container item xs={10} md={12} lg={5.5} sx={styles.uploadContainer}>
-        <Typography sx={styles.headerText}>Upload Folder or File</Typography>
-
-        <Box sx={styles.uploadBox}>
           <Grid
             container
             item
-            xs={12}
-            sx={styles.dropzone}
-            {...getRootPropsUpload()}
-            key={inputKey}
+            xs={10}
+            md={12}
+            lg={5.5}
+            sx={styles.uploadContainer}
           >
-            <input
-              {...getInputPropsUpload()}
-              type="file"
-              webkitdirectory=""
-              directory=""
-              multiple // Allow selecting multiple files/folders
-              style={{ display: "none" }} // Hide the input element
-              id="file-upload"
-            />
-            <label htmlFor="file-upload">
-              <UploadIcon sx={styles.uploadIcon} />
-              <Typography sx={styles.uploadText}>
-                Click or Drag to Upload
-              </Typography>
-            </label>
+            <Typography sx={styles.headerText}>
+              Upload Folder or File
+            </Typography>
+
+            <Box sx={styles.uploadBox}>
+              <Grid
+                container
+                item
+                xs={12}
+                sx={styles.dropzone}
+                {...getRootPropsUpload()}
+                key={inputKey}
+              >
+                <input
+                  {...getInputPropsUpload()}
+                  type="file"
+                  webkitdirectory=""
+                  directory=""
+                  multiple // Allow selecting multiple files/folders
+                  style={{ display: "none" }} // Hide the input element
+                  id="file-upload"
+                />
+                <label htmlFor="file-upload">
+                  <UploadIcon sx={styles.uploadIcon} />
+                  <Typography sx={styles.uploadText}>
+                    Click or Drag to Upload
+                  </Typography>
+                </label>
+              </Grid>
+            </Box>
           </Grid>
-        </Box>
-      </Grid>
 
-      <Grid item sx={{ marginTop: "1rem" }}>
-        <Typography sx={styles.headerText}>List of Documents</Typography>
-        <Paper
-          sx={{
-            borderRadius: "10px",
-            width: smallScreen ? "80%" : { xs: "65vw", md: "90%", lg: "100%" },
-          }}
-        >
-          <TableContainer
-            component={Paper}
-            sx={{
-              marginTop: "1rem",
-              height: "50vh",
-              overflow: "auto",
-              ...ScrollbarStyles,
-            }}
-          >
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={styles.selectColumn}>
-                    <Typography sx={styles.tableHeader}>Select</Typography>
-                  </TableCell>
-                  {/* <TableCell sx={styles.titleColumn}>
-                    <Typography sx={styles.tableHeader}>Title</Typography>
-                  </TableCell> */}
-                  <TableCell sx={styles.typeColumn}>
-                    <Typography sx={styles.tableHeader}>Type</Typography>
-                  </TableCell>
-                  <TableCell sx={styles.pathColumn}>
-                    <Typography sx={styles.tableHeader}>Path</Typography>
-                  </TableCell>
-                  <TableCell sx={styles.actionsColumn}>
-                    <Typography sx={styles.tableHeader}>Actions</Typography>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {files?.map((file, index) => (
-                  <TableRow key={index}>
-                    <TableCell sx={styles.checkboxCell}>
-                      <Checkbox
-                        checked={selectedFiles?.includes(file)}
-                        onChange={(e) =>
-                          handleCheckboxChange(file, e.target.checked)
-                        }
-                      />
-                    </TableCell>
-                    {/* <TableCell sx={styles.pathCell}>
-                      <Typography sx={styles.pathText} title={file?.name}>
-                        {truncateText(file?.name, truncateValue)}
-                      </Typography>
-                    </TableCell> */}
+          <Grid item sx={{ marginTop: "1rem" }}>
+            <Typography sx={styles.headerText}>List of Documents</Typography>
+            <Paper
+              sx={{
+                borderRadius: "10px",
+                width: smallScreen
+                  ? "80%"
+                  : { xs: "65vw", md: "90%", lg: "100%" },
+              }}
+            >
+              <TableContainer
+                component={Paper}
+                sx={{
+                  marginTop: "1rem",
+                  height: "50vh",
+                  overflow: "auto",
+                  ...ScrollbarStyles,
+                }}
+              >
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={styles.selectColumn}>
+                        <Typography sx={styles.tableHeader}>Select</Typography>
+                      </TableCell>
+                      <TableCell sx={styles.typeColumn}>
+                        <Typography sx={styles.tableHeader}>Type</Typography>
+                      </TableCell>
+                      <TableCell sx={styles.pathColumn}>
+                        <Typography sx={styles.tableHeader}>Path</Typography>
+                      </TableCell>
+                      <TableCell sx={styles.actionsColumn}>
+                        <Typography sx={styles.tableHeader}>Actions</Typography>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {files?.map((file, index) => (
+                      <TableRow key={index}>
+                        <TableCell sx={styles.checkboxCell}>
+                          <Checkbox
+                            checked={selectedFiles?.includes(file)}
+                            onChange={(e) =>
+                              handleCheckboxChange(file, e.target.checked)
+                            }
+                          />
+                        </TableCell>
+                        <TableCell sx={styles.pathCell}>
+                          <Typography sx={styles.pathText} title={file?.type}>
+                            {truncateText(file?.type, truncateValue)}
+                          </Typography>
+                        </TableCell>
 
-                    <TableCell sx={styles.pathCell}>
-                      <Typography sx={styles.pathText} title={file?.type}>
-                        {truncateText(file?.type, truncateValue)}
-                      </Typography>
-                    </TableCell>
-
-                    <TableCell sx={styles.pathDataCell}>
-                      <Typography sx={styles.pathText} title={file?.path}>
-                        {truncateText(file?.path, truncateValue)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Box sx={styles.actionIcons}>
-                        <VisibilityIcon
-                          sx={{
-                            fontSize: "1.2rem",
-                            cursor: "pointer",
-                            color: Colors.DARK_GRAY,
-                          }}
-                          onClick={() => handleViewFile(file?.file)}
-                        />
-                        <AlertDialog
-                          initialFileName={file?.name}
-                          handleEditFileName={(newName) =>
-                            handleEditFileName(index, newName)
-                          }
-                        />
-                        <CloseIcon
-                          onClick={() => handleDeleteFile(index)}
-                          sx={{
-                            fontSize: "1.2rem",
-
-                            cursor: "pointer",
-                            color: Colors.ORANGE_COLOR,
-                          }}
-                        />
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Paper>
-      </Grid>
+                        <TableCell sx={styles.pathDataCell}>
+                          <Typography sx={styles.pathText} title={file?.path}>
+                            {truncateText(file?.path, truncateValue)}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Box sx={styles.actionIcons}>
+                            <VisibilityIcon
+                              sx={{
+                                fontSize: "1.2rem",
+                                cursor: "pointer",
+                                color: Colors.DARK_GRAY,
+                              }}
+                              onClick={() => handleViewFile(file?.file)}
+                            />
+                            <AlertDialog
+                              initialFileName={file?.name}
+                              handleEditFileName={(newName) =>
+                                handleEditFileName(index, newName)
+                              }
+                            />
+                            <CloseIcon
+                              onClick={() => handleDeleteFile(index)}
+                              sx={{
+                                fontSize: "1.2rem",
+                                cursor: "pointer",
+                                color: Colors.ORANGE_COLOR,
+                              }}
+                            />
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Paper>
+          </Grid>
+        </>
+      )}
 
       {isViewerOpen && (
         <FileViewer file={selectedFileForViewing} onClose={handleCloseViewer} />

@@ -41,6 +41,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   const { showToast } = useToast();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(1);
   const [activeStep, setActiveStep] = React.useState(hide ? 1 : 0);
   const [skipped, setSkipped] = React.useState(new Set());
   const [completedSteps, setCompletedSteps] = useState(new Set());
@@ -480,6 +481,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
 
   const handleNext = async () => {
     try {
+      setProgress(1);
       setLoading(true);
       window.scrollTo(0, 0);
       if (activeStep === 0) {
@@ -495,7 +497,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
             })
           : [];
         if (files) {
-          const uploadFile = await UploadFiles(files);
+          const uploadFile = await UploadFiles(files, setProgress);
           if (uploadFile?.status === 200) {
             setUrl(uploadFile?.data?.data);
           }
@@ -503,6 +505,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
 
         handleExtractedData(extractedDataMCAs);
         setActiveStep(activeStep + 1);
+        setProgress(1);
       } else if (activeStep === 1) {
         const isEmpty = (obj) => {
           return Object.values(obj)?.every(
@@ -825,6 +828,9 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
                 setSelectedFiles={setSelectedFiles}
                 setInputKey={setInputKey}
                 inputKey={inputKey}
+                loading={loading}
+                progress={progress}
+                setProgress={setProgress}
               />
             </>
           ) : activeStep === 1 ? (
