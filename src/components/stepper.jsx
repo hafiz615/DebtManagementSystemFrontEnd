@@ -481,14 +481,22 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
 
   const handleNext = async () => {
     try {
-      setProgress(1);
-      setLoading(true);
       window.scrollTo(0, 0);
       if (activeStep === 0) {
+        const calculateTime = selectedFiles && selectedFiles?.length * 3.1 + 7;
+        !loading && setProgress(1); // Reset progress
+        setLoading(true);
+        const timer = setInterval(() => {
+          setProgress((prevProgress) =>
+            prevProgress >= 100 ? 100 : prevProgress + 100 / calculateTime
+          );
+        }, 1000);
         const extractedDataMCAs = selectedFiles
           ? await ExtractContractData(selectedFiles).then((res) => {
               if (isEmpty(res)) {
                 showToast("Could not extract data from files", "error");
+                setProgress(101);
+                clearInterval(timer);
                 setActiveStep(activeStep + 1);
               } else {
                 setExtractedData(res);
@@ -496,6 +504,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               }
             })
           : [];
+
         if (files) {
           const uploadFile = await UploadFiles(files, setProgress);
           if (uploadFile?.status === 200) {
@@ -505,7 +514,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
 
         handleExtractedData(extractedDataMCAs);
         setActiveStep(activeStep + 1);
-        setProgress(1);
       } else if (activeStep === 1) {
         const isEmpty = (obj) => {
           return Object.values(obj)?.every(

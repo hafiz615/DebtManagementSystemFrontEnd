@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { Colors } from "../../../config/default";
 
-function CircularProgressWithLabel(props) {
+export default function CircularProgressWithLabel(props) {
   const { value, size, labelSize, color, backgroundColor } = props;
 
   return (
@@ -15,7 +15,7 @@ function CircularProgressWithLabel(props) {
         display: "inline-flex",
         width: size,
         height: size,
-        backgroundColor: backgroundColor || "transparent", // Set background color
+        backgroundColor: backgroundColor || "transparent",
         borderRadius: "50%",
       }}
     >
@@ -24,7 +24,7 @@ function CircularProgressWithLabel(props) {
         value={value}
         size={size}
         sx={{
-          color: color || Colors.SKY_BLUE, // Set inside color
+          color: color || Colors.SKY_BLUE,
           position: "absolute",
           left: 0,
           top: 0,
@@ -47,7 +47,7 @@ function CircularProgressWithLabel(props) {
           component="div"
           sx={{ color: "text.secondary", fontSize: labelSize }}
         >
-          {value < 99 ? `${Math.round(value)}%` : "Loading..."}
+          {`${Math.round(value)}%`}
         </Typography>
       </Box>
     </Box>
@@ -69,25 +69,44 @@ CircularProgressWithLabel.defaultProps = {
   backgroundColor: "transparent",
 };
 
-export default function CircularWithValueLabel({ progress, setProgress }) {
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress((prevProgress) =>
-        prevProgress >= 99 ? 99 : prevProgress + 2
-      );
-    }, 800);
-    return () => {
-      clearInterval(timer);
-    };
-  }, [setProgress]);
+// export default function CircularWithValueLabel({ progress, setProgress }) {
+//   const totalDuration = 50000; // 50 seconds in milliseconds
+//   const intervalDuration = 800; // Interval for progress update in milliseconds
+//   const incrementPerInterval = 100 / (totalDuration / intervalDuration); // Calculate increment per interval
 
-  return (
-    <CircularProgressWithLabel
-      value={progress}
-      size={140}
-      labelSize="1.5rem"
-      color={Colors.SKY_BLUE} // Customize color here
-      backgroundColor="#f5f5f5" // Customize background color here
-    />
-  );
-}
+//   React.useEffect(() => {
+//     const timer = setInterval(() => {
+//       setProgress((prevProgress) => {
+//         if (prevProgress >= 100) {
+//           clearInterval(timer);
+//           return 100;
+//         }
+//         return Math.min(prevProgress + incrementPerInterval, 100);
+//       });
+//     }, intervalDuration);
+
+//     const timeout = setTimeout(() => {
+//       setProgress((prevProgress) => {
+//         if (prevProgress <= 100) {
+//           return 100; // Stop incrementing and show "Loading..." message
+//         }
+//         return prevProgress;
+//       });
+//     }, totalDuration);
+
+//     return () => {
+//       clearInterval(timer);
+//       clearTimeout(timeout);
+//     };
+//   }, [setProgress]);
+
+//   return (
+//     <CircularProgressWithLabel
+//       value={progress}
+//       size={140}
+//       labelSize="1.5rem"
+//       color={Colors.SKY_BLUE} // Customize color here
+//       backgroundColor="#f5f5f5" // Customize background color here
+//     />
+//   );
+// }

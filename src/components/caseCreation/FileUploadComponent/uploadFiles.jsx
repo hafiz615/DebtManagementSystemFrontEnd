@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import {
   Grid,
@@ -26,6 +26,8 @@ import { Colors } from "../../../config/default";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { truncateText } from "../../../common";
 import CircularProgressWithLabel from "./circularLabel";
+import { isEmpty } from "lodash";
+import { fontWeight } from "@mui/system";
 
 const FileUploadComponent = ({
   files,
@@ -146,10 +148,19 @@ const FileUploadComponent = ({
     "(min-width:290px) and (max-width:1020px)"
   );
   const truncateValue = smallToMediumScreen ? 20 : 70;
+  const [dots, setDots] = useState("");
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDots((prevDots) => (prevDots.length < 3 ? prevDots + "." : ""));
+    }, 500); // Change dots every 500ms
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <>
-      {loading ? (
+      {loading && !isEmpty(selectedFiles) && progress < 100 ? (
         <Box
           sx={{
             display: "flex",
@@ -159,12 +170,28 @@ const FileUploadComponent = ({
           }}
         >
           <CircularProgressWithLabel
-            variant="determinate"
             value={progress}
-            progress={progress}
-            setProgress={setProgress}
+            size={140}
+            labelSize="1.5rem"
+            color={Colors.SKY_BLUE}
+            backgroundColor="#f5f5f5"
           />
         </Box>
+      ) : loading && !isEmpty(selectedFiles) ? (
+        <div
+          style={{
+            height: "55vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "2rem",
+            color: Colors.SKY_BLUE,
+            fontWeight: "600",
+            fontFamily: "Nunito",
+          }}
+        >
+          Loading{dots}
+        </div>
       ) : (
         <>
           <Grid container>
