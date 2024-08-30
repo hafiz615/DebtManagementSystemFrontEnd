@@ -18,6 +18,7 @@ export default function SettlementPayment({
   caseId,
   handleClose,
   remainingAmount,
+  commissionRange,
 }) {
   const [selectedField, setSelectedField] = useState("Minimum");
 
@@ -71,6 +72,11 @@ export default function SettlementPayment({
             selectedField === "Minimum"
               ? weeksTillPaid?.min
               : weeksTillPaid?.max
+          }
+          commissionRange={
+            selectedField === "Minimum"
+              ? commissionRange?.min
+              : commissionRange?.max
           }
           remainingAmount={remainingAmount}
           closePopup={handleClose}

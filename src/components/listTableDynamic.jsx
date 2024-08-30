@@ -28,6 +28,10 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     paddingLeft: "1rem",
     fontFamily: "Nunito",
     borderTop: "1px solid #EAEBEB",
+    position: "sticky",
+    top: 0,
+    backgroundColor: Colors.WHITE,
+    zIndex: theme.zIndex.appBar,
   },
   [`&.${tableCellClasses.body}`]: {
     color: Colors.DARK_GRAY,
@@ -78,6 +82,7 @@ export default function ListTableDynamic({
   getSettings,
   loading,
   setLoading,
+  show,
 }) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:900px)");
   const settings = useSelector(
@@ -101,7 +106,8 @@ export default function ListTableDynamic({
         backgroundColor: Colors.WHITE,
         borderRadius: "10px ",
         width: "100%",
-        height: "55vh",
+        height: show ? "35vh" : "55vh",
+        overflowY: !show ? "auto" : "visible",
       }}
     >
       <div
@@ -111,7 +117,13 @@ export default function ListTableDynamic({
           height: "100%",
         }}
       >
-        <TableContainer style={{ flexGrow: 1 }}>
+        <TableContainer
+          style={{
+            flexGrow: 1,
+            overflowY: !show ? "auto" : "visible",
+            maxHeight: !show ? "calc(100% - 48px)" : "none",
+          }}
+        >
           <Table aria-label="customized table">
             <TableHead sx={{ fontFamily: "Nunito" }}>
               <TableRow sx={{ fontFamily: "Nunito" }}>
@@ -262,7 +274,7 @@ export default function ListTableDynamic({
         </TableContainer>
 
         <TablePagination
-          rowsPerPageOptions={[5]}
+          rowsPerPageOptions={[5, 10, 30]}
           component="div"
           count={data?.length || 0}
           rowsPerPage={rowsPerPage}
@@ -271,7 +283,7 @@ export default function ListTableDynamic({
           onRowsPerPageChange={handleChangeRowsPerPage}
           style={{
             alignSelf: smallScreen ? "center" : "flex-end",
-            marginBottom: ".5rem",
+            minHeight: "5rem",
             width: smallScreen ? "70%" : "auto",
           }}
         />

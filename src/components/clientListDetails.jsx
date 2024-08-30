@@ -34,8 +34,8 @@ export default function ClientListDetails() {
   const [totalData, setTotalData] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [caseHistory, setCaseHistory] = useState([]);
-  const totalPages = Math.ceil(totalData / 5);
-  const [limit, setLimit] = useState(5);
+  const [paginationRows, setPaginationRows] = useState("5");
+  const totalPages = Math.ceil(totalData / paginationRows);
   const [tableLoading, setTableLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchActive, setSearchActive] = useState(false);
@@ -182,10 +182,11 @@ export default function ClientListDetails() {
     };
     let res;
     let page = currentPage;
+    let limit = paginationRows;
     if (userRole === "client") {
-      res = await GetClientById(id, search, filter, limit, page, payload);
+      res = await GetClientById(id, search, filter, page, limit, payload);
     } else {
-      res = await GetCreditorById(id, search, filter, limit, page, payload);
+      res = await GetCreditorById(id, search, filter, page, limit, payload);
     }
     if (res?.status === 200) {
       setCaseHistory(res?.data?.data?.caseHistory);
@@ -206,17 +207,17 @@ export default function ClientListDetails() {
       text: "",
       filters: {},
     };
-    setLimit(5);
 
     let getClientData;
     let page = currentPage;
+    let limit = paginationRows;
     if (userRole === "client") {
       getClientData = await GetClientById(
         id,
         search,
         filter,
-        limit,
         page,
+        limit,
         payload
       );
     } else {
@@ -224,8 +225,8 @@ export default function ClientListDetails() {
         id,
         search,
         filter,
-        limit,
         page,
+        limit,
         payload
       );
     }
@@ -390,6 +391,10 @@ export default function ClientListDetails() {
       { label: "Account Status", value: dataUser?.status }
     );
   }
+  useEffect(() => {
+    setCurrentPage(1);
+    GetClientDetails("", "");
+  }, [paginationRows]);
   return (
     <Grid
       container
@@ -639,6 +644,8 @@ export default function ClientListDetails() {
               totalPages={totalPages}
               currentPage={currentPage}
               setCurrentPage={setCurrentPage}
+              paginationRows={paginationRows}
+              setPaginationRows={setPaginationRows}
             />
           </Grid>
           <Menu

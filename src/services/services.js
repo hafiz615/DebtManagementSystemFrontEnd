@@ -74,11 +74,11 @@ export const SignIn = async (payload) => {
   }
 };
 
-export const GetAllUsers = async (page, search, filter, payload) => {
+export const GetAllUsers = async (page, limit, search, filter, payload) => {
   try {
     return await axios.post(
       BASE_URL +
-        `/v1/user/getAllUsers?page=${page}&limit=5&search=${search}&filter=${filter}`,
+        `/v1/user/getAllUsers?page=${page}&limit=${limit}&search=${search}&filter=${filter}`,
       payload,
       setHeaders()
     );
@@ -313,8 +313,8 @@ export const GetClientById = async (
   id,
   search,
   filter,
-  limit,
   pages,
+  limit,
   payload
 ) => {
   try {
@@ -429,6 +429,7 @@ export const UpdateCreditor = async (id, payload, type) => {
 export const GetHomePayments = async (
   count,
   page,
+  limit,
   arrayName,
   search,
   filters,
@@ -437,7 +438,7 @@ export const GetHomePayments = async (
   try {
     return await axios.post(
       BASE_URL +
-        `/v1/payment/getHomePayments?days=${count}&page=${page}&limit=5&arrayName=${arrayName}&search=${search}&filters=${filters}`,
+        `/v1/payment/getHomePayments?days=${count}&page=${page}&limit=${limit}&arrayName=${arrayName}&search=${search}&filters=${filters}`,
       payload,
       setHeaders()
     );
@@ -505,8 +506,8 @@ export const GetCreditorById = async (
   id,
   search,
   filter,
-  limit,
   pages,
+  limit,
   payload
 ) => {
   try {
@@ -1071,6 +1072,41 @@ export const UpdateCommission = async (payload, id, status) => {
       BASE_URL +
         `/v1/case/getScoresSettlementByCommPercentage/${id}?all=${status}`,
       payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetWeeklyAndTotalCommission = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/case/getWeeklyAndTotalCommission/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const SendSettlementEmail = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/case/sendSettlementEmail`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetLogs = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/case/caseHistory/${id}`,
       setHeaders()
     );
   } catch (error) {

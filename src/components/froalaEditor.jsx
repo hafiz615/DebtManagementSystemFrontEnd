@@ -24,6 +24,7 @@ import {
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import { ArrowRight, ExpandMore } from "@mui/icons-material";
+import Dropdown from "./dropdown";
 
 const StyledInput = styled.input`
   font-family: "Nunito";
@@ -66,7 +67,6 @@ export default function FroalaEditor({
   });
 
   const [anchorEl, setAnchorEl] = useState(null);
-  const [anchorElNew, setAnchorElNew] = useState(null);
   const [subMenuAnchorEl, setSubMenuAnchorEl] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [allEvents, setAllEvents] = useState([]);
@@ -151,17 +151,28 @@ export default function FroalaEditor({
   const handleMenuClick = (action, selectedCategory) => {
     setSubMenuAnchorEl(null);
     setAnchorEl(null);
-    const selectedVariable = action;
-    if (selectedVariable) {
-      const newContent =
-        froalaEditor + `{{${selectedCategory}.${selectedVariable}}}`;
-      setFroalaEditor(newContent);
+    if (action) {
+      const newContent = `{{${selectedCategory}.${action}}}`;
+      if (templateType === "email") {
+        setFroalaEditor((prevContent) => {
+          if (prevContent.endsWith("</p>")) {
+            return prevContent.replace(/<\/p>$/, newContent + "</p>");
+          } else {
+            return prevContent + newContent;
+          }
+        });
+      } else {
+        setSmsTemplate((prev) => ({
+          ...prev,
+          content: smsTemplate.content + newContent,
+        }));
+        setFroalaEditor((prev) => prev + newContent);
+      }
     }
   };
 
   const handleEventChange = (event) => {
-    setAnchorElNew(null);
-    const selectedEvent = event.currentTarget.getAttribute("data-value");
+    const selectedEvent = event;
     if (templateType === "email") {
       setEmailTemplate((prev) => ({
         ...prev,
@@ -245,6 +256,15 @@ export default function FroalaEditor({
     return !field.trim();
   };
 
+  const allExistingEvents =
+    allEvents &&
+    allEvents?.map((item) => ({
+      label: item?.label
+        ? item.label.charAt(0).toUpperCase() + item.label.slice(1)
+        : "",
+      value: item?.value,
+    }));
+
   const isSaveDisabled =
     templateType === "email"
       ? isFieldEmpty(emailTemplate?.subject) ||
@@ -277,6 +297,18 @@ export default function FroalaEditor({
     fontFamily: "Nunito",
     padding: "0px 10px",
     width: "98%",
+  };
+
+  const smsTemplateStyling = {
+    backgroundColor: Colors.BG_LIGHT_GRAY,
+    border: "none",
+    outline: "none",
+    minWidth: "100%",
+    maxWidth: "100%",
+    maxHeight: "40vh",
+    padding: "1em",
+    fontFamily: "Nunito",
+    borderRadius: "5px",
   };
 
   return (
@@ -342,7 +374,7 @@ export default function FroalaEditor({
                   fontSize: FONT_SIZE_LARGE,
                 }}
               >
-                from
+                From
               </Typography>
               <StyledInput
                 type="text"
@@ -430,43 +462,39 @@ export default function FroalaEditor({
           </div>
         </Grid>
         <Grid item xs={6}>
-          <div style={divStyling} onClick={(e) => setAnchorElNew(e.target)}>
-            <span>Select Events</span>
-            <span style={{ marginTop: "5px" }}>
-              <ExpandMore />
-            </span>
-          </div>
-          <Menu
-            anchorEl={anchorElNew}
-            open={Boolean(anchorElNew)}
-            onClose={() => setAnchorElNew(null)}
-            PaperProps={{
-              sx: {
-                maxHeight: 300,
-                overflowY: "auto",
-              },
-            }}
-          >
-            {allEvents?.map((item) => (
-              <MenuItem
-                key={item?.label}
-                data-value={item?.value}
-                onClick={(event) => handleEventChange(event)}
-                sx={fontStyling}
-              >
-                {item?.label.charAt(0).toUpperCase() + item?.label.slice(1)}
-              </MenuItem>
-            ))}
-          </Menu>
+          <Dropdown
+            menuWidth="16rem"
+            menuItems={allExistingEvents}
+            height="2.5rem"
+            placeholder="Select Events"
+            backgroundColor={Colors.BG_LIGHT_GRAY}
+            hoverColor={Colors.BG_LIGHT_GRAY}
+            width="100%"
+            selectedValue={
+              templateType === "email" ? emailTemplate.event : smsTemplate.event
+            }
+            setSelectedValue={handleEventChange}
+          />
         </Grid>
       </Grid>
 
-      <FroalaEditorComponent
-        tag="textarea"
-        model={froalaEditor}
-        onModelChange={handleChange}
-        ref={editorRef}
-      />
+      {templateType === "email" ? (
+        <FroalaEditorComponent
+          tag="textarea"
+          model={froalaEditor}
+          onModelChange={handleChange}
+          ref={editorRef}
+        />
+      ) : (
+        <textarea
+          placeholder="Type something"
+          rows="6"
+          style={smsTemplateStyling}
+          value={froalaEditor}
+          onChange={(e) => handleChange(e.target.value)}
+        />
+      )}
+
       <Box
         sx={{ display: "flex", justifyContent: "flex-end", marginTop: "1rem" }}
       >

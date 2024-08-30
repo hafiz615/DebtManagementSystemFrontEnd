@@ -70,7 +70,6 @@ export default function SettingsScreen() {
     );
     setNotificationTemplates(allSettings?.data?.data?.notificationTemplates);
     setCustomFields(allSettings?.data?.data?.customFields);
-
     setLoading(false);
   };
 

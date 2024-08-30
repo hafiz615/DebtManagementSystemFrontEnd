@@ -16,7 +16,7 @@ import { useToast } from "../../toast/toastContext";
 import Prompt from "../prompt";
 import ScrollbarStyles from "./../customScroll";
 
-export default function TaskAccordion({ caseData }) {
+export default function TaskAccordion({ GetLogsById, caseData }) {
   const navigate = useNavigate();
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -30,6 +30,7 @@ export default function TaskAccordion({ caseData }) {
     setLoading(true);
     const tasksResult = await GetAllTasks(caseData?._id);
     if (tasksResult?.status === 200) {
+      GetLogsById(caseData?._id);
       setTasksList(tasksResult?.data?.data || []);
     } else if (
       tasksResult?.response?.status === 401 ||

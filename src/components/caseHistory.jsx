@@ -23,6 +23,8 @@ function CaseHistory({
   setCurrentPage,
   open,
   handleClick,
+  paginationRows,
+  setPaginationRows,
 }) {
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
@@ -151,6 +153,9 @@ function CaseHistory({
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
           loading={tableLoading}
+          defaultHeight="55vh"
+          paginationRows={paginationRows}
+          setPaginationRows={setPaginationRows}
         />
       </Grid>
     </>

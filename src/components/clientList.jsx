@@ -34,8 +34,8 @@ export default function ClientList() {
   const [searchText, setSearchText] = useState("");
   const [totalData, setTotalData] = useState();
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(totalData / 5);
-  const [limit, setLimit] = useState(5);
+  const [paginationRows, setPaginationRows] = useState("5");
+  const totalPages = Math.ceil(totalData / paginationRows);
   const [searchActive, setSearchActive] = useState(false);
   const [filterActive, setFilterActive] = useState(false);
   const [totalDebtMin, setTotalDebtMin] = useState("");
@@ -105,7 +105,6 @@ export default function ClientList() {
   const GetClients = async (search, filter) => {
     setLoading(true);
     let payload = {};
-    setLimit(5);
     const filterObj = createFilterObject(
       totalDebtMin,
       totalDebtMax,
@@ -119,6 +118,7 @@ export default function ClientList() {
       filter: filter ? filterObj : {},
     };
     let page = currentPage;
+    let limit = paginationRows;
     const getClients = await GetAllClients({
       search,
       filter,
@@ -253,6 +253,10 @@ export default function ClientList() {
     localStorage.setItem("route", "list-details");
     navigate(`/client/list-details/${id}`);
   };
+  useEffect(() => {
+    setCurrentPage(1);
+    GetClients("", "");
+  }, [paginationRows]);
   return (
     <Grid
       container
@@ -576,6 +580,9 @@ export default function ClientList() {
           setCurrentPage={setCurrentPage}
           totalPages={totalPages}
           loading={loading}
+          setPaginationRows={setPaginationRows}
+          defaultHeight="55vh"
+          paginationRows={paginationRows}
         />
       </Grid>
     </Grid>

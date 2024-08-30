@@ -31,6 +31,7 @@ import {
 } from "../constants/appConstants";
 import { useSelector } from "react-redux";
 import { isEmpty } from "lodash";
+import Dropdown from "./dropdown";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -39,6 +40,10 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     padding: "16px 1rem",
     fontFamily: "Nunito",
     borderTop: "1px solid #EAEBEB",
+    position: "sticky",
+    top: 0,
+    backgroundColor: Colors.WHITE,
+    zIndex: theme.zIndex.appBar,
   },
   [`&.${tableCellClasses.body}`]: {
     color: Colors.DARK_GRAY,
@@ -85,6 +90,9 @@ export default function ListTable({
   getHomeData,
   loading,
   onPaymentRowClick,
+  defaultHeight,
+  setPaginationRows,
+  paginationRows,
 }) {
   const navigate = useNavigate();
   const generalPermissions = useSelector(
@@ -133,6 +141,11 @@ export default function ListTable({
       );
     }
   };
+  const rowsOptions = [
+    { label: "5", value: "5" },
+    { label: "15", value: "15" },
+    { label: "30", value: "30" },
+  ];
 
   return (
     <Paper
@@ -140,7 +153,7 @@ export default function ListTable({
         backgroundColor: Colors.WHITE,
         borderRadius: "10px",
         width: { xs: "65vw", sm: "100%" },
-        height: accordionHeight,
+        height: defaultHeight || accordionHeight,
       }}
     >
       <div
@@ -150,7 +163,7 @@ export default function ListTable({
           height: "100%",
         }}
       >
-        <TableContainer style={{ flexGrow: 1 }}>
+        <TableContainer style={{ flexGrow: 1, overflowY: "auto" }}>
           <Table aria-label="customized table">
             <TableHead>
               <TableRow>
@@ -226,12 +239,12 @@ export default function ListTable({
               </TableBody>
             ) : (
               <TableBody>
-                {(rowsPerPage > 0
-                  ? data?.slice(
+                {(apiPagination
+                  ? data
+                  : data?.slice(
                       page * rowsPerPage,
                       page * rowsPerPage + rowsPerPage
                     )
-                  : data
                 )?.map((row) => (
                   <StyledTableRow
                     key={row?.id}
@@ -261,7 +274,9 @@ export default function ListTable({
                           }}
                           key={i}
                         >
-                          {value}
+                          {typeof value === "object" && value !== null
+                            ? JSON.stringify(value) // Handle object rendering if needed
+                            : value}
                         </StyledTableCell>
                       ))}
                     {requiredIcons && (
@@ -365,8 +380,18 @@ export default function ListTable({
                 fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
               }}
             >
-              Rows Per Page: {rowsPerPage}
+              Rows Per Page:
             </Typography>
+            <Dropdown
+              menuWidth="3rem"
+              menuItems={rowsOptions}
+              placeholder="Type"
+              backgroundColor={Colors.BG_LIGHT_GRAY}
+              hoverColor={Colors.BG_LIGHT_GRAY}
+              width="3rem"
+              selectedValue={paginationRows}
+              setSelectedValue={setPaginationRows}
+            />
             <Typography
               sx={{
                 fontFamily: "Nunito",
@@ -397,7 +422,7 @@ export default function ListTable({
           </div>
         ) : (
           <TablePagination
-            rowsPerPageOptions={[5]}
+            rowsPerPageOptions={[5, 10, 30]}
             component="div"
             count={data?.length || 0}
             rowsPerPage={rowsPerPage}
@@ -406,7 +431,7 @@ export default function ListTable({
             onRowsPerPageChange={handleChangeRowsPerPage}
             style={{
               alignSelf: "flex-end",
-              marginBottom: "1rem",
+              minHeight: "3rem",
             }}
           />
         )}

@@ -6,7 +6,7 @@ import PaymentsTextFields from "../caseTextField";
 import MuiPhoneTextField from "../muiPhoneText";
 import AmountTextField from "../amountTextField";
 
-import { phoneNumberFormat, swapKeysAndValues } from "../../common";
+import { formatPhoneNumber, swapKeysAndValues } from "../../common";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import PaymentFields from "../caseCreationFields/paymentFields";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -21,6 +21,7 @@ export default function CreditorFields({
   caseIndex,
   digits,
   setDigits,
+  errors,
 }) {
   const accountMenuList =
     debtorCaseData &&
@@ -320,7 +321,7 @@ export default function CreditorFields({
                     e.target.value
                   )
                 }
-                error=""
+                error={errors?.emailValid}
               />
               <MuiPhoneTextField
                 label="Phone #*"
@@ -329,11 +330,11 @@ export default function CreditorFields({
                   handleCaseDataChange(
                     caseIndex,
                     "creditor.basicInformation.phone",
-                    phoneNumberFormat(e)
+                    formatPhoneNumber(e)
                   )
                 }
                 onKeyDown={handleNumberInputKeyDown}
-                error=""
+                error={errors?.basicPhone}
               />
             </Grid>
             <Typography
