@@ -37,8 +37,7 @@ const FileUploadComponent = ({
   setInputKey,
   inputKey,
   progress,
-  setProgress, // Assuming you are using this for progress indicator
-  loading, // Pass loading as a prop
+  loading,
 }) => {
   const [selectedFileForViewing, setSelectedFileForViewing] = useState(null);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
@@ -160,7 +159,7 @@ const FileUploadComponent = ({
 
   return (
     <>
-      {loading && !isEmpty(selectedFiles) && progress < 100 ? (
+      {loading && !isEmpty(selectedFiles) ? (
         <Box
           sx={{
             display: "flex",
@@ -170,6 +169,7 @@ const FileUploadComponent = ({
           }}
         >
           <CircularProgressWithLabel
+            loading={loading}
             value={progress}
             size={140}
             labelSize="1.5rem"
@@ -177,21 +177,6 @@ const FileUploadComponent = ({
             backgroundColor="#f5f5f5"
           />
         </Box>
-      ) : loading && !isEmpty(selectedFiles) ? (
-        <div
-          style={{
-            height: "55vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "2rem",
-            color: Colors.SKY_BLUE,
-            fontWeight: "600",
-            fontFamily: "Nunito",
-          }}
-        >
-          Loading{dots}
-        </div>
       ) : (
         <>
           <Grid container>
