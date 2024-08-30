@@ -45,7 +45,7 @@ function DebtorDetails({
   useEffect(() => {
     const interval = setInterval(() => {
       setDots((prevDots) => (prevDots.length < 3 ? prevDots + "." : ""));
-    }, 500);
+    }, 500); // Change dots every 500ms
 
     return () => clearInterval(interval);
   }, []);
@@ -74,18 +74,20 @@ function DebtorDetails({
         />
       </Grid>
       {loading ? (
-        <Grid
-          container
-          item
-          xs={12}
-          sx={{
-            justifyContent: "center",
-            alignItems: "center",
+        <div
+          style={{
             height: "55vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: Colors.SKY_BLUE,
+            fontSize: "2rem",
+            fontWeight: "600",
+            fontFamily: "Nunito",
           }}
         >
-          <CircularProgress size={140} sx={{ color: Colors.SKY_BLUE }} />
-        </Grid>
+          Loading{dots}
+        </div>
       ) : (
         <Grid
           container

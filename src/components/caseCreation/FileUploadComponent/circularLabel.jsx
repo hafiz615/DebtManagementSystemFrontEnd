@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import { Colors } from "../../../config/default";
 
 export default function CircularProgressWithLabel(props) {
-  const { value, size, labelSize, color, backgroundColor, loading } = props;
+  const { value, size, labelSize, color, backgroundColor } = props;
 
   return (
     <Box
@@ -20,8 +20,8 @@ export default function CircularProgressWithLabel(props) {
       }}
     >
       <CircularProgress
-        variant={loading && value < 100 ? "determinate" : "indeterminate"}
-        value={loading && value < 100 ? value : 100}
+        variant="determinate"
+        value={value}
         size={size}
         sx={{
           color: color || Colors.SKY_BLUE,
@@ -47,7 +47,7 @@ export default function CircularProgressWithLabel(props) {
           component="div"
           sx={{ color: "text.secondary", fontSize: labelSize }}
         >
-          {loading && value < 100 ? `${Math.round(value)}%` : "100%"}
+          {`${Math.round(value)}%`}
         </Typography>
       </Box>
     </Box>
@@ -68,3 +68,45 @@ CircularProgressWithLabel.defaultProps = {
   color: Colors.SKY_BLUE,
   backgroundColor: "transparent",
 };
+
+// export default function CircularWithValueLabel({ progress, setProgress }) {
+//   const totalDuration = 50000; // 50 seconds in milliseconds
+//   const intervalDuration = 800; // Interval for progress update in milliseconds
+//   const incrementPerInterval = 100 / (totalDuration / intervalDuration); // Calculate increment per interval
+
+//   React.useEffect(() => {
+//     const timer = setInterval(() => {
+//       setProgress((prevProgress) => {
+//         if (prevProgress >= 100) {
+//           clearInterval(timer);
+//           return 100;
+//         }
+//         return Math.min(prevProgress + incrementPerInterval, 100);
+//       });
+//     }, intervalDuration);
+
+//     const timeout = setTimeout(() => {
+//       setProgress((prevProgress) => {
+//         if (prevProgress <= 100) {
+//           return 100; // Stop incrementing and show "Loading..." message
+//         }
+//         return prevProgress;
+//       });
+//     }, totalDuration);
+
+//     return () => {
+//       clearInterval(timer);
+//       clearTimeout(timeout);
+//     };
+//   }, [setProgress]);
+
+//   return (
+//     <CircularProgressWithLabel
+//       value={progress}
+//       size={140}
+//       labelSize="1.5rem"
+//       color={Colors.SKY_BLUE} // Customize color here
+//       backgroundColor="#f5f5f5" // Customize background color here
+//     />
+//   );
+// }
