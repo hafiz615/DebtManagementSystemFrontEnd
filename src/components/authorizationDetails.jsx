@@ -22,6 +22,7 @@ export default function AuthorizationDetails() {
   const [value, setValue] = useState(0);
   const [paginationRows, setPaginationRows] = useState("5");
   const [totalData, setTotalData] = useState();
+  const totalPages = Math.ceil(totalData / paginationRows);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchActive, setSearchActive] = useState(false);
   const [filterActive, setFilterActive] = useState(false);
@@ -205,9 +206,13 @@ export default function AuthorizationDetails() {
       filter,
       payload
     );
-    setData(result?.data?.data?.payments);
-    setTotalData(result?.data?.data?.counts[arrayName]);
-    if (result?.response?.status === 401 || result?.response?.status === 403) {
+    if (result?.status === 200) {
+      setData(result?.data?.data?.payments);
+      setTotalData(result?.data?.data?.counts[arrayName]);
+    } else if (
+      result?.response?.status === 401 ||
+      result?.response?.status === 403
+    ) {
       localStorage.clear();
       navigate("/");
     }
@@ -242,7 +247,6 @@ export default function AuthorizationDetails() {
     setCurrentPage(1);
   }, [filterActive, searchActive]);
 
-  const totalPages = Math.ceil(totalData / paginationRows);
   useEffect(() => {
     setCurrentPage(1);
     getHomeData("", "");

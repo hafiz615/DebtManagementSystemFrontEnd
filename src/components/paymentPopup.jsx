@@ -152,14 +152,15 @@ export default function PaymentPopup({
     const hasFrequencyChanged = currentFrequencies?.some(
       (freq, index) => freq !== prevFrequencies?.[index]
     );
+    const totalFrequency = currentFrequencies.reduce(
+      (acc, freq) => acc + freq,
+      0
+    );
     if (hasFrequencyChanged || hasLengthChanged) {
-      const totalFrequency = currentFrequencies.reduce((acc, freq) => {
-        return freq !== 0 ? acc + freq : acc;
-      }, 0);
       const newAmount = totalFrequency ? remaining / totalFrequency : 0;
       const updatedDataList = newDataList.map((item) => ({
         ...item,
-        amount: item.frequency !== 0 ? newAmount : 0,
+        amount: item.frequency ? newAmount : item.amount,
       }));
       setNewDataList(updatedDataList);
     }
@@ -173,19 +174,18 @@ export default function PaymentPopup({
     const hasAmountChanged = currentAmounts?.some(
       (amount, index) => amount !== prevAmounts?.[index]
     );
+    const totalAmount = currentAmounts.reduce((acc, amo) => acc + amo, 0);
     if (hasAmountChanged || hasLengthChanged) {
-      const totalAmount = currentAmounts.reduce((acc, amo) => {
-        return amo !== 0 ? acc + amo : acc;
-      }, 0);
       const newFrequency = totalAmount ? remaining / totalAmount : 0;
       const updatedDataList = newDataList.map((item) => ({
         ...item,
-        frequency: item.amount !== 0 ? Math.round(newFrequency) : 0,
+        frequency: item.amount ? Math.round(newFrequency) : item.frequency,
       }));
       setNewDataList(updatedDataList);
     }
     prevAmountsRef.current = currentAmounts;
   }, [newDataList, remaining]);
+
   return (
     <div>
       <Typography
