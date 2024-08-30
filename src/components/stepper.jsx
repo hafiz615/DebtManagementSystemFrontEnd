@@ -515,6 +515,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         handleExtractedData(extractedDataMCAs);
         setActiveStep(activeStep + 1);
       } else if (activeStep === 1) {
+        setLoading(true);
         const isEmpty = (obj) => {
           return Object.values(obj)?.every(
             (value) => value === "" || value == null
@@ -569,6 +570,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           showToast(errorMessage, "error");
         }
       } else if (activeStep === 2) {
+        setLoading(true);
         const isEmpty = (obj) => {
           return Object.values(obj)?.every(
             (value) => value === "" || value == null
@@ -599,6 +601,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           showToast(errorMessage, "error");
         }
       } else {
+        setLoading(true);
         let newSkipped = skipped;
         if (isStepSkipped(activeStep)) {
           newSkipped = new Set(newSkipped.values());
