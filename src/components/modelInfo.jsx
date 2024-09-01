@@ -91,9 +91,9 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
 
   const [errors, setErrors] = useState({
     phone: "",
+    email: "",
     ssid: "",
   });
-
   const [loading, setLoading] = useState(false);
 
   const handleInputChange = (field, value, event) => {
@@ -120,6 +120,19 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
         setErrors((prevErrors) => ({
           ...prevErrors,
           ssid: "",
+        }));
+      }
+    }
+    if (field === "email") {
+      if (!isEmailValid(value)) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          email: "Invalid email address",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          email: "",
         }));
       }
     }
@@ -310,17 +323,9 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
               placeHolderValue="Enter Valid Email"
               onChange={(e) => handleInputChange("email", e.target.value, e)}
               value={formData?.email}
+              error={errors?.email}
             />
-            {/* <CustomTextField
-              label="Phone #*"
-              type="number"
-              width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
-              placeHolderValue="Enter Phone"
-              onChange={(e) => handleInputChange("phone", e.target.value, e)}
-              error={errors?.phone}
-              value={formData?.phone}
-              onKeyDown={handleNumberInputKeyDown}
-            /> */}
+
             <Box>
               <Typography
                 sx={{
@@ -345,7 +350,9 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
                     : largeScreen
                     ? "20rem"
                     : "10rem",
-                  border: "none !important",
+                  border: errors?.phone
+                    ? "1px solid red"
+                    : "1px solid transparent",
                   "& .MuiInputBase-input": {
                     color: Colors.DIM_LIGHT_GRAY,
                     fontSize: ".8rem",

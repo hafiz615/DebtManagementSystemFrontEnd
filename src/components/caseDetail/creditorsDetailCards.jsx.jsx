@@ -28,6 +28,7 @@ import {
   creditorBusinessDetails,
   creditorPeronsalDetails,
 } from "../../constants/appConstants";
+import { useEffect } from "react";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -61,6 +62,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
+  const [searchText, setSearchText] = useState("");
+
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 2;
   const handleNext = () => {
@@ -73,6 +76,67 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
       setStartIndex(startIndex - itemsPerPage);
     }
   };
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src =
+      "https://developers.seamlesschex.com/docs/checkoutjs/sdk-min.js";
+    script.async = true;
+    script.defer = true;
+    // Define a function to initialize the PAYNOTE iframe
+    let casedataName = caseData?.creditor?.basicInformation?.fullName;
+    const parts = casedataName.split(" ");
+    const firstPart = parts[0].trim(); // "Funding Metrics"
+    const secondPart = parts[1] ? parts[1].trim() : "";
+
+    const initializePaynote = () => {
+      try {
+        const objRequestIframe = {
+          publicKey: "pk_test_01H8PVPA6Y7T7TBHPNJHYHKZ2C",
+          sandbox: true,
+          // authorizationOnly: true, // set this to true
+          displayMethod: "iframe",
+          paymentToken: "pay_tok_SPECIMEN-" + Math.random(),
+          widgetContainerSelector: "wrapper-pay-buttons",
+          saveBankDetails: true,
+          storeName: "AlphaBetaGamma",
+          checkout: {
+            totalValue: 3,
+            currency: "USD",
+            description: "Sign up to System",
+            items: [{ title: "Enrollment", price: 3 }],
+            customerEmail: `${caseData?.creditor?.basicInformation?.email}`,
+            customerFirstName: `${firstPart}`,
+            customerLastName: `${secondPart}`,
+          },
+          style: {
+            buttonClass: "btn green-btn btn-block no-overflow",
+            buttonColor: "#0091D5",
+            buttonLabelColor: "#ffffff",
+            buttonLabel: "Add Account Details",
+          },
+          onSuccess: function () {
+            console.log("Payment successful!");
+          },
+          onError: function () {
+            console.log("Error during payment!");
+          },
+        };
+        const paynoteIframe = new PAYNOTE(objRequestIframe);
+        paynoteIframe.render();
+      } catch (error) {
+        alert("Error initializing PAYNOTE: " + error.message);
+      }
+    };
+
+    // Set up script loading
+    script.onload = initializePaynote;
+    document.body.appendChild(script);
+
+    // Cleanup function to remove script
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const formatDate = (dateString) => {
@@ -106,6 +170,18 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
     marginLeft: ".3rem",
     marginTop: ".3rem",
   };
+  const filteredContacts = caseData?.creditor?.contacts?.filter((item) =>
+    item?.name?.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  useEffect(() => {
+    setStartIndex(0);
+  }, [searchText]);
+
+  const paginatedContacts = filteredContacts?.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
   return (
     <>
       <Grid
@@ -195,6 +271,9 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             </div>
           ))}
         </>
+        <span style={{ display: "flex", justifyContent: "center" }}>
+          <div className="wrapper-pay-buttons" />
+        </span>
       </Grid>
       <Grid
         item
@@ -226,13 +305,17 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             label: "Category",
             value: caseData?.creditor?.businessInformation?.businessCategory,
           },
+          {
+            label: "Account Title",
+            value: caseData?.creditor?.accountTitle,
+          },
         ]?.map((item, index) => (
           <div
             key={index}
             style={{
               display: "flex",
               justifyContent: "space-between",
-              marginBottom: index === 0 ? "8px" : "0",
+              marginBottom: "8px",
             }}
           >
             <Typography
@@ -425,6 +508,7 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
             <StyledInputBase
               placeholder="Search Contact..."
               inputProps={{ "aria-label": "search" }}
+              onChange={(e) => setSearchText(e.target.value)}
             />
           </SearchContainer>
         </Grid>
@@ -443,8 +527,9 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
               justifyContent: "space-between",
               backgroundColor: Colors.SKY_BLUE,
               color: Colors.WHITE,
-              paddingRight: ".2rem",
-              paddingLeft: ".2rem",
+              paddingRight: ".4rem",
+              paddingLeft: ".4rem",
+              borderRadius: ".4rem",
               height: "2rem",
               alignItems: "center",
             }}
@@ -468,58 +553,54 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
               ...ScrollbarStyles,
             }}
           >
-            {caseData?.creditor?.contacts
-              ?.slice(startIndex, startIndex + itemsPerPage)
-              ?.map((item, index) => (
-                <Grid
-                  item
-                  xs={12}
-                  key={index}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    backgroundColor:
-                      index % 2 === 0
-                        ? Colors.WHITE
-                        : "rgba(85, 148, 242, 0.06)",
-                    "&:hover": {
-                      backgroundColor: Colors.BG_LIGHT_GRAY,
-                    },
-                    cursor: "pointer",
-                    paddingRight: ".2rem",
-                    paddingLeft: ".2rem",
-                    height: "2rem",
-                    alignItems: "center",
-                  }}
-                >
-                  <Grid item xs={4}>
-                    <span style={cellStyle}>{item?.name || "-"}</span>
-                  </Grid>
-                  <Grid item xs={4} sx={griRelationdStyle}>
-                    <span style={cellStyle}>
-                      {item?.relationWithDebtor ||
-                        item?.relationWithCreditor ||
-                        "-"}
-                    </span>
-                  </Grid>
-                  <Grid item xs={4} sx={gridActionStyle}>
-                    <span style={cellStyle}>
-                      <Email sx={iconStyle} />
-                      <Call sx={iconStyle} />
-                      <Sms sx={iconStyle} />
-                      <MuiModels
-                        show="editCreditorContacts"
-                        caseData={caseData}
-                        item={item}
-                        GetCaseDetails={GetCaseDetails}
-                        width="70vw"
-                      />
-                    </span>
-                  </Grid>
+            {paginatedContacts?.map((item, index) => (
+              <Grid
+                item
+                xs={12}
+                key={index}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  backgroundColor:
+                    index % 2 === 0 ? Colors.WHITE : "rgba(85, 148, 242, 0.06)",
+                  "&:hover": {
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                  },
+                  cursor: "pointer",
+                  paddingRight: ".4rem",
+                  paddingLeft: ".4rem",
+                  height: "2rem",
+                  alignItems: "center",
+                }}
+              >
+                <Grid item xs={4}>
+                  <span style={cellStyle}>{item?.name || "-"}</span>
                 </Grid>
-              ))}
+                <Grid item xs={4} sx={griRelationdStyle}>
+                  <span style={cellStyle}>
+                    {item?.relationWithDebtor ||
+                      item?.relationWithCreditor ||
+                      "-"}
+                  </span>
+                </Grid>
+                <Grid item xs={4} sx={gridActionStyle}>
+                  <span style={cellStyle}>
+                    {/* <Email sx={iconStyle} />
+                    <Call sx={iconStyle} />
+                    <Sms sx={iconStyle} /> */}
+                    <MuiModels
+                      show="editCreditorContacts"
+                      caseData={caseData}
+                      item={item}
+                      GetCaseDetails={GetCaseDetails}
+                      width="70vw"
+                    />
+                  </span>
+                </Grid>
+              </Grid>
+            ))}
 
-            {caseData?.creditor?.contacts?.length > 2 && (
+            {filteredContacts?.length > itemsPerPage && (
               <div
                 style={{
                   display: "flex",
@@ -539,8 +620,7 @@ export default function CreditorsDetailCards({ caseData, GetCaseDetails }) {
                 <IconButton
                   aria-label="next"
                   disabled={
-                    startIndex + itemsPerPage >=
-                    caseData?.creditor?.contacts?.length
+                    startIndex + itemsPerPage >= filteredContacts?.length
                   }
                   onClick={handleNext}
                   color="primary"

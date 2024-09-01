@@ -91,6 +91,13 @@ export default function MuiModels({
   caseId,
   remainingAmount,
   closePopup,
+  commissionRange,
+  getFields,
+  connectPayment,
+  setConnectPayment,
+  payableAmount,
+  debtorInfo,
+  creditorInfo,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -139,7 +146,7 @@ export default function MuiModels({
             handleOpen();
           }}
           startIcon={<AddIcon />}
-          buttonText="New Custom Field"
+          buttonText={buttonText}
           backgroundColor={Colors.SKY_BLUE}
         />
       ) : show === "editField" ? (
@@ -429,7 +436,7 @@ export default function MuiModels({
             )
           }
         />
-      ) : show === "settlmentPayment" ? (
+      ) : show === "settlmentPayment" || buttonName === "settlmentPayment" ? (
         <TextButton
           buttonText="Choose Plan"
           boxShadow="none"
@@ -488,6 +495,7 @@ export default function MuiModels({
               handleClose={handleClose}
               customFieldsData={customFieldsData}
               GetCaseDetails={GetCaseDetails}
+              getFields={getFields}
             />
           ) : show === "EditCaseCustomField" ? (
             <EditCaseCustomField
@@ -525,6 +533,8 @@ export default function MuiModels({
                 handleClose={handleClose}
                 caseData={caseData}
                 GetCaseDetails={GetCaseDetails}
+                connectPayment={connectPayment}
+                setConnectPayment={setConnectPayment}
               />
             </>
           ) : show === "editStatus" ? (
@@ -635,7 +645,12 @@ export default function MuiModels({
               GetCaseDetails={GetCaseDetails}
             />
           ) : show === "sendEmail" ? (
-            <SendEmail handleClose={handleClose} />
+            <SendEmail
+              handleClose={handleClose}
+              payableAmount={payableAmount}
+              debtorInfo={debtorInfo}
+              creditorInfo={creditorInfo}
+            />
           ) : show === "uploadFile" ? (
             <UploadFilePopup
               handleClose={handleClose}
@@ -652,6 +667,7 @@ export default function MuiModels({
               weeksTillPaid={weeksTillPaid}
               caseId={caseId}
               remainingAmount={remainingAmount}
+              commissionRange={commissionRange}
             />
           ) : show === "settlmentPayment" ? (
             <SettlementPayment
@@ -661,6 +677,7 @@ export default function MuiModels({
               weeksTillPaid={weeksTillPaid}
               caseId={caseId}
               remainingAmount={remainingAmount}
+              commissionRange={commissionRange}
             />
           ) : (
             ""

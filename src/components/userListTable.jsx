@@ -21,6 +21,7 @@ import {
   FONT_SIZE_SMALL,
   FONT_SIZE_XL,
 } from "../constants/appConstants";
+import Dropdown from "./dropdown";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -34,15 +35,19 @@ const StyledTableCell = styled(TableCell)(() => ({
     fontFamily: "Nunito",
     borderTop: "1px solid #EAEBEB",
     width: "200px",
+    position: "sticky",
+    top: 0,
+    backgroundColor: Colors.WHITE,
+    zIndex: 1000,
   },
   "&.emailCell": {
-    maxWidth: 200, // Adjust as needed
+    maxWidth: 200,
     overflow: "hidden",
     whiteSpace: "nowrap",
     textOverflow: "ellipsis",
   },
   "&.addressCell": {
-    maxWidth: 200, // Adjust as needed
+    maxWidth: 200,
     overflow: "hidden",
     whiteSpace: "nowrap",
     textOverflow: "ellipsis",
@@ -90,13 +95,15 @@ export default function UserListTable({
   setCurrentPage,
   totalPages,
   loading,
+  setPaginationRows,
+  paginationRows,
 }) {
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
   );
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(paginationRows);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -115,16 +122,23 @@ export default function UserListTable({
     setPage(0);
   };
 
+  const rowsOptions = [
+    { label: "5", value: "5" },
+    { label: "15", value: "15" },
+    { label: "30", value: "30" },
+  ];
+
   return (
     <Paper
       sx={{
         backgroundColor: Colors.WHITE,
         borderRadius: "10px ",
         width: { xs: "65vw", sm: "100%" },
+        height: "55vh",
       }}
     >
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-        <TableContainer style={{ flexGrow: 1 }}>
+        <TableContainer style={{ flexGrow: 1, overflowY: "auto" }}>
           <Table aria-label="customized table">
             <TableHead sx={{ fontFamily: "Nunito" }}>
               <TableRow sx={{ fontFamily: "Nunito" }}>
@@ -144,11 +158,12 @@ export default function UserListTable({
                     {column?.headerName}
                   </StyledTableCell>
                 ))}
-                {requiredCustomFieldIcons && role === "Admin" && (
-                  <StyledTableCell align="left" sx={{ fontWeight: "700" }}>
-                    Actions
-                  </StyledTableCell>
-                )}
+                {requiredCustomFieldIcons &&
+                  (role === "Admin" || role === "Super User") && (
+                    <StyledTableCell align="left" sx={{ fontWeight: "700" }}>
+                      Actions
+                    </StyledTableCell>
+                  )}
               </TableRow>
             </TableHead>
             {loading ? (
@@ -165,13 +180,7 @@ export default function UserListTable({
               </StyledTableRow>
             ) : (
               <TableBody>
-                {(rowsPerPage > 0
-                  ? rows?.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
-                  : rows
-                ).map((row) => (
+                {rows?.map((row) => (
                   <StyledTableRow key={row.id}>
                     {columns?.map((column, colIndex) => (
                       <StyledTableCell key={colIndex}>
@@ -192,14 +201,15 @@ export default function UserListTable({
                         height: "3rem",
                       }}
                     >
-                      {requiredCustomFieldIcons && role === "Admin" && (
+                      {(requiredCustomFieldIcons && role === "Admin") ||
+                      role === "Super User" ? (
                         <BasicModal
                           modelButton="ADD USERS"
                           modalType="edit"
                           GetUsers={GetUsers}
                           id={row?.id}
                         />
-                      )}
+                      ) : null}
                       {requiredCustomFieldIcons &&
                         generalPermissions?.deleteUser && (
                           <Prompt
@@ -219,59 +229,71 @@ export default function UserListTable({
           </Table>
         </TableContainer>
         {apiPagination ? (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "center",
-              margin: "10px 0px",
-              gap: "20px",
-            }}
-          >
-            <Typography
-              sx={{
-                fontFamily: "Nunito",
-                fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+          <>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                margin: "10px 0px",
+                gap: "20px",
               }}
             >
-              Rows Per Page: 5
-            </Typography>
-            <Typography
-              sx={{
-                fontFamily: "Nunito",
-                fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
-              }}
-            >
-              {totalPages === 0 ? 0 : isNaN(totalPages) ? 0 : currentPage} of{" "}
-              {isNaN(totalPages) ? 0 : totalPages}
-            </Typography>
-            <IconButton
-              onClick={backward}
-              disabled={currentPage === 1 || currentPage === 0}
-            >
-              <ArrowBackIosNewIcon sx={{ fontSize: FONT_SIZE_XL }} />
-            </IconButton>
-            <IconButton
-              onClick={forward}
-              disabled={
-                currentPage === totalPages ||
-                totalPages === 0 ||
-                isNaN(totalPages)
-              }
-            >
-              <ArrowForwardIosIcon sx={{ fontSize: FONT_SIZE_XL }} />
-            </IconButton>
-          </div>
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+                }}
+              >
+                Rows Per Page:
+              </Typography>
+              <Dropdown
+                menuWidth="3rem"
+                menuItems={rowsOptions}
+                placeholder="Type"
+                backgroundColor={Colors.BG_LIGHT_GRAY}
+                hoverColor={Colors.BG_LIGHT_GRAY}
+                width="3rem"
+                selectedValue={paginationRows}
+                setSelectedValue={setPaginationRows}
+              />
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+                }}
+              >
+                {totalPages === 0 ? 0 : isNaN(totalPages) ? 0 : currentPage} of{" "}
+                {isNaN(totalPages) ? 0 : totalPages}
+              </Typography>
+              <IconButton
+                onClick={backward}
+                disabled={currentPage === 1 || currentPage === 0}
+              >
+                <ArrowBackIosNewIcon sx={{ fontSize: FONT_SIZE_XL }} />
+              </IconButton>
+              <IconButton
+                onClick={forward}
+                disabled={
+                  currentPage === totalPages ||
+                  totalPages === 0 ||
+                  isNaN(totalPages)
+                }
+              >
+                <ArrowForwardIosIcon sx={{ fontSize: FONT_SIZE_XL }} />
+              </IconButton>
+            </div>
+          </>
         ) : (
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
+            rowsPerPageOptions={[5, 10, 30]}
             component="div"
             count={rows?.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
-            style={{ alignSelf: "flex-end" }}
+            style={{ alignSelf: "flex-end", mb: "3rem" }}
           />
         )}
       </div>

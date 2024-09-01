@@ -19,6 +19,13 @@ function HomeDetails() {
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const [homeData, setHomeData] = useState({});
   const [loading, setLoading] = useState(false);
+  const [paginationRows, setPaginationRows] = useState({
+    failedAuthorizations: "5",
+    failedPayments: "5",
+    successAuthorizations: "5",
+    upcomingPayments: "5",
+    successPayments: "5",
+  });
   const [totalData, setTotalData] = useState({});
   const [selectedValue, setSelectedValue] = useState(3);
   const [currentPage, setCurrentPage] = useState({
@@ -54,22 +61,39 @@ function HomeDetails() {
   const { AUTHORITY_TEXT, HOME_HEADING, VIEW_DAYS, DAYS_TEXT } =
     HomePageDetails;
 
-  const getHomeData = async (key, pageNumber, isInitialLoad = false) => {
+  const getHomeData = async (
+    key,
+    pageNumber,
+    pageLimit,
+    isInitialLoad = false
+  ) => {
     if (selectedValue) {
       if (isInitialLoad) {
         setLoading(true);
       }
-
-      const result = await GetHomePayments(selectedValue, pageNumber, key);
+      let limit = pageLimit || paginationRows[key];
+      const result = await GetHomePayments(
+        selectedValue,
+        pageNumber,
+        limit,
+        key,
+        false,
+        false
+      );
       if (result?.status === 200) {
-        setTotalData((prev) => ({
-          ...prev,
-          [key]: result?.data?.data?.counts[key],
-        }));
-        setHomeData((prev) => ({
-          ...prev,
-          [key]: result?.data?.data?.payments[key],
-        }));
+        key === "default"
+          ? setTotalData(result?.data?.data?.counts)
+          : setTotalData((prev) => ({
+              ...prev,
+              [key]: result?.data?.data?.counts[key],
+            }));
+
+        key === "default"
+          ? setHomeData(result?.data?.data?.payments)
+          : setHomeData((prev) => ({
+              ...prev,
+              [key]: result?.data?.data?.payments[key],
+            }));
         dispatch(get_payments(result?.data?.data?.payments));
       } else if (
         result?.response?.status === 401 ||
@@ -86,9 +110,21 @@ function HomeDetails() {
   };
 
   useEffect(() => {
-    accordionData.forEach((data) => {
-      getHomeData(data?.key, currentPage[data?.key], true);
+    setPaginationRows({
+      failedAuthorizations: 5,
+      failedPayments: 5,
+      successAuthorizations: 5,
+      upcomingPayments: 5,
+      successPayments: 5,
     });
+    setCurrentPage({
+      failedAuthorizations: 1,
+      failedPayments: 1,
+      successAuthorizations: 1,
+      upcomingPayments: 1,
+      successPayments: 1,
+    });
+    getHomeData("default", 1, 5, true);
   }, [selectedValue]);
 
   const handlePageChange = (key, page) => {
@@ -96,11 +132,19 @@ function HomeDetails() {
     getHomeData(key, page);
   };
 
+  const handleRowChange = (key, newRow) => {
+    setCurrentPage((prev) => ({ ...prev, [key]: 1 }));
+    setPaginationRows((prev) => ({ ...prev, [key]: newRow }));
+    getHomeData(key, 1, newRow, false);
+  };
+
   const renderAccordion = (data, index) => (
     <Grid item xs={12} lg={6} sx={{ marginBottom: "0.5rem" }} key={data.key}>
       <AccordionUsage
+        paginationRows={paginationRows[data?.key]}
+        setPaginationRows={(newRow) => handleRowChange(data?.key, newRow)}
         index={index}
-        totalPages={Math.ceil(totalData[data?.key] / 5)}
+        totalPages={Math.ceil(totalData[data?.key] / paginationRows[data?.key])}
         totalData={totalData[data?.key]}
         arrayName={data?.key}
         currentPage={currentPage[data?.key]}

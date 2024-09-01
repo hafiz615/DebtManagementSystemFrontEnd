@@ -88,6 +88,7 @@ export default function CustomFieldsAccordion({ caseData, GetCaseDetails }) {
               show="CaseCustomField"
               customFieldsData={customFieldsData}
               GetCaseDetails={GetCaseDetails}
+              getFields={getFields}
             />
           </div>
         </div>

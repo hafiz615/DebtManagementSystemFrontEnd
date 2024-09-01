@@ -6,20 +6,23 @@ import { Grid, Typography, Menu, IconButton } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import CustomTextField from "../components/customTextfield";
 
-import { UserListPage } from "../constants/appConstants";
+import { UserListPage, paymentAuthHeading } from "../constants/appConstants";
 import { Colors } from "../config/default";
 import PaymentsTabs from "./paymentsTabs";
 import SearchBar from "./searchBar";
 import { GetHomePayments } from "../services/services";
 import TextButton from "./button";
 import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
+import { lime } from "@mui/material/colors";
 
 export default function AuthorizationDetails() {
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState("");
   const [data, setData] = useState({});
   const [value, setValue] = useState(0);
+  const [paginationRows, setPaginationRows] = useState("5");
   const [totalData, setTotalData] = useState();
+  const totalPages = Math.ceil(totalData / paginationRows);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchActive, setSearchActive] = useState(false);
   const [filterActive, setFilterActive] = useState(false);
@@ -193,18 +196,23 @@ export default function AuthorizationDetails() {
       filters: filter ? filterObj : {},
     };
     const count = 0;
-
+    const limit = paginationRows;
     const result = await GetHomePayments(
       count,
       currentPage,
+      limit,
       arrayName,
       search,
       filter,
       payload
     );
-    setData(result?.data?.data?.payments);
-    setTotalData(result?.data?.data?.counts[arrayName]);
-    if (result?.response?.status === 401 || result?.response?.status === 403) {
+    if (result?.status === 200) {
+      setData(result?.data?.data?.payments);
+      setTotalData(result?.data?.data?.counts[arrayName]);
+    } else if (
+      result?.response?.status === 401 ||
+      result?.response?.status === 403
+    ) {
       localStorage.clear();
       navigate("/");
     }
@@ -239,8 +247,10 @@ export default function AuthorizationDetails() {
     setCurrentPage(1);
   }, [filterActive, searchActive]);
 
-  const totalPages = Math.ceil(totalData / 5);
-  const paymentAuthHeading = "Payments Authorization";
+  useEffect(() => {
+    setCurrentPage(1);
+    getHomeData("", "");
+  }, [paginationRows]);
 
   return (
     <Grid
@@ -330,6 +340,8 @@ export default function AuthorizationDetails() {
           value={value}
           setValue={setValue}
           getHomeData={getHomeData}
+          paginationRows={paginationRows}
+          setPaginationRows={setPaginationRows}
         />
       </Grid>
       <Menu

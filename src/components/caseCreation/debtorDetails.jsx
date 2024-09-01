@@ -1,4 +1,5 @@
 import React from "react";
+import { useState, useEffect } from "react";
 
 import { Grid } from "@mui/material";
 
@@ -39,6 +40,15 @@ function DebtorDetails({
     setSearchText(value);
     SearchFields(value);
   };
+  const [dots, setDots] = useState("");
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDots((prevDots) => (prevDots.length < 3 ? prevDots + "." : ""));
+    }, 500); // Change dots every 500ms
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <>
@@ -64,19 +74,20 @@ function DebtorDetails({
         />
       </Grid>
       {loading ? (
-        <Grid
-          container
-          item
-          xs={12}
-          sx={{
+        <div
+          style={{
+            height: "55vh",
             display: "flex",
-            justifyContent: "center",
             alignItems: "center",
-            height: "46vh",
+            justifyContent: "center",
+            color: Colors.SKY_BLUE,
+            fontSize: "2rem",
+            fontWeight: "600",
+            fontFamily: "Nunito",
           }}
         >
-          <CircularProgress size={100} sx={{ color: Colors.SKY_BLUE }} />
-        </Grid>
+          Loading{dots}
+        </div>
       ) : (
         <Grid
           container

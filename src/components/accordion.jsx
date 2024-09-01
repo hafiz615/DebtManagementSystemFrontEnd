@@ -13,7 +13,6 @@ import { formatDollarAmount } from "../common";
 
 import { Colors } from "../config/default";
 
-// import DataTable from "./table";
 import ListTable from "./listTable";
 import {
   FONT_SIZE_MEDIUM,
@@ -36,6 +35,8 @@ export default function AccordionUsage({
   setCurrentPage,
   totalData,
   getHomeData,
+  paginationRows,
+  setPaginationRows,
 }) {
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
@@ -194,8 +195,9 @@ export default function AccordionUsage({
           arrayName={arrayName}
           getHomeData={getHomeData}
           accordionHeight="40vh"
+          paginationRows={paginationRows}
+          setPaginationRows={setPaginationRows}
         />
-        {/* <DataTable rows={rows} columns={columns} /> */}
       </AccordionDetails>
     </Accordion>
   );

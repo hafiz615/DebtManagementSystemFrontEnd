@@ -91,11 +91,11 @@ export default function AnalyticsAccordion({ loading, paymentDetails }) {
             </Grid>
           ) : (
             <>
-              {analyticsData?.map((item, index) => (
+              {analyticsData?.map((item) => (
                 <Grid
                   container
+                  xs={12}
                   sx={{ justifyContent: "space-between", mb: "10px" }}
-                  key={index}
                 >
                   <Typography
                     sx={{
