@@ -81,20 +81,40 @@ function HomeDetails() {
         false
       );
       if (result?.status === 200) {
-        key === "default"
-          ? setTotalData(result?.data?.data?.counts)
-          : setTotalData((prev) => ({
+        if (!result?.data?.data) {
+          setTotalData({
+            "failedPayments": 0,
+            "successPayments": 0,
+            "failedAuthorizations": 0,
+            "successAuthorizations": 0,
+            "upcomingPayments": 0
+          })
+          setHomeData({
+            "failedPayments": [],
+            "successPayments": [],
+            "failedAuthorizations": [],
+            "successAuthorizations": [],
+            "upcomingPayments": []
+          })
+        }
+        else {
+          key === "default"
+            ? setTotalData(result?.data?.data?.counts)
+            : setTotalData((prev) => ({
               ...prev,
               [key]: result?.data?.data?.counts[key],
             }));
 
-        key === "default"
-          ? setHomeData(result?.data?.data?.payments)
-          : setHomeData((prev) => ({
+          key === "default"
+            ? setHomeData(result?.data?.data?.payments)
+            : setHomeData((prev) => ({
               ...prev,
               [key]: result?.data?.data?.payments[key],
             }));
-        dispatch(get_payments(result?.data?.data?.payments));
+          dispatch(get_payments(result?.data?.data?.payments));
+        }
+
+
       } else if (
         result?.response?.status === 401 ||
         result?.response?.status === 403
