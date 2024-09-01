@@ -81,7 +81,6 @@ function HomeDetails() {
         false
       );
       if (result?.status === 200) {
-        debugger;
         if (!result?.data?.data) {
           setTotalData({
             "failedPayments": 0,
