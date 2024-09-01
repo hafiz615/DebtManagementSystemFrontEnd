@@ -207,8 +207,8 @@ export default function AuthorizationDetails() {
       payload
     );
     if (result?.status === 200) {
-      setData(result?.data?.data?.payments);
-      setTotalData(result?.data?.data?.counts[arrayName]);
+      setData(result?.data?.data?.payments || []);
+      setTotalData(result?.data?.data?.counts[arrayName] || 0);
     } else if (
       result?.response?.status === 401 ||
       result?.response?.status === 403
