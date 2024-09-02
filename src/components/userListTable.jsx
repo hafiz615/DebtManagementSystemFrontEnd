@@ -22,6 +22,7 @@ import {
   FONT_SIZE_XL,
 } from "../constants/appConstants";
 import Dropdown from "./dropdown";
+import ScrollbarStyles from "././customScroll";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -142,17 +143,7 @@ export default function UserListTable({
           sx={{
             flexGrow: 1,
             overflowY: "auto",
-            "&::-webkit-scrollbar": {
-              width: "10px",
-            },
-            "&::-webkit-scrollbar-track": {
-              backgroundColor: Colors.WHITE,
-              borderRadius: "8px",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "#E5E5E5",
-              borderRadius: "8px",
-            },
+            ...ScrollbarStyles,
           }}
         >
           <Table aria-label="customized table">

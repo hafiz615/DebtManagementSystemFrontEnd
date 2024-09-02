@@ -33,6 +33,7 @@ import {
 } from "../constants/appConstants";
 import { useSelector } from "react-redux";
 import Dropdown from "./dropdown";
+import ScrollbarStyles from "././customScroll";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -224,17 +225,7 @@ export default function PaymentTabsTable({
           sx={{
             flexGrow: 1,
             overflowY: "auto",
-            "&::-webkit-scrollbar": {
-              width: "10px",
-            },
-            "&::-webkit-scrollbar-track": {
-              backgroundColor: Colors.WHITE,
-              borderRadius: "8px",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "#E5E5E5",
-              borderRadius: "8px",
-            },
+            ...ScrollbarStyles,
           }}
         >
           <Table sx={{ border: "none" }} aria-label="customized table">

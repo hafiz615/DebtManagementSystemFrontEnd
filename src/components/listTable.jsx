@@ -32,6 +32,7 @@ import {
 import { useSelector } from "react-redux";
 import { isEmpty } from "lodash";
 import Dropdown from "./dropdown";
+import ScrollbarStyles from "././customScroll";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -167,17 +168,7 @@ export default function ListTable({
           sx={{
             flexGrow: 1,
             overflowY: "auto",
-            "&::-webkit-scrollbar": {
-              width: "10px",
-            },
-            "&::-webkit-scrollbar-track": {
-              backgroundColor: Colors.WHITE,
-              borderRadius: "8px",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "#E5E5E5",
-              borderRadius: "8px",
-            },
+            ...ScrollbarStyles,
           }}
         >
           <Table aria-label="customized table">
