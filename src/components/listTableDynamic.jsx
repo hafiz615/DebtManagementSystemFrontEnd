@@ -106,7 +106,7 @@ export default function ListTableDynamic({
         backgroundColor: Colors.WHITE,
         borderRadius: "10px ",
         width: "100%",
-        height: show ? "35vh" : "55vh",
+        height: "55vh",
         overflowY: !show ? "auto" : "visible",
       }}
     >
@@ -118,10 +118,21 @@ export default function ListTableDynamic({
         }}
       >
         <TableContainer
-          style={{
+          sx={{
             flexGrow: 1,
             overflowY: !show ? "auto" : "visible",
             maxHeight: !show ? "calc(100% - 48px)" : "none",
+            "&::-webkit-scrollbar": {
+              width: "10px",
+            },
+            "&::-webkit-scrollbar-track": {
+              backgroundColor: Colors.WHITE,
+              borderRadius: "8px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "#E5E5E5",
+              borderRadius: "8px",
+            },
           }}
         >
           <Table aria-label="customized table">
@@ -274,7 +285,7 @@ export default function ListTableDynamic({
         </TableContainer>
 
         <TablePagination
-          rowsPerPageOptions={[5, 10, 30]}
+          rowsPerPageOptions={[5, 15, 30]}
           component="div"
           count={data?.length || 0}
           rowsPerPage={rowsPerPage}

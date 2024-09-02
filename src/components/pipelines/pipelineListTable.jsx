@@ -92,7 +92,23 @@ export default function PipelineListTable({
           height: "100%",
         }}
       >
-        <TableContainer style={{ flexGrow: 1, overflowY: "auto" }}>
+        <TableContainer
+          sx={{
+            flexGrow: 1,
+            overflowY: "auto",
+            "&::-webkit-scrollbar": {
+              width: "10px",
+            },
+            "&::-webkit-scrollbar-track": {
+              backgroundColor: Colors.WHITE,
+              borderRadius: "8px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "#E5E5E5",
+              borderRadius: "8px",
+            },
+          }}
+        >
           <Table aria-label="customized table">
             <TableHead>
               <TableRow>
@@ -176,7 +192,7 @@ export default function PipelineListTable({
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 30]}
+          rowsPerPageOptions={[5, 15, 30]}
           component="div"
           count={data?.length || 0}
           rowsPerPage={rowsPerPage}

@@ -220,7 +220,23 @@ export default function PaymentTabsTable({
           height: "100%",
         }}
       >
-        <TableContainer style={{ flexGrow: 1, overflowY: "auto" }}>
+        <TableContainer
+          sx={{
+            flexGrow: 1,
+            overflowY: "auto",
+            "&::-webkit-scrollbar": {
+              width: "10px",
+            },
+            "&::-webkit-scrollbar-track": {
+              backgroundColor: Colors.WHITE,
+              borderRadius: "8px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "#E5E5E5",
+              borderRadius: "8px",
+            },
+          }}
+        >
           <Table sx={{ border: "none" }} aria-label="customized table">
             <TableHead sx={{ fontFamily: "Nunito", width: "100vw" }}>
               <TableRow sx={{ fontFamily: "Nunito" }}>
