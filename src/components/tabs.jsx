@@ -8,7 +8,7 @@ import { Grid, IconButton, Typography, Menu, Box } from "@mui/material";
 import { Colors } from "../config/default";
 import BasicModal from "./customPopup";
 // import DataTable from "./table";
-import { GetAllUsers } from "../services/services";
+import { GetAllUsers, ResendInvite } from "../services/services";
 import UserListTable from "./userListTable";
 import SearchBar from "./searchBar";
 import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../constants/appConstants";
@@ -16,6 +16,7 @@ import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
 import TextButton from "./button";
 import CustomTextField from "./customTextfield";
 import Dropdown from "./dropdown";
+import { useToast } from "../toast/toastContext";
 
 const columns = [
   {
@@ -78,6 +79,7 @@ export default function CustomizedTabs() {
   const [saveState, setSaveState] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  const { showToast } = useToast();
 
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -228,6 +230,17 @@ export default function CustomizedTabs() {
     GetUsers("", "");
   }, [paginationRows]);
 
+  const handleResendInvite = async (row) => {
+    console.log(row);
+    const payload = {
+      email: row?.email,
+    };
+    const res = await ResendInvite(payload);
+    if (res?.status === 200) {
+      showToast(res?.data?.message, "success");
+    }
+  };
+
   return (
     <>
       <Grid
@@ -327,6 +340,7 @@ export default function CustomizedTabs() {
             loading={loading}
             setPaginationRows={setPaginationRows}
             paginationRows={paginationRows}
+            handleResendInvite={handleResendInvite}
           />
           {/* <DataTable rows={rows} columns={columns} /> */}
         </>

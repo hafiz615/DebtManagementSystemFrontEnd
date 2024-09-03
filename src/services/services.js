@@ -1113,3 +1113,15 @@ export const GetLogs = async (id) => {
     return error;
   }
 };
+
+export const ResendInvite = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/user/resendInvitationLink`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
