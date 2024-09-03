@@ -13,7 +13,7 @@ export default function EditDebtorDetail({
   caseData,
   GetCaseDetails,
   connectPayment,
-  setConnectPayment
+  setConnectPayment,
 }) {
   const { id } = useParams();
   const { showToast } = useToast();
@@ -25,7 +25,6 @@ export default function EditDebtorDetail({
     BasicFullName: debtorBasicInfo?.fullName || "",
     BasicEmailAddress: debtorBasicInfo?.email || "",
     BasicSsid: debtorBasicInfo?.SSID || "",
-    BasicCountry: debtorBasicInfo?.country || "",
     BasicState: debtorBasicInfo?.state || "",
     BasicCity: debtorBasicInfo?.city || "",
     BasicZipCode: debtorBasicInfo?.zipCode || "",
@@ -39,7 +38,6 @@ export default function EditDebtorDetail({
     businessEinNumber: debtorBusinessInfo?.EIN || "",
     businessCategory: debtorBusinessInfo?.businessCategory || "",
     businessDescription: debtorBusinessInfo?.description || "",
-    businessCountry: debtorBusinessInfo?.country || "",
     businessState: debtorBusinessInfo?.state || "",
     businessCity: debtorBusinessInfo?.city || "",
     businessZipCode: debtorBusinessInfo?.zipCode || "",
@@ -86,7 +84,6 @@ export default function EditDebtorDetail({
         fullName: debtorOwnDetails?.BasicFullName,
         email: debtorOwnDetails?.BasicEmailAddress,
         SSID: debtorOwnDetails?.BasicSsid,
-        country: debtorOwnDetails?.BasicCountry,
         state: debtorOwnDetails?.BasicState,
         city: debtorOwnDetails?.BasicCity,
         zipCode: debtorOwnDetails?.BasicZipCode,
@@ -100,7 +97,6 @@ export default function EditDebtorDetail({
         EIN: debtorBusinessDetails?.businessEinNumber,
         businessCategory: debtorBusinessDetails?.businessCategory,
         description: debtorBusinessDetails?.businessDescription,
-        country: debtorBusinessDetails?.businessCountry,
         state: debtorBusinessDetails?.businessState,
         city: debtorBusinessDetails?.businessCity,
         zipCode: debtorBusinessDetails?.businessZipCode,

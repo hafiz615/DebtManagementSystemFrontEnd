@@ -21,7 +21,6 @@ export default function ClientImport({ setApiData }) {
     { name: "Company" },
     { name: "EIN" },
     { name: "Business Category" },
-    { name: "Country" },
     { name: "State" },
     { name: "City" },
     { name: "Zip Code" },
@@ -84,7 +83,6 @@ export default function ClientImport({ setApiData }) {
           email: getColumnDataByName("debtor_email", index),
           SSID: getColumnDataByName("debtor_ssn", index),
           status: getColumnDataByName("debtor_status", index),
-          country: getColumnDataByName("debtor_business_country", index),
           state: getColumnDataByName("debtor_business_state", index),
           city: getColumnDataByName("debtor_business_city", index),
           zipCode: getColumnDataByName("debtor_business_zipcode", index),
@@ -102,7 +100,6 @@ export default function ClientImport({ setApiData }) {
             "debtor_business_description",
             index
           ),
-          country: getColumnDataByName("debtor_business_country", index),
           state: getColumnDataByName("debtor_business_state", index),
           city: getColumnDataByName("debtor_business_city", index),
           zipCode: getColumnDataByName("debtor_business_zipcode", index),

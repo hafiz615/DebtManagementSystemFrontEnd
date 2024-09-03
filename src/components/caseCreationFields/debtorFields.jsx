@@ -8,18 +8,11 @@ import { Colors } from "../../config/default";
 import PaymentsTextFields from "../caseTextField";
 import Dropdown from "./../dropdown";
 import Checkboxes from "../checkBox";
-import MuiPhoneTextField from "../muiPhoneText";
 import { PhoneValidation } from "../../constants/appConstants";
-import { formatPhoneNumber } from "../../common";
 import AmountTextField from "../amountTextField";
-import PaymentCardDetails from "../paymentCard";
 import { GetAllStatuses } from "../../services/services";
 
-import {
-  isEmailValid,
-  handleNumberInput,
-  handleNumberInputKeyDown,
-} from "../../common";
+import { isEmailValid, handleNumberInput } from "../../common";
 
 export default function DebtorFields({
   debtorOwnDetails,
@@ -168,7 +161,6 @@ export default function DebtorFields({
     if (event.target.checked) {
       setDebtorBusinessDetails((prevDetails) => ({
         ...prevDetails,
-        businessCountry: debtorOwnDetails?.BasicCountry,
         businessState: debtorOwnDetails?.BasicState,
         businessCity: debtorOwnDetails?.BasicCity,
         businessZipCode: debtorOwnDetails?.BasicZipCode,
@@ -183,7 +175,6 @@ export default function DebtorFields({
       title: "",
       phone: "",
       email: "",
-      country: "",
       state: "",
       city: "",
       zipCode: "",
@@ -416,16 +407,6 @@ export default function DebtorFields({
         >
           <PaymentsTextFields
             type="text"
-            label="Country*"
-            placeHolderValue="Enter Country Name"
-            width="100%"
-            value={debtorOwnDetails?.BasicCountry}
-            onChangeFunction={(e) =>
-              basicInfoInputChange("BasicCountry", e.target.value)
-            }
-          />
-          <PaymentsTextFields
-            type="text"
             label="State*"
             placeHolderValue="Enter State Name"
             width="100%"
@@ -443,17 +424,6 @@ export default function DebtorFields({
               basicInfoInputChange("BasicCity", e.target.value)
             }
           />
-        </Grid>
-        <Grid
-          container
-          item
-          xs={12}
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginTop: "0.5rem",
-          }}
-        >
           <PaymentsTextFields
             type="text"
             label="Zip Code*"
@@ -465,13 +435,29 @@ export default function DebtorFields({
             }
             onKeyDown={handleNumberInput}
           />
-          <MuiPhoneTextField
+        </Grid>
+        <Grid
+          container
+          item
+          xs={12}
+          sx={{
+            display: "flex",
+            marginTop: "0.5rem",
+            gap: "1.2%",
+          }}
+        >
+          <PaymentsTextFields
+            type="text"
             label="Phone #*"
-            value={debtorOwnDetails?.BasicPhoneNumber}
-            onChange={(e) =>
-              basicInfoInputChange("BasicPhoneNumber", formatPhoneNumber(e))
-            }
+            placeHolderValue="Enter Phone Number"
+            width="100%"
+            value={debtorOwnDetails?.BasicPhoneNumber || ""}
+            onChangeFunction={(e) => {
+              const numericValue = e.target.value.replace(/\D/g, "");
+              basicInfoInputChange("BasicPhoneNumber", numericValue);
+            }}
             error={errors?.basicPhone}
+            onKeyDown={handleNumberInput}
           />
           <PaymentsTextFields
             type="text"
@@ -588,16 +574,6 @@ export default function DebtorFields({
         >
           <PaymentsTextFields
             type="text"
-            label="Country*"
-            placeHolderValue="Enter Country Name"
-            width="100%"
-            value={debtorBusinessDetails?.businessCountry}
-            onChangeFunction={(e) =>
-              businessInfoInputChange("businessCountry", e.target.value)
-            }
-          />
-          <PaymentsTextFields
-            type="text"
             label="State*"
             placeHolderValue="Enter State Name"
             width="100%"
@@ -616,17 +592,6 @@ export default function DebtorFields({
               businessInfoInputChange("businessCity", e.target.value)
             }
           />
-        </Grid>
-        <Grid
-          container
-          item
-          xs={12}
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginTop: "0.5rem",
-          }}
-        >
           <PaymentsTextFields
             type="number"
             label="Zip Code*"
@@ -638,19 +603,31 @@ export default function DebtorFields({
             }
             onKeyDown={handleNumberInput}
           />
-
-          <MuiPhoneTextField
+        </Grid>
+        <Grid
+          container
+          item
+          xs={12}
+          sx={{
+            display: "flex",
+            marginTop: "0.5rem",
+            gap: "1.2%",
+          }}
+        >
+          <PaymentsTextFields
+            type="text"
             label="Phone #*"
-            value={debtorBusinessDetails?.businessPhoneNumber}
-            onChange={(e) =>
-              businessInfoInputChange(
-                "businessPhoneNumber",
-                formatPhoneNumber(e)
-              )
-            }
-            onKeyDown={handleNumberInputKeyDown}
+            placeHolderValue="Enter Phone Number"
+            width="100%"
+            value={debtorBusinessDetails?.businessPhoneNumber || ""}
+            onChangeFunction={(e) => {
+              const numericValue = e.target.value.replace(/\D/g, "");
+              businessInfoInputChange("businessPhoneNumber", numericValue);
+            }}
             error={errors?.businessPhone}
+            onKeyDown={handleNumberInput}
           />
+
           <PaymentsTextFields
             type="text"
             label="Address*"
@@ -751,19 +728,21 @@ export default function DebtorFields({
                           handleInputChange(index, "title", e.target.value)
                         }
                       />
-
-                      <MuiPhoneTextField
+                      <PaymentsTextFields
+                        type="text"
                         label="Phone #"
+                        placeHolderValue="Enter Phone Number"
+                        width="100%"
                         value={item?.phone}
-                        onChange={(e) => {
-                          handleInputChange(
-                            index,
-                            "phone",
-                            formatPhoneNumber(e)
+                        onChangeFunction={(e) => {
+                          const numericValue = e.target.value.replace(
+                            /\D/g,
+                            ""
                           );
+                          handleInputChange(index, "phone", numericValue);
                         }}
-                        onKeyDown={handleNumberInputKeyDown}
                         error={contactError?.[`phone${index}`]}
+                        onKeyDown={handleNumberInput}
                       />
 
                       <PaymentsTextFields
@@ -776,17 +755,6 @@ export default function DebtorFields({
                           handleInputChange(index, "email", e.target.value)
                         }
                         error={emailContactError?.[`email${index}`]}
-                      />
-
-                      <PaymentsTextFields
-                        type="text"
-                        label="Country (Optional)"
-                        placeHolderValue="Country Name"
-                        width={smallScreen ? "100%" : "97%"}
-                        value={item?.country}
-                        onChange={(e) =>
-                          handleInputChange(index, "country", e.target.value)
-                        }
                       />
                       <PaymentsTextFields
                         type="text"

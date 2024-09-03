@@ -164,28 +164,6 @@ export default function BasicCard({
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  Country
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: "Nunito",
-                    fontWeight: "500",
-                    width: "50%",
-                    color: Colors.DARK_GRAY,
-                  }}
-                >
-                  {debtorOwnDetails?.BasicCountry || "-"}
-                </Typography>
-              </Grid>
-              <Grid container item xs={12} lg={3}>
-                <Typography
-                  sx={{
-                    fontFamily: "Nunito",
-                    fontWeight: "600",
-                    width: "40%",
-                    color: Colors.DARK_GRAY,
-                  }}
-                >
                   State
                 </Typography>
                 <Typography
