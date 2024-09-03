@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDrop } from "react-dnd";
 import DraggableItem from "./draggableItem";
-import { Grid, Typography } from "@mui/material";
+import { Grid, Tooltip, Typography } from "@mui/material";
 import { FONT_SIZE_LARGE } from "../../constants/appConstants";
 import { Colors } from "../../config/default";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import Dropdown from "../dropdown";
 
 const BoardColumns = ({
   columnId,
@@ -18,6 +19,12 @@ const BoardColumns = ({
   startDate,
   endDate,
 }) => {
+  const [order, setOrder] = useState("asc");
+  const orders = [
+    { label: "Ascending", value: "asc" },
+    { label: "Descending", value: "des" },
+  ];
+
   const filteredCaseCodes = items?.cases?.filter((caseItem) =>
     caseItem?.caseCode?.toLowerCase()?.includes(searchText?.toLowerCase())
   );
@@ -64,6 +71,21 @@ const BoardColumns = ({
       return updatedAt <= end;
     }
     return true;
+  });
+
+  const sortedCases = [...filteredCasesByDate].sort((a, b) => {
+    if (order === "asc") {
+      return a?.debtor?.businessInformation?.companyName.toLowerCase() >
+        b?.debtor?.businessInformation?.companyName.toLowerCase()
+        ? 1
+        : -1;
+    } else if (order === "des") {
+      return a?.debtor?.businessInformation?.companyName.toLowerCase() <
+        b?.debtor?.businessInformation?.companyName.toLowerCase()
+        ? 1
+        : -1;
+    }
+    return 0;
   });
 
   const smallScreen = useMediaQuery(
@@ -122,25 +144,41 @@ const BoardColumns = ({
         minWidth: widthStyling,
       }}
     >
-      <Typography
-        sx={{
-          fontSize: FONT_SIZE_LARGE,
-          fontFamily: "Nunito",
-          fontWeight: "700",
-          marginBottom: "10px",
-        }}
-      >
-        {columnId}
-      </Typography>
-      <Typography
-        sx={{
-          fontSize: FONT_SIZE_LARGE,
-          fontFamily: "Nunito",
-          marginBottom: "10px",
-        }}
-      >
-        {items?.cases?.length} Opportunities
-      </Typography>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div>
+          <Typography
+            sx={{
+              fontSize: FONT_SIZE_LARGE,
+              fontFamily: "Nunito",
+              fontWeight: "700",
+              marginBottom: "10px",
+            }}
+          >
+            {columnId}
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: FONT_SIZE_LARGE,
+              fontFamily: "Nunito",
+              marginBottom: "10px",
+            }}
+          >
+            {items?.cases?.length} Opportunities
+          </Typography>
+        </div>
+        <Tooltip title="Sort By Debtor Business" placement="top-start">
+          <div>
+            <Dropdown
+              width="1rem"
+              menuItems={orders}
+              selectedValue={order}
+              setSelectedValue={setOrder}
+              backgroundColor={Colors.BG_LIGHT_GRAY}
+              hoverColor={Colors.BG_LIGHT_GRAY}
+            />
+          </div>
+        </Tooltip>
+      </div>
       <div
         style={{
           width: "100%",
@@ -192,7 +230,7 @@ const BoardColumns = ({
           },
         }}
       >
-        {filteredCasesByDate?.length === 0 ? (
+        {sortedCases?.length === 0 ? (
           <p
             style={{
               textAlign: "center",
@@ -203,7 +241,7 @@ const BoardColumns = ({
             No Cases
           </p>
         ) : (
-          filteredCasesByDate?.map((item) => (
+          sortedCases?.map((item) => (
             <DraggableItem
               key={item._id}
               item={item}

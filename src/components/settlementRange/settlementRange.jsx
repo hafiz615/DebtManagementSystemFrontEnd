@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import ListTableDynamic from "../listTableDynamic";
 
 import {
   Grid,
@@ -16,6 +15,8 @@ import {
   CircularProgress,
   Box,
   Tooltip,
+  Card,
+  LinearProgress,
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import {
@@ -32,7 +33,6 @@ import TextButton from "../button";
 import SettlementCards from "./settlementCards";
 import {
   GetSettlementRangeWithScores,
-  GetSettlementRange,
   GetSummary,
   GetLumpSumAmount,
   GetFullProfit,
@@ -47,6 +47,7 @@ import { ErrorOutline } from "@mui/icons-material";
 import { isEmpty } from "lodash";
 import { getWeeksRemainingMessage } from "../../common";
 import DataSummaryTable from "../dataSummaryTable";
+import SettlementBounds from "./settlementBounds";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -201,6 +202,7 @@ export default function SettlementRange() {
   const [tabValue, setTabValue] = useState(0);
   const [errorMessage, setErrorMessage] = useState(null);
   const [inputValue, setInputValue] = useState("");
+  const [chatHistory, setChatHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
   const [apiData, setApiData] = useState(null);
@@ -219,13 +221,7 @@ export default function SettlementRange() {
   const [errorfullProfitMessage, setErrorFullProfitMessage] = useState("");
   const [commissionPercentage, setCommissionPercentage] = useState("");
   const [summaryAmount, setSummaryAmount] = useState({});
-
-  const [justifications, setJustifications] = useState({
-    justification_claude: "",
-    justification_gemini: "",
-    justification_gpt4_o: "",
-    justification_llama: "",
-  });
+  const scrollRef = useRef(null);
 
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const drawerOpen = useSelector((state) => state.drawer.open);
@@ -237,10 +233,7 @@ export default function SettlementRange() {
   const [messages, setMessages] = useState([]);
 
   const [strategyTab, setStrategyTab] = useState(0);
-  const [rangeTab, setRangeTab] = useState(0);
-  const handleRangeChange = (event, newValue) => {
-    setRangeTab(newValue);
-  };
+
   const [settlementData, setSettlementData] = useState({});
   const handleStrategyChange = (event, newValue) => {
     setStrategyTab(newValue);
@@ -467,36 +460,71 @@ export default function SettlementRange() {
   };
 
   const handleClick = async () => {
+    if (!inputValue) return;
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+    setChatHistory((prev) => [...prev, { type: "user", text: inputValue }]);
     setTableLoading(true);
     const payload = {
       financialHealthSummary: "",
       humanInput: inputValue,
     };
     setInputValue("");
-    const resSummary = await GetSummary(payload, caseId);
-    if (resSummary?.status === 200) {
-      setTableLoading(false);
-      setSettlementData(resSummary?.data?.data);
-      const resRanges = await GetSettlementRange("", caseId);
-      if (resRanges?.status === 200) {
-        showToast(resRanges?.data?.message, "success");
-        setJustifications({
-          justifications1:
-            resRanges?.data?.data?.justifications?.justification_gemini ?? "",
-          justifications2:
-            resRanges?.data?.data?.justifications?.justification_gpt4_o ?? "",
-          justifications3:
-            resRanges?.data?.data?.justifications?.justification_llama ?? "",
-          justifications4:
-            resRanges?.data?.data?.justifications?.justification_claude ?? "",
-        });
+    try {
+      const resSummary = await GetSummary(payload, caseId);
+
+      if (resSummary?.status === 200) {
+        const reasons = resSummary?.data?.data?.[`settlement_range_1`]?.reasons;
+        const reason = resSummary?.data?.data?.[`settlement_range_1`]?.reason;
+        let formattedReason = "";
+
+        if (Array.isArray(reasons)) {
+          formattedReason = reasons.join("\n");
+        } else if (typeof reasons === "string") {
+          formattedReason = reasons;
+        } else if (Array.isArray(reason)) {
+          formattedReason = reason.join("\n");
+        } else if (typeof reason === "string") {
+          formattedReason = reason;
+        } else {
+          formattedReason = "No reason available";
+        }
+        setChatHistory((prev) => [
+          ...prev,
+          {
+            type: "response",
+            text: formattedReason,
+          },
+        ]);
+        setChatHistory((prev) => [
+          ...prev,
+          {
+            type: "bound",
+            text: resSummary?.data?.data,
+          },
+        ]);
+        const resRanges = await GetSettlementRangeWithScores("", caseId, false);
+        if (resRanges?.status === 200) {
+          setChatHistory((prev) => [
+            ...prev,
+            {
+              type: "response",
+              text:
+                resRanges?.data?.data?.settlementRange?.justifications?.[
+                  justificationValue
+                ] || "No justification available",
+            },
+          ]);
+        }
       }
-    } else if (
-      resSummary?.response?.status === 401 ||
-      resSummary?.response?.status === 403
-    ) {
-      localStorage.clear();
-      navigate("/");
+    } catch (error) {
+      setChatHistory((prev) => [
+        ...prev,
+        { type: "response", text: "An error occurred. Please try again." },
+      ]);
+    } finally {
+      setTableLoading(false);
     }
   };
 
@@ -532,20 +560,7 @@ export default function SettlementRange() {
           setCommissionPercentage(
             resCommission?.data?.data?.debtor?.commissionPercentage
           );
-          setJustifications({
-            justifications1:
-              resCommission?.data?.data?.settlementRange?.justifications
-                ?.justification_gemini ?? "",
-            justifications2:
-              resCommission?.data?.data?.settlementRange?.justifications
-                ?.justification_gpt4_o ?? "",
-            justifications3:
-              resCommission?.data?.data?.settlementRange?.justifications
-                ?.justification_llama ?? "",
-            justifications4:
-              resCommission?.data?.data?.settlementRange?.justifications
-                ?.justification_claude ?? "",
-          });
+
           const allCreditors = resCommission?.data?.data?.creditors;
           setCreditorNames(allCreditors);
           const creditorAccountTitles = allCreditors?.map(
@@ -607,20 +622,15 @@ export default function SettlementRange() {
           setSummaryAmount(
             settlementRangeData?.data?.data?.creditorsContractDetailsSum
           );
-          setJustifications({
-            justifications1:
-              settlementRangeData?.data?.data?.settlementRange?.justifications
-                ?.justification_gemini ?? "",
-            justifications2:
-              settlementRangeData?.data?.data?.settlementRange?.justifications
-                ?.justification_gpt4_o ?? "",
-            justifications3:
-              settlementRangeData?.data?.data?.settlementRange?.justifications
-                ?.justification_llama ?? "",
-            justifications4:
-              settlementRangeData?.data?.data?.settlementRange?.justifications
-                ?.justification_claude ?? "",
-          });
+          setChatHistory((prev) => [
+            ...prev,
+            {
+              type: "response",
+              text: settlementRangeData?.data?.data?.settlementRange
+                ?.justifications?.[justificationValue],
+            },
+          ]);
+
           const allCreditors = settlementRangeData?.data?.data?.creditors;
           setCreditorNames(allCreditors);
           const creditorAccountTitles = allCreditors?.map(
@@ -1293,16 +1303,7 @@ export default function SettlementRange() {
           >
             {cardData[strategyTab]}
           </Grid>
-          <Grid
-            container
-            item
-            xs={12}
-            lg={12}
-            md={12}
-            xl={12}
-            sm={12}
-            sx={{ gap: "2%", mt: "1rem" }}
-          >
+          <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
             {scores?.message && (
               <GridItemMessage
                 key="No Score Reason"
@@ -1312,119 +1313,6 @@ export default function SettlementRange() {
               />
             )}
           </Grid>
-          {!isEmpty(settlementData) && (
-            <>
-              <Grid
-                item
-                xs={12}
-                sx={{
-                  backgroundColor: Colors.WHITE,
-                  borderRadius: "10px",
-                  mt: "2rem",
-                }}
-              >
-                <AntTabs
-                  value={rangeTab}
-                  onChange={handleRangeChange}
-                  variant="scrollable"
-                  scrollButtons="auto"
-                  sx={{
-                    width: "100%",
-                    borderTopLeftRadius: "10px",
-                    borderTopRightRadius: "10px",
-                  }}
-                >
-                  <AntTab
-                    sx={{
-                      bgcolor: Colors.WHITE,
-                      width: "max-content",
-                      fontWeight: "600",
-                      height: "3.5rem",
-                    }}
-                    label="Settlement Range 1"
-                  />
-                  <AntTab
-                    sx={{
-                      bgcolor: Colors.WHITE,
-                      width: "max-content",
-                      fontWeight: "600",
-                      height: "3.5rem",
-                    }}
-                    label="Settlement Range 2"
-                  />
-                  <AntTab
-                    sx={{
-                      bgcolor: Colors.WHITE,
-                      width: "max-content",
-                      fontWeight: "600",
-                      height: "3.5rem",
-                    }}
-                    label="Settlement Range 3"
-                  />
-                </AntTabs>
-              </Grid>
-              <Grid container item xs={12} sx={{ gap: "1rem", mt: "1.5rem" }}>
-                <Grid
-                  container
-                  item
-                  xs={12}
-                  sx={{
-                    gap: "1rem",
-                  }}
-                >
-                  <Grid item xs={12} lg={5.8} sx={rangeStyles}>
-                    <Typography sx={commonTextStyles}>
-                      Lower Bound:{" "}
-                      <span style={textStyles}>
-                        {`$${
-                          settlementData[`settlement_range_${rangeTab + 1}`]
-                            ?.lower_bound ||
-                          settlementData[`settlement_range_${rangeTab + 1}`]
-                            ?.weekly_payment_range?.[0]
-                        }` || "--"}
-                      </span>
-                    </Typography>
-                    <Typography sx={commonTextStyles}>
-                      Weeks to Payoff (Lower):{" "}
-                      <span style={textStyles}>
-                        {`${Math.round(
-                          settlementData[`settlement_range_${rangeTab + 1}`]
-                            ?.weeks_to_payoff_lower_bound ||
-                            settlementData[`settlement_range_${rangeTab + 1}`]
-                              ?.weeks_to_pay_off_lower_bound
-                        )}` || "--"}
-                      </span>
-                    </Typography>
-                  </Grid>
-
-                  <Grid item xs={12} lg={5.8} sx={rangeStyles}>
-                    <Typography sx={commonTextStyles}>
-                      Upper Bound:{" "}
-                      <span style={textStyles}>
-                        {`$${
-                          settlementData[`settlement_range_${rangeTab + 1}`]
-                            ?.upper_bound ||
-                          settlementData[`settlement_range_${rangeTab + 1}`]
-                            ?.weekly_payment_range?.[1]
-                        }` || "--"}
-                      </span>
-                    </Typography>
-                    <Typography sx={commonTextStyles}>
-                      Weeks to Payoff (Upper):{" "}
-                      <span style={textStyles}>
-                        {`${Math.round(
-                          settlementData[`settlement_range_${rangeTab + 1}`]
-                            ?.weeks_to_payoff_upper_bound ||
-                            settlementData[`settlement_range_${rangeTab + 1}`]
-                              ?.weeks_to_pay_off_upper_bound
-                        )}` || "--"}
-                      </span>
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </>
-          )}
 
           <Grid
             item
@@ -1474,121 +1362,118 @@ export default function SettlementRange() {
                 }}
                 label="llama"
               />
-
-              {/* <AntTab
-                sx={{
-                  bgcolor: Colors.WHITE,
-                  width: "max-content",
-                  fontWeight: "600",
-                  height: "3.5rem",
-                }}
-                label="Claude"
-              /> */}
             </AntTabs>
           </Grid>
 
-          <Grid
-            item
-            xs={12}
-            sx={{
-              height: "40vh",
-              overflowY: "auto",
-              backgroundColor: Colors1.WHITE,
-              ...ScrollbarStyles1,
-              padding: "16px",
-            }}
-          >
-            {tableLoading ? (
-              <Grid
-                container
-                item
-                xs={12}
-                sx={{
-                  height: "37vh",
-                  width: "100%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <CircularProgress />
-              </Grid>
-            ) : (
-              <ReactMarkdown>
-                {`${
-                  strategyTab === 2
-                    ? fullProfit?.justifications?.[justificationValue] ||
-                      "No justifications available"
-                    : strategyTab === 1
-                    ? lumpSumpData?.justifications?.[justificationValue] ||
-                      "No justifications available"
-                    : justifications?.[`justifications${value + 1}`] ||
-                      "No justifications available"
-                }\n\n### Reason:\n\n${
-                  settlementData[`settlement_range_${rangeTab + 1}`]?.reason ||
-                  "No reason available"
-                }`}
-              </ReactMarkdown>
-            )}
-          </Grid>
-          <Grid
-            container
-            item
-            xs={12}
-            sx={{
-              backgroundColor: Colors.WHITE,
-              borderRadius: "10px",
-              height: "6vh",
-              m: "2rem 0rem",
-              alignItems: "center",
-              padding: "0 0.5rem",
-            }}
-          >
-            <input
-              type="text"
-              placeholder="Write Text..."
-              value={inputValue}
-              onChange={(e) => handleInputChange(e)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && inputValue) {
-                  handleClick();
-                }
-              }}
-              style={{
-                backgroundColor: Colors.WHITE,
-                color: Colors.BLACK,
-                paddingLeft: "1rem",
-                border: "none",
-                outline: "none",
-                borderRadius: "5px 0 0 5px",
-                flex: 1,
-                height: "95%",
-              }}
-            />
-            <IconButton
-              onClick={handleClick}
-              disabled={!inputValue}
+          <Grid xs={12}>
+            <Grid
+              ref={scrollRef}
+              item
+              xs={12}
               sx={{
-                backgroundColor: Colors.SKY_BLUE,
-                borderRadius: "5px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "40px",
-                width: "40px",
-                cursor: "pointer",
-                ":hover": {
-                  backgroundColor: Colors.SKY_BLUE,
-                  color: Colors.WHITE,
-                },
+                height: "50vh",
+                overflowY: "auto",
+                backgroundColor: Colors.WHITE,
+                ...ScrollbarStyles1,
+                padding: "16px",
               }}
             >
-              <Send
-                sx={{
-                  color: Colors.WHITE,
-                  fontSize: "1.5rem",
+              {chatHistory?.map((message, index) => (
+                <Grid
+                  xs={12}
+                  key={index}
+                  container
+                  justifyContent={
+                    message.type === "user" ? "flex-end" : "flex-start"
+                  }
+                  sx={{ marginBottom: "8px" }}
+                >
+                  <Card
+                    sx={{
+                      maxWidth: "60%",
+                      padding: "8px 16px",
+                      borderRadius: "10px",
+                      backgroundColor: Colors.BG_LIGHT_GRAY,
+                      boxShadow: "none",
+                    }}
+                  >
+                    {message.type === "bound" ? (
+                      <SettlementBounds data={message?.text} />
+                    ) : (
+                      <Typography variant="body1">
+                        <ReactMarkdown>{message?.text}</ReactMarkdown>
+                      </Typography>
+                    )}
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+            {tableLoading && (
+              <Grid xs={12}>
+                <LinearProgress />
+              </Grid>
+            )}
+
+            <Grid
+              container
+              item
+              xs={12}
+              sx={{
+                backgroundColor: Colors.WHITE,
+                borderRadius: "10px",
+                height: "6vh",
+                m: "2rem 0rem",
+                alignItems: "center",
+                padding: "0 0.5rem",
+              }}
+            >
+              <input
+                type="text"
+                placeholder="Write Text..."
+                value={inputValue}
+                onChange={handleInputChange}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && inputValue) {
+                    handleClick();
+                  }
+                }}
+                style={{
+                  backgroundColor: Colors.WHITE,
+                  color: Colors.BLACK,
+                  paddingLeft: "1rem",
+                  border: "none",
+                  outline: "none",
+                  borderRadius: "5px 0 0 5px",
+                  flex: 1,
+                  height: "95%",
                 }}
               />
-            </IconButton>
+              <IconButton
+                onClick={handleClick}
+                disabled={!inputValue}
+                sx={{
+                  backgroundColor: Colors.SKY_BLUE,
+                  borderRadius: "5px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "40px",
+                  width: "40px",
+                  cursor: "pointer",
+                  ":hover": {
+                    backgroundColor: Colors.SKY_BLUE,
+                    color: Colors.WHITE,
+                  },
+                }}
+              >
+                <Send
+                  sx={{
+                    color: Colors.WHITE,
+                    fontSize: "1.5rem",
+                  }}
+                />
+              </IconButton>
+            </Grid>
           </Grid>
         </>
       )}
