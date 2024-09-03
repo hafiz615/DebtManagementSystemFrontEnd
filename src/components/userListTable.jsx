@@ -1,7 +1,13 @@
 import * as React from "react";
 import { useSelector } from "react-redux";
 import { styled } from "@mui/material/styles";
-import { Table, Typography, IconButton, CircularProgress } from "@mui/material";
+import {
+  Table,
+  Typography,
+  IconButton,
+  CircularProgress,
+  Tooltip,
+} from "@mui/material";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
@@ -22,6 +28,7 @@ import {
   FONT_SIZE_XL,
 } from "../constants/appConstants";
 import Dropdown from "./dropdown";
+import { Replay } from "@mui/icons-material";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -97,6 +104,7 @@ export default function UserListTable({
   loading,
   setPaginationRows,
   paginationRows,
+  handleResendInvite,
 }) {
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const generalPermissions = useSelector(
@@ -221,6 +229,13 @@ export default function UserListTable({
                             deleting="Delete User"
                           />
                         )}
+                      {row?.active === "Inactive" && (
+                        <Tooltip title="Resend Invite" placement="top-end">
+                          <IconButton onClick={() => handleResendInvite(row)}>
+                            <Replay sx={{ color: Colors.BLACK }} />
+                          </IconButton>
+                        </Tooltip>
+                      )}
                     </StyledTableCell>
                   </StyledTableRow>
                 ))}
