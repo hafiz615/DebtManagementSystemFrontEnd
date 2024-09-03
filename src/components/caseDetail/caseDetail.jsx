@@ -220,17 +220,39 @@ function CaseDetail() {
             >
               {caseData?.caseCode}
             </Typography>
-
-            <TextButton
-              buttonText="Get Settlement Range"
-              height="2.5rem"
-              width="14rem"
-              onClick={() => {
-                navigate(`/settlementRange/${id}`);
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "1.2%",
               }}
-              backgroundColor={Colors.SKY_BLUE}
-              hoverColor={Colors.SKY_BLUE}
-            />
+            >
+              <MuiModels
+                show="sendEmailCase"
+                buttonName="sendEmailCase"
+                iconColor={Colors.BLACK}
+                width="80vw"
+                height="72vh"
+              />
+              <MuiModels
+                show="sendSmsCase"
+                buttonName="sendSmsCase"
+                iconColor={Colors.BLACK}
+                width="80vw"
+                height="72vh"
+              />
+              <TextButton
+                buttonText="Get Settlement Range"
+                height="2.5rem"
+                width="14rem"
+                onClick={() => {
+                  navigate(`/settlementRange/${id}`);
+                }}
+                backgroundColor={Colors.SKY_BLUE}
+                hoverColor={Colors.SKY_BLUE}
+              />
+            </div>
           </Grid>
 
           <Grid item sx={{ marginTop: "1.5rem" }}>

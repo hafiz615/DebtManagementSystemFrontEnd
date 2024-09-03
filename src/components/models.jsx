@@ -353,6 +353,24 @@ export default function MuiModels({
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
         />
+      ) : buttonName === "sendEmailCase" ? (
+        <TextButton
+          buttonText="Send Email"
+          height="2.5rem"
+          width="9rem"
+          onClick={handleOpen}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
+      ) : buttonName === "sendSmsCase" ? (
+        <TextButton
+          buttonText="Send SMS"
+          height="2.5rem"
+          width="9rem"
+          onClick={handleOpen}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
       ) : show === "createRole" ? (
         <TextButton
           buttonText={extraSmallScreen ? <Add /> : "Create Role"}
