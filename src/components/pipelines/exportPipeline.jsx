@@ -60,7 +60,7 @@ export default function ExportPipeline({ handleClose, data }) {
     const statusNames = Object.keys(data);
 
     csvContent +=
-      "Status, Case Name, Annualized Value, Debtor Name, Debtor Company Name, Debtor Business Category, Debtor Address, Debtor EIN, Debtor City, Debtor Country, Debtor Phone, Debtor State, Debtor Zip Code, Creditor Name, Creditor Company Name, Creditor Business Category, Last Payment Date, Paid Amount, Remaining, Total Debt, Confidence, Manager, Negotiator, Status\n";
+      "Status, Case Name, Annualized Value, Debtor Name, Debtor Company Name, Debtor Business Category, Debtor Address, Debtor EIN, Debtor City, Debtor Phone, Debtor State, Debtor Zip Code, Creditor Name, Creditor Company Name, Creditor Business Category, Last Payment Date, Paid Amount, Remaining, Total Debt, Confidence, Manager, Negotiator, Status\n";
 
     statusNames.forEach((statusName) => {
       data[statusName].cases.forEach((caseItem) => {
@@ -75,8 +75,6 @@ export default function ExportPipeline({ handleClose, data }) {
           caseItem.debtor?.businessInformation?.address || "";
         const debtorEIN = caseItem.debtor?.businessInformation?.EIN || "";
         const debtorCity = caseItem.debtor?.businessInformation?.city || "";
-        const debtorCountry =
-          caseItem.debtor?.businessInformation?.country || "";
         const debtorPhone = caseItem.debtor?.businessInformation?.phone || "";
         const debtorState = caseItem.debtor?.businessInformation?.state || "";
         const debtorZipCode =
@@ -96,7 +94,7 @@ export default function ExportPipeline({ handleClose, data }) {
         const negotiator = caseItem.negotiator || "";
         const status = caseItem.status || "";
 
-        csvContent += `${statusName}, ${caseName}, ${annualizedValue}, ${debtorName},${debtorCompanyName},${debtorBusinessCategory},${debtorAddress},${debtorEIN},${debtorCity},${debtorCountry},${debtorPhone},${debtorState},${debtorZipCode}, ${creditorName},${creditorCompanyName},${creditorBuisnessCategory}, ${lastPaymentDate}, ${paidAmount}, ${remaining}, ${totalDebt} , ${confidence} ,${manager} , ${negotiator},${status} \n`;
+        csvContent += `${statusName}, ${caseName}, ${annualizedValue}, ${debtorName},${debtorCompanyName},${debtorBusinessCategory},${debtorAddress},${debtorEIN},${debtorCity},${debtorPhone},${debtorState},${debtorZipCode}, ${creditorName},${creditorCompanyName},${creditorBuisnessCategory}, ${lastPaymentDate}, ${paidAmount}, ${remaining}, ${totalDebt} , ${confidence} ,${manager} , ${negotiator},${status} \n`;
       });
     });
 

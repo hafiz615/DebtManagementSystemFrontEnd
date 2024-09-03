@@ -3,14 +3,13 @@ import Typography from "@mui/material/Typography";
 import { Grid, Box, TextField, Slider } from "@mui/material";
 import { Colors } from "../../config/default";
 import PaymentsTextFields from "../caseTextField";
-import MuiPhoneTextField from "../muiPhoneText";
 import AmountTextField from "../amountTextField";
 
-import { formatPhoneNumber, swapKeysAndValues } from "../../common";
+import { swapKeysAndValues } from "../../common";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import PaymentFields from "../caseCreationFields/paymentFields";
 import Autocomplete from "@mui/material/Autocomplete";
-import { handleNumberInput, handleNumberInputKeyDown } from "../../common";
+import { handleNumberInput } from "../../common";
 
 export default function CreditorFields({
   debtorCaseData,
@@ -45,7 +44,6 @@ export default function CreditorFields({
       title: "",
       phone: "",
       email: "",
-      country: "",
       state: "",
       city: "",
       zipCode: "",
@@ -323,18 +321,22 @@ export default function CreditorFields({
                 }
                 error={errors?.emailValid}
               />
-              <MuiPhoneTextField
-                label="Phone #*"
+              <PaymentsTextFields
+                type="text"
+                label="Phone #"
+                placeHolderValue="Enter Phone Number"
+                width="100%"
                 value={thisCaseData?.creditor?.basicInformation?.phone}
-                onChange={(e) =>
+                onChangeFunction={(e) => {
+                  const numericValue = e.target.value.replace(/\D/g, "");
                   handleCaseDataChange(
                     caseIndex,
                     "creditor.basicInformation.phone",
-                    formatPhoneNumber(e)
-                  )
-                }
-                onKeyDown={handleNumberInputKeyDown}
+                    numericValue
+                  );
+                }}
                 error={errors?.basicPhone}
+                onKeyDown={handleNumberInput}
               />
             </Grid>
             <Typography

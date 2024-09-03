@@ -40,7 +40,6 @@ export default function DebtorContacts({
     title: item?.title || "",
     phone: item?.phone || "",
     email: item?.email || "",
-    country: item?.country || "",
     state: item?.state || "",
     city: item?.city || "",
     zipCode: item?.zipCode || "",
@@ -203,13 +202,18 @@ export default function DebtorContacts({
                 handleInputChange("title", e.target.value)
               }
             />
-
-            <MuiPhoneTextField
-              label="Phone #"
-              value={debtorContactDetails.phone}
-              onChange={(e) => handleInputChange("phone", formatPhoneNumber(e))}
-              onKeyDown={handleNumberInputKeyDown}
+            <PaymentsTextFields
+              type="text"
+              label="Phone #*"
+              placeHolderValue="Enter Phone Number"
+              width="100%"
+              value={debtorContactDetails?.phone || ""}
+              onChangeFunction={(e) => {
+                const numericValue = e.target.value.replace(/\D/g, "");
+                handleInputChange("phone", numericValue);
+              }}
               error={contactError?.phone}
+              onKeyDown={handleNumberInput}
             />
 
             <PaymentsTextFields
@@ -224,16 +228,6 @@ export default function DebtorContacts({
               error={emailContactError?.email}
             />
 
-            <PaymentsTextFields
-              type="text"
-              label="Country (Optional)"
-              placeHolderValue="Country Name"
-              width={smallScreen ? "100%" : "97%"}
-              value={debtorContactDetails?.country}
-              onChangeFunction={(e) =>
-                handleInputChange("country", e.target.value)
-              }
-            />
             <PaymentsTextFields
               type="text"
               label="State (Optional)"

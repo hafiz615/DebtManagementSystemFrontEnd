@@ -5,6 +5,7 @@ import MenuItem from "@mui/material/MenuItem";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { Colors } from "../config/default";
+import ScrollbarStyles from "././customScroll";
 
 export default function Dropdown({
   menuItems,
@@ -92,6 +93,7 @@ export default function Dropdown({
             maxHeight: 300,
             overflowY: "auto",
             minWidth: menuWidth,
+            ...ScrollbarStyles,
           },
         }}
       >

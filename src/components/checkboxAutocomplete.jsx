@@ -9,11 +9,18 @@ import { Colors } from "../config/default";
 import { FONT_SIZE_LARGE } from "../constants/appConstants";
 import TextButton from "./button";
 import { styled } from "@mui/material/styles";
+import ScrollbarStyles from "././customScroll";
 
 const icon = <CheckBoxOutlineBlankIcon />;
 const checkedIcon = <CheckBoxIcon />;
 
-const StyledListbox = styled("ul")(({ theme }) => ({}));
+const StyledListbox = styled("ul")(({ theme }) => ({
+  maxHeight: "100px",
+  overflowY: "auto",
+  padding: 0,
+  margin: 0,
+  ...ScrollbarStyles,
+}));
 
 export default function CheckboxAutocomplete({
   options,
