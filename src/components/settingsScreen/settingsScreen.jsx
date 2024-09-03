@@ -15,6 +15,7 @@ import CaseStatuses from "./caseStatuses";
 import PipelineAccordion from "./pipelineAccordion";
 import RoleAndPermission from "./roleAndPermission";
 import NotificationConfiguration from "../notificationConfigure";
+import JustificationModal from "./justificationModal";
 
 export default function SettingsScreen() {
   const navigate = useNavigate();
@@ -148,6 +149,7 @@ export default function SettingsScreen() {
         )}
 
         <PasswordAccordion />
+        <JustificationModal />
         {settings?.viewCaseStatuses && <CaseStatuses />}
 
         {settings?.viewPipeline && <PipelineAccordion />}

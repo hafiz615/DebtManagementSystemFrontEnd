@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-import { Grid, Typography } from "@mui/material";
+import { Grid, Tooltip, Typography } from "@mui/material";
 import {
   Window,
   Handyman,
@@ -53,6 +53,7 @@ export default function PipelineDetail() {
   const [searchText, setSearchText] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [order, setOrder] = useState("Ascending");
   const [page, setPage] = useState(0);
 
   const handleKeyPress = (e) => {
@@ -204,6 +205,11 @@ export default function PipelineDetail() {
       ]
     : [];
 
+  const orders = [
+    { label: "Ascending", value: "Ascending" },
+    { label: "Descending", value: "Descending" },
+  ];
+
   const allStatuses = data ? Object.keys(data)?.map((item) => item) : [];
 
   const allUsers = usersArray
@@ -238,7 +244,16 @@ export default function PipelineDetail() {
 
   useEffect(() => {
     setPage(0);
-  }, [pipelineType, pipelineName, leads, users, statuses, byTime, searchText]);
+  }, [
+    pipelineType,
+    pipelineName,
+    leads,
+    users,
+    statuses,
+    byTime,
+    searchText,
+    order,
+  ]);
 
   return (
     <Grid
@@ -289,12 +304,28 @@ export default function PipelineDetail() {
         >
           {pipelinesHeading}
         </Typography>
-        <SearchBar
-          searchCheck={true}
-          searchingText={searchText}
-          handleKeyPress={handleKeyPress}
-          placeholder="Search ..."
-        />
+        <div style={{ display: "flex" }}>
+          {pipelineType === "List" && (
+            <Tooltip title="Sort By Debtor Business" placement="top-start">
+              <div>
+                <Dropdown
+                  width="8rem"
+                  menuItems={orders}
+                  selectedValue={order}
+                  setSelectedValue={setOrder}
+                  backgroundColor={Colors.BG_LIGHT_GRAY}
+                  hoverColor={Colors.BG_LIGHT_GRAY}
+                />
+              </div>
+            </Tooltip>
+          )}
+          <SearchBar
+            searchCheck={true}
+            searchingText={searchText}
+            handleKeyPress={handleKeyPress}
+            placeholder="Search ..."
+          />
+        </div>
       </Grid>
 
       <div
@@ -470,6 +501,7 @@ export default function PipelineDetail() {
           statuses={statuses}
           users={users}
           leads={leads}
+          order={order}
           startDate={startDate}
           endDate={endDate}
           page={page}

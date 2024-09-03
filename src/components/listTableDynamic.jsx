@@ -17,6 +17,7 @@ import Prompt from "./prompt";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { CircularProgress } from "@mui/material";
 import { isEmpty } from "lodash";
+import ScrollbarStyles from "././customScroll";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     color: Colors.BLACK,
@@ -106,7 +107,7 @@ export default function ListTableDynamic({
         backgroundColor: Colors.WHITE,
         borderRadius: "10px ",
         width: "100%",
-        height: show ? "35vh" : "55vh",
+        height: "55vh",
         overflowY: !show ? "auto" : "visible",
       }}
     >
@@ -118,10 +119,11 @@ export default function ListTableDynamic({
         }}
       >
         <TableContainer
-          style={{
+          sx={{
             flexGrow: 1,
             overflowY: !show ? "auto" : "visible",
             maxHeight: !show ? "calc(100% - 48px)" : "none",
+            ...ScrollbarStyles,
           }}
         >
           <Table aria-label="customized table">
@@ -274,7 +276,7 @@ export default function ListTableDynamic({
         </TableContainer>
 
         <TablePagination
-          rowsPerPageOptions={[5, 10, 30]}
+          rowsPerPageOptions={[5, 15, 30]}
           component="div"
           count={data?.length || 0}
           rowsPerPage={rowsPerPage}

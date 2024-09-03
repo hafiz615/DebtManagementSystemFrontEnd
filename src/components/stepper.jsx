@@ -41,6 +41,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   const { showToast } = useToast();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(1);
   const [activeStep, setActiveStep] = React.useState(hide ? 1 : 0);
   const [skipped, setSkipped] = React.useState(new Set());
   const [completedSteps, setCompletedSteps] = useState(new Set());
@@ -465,13 +466,22 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
 
   const handleNext = async () => {
     try {
-      setLoading(true);
       window.scrollTo(0, 0);
       if (activeStep === 0) {
+        const calculateTime = selectedFiles && selectedFiles?.length * 3.1 + 7;
+        !loading && setProgress(1); // Reset progress
+        setLoading(true);
+        const timer = setInterval(() => {
+          setProgress((prevProgress) =>
+            prevProgress >= 100 ? 100 : prevProgress + 100 / calculateTime
+          );
+        }, 1000);
         const extractedDataMCAs = selectedFiles
           ? await ExtractContractData(selectedFiles).then((res) => {
               if (isEmpty(res)) {
                 showToast("Could not extract data from files", "error");
+                setProgress(101);
+                clearInterval(timer);
                 setActiveStep(activeStep + 1);
               } else {
                 setExtractedData(res);
@@ -479,8 +489,9 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               }
             })
           : [];
+
         if (files) {
-          const uploadFile = await UploadFiles(files);
+          const uploadFile = await UploadFiles(files, setProgress);
           if (uploadFile?.status === 200) {
             setUrl(uploadFile?.data?.data);
           }
@@ -805,6 +816,9 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
                 setSelectedFiles={setSelectedFiles}
                 setInputKey={setInputKey}
                 inputKey={inputKey}
+                loading={loading}
+                progress={progress}
+                setProgress={setProgress}
               />
             </>
           ) : activeStep === 1 ? (

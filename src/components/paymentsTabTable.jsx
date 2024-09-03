@@ -33,6 +33,7 @@ import {
 } from "../constants/appConstants";
 import { useSelector } from "react-redux";
 import Dropdown from "./dropdown";
+import ScrollbarStyles from "././customScroll";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -220,7 +221,13 @@ export default function PaymentTabsTable({
           height: "100%",
         }}
       >
-        <TableContainer style={{ flexGrow: 1, overflowY: "auto" }}>
+        <TableContainer
+          sx={{
+            flexGrow: 1,
+            overflowY: "auto",
+            ...ScrollbarStyles,
+          }}
+        >
           <Table sx={{ border: "none" }} aria-label="customized table">
             <TableHead sx={{ fontFamily: "Nunito", width: "100vw" }}>
               <TableRow sx={{ fontFamily: "Nunito" }}>
