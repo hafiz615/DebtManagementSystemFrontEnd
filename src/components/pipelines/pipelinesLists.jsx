@@ -16,11 +16,13 @@ export default function PipelinesLists({
   endDate,
   page,
   setPage,
+  order,
 }) {
   const [cases, setCases] = useState([]);
 
   const headers = [
-    "Lead",
+    "Leads",
+    "Business Name",
     "Total Debt",
     "Confidence",
     "Close Date",
@@ -35,6 +37,7 @@ export default function PipelinesLists({
         test?.cases?.map((c) => ({
           id: c?._id,
           lead: c?.debtor?.basicInformation?.fullName,
+          company: c?.debtor?.businessInformation?.companyName,
           totalDebt: `$${c?.totalDebt}`,
           confidence: c?.confidence,
           closeDate: c?.closeDate || "-",
@@ -101,6 +104,15 @@ export default function PipelinesLists({
     return true;
   });
 
+  const sortedCases = [...filteredCasesByDate].sort((a, b) => {
+    if (order === "Ascending") {
+      return a.company.toLowerCase() > b.company.toLowerCase() ? 1 : -1;
+    } else if (order === "Descending") {
+      return a.company.toLowerCase() < b.company.toLowerCase() ? 1 : -1;
+    }
+    return 0;
+  });
+
   const navigate = useNavigate();
   const handleRowClick = (id) => {
     localStorage.setItem("route", "all-cases");
@@ -129,9 +141,7 @@ export default function PipelinesLists({
           onRowClick={
             generalPermissions?.viewCaseDetails ? handleRowClick : undefined
           }
-          data={
-            data ? filteredCasesByDate?.map(({ time, ...rest }) => rest) : []
-          }
+          data={data ? sortedCases?.map(({ time, ...rest }) => rest) : []}
           page={page}
           setPage={setPage}
         />
