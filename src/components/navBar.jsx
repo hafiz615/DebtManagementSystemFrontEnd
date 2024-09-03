@@ -69,7 +69,6 @@ export default function NavBar({ onClick }) {
                 fontSize: FONT_SIZE_XXL,
                 fontWeight: "600",
               }}
-              onClick={handleLogout}
             >
               LOGOUT
             </Typography>

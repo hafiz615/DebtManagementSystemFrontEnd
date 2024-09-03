@@ -149,7 +149,7 @@ export default function SettingsScreen() {
         )}
 
         <PasswordAccordion />
-        <JustificationModal />
+        <JustificationModal getSettings={getSettings} />
         {settings?.viewCaseStatuses && <CaseStatuses />}
 
         {settings?.viewPipeline && <PipelineAccordion />}

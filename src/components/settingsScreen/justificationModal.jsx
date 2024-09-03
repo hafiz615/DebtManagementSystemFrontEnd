@@ -7,6 +7,8 @@ import { Colors } from "../../config/default";
 import { Typography, Grid, Checkbox, FormControlLabel } from "@mui/material";
 import TextButton from "../button";
 import { styled } from "@mui/material/styles";
+import { SelectJustificationModal } from "../../services/services";
+import { useToast } from "../../toast/toastContext";
 
 const StyledAccordion = styled(Accordion)({
   "&:before": {
@@ -33,15 +35,16 @@ const StyledAccordionDetails = styled(AccordionDetails)({
   borderTop: "none",
 });
 
-export default function JustificationModal() {
+export default function JustificationModal({ getSettings }) {
   const typographyOptions = ["Gemini", "GPT-04", "Llama"];
+  const [loading, setLoading] = useState(false);
+  const { showToast } = useToast();
 
   const [checkboxState, setCheckboxState] = useState({
     Gemini: false,
-    "GPT-04": false,
     Llama: false,
+    "GPT-04": false,
   });
-
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
 
@@ -51,9 +54,23 @@ export default function JustificationModal() {
     }));
   };
 
-  //   const handleSave = () => {
-  //     console.log("Checkbox State:", checkboxState);
-  //   };
+  const handleSave = async () => {
+    setLoading(true);
+    const params = {
+      gemini: checkboxState?.Gemini ? checkboxState?.Gemini : false,
+      llama: checkboxState?.Llama ? checkboxState?.Llama : false,
+      chatGpt: checkboxState["GPT-04"] ? checkboxState["GPT-04"] : false,
+    };
+
+    const justificationRes = await SelectJustificationModal(params);
+    if (justificationRes?.status === 200) {
+      showToast(justificationRes?.data?.message, "success");
+    } else {
+      const errorMessage = justificationRes?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setLoading(false);
+  };
 
   return (
     <StyledAccordion>
@@ -109,8 +126,10 @@ export default function JustificationModal() {
             paddingLeft="2rem"
             paddingRight="2rem"
             height="2rem"
+            width="6rem"
             marginRight="1rem"
-            // onClick={handleSave}
+            onClick={handleSave}
+            loading={loading}
           />
         </Grid>
       </StyledAccordionDetails>
