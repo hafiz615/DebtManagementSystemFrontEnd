@@ -28,6 +28,7 @@ import {
   FONT_SIZE_XL,
 } from "../constants/appConstants";
 import Dropdown from "./dropdown";
+import ScrollbarStyles from "././customScroll";
 import { Replay } from "@mui/icons-material";
 
 const StyledTableCell = styled(TableCell)(() => ({
@@ -146,7 +147,13 @@ export default function UserListTable({
       }}
     >
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-        <TableContainer style={{ flexGrow: 1, overflowY: "auto" }}>
+        <TableContainer
+          sx={{
+            flexGrow: 1,
+            overflowY: "auto",
+            ...ScrollbarStyles,
+          }}
+        >
           <Table aria-label="customized table">
             <TableHead sx={{ fontFamily: "Nunito" }}>
               <TableRow sx={{ fontFamily: "Nunito" }}>

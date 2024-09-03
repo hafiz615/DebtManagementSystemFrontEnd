@@ -15,6 +15,7 @@ import {
 import { Colors } from "../../config/default";
 import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../../constants/appConstants";
 import { isEmpty } from "lodash";
+import ScrollbarStyles from "./../customScroll";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -92,7 +93,13 @@ export default function PipelineListTable({
           height: "100%",
         }}
       >
-        <TableContainer style={{ flexGrow: 1, overflowY: "auto" }}>
+        <TableContainer
+          sx={{
+            flexGrow: 1,
+            overflowY: "auto",
+            ...ScrollbarStyles,
+          }}
+        >
           <Table aria-label="customized table">
             <TableHead>
               <TableRow>
@@ -176,7 +183,7 @@ export default function PipelineListTable({
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 30]}
+          rowsPerPageOptions={[5, 15, 30]}
           component="div"
           count={data?.length || 0}
           rowsPerPage={rowsPerPage}
