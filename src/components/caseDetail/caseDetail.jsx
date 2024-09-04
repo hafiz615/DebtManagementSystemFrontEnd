@@ -232,15 +232,18 @@ function CaseDetail() {
                 show="sendEmailCase"
                 buttonName="sendEmailCase"
                 iconColor={Colors.BLACK}
-                width="80vw"
-                height="72vh"
+                maxHeight="78vh"
+                caseDataId={id}
+                GetLogsById={GetLogsById}
               />
               <MuiModels
-                show="sendSmsCase"
+                show="sendEmailCase"
                 buttonName="sendSmsCase"
+                headerName={true}
                 iconColor={Colors.BLACK}
-                width="80vw"
-                height="72vh"
+                maxHeight="78vh"
+                caseDataId={id}
+                GetLogsById={GetLogsById}
               />
               <TextButton
                 buttonText="Get Settlement Range"
@@ -339,11 +342,15 @@ function CaseDetail() {
                     <DebtorDetailsCards
                       caseData={caseData}
                       GetCaseDetails={GetCaseDetails}
+                      caseDataId={id}
+                      GetLogsById={GetLogsById}
                     />
                   ) : value === "Creditor" ? (
                     <CreditorsDetailCards
                       caseData={caseData}
                       GetCaseDetails={GetCaseDetails}
+                      caseDataId={id}
+                      GetLogsById={GetLogsById}
                     />
                   ) : value === "Other Creditors" ? (
                     <Grid

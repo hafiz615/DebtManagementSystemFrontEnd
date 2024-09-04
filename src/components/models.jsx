@@ -30,6 +30,7 @@ import {
   Email,
   Difference,
   Edit,
+  Sms,
 } from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
@@ -44,8 +45,7 @@ import DebtorContacts from "./caseDetail/debtorContacts";
 import UploadFilePopup from "./caseDetail/uploadFilePopup";
 import ScrollbarStyles from "./../components/customScroll";
 import SettlementPayment from "./settlementPlan";
-import SendEmailCase from "./caseDetail/sendEmail";
-import SendSmsCase from "./caseDetail/sendSms";
+import SendEmailCase from "./caseDetail/sendEmailCase";
 
 export default function MuiModels({
   buttonName,
@@ -100,6 +100,9 @@ export default function MuiModels({
   payableAmount,
   debtorInfo,
   creditorInfo,
+  headerName,
+  caseDataId,
+  GetLogsById,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -182,31 +185,35 @@ export default function MuiModels({
           />
         </IconButton>
       ) : show === "editDebtorContacts" ? (
-        <Edit
+        <IconButton
+          sx={{ display: "flex", alignItems: "center" }}
           onClick={() => {
             handleOpen();
           }}
-          sx={{
-            color: Colors.DIM_LIGHT_GRAY,
-            cursor: "pointer",
-            fontSize: "13px",
-            marginLeft: ".3rem",
-            marginTop: ".3rem",
-          }}
-        />
+        >
+          <Edit
+            sx={{
+              color: Colors.DIM_LIGHT_GRAY,
+              cursor: "pointer",
+              fontSize: "13px",
+            }}
+          />
+        </IconButton>
       ) : show === "editCreditorContacts" ? (
-        <Edit
+        <IconButton
+          sx={{ display: "flex", alignItems: "center" }}
           onClick={() => {
             handleOpen();
           }}
-          sx={{
-            color: Colors.DIM_LIGHT_GRAY,
-            cursor: "pointer",
-            fontSize: "13px",
-            marginLeft: ".3rem",
-            marginTop: ".3rem",
-          }}
-        />
+        >
+          <Edit
+            sx={{
+              color: Colors.DIM_LIGHT_GRAY,
+              cursor: "pointer",
+              fontSize: "13px",
+            }}
+          />
+        </IconButton>
       ) : show === "creditorContacts" ? (
         <IconButton
           sx={{ display: "flex", alignItems: "center" }}
@@ -314,6 +321,40 @@ export default function MuiModels({
           }}
         >
           <MoreHorizOutlined
+            sx={{
+              fontSize: "1.2rem",
+              color: Colors.DARK_GRAY,
+              cursor: "pointer",
+            }}
+          />
+        </IconButton>
+      ) : buttonName === "sendEmail" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <Email
+            onClick={() => {
+              handleOpen();
+            }}
+            sx={{
+              fontSize: "1.2rem",
+              color: Colors.DARK_GRAY,
+              cursor: "pointer",
+            }}
+          />
+        </IconButton>
+      ) : buttonName === "sendSms" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <Sms
+            onClick={() => {
+              handleOpen();
+            }}
             sx={{
               fontSize: "1.2rem",
               color: Colors.DARK_GRAY,
@@ -591,9 +632,13 @@ export default function MuiModels({
               setLoading={setLoading}
             />
           ) : show === "sendEmailCase" ? (
-            <SendEmailCase />
-          ) : show === "sendSmsCase" ? (
-            <SendSmsCase />
+            <SendEmailCase
+              buttonText={buttonText}
+              handleClose={handleClose}
+              headerName={headerName}
+              caseDataId={caseDataId}
+              GetLogsById={GetLogsById}
+            />
           ) : show === "editPipeline" ? (
             <EditPipeline
               handleClose={handleClose}

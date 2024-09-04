@@ -53,7 +53,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
+export default function DebtorDetailsCards({
+  caseData,
+  GetCaseDetails,
+  caseDataId,
+  GetLogsById,
+}) {
   const [searchText, setSearchText] = useState("");
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 2;
@@ -428,6 +433,23 @@ export default function DebtorDetailsCards({ caseData, GetCaseDetails }) {
                 </Grid>
                 <Grid item xs={4} sx={gridActionStyle}>
                   <span style={cellStyle}>
+                    <MuiModels
+                      show="sendEmailCase"
+                      buttonName="sendEmail"
+                      iconColor={Colors.BLACK}
+                      caseDataId={caseDataId}
+                      maxHeight="78vh"
+                      GetLogsById={GetLogsById}
+                    />
+                    <MuiModels
+                      show="sendEmailCase"
+                      buttonName="sendSms"
+                      headerName={true}
+                      iconColor={Colors.BLACK}
+                      caseDataId={caseDataId}
+                      maxHeight="78vh"
+                      GetLogsById={GetLogsById}
+                    />
                     <MuiModels
                       show="editDebtorContacts"
                       caseData={caseData}
