@@ -1137,3 +1137,14 @@ export const SendEmailSmsCase = async (id, type, payload) => {
     return error;
   }
 };
+export const SelectJustificationModal = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + "/v1/case/saveJustification",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
