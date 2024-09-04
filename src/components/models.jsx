@@ -44,6 +44,8 @@ import DebtorContacts from "./caseDetail/debtorContacts";
 import UploadFilePopup from "./caseDetail/uploadFilePopup";
 import ScrollbarStyles from "./../components/customScroll";
 import SettlementPayment from "./settlementPlan";
+import SendEmailCase from "./caseDetail/sendEmail";
+import SendSmsCase from "./caseDetail/sendSms";
 
 export default function MuiModels({
   buttonName,
@@ -588,6 +590,10 @@ export default function MuiModels({
               loading={loading}
               setLoading={setLoading}
             />
+          ) : show === "sendEmailCase" ? (
+            <SendEmailCase />
+          ) : show === "sendSmsCase" ? (
+            <SendSmsCase />
           ) : show === "editPipeline" ? (
             <EditPipeline
               handleClose={handleClose}
