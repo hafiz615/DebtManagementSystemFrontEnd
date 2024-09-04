@@ -10,6 +10,7 @@ import {
   FONT_SIZE_MEDIUM,
   initialHtmlContent,
 } from "../constants/appConstants";
+import Dropdown from "./dropdown";
 
 const lineStyle = {
   width: "100%",
@@ -66,6 +67,7 @@ export default function SendEmail({
 }) {
   const [sendTo, setSendTo] = useState("");
   const [sendFrom, setSendFrom] = useState("");
+  const [strategy, setStrategy] = useState("Strategy 1");
   const [cc, setCc] = useState([]);
   const [inputValue, setInputValue] = useState("");
 
@@ -73,6 +75,12 @@ export default function SendEmail({
   const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
+
+  const allStrategies = [
+    { label: "Strategy 1", value: "Strategy 1" },
+    { label: "Strategy 2", value: "Strategy 2" },
+    { label: "Strategy 3", value: "Strategy 3" },
+  ];
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" || e.key === "Tab" || e.key === ",") {
@@ -193,6 +201,18 @@ export default function SendEmail({
             style={inputStyling}
           />
         </Tooltip>
+      </div>
+      <div style={{ marginBottom: "10px" }}>
+        <Dropdown
+          menuWidth="22rem"
+          menuItems={allStrategies}
+          placeholder="Type"
+          backgroundColor={Colors.BG_LIGHT_GRAY}
+          hoverColor={Colors.BG_LIGHT_GRAY}
+          width="48%"
+          selectedValue={strategy}
+          setSelectedValue={setStrategy}
+        />
       </div>
       {cc?.length > 0 && (
         <div style={inputContainerStyle}>

@@ -37,6 +37,7 @@ import {
   GetLumpSumAmount,
   GetFullProfit,
   UpdateCommission,
+  GetCaseSummariesById,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import { generatePdfFromApiData } from "../../common";
@@ -221,6 +222,8 @@ export default function SettlementRange() {
   const [errorfullProfitMessage, setErrorFullProfitMessage] = useState("");
   const [commissionPercentage, setCommissionPercentage] = useState("");
   const [summaryAmount, setSummaryAmount] = useState({});
+  const [justification, setJustification] = useState();
+  const [summary, setSummary] = useState([]);
   const scrollRef = useRef(null);
 
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
@@ -471,61 +474,33 @@ export default function SettlementRange() {
       humanInput: inputValue,
     };
     setInputValue("");
-    try {
-      const resSummary = await GetSummary(payload, caseId);
+    const resSummary = await GetSummary(payload, caseId);
+    if (resSummary?.status === 200) {
+      const reasons = resSummary?.data?.data?.[`settlement_range_1`]?.reasons;
+      const reason = resSummary?.data?.data?.[`settlement_range_1`]?.reason;
+      let formattedReason = "";
 
-      if (resSummary?.status === 200) {
-        const reasons = resSummary?.data?.data?.[`settlement_range_1`]?.reasons;
-        const reason = resSummary?.data?.data?.[`settlement_range_1`]?.reason;
-        let formattedReason = "";
-
-        if (Array.isArray(reasons)) {
-          formattedReason = reasons.join("\n");
-        } else if (typeof reasons === "string") {
-          formattedReason = reasons;
-        } else if (Array.isArray(reason)) {
-          formattedReason = reason.join("\n");
-        } else if (typeof reason === "string") {
-          formattedReason = reason;
-        } else {
-          formattedReason = "No reason available";
-        }
-        setChatHistory((prev) => [
-          ...prev,
-          {
-            type: "response",
-            text: formattedReason,
-          },
-        ]);
-        setChatHistory((prev) => [
-          ...prev,
-          {
-            type: "bound",
-            text: resSummary?.data?.data,
-          },
-        ]);
-        const resRanges = await GetSettlementRangeWithScores("", caseId, false);
-        if (resRanges?.status === 200) {
-          setChatHistory((prev) => [
-            ...prev,
-            {
-              type: "response",
-              text:
-                resRanges?.data?.data?.settlementRange?.justifications?.[
-                  justificationValue
-                ] || "No justification available",
-            },
-          ]);
-        }
+      if (Array.isArray(reasons)) {
+        formattedReason = reasons.join("\n");
+      } else if (typeof reasons === "string") {
+        formattedReason = reasons;
+      } else if (Array.isArray(reason)) {
+        formattedReason = reason.join("\n");
+      } else if (typeof reason === "string") {
+        formattedReason = reason;
+      } else {
+        formattedReason = "No reason available";
       }
-    } catch (error) {
+
       setChatHistory((prev) => [
         ...prev,
-        { type: "response", text: "An error occurred. Please try again." },
+        {
+          type: "bound",
+          text: resSummary?.data?.data,
+        },
       ]);
-    } finally {
-      setTableLoading(false);
     }
+    setTableLoading(false);
   };
 
   const handleCommissionUpdate = async () => {
@@ -571,6 +546,9 @@ export default function SettlementRange() {
           }
           setAllCreditorsNames(creditorAccountTitles);
           showToast(resCommission?.data?.message, "success");
+          setJustification(
+            settlementRangeData?.data?.data?.settlementRange?.justifications
+          );
           GetLumpSumAmountData();
           GetFullProfitData();
         } else if (
@@ -622,14 +600,9 @@ export default function SettlementRange() {
           setSummaryAmount(
             settlementRangeData?.data?.data?.creditorsContractDetailsSum
           );
-          setChatHistory((prev) => [
-            ...prev,
-            {
-              type: "response",
-              text: settlementRangeData?.data?.data?.settlementRange
-                ?.justifications?.[justificationValue],
-            },
-          ]);
+          setJustification(
+            settlementRangeData?.data?.data?.settlementRange?.justifications
+          );
 
           const allCreditors = settlementRangeData?.data?.data?.creditors;
           setCreditorNames(allCreditors);
@@ -668,9 +641,16 @@ export default function SettlementRange() {
     };
     GetAllRanges(params, status);
   };
+  const GetAllSummary = async () => {
+    const res = await GetCaseSummariesById(caseId);
+    if (res?.status === 200) {
+      setSummary(res?.data?.data);
+    }
+  };
 
   useEffect(() => {
     GetAllRanges([], false);
+    GetAllSummary();
   }, []);
 
   const handleGeneratePdf = () => {
@@ -1378,6 +1358,71 @@ export default function SettlementRange() {
                 padding: "16px",
               }}
             >
+              <Grid
+                xs={12}
+                container
+                justifyContent="flex-start"
+                sx={{ marginBottom: "8px" }}
+              >
+                <Card
+                  sx={{
+                    maxWidth: "60%",
+                    padding: "8px 16px",
+                    borderRadius: "10px",
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    boxShadow: "none",
+                  }}
+                >
+                  <Typography variant="body1">
+                    <ReactMarkdown>
+                      {justification?.[justificationValue]}
+                    </ReactMarkdown>
+                  </Typography>
+                </Card>
+              </Grid>
+              {summary?.map((item) => (
+                <>
+                  <Grid
+                    xs={12}
+                    container
+                    justifyContent="flex-end"
+                    sx={{ marginBottom: "8px" }}
+                  >
+                    <Card
+                      sx={{
+                        maxWidth: "70%",
+                        padding: "8px 16px",
+                        borderRadius: "10px",
+                        backgroundColor: Colors.BG_LIGHT_GRAY,
+                        boxShadow: "none",
+                      }}
+                    >
+                      <Typography variant="body1">
+                        <ReactMarkdown>{item?.prompt}</ReactMarkdown>
+                      </Typography>
+                    </Card>
+                  </Grid>
+                  <Grid
+                    xs={12}
+                    container
+                    justifyContent="flex-start"
+                    sx={{ marginBottom: "8px" }}
+                  >
+                    <Card
+                      sx={{
+                        maxWidth: "70%",
+                        padding: "8px 16px",
+                        borderRadius: "10px",
+                        backgroundColor: Colors.BG_LIGHT_GRAY,
+                        boxShadow: "none",
+                      }}
+                    >
+                      <SettlementBounds data={item?.chat} />
+                    </Card>
+                  </Grid>
+                </>
+              ))}
+
               {chatHistory?.map((message, index) => (
                 <Grid
                   xs={12}
@@ -1390,7 +1435,7 @@ export default function SettlementRange() {
                 >
                   <Card
                     sx={{
-                      maxWidth: "60%",
+                      maxWidth: "70%",
                       padding: "8px 16px",
                       borderRadius: "10px",
                       backgroundColor: Colors.BG_LIGHT_GRAY,
