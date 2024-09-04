@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -35,16 +35,27 @@ const StyledAccordionDetails = styled(AccordionDetails)({
   borderTop: "none",
 });
 
-export default function JustificationModal({ getSettings }) {
+export default function JustificationModal({
+  getSettings,
+  selectJustification,
+}) {
   const typographyOptions = ["Gemini", "GPT-04", "Llama"];
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
 
   const [checkboxState, setCheckboxState] = useState({
-    Gemini: false,
-    Llama: false,
-    "GPT-04": false,
+    Gemini: selectJustification?.gemini || false,
+    Llama: selectJustification?.llama || false,
+    "GPT-04": selectJustification?.chatGpt || false,
   });
+  useEffect(() => {
+    const justificationData = {
+      Gemini: selectJustification?.gemini,
+      Llama: selectJustification?.llama,
+      "GPT-04": selectJustification?.chatGpt,
+    };
+    setCheckboxState(justificationData);
+  }, [selectJustification]);
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
 
@@ -65,6 +76,7 @@ export default function JustificationModal({ getSettings }) {
     const justificationRes = await SelectJustificationModal(params);
     if (justificationRes?.status === 200) {
       showToast(justificationRes?.data?.message, "success");
+      getSettings();
     } else {
       const errorMessage = justificationRes?.response?.data?.message;
       showToast(errorMessage, "error");
@@ -75,7 +87,7 @@ export default function JustificationModal({ getSettings }) {
   return (
     <StyledAccordion>
       <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
-        Justification Modal
+        Justification Modals
       </StyledAccordionSummary>
       <StyledAccordionDetails>
         <Grid
