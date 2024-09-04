@@ -231,7 +231,6 @@ export default function CustomizedTabs() {
   }, [paginationRows]);
 
   const handleResendInvite = async (row) => {
-    console.log(row);
     const payload = {
       email: row?.email,
     };
