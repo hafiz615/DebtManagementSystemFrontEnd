@@ -102,7 +102,7 @@ export default function CustomFieldsAccordion({ caseData, GetCaseDetails }) {
         }}
       >
         <Grid>
-          {customField &&
+          {customField && customField.length > 0 ? (
             customField?.map((item) => (
               <Grid
                 container
@@ -130,7 +130,29 @@ export default function CustomFieldsAccordion({ caseData, GetCaseDetails }) {
                   {item?.value}
                 </Typography>
               </Grid>
-            ))}
+            ))
+          ) : (
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "35vh",
+              }}
+            >
+              <Typography
+                sx={{
+                  color: Colors.GRAY,
+                  fontFamily: "Nunito",
+                  fontWeight: "700",
+                }}
+              >
+                No Custom Fields Exist
+              </Typography>
+            </Grid>
+          )}
         </Grid>
       </AccordionDetails>
     </Accordion>
