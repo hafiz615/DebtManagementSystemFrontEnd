@@ -38,7 +38,7 @@ export default function SettlementBounds({ data }) {
             <StyledTableCell></StyledTableCell>
             {settlements?.map((_, index) => (
               <StyledTableCell key={index} align="center">
-                <b>{`Settlement ${index + 1}`}</b>
+                <b>{`Settlement Range ${index + 1}`}</b>
               </StyledTableCell>
             ))}
           </TableRow>

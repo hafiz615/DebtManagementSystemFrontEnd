@@ -17,6 +17,7 @@ import {
   Tooltip,
   Card,
   LinearProgress,
+  Checkbox,
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import {
@@ -40,7 +41,7 @@ import {
   GetCaseSummariesById,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
-import { generatePdfFromApiData } from "../../common";
+import { formatDateString, generatePdfFromApiData } from "../../common";
 import MuiModels from "../models";
 import CheckboxAutocomplete from "../checkboxAutocomplete";
 import { useParams } from "react-router-dom";
@@ -224,6 +225,9 @@ export default function SettlementRange() {
   const [summaryAmount, setSummaryAmount] = useState({});
   const [justification, setJustification] = useState();
   const [summary, setSummary] = useState([]);
+  const [checkboxStates, setCheckboxStates] = useState({});
+  const [selectedData, setSelectedData] = useState([]);
+
   const scrollRef = useRef(null);
 
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
@@ -250,6 +254,25 @@ export default function SettlementRange() {
       setTableLoading(false);
     }, 2000);
   }, []);
+
+  const handleCheckboxChange = (id, data) => {
+    setCheckboxStates((prev) => {
+      const newState = {
+        ...prev,
+        [id]: !prev[id],
+      };
+
+      if (newState[id]) {
+        setSelectedData((prevSelected) => [...prevSelected, data]);
+      } else {
+        setSelectedData((prevSelected) =>
+          prevSelected.filter((item) => item !== data)
+        );
+      }
+
+      return newState;
+    });
+  };
 
   const GetLumpSumAmountData = async () => {
     if (caseId) {
@@ -464,10 +487,10 @@ export default function SettlementRange() {
 
   const handleClick = async () => {
     if (!inputValue) return;
+    setChatHistory((prev) => [...prev, { type: "user", text: inputValue }]);
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-    setChatHistory((prev) => [...prev, { type: "user", text: inputValue }]);
     setTableLoading(true);
     const payload = {
       financialHealthSummary: "",
@@ -837,6 +860,8 @@ export default function SettlementRange() {
   const filteredData = updatedCreditorNamesDetails.filter(
     (item) => item.creditorName !== "Summary"
   );
+
+  const isAnyChecked = Object.values(checkboxStates).some((checked) => checked);
 
   return (
     <Grid
@@ -1297,10 +1322,13 @@ export default function SettlementRange() {
           <Grid
             item
             xs={12}
+            container
             sx={{
               backgroundColor: Colors.WHITE,
               borderRadius: "10px",
               mt: "2rem",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
             <AntTabs
@@ -1310,7 +1338,6 @@ export default function SettlementRange() {
               variant="scrollable"
               scrollButtons="auto"
               sx={{
-                width: "100%",
                 borderTopLeftRadius: "10px",
                 borderTopRightRadius: "10px",
               }}
@@ -1343,19 +1370,25 @@ export default function SettlementRange() {
                 label="llama"
               />
             </AntTabs>
+            <div style={{ marginRight: "16px" }}>
+              <MuiModels
+                show="sendEmailJustification"
+                disabled={!isAnyChecked}
+                data={selectedData}
+              />
+            </div>
           </Grid>
 
           <Grid xs={12}>
             <Grid
-              ref={scrollRef}
               item
               xs={12}
               sx={{
                 height: "50vh",
                 overflowY: "auto",
-                backgroundColor: Colors.WHITE,
-                ...ScrollbarStyles1,
+                backgroundColor: "white",
                 padding: "16px",
+                ...ScrollbarStyles,
               }}
             >
               <Grid
@@ -1364,6 +1397,17 @@ export default function SettlementRange() {
                 justifyContent="flex-start"
                 sx={{ marginBottom: "8px" }}
               >
+                <div>
+                  <Checkbox
+                    checked={checkboxStates["justification"]}
+                    onChange={() =>
+                      handleCheckboxChange(
+                        "justification",
+                        justification?.[justificationValue]
+                      )
+                    }
+                  />
+                </div>
                 <Card
                   sx={{
                     maxWidth: "60%",
@@ -1380,8 +1424,8 @@ export default function SettlementRange() {
                   </Typography>
                 </Card>
               </Grid>
-              {summary?.map((item) => (
-                <>
+              {summary?.map((item, index) => (
+                <React.Fragment key={index}>
                   <Grid
                     xs={12}
                     container
@@ -1400,6 +1444,15 @@ export default function SettlementRange() {
                       <Typography variant="body1">
                         <ReactMarkdown>{item?.prompt}</ReactMarkdown>
                       </Typography>
+                      <p
+                        style={{
+                          textAlign: "right",
+                          fontFamily: "Nunito",
+                          fontSize: FONT_SIZE_SMALL,
+                        }}
+                      >
+                        {formatDateString(item?.updatedAt)}
+                      </p>
                     </Card>
                   </Grid>
                   <Grid
@@ -1408,6 +1461,14 @@ export default function SettlementRange() {
                     justifyContent="flex-start"
                     sx={{ marginBottom: "8px" }}
                   >
+                    <div>
+                      <Checkbox
+                        checked={checkboxStates[`summary_${index}`]}
+                        onChange={() =>
+                          handleCheckboxChange(`summary_${index}`, item?.chat)
+                        }
+                      />
+                    </div>
                     <Card
                       sx={{
                         maxWidth: "70%",
@@ -1418,9 +1479,18 @@ export default function SettlementRange() {
                       }}
                     >
                       <SettlementBounds data={item?.chat} />
+                      <p
+                        style={{
+                          textAlign: "left",
+                          fontFamily: "Nunito",
+                          fontSize: FONT_SIZE_SMALL,
+                        }}
+                      >
+                        {formatDateString(item?.updatedAt)}
+                      </p>
                     </Card>
                   </Grid>
-                </>
+                </React.Fragment>
               ))}
 
               {chatHistory?.map((message, index) => (
@@ -1433,6 +1503,19 @@ export default function SettlementRange() {
                   }
                   sx={{ marginBottom: "8px" }}
                 >
+                  {message.type === "bound" && (
+                    <div>
+                      <Checkbox
+                        checked={checkboxStates[`chatHistory_${index}`]}
+                        onChange={() =>
+                          handleCheckboxChange(
+                            `chatHistory_${index}`,
+                            message?.text
+                          )
+                        }
+                      />
+                    </div>
+                  )}
                   <Card
                     sx={{
                       maxWidth: "70%",
@@ -1443,12 +1526,23 @@ export default function SettlementRange() {
                     }}
                   >
                     {message.type === "bound" ? (
-                      <SettlementBounds data={message?.text} />
+                      <div>
+                        <SettlementBounds data={message?.text} />
+                      </div>
                     ) : (
                       <Typography variant="body1">
                         <ReactMarkdown>{message?.text}</ReactMarkdown>
                       </Typography>
                     )}
+                    <p
+                      style={{
+                        textAlign: "right",
+                        fontFamily: "Nunito",
+                        fontSize: FONT_SIZE_SMALL,
+                      }}
+                    >
+                      {formatDateString("now")}
+                    </p>
                   </Card>
                 </Grid>
               ))}
