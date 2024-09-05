@@ -6,11 +6,8 @@ import TextButton from "./button";
 import FroalaEditorComponent from "react-froala-wysiwyg";
 import ScrollbarStyles from "./customScroll";
 import { SendSettlementEmail } from "../services/services";
-import {
-  FONT_SIZE_MEDIUM,
-  initialHtmlContent,
-} from "../constants/appConstants";
-import Dropdown from "./dropdown";
+import { FONT_SIZE_MEDIUM } from "../constants/appConstants";
+import { marked } from "marked";
 
 const lineStyle = {
   width: "100%",
@@ -59,12 +56,7 @@ const inputStyling = {
   borderRadius: "5px",
   width: "48%",
 };
-export default function SendEmail({
-  handleClose,
-  payableAmount,
-  debtorInfo,
-  creditorInfo,
-}) {
+export default function SendEmailJustification({ handleClose, data }) {
   const [sendTo, setSendTo] = useState("");
   const [sendFrom, setSendFrom] = useState("");
   const [strategy, setStrategy] = useState("Strategy 1");
@@ -75,12 +67,6 @@ export default function SendEmail({
   const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
-
-  const allStrategies = [
-    { label: "Strategy 1", value: "Strategy 1" },
-    { label: "Strategy 2", value: "Strategy 2" },
-    { label: "Strategy 3", value: "Strategy 3" },
-  ];
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" || e.key === "Tab" || e.key === ",") {
@@ -131,31 +117,38 @@ export default function SendEmail({
   const editorRef = useRef(null);
 
   useEffect(() => {
-    const currentDate = new Date();
-    const options = {
-      weekday: "short",
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    };
-    const formattedDate = currentDate.toLocaleDateString("en-US", options);
+    if (data) {
+      const formattedData = data
+        ?.map((item) => {
+          if (typeof item === "string") {
+            const htmlContent = marked(item);
+            return htmlContent;
+          } else if (typeof item === "object") {
+            return Object.keys(item)
+              ?.map((key) => {
+                const range = item[key];
+                const dynamicContent = Object.keys(range)
+                  ?.map((innerKey) => {
+                    const mappedSettlements = innerKey.replace(/_/g, " ");
+                    const value = Array.isArray(range[innerKey])
+                      ? range[innerKey].join(" - ")
+                      : range[innerKey];
 
-    const formatedValue =
-      typeof payableAmount === "string"
-        ? payableAmount && payableAmount?.includes("$")
-          ? payableAmount
-          : `$${payableAmount}`
-        : `$${payableAmount}`;
+                    return `<p><strong>${mappedSettlements}:</strong> ${value}</p>`;
+                  })
+                  ?.join("");
 
-    const htmlContent = initialHtmlContent(
-      formattedDate,
-      debtorInfo,
-      creditorInfo,
-      formatedValue
-    );
+                return `<h3>${key?.replace(/_/g, " ")}</h3>${dynamicContent}`;
+              })
+              .join("");
+          }
+          return "";
+        })
+        .join("");
 
-    setPreview(htmlContent);
-  }, []);
+      setPreview(formattedData);
+    }
+  }, [data]);
 
   return (
     <div>
@@ -202,18 +195,7 @@ export default function SendEmail({
           />
         </Tooltip>
       </div>
-      <div style={{ marginBottom: "10px" }}>
-        <Dropdown
-          menuWidth="22rem"
-          menuItems={allStrategies}
-          placeholder="Type"
-          backgroundColor={Colors.BG_LIGHT_GRAY}
-          hoverColor={Colors.BG_LIGHT_GRAY}
-          width="48%"
-          selectedValue={strategy}
-          setSelectedValue={setStrategy}
-        />
-      </div>
+
       {cc?.length > 0 && (
         <div style={inputContainerStyle}>
           {cc?.map((email, index) => (

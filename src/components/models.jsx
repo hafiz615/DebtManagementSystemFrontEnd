@@ -46,6 +46,7 @@ import UploadFilePopup from "./caseDetail/uploadFilePopup";
 import ScrollbarStyles from "./../components/customScroll";
 import SettlementPayment from "./settlementPlan";
 import SendEmailCase from "./caseDetail/sendEmailCase";
+import SendEmailJustification from "./sendEmailJustifications";
 
 export default function MuiModels({
   buttonName,
@@ -103,6 +104,7 @@ export default function MuiModels({
   headerName,
   caseDataId,
   GetLogsById,
+  disabled,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -479,21 +481,31 @@ export default function MuiModels({
           <AddIcon sx={{ fontSize: ".9rem" }} />
           {froalaEditorButton}
         </Button>
-      ) : show === "sendEmail" ? (
+      ) : show === "sendEmail" || show === "sendEmailJustification" ? (
         <TextButton
           buttonText={"Send Email"}
           boxShadow="none"
           height={"2.5rem"}
           width={extraSmallScreen ? "2rem" : "9rem"}
-          backgroundColor={Colors.BG_LIGHT_GRAY}
-          fontColor={Colors.BLACK}
-          hoverColor={Colors.BG_LIGHT_GRAY}
+          backgroundColor={
+            show === "sendEmail" ? Colors.BG_LIGHT_GRAY : Colors.SKY_BLUE
+          }
+          fontColor={show === "sendEmail" ? Colors.BLACK : Colors.WHITE}
+          hoverColor={
+            show === "sendEmail" ? Colors.BG_LIGHT_GRAY : Colors.SKY_BLUE
+          }
           onClick={handleOpen}
+          disabled={disabled}
           startIcon={
-            extraSmallScreen ? (
+            extraSmallScreen || show === "sendEmailJustification" ? (
               ""
             ) : (
-              <Email sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }} />
+              <Email
+                sx={{
+                  color: Colors.DARK_GRAY,
+                  fontSize: FONT_SIZE_XL,
+                }}
+              />
             )
           }
         />
@@ -748,6 +760,8 @@ export default function MuiModels({
               remainingAmount={remainingAmount}
               commissionRange={commissionRange}
             />
+          ) : show === "sendEmailJustification" ? (
+            <SendEmailJustification handleClose={handleClose} data={data} />
           ) : (
             ""
           )}
