@@ -603,7 +603,6 @@ export default function SettlementRange() {
           caseId,
           status
         );
-        console.log(settlementRangeData, "settlementRangeData");
         if (settlementRangeData?.status === 200) {
           setLoading(false);
           if (typeof settlementRangeData?.data?.data?.getScores === "string") {
@@ -974,7 +973,7 @@ export default function SettlementRange() {
                     }}
                   />
                 }
-                onClick={() => generatePDF(allData)}
+                onClick={() => generatePDF(allData, lumpSumpData, fullProfit)}
               />
               <MuiModels
                 show="sendEmail"
