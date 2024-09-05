@@ -340,7 +340,7 @@ export default function MuiModels({
             }}
             sx={{
               fontSize: "1.2rem",
-              color: Colors.DARK_GRAY,
+              color: Colors.DIM_LIGHT_GRAY,
               cursor: "pointer",
             }}
           />
@@ -357,7 +357,7 @@ export default function MuiModels({
             }}
             sx={{
               fontSize: "1.2rem",
-              color: Colors.DARK_GRAY,
+              color: Colors.DIM_LIGHT_GRAY,
               cursor: "pointer",
             }}
           />
