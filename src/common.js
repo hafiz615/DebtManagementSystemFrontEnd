@@ -414,12 +414,8 @@ export const truncateText = (text, length) => {
 };
 
 export function formatDateString(isoDateStr) {
-  let date;
-  if (isoDateStr === "now") {
-    date = new Date();
-  } else {
-    date = new Date(isoDateStr);
-  }
+  const date = isoDateStr === "now" ? new Date() : new Date(isoDateStr);
+
   const options = {
     year: "numeric",
     month: "long",
@@ -430,6 +426,5 @@ export function formatDateString(isoDateStr) {
     hour12: true,
   };
 
-  const formattedDate = date.toLocaleString("en-US", options);
-  return formattedDate.replace(",", " at");
+  return date.toLocaleString("en-US", options).replace(",", " at");
 }

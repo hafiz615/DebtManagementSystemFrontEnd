@@ -119,26 +119,26 @@ export default function SendEmailJustification({ handleClose, data }) {
   useEffect(() => {
     if (data) {
       const formattedData = data
-        .map((item) => {
+        ?.map((item) => {
           if (typeof item === "string") {
             const htmlContent = marked(item);
             return htmlContent;
           } else if (typeof item === "object") {
             return Object.keys(item)
-              .map((key) => {
+              ?.map((key) => {
                 const range = item[key];
                 const dynamicContent = Object.keys(range)
-                  .map((innerKey) => {
-                    const formattedKey = innerKey.replace(/_/g, " ");
+                  ?.map((innerKey) => {
+                    const mappedSettlements = innerKey.replace(/_/g, " ");
                     const value = Array.isArray(range[innerKey])
                       ? range[innerKey].join(" - ")
                       : range[innerKey];
 
-                    return `<p><strong>${formattedKey}:</strong> ${value}</p>`;
+                    return `<p><strong>${mappedSettlements}:</strong> ${value}</p>`;
                   })
-                  .join("");
+                  ?.join("");
 
-                return `<h3>${key.replace(/_/g, " ")}</h3>${dynamicContent}`;
+                return `<h3>${key?.replace(/_/g, " ")}</h3>${dynamicContent}`;
               })
               .join("");
           }
