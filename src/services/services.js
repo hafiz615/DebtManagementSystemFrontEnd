@@ -1126,6 +1126,18 @@ export const ResendInvite = async (payload) => {
   }
 };
 
+export const SendEmailSmsCase = async (id, type, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/email/sendSmsEmailDebtorCreditor/${id}?type=${type}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
 export const GetCaseSummariesById = async (id) => {
   try {
     return await axios.get(
