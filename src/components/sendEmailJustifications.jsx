@@ -8,6 +8,7 @@ import ScrollbarStyles from "./customScroll";
 import { SendSettlementEmail } from "../services/services";
 import { FONT_SIZE_MEDIUM } from "../constants/appConstants";
 import { marked } from "marked";
+import { useParams } from "react-router-dom";
 
 const lineStyle = {
   width: "100%",
@@ -56,7 +57,7 @@ const inputStyling = {
   borderRadius: "5px",
   width: "48%",
 };
-export default function SendEmailJustification({ handleClose, data }) {
+export default function SendEmailJustification({ handleClose, data, caseId }) {
   const [sendTo, setSendTo] = useState("");
   const [sendFrom, setSendFrom] = useState("");
   const [strategy, setStrategy] = useState("Strategy 1");
@@ -67,6 +68,7 @@ export default function SendEmailJustification({ handleClose, data }) {
   const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
+  const { id } = useParams();
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" || e.key === "Tab" || e.key === ",") {
@@ -97,7 +99,7 @@ export default function SendEmailJustification({ handleClose, data }) {
       content: preview,
       cc: cc,
     };
-    const resEmail = await SendSettlementEmail(payload);
+    const resEmail = await SendSettlementEmail(payload, caseId);
     if (resEmail?.status === 200) {
       showToast(resEmail?.data?.message, "success");
       setCc([]);

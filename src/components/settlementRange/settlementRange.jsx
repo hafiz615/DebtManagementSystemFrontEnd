@@ -39,6 +39,7 @@ import {
   GetFullProfit,
   UpdateCommission,
   GetCaseSummariesById,
+  GetPaymentIntervals,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import { formatDateString, generatePdfFromApiData } from "../../common";
@@ -227,6 +228,8 @@ export default function SettlementRange() {
   const [summary, setSummary] = useState([]);
   const [checkboxStates, setCheckboxStates] = useState({});
   const [selectedData, setSelectedData] = useState([]);
+  const [paymentData, setPaymentData] = useState();
+  const [paymentChanged, setPaymentChanged] = useState(false);
 
   const scrollRef = useRef(null);
 
@@ -336,6 +339,7 @@ export default function SettlementRange() {
     0: recommendations?.map((item, index) => (
       <>
         <SettlementCards
+          setPaymentChanged={setPaymentChanged}
           remainingAmount={
             allCreditorNames[tabValue] === "Summary"
               ? summaryAmount?.loanAmount.toString()
@@ -374,6 +378,7 @@ export default function SettlementRange() {
       <>
         {!isEmpty(lumpSumpData) ? (
           <SettlementCards
+            setPaymentChanged={setPaymentChanged}
             remainingAmount={
               allCreditorNames[tabValue] === "Summary"
                 ? summaryAmount?.loanAmount.toString()
@@ -416,6 +421,7 @@ export default function SettlementRange() {
       <>
         {!isEmpty(fullProfit) ? (
           <SettlementCards
+            setPaymentChanged={setPaymentChanged}
             remainingAmount={
               allCreditorNames[tabValue] === "Summary"
                 ? summaryAmount?.loanAmount.toString()
@@ -670,6 +676,17 @@ export default function SettlementRange() {
       setSummary(res?.data?.data);
     }
   };
+
+  const getIntervals = async () => {
+    const res = await GetPaymentIntervals(caseId);
+    if (res?.status === 200) {
+      setPaymentData(res?.data?.data);
+    }
+  };
+
+  useEffect(() => {
+    getIntervals();
+  }, [paymentChanged]);
 
   useEffect(() => {
     GetAllRanges([], false);
@@ -968,6 +985,12 @@ export default function SettlementRange() {
                     ? summaryAmount?.payableAmount
                     : selectedCreditorDetails?.contractDetails?.payable_amount
                 }
+                data={apiData}
+                selectedCreditor={allCreditorNames[tabValue]}
+                lumpSump={lumpSumpData}
+                fullProfit={fullProfit}
+                caseId={caseId}
+                paymentData={paymentData}
               />
               <TextButton
                 disabled={!apiData}
@@ -1375,6 +1398,7 @@ export default function SettlementRange() {
                 show="sendEmailJustification"
                 disabled={!isAnyChecked}
                 data={selectedData}
+                caseId={caseId}
               />
             </div>
           </Grid>

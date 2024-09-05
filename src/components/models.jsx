@@ -100,6 +100,11 @@ export default function MuiModels({
   debtorInfo,
   creditorInfo,
   disabled,
+  selectedCreditor,
+  lumpSump,
+  fullProfit,
+  paymentData,
+  setPaymentChanged,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -662,6 +667,12 @@ export default function MuiModels({
               payableAmount={payableAmount}
               debtorInfo={debtorInfo}
               creditorInfo={creditorInfo}
+              data={data}
+              selectedCreditor={selectedCreditor}
+              lumpSump={lumpSump}
+              fullProfit={fullProfit}
+              caseId={caseId}
+              paymentData={paymentData}
             />
           ) : show === "uploadFile" ? (
             <UploadFilePopup
@@ -680,6 +691,7 @@ export default function MuiModels({
               caseId={caseId}
               remainingAmount={remainingAmount}
               commissionRange={commissionRange}
+              setPaymentChanged={setPaymentChanged}
             />
           ) : show === "settlmentPayment" ? (
             <SettlementPayment
@@ -690,9 +702,14 @@ export default function MuiModels({
               caseId={caseId}
               remainingAmount={remainingAmount}
               commissionRange={commissionRange}
+              setPaymentChanged={setPaymentChanged}
             />
           ) : show === "sendEmailJustification" ? (
-            <SendEmailJustification handleClose={handleClose} data={data} />
+            <SendEmailJustification
+              handleClose={handleClose}
+              data={data}
+              caseId={caseId}
+            />
           ) : (
             ""
           )}
