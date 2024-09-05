@@ -1125,6 +1125,18 @@ export const ResendInvite = async (payload) => {
     return error;
   }
 };
+
+export const GetCaseSummariesById = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/case/getCaseSummaries/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
 export const SelectJustificationModal = async (payload) => {
   try {
     return await axios.post(
