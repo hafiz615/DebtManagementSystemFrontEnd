@@ -1,5 +1,6 @@
 import { baseUrl, NETWORK_ERROR } from "./constants/appConstants";
 import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 import { parse, format, isValid } from "date-fns";
 
 const BASE_URL = baseUrl();
@@ -412,3 +413,84 @@ export const truncateText = (text, length) => {
   }
   return text;
 };
+
+const generatePDF = (data) => {
+  const { creditors, debtor, creditorsContractDetailsSum } = data;
+  const doc = new jsPDF();
+  doc.setFontSize(18);
+  doc.text("Debtor and Creditor Details", 14, 20);
+  doc.setFontSize(14);
+  doc.text("Debtor Information", 14, 40);
+
+  const debtorInfo = [
+    ["Full Name", debtor.basicInformation.fullName],
+    ["Email", debtor.basicInformation.email],
+    ["Phone", debtor.basicInformation.phone],
+    [
+      "Address",
+      `${debtor.basicInformation.address}, ${debtor.basicInformation.city}, ${debtor.basicInformation.state}, ${debtor.basicInformation.zipCode}`,
+    ],
+    ["Weekly Budget", `$${debtor.basicInformation.weeklyBudget}`],
+  ];
+
+  // Add table for debtor information
+  doc.autoTable({
+    head: [["Field", "Value"]],
+    body: debtorInfo,
+    startY: 45,
+  });
+
+  // Creditors Section
+  doc.setFontSize(14);
+  doc.text("Creditors Information", 14, doc.autoTable.previous.finalY + 20);
+
+  const creditorDetails = creditors.map((creditor) => [
+    creditor.name,
+    `$${creditor.contractDetails.loan_amount.toLocaleString()}`,
+    `$${creditor.contractDetails.payable_amount.toLocaleString()}`,
+    `${creditor.contractDetails.purchased_percentage}%`,
+    `$${creditor.contractDetails.repayment_amount.toLocaleString()}`,
+  ]);
+
+  doc.autoTable({
+    head: [
+      [
+        "Name",
+        "Loan Amount",
+        "Payable Amount",
+        "Purchased %",
+        "Repayment Amount",
+      ],
+    ],
+    body: creditorDetails,
+    startY: doc.autoTable.previous.finalY + 25,
+  });
+
+  // Creditors Summary Section
+  doc.setFontSize(14);
+  doc.text(
+    "Creditors Contract Details Summary",
+    14,
+    doc.autoTable.previous.finalY + 20
+  );
+
+  const creditorsSummary = [
+    [
+      "Total Loan Amount",
+      `$${creditorsContractDetailsSum.loanAmount.toLocaleString()}`,
+    ],
+    [
+      "Total Payable Amount",
+      `$${creditorsContractDetailsSum.payableAmount.toLocaleString()}`,
+    ],
+  ];
+
+  doc.autoTable({
+    head: [["Field", "Value"]],
+    body: creditorsSummary,
+    startY: doc.autoTable.previous.finalY + 25,
+  });
+  doc.save("Debtor_and_Creditor_Details.pdf");
+};
+
+export default generatePDF;

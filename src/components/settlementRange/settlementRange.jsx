@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import generatePDF from "../../common";
 
 import {
   Grid,
@@ -221,6 +222,8 @@ export default function SettlementRange() {
   const [errorfullProfitMessage, setErrorFullProfitMessage] = useState("");
   const [commissionPercentage, setCommissionPercentage] = useState("");
   const [summaryAmount, setSummaryAmount] = useState({});
+  const [allData, setAllData] = useState();
+
   const scrollRef = useRef(null);
 
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
@@ -554,6 +557,8 @@ export default function SettlementRange() {
           setSummaryAmount(
             resCommission?.data?.data?.creditorsContractDetailsSum
           );
+          setAllData(resCommission?.data?.data);
+
           setDebtor(resCommission?.data?.data?.debtor?.basicInformation);
           setDebtorInfo(resCommission?.data?.data?.debtor?.businessInformation);
           setApiData(resCommission?.data?.data?.settlementRange);
@@ -598,7 +603,7 @@ export default function SettlementRange() {
           caseId,
           status
         );
-
+        console.log(settlementRangeData, "settlementRangeData");
         if (settlementRangeData?.status === 200) {
           setLoading(false);
           if (typeof settlementRangeData?.data?.data?.getScores === "string") {
@@ -611,6 +616,7 @@ export default function SettlementRange() {
           } else {
             setScores(settlementRangeData?.data?.data?.getScores);
           }
+          setAllData(settlementRangeData?.data?.data);
           setDebtor(settlementRangeData?.data?.data?.debtor?.basicInformation);
           setDebtorInfo(
             settlementRangeData?.data?.data?.debtor?.businessInformation
@@ -950,6 +956,26 @@ export default function SettlementRange() {
             </Typography>
 
             <div style={{ display: "flex", gap: "10px" }}>
+              <TextButton
+                disabled={!apiData}
+                buttonText={"Download PDF"}
+                boxShadow="none"
+                height={"2.5rem"}
+                width={extraSmallScreen ? "2rem" : "10rem"}
+                backgroundColor={Colors.BG_LIGHT_GRAY}
+                fontColor={Colors.BLACK}
+                hoverColor={Colors.BG_LIGHT_GRAY}
+                border={`1px solid ${Colors.SKY_BLUE}`}
+                borderRadius="5px"
+                startIcon={
+                  <Download
+                    sx={{
+                      color: apiData ? Colors.BLACK : Colors.DIM_LIGHT_GRAY,
+                    }}
+                  />
+                }
+                onClick={() => generatePDF(allData)}
+              />
               <MuiModels
                 show="sendEmail"
                 creditorInfo={
