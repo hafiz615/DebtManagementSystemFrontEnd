@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import generatePDF from "../../common";
 
 import {
   Grid,
@@ -40,6 +41,7 @@ import {
   UpdateCommission,
   GetCaseSummariesById,
   GetJustifications,
+  GetPaymentIntervals,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import { formatDateString, generatePdfFromApiData } from "../../common";
@@ -225,6 +227,10 @@ export default function SettlementRange() {
   const [summary, setSummary] = useState([]);
   const [checkboxStates, setCheckboxStates] = useState({});
   const [selectedData, setSelectedData] = useState([]);
+  const [paymentData, setPaymentData] = useState();
+  const [paymentChanged, setPaymentChanged] = useState(false);
+
+  const [allData, setAllData] = useState();
 
   const scrollRef = useRef(null);
 
@@ -322,6 +328,7 @@ export default function SettlementRange() {
     0: recommendations?.map((item, index) => (
       <>
         <SettlementCards
+          setPaymentChanged={setPaymentChanged}
           remainingAmount={
             allCreditorNames[tabValue] === "Summary"
               ? summaryAmount?.loanAmount.toString()
@@ -360,6 +367,7 @@ export default function SettlementRange() {
       <>
         {!isEmpty(lumpSumpData) ? (
           <SettlementCards
+            setPaymentChanged={setPaymentChanged}
             remainingAmount={
               allCreditorNames[tabValue] === "Summary"
                 ? summaryAmount?.loanAmount.toString()
@@ -405,6 +413,7 @@ export default function SettlementRange() {
       <>
         {!isEmpty(fullProfit) ? (
           <SettlementCards
+            setPaymentChanged={setPaymentChanged}
             remainingAmount={
               allCreditorNames[tabValue] === "Summary"
                 ? summaryAmount?.loanAmount.toString()
@@ -541,6 +550,8 @@ export default function SettlementRange() {
           setSummaryAmount(
             resCommission?.data?.data?.creditorsContractDetailsSum
           );
+          setAllData(resCommission?.data?.data);
+
           setDebtor(resCommission?.data?.data?.debtor?.basicInformation);
           setDebtorInfo(resCommission?.data?.data?.debtor?.businessInformation);
           setApiData(resCommission?.data?.data?.settlementRange);
@@ -590,7 +601,6 @@ export default function SettlementRange() {
           caseId,
           status
         );
-
         if (settlementRangeData?.status === 200) {
           setLoading(false);
           if (typeof settlementRangeData?.data?.data?.getScores === "string") {
@@ -603,6 +613,7 @@ export default function SettlementRange() {
           } else {
             setScores(settlementRangeData?.data?.data?.getScores);
           }
+          setAllData(settlementRangeData?.data?.data);
           setDebtor(settlementRangeData?.data?.data?.debtor?.basicInformation);
           setDebtorInfo(
             settlementRangeData?.data?.data?.debtor?.businessInformation
@@ -663,6 +674,17 @@ export default function SettlementRange() {
       setSummary(res?.data?.data);
     }
   };
+
+  const getIntervals = async () => {
+    const res = await GetPaymentIntervals(caseId);
+    if (res?.status === 200) {
+      setPaymentData(res?.data?.data);
+    }
+  };
+
+  useEffect(() => {
+    getIntervals();
+  }, [paymentChanged]);
 
   useEffect(() => {
     GetAllRanges([], false);
@@ -948,6 +970,26 @@ export default function SettlementRange() {
             </Typography>
 
             <div style={{ display: "flex", gap: "10px" }}>
+              <TextButton
+                disabled={!apiData}
+                buttonText={"Download PDF"}
+                boxShadow="none"
+                height={"2.5rem"}
+                width={extraSmallScreen ? "2rem" : "10rem"}
+                backgroundColor={Colors.BG_LIGHT_GRAY}
+                fontColor={Colors.BLACK}
+                hoverColor={Colors.BG_LIGHT_GRAY}
+                border={`1px solid ${Colors.SKY_BLUE}`}
+                borderRadius="5px"
+                startIcon={
+                  <Download
+                    sx={{
+                      color: apiData ? Colors.BLACK : Colors.DIM_LIGHT_GRAY,
+                    }}
+                  />
+                }
+                onClick={() => generatePDF(allData, lumpSumpData, fullProfit)}
+              />
               <MuiModels
                 show="sendEmail"
                 creditorInfo={
@@ -961,6 +1003,12 @@ export default function SettlementRange() {
                     ? summaryAmount?.payableAmount
                     : selectedCreditorDetails?.contractDetails?.payable_amount
                 }
+                data={apiData}
+                selectedCreditor={allCreditorNames[tabValue]}
+                lumpSump={lumpSumpData}
+                fullProfit={fullProfit}
+                caseId={caseId}
+                paymentData={paymentData}
               />
               <TextButton
                 disabled={!apiData}
@@ -1368,6 +1416,7 @@ export default function SettlementRange() {
                 show="sendEmailJustification"
                 disabled={!isAnyChecked}
                 data={selectedData}
+                caseId={caseId}
               />
             </div>
           </Grid>

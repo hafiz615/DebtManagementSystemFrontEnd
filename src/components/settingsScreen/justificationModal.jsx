@@ -98,7 +98,7 @@ export default function JustificationModal({
             paddingRight: { xs: "0.5rem", sm: "2rem" },
           }}
         >
-          {typographyOptions.map((name) => (
+          {typographyOptions?.map((name) => (
             <Grid item xs={12} key={name}>
               <FormControlLabel
                 control={

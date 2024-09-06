@@ -9,6 +9,8 @@ const ScrollbarStyles = {
     borderRadius: "8px",
   },
   "&::-webkit-scrollbar-track": {
+    marginTop: ".8rem",
+    marginBottom: ".8rem",
     backgroundColor: Colors.WHITE,
     borderRadius: "8px",
   },

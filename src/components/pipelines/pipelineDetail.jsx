@@ -305,20 +305,6 @@ export default function PipelineDetail() {
           {pipelinesHeading}
         </Typography>
         <div style={{ display: "flex" }}>
-          {pipelineType === "List" && (
-            <Tooltip title="Sort By Debtor Business" placement="top-start">
-              <div>
-                <Dropdown
-                  width="8rem"
-                  menuItems={orders}
-                  selectedValue={order}
-                  setSelectedValue={setOrder}
-                  backgroundColor={Colors.BG_LIGHT_GRAY}
-                  hoverColor={Colors.BG_LIGHT_GRAY}
-                />
-              </div>
-            </Tooltip>
-          )}
           <SearchBar
             searchCheck={true}
             searchingText={searchText}
@@ -501,11 +487,13 @@ export default function PipelineDetail() {
           statuses={statuses}
           users={users}
           leads={leads}
-          order={order}
           startDate={startDate}
           endDate={endDate}
           page={page}
           setPage={setPage}
+          orders={orders}
+          order={order}
+          setOrder={setOrder}
         />
       )}
     </Grid>

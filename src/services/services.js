@@ -1091,10 +1091,10 @@ export const GetWeeklyAndTotalCommission = async (payload, id) => {
   }
 };
 
-export const SendSettlementEmail = async (payload) => {
+export const SendSettlementEmail = async (payload, id) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/case/sendSettlementEmail`,
+      BASE_URL + `/v1/case/sendSettlementEmail/${id}`,
       payload,
       setHeaders()
     );
@@ -1165,6 +1165,17 @@ export const GetJustifications = async (id) => {
   try {
     return await axios.get(
       BASE_URL + `/v1/case/getSettlementJustifications/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetPaymentIntervals = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/case/calculateIntervalsAmount/${id}`,
       setHeaders()
     );
   } catch (error) {

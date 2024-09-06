@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import ScrollbarStyles from "../customScroll";
-import { Grid } from "@mui/material";
-import ListTable from "../listTable";
+import { Grid, Tooltip } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import PipelineListTable from "./pipelineListTable";
+import Dropdown from "../dropdown";
+import { Colors } from "../../config/default";
 
 export default function PipelinesLists({
   data,
@@ -17,8 +18,11 @@ export default function PipelinesLists({
   page,
   setPage,
   order,
+  setOrder,
+  orders,
 }) {
   const [cases, setCases] = useState([]);
+  const navigate = useNavigate();
 
   const headers = [
     "Leads",
@@ -113,7 +117,6 @@ export default function PipelinesLists({
     return 0;
   });
 
-  const navigate = useNavigate();
   const handleRowClick = (id) => {
     localStorage.setItem("route", "all-cases");
     navigate(`/all-cases/${id}`);
@@ -144,6 +147,9 @@ export default function PipelinesLists({
           data={data ? sortedCases?.map(({ time, ...rest }) => rest) : []}
           page={page}
           setPage={setPage}
+          orders={orders}
+          order={order}
+          setOrder={setOrder}
         />
       </Grid>
     </Grid>
