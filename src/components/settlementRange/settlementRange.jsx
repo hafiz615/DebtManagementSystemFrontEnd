@@ -39,6 +39,7 @@ import {
   GetFullProfit,
   UpdateCommission,
   GetCaseSummariesById,
+  GetJustifications,
   GetPaymentIntervals,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
@@ -198,9 +199,6 @@ export default function SettlementRange() {
   const { caseId } = useParams();
   const { showToast } = useToast();
   const [value, setValue] = useState(0);
-  const [justificationValue, setJustificationValue] = useState(
-    "justification_gemini"
-  );
 
   const [tabValue, setTabValue] = useState(0);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -246,7 +244,6 @@ export default function SettlementRange() {
 
   const [strategyTab, setStrategyTab] = useState(0);
 
-  const [settlementData, setSettlementData] = useState({});
   const handleStrategyChange = (event, newValue) => {
     setStrategyTab(newValue);
     setValue(0);
@@ -314,17 +311,6 @@ export default function SettlementRange() {
   const strat3Recommendations = ["recommendation 1"];
   const strat2Recommendations = ["lump Sum"];
 
-  useEffect(() => {
-    if (value === 0) {
-      setJustificationValue("justification_gemini");
-    } else if (value === 1) {
-      setJustificationValue("justification_gpt4_o");
-    } else if (value === 2) {
-      setJustificationValue("justification_llama");
-    } else if (value === 3) {
-      setJustificationValue("justification_claude");
-    }
-  }, [value]);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -399,7 +385,10 @@ export default function SettlementRange() {
                 allCreditorNames[parseInt(tabValue)]
               ] || null
             }
-            warning={lumpSumpData?.warning || ""}
+            warning={
+              lumpSumpData?.warning?.[allCreditorNames[parseInt(tabValue)]] ||
+              ""
+            }
             caseId={caseId}
           />
         ) : (
@@ -579,9 +568,11 @@ export default function SettlementRange() {
           }
           setAllCreditorsNames(creditorAccountTitles);
           showToast(resCommission?.data?.message, "success");
-          setJustification(
-            settlementRangeData?.data?.data?.settlementRange?.justifications
-          );
+
+          const resJustifications = await GetJustifications(caseId);
+          if (resJustifications?.status === 200) {
+            setJustification(resJustifications?.data?.data?.justifications);
+          }
           GetLumpSumAmountData();
           GetFullProfitData();
         } else if (
@@ -633,9 +624,6 @@ export default function SettlementRange() {
           setSummaryAmount(
             settlementRangeData?.data?.data?.creditorsContractDetailsSum
           );
-          setJustification(
-            settlementRangeData?.data?.data?.settlementRange?.justifications
-          );
 
           const allCreditors = settlementRangeData?.data?.data?.creditors;
           setCreditorNames(allCreditors);
@@ -647,6 +635,11 @@ export default function SettlementRange() {
           }
           setAllCreditorsNames(creditorAccountTitles);
           showToast(settlementRangeData?.data?.message, "success");
+          const resJustifications = await GetJustifications(caseId);
+          if (resJustifications?.status === 200) {
+            setJustification(resJustifications?.data?.data?.justifications);
+          }
+
           GetLumpSumAmountData();
           GetFullProfitData();
         } else if (
@@ -1440,7 +1433,7 @@ export default function SettlementRange() {
                     onChange={() =>
                       handleCheckboxChange(
                         "justification",
-                        justification?.[justificationValue]
+                        justification?.[allCreditorNames[tabValue]]?.[value]
                       )
                     }
                   />
@@ -1456,7 +1449,8 @@ export default function SettlementRange() {
                 >
                   <Typography variant="body1">
                     <ReactMarkdown>
-                      {justification?.[justificationValue]}
+                      {justification?.[allCreditorNames[tabValue]]?.[value] ||
+                        "No Justifications"}
                     </ReactMarkdown>
                   </Typography>
                 </Card>
