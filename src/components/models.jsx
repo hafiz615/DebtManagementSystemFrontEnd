@@ -48,6 +48,7 @@ import ScrollbarStyles from "./../components/customScroll";
 import SettlementPayment from "./settlementPlan";
 import SendEmailCase from "./caseDetail/sendEmailCase";
 import DownloadPDF from "./caseDetail/downloadPDF";
+import SendEmailJustification from "./sendEmailJustifications";
 
 export default function MuiModels({
   buttonName,
@@ -105,9 +106,14 @@ export default function MuiModels({
   headerName,
   caseDataId,
   GetLogsById,
+  disabled,
+  selectedCreditor,
+  lumpSump,
+  fullProfit,
+  paymentData,
+  setPaymentChanged,
   allData,
   lumpSumpData,
-  fullProfit,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -504,21 +510,31 @@ export default function MuiModels({
           <AddIcon sx={{ fontSize: ".9rem" }} />
           {froalaEditorButton}
         </Button>
-      ) : show === "sendEmail" ? (
+      ) : show === "sendEmail" || show === "sendEmailJustification" ? (
         <TextButton
           buttonText={"Send Email"}
           boxShadow="none"
           height={"2.5rem"}
           width={extraSmallScreen ? "2rem" : "9rem"}
-          backgroundColor={Colors.BG_LIGHT_GRAY}
-          fontColor={Colors.BLACK}
-          hoverColor={Colors.BG_LIGHT_GRAY}
+          backgroundColor={
+            show === "sendEmail" ? Colors.BG_LIGHT_GRAY : Colors.SKY_BLUE
+          }
+          fontColor={show === "sendEmail" ? Colors.BLACK : Colors.WHITE}
+          hoverColor={
+            show === "sendEmail" ? Colors.BG_LIGHT_GRAY : Colors.SKY_BLUE
+          }
           onClick={handleOpen}
+          disabled={disabled}
           startIcon={
-            extraSmallScreen ? (
+            extraSmallScreen || show === "sendEmailJustification" ? (
               ""
             ) : (
-              <Email sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }} />
+              <Email
+                sx={{
+                  color: Colors.DARK_GRAY,
+                  fontSize: FONT_SIZE_XL,
+                }}
+              />
             )
           }
         />
@@ -744,6 +760,12 @@ export default function MuiModels({
               payableAmount={payableAmount}
               debtorInfo={debtorInfo}
               creditorInfo={creditorInfo}
+              data={data}
+              selectedCreditor={selectedCreditor}
+              lumpSump={lumpSump}
+              fullProfit={fullProfit}
+              caseId={caseId}
+              paymentData={paymentData}
             />
           ) : show === "uploadFile" ? (
             <UploadFilePopup
@@ -762,6 +784,7 @@ export default function MuiModels({
               caseId={caseId}
               remainingAmount={remainingAmount}
               commissionRange={commissionRange}
+              setPaymentChanged={setPaymentChanged}
             />
           ) : show === "settlmentPayment" ? (
             <SettlementPayment
@@ -772,12 +795,20 @@ export default function MuiModels({
               caseId={caseId}
               remainingAmount={remainingAmount}
               commissionRange={commissionRange}
+              setPaymentChanged={setPaymentChanged}
+            />
+          ) : show === "sendEmailJustification" ? (
+            <SendEmailJustification
+              handleClose={handleClose}
+              data={data}
+              caseId={caseId}
             />
           ) : show === "downloadPDF" ? (
             <DownloadPDF
               allData={allData}
               lumpSumpData={lumpSumpData}
               fullProfit={fullProfit}
+              handleClose={handleClose}
             />
           ) : (
             ""

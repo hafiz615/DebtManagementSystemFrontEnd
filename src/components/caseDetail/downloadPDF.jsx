@@ -4,11 +4,9 @@ import { Colors } from "../../config/default";
 import { Typography, Grid, Checkbox, FormControlLabel } from "@mui/material";
 import TextButton from "../button";
 import generatePDF from "../../common";
-import { Download } from "@mui/icons-material";
 import { FONT_SIZE_XXL } from "../../constants/appConstants";
 
-function DownloadPDF({ allData, lumpSumpData, fullProfit }) {
-  console.log(allData, lumpSumpData, fullProfit, "kkkk");
+function DownloadPDF({ allData, lumpSumpData, fullProfit, handleClose }) {
   const typographyOptions = [
     "Debtor Information",
     "Settlement Range",
@@ -21,12 +19,13 @@ function DownloadPDF({ allData, lumpSumpData, fullProfit }) {
   ];
 
   const [checkboxState, setCheckboxState] = useState({
-    "Debtor Information": false,
+    "Debtor Information": true,
     "Settlement Range": false,
     Scores: false,
     "Creditors Contract Information": false,
     "Creditors Contract Details Summary": false,
     "Strategy 1 Recommendations": false,
+    "Strategy 2 Recommendations": false,
     "Strategy 3 Recommendations": false,
   });
 
@@ -55,9 +54,9 @@ function DownloadPDF({ allData, lumpSumpData, fullProfit }) {
           marginTop: "1rem",
         }}
       >
-        Download Settlement Range data from the following:
+        Download Settlement Range data from the following :
       </Typography>
-      {typographyOptions.map((name) => (
+      {typographyOptions?.map((name) => (
         <Grid item xs={12} key={name}>
           <FormControlLabel
             control={
@@ -73,7 +72,7 @@ function DownloadPDF({ allData, lumpSumpData, fullProfit }) {
               />
             }
             label={
-              <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
+              <Typography sx={{ fontFamily: "Nunito", fontWeight: "400" }}>
                 {name}
               </Typography>
             }
@@ -90,16 +89,27 @@ function DownloadPDF({ allData, lumpSumpData, fullProfit }) {
         }}
       >
         <TextButton
+          buttonText="CANCEL"
+          height="2rem"
+          marginRight="1rem"
+          width="6rem"
+          onClick={handleClose}
+          backgroundColor={Colors.ORANGE_COLOR}
+          hoverColor={Colors.ORANGE_COLOR}
+        />
+        <TextButton
           buttonText={"Download"}
           boxShadow="none"
-          height={"2.5rem"}
-          width="10rem"
+          height={"2rem"}
+          width="6rem"
           backgroundColor={Colors.SKY_BLUE}
           fontColor={Colors.WHITE}
           hoverColor={Colors.SKY_BLUE}
           border={`1px solid ${Colors.SKY_BLUE}`}
           borderRadius="5px"
-          onClick={() => generatePDF(allData, lumpSumpData, fullProfit)}
+          onClick={() =>
+            generatePDF(allData, lumpSumpData, fullProfit, checkboxState)
+          }
         />
       </Grid>
     </Grid>

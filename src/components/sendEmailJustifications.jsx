@@ -5,12 +5,9 @@ import { Colors } from "../config/default";
 import TextButton from "./button";
 import FroalaEditorComponent from "react-froala-wysiwyg";
 import ScrollbarStyles from "./customScroll";
-import { GetPaymentIntervals, SendSettlementEmail } from "../services/services";
-import {
-  FONT_SIZE_MEDIUM,
-  initialHtmlContent,
-} from "../constants/appConstants";
-import Dropdown from "./dropdown";
+import { SendSettlementEmail } from "../services/services";
+import { FONT_SIZE_MEDIUM } from "../constants/appConstants";
+import { marked } from "marked";
 import { useParams } from "react-router-dom";
 
 const lineStyle = {
@@ -50,7 +47,7 @@ const removeIconStyle = {
 };
 
 const inputStyling = {
-  backgroundColor: Colors.BG_LIGHT_GRAY,
+  backgroundColor: "#f0f0f0",
   marginBottom: "1rem",
   height: "2.5rem",
   color: "#333",
@@ -60,23 +57,10 @@ const inputStyling = {
   borderRadius: "5px",
   width: "48%",
 };
-export default function SendEmail({
-  handleClose,
-  payableAmount,
-  debtorInfo,
-  creditorInfo,
-  data,
-  selectedCreditor,
-  lumpSump,
-  fullProfit,
-  caseId,
-  paymentData,
-}) {
+export default function SendEmailJustification({ handleClose, data, caseId }) {
   const [sendTo, setSendTo] = useState("");
   const [sendFrom, setSendFrom] = useState("");
   const [strategy, setStrategy] = useState("Strategy 1");
-  const [recommendation, setRecommendation] = useState("recommendation 1");
-  const [rangeMinToMax, setRangeMinToMax] = useState("min");
   const [cc, setCc] = useState([]);
   const [inputValue, setInputValue] = useState("");
 
@@ -84,28 +68,13 @@ export default function SendEmail({
   const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
-
-  const allStrategies = [
-    { label: "Strategy 1", value: "Strategy 1" },
-    { label: "Strategy 2", value: "Strategy 2" },
-    { label: "Strategy 3", value: "Strategy 3" },
-  ];
-
-  const allRecommendation = [
-    { label: "Recommendation 1", value: "recommendation 1" },
-    { label: "Recommendation 2", value: "recommendation 2" },
-    { label: "Recommendation 3", value: "recommendation 3" },
-  ];
-
-  const allRanges = [
-    { label: "Minimum", value: "min" },
-    { label: "Maximum", value: "max" },
-  ];
+  const { id } = useParams();
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" || e.key === "Tab" || e.key === ",") {
       e.preventDefault();
       const trimmedValue = inputValue.trim();
+
       if (trimmedValue && validateEmail(trimmedValue)) {
         setCc([...cc, trimmedValue]);
         setInputValue("");
@@ -150,52 +119,38 @@ export default function SendEmail({
   const editorRef = useRef(null);
 
   useEffect(() => {
-    const currentDate = new Date();
-    const options = {
-      weekday: "short",
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    };
-    const formattedDate = currentDate.toLocaleDateString("en-US", options);
-    const paymentInterval = "Weekly";
+    if (data) {
+      const formattedData = data
+        ?.map((item) => {
+          if (typeof item === "string") {
+            const htmlContent = marked(item);
+            return htmlContent;
+          } else if (typeof item === "object") {
+            return Object.keys(item)
+              ?.map((key) => {
+                const range = item[key];
+                const dynamicContent = Object.keys(range)
+                  ?.map((innerKey) => {
+                    const mappedSettlements = innerKey.replace(/_/g, " ");
+                    const value = Array.isArray(range[innerKey])
+                      ? range[innerKey].join(" - ")
+                      : range[innerKey];
 
-    const payment =
-      strategy === "Strategy 1"
-        ? data?.settlement_range?.[selectedCreditor]?.[recommendation]?.[
-            rangeMinToMax
-          ]
-        : strategy === "Strategy 2"
-        ? lumpSump?.lumpsum_settlement?.[selectedCreditor]
-            ?.remaining_principle_amount
-        : fullProfit?.settlement_range?.[selectedCreditor]?.[
-            "recommendation 1"
-          ]?.[rangeMinToMax];
+                    return `<p><strong>${mappedSettlements}:</strong> ${value}</p>`;
+                  })
+                  ?.join("");
 
-    const formatedPayment =
-      typeof payment === "string"
-        ? payment && payment?.includes("$")
-          ? payment
-          : `$${payment}`
-        : `$${payment}`;
+                return `<h3>${key?.replace(/_/g, " ")}</h3>${dynamicContent}`;
+              })
+              .join("");
+          }
+          return "";
+        })
+        .join("");
 
-    const formatedValue =
-      typeof payableAmount === "string"
-        ? payableAmount && payableAmount?.includes("$")
-          ? payableAmount
-          : `$${payableAmount}`
-        : `$${payableAmount}`;
-
-    const htmlContent = initialHtmlContent(
-      formattedDate,
-      debtorInfo,
-      creditorInfo,
-      formatedValue,
-      paymentInterval,
-      paymentData ? `$${paymentData}` : formatedPayment
-    );
-    setPreview(htmlContent);
-  }, [strategy, rangeMinToMax, recommendation, paymentData]);
+      setPreview(formattedData);
+    }
+  }, [data]);
 
   return (
     <div>
@@ -242,65 +197,7 @@ export default function SendEmail({
           />
         </Tooltip>
       </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-        }}
-      >
-        {!paymentData && (
-          <Dropdown
-            menuWidth="22rem"
-            menuItems={allStrategies}
-            placeholder="Type"
-            backgroundColor={Colors.BG_LIGHT_GRAY}
-            hoverColor={Colors.BG_LIGHT_GRAY}
-            width="48%"
-            selectedValue={strategy}
-            setSelectedValue={setStrategy}
-          />
-        )}
 
-        {!paymentData && strategy === "Strategy 1" ? (
-          <Dropdown
-            menuWidth="22rem"
-            menuItems={allRecommendation}
-            placeholder="Type"
-            backgroundColor={Colors.BG_LIGHT_GRAY}
-            hoverColor={Colors.BG_LIGHT_GRAY}
-            width="48%"
-            selectedValue={recommendation}
-            setSelectedValue={setRecommendation}
-          />
-        ) : !paymentData && strategy === "Strategy 3" ? (
-          <Dropdown
-            menuWidth="22rem"
-            menuItems={allRanges}
-            placeholder="Type"
-            backgroundColor={Colors.BG_LIGHT_GRAY}
-            hoverColor={Colors.BG_LIGHT_GRAY}
-            width="48%"
-            selectedValue={rangeMinToMax}
-            setSelectedValue={setRangeMinToMax}
-          />
-        ) : (
-          ""
-        )}
-      </div>
-      <div style={{ margin: "16px 0px" }}>
-        {!paymentData && strategy === "Strategy 1" && recommendation && (
-          <Dropdown
-            menuWidth="22rem"
-            menuItems={allRanges}
-            placeholder="Type"
-            backgroundColor={Colors.BG_LIGHT_GRAY}
-            hoverColor={Colors.BG_LIGHT_GRAY}
-            width="48%"
-            selectedValue={rangeMinToMax}
-            setSelectedValue={setRangeMinToMax}
-          />
-        )}
-      </div>
       {cc?.length > 0 && (
         <div style={inputContainerStyle}>
           {cc?.map((email, index) => (
