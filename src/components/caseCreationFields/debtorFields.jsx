@@ -451,7 +451,13 @@ export default function DebtorFields({
             label="Phone #*"
             placeHolderValue="Enter Phone Number"
             width="100%"
-            value={debtorOwnDetails?.BasicPhoneNumber || ""}
+            value={
+              debtorOwnDetails?.BasicPhoneNumber
+                ? debtorOwnDetails.BasicPhoneNumber.startsWith("+1")
+                  ? debtorOwnDetails.BasicPhoneNumber.slice(2)
+                  : debtorOwnDetails.BasicPhoneNumber
+                : ""
+            }
             onChangeFunction={(e) => {
               const numericValue = e.target.value.replace(/\D/g, "");
               basicInfoInputChange("BasicPhoneNumber", numericValue);
