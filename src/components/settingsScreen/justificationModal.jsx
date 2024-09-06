@@ -39,20 +39,22 @@ export default function JustificationModal({
   getSettings,
   selectJustification,
 }) {
-  const typographyOptions = ["Gemini", "GPT-04", "Llama"];
+  const typographyOptions = ["Gemini", "GPT-04", "Llama", "Claude"];
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
 
   const [checkboxState, setCheckboxState] = useState({
     Gemini: selectJustification?.gemini || false,
     Llama: selectJustification?.llama || false,
-    "GPT-04": selectJustification?.chatGpt || false,
+    "GPT-04": selectJustification?.chatgpt || false,
+    Claude: selectJustification?.claude || false,
   });
   useEffect(() => {
     const justificationData = {
       Gemini: selectJustification?.gemini,
       Llama: selectJustification?.llama,
-      "GPT-04": selectJustification?.chatGpt,
+      "GPT-04": selectJustification?.chatgpt,
+      Claude: selectJustification?.claude,
     };
     setCheckboxState(justificationData);
   }, [selectJustification]);
@@ -70,7 +72,8 @@ export default function JustificationModal({
     const params = {
       gemini: checkboxState?.Gemini ? checkboxState?.Gemini : false,
       llama: checkboxState?.Llama ? checkboxState?.Llama : false,
-      chatGpt: checkboxState["GPT-04"] ? checkboxState["GPT-04"] : false,
+      chatgpt: checkboxState["GPT-04"] ? checkboxState["GPT-04"] : false,
+      claude: checkboxState?.Claude ? checkboxState?.Claude : false,
     };
 
     const justificationRes = await SelectJustificationModal(params);
@@ -87,7 +90,7 @@ export default function JustificationModal({
   return (
     <StyledAccordion>
       <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
-        Justification Modals
+        Justification Models
       </StyledAccordionSummary>
       <StyledAccordionDetails>
         <Grid

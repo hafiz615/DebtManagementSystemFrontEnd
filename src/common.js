@@ -421,6 +421,7 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     creditorsContractDetailsSum,
     settlementRange,
     getScores,
+    chatGpt,
   } = data;
   const doc = new jsPDF();
   doc.setFontSize(18);
@@ -884,7 +885,7 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
   }
 
   //strategy 3
-  if (checkboxState["Strategy 3 Recommendations"]) {
+  if (checkboxState["Strategy 3 Recommendation"]) {
     doc.setFontSize(14);
     doc.text(
       "Strategy 3 Recommendations Minimum",
@@ -929,7 +930,7 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     });
     doc.setFontSize(14);
     doc.text(
-      "Strategy 3 Recommendations Maximum",
+      "Strategy 3 Recommendation Maximum",
       14,
       doc.autoTable.previous.finalY + 10
     );
