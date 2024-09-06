@@ -13,7 +13,7 @@ export default function EditDebtorDetail({
   caseData,
   GetCaseDetails,
   connectPayment,
-  setConnectPayment
+  setConnectPayment,
 }) {
   const { id } = useParams();
   const { showToast } = useToast();
@@ -25,13 +25,12 @@ export default function EditDebtorDetail({
     BasicFullName: debtorBasicInfo?.fullName || "",
     BasicEmailAddress: debtorBasicInfo?.email || "",
     BasicSsid: debtorBasicInfo?.SSID || "",
-    BasicCountry: debtorBasicInfo?.country || "",
     BasicState: debtorBasicInfo?.state || "",
     BasicCity: debtorBasicInfo?.city || "",
     BasicZipCode: debtorBasicInfo?.zipCode || "",
     BasicPhoneNumber: debtorBasicInfo?.phone || "",
     BasicAddress: debtorBasicInfo?.address || "",
-    BasicWeeklyBudget: debtorBasicInfo?.weeklyBudget || "",
+    BasicWeeklyBudget: debtorBasicInfo?.weeklyBudget || 0,
   });
 
   const [debtorBusinessDetails, setDebtorBusinessDetails] = useState({
@@ -39,7 +38,6 @@ export default function EditDebtorDetail({
     businessEinNumber: debtorBusinessInfo?.EIN || "",
     businessCategory: debtorBusinessInfo?.businessCategory || "",
     businessDescription: debtorBusinessInfo?.description || "",
-    businessCountry: debtorBusinessInfo?.country || "",
     businessState: debtorBusinessInfo?.state || "",
     businessCity: debtorBusinessInfo?.city || "",
     businessZipCode: debtorBusinessInfo?.zipCode || "",
@@ -57,27 +55,27 @@ export default function EditDebtorDetail({
   });
 
   const [isFormValid, setIsFormValid] = useState(false);
-  const validateForm = () => {
-    const ownDetailsValid = Object.values(debtorOwnDetails).every(
-      (value) => value !== ""
-    );
-    const businessDetailsValid = Object.entries(debtorBusinessDetails).every(
-      ([key, value]) => key === "businessDescription" || value !== ""
-    );
-    const noErrors = Object.values(errors).every((error) => error === "");
-    const isWeeklyBudgetValid = debtorOwnDetails.BasicWeeklyBudget > 0; // Check if weekly budget is greater than 0
-    return (
-      ownDetailsValid &&
-      businessDetailsValid &&
-      noErrors &&
-      status !== "" &&
-      isWeeklyBudgetValid
-    );
-  };
+  // const validateForm = () => {
+  //   const ownDetailsValid = Object.values(debtorOwnDetails).every(
+  //     (value) => value !== ""
+  //   );
+  //   const businessDetailsValid = Object.entries(debtorBusinessDetails).every(
+  //     ([key, value]) => key === "businessDescription" || value !== ""
+  //   );
+  //   const noErrors = Object.values(errors).every((error) => error === "");
+  //   const isWeeklyBudgetValid = debtorOwnDetails.BasicWeeklyBudget > 0; // Check if weekly budget is greater than 0
+  //   return (
+  //     ownDetailsValid &&
+  //     businessDetailsValid &&
+  //     noErrors &&
+  //     status !== "" &&
+  //     isWeeklyBudgetValid
+  //   );
+  // };
 
-  useEffect(() => {
-    setIsFormValid(validateForm());
-  }, [debtorOwnDetails, debtorBusinessDetails, errors, status]);
+  // useEffect(() => {
+  //   setIsFormValid(validateForm());
+  // }, [debtorOwnDetails, debtorBusinessDetails, errors, status]);
 
   const updateDebtorById = async () => {
     setLoading(true);
@@ -86,21 +84,19 @@ export default function EditDebtorDetail({
         fullName: debtorOwnDetails?.BasicFullName,
         email: debtorOwnDetails?.BasicEmailAddress,
         SSID: debtorOwnDetails?.BasicSsid,
-        country: debtorOwnDetails?.BasicCountry,
         state: debtorOwnDetails?.BasicState,
         city: debtorOwnDetails?.BasicCity,
         zipCode: debtorOwnDetails?.BasicZipCode,
         status: status,
         phone: debtorOwnDetails?.BasicPhoneNumber,
         address: debtorOwnDetails?.BasicAddress,
-        weeklyBudget: debtorOwnDetails?.BasicWeeklyBudget?.toString() || "",
+        weeklyBudget: debtorOwnDetails?.BasicWeeklyBudget?.toString() || 0,
       },
       businessInformation: {
         companyName: debtorBusinessDetails?.businessCompanyName,
         EIN: debtorBusinessDetails?.businessEinNumber,
         businessCategory: debtorBusinessDetails?.businessCategory,
         description: debtorBusinessDetails?.businessDescription,
-        country: debtorBusinessDetails?.businessCountry,
         state: debtorBusinessDetails?.businessState,
         city: debtorBusinessDetails?.businessCity,
         zipCode: debtorBusinessDetails?.businessZipCode,
@@ -175,7 +171,7 @@ export default function EditDebtorDetail({
           height="2rem"
           width="8rem"
           marginRight="1rem"
-          disabled={!isFormValid}
+          // disabled={!isFormValid}
           onClick={updateDebtorById}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}

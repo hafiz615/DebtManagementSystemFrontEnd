@@ -17,6 +17,7 @@ import {
   Tooltip,
   Card,
   LinearProgress,
+  Checkbox,
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import {
@@ -37,9 +38,12 @@ import {
   GetLumpSumAmount,
   GetFullProfit,
   UpdateCommission,
+  GetCaseSummariesById,
+  GetJustifications,
+  GetPaymentIntervals,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
-import { generatePdfFromApiData } from "../../common";
+import { formatDateString, generatePdfFromApiData } from "../../common";
 import MuiModels from "../models";
 import CheckboxAutocomplete from "../checkboxAutocomplete";
 import { useParams } from "react-router-dom";
@@ -195,9 +199,6 @@ export default function SettlementRange() {
   const { caseId } = useParams();
   const { showToast } = useToast();
   const [value, setValue] = useState(0);
-  const [justificationValue, setJustificationValue] = useState(
-    "justification_gemini"
-  );
 
   const [tabValue, setTabValue] = useState(0);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -221,6 +222,18 @@ export default function SettlementRange() {
   const [errorfullProfitMessage, setErrorFullProfitMessage] = useState("");
   const [commissionPercentage, setCommissionPercentage] = useState("");
   const [summaryAmount, setSummaryAmount] = useState({});
+  const [justification, setJustification] = useState();
+  const [summary, setSummary] = useState([]);
+  const [checkboxStates, setCheckboxStates] = useState({});
+  const [selectedData, setSelectedData] = useState([]);
+  const [paymentData, setPaymentData] = useState();
+  const [paymentChanged, setPaymentChanged] = useState(false);
+  const [justificationValue, setJustificationValue] = useState(
+    "justification_gemini"
+  );
+
+  const [allData, setAllData] = useState();
+
   const scrollRef = useRef(null);
 
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
@@ -234,7 +247,6 @@ export default function SettlementRange() {
 
   const [strategyTab, setStrategyTab] = useState(0);
 
-  const [settlementData, setSettlementData] = useState({});
   const handleStrategyChange = (event, newValue) => {
     setStrategyTab(newValue);
     setValue(0);
@@ -247,6 +259,37 @@ export default function SettlementRange() {
       setTableLoading(false);
     }, 2000);
   }, []);
+
+  useEffect(() => {
+    if (value === 0) {
+      setJustificationValue("justification_gemini");
+    } else if (value === 1) {
+      setJustificationValue("justification_gpt4_o");
+    } else if (value === 2) {
+      setJustificationValue("justification_llama");
+    } else if (value === 3) {
+      setJustificationValue("justification_claude");
+    }
+  }, [value]);
+
+  const handleCheckboxChange = (id, data) => {
+    setCheckboxStates((prev) => {
+      const newState = {
+        ...prev,
+        [id]: !prev[id],
+      };
+
+      if (newState[id]) {
+        setSelectedData((prevSelected) => [...prevSelected, data]);
+      } else {
+        setSelectedData((prevSelected) =>
+          prevSelected.filter((item) => item !== data)
+        );
+      }
+
+      return newState;
+    });
+  };
 
   const GetLumpSumAmountData = async () => {
     if (caseId) {
@@ -283,17 +326,6 @@ export default function SettlementRange() {
   const strat3Recommendations = ["recommendation 1"];
   const strat2Recommendations = ["lump Sum"];
 
-  useEffect(() => {
-    if (value === 0) {
-      setJustificationValue("justification_gemini");
-    } else if (value === 1) {
-      setJustificationValue("justification_gpt4_o");
-    } else if (value === 2) {
-      setJustificationValue("justification_llama");
-    } else if (value === 3) {
-      setJustificationValue("justification_claude");
-    }
-  }, [value]);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -310,6 +342,7 @@ export default function SettlementRange() {
     0: recommendations?.map((item, index) => (
       <>
         <SettlementCards
+          setPaymentChanged={setPaymentChanged}
           remainingAmount={
             allCreditorNames[tabValue] === "Summary"
               ? summaryAmount?.loanAmount.toString()
@@ -348,6 +381,7 @@ export default function SettlementRange() {
       <>
         {!isEmpty(lumpSumpData) ? (
           <SettlementCards
+            setPaymentChanged={setPaymentChanged}
             remainingAmount={
               allCreditorNames[tabValue] === "Summary"
                 ? summaryAmount?.loanAmount.toString()
@@ -366,7 +400,10 @@ export default function SettlementRange() {
                 allCreditorNames[parseInt(tabValue)]
               ] || null
             }
-            warning={lumpSumpData?.warning || ""}
+            warning={
+              lumpSumpData?.warning?.[allCreditorNames[parseInt(tabValue)]] ||
+              ""
+            }
             caseId={caseId}
           />
         ) : (
@@ -390,6 +427,7 @@ export default function SettlementRange() {
       <>
         {!isEmpty(fullProfit) ? (
           <SettlementCards
+            setPaymentChanged={setPaymentChanged}
             remainingAmount={
               allCreditorNames[tabValue] === "Summary"
                 ? summaryAmount?.loanAmount.toString()
@@ -461,71 +499,43 @@ export default function SettlementRange() {
 
   const handleClick = async () => {
     if (!inputValue) return;
+    setChatHistory((prev) => [...prev, { type: "user", text: inputValue }]);
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-    setChatHistory((prev) => [...prev, { type: "user", text: inputValue }]);
     setTableLoading(true);
     const payload = {
       financialHealthSummary: "",
       humanInput: inputValue,
     };
     setInputValue("");
-    try {
-      const resSummary = await GetSummary(payload, caseId);
+    const resSummary = await GetSummary(payload, caseId);
+    if (resSummary?.status === 200) {
+      const reasons = resSummary?.data?.data?.[`settlement_range_1`]?.reasons;
+      const reason = resSummary?.data?.data?.[`settlement_range_1`]?.reason;
+      let formattedReason = "";
 
-      if (resSummary?.status === 200) {
-        const reasons = resSummary?.data?.data?.[`settlement_range_1`]?.reasons;
-        const reason = resSummary?.data?.data?.[`settlement_range_1`]?.reason;
-        let formattedReason = "";
-
-        if (Array.isArray(reasons)) {
-          formattedReason = reasons.join("\n");
-        } else if (typeof reasons === "string") {
-          formattedReason = reasons;
-        } else if (Array.isArray(reason)) {
-          formattedReason = reason.join("\n");
-        } else if (typeof reason === "string") {
-          formattedReason = reason;
-        } else {
-          formattedReason = "No reason available";
-        }
-        setChatHistory((prev) => [
-          ...prev,
-          {
-            type: "response",
-            text: formattedReason,
-          },
-        ]);
-        setChatHistory((prev) => [
-          ...prev,
-          {
-            type: "bound",
-            text: resSummary?.data?.data,
-          },
-        ]);
-        const resRanges = await GetSettlementRangeWithScores("", caseId, false);
-        if (resRanges?.status === 200) {
-          setChatHistory((prev) => [
-            ...prev,
-            {
-              type: "response",
-              text:
-                resRanges?.data?.data?.settlementRange?.justifications?.[
-                  justificationValue
-                ] || "No justification available",
-            },
-          ]);
-        }
+      if (Array.isArray(reasons)) {
+        formattedReason = reasons.join("\n");
+      } else if (typeof reasons === "string") {
+        formattedReason = reasons;
+      } else if (Array.isArray(reason)) {
+        formattedReason = reason.join("\n");
+      } else if (typeof reason === "string") {
+        formattedReason = reason;
+      } else {
+        formattedReason = "No reason available";
       }
-    } catch (error) {
+
       setChatHistory((prev) => [
         ...prev,
-        { type: "response", text: "An error occurred. Please try again." },
+        {
+          type: "bound",
+          text: resSummary?.data?.data,
+        },
       ]);
-    } finally {
-      setTableLoading(false);
     }
+    setTableLoading(false);
   };
 
   const handleCommissionUpdate = async () => {
@@ -554,6 +564,8 @@ export default function SettlementRange() {
           setSummaryAmount(
             resCommission?.data?.data?.creditorsContractDetailsSum
           );
+          setAllData(resCommission?.data?.data);
+
           setDebtor(resCommission?.data?.data?.debtor?.basicInformation);
           setDebtorInfo(resCommission?.data?.data?.debtor?.businessInformation);
           setApiData(resCommission?.data?.data?.settlementRange);
@@ -571,6 +583,11 @@ export default function SettlementRange() {
           }
           setAllCreditorsNames(creditorAccountTitles);
           showToast(resCommission?.data?.message, "success");
+
+          const resJustifications = await GetJustifications(caseId);
+          if (resJustifications?.status === 200) {
+            setJustification(resJustifications?.data?.data?.justifications);
+          }
           GetLumpSumAmountData();
           GetFullProfitData();
         } else if (
@@ -598,7 +615,6 @@ export default function SettlementRange() {
           caseId,
           status
         );
-
         if (settlementRangeData?.status === 200) {
           setLoading(false);
           if (typeof settlementRangeData?.data?.data?.getScores === "string") {
@@ -611,6 +627,7 @@ export default function SettlementRange() {
           } else {
             setScores(settlementRangeData?.data?.data?.getScores);
           }
+          setAllData(settlementRangeData?.data?.data);
           setDebtor(settlementRangeData?.data?.data?.debtor?.basicInformation);
           setDebtorInfo(
             settlementRangeData?.data?.data?.debtor?.businessInformation
@@ -622,14 +639,6 @@ export default function SettlementRange() {
           setSummaryAmount(
             settlementRangeData?.data?.data?.creditorsContractDetailsSum
           );
-          setChatHistory((prev) => [
-            ...prev,
-            {
-              type: "response",
-              text: settlementRangeData?.data?.data?.settlementRange
-                ?.justifications?.[justificationValue],
-            },
-          ]);
 
           const allCreditors = settlementRangeData?.data?.data?.creditors;
           setCreditorNames(allCreditors);
@@ -641,6 +650,11 @@ export default function SettlementRange() {
           }
           setAllCreditorsNames(creditorAccountTitles);
           showToast(settlementRangeData?.data?.message, "success");
+          const resJustifications = await GetJustifications(caseId);
+          if (resJustifications?.status === 200) {
+            setJustification(resJustifications?.data?.data?.justifications);
+          }
+
           GetLumpSumAmountData();
           GetFullProfitData();
         } else if (
@@ -668,9 +682,27 @@ export default function SettlementRange() {
     };
     GetAllRanges(params, status);
   };
+  const GetAllSummary = async () => {
+    const res = await GetCaseSummariesById(caseId);
+    if (res?.status === 200) {
+      setSummary(res?.data?.data);
+    }
+  };
+
+  const getIntervals = async () => {
+    const res = await GetPaymentIntervals(caseId);
+    if (res?.status === 200) {
+      setPaymentData(res?.data?.data);
+    }
+  };
+
+  useEffect(() => {
+    getIntervals();
+  }, [paymentChanged]);
 
   useEffect(() => {
     GetAllRanges([], false);
+    GetAllSummary();
   }, []);
 
   const handleGeneratePdf = () => {
@@ -858,6 +890,8 @@ export default function SettlementRange() {
     (item) => item.creditorName !== "Summary"
   );
 
+  const isAnyChecked = Object.values(checkboxStates).some((checked) => checked);
+
   return (
     <Grid
       container
@@ -951,6 +985,15 @@ export default function SettlementRange() {
 
             <div style={{ display: "flex", gap: "10px" }}>
               <MuiModels
+                show="downloadPDF"
+                buttonName="downloadPDF"
+                maxHeight="85vh"
+                allData={allData}
+                lumpSumpData={lumpSumpData}
+                fullProfit={fullProfit}
+              />
+
+              <MuiModels
                 show="sendEmail"
                 creditorInfo={
                   allCreditorNames[tabValue] === "Summary"
@@ -963,6 +1006,12 @@ export default function SettlementRange() {
                     ? summaryAmount?.payableAmount
                     : selectedCreditorDetails?.contractDetails?.payable_amount
                 }
+                data={apiData}
+                selectedCreditor={allCreditorNames[tabValue]}
+                lumpSump={lumpSumpData}
+                fullProfit={fullProfit}
+                caseId={caseId}
+                paymentData={paymentData}
               />
               <TextButton
                 disabled={!apiData}
@@ -1290,6 +1339,23 @@ export default function SettlementRange() {
                 </Grid>
               </>
             )}
+            {apiData?.warnings?.[allCreditorNames[tabValue]] && (
+              <Grid
+                sx={{
+                  mt: "10px",
+                  backgroundColor: Colors.WHITE,
+                  borderRadius: "10px",
+                  padding: "16px",
+                  maxWidth: "50%",
+                  border: `2px solid ${Colors.ORANGE_COLOR}`,
+                }}
+              >
+                <Typography sx={commonTextStyles}>Warning!</Typography>
+                <Typography sx={{ ...commonTextStyles, fontWeight: "500" }}>
+                  {apiData?.warnings?.[allCreditorNames[tabValue]]}
+                </Typography>
+              </Grid>
+            )}
           </Grid>
           <Grid
             container
@@ -1317,10 +1383,13 @@ export default function SettlementRange() {
           <Grid
             item
             xs={12}
+            container
             sx={{
               backgroundColor: Colors.WHITE,
               borderRadius: "10px",
               mt: "2rem",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
             <AntTabs
@@ -1330,7 +1399,6 @@ export default function SettlementRange() {
               variant="scrollable"
               scrollButtons="auto"
               sx={{
-                width: "100%",
                 borderTopLeftRadius: "10px",
                 borderTopRightRadius: "10px",
               }}
@@ -1362,22 +1430,144 @@ export default function SettlementRange() {
                 }}
                 label="llama"
               />
+              <AntTab
+                sx={{
+                  bgcolor: Colors.WHITE,
+                  width: "max-content",
+                  fontWeight: "600",
+                  height: "3.5rem",
+                }}
+                label="claude"
+              />
             </AntTabs>
+            <div style={{ marginRight: "16px" }}>
+              <MuiModels
+                show="sendEmailJustification"
+                disabled={!isAnyChecked}
+                data={selectedData}
+                caseId={caseId}
+              />
+            </div>
           </Grid>
 
           <Grid xs={12}>
             <Grid
-              ref={scrollRef}
               item
               xs={12}
               sx={{
                 height: "50vh",
                 overflowY: "auto",
-                backgroundColor: Colors.WHITE,
-                ...ScrollbarStyles1,
+                backgroundColor: "white",
                 padding: "16px",
+                ...ScrollbarStyles,
               }}
             >
+              <Grid
+                xs={12}
+                container
+                justifyContent="flex-start"
+                sx={{ marginBottom: "8px" }}
+              >
+                <div>
+                  <Checkbox
+                    checked={checkboxStates["justification"]}
+                    onChange={() =>
+                      handleCheckboxChange(
+                        "justification",
+                        justification?.[justificationValue]?.[
+                          allCreditorNames[tabValue]
+                        ]
+                      )
+                    }
+                  />
+                </div>
+                <Card
+                  sx={{
+                    maxWidth: "60%",
+                    padding: "8px 16px",
+                    borderRadius: "10px",
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    boxShadow: "none",
+                  }}
+                >
+                  <Typography variant="body1">
+                    <ReactMarkdown>
+                      {justification?.[justificationValue]?.[
+                        allCreditorNames[tabValue]
+                      ] || "No Justifications"}
+                    </ReactMarkdown>
+                  </Typography>
+                </Card>
+              </Grid>
+              {summary?.map((item, index) => (
+                <React.Fragment key={index}>
+                  <Grid
+                    xs={12}
+                    container
+                    justifyContent="flex-end"
+                    sx={{ marginBottom: "8px" }}
+                  >
+                    <Card
+                      sx={{
+                        maxWidth: "70%",
+                        padding: "8px 16px",
+                        borderRadius: "10px",
+                        backgroundColor: Colors.BG_LIGHT_GRAY,
+                        boxShadow: "none",
+                      }}
+                    >
+                      <Typography variant="body1">
+                        <ReactMarkdown>{item?.prompt}</ReactMarkdown>
+                      </Typography>
+                      <p
+                        style={{
+                          textAlign: "right",
+                          fontFamily: "Nunito",
+                          fontSize: FONT_SIZE_SMALL,
+                        }}
+                      >
+                        {formatDateString(item?.updatedAt)}
+                      </p>
+                    </Card>
+                  </Grid>
+                  <Grid
+                    xs={12}
+                    container
+                    justifyContent="flex-start"
+                    sx={{ marginBottom: "8px" }}
+                  >
+                    <div>
+                      <Checkbox
+                        checked={checkboxStates[`summary_${index}`]}
+                        onChange={() =>
+                          handleCheckboxChange(`summary_${index}`, item?.chat)
+                        }
+                      />
+                    </div>
+                    <Card
+                      sx={{
+                        maxWidth: "70%",
+                        padding: "8px 16px",
+                        borderRadius: "10px",
+                        backgroundColor: Colors.BG_LIGHT_GRAY,
+                        boxShadow: "none",
+                      }}
+                    >
+                      <SettlementBounds data={item?.chat} />
+                      <p
+                        style={{
+                          textAlign: "left",
+                          fontFamily: "Nunito",
+                          fontSize: FONT_SIZE_SMALL,
+                        }}
+                      >
+                        {formatDateString(item?.updatedAt)}
+                      </p>
+                    </Card>
+                  </Grid>
+                </React.Fragment>
+              ))}
+
               {chatHistory?.map((message, index) => (
                 <Grid
                   xs={12}
@@ -1388,9 +1578,22 @@ export default function SettlementRange() {
                   }
                   sx={{ marginBottom: "8px" }}
                 >
+                  {message.type === "bound" && (
+                    <div>
+                      <Checkbox
+                        checked={checkboxStates[`chatHistory_${index}`]}
+                        onChange={() =>
+                          handleCheckboxChange(
+                            `chatHistory_${index}`,
+                            message?.text
+                          )
+                        }
+                      />
+                    </div>
+                  )}
                   <Card
                     sx={{
-                      maxWidth: "60%",
+                      maxWidth: "70%",
                       padding: "8px 16px",
                       borderRadius: "10px",
                       backgroundColor: Colors.BG_LIGHT_GRAY,
@@ -1398,12 +1601,23 @@ export default function SettlementRange() {
                     }}
                   >
                     {message.type === "bound" ? (
-                      <SettlementBounds data={message?.text} />
+                      <div>
+                        <SettlementBounds data={message?.text} />
+                      </div>
                     ) : (
                       <Typography variant="body1">
                         <ReactMarkdown>{message?.text}</ReactMarkdown>
                       </Typography>
                     )}
+                    <p
+                      style={{
+                        textAlign: "right",
+                        fontFamily: "Nunito",
+                        fontSize: FONT_SIZE_SMALL,
+                      }}
+                    >
+                      {formatDateString("now")}
+                    </p>
                   </Card>
                 </Grid>
               ))}

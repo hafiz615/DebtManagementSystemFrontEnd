@@ -74,20 +74,18 @@ function DebtorDetails({
         />
       </Grid>
       {loading ? (
-        <div
-          style={{
-            height: "55vh",
-            display: "flex",
-            alignItems: "center",
+        <Grid
+          container
+          item
+          xs={12}
+          sx={{
             justifyContent: "center",
-            color: Colors.SKY_BLUE,
-            fontSize: "2rem",
-            fontWeight: "600",
-            fontFamily: "Nunito",
+            alignItems: "center",
+            height: "55vh",
           }}
         >
-          Loading{dots}
-        </div>
+          <CircularProgress size={140} sx={{ color: Colors.SKY_BLUE }} />
+        </Grid>
       ) : (
         <Grid
           container

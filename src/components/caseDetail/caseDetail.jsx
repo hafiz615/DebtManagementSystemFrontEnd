@@ -220,17 +220,42 @@ function CaseDetail() {
             >
               {caseData?.caseCode}
             </Typography>
-
-            <TextButton
-              buttonText="Get Settlement Range"
-              height="2.5rem"
-              width="14rem"
-              onClick={() => {
-                navigate(`/settlementRange/${id}`);
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "1.2%",
               }}
-              backgroundColor={Colors.SKY_BLUE}
-              hoverColor={Colors.SKY_BLUE}
-            />
+            >
+              <MuiModels
+                show="sendEmailCase"
+                buttonName="sendEmailCase"
+                iconColor={Colors.BLACK}
+                maxHeight="78vh"
+                caseDataId={id}
+                GetLogsById={GetLogsById}
+              />
+              <MuiModels
+                show="sendEmailCase"
+                buttonName="sendSmsCase"
+                headerName={true}
+                iconColor={Colors.BLACK}
+                maxHeight="78vh"
+                caseDataId={id}
+                GetLogsById={GetLogsById}
+              />
+              <TextButton
+                buttonText="Get Settlement Range"
+                height="2.5rem"
+                width="14rem"
+                onClick={() => {
+                  navigate(`/settlementRange/${id}`);
+                }}
+                backgroundColor={Colors.SKY_BLUE}
+                hoverColor={Colors.SKY_BLUE}
+              />
+            </div>
           </Grid>
 
           <Grid item sx={{ marginTop: "1.5rem" }}>
@@ -317,11 +342,15 @@ function CaseDetail() {
                     <DebtorDetailsCards
                       caseData={caseData}
                       GetCaseDetails={GetCaseDetails}
+                      caseDataId={id}
+                      GetLogsById={GetLogsById}
                     />
                   ) : value === "Creditor" ? (
                     <CreditorsDetailCards
                       caseData={caseData}
                       GetCaseDetails={GetCaseDetails}
+                      caseDataId={id}
+                      GetLogsById={GetLogsById}
                     />
                   ) : value === "Other Creditors" ? (
                     <Grid

@@ -15,9 +15,8 @@ import {
 import { useToast } from "../toast/toastContext";
 import Dropdown from "./dropdown";
 import { Colors } from "../config/default";
-import MuiPhoneNumber from "material-ui-phone-number";
 import { PhoneValidation } from "../constants/appConstants";
-import { formatPhoneNumber, isEmailValid } from "../common";
+import { isEmailValid } from "../common";
 
 function ModelInfo({ modalType, setOpen, GetUsers, id }) {
   const [menuItem, setMenuItem] = useState([]);
@@ -327,74 +326,19 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
             />
 
             <Box>
-              <Typography
-                sx={{
-                  fontWeight: "500",
-                  fontFamily: "Nunito",
-                  marginLeft: "1rem",
-                  color: Colors.DARK_GRAY,
-                }}
-              >
-                Phone #*
-              </Typography>
-              <MuiPhoneNumber
-                sx={{
-                  backgroundColor: Colors.BG_LIGHT_GRAY,
-                  height: "2.5rem",
-                  paddingLeft: ".4rem",
-                  borderRadius: "5px",
-                  display: "flex",
-                  justifyContent: "center",
-                  width: smallScreen
-                    ? "15rem"
-                    : largeScreen
-                    ? "20rem"
-                    : "10rem",
-                  border: errors?.phone
-                    ? "1px solid red"
-                    : "1px solid transparent",
-                  "& .MuiInputBase-input": {
-                    color: Colors.DIM_LIGHT_GRAY,
-                    fontSize: ".8rem",
-                  },
-                  "& .MuiInput-underline:before": {
-                    borderBottom: "none",
-                  },
-                  "& .MuiInput-underline:after": {
-                    borderBottom: "none",
-                  },
-                  "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
-                    borderBottom: "none",
-                  },
-                }}
+              <CustomTextField
+                label="Phone #"
+                type="text"
+                width={smallScreen ? "15rem" : largeScreen ? "20rem" : "10rem"}
+                placeHolderValue="Enter Phone Number"
                 value={formData?.phone}
-                onlyCountries={["us"]}
-                variant="standard"
-                defaultCountry={"us"}
-                disableDropdown={false}
-                onChange={(e) =>
-                  handleInputChange("phone", formatPhoneNumber(e))
-                }
-                onKeyDown={handleNumberInputKeyDown}
+                onChange={(e) => {
+                  const numericValue = e.target.value.replace(/\D/g, "");
+                  handleInputChange("phone", numericValue);
+                }}
+                onKeyDown={handleNumberInput}
+                error={errors?.phone}
               />
-              {errors?.phone ? (
-                <Box
-                  sx={{
-                    color: "red",
-                    fontSize: "9.3px",
-                    height: smallScreen ? "0.5rem" : "0.7rem",
-                  }}
-                >
-                  {errors?.phone}
-                </Box>
-              ) : (
-                <Box
-                  sx={{
-                    color: "red",
-                    height: smallScreen ? "0.5rem" : "0.7rem",
-                  }}
-                ></Box>
-              )}
             </Box>
 
             <Grid

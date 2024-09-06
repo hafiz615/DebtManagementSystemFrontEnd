@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import ScrollbarStyles from "../customScroll";
-import { Grid } from "@mui/material";
-import ListTable from "../listTable";
+import { Grid, Tooltip } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import PipelineListTable from "./pipelineListTable";
+import Dropdown from "../dropdown";
+import { Colors } from "../../config/default";
 
 export default function PipelinesLists({
   data,
@@ -16,11 +17,16 @@ export default function PipelinesLists({
   endDate,
   page,
   setPage,
+  order,
+  setOrder,
+  orders,
 }) {
   const [cases, setCases] = useState([]);
+  const navigate = useNavigate();
 
   const headers = [
-    "Lead",
+    "Leads",
+    "Business Name",
     "Total Debt",
     "Confidence",
     "Close Date",
@@ -35,6 +41,7 @@ export default function PipelinesLists({
         test?.cases?.map((c) => ({
           id: c?._id,
           lead: c?.debtor?.basicInformation?.fullName,
+          company: c?.debtor?.businessInformation?.companyName,
           totalDebt: `$${c?.totalDebt}`,
           confidence: c?.confidence,
           closeDate: c?.closeDate || "-",
@@ -101,7 +108,15 @@ export default function PipelinesLists({
     return true;
   });
 
-  const navigate = useNavigate();
+  const sortedCases = [...filteredCasesByDate].sort((a, b) => {
+    if (order === "Ascending") {
+      return a.company.toLowerCase() > b.company.toLowerCase() ? 1 : -1;
+    } else if (order === "Descending") {
+      return a.company.toLowerCase() < b.company.toLowerCase() ? 1 : -1;
+    }
+    return 0;
+  });
+
   const handleRowClick = (id) => {
     localStorage.setItem("route", "all-cases");
     navigate(`/all-cases/${id}`);
@@ -129,11 +144,12 @@ export default function PipelinesLists({
           onRowClick={
             generalPermissions?.viewCaseDetails ? handleRowClick : undefined
           }
-          data={
-            data ? filteredCasesByDate?.map(({ time, ...rest }) => rest) : []
-          }
+          data={data ? sortedCases?.map(({ time, ...rest }) => rest) : []}
           page={page}
           setPage={setPage}
+          orders={orders}
+          order={order}
+          setOrder={setOrder}
         />
       </Grid>
     </Grid>

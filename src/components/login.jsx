@@ -210,7 +210,7 @@ function Login() {
           {passwordError && (
             <FormHelperText error>{passwordError}</FormHelperText>
           )}
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          {/* <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <Typography
               sx={{
                 fontWeight: "200",
@@ -225,7 +225,7 @@ function Login() {
             >
               {FORGOT_PASSWORD}
             </Typography>
-          </div>
+          </div> */}
         </FormControl>
 
         <Button

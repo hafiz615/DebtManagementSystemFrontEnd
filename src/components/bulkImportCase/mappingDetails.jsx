@@ -27,7 +27,6 @@ export default function MappingDetails() {
     { name: "Company" },
     { name: "EIN" },
     { name: "Business Category" },
-    { name: "Country" },
     { name: "State" },
     { name: "City" },
     { name: "Zip Code" },
@@ -91,9 +90,6 @@ export default function MappingDetails() {
       );
       initialDropdownStates[`debtor-Business Category-0`] = getFieldIndex(
         "debtor_business_category"
-      );
-      initialDropdownStates[`debtor-Country-0`] = getFieldIndex(
-        "debtor_business_country"
       );
       initialDropdownStates[`debtor-State-0`] = getFieldIndex(
         "debtor_business_state"

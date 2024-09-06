@@ -60,10 +60,7 @@ export default function DeleteStatus({
             fontFamily: "Nunito",
             color: Colors.DIM_LIGHT_GRAY,
           }}
-        >
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur
-          cursus elit id tempor tincidunt. Quisque turpis
-        </Typography>
+        ></Typography>
         <StatusAutoComplete
           arrayStatus={arrayStatus}
           setValue={setValue}

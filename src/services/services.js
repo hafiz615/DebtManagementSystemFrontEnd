@@ -1091,10 +1091,10 @@ export const GetWeeklyAndTotalCommission = async (payload, id) => {
   }
 };
 
-export const SendSettlementEmail = async (payload) => {
+export const SendSettlementEmail = async (payload, id) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/case/sendSettlementEmail`,
+      BASE_URL + `/v1/case/sendSettlementEmail/${id}`,
       payload,
       setHeaders()
     );
@@ -1107,6 +1107,75 @@ export const GetLogs = async (id) => {
   try {
     return await axios.get(
       BASE_URL + `/v1/case/caseHistory/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const ResendInvite = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/user/resendInvitationLink`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const SendEmailSmsCase = async (id, type, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/email/sendSmsEmailDebtorCreditor/${id}?type=${type}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetCaseSummariesById = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/case/getCaseSummaries/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const SelectJustificationModal = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + "/v1/case/saveJustification",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetJustifications = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/case/getSettlementJustifications/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetPaymentIntervals = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/case/calculateIntervalsAmount/${id}`,
       setHeaders()
     );
   } catch (error) {

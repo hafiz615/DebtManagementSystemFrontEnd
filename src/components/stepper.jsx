@@ -57,13 +57,12 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     BasicFullName: debtorBasicInfo?.fullName || "",
     BasicEmailAddress: debtorBasicInfo?.email || "",
     BasicSsid: debtorBasicInfo?.SSID || "",
-    BasicCountry: debtorBasicInfo?.country || "",
     BasicState: debtorBasicInfo?.state || "",
     BasicCity: debtorBasicInfo?.city || "",
     BasicZipCode: debtorBasicInfo?.zipCode || "",
     BasicPhoneNumber: debtorBasicInfo?.phone || "",
     BasicAddress: debtorBasicInfo?.address || "",
-    BasicWeeklyBudget: debtorBasicInfo?.weeklyBudget || "",
+    BasicWeeklyBudget: debtorBasicInfo?.weeklyBudget || 0,
   });
 
   //Debtor-Business-Details-State
@@ -72,7 +71,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     businessEinNumber: debtorBusinessInfo?.EIN || "",
     businessCategory: debtorBusinessInfo?.businessCategory || "",
     businessDescription: debtorBusinessInfo?.description || "",
-    businessCountry: debtorBusinessInfo?.country || "",
     businessState: debtorBusinessInfo?.state || "",
     businessCity: debtorBusinessInfo?.city || "",
     businessZipCode: debtorBusinessInfo?.zipCode || "",
@@ -89,9 +87,12 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     ? caseData?.debtor?.contacts?.map((contact) => ({
         name: contact?.name || "",
         title: contact?.title || "",
-        phone: contact?.phone || "",
+        phone: contact?.phone
+          ? contact?.phone.startsWith("+1")
+            ? contact?.phone.slice(2)
+            : contact?.phone
+          : "",
         email: contact?.email || "",
-        country: contact?.country || "",
         state: contact?.state || "",
         city: contact?.city || "",
         zipCode: contact?.zipCode || "",
@@ -103,7 +104,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           title: "",
           phone: "",
           email: "",
-          country: "",
           state: "",
           city: "",
           zipCode: "",
@@ -326,9 +326,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       BasicSsid: response?.DebtorInfo
         ? parseString(response?.DebtorInfo["Debtor's SSN"])
         : "",
-      BasicCountry: response?.DebtorInfo
-        ? response?.DebtorInfo["Debtor's Country Name"]
-        : "",
       BasicState: response?.DebtorInfo
         ? response?.DebtorInfo["Debtor's State Name"]
         : "",
@@ -344,7 +341,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       BasicAddress: response?.DebtorInfo
         ? response?.DebtorInfo["Debtor's Address"]
         : "",
-      // BasicWeeklyBudget: response?.debtor_info["Debtor's Country Name"] || "",
     });
 
     // setStatus(debtorData?.basicInformation?.status);
@@ -360,10 +356,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       businessCategory: response?.BusinessInfo
         ? response?.BusinessInfo["Business Category"]
         : "",
-      // businessDescription: response?.bussiness_info["Business Legal Name"] || "",
-      businessCountry: response?.BusinessInfo
-        ? response?.BusinessInfo["Business Country Name"]
-        : "",
+
       businessState: response?.BusinessInfo
         ? response?.BusinessInfo["Business State Name"]
         : "",
@@ -398,13 +391,12 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       BasicFullName: debtorData?.basicInformation?.fullName || "",
       BasicEmailAddress: debtorData?.basicInformation?.email || "",
       BasicSsid: debtorData?.basicInformation?.SSID || "",
-      BasicCountry: debtorData?.basicInformation?.country || "",
       BasicState: debtorData?.basicInformation?.state || "",
       BasicCity: debtorData?.basicInformation?.city || "",
       BasicZipCode: debtorData?.basicInformation?.zipCode || "",
       BasicPhoneNumber: debtorData?.basicInformation?.phone || "",
       BasicAddress: debtorData?.basicInformation?.address || "",
-      BasicWeeklyBudget: debtorData?.basicInformation?.weeklyBudget || "",
+      BasicWeeklyBudget: debtorData?.basicInformation?.weeklyBudget || 0,
     });
     setWalletId(debtorData?.customerVaultId || "");
     setStatus(debtorData?.basicInformation?.status);
@@ -413,7 +405,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       businessEinNumber: debtorData?.businessInformation?.EIN || "",
       businessCategory: debtorData?.businessInformation?.businessCategory || "",
       businessDescription: debtorData?.businessInformation?.description || "",
-      businessCountry: debtorData?.businessInformation?.country || "",
       businessState: debtorData?.businessInformation?.state || "",
       businessCity: debtorData?.businessInformation?.city || "",
       businessZipCode: debtorData?.businessInformation?.zipCode || "",
@@ -427,7 +418,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           title: contact?.title || "",
           phone: contact?.phone || "",
           email: contact?.email || "",
-          country: contact?.country || "",
           state: contact?.state || "",
           city: contact?.city || "",
           zipCode: contact?.zipCode || "",
@@ -441,7 +431,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           title: "",
           phone: "",
           email: "",
-          country: "",
           state: "",
           city: "",
           zipCode: "",
@@ -515,6 +504,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         handleExtractedData(extractedDataMCAs);
         setActiveStep(activeStep + 1);
       } else if (activeStep === 1) {
+        setLoading(true);
         const isEmpty = (obj) => {
           return Object.values(obj)?.every(
             (value) => value === "" || value == null
@@ -533,24 +523,30 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
             email: debtorOwnDetails?.BasicEmailAddress,
             SSID: debtorOwnDetails?.BasicSsid,
             status: status,
-            country: debtorOwnDetails?.BasicCountry,
             state: debtorOwnDetails?.BasicState,
             city: debtorOwnDetails?.BasicCity,
             zipCode: debtorOwnDetails?.BasicZipCode,
-            phone: debtorOwnDetails?.BasicPhoneNumber,
+            phone: debtorOwnDetails?.BasicPhoneNumber
+              ? debtorOwnDetails.BasicPhoneNumber.startsWith("+1")
+                ? debtorOwnDetails.BasicPhoneNumber.slice(2)
+                : debtorOwnDetails.BasicPhoneNumber
+              : "",
             address: debtorOwnDetails?.BasicAddress,
-            weeklyBudget: debtorOwnDetails?.BasicWeeklyBudget || "",
+            weeklyBudget: debtorOwnDetails?.BasicWeeklyBudget || 0,
           },
           businessInformation: {
             companyName: debtorBusinessDetails?.businessCompanyName,
             EIN: debtorBusinessDetails?.businessEinNumber,
             businessCategory: debtorBusinessDetails?.businessCategory,
             description: debtorBusinessDetails?.businessDescription,
-            country: debtorBusinessDetails?.businessCountry,
             state: debtorBusinessDetails?.businessState,
             city: debtorBusinessDetails?.businessCity,
             zipCode: debtorBusinessDetails?.businessZipCode,
-            phone: debtorBusinessDetails?.businessPhoneNumber,
+            phone: debtorBusinessDetails?.businessPhoneNumber
+              ? debtorBusinessDetails?.businessPhoneNumber.startsWith("+1")
+                ? debtorBusinessDetails?.businessPhoneNumber.slice(2)
+                : debtorBusinessDetails?.businessPhoneNumber
+              : "",
             address: debtorBusinessDetails?.businessAddress,
           },
           contacts: debtorContacts,
@@ -569,6 +565,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           showToast(errorMessage, "error");
         }
       } else if (activeStep === 2) {
+        setLoading(true);
         const isEmpty = (obj) => {
           return Object.values(obj)?.every(
             (value) => value === "" || value == null
@@ -599,6 +596,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           showToast(errorMessage, "error");
         }
       } else {
+        setLoading(true);
         let newSkipped = skipped;
         if (isStepSkipped(activeStep)) {
           newSkipped = new Set(newSkipped.values());
@@ -634,7 +632,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       BasicFullName: "",
       BasicEmailAddress: "",
       BasicSsid: "",
-      BasicCountry: "",
       BasicState: "",
       BasicCity: "",
       BasicZipCode: "",
@@ -647,7 +644,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       businessEinNumber: "",
       businessCategory: "",
       businessDescription: "",
-      businessCountry: "",
       businessState: "",
       businessCity: "",
       businessZipCode: "",
@@ -662,7 +658,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         title: "",
         phone: "",
         email: "",
-        country: "",
         state: "",
         city: "",
         zipCode: "",

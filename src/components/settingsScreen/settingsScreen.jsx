@@ -15,6 +15,7 @@ import CaseStatuses from "./caseStatuses";
 import PipelineAccordion from "./pipelineAccordion";
 import RoleAndPermission from "./roleAndPermission";
 import NotificationConfiguration from "../notificationConfigure";
+import JustificationModal from "./justificationModal";
 
 export default function SettingsScreen() {
   const navigate = useNavigate();
@@ -36,6 +37,7 @@ export default function SettingsScreen() {
   const [notificationTemplates, setNotificationTemplates] = useState([]);
   const [customFields, setCustomFields] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectJustification, setSelectJustification] = useState({});
 
   const getSettings = async () => {
     setLoading(true);
@@ -70,6 +72,7 @@ export default function SettingsScreen() {
     );
     setNotificationTemplates(allSettings?.data?.data?.notificationTemplates);
     setCustomFields(allSettings?.data?.data?.customFields);
+    setSelectJustification(allSettings?.data?.data?.justification);
     setLoading(false);
   };
 
@@ -148,6 +151,10 @@ export default function SettingsScreen() {
         )}
 
         <PasswordAccordion />
+        <JustificationModal
+          getSettings={getSettings}
+          selectJustification={selectJustification}
+        />
         {settings?.viewCaseStatuses && <CaseStatuses />}
 
         {settings?.viewPipeline && <PipelineAccordion />}

@@ -30,6 +30,8 @@ import {
   Email,
   Difference,
   Edit,
+  Sms,
+  Download,
 } from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
@@ -44,6 +46,9 @@ import DebtorContacts from "./caseDetail/debtorContacts";
 import UploadFilePopup from "./caseDetail/uploadFilePopup";
 import ScrollbarStyles from "./../components/customScroll";
 import SettlementPayment from "./settlementPlan";
+import SendEmailCase from "./caseDetail/sendEmailCase";
+import DownloadPDF from "./caseDetail/downloadPDF";
+import SendEmailJustification from "./sendEmailJustifications";
 
 export default function MuiModels({
   buttonName,
@@ -98,6 +103,17 @@ export default function MuiModels({
   payableAmount,
   debtorInfo,
   creditorInfo,
+  headerName,
+  caseDataId,
+  GetLogsById,
+  disabled,
+  selectedCreditor,
+  lumpSump,
+  fullProfit,
+  paymentData,
+  setPaymentChanged,
+  allData,
+  lumpSumpData,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -180,31 +196,35 @@ export default function MuiModels({
           />
         </IconButton>
       ) : show === "editDebtorContacts" ? (
-        <Edit
+        <IconButton
+          sx={{ display: "flex", alignItems: "center" }}
           onClick={() => {
             handleOpen();
           }}
-          sx={{
-            color: Colors.DIM_LIGHT_GRAY,
-            cursor: "pointer",
-            fontSize: "13px",
-            marginLeft: ".3rem",
-            marginTop: ".3rem",
-          }}
-        />
+        >
+          <Edit
+            sx={{
+              color: Colors.DIM_LIGHT_GRAY,
+              cursor: "pointer",
+              fontSize: "13px",
+            }}
+          />
+        </IconButton>
       ) : show === "editCreditorContacts" ? (
-        <Edit
+        <IconButton
+          sx={{ display: "flex", alignItems: "center" }}
           onClick={() => {
             handleOpen();
           }}
-          sx={{
-            color: Colors.DIM_LIGHT_GRAY,
-            cursor: "pointer",
-            fontSize: "13px",
-            marginLeft: ".3rem",
-            marginTop: ".3rem",
-          }}
-        />
+        >
+          <Edit
+            sx={{
+              color: Colors.DIM_LIGHT_GRAY,
+              cursor: "pointer",
+              fontSize: "13px",
+            }}
+          />
+        </IconButton>
       ) : show === "creditorContacts" ? (
         <IconButton
           sx={{ display: "flex", alignItems: "center" }}
@@ -319,6 +339,40 @@ export default function MuiModels({
             }}
           />
         </IconButton>
+      ) : buttonName === "sendEmail" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <Email
+            onClick={() => {
+              handleOpen();
+            }}
+            sx={{
+              fontSize: "1.2rem",
+              color: Colors.DIM_LIGHT_GRAY,
+              cursor: "pointer",
+            }}
+          />
+        </IconButton>
+      ) : buttonName === "sendSms" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <Sms
+            onClick={() => {
+              handleOpen();
+            }}
+            sx={{
+              fontSize: "1.2rem",
+              color: Colors.DIM_LIGHT_GRAY,
+              cursor: "pointer",
+            }}
+          />
+        </IconButton>
       ) : show === "EditCaseCustomField" ? (
         <IconButton
           disabled={isEmpty(customFieldsData)}
@@ -349,6 +403,44 @@ export default function MuiModels({
           buttonText="Set Payment Plan"
           height="2rem"
           width="12rem"
+          onClick={handleOpen}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
+      ) : show === "downloadPDF" ? (
+        <TextButton
+          buttonText={"Download PDF"}
+          boxShadow="none"
+          height={"2.5rem"}
+          width={extraSmallScreen ? "2rem" : "10rem"}
+          backgroundColor={Colors.BG_LIGHT_GRAY}
+          fontColor={Colors.BLACK}
+          hoverColor={Colors.BG_LIGHT_GRAY}
+          border={`1px solid ${Colors.SKY_BLUE}`}
+          onClick={handleOpen}
+          borderRadius="5px"
+          startIcon={
+            <Download
+              sx={{
+                color: Colors.BLACK,
+              }}
+            />
+          }
+        />
+      ) : buttonName === "sendEmailCase" ? (
+        <TextButton
+          buttonText="Send Email"
+          height="2.5rem"
+          width="9rem"
+          onClick={handleOpen}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
+      ) : buttonName === "sendSmsCase" ? (
+        <TextButton
+          buttonText="Send SMS"
+          height="2.5rem"
+          width="9rem"
           onClick={handleOpen}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
@@ -418,21 +510,31 @@ export default function MuiModels({
           <AddIcon sx={{ fontSize: ".9rem" }} />
           {froalaEditorButton}
         </Button>
-      ) : show === "sendEmail" ? (
+      ) : show === "sendEmail" || show === "sendEmailJustification" ? (
         <TextButton
           buttonText={"Send Email"}
           boxShadow="none"
           height={"2.5rem"}
           width={extraSmallScreen ? "2rem" : "9rem"}
-          backgroundColor={Colors.BG_LIGHT_GRAY}
-          fontColor={Colors.BLACK}
-          hoverColor={Colors.BG_LIGHT_GRAY}
+          backgroundColor={
+            show === "sendEmail" ? Colors.BG_LIGHT_GRAY : Colors.SKY_BLUE
+          }
+          fontColor={show === "sendEmail" ? Colors.BLACK : Colors.WHITE}
+          hoverColor={
+            show === "sendEmail" ? Colors.BG_LIGHT_GRAY : Colors.SKY_BLUE
+          }
           onClick={handleOpen}
+          disabled={disabled}
           startIcon={
-            extraSmallScreen ? (
+            extraSmallScreen || show === "sendEmailJustification" ? (
               ""
             ) : (
-              <Email sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }} />
+              <Email
+                sx={{
+                  color: Colors.DARK_GRAY,
+                  fontSize: FONT_SIZE_XL,
+                }}
+              />
             )
           }
         />
@@ -570,6 +672,14 @@ export default function MuiModels({
               loading={loading}
               setLoading={setLoading}
             />
+          ) : show === "sendEmailCase" ? (
+            <SendEmailCase
+              buttonText={buttonText}
+              handleClose={handleClose}
+              headerName={headerName}
+              caseDataId={caseDataId}
+              GetLogsById={GetLogsById}
+            />
           ) : show === "editPipeline" ? (
             <EditPipeline
               handleClose={handleClose}
@@ -650,6 +760,12 @@ export default function MuiModels({
               payableAmount={payableAmount}
               debtorInfo={debtorInfo}
               creditorInfo={creditorInfo}
+              data={data}
+              selectedCreditor={selectedCreditor}
+              lumpSump={lumpSump}
+              fullProfit={fullProfit}
+              caseId={caseId}
+              paymentData={paymentData}
             />
           ) : show === "uploadFile" ? (
             <UploadFilePopup
@@ -668,6 +784,7 @@ export default function MuiModels({
               caseId={caseId}
               remainingAmount={remainingAmount}
               commissionRange={commissionRange}
+              setPaymentChanged={setPaymentChanged}
             />
           ) : show === "settlmentPayment" ? (
             <SettlementPayment
@@ -678,6 +795,20 @@ export default function MuiModels({
               caseId={caseId}
               remainingAmount={remainingAmount}
               commissionRange={commissionRange}
+              setPaymentChanged={setPaymentChanged}
+            />
+          ) : show === "sendEmailJustification" ? (
+            <SendEmailJustification
+              handleClose={handleClose}
+              data={data}
+              caseId={caseId}
+            />
+          ) : show === "downloadPDF" ? (
+            <DownloadPDF
+              allData={allData}
+              lumpSumpData={lumpSumpData}
+              fullProfit={fullProfit}
+              handleClose={handleClose}
             />
           ) : (
             ""
