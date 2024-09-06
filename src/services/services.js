@@ -1160,3 +1160,14 @@ export const SelectJustificationModal = async (payload) => {
     return error;
   }
 };
+
+export const GetJustifications = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/case/getSettlementJustifications/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
