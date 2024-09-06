@@ -414,13 +414,14 @@ export const truncateText = (text, length) => {
   return text;
 };
 
-const generatePDF = (data, lumpSumpData, fullProfit) => {
+const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
   const {
     creditors,
     debtor,
     creditorsContractDetailsSum,
     settlementRange,
     getScores,
+    chatGpt,
   } = data;
   const doc = new jsPDF();
   doc.setFontSize(18);
@@ -437,524 +438,539 @@ const generatePDF = (data, lumpSumpData, fullProfit) => {
   const formatCurrency = (value) => {
     return typeof value === "number" ? `$${value.toLocaleString()}` : "N/A";
   };
-  doc.text("Debtor and Creditor Details", 14, 20);
+  doc.text("Settlement Range Data ", 14, 20);
   doc.setFontSize(14);
 
   // Debtor Information
-  doc.text("Debtor Information", 14, 40);
-  const debtorInfo = [
-    ["Full Name", debtor?.basicInformation?.fullName || "N/A"],
-    ["Email", debtor?.basicInformation?.email || "N/A"],
-    ["Phone", debtor?.basicInformation?.phone || "N/A"],
-    [
-      "Address",
-      `${debtor?.basicInformation?.address || "N/A"}, ${
-        debtor?.basicInformation?.city || "N/A"
-      }, ${debtor?.basicInformation?.state || "N/A"}, ${
-        debtor?.basicInformation?.zipCode || "N/A"
-      }`,
-    ],
-    ["Weekly Budget", `$${debtor?.basicInformation?.weeklyBudget || 0}`],
-    ["Commission Percentage", `${debtor?.commissionPercentage || 0}%`],
-  ];
+  if (checkboxState["Debtor Information"]) {
+    doc.text("Debtor Information", 14, 40);
+    const debtorInfo = [
+      ["Full Name", debtor?.basicInformation?.fullName || "N/A"],
+      ["Email", debtor?.basicInformation?.email || "N/A"],
+      ["Phone", debtor?.basicInformation?.phone || "N/A"],
+      [
+        "Address",
+        `${debtor?.basicInformation?.address || "N/A"}, ${
+          debtor?.basicInformation?.city || "N/A"
+        }, ${debtor?.basicInformation?.state || "N/A"}, ${
+          debtor?.basicInformation?.zipCode || "N/A"
+        }`,
+      ],
+      ["Weekly Budget", `$${debtor?.basicInformation?.weeklyBudget || 0}`],
+      ["Commission Percentage", `${debtor?.commissionPercentage || 0}%`],
+    ];
 
-  doc.autoTable({
-    head: [["Field", "Value"]],
-    body: debtorInfo,
-    startY: 45,
-  });
+    doc.autoTable({
+      head: [["Field", "Value"]],
+      body: debtorInfo,
+      startY: 45,
+    });
+  }
+
   //Settlement Range
-  doc.setFontSize(14);
-  doc.text("Settlement Range", 14, doc.autoTable.previous.finalY + 20);
-
-  // Prepare data for the table
-
-  const settlementRangeSummary = [
-    ["Weekly Profit", formatCurrency(settlementRange?.weekly_profit) || 0],
-    [
-      "Weekly True Revenue",
-      formatCurrency(settlementRange?.weekly_true_revenue) || 0,
-    ],
-    ["Profitability", formatPercentage(settlementRange?.profitability) || 0],
-  ];
-  doc.autoTable({
-    head: [["Field", "Value"]],
-    body: settlementRangeSummary,
-    startY: doc.autoTable.previous.finalY + 25,
-  });
+  if (checkboxState["Settlement Range"]) {
+    doc.setFontSize(14);
+    doc.text("Settlement Range", 14, doc.autoTable.previous.finalY + 20);
+    const settlementRangeSummary = [
+      ["Weekly Profit", formatCurrency(settlementRange?.weekly_profit) || 0],
+      [
+        "Weekly True Revenue",
+        formatCurrency(settlementRange?.weekly_true_revenue) || 0,
+      ],
+      ["Profitability", formatPercentage(settlementRange?.profitability) || 0],
+    ];
+    doc.autoTable({
+      head: [["Field", "Value"]],
+      body: settlementRangeSummary,
+      startY: doc.autoTable.previous.finalY + 25,
+    });
+  }
 
   // Add Scores
-  doc.setFontSize(14);
-  doc.text("Scores", 14, doc.autoTable.previous.finalY + 20);
-  const scoresSummary = [
-    ["Default Risk Score", getScores?.Scores?.["Default Risk Score"] || 0],
-    ["UCC Score", getScores?.Scores?.["UCC Score"] || 0],
-  ];
-  doc.autoTable({
-    head: [["Field", "Value"]],
-    body: scoresSummary,
-    startY: doc.autoTable.previous.finalY + 25,
-  });
+  if (checkboxState.Scores) {
+    doc.setFontSize(14);
+    doc.text("Scores", 14, doc.autoTable.previous.finalY + 20);
+    const scoresSummary = [
+      ["Default Risk Score", getScores?.Scores?.["Default Risk Score"] || 0],
+      ["UCC Score", getScores?.Scores?.["UCC Score"] || 0],
+    ];
+    doc.autoTable({
+      head: [["Field", "Value"]],
+      body: scoresSummary,
+      startY: doc.autoTable.previous.finalY + 25,
+    });
+  }
 
   // Creditors Information
-  doc.setFontSize(14);
-  doc.text(
-    "Creditors Contract Information",
-    14,
-    doc.autoTable.previous.finalY + 20
-  );
+  if (checkboxState["Creditors Contract Information"]) {
+    doc.setFontSize(14);
+    doc.text(
+      "Creditors Contract Information",
+      14,
+      doc.autoTable.previous.finalY + 20
+    );
 
-  const creditorDetails = creditors.map((creditor) => {
-    return [
-      creditor?.creditorAccountTitle || "N/A",
-      formatCurrencyConditional(creditor?.contractDetails?.loan_amount || 0),
-      formatCurrencyConditional(creditor?.contractDetails?.payable_amount || 0),
-      creditor?.contractDetails?.purchased_percentage || 0,
-      formatCurrencyConditional(
-        creditor?.contractDetails?.repayment_amount || 0
-      ),
+    const creditorDetails = creditors?.map((creditor) => {
+      return [
+        creditor?.creditorAccountTitle || "N/A",
+        formatCurrencyConditional(creditor?.contractDetails?.loan_amount || 0),
+        formatCurrencyConditional(
+          creditor?.contractDetails?.payable_amount || 0
+        ),
+        creditor?.contractDetails?.purchased_percentage || 0,
+        formatCurrencyConditional(
+          creditor?.contractDetails?.repayment_amount || 0
+        ),
 
-      formatCurrency(
-        settlementRange?.weekly_budget[creditor?.creditorAccountTitle] || 0
-      ),
-    ];
-  });
+        formatCurrency(
+          settlementRange?.weekly_budget[creditor?.creditorAccountTitle] || 0
+        ),
+      ];
+    });
 
-  doc.autoTable({
-    head: [
-      [
-        "Name",
-        "Loan Amount",
-        "Payable Amount",
-        "Purchased %",
-        "Repayment Amount",
-        "Weekly Budget",
+    doc.autoTable({
+      head: [
+        [
+          "Name",
+          "Loan Amount",
+          "Payable Amount",
+          "Purchased %",
+          "Repayment Amount",
+          "Weekly Budget",
+        ],
       ],
-    ],
-    body: creditorDetails,
-    startY: doc.autoTable.previous.finalY + 25,
-  });
+      body: creditorDetails,
+      startY: doc.autoTable.previous.finalY + 25,
+    });
+  }
 
   // Creditors Summary
-  doc.setFontSize(14);
-  doc.text(
-    "Creditors Contract Details Summary",
-    14,
-    doc.autoTable.previous.finalY + 20
-  );
+  if (checkboxState["Creditors Contract Details Summary"]) {
+    doc.setFontSize(14);
+    doc.text(
+      "Creditors Contract Details Summary",
+      14,
+      doc.autoTable.previous.finalY + 20
+    );
 
-  const creditorsSummary = [
-    [
-      "Total Loan Amount",
-      `$${creditorsContractDetailsSum?.loanAmount?.toLocaleString() || 0}`,
-    ],
-    [
-      "Total Payable Amount",
-      `$${creditorsContractDetailsSum?.payableAmount?.toLocaleString() || 0}`,
-    ],
-  ];
+    const creditorsSummary = [
+      [
+        "Total Loan Amount",
+        `$${creditorsContractDetailsSum?.loanAmount?.toLocaleString() || 0}`,
+      ],
+      [
+        "Total Payable Amount",
+        `$${creditorsContractDetailsSum?.payableAmount?.toLocaleString() || 0}`,
+      ],
+    ];
 
-  doc.autoTable({
-    head: [["Field", "Value"]],
-    body: creditorsSummary,
-    startY: doc.autoTable.previous.finalY + 25,
-  });
+    doc.autoTable({
+      head: [["Field", "Value"]],
+      body: creditorsSummary,
+      startY: doc.autoTable.previous.finalY + 25,
+    });
+  }
 
   //Recommendations
-  doc.setFontSize(14);
-  doc.text(
-    "Strategy 1 Recommendation 1 Minimum",
-    14,
-    doc.autoTable.previous.finalY + 10
-  );
+  if (checkboxState["Strategy 1 Recommendations"]) {
+    doc.setFontSize(14);
+    doc.text(
+      "Strategy 1 Recommendation 1 Minimum",
+      14,
+      doc.autoTable.previous.finalY + 10
+    );
 
-  // Recommendations one min
-  const recommendationOneMin = creditors.map((creditor) => {
-    const title = creditor?.creditorAccountTitle || "N/A";
-    return [
-      title,
-      formatCurrencyConditional(
-        settlementRange?.commission_range?.[title]?.["recommendation 1"]?.min ||
-          0
-      ),
-      formatCurrencyConditional(
-        settlementRange?.percentage_settlement_over_weekly_budget?.[title]?.[
-          "recommendation 1"
-        ]?.min || 0
-      ),
-      formatCurrencyConditional(
-        settlementRange?.percentage_settlement_over_weekly_true_revenue?.[
-          title
-        ]?.["recommendation 1"]?.min || 0
-      ),
-      formatCurrencyConditional(
-        settlementRange?.settlement_range?.[title]?.["recommendation 1"]?.min ||
-          0
-      ),
-    ];
-  });
+    // Recommendations one min
+    const recommendationOneMin = creditors?.map((creditor) => {
+      const title = creditor?.creditorAccountTitle || "N/A";
+      return [
+        title,
+        formatCurrencyConditional(
+          settlementRange?.commission_range?.[title]?.["recommendation 1"]
+            ?.min || 0
+        ),
+        formatCurrencyConditional(
+          settlementRange?.settlement_range?.[title]?.["recommendation 1"]
+            ?.min || 0
+        ),
+        formatPercentage(
+          settlementRange?.percentage_settlement_over_weekly_budget?.[title]?.[
+            "recommendation 1"
+          ]?.min || 0
+        ),
+        formatPercentage(
+          settlementRange?.percentage_settlement_over_weekly_true_revenue?.[
+            title
+          ]?.["recommendation 1"]?.min || 0
+        ),
+      ];
+    });
 
-  doc.autoTable({
-    head: [
-      [
-        "Creditors",
-        "Settlement Range ",
-        "Commission Range",
-        "New Default Risk",
-        "Weekly Budget %",
+    doc.autoTable({
+      head: [
+        [
+          "Creditors",
+          "Commission Range",
+          "Settlement Range ",
+          "Weekly Budget %",
+          "Weekly True Revenue",
+        ],
       ],
-    ],
-    body: recommendationOneMin,
-    startY: doc.autoTable.previous.finalY + 20,
-  });
+      body: recommendationOneMin,
+      startY: doc.autoTable.previous.finalY + 20,
+    });
 
-  doc.setFontSize(14);
-  doc.text(
-    "Strategy 1 Recommendation 1 Maximum",
-    14,
-    doc.autoTable.previous.finalY + 10
-  );
+    doc.setFontSize(14);
+    doc.text(
+      "Strategy 1 Recommendation 1 Maximum",
+      14,
+      doc.autoTable.previous.finalY + 10
+    );
 
-  // Recommendations one max
+    // Recommendations one max
 
-  const recommendationOneMax = creditors.map((creditor) => {
-    const title = creditor?.creditorAccountTitle || "N/A";
-    return [
-      title,
-      formatCurrencyConditional(
-        settlementRange?.commission_range?.[title]?.["recommendation 1"]?.max ||
-          0
-      ),
-      formatCurrencyConditional(
-        settlementRange?.percentage_settlement_over_weekly_budget?.[title]?.[
-          "recommendation 1"
-        ]?.max || 0
-      ),
-      formatCurrencyConditional(
-        settlementRange?.percentage_settlement_over_weekly_true_revenue?.[
-          title
-        ]?.["recommendation 1"]?.max || 0
-      ),
-      formatCurrencyConditional(
-        settlementRange?.settlement_range?.[title]?.["recommendation 1"]?.max ||
-          0
-      ),
-    ];
-  });
+    const recommendationOneMax = creditors?.map((creditor) => {
+      const title = creditor?.creditorAccountTitle || "N/A";
+      return [
+        title,
+        formatCurrencyConditional(
+          settlementRange?.commission_range?.[title]?.["recommendation 1"]
+            ?.max || 0
+        ),
+        formatCurrencyConditional(
+          settlementRange?.settlement_range?.[title]?.["recommendation 1"]
+            ?.max || 0
+        ),
+        formatPercentage(
+          settlementRange?.percentage_settlement_over_weekly_budget?.[title]?.[
+            "recommendation 1"
+          ]?.max || 0
+        ),
+        formatPercentage(
+          settlementRange?.percentage_settlement_over_weekly_true_revenue?.[
+            title
+          ]?.["recommendation 1"]?.max || 0
+        ),
+      ];
+    });
 
-  doc.autoTable({
-    head: [
-      [
-        "Creditors",
-        "Settlement Range ",
-        "Commission Range",
-        "New Default Risk",
-        "Weekly Budget %",
+    doc.autoTable({
+      head: [
+        [
+          "Creditors",
+          "Commission Range",
+          "Settlement Range ",
+          "Weekly Budget %",
+          "Weekly True Revenue",
+        ],
       ],
-    ],
-    body: recommendationOneMax,
-    startY: doc.autoTable.previous.finalY + 20,
-  });
+      body: recommendationOneMax,
+      startY: doc.autoTable.previous.finalY + 20,
+    });
 
-  doc.setFontSize(14);
-  doc.text(
-    "Strategy 1 Recommendation 2 Minimum",
-    14,
-    doc.autoTable.previous.finalY + 10
-  );
+    doc.setFontSize(14);
+    doc.text(
+      "Strategy 1 Recommendation 2 Minimum",
+      14,
+      doc.autoTable.previous.finalY + 10
+    );
 
-  // Recommendations two min
-  const recommendationTwoMin = creditors.map((creditor) => {
-    const title = creditor?.creditorAccountTitle || "N/A";
-    return [
-      title,
-      formatCurrencyConditional(
-        settlementRange?.commission_range?.[title]?.["recommendation 2"]?.min ||
-          0
-      ),
-      formatCurrencyConditional(
-        settlementRange?.percentage_settlement_over_weekly_budget?.[title]?.[
-          "recommendation 2"
-        ]?.min || 0
-      ),
-      formatCurrencyConditional(
-        settlementRange?.percentage_settlement_over_weekly_true_revenue?.[
-          title
-        ]?.["recommendation 2"]?.min || 0
-      ),
-      formatCurrencyConditional(
-        settlementRange?.settlement_range?.[title]?.["recommendation 2"]?.min ||
-          0
-      ),
-    ];
-  });
+    // Recommendations two min
+    const recommendationTwoMin = creditors?.map((creditor) => {
+      const title = creditor?.creditorAccountTitle || "N/A";
+      return [
+        title,
+        formatCurrencyConditional(
+          settlementRange?.commission_range?.[title]?.["recommendation 2"]
+            ?.min || 0
+        ),
+        formatCurrencyConditional(
+          settlementRange?.settlement_range?.[title]?.["recommendation 2"]
+            ?.min || 0
+        ),
+        formatPercentage(
+          settlementRange?.percentage_settlement_over_weekly_budget?.[title]?.[
+            "recommendation 2"
+          ]?.min || 0
+        ),
+        formatPercentage(
+          settlementRange?.percentage_settlement_over_weekly_true_revenue?.[
+            title
+          ]?.["recommendation 2"]?.min || 0
+        ),
+      ];
+    });
 
-  doc.autoTable({
-    head: [
-      [
-        "Creditors",
-        "Settlement Range ",
-        "Commission Range",
-        "New Default Risk",
-        "Weekly Budget %",
+    doc.autoTable({
+      head: [
+        [
+          "Creditors",
+          "Commission Range",
+          "Settlement Range ",
+          "Weekly Budget %",
+          "Weekly True Revenue",
+        ],
       ],
-    ],
-    body: recommendationTwoMin,
-    startY: doc.autoTable.previous.finalY + 20,
-  });
+      body: recommendationTwoMin,
+      startY: doc.autoTable.previous.finalY + 20,
+    });
 
-  doc.setFontSize(14);
-  doc.text(
-    "Strategy 1 Recommendation 2 Maximum",
-    14,
-    doc.autoTable.previous.finalY + 10
-  );
-  // Recommendations two max
-  const recommendationTwoMax = creditors.map((creditor) => {
-    const title = creditor?.creditorAccountTitle || "N/A";
-    return [
-      title,
-      formatCurrencyConditional(
-        settlementRange?.commission_range?.[title]?.["recommendation 2"]?.max ||
-          0
-      ),
-      formatCurrencyConditional(
-        settlementRange?.percentage_settlement_over_weekly_budget?.[title]?.[
-          "recommendation 2"
-        ]?.max || 0
-      ),
-      formatCurrencyConditional(
-        settlementRange?.percentage_settlement_over_weekly_true_revenue?.[
-          title
-        ]?.["recommendation 2"]?.max || 0
-      ),
-      formatCurrencyConditional(
-        settlementRange?.settlement_range?.[title]?.["recommendation 2"]?.max ||
-          0
-      ),
-    ];
-  });
+    doc.setFontSize(14);
+    doc.text(
+      "Strategy 1 Recommendation 2 Maximum",
+      14,
+      doc.autoTable.previous.finalY + 10
+    );
+    // Recommendations two max
+    const recommendationTwoMax = creditors?.map((creditor) => {
+      const title = creditor?.creditorAccountTitle || "N/A";
+      return [
+        title,
+        formatCurrencyConditional(
+          settlementRange?.commission_range?.[title]?.["recommendation 2"]
+            ?.max || 0
+        ),
+        formatCurrencyConditional(
+          settlementRange?.settlement_range?.[title]?.["recommendation 2"]
+            ?.max || 0
+        ),
+        formatCurrencyConditional(
+          settlementRange?.percentage_settlement_over_weekly_budget?.[title]?.[
+            "recommendation 2"
+          ]?.max || 0
+        ),
+        formatCurrencyConditional(
+          settlementRange?.percentage_settlement_over_weekly_true_revenue?.[
+            title
+          ]?.["recommendation 2"]?.max || 0
+        ),
+      ];
+    });
 
-  doc.autoTable({
-    head: [
-      [
-        "Creditors",
-        "Settlement Range ",
-        "Commission Range",
-        "New Default Risk",
-        "Weekly Budget %",
+    doc.autoTable({
+      head: [
+        [
+          "Creditors",
+          "Commission Range",
+          "Settlement Range ",
+          "Weekly Budget %",
+          "Weekly True Revenue",
+        ],
       ],
-    ],
-    body: recommendationTwoMax,
-    startY: doc.autoTable.previous.finalY + 20,
-  });
+      body: recommendationTwoMax,
+      startY: doc.autoTable.previous.finalY + 20,
+    });
 
-  doc.setFontSize(14);
-  doc.text(
-    "Strategy 1 Recommendation 3 Minimum",
-    14,
-    doc.autoTable.previous.finalY + 10
-  );
-  // Recommendations three min
-  const recommendationThreeMin = creditors.map((creditor) => {
-    const title = creditor?.creditorAccountTitle || "N/A";
-    return [
-      title,
-      formatCurrencyConditional(
-        settlementRange?.commission_range?.[title]?.["recommendation 3"]?.min ||
-          0
-      ),
-      formatCurrencyConditional(
-        settlementRange?.percentage_settlement_over_weekly_budget?.[title]?.[
-          "recommendation 3"
-        ]?.min || 0
-      ),
-      formatCurrencyConditional(
-        settlementRange?.percentage_settlement_over_weekly_true_revenue?.[
-          title
-        ]?.["recommendation 3"]?.min || 0
-      ),
-      formatCurrencyConditional(
-        settlementRange?.settlement_range?.[title]?.["recommendation 3"]?.min ||
-          0
-      ),
-    ];
-  });
+    doc.setFontSize(14);
+    doc.text(
+      "Strategy 1 Recommendation 3 Minimum",
+      14,
+      doc.autoTable.previous.finalY + 10
+    );
+    // Recommendations three min
+    const recommendationThreeMin = creditors?.map((creditor) => {
+      const title = creditor?.creditorAccountTitle || "N/A";
+      return [
+        title,
+        formatCurrencyConditional(
+          settlementRange?.commission_range?.[title]?.["recommendation 3"]
+            ?.min || 0
+        ),
+        formatCurrencyConditional(
+          settlementRange?.settlement_range?.[title]?.["recommendation 3"]
+            ?.min || 0
+        ),
+        formatPercentage(
+          settlementRange?.percentage_settlement_over_weekly_budget?.[title]?.[
+            "recommendation 3"
+          ]?.min || 0
+        ),
+        formatPercentage(
+          settlementRange?.percentage_settlement_over_weekly_true_revenue?.[
+            title
+          ]?.["recommendation 3"]?.min || 0
+        ),
+      ];
+    });
 
-  doc.autoTable({
-    head: [
-      [
-        "Creditors",
-        "Settlement Range ",
-        "Commission Range",
-        "New Default Risk",
-        "Weekly Budget %",
+    doc.autoTable({
+      head: [
+        [
+          "Creditors",
+          "Commission Range",
+          "Settlement Range ",
+          "Weekly Budget %",
+          "Weekly True Revenue",
+        ],
       ],
-    ],
-    body: recommendationThreeMin,
-    startY: doc.autoTable.previous.finalY + 20,
-  });
+      body: recommendationThreeMin,
+      startY: doc.autoTable.previous.finalY + 20,
+    });
 
-  doc.setFontSize(14);
-  doc.text(
-    "Strategy 1 Recommendation 3 Maximum",
-    14,
-    doc.autoTable.previous.finalY + 10
-  );
-  // Recommendations three max
-  const recommendationThreeMax = creditors.map((creditor) => {
-    const title = creditor?.creditorAccountTitle || "N/A";
-    return [
-      title,
-      formatCurrencyConditional(
-        settlementRange?.commission_range?.[title]?.["recommendation 3"]?.max ||
-          0
-      ),
-      formatCurrencyConditional(
-        settlementRange?.percentage_settlement_over_weekly_budget?.[title]?.[
-          "recommendation 3"
-        ]?.max || 0
-      ),
-      formatCurrencyConditional(
-        settlementRange?.percentage_settlement_over_weekly_true_revenue?.[
-          title
-        ]?.["recommendation 3"]?.max || 0
-      ),
-      formatCurrencyConditional(
-        settlementRange?.settlement_range?.[title]?.["recommendation 3"]?.max ||
-          0
-      ),
-    ];
-  });
+    doc.setFontSize(14);
+    doc.text(
+      "Strategy 1 Recommendation 3 Maximum",
+      14,
+      doc.autoTable.previous.finalY + 10
+    );
+    // Recommendations three max
+    const recommendationThreeMax = creditors.map((creditor) => {
+      const title = creditor?.creditorAccountTitle || "N/A";
+      return [
+        title,
+        formatCurrencyConditional(
+          settlementRange?.commission_range?.[title]?.["recommendation 3"]
+            ?.max || 0
+        ),
+        formatCurrencyConditional(
+          settlementRange?.settlement_range?.[title]?.["recommendation 3"]
+            ?.max || 0
+        ),
+        formatPercentage(
+          settlementRange?.percentage_settlement_over_weekly_budget?.[title]?.[
+            "recommendation 3"
+          ]?.max || 0
+        ),
+        formatPercentage(
+          settlementRange?.percentage_settlement_over_weekly_true_revenue?.[
+            title
+          ]?.["recommendation 3"]?.max || 0
+        ),
+      ];
+    });
 
-  doc.autoTable({
-    head: [
-      [
-        "Creditors",
-        "Settlement Range ",
-        "Commission Range",
-        "New Default Risk",
-        "Weekly Budget %",
+    doc.autoTable({
+      head: [
+        [
+          "Creditors",
+          "Commission Range",
+          "Settlement Range ",
+          "Weekly Budget %",
+          "Weekly True Revenue",
+        ],
       ],
-    ],
-    body: recommendationThreeMax,
-    startY: doc.autoTable.previous.finalY + 20,
-  });
+      body: recommendationThreeMax,
+      startY: doc.autoTable.previous.finalY + 20,
+    });
+  }
 
   //strategy 2
-  doc.setFontSize(14);
-  doc.text(
-    "Strategy 2 Recommendations ",
-    14,
-    doc.autoTable.previous.finalY + 10
-  );
-  const recommendationTwo = creditors.map((creditor) => {
-    const title = creditor?.creditorAccountTitle || "N/A";
-    return [
-      title,
-      formatCurrency(
-        lumpSumpData?.lumpsum_settlement?.[title]?.remaining_principle_amount ||
-          0
-      ) || 0,
+  if (checkboxState["Strategy 2 Recommendations"]) {
+    doc.setFontSize(14);
+    doc.text(
+      "Strategy 2 Recommendations ",
+      14,
+      doc.autoTable.previous.finalY + 10
+    );
+    const recommendationTwo = creditors.map((creditor) => {
+      const title = creditor?.creditorAccountTitle || "N/A";
+      return [
+        title,
+        formatCurrency(
+          lumpSumpData?.lumpsum_settlement?.[title]
+            ?.remaining_principle_amount || 0
+        ) || 0,
 
-      formatCurrency(
-        lumpSumpData?.lumpsum_settlement?.[title]?.repaid_debt || 0
-      ) || 0,
-    ];
-  });
+        formatCurrency(
+          lumpSumpData?.lumpsum_settlement?.[title]?.repaid_debt || 0
+        ) || 0,
+      ];
+    });
 
-  doc.autoTable({
-    head: [["Creditors", "Remaining Amount ", "Repaid Debt"]],
-    body: recommendationTwo,
-    startY: doc.autoTable.previous.finalY + 20,
-  });
+    doc.autoTable({
+      head: [["Creditors", "Remaining Amount ", "Repaid Debt"]],
+      body: recommendationTwo,
+      startY: doc.autoTable.previous.finalY + 20,
+    });
+  }
 
-  //strategy 2
-  doc.setFontSize(14);
-  doc.text(
-    "Strategy 3 Recommendations Maximum",
-    14,
-    doc.autoTable.previous.finalY + 10
-  );
+  //strategy 3
+  if (checkboxState["Strategy 3 Recommendation"]) {
+    doc.setFontSize(14);
+    doc.text(
+      "Strategy 3 Recommendations Minimum",
+      14,
+      doc.autoTable.previous.finalY + 10
+    );
 
-  const recommendationThree = creditors.map((creditor) => {
-    const title = creditor?.creditorAccountTitle || "N/A";
-    return [
-      title,
-      formatCurrencyConditional(
-        fullProfit?.commission_range?.[title]?.["recommendation 1"]?.max || 0
-      ),
-      formatCurrencyConditional(
-        fullProfit?.percentage_settlement_over_weekly_budget?.[title]?.[
-          "recommendation 1"
-        ]?.max || 0
-      ),
-      formatCurrencyConditional(
-        fullProfit?.percentage_settlement_over_weekly_true_revenue?.[title]?.[
-          "recommendation 1"
-        ]?.max || 0
-      ),
-      formatCurrencyConditional(
-        fullProfit?.settlement_range?.[title]?.["recommendation 1"]?.max || 0
-      ),
-    ];
-  });
-  doc.autoTable({
-    head: [
-      [
-        "Creditors",
-        "Settlement Range ",
-        "Commission Range",
-        "New Default Risk",
-        "Weekly Budget %",
+    const recommendationThreeMinVal = creditors?.map((creditor) => {
+      const title = creditor?.creditorAccountTitle || "N/A";
+      return [
+        title,
+        formatCurrencyConditional(
+          fullProfit?.commission_range?.[title]?.["recommendation 1"]?.min || 0
+        ),
+        formatCurrencyConditional(
+          fullProfit?.settlement_range?.[title]?.["recommendation 1"]?.min || 0
+        ),
+        formatPercentage(
+          fullProfit?.percentage_settlement_over_weekly_budget?.[title]?.[
+            "recommendation 1"
+          ]?.min || 0
+        ),
+        formatPercentage(
+          fullProfit?.percentage_settlement_over_weekly_true_revenue?.[title]?.[
+            "recommendation 1"
+          ]?.min || 0
+        ),
+      ];
+    });
+    doc.autoTable({
+      head: [
+        [
+          "Creditors",
+          "Commission Range",
+          "Settlement Range ",
+          "Weekly Budget %",
+          "Weekly True Revenue",
+        ],
       ],
-    ],
-    body: recommendationThree,
-    startY: doc.autoTable.previous.finalY + 20,
-  });
+      body: recommendationThreeMinVal,
+      startY: doc.autoTable.previous.finalY + 20,
+    });
+    doc.setFontSize(14);
+    doc.text(
+      "Strategy 3 Recommendation Maximum",
+      14,
+      doc.autoTable.previous.finalY + 10
+    );
 
-  doc.setFontSize(14);
-  doc.text(
-    "Strategy 3 Recommendations Minimum",
-    14,
-    doc.autoTable.previous.finalY + 10
-  );
-
-  const recommendationThreeMinVal = creditors.map((creditor) => {
-    const title = creditor?.creditorAccountTitle || "N/A";
-    return [
-      title,
-      formatCurrencyConditional(
-        fullProfit?.commission_range?.[title]?.["recommendation 1"]?.min || 0
-      ),
-      formatCurrencyConditional(
-        fullProfit?.percentage_settlement_over_weekly_budget?.[title]?.[
-          "recommendation 1"
-        ]?.min || 0
-      ),
-      formatCurrencyConditional(
-        fullProfit?.percentage_settlement_over_weekly_true_revenue?.[title]?.[
-          "recommendation 1"
-        ]?.min || 0
-      ),
-      formatCurrencyConditional(
-        fullProfit?.settlement_range?.[title]?.["recommendation 1"]?.min || 0
-      ),
-    ];
-  });
-  doc.autoTable({
-    head: [
-      [
-        "Creditors",
-        "Settlement Range ",
-        "Commission Range",
-        "New Default Risk",
-        "Weekly Budget %",
+    const recommendationThree = creditors?.map((creditor) => {
+      const title = creditor?.creditorAccountTitle || "N/A";
+      return [
+        title,
+        formatCurrencyConditional(
+          fullProfit?.commission_range?.[title]?.["recommendation 1"]?.max || 0
+        ),
+        formatCurrencyConditional(
+          fullProfit?.settlement_range?.[title]?.["recommendation 1"]?.max || 0
+        ),
+        formatPercentage(
+          fullProfit?.percentage_settlement_over_weekly_budget?.[title]?.[
+            "recommendation 1"
+          ]?.max || 0
+        ),
+        formatPercentage(
+          fullProfit?.percentage_settlement_over_weekly_true_revenue?.[title]?.[
+            "recommendation 1"
+          ]?.max || 0
+        ),
+      ];
+    });
+    doc.autoTable({
+      head: [
+        [
+          "Creditors",
+          "Commission Range",
+          "Settlement Range ",
+          "Weekly Budget %",
+          "Weekly True Revenue",
+        ],
       ],
-    ],
-    body: recommendationThreeMinVal,
-    startY: doc.autoTable.previous.finalY + 20,
-  });
+      body: recommendationThree,
+      startY: doc.autoTable.previous.finalY + 20,
+    });
+  }
 
   doc.save("Debtor_and_Creditor_Details.pdf");
 };

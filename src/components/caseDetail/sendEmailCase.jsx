@@ -279,7 +279,7 @@ export default function SendEmailCase({
             <>
               <StyledInput
                 type="number"
-                placeholder="Send To*"
+                placeholder="Exclude Country Code*"
                 value={sendTo}
                 onChange={(e) => handleInputChange(e)}
                 onKeyDown={handleNumberInput}

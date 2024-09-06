@@ -352,7 +352,7 @@ export default function DebtorFields({
                 color: Colors.DARK_GRAY,
               }}
             >
-              Weekly Budget*
+              Weekly Budget
             </Typography>
 
             <AmountTextField
@@ -625,7 +625,13 @@ export default function DebtorFields({
             label="Phone #*"
             placeHolderValue="Enter Phone Number"
             width="100%"
-            value={debtorBusinessDetails?.businessPhoneNumber || ""}
+            value={
+              debtorBusinessDetails?.businessPhoneNumber
+                ? debtorBusinessDetails.businessPhoneNumber.startsWith("+1")
+                  ? debtorBusinessDetails.businessPhoneNumber.slice(2)
+                  : debtorBusinessDetails.businessPhoneNumber
+                : ""
+            }
             onChangeFunction={(e) => {
               const numericValue = e.target.value.replace(/\D/g, "");
               businessInfoInputChange("businessPhoneNumber", numericValue);
@@ -739,7 +745,13 @@ export default function DebtorFields({
                         label="Phone #"
                         placeHolderValue="Enter Phone Number"
                         width="100%"
-                        value={item?.phone}
+                        value={
+                          item?.phone
+                            ? item?.phone.startsWith("+1")
+                              ? item?.phone.slice(2)
+                              : item?.phone
+                            : ""
+                        }
                         onChangeFunction={(e) => {
                           const numericValue = e.target.value.replace(
                             /\D/g,

@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import generatePDF from "../../common";
 
 import {
   Grid,
@@ -985,26 +984,15 @@ export default function SettlementRange() {
             </Typography>
 
             <div style={{ display: "flex", gap: "10px" }}>
-              <TextButton
-                disabled={!apiData}
-                buttonText={"Download PDF"}
-                boxShadow="none"
-                height={"2.5rem"}
-                width={extraSmallScreen ? "2rem" : "10rem"}
-                backgroundColor={Colors.BG_LIGHT_GRAY}
-                fontColor={Colors.BLACK}
-                hoverColor={Colors.BG_LIGHT_GRAY}
-                border={`1px solid ${Colors.SKY_BLUE}`}
-                borderRadius="5px"
-                startIcon={
-                  <Download
-                    sx={{
-                      color: apiData ? Colors.BLACK : Colors.DIM_LIGHT_GRAY,
-                    }}
-                  />
-                }
-                onClick={() => generatePDF(allData, lumpSumpData, fullProfit)}
+              <MuiModels
+                show="downloadPDF"
+                buttonName="downloadPDF"
+                maxHeight="85vh"
+                allData={allData}
+                lumpSumpData={lumpSumpData}
+                fullProfit={fullProfit}
               />
+
               <MuiModels
                 show="sendEmail"
                 creditorInfo={
