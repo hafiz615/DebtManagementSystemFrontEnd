@@ -19,6 +19,7 @@ export default function SettlementPayment({
   handleClose,
   remainingAmount,
   commissionRange,
+  setPaymentChanged,
 }) {
   const [selectedField, setSelectedField] = useState("Minimum");
 
@@ -80,6 +81,7 @@ export default function SettlementPayment({
           }
           remainingAmount={remainingAmount}
           closePopup={handleClose}
+          setPaymentChanged={setPaymentChanged}
         />
       </Grid>
     </div>

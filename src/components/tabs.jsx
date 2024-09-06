@@ -377,6 +377,15 @@ export default function CustomizedTabs() {
             >
               Date Of Birth
             </p>
+            <p
+              style={{
+                fontFamily: "Nunito",
+                fontSize: FONT_SIZE_LARGE,
+                margin: "5px 0px",
+              }}
+            >
+              Start Range
+            </p>
             <CustomTextField
               type="date"
               width="100%"
@@ -384,6 +393,15 @@ export default function CustomizedTabs() {
               onChange={(e) => setDateOfBirthStart(e.target.value)}
               value={dateOfBirthStart}
             />
+            <p
+              style={{
+                fontFamily: "Nunito",
+                fontSize: FONT_SIZE_LARGE,
+                margin: "5px 0px",
+              }}
+            >
+              End Range
+            </p>
             <CustomTextField
               type="date"
               width="100%"

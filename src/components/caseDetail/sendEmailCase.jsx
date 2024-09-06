@@ -22,6 +22,8 @@ import styled from "styled-components";
 import { GetCustomVariable, SendEmailSmsCase } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import { ArrowRight, ExpandMore } from "@mui/icons-material";
+import ScrollbarStyles from "./../customScroll";
+import { handleNumberInput } from "../../common";
 
 const lineStyle = {
   width: "100%",
@@ -57,6 +59,7 @@ export default function SendEmailCase({
   const [preview, setPreview] = useState("");
   const editorRef = useRef(null);
   const { showToast } = useToast();
+  const [errors, setErrors] = useState("");
   const handleKeyDown = (e) => {
     if (e.key === "Enter" || e.key === "Tab" || e.key === ",") {
       e.preventDefault();
@@ -124,7 +127,19 @@ export default function SendEmailCase({
       });
     }
   };
+  const handleInputChange = (e) => {
+    const value = e.target.value;
 
+    // Update input value
+    setSendTo(value);
+
+    // Validate length
+    if (value?.length > 10 || value?.length < 10) {
+      setErrors("Phone number must be exactly 10 digits.");
+    } else {
+      setErrors("");
+    }
+  };
   const isFieldEmpty = (field) => {
     return !field.trim();
   };
@@ -177,6 +192,7 @@ export default function SendEmailCase({
     fontFamily: "Nunito",
     padding: "0px 10px",
     width: "98%",
+    marginBottom: headerName ? "0.8rem" : "auto",
   };
 
   const smsTemplateStyling = {
@@ -191,13 +207,18 @@ export default function SendEmailCase({
     borderRadius: "5px",
   };
   const disable =
-    !sendTo || headerName ? null : !sendFrom || !subject || !preview;
+    !sendTo.trim() ||
+    (!headerName && !sendFrom.trim()) ||
+    (!headerName && !subject.trim()) ||
+    !preview.trim() ||
+    (headerName && errors);
+
   const handleSend = async () => {
     setLoading(true);
     const payload = {
       sendTo: sendTo,
-      subject: subject,
       content: preview,
+      ...(headerName ? {} : { subject: subject }),
       ...(headerName ? {} : { cc: cc }),
       ...(headerName ? {} : { from: sendFrom }),
     };
@@ -254,12 +275,43 @@ export default function SendEmailCase({
           >
             To
           </Typography>
-          <StyledInput
-            type="text"
-            placeholder="Send To*"
-            value={sendTo}
-            onChange={(e) => setSendTo(e.target.value)}
-          />
+          {headerName ? (
+            <>
+              <StyledInput
+                type="number"
+                placeholder="Send To*"
+                value={sendTo}
+                onChange={(e) => handleInputChange(e)}
+                onKeyDown={handleNumberInput}
+                error={errors}
+              />
+              {errors ? (
+                <Box
+                  sx={{
+                    color: "red",
+                    fontSize: "9.3px",
+                    height: "0.7rem",
+                  }}
+                >
+                  {errors}
+                </Box>
+              ) : (
+                <Box
+                  sx={{
+                    color: "red",
+                    height: "0.7rem",
+                  }}
+                ></Box>
+              )}
+            </>
+          ) : (
+            <StyledInput
+              type="text"
+              placeholder="Send To*"
+              value={sendTo}
+              onChange={(e) => setSendTo(e.target.value)}
+            />
+          )}
         </Grid>
         {headerName ? null : (
           <Grid xs={6}>
@@ -283,27 +335,6 @@ export default function SendEmailCase({
             </>
           </Grid>
         )}
-
-        <Grid item xs={6}>
-          <>
-            <Typography
-              sx={{
-                fontFamily: "Nunito",
-                fontWeight: "600",
-                color: Colors.DARK_GRAY,
-                fontSize: FONT_SIZE_LARGE,
-              }}
-            >
-              Subject
-            </Typography>
-            <StyledInput
-              type="text"
-              placeholder="Add Subject"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-            />
-          </>
-        </Grid>
         {headerName ? null : (
           <Grid item xs={6}>
             <>
@@ -315,34 +346,14 @@ export default function SendEmailCase({
                   fontSize: FONT_SIZE_LARGE,
                 }}
               >
-                CC
+                Subject
               </Typography>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <Tooltip title="Press Enter To Save An Email" placement="top">
-                  <StyledInput
-                    type="text"
-                    placeholder="Enter CC"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                  />
-                </Tooltip>
-              </div>
-              {cc?.length > 0 && (
-                <div style={inputContainerStyle}>
-                  {cc?.map((email, index) => (
-                    <div key={index} style={emailChipStyle}>
-                      {email}
-                      <span
-                        onClick={() => handleRemoveEmail(index)}
-                        style={removeIconStyle}
-                      >
-                        ×
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <StyledInput
+                type="text"
+                placeholder="Add Subject"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+              />
             </>
           </Grid>
         )}
@@ -404,7 +415,13 @@ export default function SendEmailCase({
                 horizontal: "left",
               }}
             >
-              <Grid sx={{ maxHeight: "300px", overflowY: "auto" }}>
+              <Grid
+                sx={{
+                  maxHeight: "300px",
+                  overflowY: "auto",
+                  ...ScrollbarStyles,
+                }}
+              >
                 {selectedCategory &&
                   Object.entries(customVariables[selectedCategory])?.map(
                     ([label, action]) => (
@@ -424,6 +441,48 @@ export default function SendEmailCase({
             </Popover>
           </div>
         </Grid>
+        {headerName ? null : (
+          <Grid item xs={6}>
+            <>
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontWeight: "600",
+                  color: Colors.DARK_GRAY,
+                  fontSize: FONT_SIZE_LARGE,
+                }}
+              >
+                CC
+              </Typography>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <Tooltip title="Press Enter To Save An Email" placement="top">
+                  <StyledInput
+                    type="text"
+                    placeholder="Enter CC"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                  />
+                </Tooltip>
+              </div>
+              {cc?.length > 0 && (
+                <div style={inputContainerStyle}>
+                  {cc?.map((email, index) => (
+                    <div key={index} style={emailChipStyle}>
+                      {email}
+                      <span
+                        onClick={() => handleRemoveEmail(index)}
+                        style={removeIconStyle}
+                      >
+                        ×
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          </Grid>
+        )}
       </Grid>
 
       <div style={{ marginTop: "1rem" }}>

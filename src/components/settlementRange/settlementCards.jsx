@@ -23,6 +23,7 @@ export default function SettlementCards({
   isLumpSumPayment,
   warning,
   strategy,
+  setPaymentChanged,
 }) {
   const commonStyles = {
     backgroundColor: Colors.WHITE,
@@ -121,6 +122,7 @@ export default function SettlementCards({
               buttonName="settlmentPayment"
               settlementRange={settlementRange?.remaining_principle_amount}
               remainingAmount={remainingAmount}
+              setPaymentChanged={setPaymentChanged}
               caseId={caseId}
             />
           ) : (
@@ -132,6 +134,7 @@ export default function SettlementCards({
               weeksTillPaid={weeksTillPaid?.[weeksTillPaidTitle]}
               commissionRange={commissionRange?.[title]}
               remainingAmount={remainingAmount}
+              setPaymentChanged={setPaymentChanged}
               caseId={caseId}
             />
           )}
