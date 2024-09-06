@@ -1351,7 +1351,7 @@ export default function SettlementRange() {
                 </Grid>
               </>
             )}
-            {allData?.warnings?.[allCreditorNames[tabValue]] && (
+            {apiData?.warnings?.[allCreditorNames[tabValue]] && (
               <Grid
                 sx={{
                   mt: "10px",
@@ -1359,11 +1359,12 @@ export default function SettlementRange() {
                   borderRadius: "10px",
                   padding: "16px",
                   maxWidth: "50%",
+                  border: `2px solid ${Colors.ORANGE_COLOR}`,
                 }}
               >
                 <Typography sx={commonTextStyles}>Warning!</Typography>
                 <Typography sx={{ ...commonTextStyles, fontWeight: "500" }}>
-                  {allData?.warnings?.[allCreditorNames[tabValue]]}
+                  {apiData?.warnings?.[allCreditorNames[tabValue]]}
                 </Typography>
               </Grid>
             )}
