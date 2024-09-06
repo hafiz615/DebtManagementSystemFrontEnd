@@ -31,6 +31,7 @@ import {
   Difference,
   Edit,
   Sms,
+  Download,
 } from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
@@ -46,6 +47,7 @@ import UploadFilePopup from "./caseDetail/uploadFilePopup";
 import ScrollbarStyles from "./../components/customScroll";
 import SettlementPayment from "./settlementPlan";
 import SendEmailCase from "./caseDetail/sendEmailCase";
+import DownloadPDF from "./caseDetail/downloadPDF";
 
 export default function MuiModels({
   buttonName,
@@ -103,6 +105,9 @@ export default function MuiModels({
   headerName,
   caseDataId,
   GetLogsById,
+  allData,
+  lumpSumpData,
+  fullProfit,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -395,6 +400,26 @@ export default function MuiModels({
           onClick={handleOpen}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
+        />
+      ) : show === "downloadPDF" ? (
+        <TextButton
+          buttonText={"Download PDF"}
+          boxShadow="none"
+          height={"2.5rem"}
+          width={extraSmallScreen ? "2rem" : "10rem"}
+          backgroundColor={Colors.BG_LIGHT_GRAY}
+          fontColor={Colors.BLACK}
+          hoverColor={Colors.BG_LIGHT_GRAY}
+          border={`1px solid ${Colors.SKY_BLUE}`}
+          onClick={handleOpen}
+          borderRadius="5px"
+          startIcon={
+            <Download
+              sx={{
+                color: Colors.BLACK,
+              }}
+            />
+          }
         />
       ) : buttonName === "sendEmailCase" ? (
         <TextButton
@@ -747,6 +772,12 @@ export default function MuiModels({
               caseId={caseId}
               remainingAmount={remainingAmount}
               commissionRange={commissionRange}
+            />
+          ) : show === "downloadPDF" ? (
+            <DownloadPDF
+              allData={allData}
+              lumpSumpData={lumpSumpData}
+              fullProfit={fullProfit}
             />
           ) : (
             ""
