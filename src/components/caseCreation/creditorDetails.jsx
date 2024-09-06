@@ -193,7 +193,13 @@ export default function CreditorDetails({
           basicInformation: {
             fullName: creditor?.Name || "",
             email: creditor?.EmailAddress || "",
-            phone: phoneNumberFormat(creditor?.PhoneNumber) || "",
+            phone: phoneNumberFormat(
+              creditor?.PhoneNumber
+                ? creditor?.PhoneNumber.startsWith("+1")
+                  ? creditor?.PhoneNumber.slice(2)
+                  : creditor?.PhoneNumber
+                : ""
+            ),
           },
           businessInformation: {
             companyName: creditor?.Name || "",
