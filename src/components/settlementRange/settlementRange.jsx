@@ -1351,6 +1351,22 @@ export default function SettlementRange() {
                 </Grid>
               </>
             )}
+            {allData?.warnings?.[allCreditorNames[tabValue]] && (
+              <Grid
+                sx={{
+                  mt: "10px",
+                  backgroundColor: Colors.WHITE,
+                  borderRadius: "10px",
+                  padding: "16px",
+                  maxWidth: "50%",
+                }}
+              >
+                <Typography sx={commonTextStyles}>Warning!</Typography>
+                <Typography sx={{ ...commonTextStyles, fontWeight: "500" }}>
+                  {allData?.warnings?.[allCreditorNames[tabValue]]}
+                </Typography>
+              </Grid>
+            )}
           </Grid>
           <Grid
             container
