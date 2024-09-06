@@ -30,7 +30,7 @@ export default function EditDebtorDetail({
     BasicZipCode: debtorBasicInfo?.zipCode || "",
     BasicPhoneNumber: debtorBasicInfo?.phone || "",
     BasicAddress: debtorBasicInfo?.address || "",
-    BasicWeeklyBudget: debtorBasicInfo?.weeklyBudget || "",
+    BasicWeeklyBudget: debtorBasicInfo?.weeklyBudget || 0,
   });
 
   const [debtorBusinessDetails, setDebtorBusinessDetails] = useState({
@@ -55,27 +55,27 @@ export default function EditDebtorDetail({
   });
 
   const [isFormValid, setIsFormValid] = useState(false);
-  const validateForm = () => {
-    const ownDetailsValid = Object.values(debtorOwnDetails).every(
-      (value) => value !== ""
-    );
-    const businessDetailsValid = Object.entries(debtorBusinessDetails).every(
-      ([key, value]) => key === "businessDescription" || value !== ""
-    );
-    const noErrors = Object.values(errors).every((error) => error === "");
-    const isWeeklyBudgetValid = debtorOwnDetails.BasicWeeklyBudget > 0; // Check if weekly budget is greater than 0
-    return (
-      ownDetailsValid &&
-      businessDetailsValid &&
-      noErrors &&
-      status !== "" &&
-      isWeeklyBudgetValid
-    );
-  };
+  // const validateForm = () => {
+  //   const ownDetailsValid = Object.values(debtorOwnDetails).every(
+  //     (value) => value !== ""
+  //   );
+  //   const businessDetailsValid = Object.entries(debtorBusinessDetails).every(
+  //     ([key, value]) => key === "businessDescription" || value !== ""
+  //   );
+  //   const noErrors = Object.values(errors).every((error) => error === "");
+  //   const isWeeklyBudgetValid = debtorOwnDetails.BasicWeeklyBudget > 0; // Check if weekly budget is greater than 0
+  //   return (
+  //     ownDetailsValid &&
+  //     businessDetailsValid &&
+  //     noErrors &&
+  //     status !== "" &&
+  //     isWeeklyBudgetValid
+  //   );
+  // };
 
-  useEffect(() => {
-    setIsFormValid(validateForm());
-  }, [debtorOwnDetails, debtorBusinessDetails, errors, status]);
+  // useEffect(() => {
+  //   setIsFormValid(validateForm());
+  // }, [debtorOwnDetails, debtorBusinessDetails, errors, status]);
 
   const updateDebtorById = async () => {
     setLoading(true);
@@ -90,7 +90,7 @@ export default function EditDebtorDetail({
         status: status,
         phone: debtorOwnDetails?.BasicPhoneNumber,
         address: debtorOwnDetails?.BasicAddress,
-        weeklyBudget: debtorOwnDetails?.BasicWeeklyBudget?.toString() || "",
+        weeklyBudget: debtorOwnDetails?.BasicWeeklyBudget?.toString() || 0,
       },
       businessInformation: {
         companyName: debtorBusinessDetails?.businessCompanyName,
@@ -171,7 +171,7 @@ export default function EditDebtorDetail({
           height="2rem"
           width="8rem"
           marginRight="1rem"
-          disabled={!isFormValid}
+          // disabled={!isFormValid}
           onClick={updateDebtorById}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
