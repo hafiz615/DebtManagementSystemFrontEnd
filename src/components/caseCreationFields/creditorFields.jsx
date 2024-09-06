@@ -326,7 +326,16 @@ export default function CreditorFields({
                 label="Phone #"
                 placeHolderValue="Enter Phone Number"
                 width="100%"
-                value={thisCaseData?.creditor?.basicInformation?.phone}
+                value={
+                  thisCaseData?.creditor?.basicInformation?.phone
+                    ? thisCaseData?.creditor?.basicInformation?.phone.startsWith(
+                        "+1"
+                      )
+                      ? thisCaseData?.creditor?.basicInformation?.phone.slice(2)
+                      : thisCaseData?.creditor?.basicInformation?.phone
+                    : ""
+                }
+                // value={thisCaseData?.creditor?.basicInformation?.phone}
                 onChangeFunction={(e) => {
                   const numericValue = e.target.value.replace(/\D/g, "");
                   handleCaseDataChange(

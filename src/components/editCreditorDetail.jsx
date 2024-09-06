@@ -93,7 +93,14 @@ export default function EditCreditorDetail({
           basicInformation: {
             fullName: creditors?.basicInformation?.fullName || "",
             email: creditors?.basicInformation?.email || "",
-            phone: phoneNumberFormat(creditors?.basicInformation?.phone) || "",
+            phone: phoneNumberFormat(
+              creditors?.basicInformation?.phone
+                ? creditors?.basicInformation?.phone.startsWith("+1")
+                  ? creditors?.basicInformation?.phone.slice(2)
+                  : creditors?.basicInformation?.phone
+                : ""
+            ),
+            // phone: phoneNumberFormat(creditors?.basicInformation?.phone) || "",
           },
           businessInformation: {
             companyName: creditors?.businessInformation?.companyName || "",

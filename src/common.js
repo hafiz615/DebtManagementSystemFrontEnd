@@ -108,11 +108,11 @@ export const phoneNumberFormat = (phoneNumber) => {
   const cleanedPhoneNumber = phoneNumber.replace(/\D/g, ""); // Remove all non-numeric characters
 
   if (cleanedPhoneNumber.length === 10) {
-    return "+1" + cleanedPhoneNumber;
+    return cleanedPhoneNumber;
   } else if (cleanedPhoneNumber.length === 11) {
-    return "+" + cleanedPhoneNumber;
+    return cleanedPhoneNumber;
   }
-  return phoneNumber.startsWith("+") ? phoneNumber : "+" + cleanedPhoneNumber;
+  return phoneNumber.startsWith("+") ? phoneNumber : cleanedPhoneNumber;
 };
 export const sanitizeText = (input) => {
   const sanitizedInput = input.replace(/[^0-9]/g, ""); // Remove non-numeric characters
