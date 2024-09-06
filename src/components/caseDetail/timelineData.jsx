@@ -119,6 +119,19 @@ export default function TimelineData({ value, date, notes }) {
                           }}
                         />
                       </>
+                    ) : key === "To" ? (
+                      <>
+                        <Typography
+                          sx={{
+                            fontSize: "13px",
+                            fontFamily: "Nunito",
+                            mb: "10px",
+                          }}
+                        >
+                          <strong>{key}:</strong>{" "}
+                          {Array.isArray(value) ? value.join(", ") : value}
+                        </Typography>
+                      </>
                     ) : key === "Notes" ? (
                       <>
                         <Typography

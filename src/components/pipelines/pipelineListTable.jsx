@@ -11,11 +11,13 @@ import {
   Paper,
   CircularProgress,
   TablePagination,
+  Tooltip,
 } from "@mui/material/";
 import { Colors } from "../../config/default";
 import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../../constants/appConstants";
 import { isEmpty } from "lodash";
 import ScrollbarStyles from "./../customScroll";
+import Dropdown from "../dropdown";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -66,6 +68,9 @@ export default function PipelineListTable({
   loading,
   page,
   setPage,
+  orders,
+  order,
+  setOrder,
 }) {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const handleChangePage = (event, newPage) => {
@@ -112,7 +117,34 @@ export default function PipelineListTable({
                     }}
                     key={index}
                   >
-                    {header}
+                    {header === "Business Name" ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "10px",
+                        }}
+                      >
+                        {header}
+                        <Tooltip
+                          title="Sort By Debtor Business"
+                          placement="top-start"
+                        >
+                          <div>
+                            <Dropdown
+                              width="8rem"
+                              menuItems={orders}
+                              selectedValue={order}
+                              setSelectedValue={setOrder}
+                              backgroundColor={Colors.BG_LIGHT_GRAY}
+                              hoverColor={Colors.BG_LIGHT_GRAY}
+                            />
+                          </div>
+                        </Tooltip>
+                      </div>
+                    ) : (
+                      header
+                    )}
                   </StyledTableCell>
                 ))}
               </TableRow>
