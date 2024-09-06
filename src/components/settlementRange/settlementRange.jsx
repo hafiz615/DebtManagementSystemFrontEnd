@@ -229,6 +229,9 @@ export default function SettlementRange() {
   const [selectedData, setSelectedData] = useState([]);
   const [paymentData, setPaymentData] = useState();
   const [paymentChanged, setPaymentChanged] = useState(false);
+  const [justificationValue, setJustificationValue] = useState(
+    "justification_gemini"
+  );
 
   const [allData, setAllData] = useState();
 
@@ -257,6 +260,18 @@ export default function SettlementRange() {
       setTableLoading(false);
     }, 2000);
   }, []);
+
+  useEffect(() => {
+    if (value === 0) {
+      setJustificationValue("justification_gemini");
+    } else if (value === 1) {
+      setJustificationValue("justification_gpt4_o");
+    } else if (value === 2) {
+      setJustificationValue("justification_llama");
+    } else if (value === 3) {
+      setJustificationValue("justification_claude");
+    }
+  }, [value]);
 
   const handleCheckboxChange = (id, data) => {
     setCheckboxStates((prev) => {
@@ -1410,6 +1425,15 @@ export default function SettlementRange() {
                 }}
                 label="llama"
               />
+              <AntTab
+                sx={{
+                  bgcolor: Colors.WHITE,
+                  width: "max-content",
+                  fontWeight: "600",
+                  height: "3.5rem",
+                }}
+                label="claude"
+              />
             </AntTabs>
             <div style={{ marginRight: "16px" }}>
               <MuiModels
@@ -1445,7 +1469,9 @@ export default function SettlementRange() {
                     onChange={() =>
                       handleCheckboxChange(
                         "justification",
-                        justification?.[allCreditorNames[tabValue]]?.[value]
+                        justification?.[justificationValue]?.[
+                          allCreditorNames[tabValue]
+                        ]
                       )
                     }
                   />
@@ -1461,8 +1487,9 @@ export default function SettlementRange() {
                 >
                   <Typography variant="body1">
                     <ReactMarkdown>
-                      {justification?.[allCreditorNames[tabValue]]?.[value] ||
-                        "No Justifications"}
+                      {justification?.[justificationValue]?.[
+                        allCreditorNames[tabValue]
+                      ] || "No Justifications"}
                     </ReactMarkdown>
                   </Typography>
                 </Card>
