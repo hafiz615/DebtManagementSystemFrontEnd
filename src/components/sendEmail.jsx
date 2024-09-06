@@ -5,12 +5,13 @@ import { Colors } from "../config/default";
 import TextButton from "./button";
 import FroalaEditorComponent from "react-froala-wysiwyg";
 import ScrollbarStyles from "./customScroll";
-import { SendSettlementEmail } from "../services/services";
+import { GetPaymentIntervals, SendSettlementEmail } from "../services/services";
 import {
   FONT_SIZE_MEDIUM,
   initialHtmlContent,
 } from "../constants/appConstants";
 import Dropdown from "./dropdown";
+import { useParams } from "react-router-dom";
 
 const lineStyle = {
   width: "100%",
@@ -49,7 +50,7 @@ const removeIconStyle = {
 };
 
 const inputStyling = {
-  backgroundColor: "#f0f0f0",
+  backgroundColor: Colors.BG_LIGHT_GRAY,
   marginBottom: "1rem",
   height: "2.5rem",
   color: "#333",
@@ -64,10 +65,18 @@ export default function SendEmail({
   payableAmount,
   debtorInfo,
   creditorInfo,
+  data,
+  selectedCreditor,
+  lumpSump,
+  fullProfit,
+  caseId,
+  paymentData,
 }) {
   const [sendTo, setSendTo] = useState("");
   const [sendFrom, setSendFrom] = useState("");
   const [strategy, setStrategy] = useState("Strategy 1");
+  const [recommendation, setRecommendation] = useState("recommendation 1");
+  const [rangeMinToMax, setRangeMinToMax] = useState("min");
   const [cc, setCc] = useState([]);
   const [inputValue, setInputValue] = useState("");
 
@@ -82,11 +91,21 @@ export default function SendEmail({
     { label: "Strategy 3", value: "Strategy 3" },
   ];
 
+  const allRecommendation = [
+    { label: "Recommendation 1", value: "recommendation 1" },
+    { label: "Recommendation 2", value: "recommendation 2" },
+    { label: "Recommendation 3", value: "recommendation 3" },
+  ];
+
+  const allRanges = [
+    { label: "Minimum", value: "min" },
+    { label: "Maximum", value: "max" },
+  ];
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter" || e.key === "Tab" || e.key === ",") {
       e.preventDefault();
       const trimmedValue = inputValue.trim();
-
       if (trimmedValue && validateEmail(trimmedValue)) {
         setCc([...cc, trimmedValue]);
         setInputValue("");
@@ -111,7 +130,7 @@ export default function SendEmail({
       content: preview,
       cc: cc,
     };
-    const resEmail = await SendSettlementEmail(payload);
+    const resEmail = await SendSettlementEmail(payload, caseId);
     if (resEmail?.status === 200) {
       showToast(resEmail?.data?.message, "success");
       setCc([]);
@@ -139,6 +158,26 @@ export default function SendEmail({
       day: "numeric",
     };
     const formattedDate = currentDate.toLocaleDateString("en-US", options);
+    const paymentInterval = "Weekly";
+
+    const payment =
+      strategy === "Strategy 1"
+        ? data?.settlement_range?.[selectedCreditor]?.[recommendation]?.[
+            rangeMinToMax
+          ]
+        : strategy === "Strategy 2"
+        ? lumpSump?.lumpsum_settlement?.[selectedCreditor]
+            ?.remaining_principle_amount
+        : fullProfit?.settlement_range?.[selectedCreditor]?.[
+            "recommendation 1"
+          ]?.[rangeMinToMax];
+
+    const formatedPayment =
+      typeof payment === "string"
+        ? payment && payment?.includes("$")
+          ? payment
+          : `$${payment}`
+        : `$${payment}`;
 
     const formatedValue =
       typeof payableAmount === "string"
@@ -151,11 +190,12 @@ export default function SendEmail({
       formattedDate,
       debtorInfo,
       creditorInfo,
-      formatedValue
+      formatedValue,
+      paymentInterval,
+      paymentData ? `$${paymentData}` : formatedPayment
     );
-
     setPreview(htmlContent);
-  }, []);
+  }, [strategy, rangeMinToMax, recommendation, paymentData]);
 
   return (
     <div>
@@ -202,17 +242,64 @@ export default function SendEmail({
           />
         </Tooltip>
       </div>
-      <div style={{ marginBottom: "10px" }}>
-        <Dropdown
-          menuWidth="22rem"
-          menuItems={allStrategies}
-          placeholder="Type"
-          backgroundColor={Colors.BG_LIGHT_GRAY}
-          hoverColor={Colors.BG_LIGHT_GRAY}
-          width="48%"
-          selectedValue={strategy}
-          setSelectedValue={setStrategy}
-        />
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        {!paymentData && (
+          <Dropdown
+            menuWidth="22rem"
+            menuItems={allStrategies}
+            placeholder="Type"
+            backgroundColor={Colors.BG_LIGHT_GRAY}
+            hoverColor={Colors.BG_LIGHT_GRAY}
+            width="48%"
+            selectedValue={strategy}
+            setSelectedValue={setStrategy}
+          />
+        )}
+
+        {!paymentData && strategy === "Strategy 1" ? (
+          <Dropdown
+            menuWidth="22rem"
+            menuItems={allRecommendation}
+            placeholder="Type"
+            backgroundColor={Colors.BG_LIGHT_GRAY}
+            hoverColor={Colors.BG_LIGHT_GRAY}
+            width="48%"
+            selectedValue={recommendation}
+            setSelectedValue={setRecommendation}
+          />
+        ) : !paymentData && strategy === "Strategy 3" ? (
+          <Dropdown
+            menuWidth="22rem"
+            menuItems={allRanges}
+            placeholder="Type"
+            backgroundColor={Colors.BG_LIGHT_GRAY}
+            hoverColor={Colors.BG_LIGHT_GRAY}
+            width="48%"
+            selectedValue={rangeMinToMax}
+            setSelectedValue={setRangeMinToMax}
+          />
+        ) : (
+          ""
+        )}
+      </div>
+      <div style={{ margin: "16px 0px" }}>
+        {!paymentData && strategy === "Strategy 1" && recommendation && (
+          <Dropdown
+            menuWidth="22rem"
+            menuItems={allRanges}
+            placeholder="Type"
+            backgroundColor={Colors.BG_LIGHT_GRAY}
+            hoverColor={Colors.BG_LIGHT_GRAY}
+            width="48%"
+            selectedValue={rangeMinToMax}
+            setSelectedValue={setRangeMinToMax}
+          />
+        )}
       </div>
       {cc?.length > 0 && (
         <div style={inputContainerStyle}>

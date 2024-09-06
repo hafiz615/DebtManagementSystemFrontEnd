@@ -41,6 +41,7 @@ export default function PaymentPopup({
   remainingAmount,
   closePopup,
   commissionRange,
+  setPaymentChanged,
 }) {
   const [saveDisabled, setSaveDisabled] = useState(false);
   const [totalCommission, setTotalCommission] = useState("");
@@ -120,6 +121,7 @@ export default function PaymentPopup({
     const updateCaseId = caseId || data?._id;
     const resCaseUpdate = await UpdateCase(params, updateCaseId);
     if (resCaseUpdate?.status === 200) {
+      setPaymentChanged && setPaymentChanged(true);
       showToast(resCaseUpdate?.data?.message, "success");
       GetCaseDetails && GetCaseDetails(id);
       GetCasePaymentDetails && GetCasePaymentDetails(id);
