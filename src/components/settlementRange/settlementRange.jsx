@@ -991,6 +991,7 @@ export default function SettlementRange() {
                 allData={allData}
                 lumpSumpData={lumpSumpData}
                 fullProfit={fullProfit}
+                disabled={!apiData}
               />
 
               <MuiModels
