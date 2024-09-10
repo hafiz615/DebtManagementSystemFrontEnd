@@ -421,7 +421,6 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     creditorsContractDetailsSum,
     settlementRange,
     getScores,
-    chatGpt,
   } = data;
   const doc = new jsPDF();
   doc.setFontSize(18);
@@ -438,12 +437,16 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
   const formatCurrency = (value) => {
     return typeof value === "number" ? `$${value.toLocaleString()}` : "N/A";
   };
-  doc.text("Settlement Range Data ", 14, 20);
+
+  let currentY = 20;
+  doc.text("Settlement Range Data ", 14, currentY);
   doc.setFontSize(14);
+  currentY += 10;
 
   // Debtor Information
   if (checkboxState["Debtor Information"]) {
-    doc.text("Debtor Information", 14, 40);
+    doc.text("Debtor Information", 14, currentY);
+    currentY += 10;
     const debtorInfo = [
       ["Full Name", debtor?.basicInformation?.fullName || "N/A"],
       ["Email", debtor?.basicInformation?.email || "N/A"],
@@ -463,14 +466,16 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     doc.autoTable({
       head: [["Field", "Value"]],
       body: debtorInfo,
-      startY: 45,
+      startY: currentY,
     });
+    currentY = doc.autoTable.previous.finalY + 10;
   }
 
   //Settlement Range
   if (checkboxState["Settlement Range"]) {
     doc.setFontSize(14);
-    doc.text("Settlement Range", 14, doc.autoTable.previous.finalY + 20);
+    doc.text("Settlement Range", 14, currentY);
+    currentY += 10;
     const settlementRangeSummary = [
       ["Weekly Profit", formatCurrency(settlementRange?.weekly_profit) || 0],
       [
@@ -482,8 +487,9 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     doc.autoTable({
       head: [["Field", "Value"]],
       body: settlementRangeSummary,
-      startY: doc.autoTable.previous.finalY + 25,
+      startY: currentY,
     });
+    currentY = doc.autoTable.previous.finalY + 10;
   }
 
   // Add Scores
@@ -885,7 +891,7 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
   }
 
   //strategy 3
-  if (checkboxState["Strategy 3 Recommendation"]) {
+  if (checkboxState["Strategy 3 Recommendations"]) {
     doc.setFontSize(14);
     doc.text(
       "Strategy 3 Recommendations Minimum",

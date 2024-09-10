@@ -426,6 +426,7 @@ export default function MuiModels({
               }}
             />
           }
+          disabled={disabled}
         />
       ) : buttonName === "sendEmailCase" ? (
         <TextButton
