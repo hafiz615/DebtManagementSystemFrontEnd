@@ -186,6 +186,18 @@ export default function CreditorsDetailCards({
     startIndex,
     startIndex + itemsPerPage
   );
+  const isPhoneNumber = (value) => {
+    // Basic check for phone numbers (this can be more sophisticated depending on your requirements)
+    const phoneRegex = /^[0-9]{10,}$/; // Simple regex for 10 or more digits
+    return phoneRegex.test(value);
+  };
+
+  const formatValue = (value) => {
+    if (isPhoneNumber(value)) {
+      return `+1${value}`;
+    }
+    return value;
+  };
   return (
     <>
       <Grid
@@ -240,7 +252,7 @@ export default function CreditorsDetailCards({
               label: "Phone #",
               value: caseData?.creditor?.basicInformation?.phone,
             },
-          ]?.map((item, index) => (
+          ].map((item, index) => (
             <div
               key={index}
               style={{
@@ -269,7 +281,7 @@ export default function CreditorsDetailCards({
                     textAlign: "right",
                   }}
                 >
-                  {getTruncatedText(item?.value, 15)}
+                  {getTruncatedText(formatValue(item?.value), 15)}
                 </Typography>
               </Tooltip>
             </div>

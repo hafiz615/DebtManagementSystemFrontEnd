@@ -124,6 +124,19 @@ export default function DebtorDetailsCards({
     startIndex,
     startIndex + itemsPerPage
   );
+
+  const isPhoneNumber = (value) => {
+    // Basic check for phone numbers (this can be more sophisticated depending on your requirements)
+    const phoneRegex = /^[0-9]{10,}$/; // Simple regex for 10 or more digits
+    return phoneRegex.test(value);
+  };
+
+  const formatValue = (value) => {
+    if (isPhoneNumber(value)) {
+      return `+1${value}`;
+    }
+    return value;
+  };
   return (
     <>
       <Grid
@@ -212,7 +225,7 @@ export default function DebtorDetailsCards({
                         wordBreak: "break-word",
                       }}
                     >
-                      {getTruncatedText(value, 15)}
+                      {getTruncatedText(formatValue(value), 15)}
                     </Typography>
                   </Tooltip>
                 </div>
