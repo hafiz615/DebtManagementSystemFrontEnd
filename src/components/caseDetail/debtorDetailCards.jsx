@@ -303,7 +303,7 @@ export default function DebtorDetailsCards({
                         textAlign: "right",
                       }}
                     >
-                      {getTruncatedText(value, 15)}
+                      {getTruncatedText(formatValue(value), 15)}
                     </Typography>
                   </Tooltip>
                 </div>
