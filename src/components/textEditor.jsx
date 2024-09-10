@@ -8,8 +8,7 @@ import {
   MenuItem,
   Popover,
 } from "@mui/material";
-import "froala-editor/css/froala_style.min.css";
-import "froala-editor/css/froala_editor.pkgd.min.css";
+
 import TextButton from "./button";
 import { Colors } from "../config/default";
 import { FONT_SIZE_LARGE, TEXT_EDITOR_KEY } from "../constants/appConstants";
@@ -38,7 +37,7 @@ const StyledInput = styled.input`
   width: 98%;
 `;
 
-export default function FroalaEditor({
+export default function TextEditor({
   froalaEditor,
   setFroalaEditor,
   templateType,

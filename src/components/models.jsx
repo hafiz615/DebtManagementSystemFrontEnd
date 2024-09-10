@@ -14,7 +14,7 @@ import { Colors } from "../config/default";
 import TextButton from "./button";
 import EditCreditorDetail from "./editCreditorDetail";
 import EditDebtorDetails from "./editDebtorDetails";
-import FroalaEditor from "./froalaEditor";
+import FroalaEditor from "./textEditor";
 import CaseModel from "./caseModel";
 import CaseCustomField from "./caseCustomField";
 import EditCaseCustomField from "./editCaseCustomField";
@@ -49,6 +49,7 @@ import SettlementPayment from "./settlementPlan";
 import SendEmailCase from "./caseDetail/sendEmailCase";
 import DownloadPDF from "./caseDetail/downloadPDF";
 import SendEmailJustification from "./sendEmailJustifications";
+import TextEditor from "./textEditor";
 
 export default function MuiModels({
   buttonName,
@@ -119,7 +120,7 @@ export default function MuiModels({
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
-    if (show === "froalaEditor") {
+    if (show === "textEditor") {
       setFroalaEditor("");
     }
 
@@ -494,7 +495,7 @@ export default function MuiModels({
             )
           }
         />
-      ) : show === "froalaEditor" ? (
+      ) : show === "textEditor" ? (
         <Button
           onClick={handleOpen}
           sx={{
@@ -657,8 +658,8 @@ export default function MuiModels({
               statusId={statusId}
               GetStatuses={GetStatuses}
             />
-          ) : show === "froalaEditor" ? (
-            <FroalaEditor
+          ) : show === "textEditor" ? (
+            <TextEditor
               froalaEditor={froalaEditor}
               setFroalaEditor={setFroalaEditor}
               templateType={templateType}

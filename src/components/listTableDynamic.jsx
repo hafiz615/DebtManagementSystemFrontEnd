@@ -203,7 +203,7 @@ export default function ListTableDynamic({
                       >
                         {settings?.editNotificationTemplate ? (
                           <MuiModels
-                            show="froalaEditor"
+                            show="textEditor"
                             froalaEditor={froalaEditor}
                             setFroalaEditor={setFroalaEditor}
                             getSettings={getSettings}
