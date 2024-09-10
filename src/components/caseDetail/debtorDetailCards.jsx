@@ -14,7 +14,7 @@ import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Tooltip from "@mui/material/Tooltip";
-import { getTruncatedText } from "../../common";
+import { formatValue, getTruncatedText } from "../../common";
 import ScrollbarStyles from "./../customScroll";
 import {
   debtorBusinessDetails,
@@ -125,18 +125,6 @@ export default function DebtorDetailsCards({
     startIndex + itemsPerPage
   );
 
-  const isPhoneNumber = (value) => {
-    // Basic check for phone numbers (this can be more sophisticated depending on your requirements)
-    const phoneRegex = /^[0-9]{10,}$/; // Simple regex for 10 or more digits
-    return phoneRegex.test(value);
-  };
-
-  const formatValue = (value) => {
-    if (isPhoneNumber(value)) {
-      return `+1${value}`;
-    }
-    return value;
-  };
   return (
     <>
       <Grid
