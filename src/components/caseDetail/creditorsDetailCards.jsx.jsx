@@ -20,7 +20,7 @@ import {
 
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
-import { formatDollarAmount } from "../../common";
+import { formatDollarAmount, formatValue } from "../../common";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { getTruncatedText } from "../../common";
 import ScrollbarStyles from "./../customScroll";
@@ -186,6 +186,7 @@ export default function CreditorsDetailCards({
     startIndex,
     startIndex + itemsPerPage
   );
+
   return (
     <>
       <Grid
@@ -240,7 +241,7 @@ export default function CreditorsDetailCards({
               label: "Phone #",
               value: caseData?.creditor?.basicInformation?.phone,
             },
-          ]?.map((item, index) => (
+          ].map((item, index) => (
             <div
               key={index}
               style={{
@@ -269,7 +270,7 @@ export default function CreditorsDetailCards({
                     textAlign: "right",
                   }}
                 >
-                  {getTruncatedText(item?.value, 15)}
+                  {getTruncatedText(formatValue(item?.value), 15)}
                 </Typography>
               </Tooltip>
             </div>

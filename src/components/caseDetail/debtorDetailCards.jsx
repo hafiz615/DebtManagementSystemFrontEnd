@@ -14,7 +14,7 @@ import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Tooltip from "@mui/material/Tooltip";
-import { getTruncatedText } from "../../common";
+import { formatValue, getTruncatedText } from "../../common";
 import ScrollbarStyles from "./../customScroll";
 import {
   debtorBusinessDetails,
@@ -124,6 +124,7 @@ export default function DebtorDetailsCards({
     startIndex,
     startIndex + itemsPerPage
   );
+
   return (
     <>
       <Grid
@@ -212,7 +213,7 @@ export default function DebtorDetailsCards({
                         wordBreak: "break-word",
                       }}
                     >
-                      {getTruncatedText(value, 15)}
+                      {getTruncatedText(formatValue(value), 15)}
                     </Typography>
                   </Tooltip>
                 </div>
@@ -290,7 +291,7 @@ export default function DebtorDetailsCards({
                         textAlign: "right",
                       }}
                     >
-                      {getTruncatedText(value, 15)}
+                      {getTruncatedText(formatValue(value), 15)}
                     </Typography>
                   </Tooltip>
                 </div>

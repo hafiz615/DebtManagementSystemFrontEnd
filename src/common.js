@@ -998,3 +998,14 @@ export function formatDateString(isoDateStr) {
 
   return date.toLocaleString("en-US", options).replace(",", " at");
 }
+
+export const isPhoneNumber = (value) => {
+  const phoneRegex = /^[0-9]{10,}$/;
+  return phoneRegex.test(value);
+};
+export const formatValue = (value) => {
+  if (isPhoneNumber(value)) {
+    return `+1${value}`;
+  }
+  return value;
+};
