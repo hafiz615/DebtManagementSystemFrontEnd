@@ -658,10 +658,6 @@ export default function MuiModels({
             />
           ) : show === "froalaEditor" ? (
             <FroalaEditor
-              // emailTemplate={emailTemplate}
-              // setEmailTemplate={setEmailTemplate}
-              // smsTemplate={smsTemplate}
-              // setSmsTemplate={setSmsTemplate}
               froalaEditor={froalaEditor}
               setFroalaEditor={setFroalaEditor}
               templateType={templateType}
