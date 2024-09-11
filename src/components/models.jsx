@@ -49,6 +49,7 @@ import SettlementPayment from "./settlementPlan";
 import SendEmailCase from "./caseDetail/sendEmailCase";
 import DownloadPDF from "./caseDetail/downloadPDF";
 import SendEmailJustification from "./sendEmailJustifications";
+import ExtractFieldPopup from "./caseDetail/extractFieldPopup";
 
 export default function MuiModels({
   buttonName,
@@ -114,6 +115,8 @@ export default function MuiModels({
   setPaymentChanged,
   allData,
   lumpSumpData,
+  selectedFiles,
+  setSelectedFiles,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -407,6 +410,15 @@ export default function MuiModels({
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
         />
+      ) : buttonName === "extractFiles" ? (
+        <TextButton
+          buttonText="Extract Files"
+          height="2rem"
+          width="8rem"
+          onClick={handleOpen}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
       ) : show === "downloadPDF" ? (
         <TextButton
           buttonText={"Download PDF"}
@@ -659,10 +671,6 @@ export default function MuiModels({
             />
           ) : show === "froalaEditor" ? (
             <FroalaEditor
-              // emailTemplate={emailTemplate}
-              // setEmailTemplate={setEmailTemplate}
-              // smsTemplate={smsTemplate}
-              // setSmsTemplate={setSmsTemplate}
               froalaEditor={froalaEditor}
               setFroalaEditor={setFroalaEditor}
               templateType={templateType}
@@ -810,6 +818,17 @@ export default function MuiModels({
               lumpSumpData={lumpSumpData}
               fullProfit={fullProfit}
               handleClose={handleClose}
+            />
+          ) : show === "extractFiles" ? (
+            <ExtractFieldPopup
+              selectedFiles={selectedFiles}
+              setSelectedFiles={setSelectedFiles}
+              handleClose={handleClose}
+              caseDataId={caseDataId}
+              data={caseData}
+              GetCaseDetails={GetCaseDetails}
+              connectPayment={connectPayment}
+              setConnectPayment={setConnectPayment}
             />
           ) : (
             ""

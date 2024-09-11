@@ -468,6 +468,7 @@ function CaseDetail() {
                   ) : (
                     <CaseFileCard
                       caseData={caseData}
+                      caseDataId={id}
                       GetCaseDetails={GetCaseDetails}
                     />
                   )}

@@ -7,6 +7,7 @@ import TextButton from "./button";
 import { UpdateDebtor } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import DebtorFields from "./caseCreationFields/debtorFields";
+import { phoneNumberFormat } from "../common";
 
 export default function EditDebtorDetail({
   handleClose,
@@ -14,38 +15,85 @@ export default function EditDebtorDetail({
   GetCaseDetails,
   connectPayment,
   setConnectPayment,
+  data,
+  showFields,
+  showComponent,
+  setShowComponent,
 }) {
   const { id } = useParams();
   const { showToast } = useToast();
+  const parseString = (value) => (value ? String(value).replace(/-/g, "") : "");
 
-  const debtorBasicInfo = caseData?.debtor?.basicInformation;
-  const debtorBusinessInfo = caseData?.debtor?.businessInformation;
+  const debtorBasicInfo =
+    caseData?.debtor?.basicInformation || caseData?.debtor_info;
+  const debtorBusinessInfo =
+    caseData?.debtor?.businessInformation || caseData?.bussiness_info;
+
   const [loading, setLoading] = useState(false);
   const [debtorOwnDetails, setDebtorOwnDetails] = useState({
-    BasicFullName: debtorBasicInfo?.fullName || "",
-    BasicEmailAddress: debtorBasicInfo?.email || "",
-    BasicSsid: debtorBasicInfo?.SSID || "",
-    BasicState: debtorBasicInfo?.state || "",
-    BasicCity: debtorBasicInfo?.city || "",
-    BasicZipCode: debtorBasicInfo?.zipCode || "",
-    BasicPhoneNumber: debtorBasicInfo?.phone || "",
-    BasicAddress: debtorBasicInfo?.address || "",
+    BasicFullName:
+      debtorBasicInfo?.fullName || debtorBasicInfo?.["Debtor's Name"] || "",
+    BasicEmailAddress:
+      debtorBasicInfo?.email ||
+      debtorBasicInfo?.["Debtor's Email address"] ||
+      "",
+    BasicSsid:
+      debtorBasicInfo?.SSID ||
+      parseString(debtorBasicInfo?.["Debtor's SSN"]) ||
+      "",
+    BasicState:
+      debtorBasicInfo?.state || debtorBasicInfo?.["Debtor's State Name"] || "",
+    BasicCity:
+      debtorBasicInfo?.city || debtorBasicInfo?.["Debtor's City Name"] || "",
+    BasicZipCode:
+      debtorBasicInfo?.zipCode || debtorBasicInfo?.["Debtor's Zip code"] || "",
+    BasicPhoneNumber:
+      debtorBasicInfo?.phone ||
+      phoneNumberFormat(debtorBasicInfo?.["Debtor's Phone Number"]) ||
+      "",
+    BasicAddress:
+      debtorBasicInfo?.address || debtorBasicInfo?.["Debtor's Address"] || "",
     BasicWeeklyBudget: debtorBasicInfo?.weeklyBudget || 0,
   });
 
   const [debtorBusinessDetails, setDebtorBusinessDetails] = useState({
-    businessCompanyName: debtorBusinessInfo?.companyName || "",
-    businessEinNumber: debtorBusinessInfo?.EIN || "",
-    businessCategory: debtorBusinessInfo?.businessCategory || "",
+    businessCompanyName:
+      debtorBusinessInfo?.companyName ||
+      debtorBusinessInfo?.["Business Legal Name"] ||
+      "",
+    businessEinNumber:
+      debtorBusinessInfo?.EIN ||
+      parseString(debtorBusinessInfo?.["Business EIN Number"]) ||
+      "",
+    businessCategory:
+      debtorBusinessInfo?.businessCategory ||
+      debtorBusinessInfo?.["Business Category"] ||
+      "",
     businessDescription: debtorBusinessInfo?.description || "",
-    businessState: debtorBusinessInfo?.state || "",
-    businessCity: debtorBusinessInfo?.city || "",
-    businessZipCode: debtorBusinessInfo?.zipCode || "",
-    businessPhoneNumber: debtorBusinessInfo?.phone || "",
-    businessAddress: debtorBusinessInfo?.address || "",
+    businessState:
+      debtorBusinessInfo?.state ||
+      debtorBusinessInfo?.["Business State Name"] ||
+      "",
+    businessCity:
+      debtorBusinessInfo?.city ||
+      debtorBusinessInfo?.["Business City Name"] ||
+      "",
+    businessZipCode:
+      debtorBusinessInfo?.zipCode ||
+      debtorBusinessInfo?.["Business Zip code"] ||
+      "",
+    businessPhoneNumber:
+      debtorBusinessInfo?.phone ||
+      phoneNumberFormat(debtorBusinessInfo?.["Business Phone Number"]) ||
+      "",
+    businessAddress:
+      debtorBusinessInfo?.address ||
+      debtorBusinessInfo?.["Business Street Address"] ||
+      "",
   });
   const [checked, setChecked] = React.useState(false);
   const [status, setStatus] = useState(debtorBasicInfo?.status || "");
+  const [mismatches, setMismatches] = useState({});
   const [errors, setErrors] = useState({
     businessPhone: "",
     einNumber: "",
@@ -53,6 +101,86 @@ export default function EditDebtorDetail({
     basicPhone: "",
     emailValid: "",
   });
+  const checkFieldMismatch = (value1, value2) => {
+    return value1 !== value2;
+  };
+  const [noteMessage, setNoteMessage] = useState("");
+  useEffect(() => {
+    if (showFields) {
+      const mismatches = {
+        BasicFullName: checkFieldMismatch(
+          debtorOwnDetails?.BasicFullName,
+          data?.debtor?.basicInformation?.fullName
+        ),
+        BasicEmailAddress: checkFieldMismatch(
+          debtorOwnDetails?.BasicEmailAddress,
+          data?.debtor?.basicInformation?.email
+        ),
+        BasicSsid: checkFieldMismatch(
+          debtorOwnDetails?.BasicSsid,
+          data?.debtor?.basicInformation?.SSID
+        ),
+        BasicState: checkFieldMismatch(
+          debtorOwnDetails?.BasicState,
+          data?.debtor?.basicInformation?.state
+        ),
+        BasicCity: checkFieldMismatch(
+          debtorOwnDetails?.BasicCity,
+          data?.debtor?.basicInformation?.city
+        ),
+        BasicZipCode: checkFieldMismatch(
+          debtorOwnDetails?.BasicZipCode,
+          data?.debtor?.basicInformation?.zipCode
+        ),
+        BasicPhoneNumber: checkFieldMismatch(
+          debtorOwnDetails?.BasicPhoneNumber,
+          data?.debtor?.basicInformation?.phone
+        ),
+        businessCompanyName: checkFieldMismatch(
+          debtorBusinessDetails?.businessCompanyName,
+          data?.debtor?.basicInformation?.companyName
+        ),
+        businessEinNumber: checkFieldMismatch(
+          debtorBusinessDetails?.businessEinNumber,
+          data?.debtor?.basicInformation?.EIN
+        ),
+        businessCategory: checkFieldMismatch(
+          debtorBusinessDetails?.businessCategory,
+          data?.debtor?.basicInformation?.businessCategory
+        ),
+        businessState: checkFieldMismatch(
+          debtorBusinessDetails?.businessState,
+          data?.debtor?.basicInformation?.state
+        ),
+        businessCity: checkFieldMismatch(
+          debtorBusinessDetails?.businessCity,
+          data?.debtor?.basicInformation?.city
+        ),
+        businessZipCode: checkFieldMismatch(
+          debtorBusinessDetails?.businessZipCode,
+          data?.debtor?.basicInformation?.zipCode
+        ),
+        businessPhoneNumber: checkFieldMismatch(
+          debtorBusinessDetails?.businessPhoneNumber,
+          data?.debtor?.basicInformation?.phone
+        ),
+        businessAddress: checkFieldMismatch(
+          debtorBusinessDetails?.businessAddress,
+          data?.debtor?.basicInformation?.address
+        ),
+      };
+
+      setMismatches(mismatches);
+      const hasMismatch = Object.values(mismatches).some((value) => value);
+      if (hasMismatch) {
+        setNoteMessage(
+          "Note: Highlighted Information does not match with exiting Case Information"
+        );
+      } else {
+        setNoteMessage("");
+      }
+    }
+  }, [data, caseData, debtorBusinessDetails, debtorOwnDetails, showFields]);
 
   const [isFormValid, setIsFormValid] = useState(false);
   // const validateForm = () => {
@@ -106,7 +234,7 @@ export default function EditDebtorDetail({
       paymentToken: connectPayment?.paymentToken,
       paymentType: connectPayment?.paymentType,
     };
-    const updateDebtor = await UpdateDebtor(caseData?._id, params);
+    const updateDebtor = await UpdateDebtor(caseData?._id || data?._id, params);
     if (updateDebtor?.status === 200) {
       showToast(updateDebtor?.data?.message, "success");
       handleClose();
@@ -118,6 +246,9 @@ export default function EditDebtorDetail({
       );
     }
     setLoading(false);
+  };
+  const showCreditor = () => {
+    setShowComponent(false);
   };
 
   return (
@@ -163,8 +294,21 @@ export default function EditDebtorDetail({
           setConnectPayment={setConnectPayment}
           errors={errors}
           setErrors={setErrors}
+          misMatches={mismatches}
+          showFieldError={showFields}
         />
       </Grid>
+      {noteMessage && (
+        <Typography
+          sx={{
+            color: Colors.ORANGE_COLOR,
+            margin: "1rem",
+            fontFamily: "Nunito",
+          }}
+        >
+          {noteMessage}
+        </Typography>
+      )}
       <Grid container sx={{ justifyContent: "right" }}>
         <TextButton
           buttonText="Save"
@@ -175,6 +319,16 @@ export default function EditDebtorDetail({
           onClick={updateDebtorById}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
+          loading={loading}
+        />
+        <TextButton
+          buttonText="Next"
+          height="2rem"
+          width="8rem"
+          marginRight="1rem"
+          onClick={showCreditor}
+          backgroundColor={Colors.DIM_LIGHT_GRAY}
+          hoverColor={Colors.DIM_LIGHT_GRAY}
           loading={loading}
         />
       </Grid>

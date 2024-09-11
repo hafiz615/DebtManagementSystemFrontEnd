@@ -1182,3 +1182,14 @@ export const GetPaymentIntervals = async (id) => {
     return error;
   }
 };
+export const ExtractedCaseFields = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/getExtractedFields/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
