@@ -154,7 +154,6 @@ export default function ListTable({
         backgroundColor: Colors.WHITE,
         borderRadius: "10px",
         width: { xs: "65vw", sm: "100%" },
-        height: defaultHeight || accordionHeight,
       }}
     >
       <div
@@ -168,6 +167,7 @@ export default function ListTable({
           sx={{
             flexGrow: 1,
             overflowY: "auto",
+            maxHeight: defaultHeight || accordionHeight,
             ...ScrollbarStyles,
           }}
         >

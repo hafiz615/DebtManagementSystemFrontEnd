@@ -61,6 +61,7 @@ export default function PipelineDetail() {
   const [customFields, setCustomFields] = useState();
   const [selectedField, setSelectedField] = useState();
   const [customFieldValue, setCustomFieldValue] = useState("");
+  const [fieldType, setFieldType] = useState("number");
   const [anchorEl, setAnchorEl] = useState(null);
   const [page, setPage] = useState(0);
   const open = Boolean(anchorEl);
@@ -74,6 +75,12 @@ export default function PipelineDetail() {
       (p) => p?.pipeline === pipelineName
     );
     return pipeline ? pipeline?._id : null;
+  }
+
+  function getTypeByField(field) {
+    const allFields =
+      customFields && customFields?.find((p) => p?.name === field);
+    return allFields ? allFields?.type : null;
   }
 
   const getUsers = async () => {
@@ -287,25 +294,29 @@ export default function PipelineDetail() {
 
   const handleClear = () => {
     setPage(0);
-    GetAllPipelineDetail(true);
+    GetAllPipelineDetail(false);
     setCustomFieldValue("");
     handleClose();
   };
 
   const handleSave = async () => {
+    setPage(0);
     handleClose();
+    const id = getIdByPipelineName(pipelineName);
     const payload = {
       name: selectedField,
-      value: customFieldValue,
+      value:
+        fieldType === "number" ? parseInt(customFieldValue) : customFieldValue,
     };
-    const res = await GetPipelineDataByCustomFields(
-      payload,
-      "66d61bfdec80c071397c0385"
-    );
+    const res = await GetPipelineDataByCustomFields(payload, id);
     if (res?.status === 200) {
       setData(res?.data?.data);
     }
   };
+
+  useEffect(() => {
+    setFieldType(getTypeByField(selectedField));
+  }, [selectedField]);
 
   return (
     <Grid
@@ -516,10 +527,19 @@ export default function PipelineDetail() {
           >
             <FilterListOutlined
               sx={{
-                color: Colors.DARK_GRAY,
-                fontSize: { xs: "20px", sm: "30px" },
+                color: Colors.BLACK,
+                fontSize: "20px",
+                mr: "5px",
               }}
             />
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontSize: FONT_SIZE_LARGE,
+              }}
+            >
+              Custom Field
+            </Typography>
           </IconButton>
           <Menu
             id="demo-positioned-menu"
@@ -587,7 +607,7 @@ export default function PipelineDetail() {
                     color: Colors.DIM_LIGHT_GRAY,
                   }}
                   placeholder="value"
-                  type="email"
+                  type={fieldType}
                   value={customFieldValue}
                   onChange={(e) => setCustomFieldValue(e.target.value)}
                 />
@@ -606,6 +626,7 @@ export default function PipelineDetail() {
                   width="45%"
                   marginRight="10%"
                   fontColor={Colors.BLACK}
+                  disabled={!customFieldValue}
                   onClick={handleClear}
                   backgroundColor={Colors.BG_LIGHT_GRAY}
                   hoverColor={Colors.BG_LIGHT_GRAY}

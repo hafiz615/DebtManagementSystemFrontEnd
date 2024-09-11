@@ -210,8 +210,6 @@ export default function PaymentTabsTable({
       sx={{
         backgroundColor: Colors.WHITE,
         borderRadius: "10px",
-        // width: { xs: "65vw", sm: "100%" },
-        height: "55vh",
       }}
     >
       <div
@@ -224,6 +222,7 @@ export default function PaymentTabsTable({
         <TableContainer
           sx={{
             flexGrow: 1,
+            maxHeight: "55vh",
             overflowY: "auto",
             ...ScrollbarStyles,
           }}

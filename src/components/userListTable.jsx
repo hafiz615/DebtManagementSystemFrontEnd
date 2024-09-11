@@ -143,13 +143,13 @@ export default function UserListTable({
         backgroundColor: Colors.WHITE,
         borderRadius: "10px ",
         width: { xs: "65vw", sm: "100%" },
-        height: "55vh",
       }}
     >
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
         <TableContainer
           sx={{
             flexGrow: 1,
+            maxHeight: "55vh",
             overflowY: "auto",
             ...ScrollbarStyles,
           }}

@@ -31,15 +31,6 @@ export default function AnalyticsAccordion({ loading, paymentDetails }) {
       name: "Failed Payments",
       value: paymentDetails?.paymentCounts?.failedPayments || 0,
     },
-    {
-      name: "Remaining Debt",
-      value:
-        formatDollarAmount(paymentDetails?.paymentCounts?.remainingAmount) || 0,
-    },
-    {
-      name: "Paid Debt",
-      value: formatDollarAmount(paymentDetails?.paymentCounts?.paidAmount) || 0,
-    },
   ];
   return (
     <Accordion
