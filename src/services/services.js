@@ -1204,3 +1204,15 @@ export const GetLumpSumJustifications = async (id) => {
     return error;
   }
 };
+
+export const ForgotPasswordRes = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + "/v1/user/forgotPassword",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

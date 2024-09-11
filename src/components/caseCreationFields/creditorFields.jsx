@@ -170,7 +170,7 @@ export default function CreditorFields({
                   )
                 }
               />
-              {typeof debtorCaseData?.creditorNames !== "string" &&
+              {/* {typeof debtorCaseData?.creditorNames !== "string" &&
               debtorCaseData?.creditorNames?.creditor_names?.length > 0 ? (
                 <Grid item xs={12} md={4} lg={4}>
                   <Typography
@@ -264,22 +264,22 @@ export default function CreditorFields({
                     )}
                   />
                 </Grid>
-              ) : (
-                <PaymentsTextFields
-                  type="Account Title"
-                  label="Account Title"
-                  placeHolderValue="Enter Account Title"
-                  width="100%"
-                  value={thisCaseData?.creditor?.accountTitle}
-                  onChangeFunction={(e) =>
-                    handleCaseDataChange(
-                      caseIndex,
-                      "creditor.accountTitle",
-                      e.target.value
-                    )
-                  }
-                />
-              )}
+              ) : ( */}
+              <PaymentsTextFields
+                type="Account Title"
+                label="Account Title"
+                placeHolderValue="Enter Account Title"
+                width="100%"
+                value={thisCaseData?.creditor?.accountTitle}
+                onChangeFunction={(e) =>
+                  handleCaseDataChange(
+                    caseIndex,
+                    "creditor.accountTitle",
+                    e.target.value
+                  )
+                }
+              />
+              {/* )} */}
             </Grid>
             <Typography
               sx={{

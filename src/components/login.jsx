@@ -22,6 +22,7 @@ import {
 import { GetRoleByName, SignIn } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import Button from "./button";
+import ForgotPassword from "./forgortPassword";
 
 function Login() {
   const { showToast } = useToast();
@@ -32,6 +33,7 @@ function Login() {
   const [passwordError, setPasswordError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const smallScreen = useMediaQuery("(min-width:250px) and (max-width:900px)");
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -122,7 +124,10 @@ function Login() {
     INPUT_EMAIL_LABEL,
   } = LoginPage;
 
-  return (
+  const forgotPass = () => {
+    setShowForgotPassword(true);
+  };
+  return !showForgotPassword ? (
     <>
       {smallScreen && (
         <Typography
@@ -210,7 +215,8 @@ function Login() {
           {passwordError && (
             <FormHelperText error>{passwordError}</FormHelperText>
           )}
-          {/* <div style={{ display: "flex", justifyContent: "flex-end" }}>
+
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <Typography
               sx={{
                 fontWeight: "200",
@@ -219,13 +225,13 @@ function Login() {
                 marginBottom: smallScreen ? "0px" : "1.5rem",
                 cursor: "pointer",
                 fontFamily: "Nunito",
-                color: Colors.DARK_GRAY,
+                color: Colors.SKY_BLUE,
               }}
-              onClick={() => alert("Forgot Password clicked")}
+              onClick={() => forgotPass()}
             >
               {FORGOT_PASSWORD}
             </Typography>
-          </div> */}
+          </div>
         </FormControl>
 
         <Button
@@ -239,6 +245,8 @@ function Login() {
         />
       </Grid>
     </>
+  ) : (
+    <ForgotPassword setShowForgotPassword={setShowForgotPassword} />
   );
 }
 

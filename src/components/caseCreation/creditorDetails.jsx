@@ -186,51 +186,61 @@ export default function CreditorDetails({
         },
       ];
     } else {
-      processedData = creditors.map((creditor) => ({
-        creditor: {
-          aggression: 0,
-          accountTitle: creditor?.AccountTitle || "",
-          basicInformation: {
-            fullName: creditor?.Name || "",
-            email: creditor?.EmailAddress || "",
-            phone: phoneNumberFormat(
-              creditor?.PhoneNumber
-                ? creditor?.PhoneNumber.startsWith("+1")
-                  ? creditor?.PhoneNumber.slice(2)
-                  : creditor?.PhoneNumber
-                : ""
-            ),
+      processedData = creditors?.map((creditor) => {
+        let mappedEntry = Object.entries(
+          debtorCaseData?.creditorNames?.mapped_data || {}
+        )?.find(([key, value]) => {
+          return value === creditor?.Name;
+        });
+
+        let mappedKey = mappedEntry ? mappedEntry[0] : null;
+
+        return {
+          creditor: {
+            aggression: 0,
+            accountTitle: creditor?.AccountTitle || mappedKey || "",
+            basicInformation: {
+              fullName: creditor?.Name || "",
+              email: creditor?.EmailAddress || "",
+              phone: phoneNumberFormat(
+                creditor?.PhoneNumber
+                  ? creditor?.PhoneNumber.startsWith("+1")
+                    ? creditor?.PhoneNumber.slice(2)
+                    : creditor?.PhoneNumber
+                  : ""
+              ),
+            },
+            businessInformation: {
+              companyName: creditor?.Name || "",
+              businessCategory: "",
+            },
+            notes: "",
+            lastFundedDate: creditor?.ContractDetails?.signing_date || "",
+            historicalRange: {
+              minimum: 0,
+              maximum: 0,
+            },
+            contacts: [],
           },
-          businessInformation: {
-            companyName: creditor?.Name || "",
-            businessCategory: "",
-          },
-          notes: "",
-          lastFundedDate: creditor?.ContractDetails?.signing_date || "",
-          historicalRange: {
-            minimum: 0,
-            maximum: 0,
-          },
-          contacts: [],
-        },
-        status: "",
-        totalDebt:
-          parseInt(
-            creditor?.ContractDetails?.payable_amount
-              .replace("$", "")
-              .replace(",", "")
-          ) || 0,
-        lastPaymentDate: "",
-        contractDetails: creditor?.ContractDetails,
-        paidAmount: 0,
-        remaining:
-          parseInt(
-            creditor?.ContractDetails?.payable_amount
-              .replace("$", "")
-              .replace(",", "")
-          ) || 0,
-        feePayment: "toPay",
-      }));
+          status: "",
+          totalDebt:
+            parseInt(
+              creditor?.ContractDetails?.payable_amount
+                .replace("$", "")
+                .replace(",", "")
+            ) || 0,
+          lastPaymentDate: "",
+          contractDetails: creditor?.ContractDetails,
+          paidAmount: 0,
+          remaining:
+            parseInt(
+              creditor?.ContractDetails?.payable_amount
+                .replace("$", "")
+                .replace(",", "")
+            ) || 0,
+          feePayment: "toPay",
+        };
+      });
     }
 
     setFinalCaseData(processedData);
