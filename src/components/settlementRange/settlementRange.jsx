@@ -39,7 +39,9 @@ import {
   GetFullProfit,
   UpdateCommission,
   GetCaseSummariesById,
-  GetJustifications,
+  GetSettlementJustifications,
+  GetLumpSumJustifications,
+  GetFullProfitSettlement,
   GetPaymentIntervals,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
@@ -59,41 +61,6 @@ const AntTabs = styled(Tabs)({
     backgroundColor: Colors.SKY_BLUE,
   },
 });
-
-const dummyData = [
-  { id: 1, sender: "bot", message: "Hello! How can I help you today?" },
-  {
-    id: 2,
-    sender: "user",
-    message: " Sure! We offer a variety ",
-  },
-  {
-    id: 3,
-    sender: "bot",
-    message: "Sure! We offer a variety of services including...",
-  },
-];
-
-const ScrollbarStyles1 = {
-  "&::-webkit-scrollbar": {
-    width: "0.4em",
-  },
-  "&::-webkit-scrollbar-track": {
-    background: "#f1f1f1",
-  },
-  "&::-webkit-scrollbar-thumb": {
-    backgroundColor: "#888",
-    borderRadius: "10px",
-    border: "3px solid #f1f1f1",
-  },
-};
-
-const Colors1 = {
-  WHITE: "#ffffff",
-  LIGHT_GREY: "#f1f1f1",
-  BOT_MESSAGE_BG: "#e1f5fe",
-  USER_MESSAGE_BG: "#c8e6c9",
-};
 
 const AntTab = styled((props) => <Tab disableRipple {...props} />)(
   ({ theme }) => ({
@@ -133,31 +100,31 @@ const commonStyles = {
   gap: "10px",
   mb: { xs: "10px", lg: "0" },
 };
-const rangeStyles = {
-  backgroundColor: Colors.WHITE,
-  height: "15vh",
-  borderRadius: "10px",
-  paddingLeft: "2%",
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
-  // gap: "10px",
-  // mb: { xs: "10px", lg: "0" },
-};
 
 const commonTextStyles = {
   fontSize: FONT_SIZE_XL,
   fontFamily: "Nunito",
   fontWeight: "700",
 };
-const textStyles = {
+
+const inputStyles = {
+  width: "12rem",
+  padding: "7px 5px",
+  borderRadius: "5px",
+  marginRight: "10px",
+  marginTop: "10px",
+  backgroundColor: Colors.LIGHT_GREY,
+  border: "none",
+  outline: "none",
   fontSize: FONT_SIZE_LARGE,
   fontFamily: "Nunito",
-  color: Colors.DARK_GRAY,
+  color: Colors.BLACK,
 };
+
 const isNegative = (number) => {
   return number < 0;
 };
+
 const GridItem = ({ title, value, rawValue, tooltip }) => (
   <Grid
     item
@@ -181,6 +148,7 @@ const GridItem = ({ title, value, rawValue, tooltip }) => (
     </Tooltip>
   </Grid>
 );
+
 const GridItemMessage = ({ title, value, rawValue }) => (
   <Grid item xs={12} sm={12} md={12} lg={12} container sx={commonStyles}>
     <Typography sx={commonTextStyles}>{title}</Typography>
@@ -199,7 +167,6 @@ export default function SettlementRange() {
   const { caseId } = useParams();
   const { showToast } = useToast();
   const [value, setValue] = useState(0);
-
   const [tabValue, setTabValue] = useState(0);
   const [errorMessage, setErrorMessage] = useState(null);
   const [inputValue, setInputValue] = useState("");
@@ -207,11 +174,8 @@ export default function SettlementRange() {
   const [loading, setLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
   const [apiData, setApiData] = useState(null);
-
   const [creditorNames, setCreditorNames] = useState([]);
   const [allCreditorNames, setAllCreditorsNames] = useState([]);
-  const [buttonLoading, setButtonLoading] = useState(false);
-
   const [creditorSelect, setCreditorSelect] = useState([]);
   const [scores, setScores] = useState(null);
   const [debtor, setDebtor] = useState({});
@@ -228,49 +192,27 @@ export default function SettlementRange() {
   const [selectedData, setSelectedData] = useState([]);
   const [paymentData, setPaymentData] = useState();
   const [paymentChanged, setPaymentChanged] = useState(false);
+  const [allData, setAllData] = useState();
+  const [strategyTab, setStrategyTab] = useState(0);
+  const [justificationLoading, setJustificationLoading] = useState(false);
   const [justificationValue, setJustificationValue] = useState(
     "justification_gemini"
   );
-
-  const [allData, setAllData] = useState();
-
-  const scrollRef = useRef(null);
-
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const drawerOpen = useSelector((state) => state.drawer.open);
   const { AUTHORITY_TEXT } = UserListPage;
   const extraSmallScreen = useMediaQuery(
     "(min-width:300px) and (max-width:900px)"
   );
-
-  const [messages, setMessages] = useState([]);
-
-  const [strategyTab, setStrategyTab] = useState(0);
+  const scrollRef = useRef(null);
+  const widthStyling = drawerOpen
+    ? "calc(100vw - 250px - 4rem)"
+    : "calc(100vw - 70px - 4rem)";
 
   const handleStrategyChange = (event, newValue) => {
     setStrategyTab(newValue);
     setValue(0);
   };
-
-  useEffect(() => {
-    // Simulate loading data
-    setTimeout(() => {
-      setMessages(dummyData);
-      setTableLoading(false);
-    }, 2000);
-  }, []);
-
-  useEffect(() => {
-    if (value === 0) {
-      setJustificationValue("justification_gemini");
-    } else if (value === 1) {
-      setJustificationValue("justification_gpt4_o");
-    } else if (value === 2) {
-      setJustificationValue("justification_llama");
-    } else if (value === 3) {
-      setJustificationValue("justification_claude");
-    }
-  }, [value]);
 
   const handleCheckboxChange = (id, data) => {
     setCheckboxStates((prev) => {
@@ -289,32 +231,6 @@ export default function SettlementRange() {
 
       return newState;
     });
-  };
-
-  const GetLumpSumAmountData = async () => {
-    if (caseId) {
-      const GetLumpSumDataRes = await GetLumpSumAmount(caseId);
-
-      if (GetLumpSumDataRes?.status === 200) {
-        setLumpSumpData(GetLumpSumDataRes?.data?.data);
-      } else {
-        const errorMessage = GetLumpSumDataRes?.response?.data?.message;
-        setErrorLumSumtMessage(errorMessage);
-        showToast(errorMessage, "error");
-      }
-    }
-  };
-  const GetFullProfitData = async () => {
-    if (caseId) {
-      const GetFullProfitDataRes = await GetFullProfit(caseId);
-      if (GetFullProfitDataRes?.status === 200) {
-        setFullProfit(GetFullProfitDataRes?.data?.data);
-      } else {
-        const errorMessage = GetFullProfitDataRes?.response?.data?.message;
-        setErrorFullProfitMessage(errorMessage);
-        showToast(errorMessage, "error");
-      }
-    }
   };
 
   const tabs = ["Strategy 1", "Strategy 2", "Strategy 3"];
@@ -338,6 +254,7 @@ export default function SettlementRange() {
   const selectedCreditorDetails = creditorNames?.find(
     (item) => item?.creditorAccountTitle === currentCreditor
   );
+
   const cardData = {
     0: recommendations?.map((item, index) => (
       <>
@@ -583,13 +500,8 @@ export default function SettlementRange() {
           }
           setAllCreditorsNames(creditorAccountTitles);
           showToast(resCommission?.data?.message, "success");
-
-          const resJustifications = await GetJustifications(caseId);
-          if (resJustifications?.status === 200) {
-            setJustification(resJustifications?.data?.data?.justifications);
-          }
-          GetLumpSumAmountData();
-          GetFullProfitData();
+          getLumpSumAmountData();
+          getFullProfitData();
         } else if (
           resCommission?.response?.status === 401 ||
           resCommission?.response?.status === 403
@@ -606,7 +518,33 @@ export default function SettlementRange() {
     }
   };
 
-  const GetAllRanges = async (creditors, status) => {
+  const handleUpdate = async (status) => {
+    const selectedCreditorIds = creditorSelect?.map(
+      (creditor) => creditor.creditorId
+    );
+    const params = {
+      creditorNames: selectedCreditorIds,
+    };
+    getAllRanges(params, status);
+  };
+
+  const handleGeneratePdf = () => {
+    const credDetail =
+      allCreditorNames[tabValue] === "Summary"
+        ? "Summary"
+        : selectedCreditorDetails?.name;
+
+    const summaryPayable = summaryAmount?.payableAmount;
+
+    generatePdfFromApiData(
+      selectedCreditorDetails,
+      credDetail,
+      debtorInfo,
+      summaryPayable
+    );
+  };
+
+  const getAllRanges = async (creditors, status) => {
     setLoading(true);
     try {
       if (caseId) {
@@ -650,13 +588,9 @@ export default function SettlementRange() {
           }
           setAllCreditorsNames(creditorAccountTitles);
           showToast(settlementRangeData?.data?.message, "success");
-          const resJustifications = await GetJustifications(caseId);
-          if (resJustifications?.status === 200) {
-            setJustification(resJustifications?.data?.data?.justifications);
-          }
 
-          GetLumpSumAmountData();
-          GetFullProfitData();
+          getLumpSumAmountData();
+          getFullProfitData();
         } else if (
           settlementRangeData?.response?.status === 401 ||
           settlementRangeData?.response?.status === 403
@@ -673,16 +607,7 @@ export default function SettlementRange() {
     }
   };
 
-  const handleUpdate = async (status) => {
-    const selectedCreditorIds = creditorSelect?.map(
-      (creditor) => creditor.creditorId
-    );
-    const params = {
-      creditorNames: selectedCreditorIds,
-    };
-    GetAllRanges(params, status);
-  };
-  const GetAllSummary = async () => {
+  const getAllSummary = async () => {
     const res = await GetCaseSummariesById(caseId);
     if (res?.status === 200) {
       setSummary(res?.data?.data);
@@ -696,34 +621,88 @@ export default function SettlementRange() {
     }
   };
 
+  const getLumpSumAmountData = async () => {
+    if (caseId) {
+      const GetLumpSumDataRes = await GetLumpSumAmount(caseId);
+
+      if (GetLumpSumDataRes?.status === 200) {
+        setLumpSumpData(GetLumpSumDataRes?.data?.data);
+      } else {
+        const errorMessage = GetLumpSumDataRes?.response?.data?.message;
+        setErrorLumSumtMessage(errorMessage);
+        showToast(errorMessage, "error");
+      }
+    }
+  };
+
+  const getFullProfitData = async () => {
+    if (caseId) {
+      const GetFullProfitDataRes = await GetFullProfit(caseId);
+      if (GetFullProfitDataRes?.status === 200) {
+        setFullProfit(GetFullProfitDataRes?.data?.data);
+      } else {
+        const errorMessage = GetFullProfitDataRes?.response?.data?.message;
+        setErrorFullProfitMessage(errorMessage);
+        showToast(errorMessage, "error");
+      }
+    }
+  };
+
+  const getAllJustifications = async (activeStrategy) => {
+    setJustificationLoading(true);
+    let response;
+    switch (activeStrategy) {
+      case 0:
+        response = await GetSettlementJustifications(caseId);
+        break;
+      case 1:
+        response = await GetLumpSumJustifications(caseId);
+        break;
+      default:
+        response = await GetFullProfitSettlement(caseId);
+    }
+    if (response?.status === 200) {
+      setJustification(response?.data?.data?.justifications);
+      setJustificationLoading(false);
+    }
+  };
+
   useEffect(() => {
     getIntervals();
   }, [paymentChanged]);
 
   useEffect(() => {
-    GetAllRanges([], false);
-    GetAllSummary();
+    getAllRanges([], false);
+    getAllSummary();
   }, []);
 
-  const handleGeneratePdf = () => {
-    const credDetail =
-      allCreditorNames[tabValue] === "Summary"
-        ? "Summary"
-        : selectedCreditorDetails?.name;
+  useEffect(() => {
+    getAllJustifications(strategyTab);
+  }, [strategyTab]);
 
-    const summaryPayable = summaryAmount?.payableAmount;
+  useEffect(() => {
+    setTimeout(() => {
+      setTableLoading(false);
+    }, 2000);
+  }, []);
 
-    generatePdfFromApiData(
-      selectedCreditorDetails,
-      credDetail,
-      debtorInfo,
-      summaryPayable
-    );
-  };
+  useEffect(() => {
+    if (value === 0) {
+      setJustificationValue("justification_gemini");
+    } else if (value === 1) {
+      setJustificationValue("justification_gpt4_o");
+    } else if (value === 2) {
+      setJustificationValue("justification_llama");
+    } else if (value === 3) {
+      setJustificationValue("justification_claude");
+    }
+  }, [value]);
 
-  const widthStyling = drawerOpen
-    ? "calc(100vw - 250px - 4rem)"
-    : "calc(100vw - 70px - 4rem)";
+  useEffect(() => {
+    if (creditorNames) {
+      setCreditorSelect(creditorNameWithId);
+    }
+  }, [creditorNames]);
 
   const creditorNameWithId =
     creditorNames &&
@@ -732,14 +711,7 @@ export default function SettlementRange() {
       creditorId,
     }));
 
-  useEffect(() => {
-    if (creditorNames) {
-      setCreditorSelect(creditorNameWithId);
-    }
-  }, [creditorNames]);
-
   if (errorMessage) {
-    // Render Error Page component if errorMessage exists
     return (
       <Grid
         container
@@ -750,7 +722,6 @@ export default function SettlementRange() {
       >
         <Grid item textAlign="center">
           <ErrorOutline sx={{ fontSize: 80, color: Colors.RED }} />{" "}
-          {/* Adjust icon size and color */}
           <Typography variant="h4" color={Colors.DARK_GRAY} gutterBottom>
             Oops! Something went wrong.
           </Typography>
@@ -770,19 +741,7 @@ export default function SettlementRange() {
       </Grid>
     );
   }
-  const inputStyles = {
-    width: "12rem",
-    padding: "7px 5px",
-    borderRadius: "5px",
-    marginRight: "10px",
-    marginTop: "10px",
-    backgroundColor: Colors.LIGHT_GREY,
-    border: "none",
-    outline: "none",
-    fontSize: FONT_SIZE_LARGE,
-    fontFamily: "Nunito",
-    color: Colors.BLACK,
-  };
+
   const creditorDetails = [
     {
       label: "Loan Amount",
@@ -831,10 +790,12 @@ export default function SettlementRange() {
       width: "15%",
     },
   ];
+
   const formatSummaryCurrency = (value) => {
     if (value === "--" || typeof value !== "string") return value;
     return !value.startsWith("$") ? `$${value}` : value;
   };
+
   const formatSummary = (value) => {
     if (typeof value === "number") {
       return `$${value.toFixed(2)}`;
@@ -844,6 +805,7 @@ export default function SettlementRange() {
     }
     return value || "--";
   };
+
   const creditorNamesDetails = creditorNames?.map((creditor) => {
     const weeklyBudget =
       apiData?.weekly_budget?.[
@@ -913,17 +875,8 @@ export default function SettlementRange() {
       >
         <Grid item xs={12} lg={6}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <IconButton
-              onClick={() => handleUpdate(true)}
-              disabled={buttonLoading}
-            >
-              {buttonLoading ? (
-                <CircularProgress size={24} sx={{ color: Colors.SKY_BLUE }} />
-              ) : (
-                <RefreshIcon
-                  sx={{ color: Colors.SKY_BLUE, fontSize: "2rem" }}
-                />
-              )}
+            <IconButton onClick={() => handleUpdate(true)}>
+              <RefreshIcon sx={{ color: Colors.SKY_BLUE, fontSize: "2rem" }} />
             </IconButton>
             <Typography
               sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
@@ -1328,6 +1281,7 @@ export default function SettlementRange() {
                   </Grid>
                 </>
               )}
+
             {allCreditorNames[tabValue] === "Summary" && (
               <>
                 <Grid item xs={12} sx={{ mt: "1rem" }}>
@@ -1340,6 +1294,7 @@ export default function SettlementRange() {
                 </Grid>
               </>
             )}
+
             {apiData?.warnings?.[allCreditorNames[tabValue]] && (
               <Grid
                 sx={{
@@ -1438,9 +1393,10 @@ export default function SettlementRange() {
                   fontWeight: "600",
                   height: "3.5rem",
                 }}
-                label="claude"
+                label="Claude"
               />
             </AntTabs>
+
             <div style={{ marginRight: "16px" }}>
               <MuiModels
                 show="sendEmailJustification"
@@ -1491,13 +1447,17 @@ export default function SettlementRange() {
                     boxShadow: "none",
                   }}
                 >
-                  <Typography variant="body1">
-                    <ReactMarkdown>
-                      {justification?.[justificationValue]?.[
-                        allCreditorNames[tabValue]
-                      ] || "No Justifications"}
-                    </ReactMarkdown>
-                  </Typography>
+                  {justificationLoading ? (
+                    <CircularProgress size={20} />
+                  ) : (
+                    <Typography variant="body1">
+                      <ReactMarkdown>
+                        {justification?.[justificationValue]?.[
+                          allCreditorNames[tabValue]
+                        ] || "No Justifications"}
+                      </ReactMarkdown>
+                    </Typography>
+                  )}
                 </Card>
               </Grid>
               {summary?.map((item, index) => (
