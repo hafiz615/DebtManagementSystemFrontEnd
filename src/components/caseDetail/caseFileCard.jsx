@@ -29,8 +29,6 @@ function CaseFileCard({ caseData, GetCaseDetails }) {
         padding: "0px 10px",
         height: "13rem",
         marginBottom: "0.5rem",
-        overflowY: "auto",
-        ...ScrollbarStyles,
       }}
     >
       <div
@@ -56,37 +54,42 @@ function CaseFileCard({ caseData, GetCaseDetails }) {
           />
         </Box>
       </div>
-      {caseData?.debtor?.documents?.map((item, index) => (
-        <Grid
-          container
-          key={index}
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            backgroundColor:
-              index % 2 === 0 ? Colors.WHITE : "rgba(85, 148, 242, 0.06)",
-            paddingRight: ".2rem",
-            paddingLeft: ".2rem",
-            height: "2rem",
-            alignItems: "center",
-          }}
-        >
-          <span
-            style={{
-              color: Colors.DIM_LIGHT_GRAY,
-              fontWeight: "700",
-              fontFamily: "Nunito",
-              fontSize: "11px",
+      <Grid
+        container
+        sx={{ overflowY: "auto", ...ScrollbarStyles, height: "10rem" }}
+      >
+        {caseData?.debtor?.documents?.map((item, index) => (
+          <Grid
+            container
+            key={index}
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              backgroundColor:
+                index % 2 === 0 ? Colors.WHITE : "rgba(85, 148, 242, 0.06)",
+              paddingRight: ".2rem",
+              paddingLeft: ".2rem",
+              height: "2rem",
+              alignItems: "center",
             }}
           >
-            {item?.originalFileName}
-          </span>
-          <RemoveRedEye
-            sx={{ color: Colors.SKY_BLUE, cursor: "pointer" }}
-            onClick={() => handleFileView(item?.url)}
-          />
-        </Grid>
-      ))}
+            <span
+              style={{
+                color: Colors.DIM_LIGHT_GRAY,
+                fontWeight: "700",
+                fontFamily: "Nunito",
+                fontSize: "11px",
+              }}
+            >
+              {item?.originalFileName}
+            </span>
+            <RemoveRedEye
+              sx={{ color: Colors.SKY_BLUE, cursor: "pointer" }}
+              onClick={() => handleFileView(item?.url)}
+            />
+          </Grid>
+        ))}
+      </Grid>
 
       {isViewerOpen && (
         <div
