@@ -318,7 +318,7 @@ export default function PipelineDetail() {
         style={{
           display: "flex",
           marginTop: "1rem",
-          justifyContent: "space-between",
+          gap: "10px",
           width: "100%",
           flexWrap: "wrap",
         }}
@@ -344,7 +344,7 @@ export default function PipelineDetail() {
             View:
           </Typography>
           <Dropdown
-            width="7rem"
+            width="5rem"
             menuItems={viewType}
             selectedValue={pipelineType}
             setSelectedValue={setPipelineType}
@@ -396,6 +396,7 @@ export default function PipelineDetail() {
             multiSelect={leads}
             setMultiselect={setLeads}
             placeholder="Leads"
+            width="10rem"
           />
         </div>
         <div
@@ -411,6 +412,7 @@ export default function PipelineDetail() {
             multiSelect={users}
             setMultiselect={setUsers}
             placeholder="Users"
+            width="10rem"
           />
         </div>
         <div
@@ -429,6 +431,7 @@ export default function PipelineDetail() {
             multiSelect={statuses}
             setMultiselect={setStatuses}
             placeholder="Status"
+            width="10rem"
           />
         </div>
         <div
