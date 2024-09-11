@@ -24,10 +24,7 @@ export default function TransactionAccordion({
   GetCaseDetails,
 }) {
   const divStyles = {
-    width: "100%",
     display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
   };
   return (
     <Accordion
@@ -50,7 +47,14 @@ export default function TransactionAccordion({
           borderRadius: "1rem",
         }}
       >
-        <div style={divStyles} onClick={(e) => e.stopPropagation()}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            width: "100%",
+          }}
+        >
           <Typography
             sx={{
               color: Colors.WHITE,
@@ -60,16 +64,17 @@ export default function TransactionAccordion({
           >
             TRANSACTIONS
           </Typography>
-
-          <MuiModels
-            width="70vw"
-            show="payments"
-            buttonName="payments"
-            remainingAmount={caseData?.remaining.toString()}
-            data={caseData}
-            GetCaseDetails={GetCaseDetails}
-            GetCasePaymentDetails={GetCasePaymentDetails}
-          />
+          <div style={divStyles} onClick={(e) => e.stopPropagation()}>
+            <MuiModels
+              width="70vw"
+              show="payments"
+              buttonName="payments"
+              remainingAmount={caseData?.remaining.toString()}
+              data={caseData}
+              GetCaseDetails={GetCaseDetails}
+              GetCasePaymentDetails={GetCasePaymentDetails}
+            />
+          </div>
         </div>
       </AccordionSummary>
       <AccordionDetails
