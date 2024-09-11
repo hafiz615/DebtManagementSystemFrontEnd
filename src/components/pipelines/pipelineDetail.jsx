@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-import { Grid, Tooltip, Typography } from "@mui/material";
+import { Grid, IconButton, Menu, Tooltip, Typography } from "@mui/material";
 import {
   Window,
   Handyman,
@@ -11,6 +11,7 @@ import {
   PeopleAlt,
   DonutLarge,
   CalendarMonth,
+  FilterListOutlined,
 } from "@mui/icons-material/";
 
 import {
@@ -28,14 +29,17 @@ import PipelinesLists from "./pipelinesLists";
 import Dropdown from "../dropdown";
 import ScrollbarStyles from "../customScroll";
 import {
+  GetAllCustomFields,
   GetAllDebtors,
   GetAllPipelines,
   GetAllUsers,
+  GetPipelineDataByCustomFields,
   GetPipelinesDetails,
 } from "../../services/services";
 import CheckboxAutocomplete from "../checkboxAutocomplete";
 import moment from "moment";
 import MuiModels from "../models";
+import TextButton from "../button";
 
 export default function PipelineDetail() {
   const navigate = useNavigate();
@@ -54,7 +58,12 @@ export default function PipelineDetail() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [order, setOrder] = useState("Ascending");
+  const [customFields, setCustomFields] = useState();
+  const [selectedField, setSelectedField] = useState();
+  const [customFieldValue, setCustomFieldValue] = useState("");
+  const [anchorEl, setAnchorEl] = useState(null);
   const [page, setPage] = useState(0);
+  const open = Boolean(anchorEl);
 
   const handleKeyPress = (e) => {
     setSearchText(e.target.value);
@@ -120,6 +129,14 @@ export default function PipelineDetail() {
     }
   };
 
+  const getCustomFields = async () => {
+    const resCustomFields = await GetAllCustomFields();
+    if (resCustomFields?.status === 200) {
+      setCustomFields(resCustomFields?.data?.data);
+      setSelectedField(resCustomFields?.data?.data?.[0]?.name);
+    }
+  };
+
   useEffect(() => {
     GetAllPipelineDetail(true);
   }, [pipelineName]);
@@ -128,6 +145,7 @@ export default function PipelineDetail() {
     getUsers();
     getAllPipelinesNames();
     getDebtors();
+    getCustomFields();
   }, []);
 
   useEffect(() => {
@@ -198,6 +216,11 @@ export default function PipelineDetail() {
     calculateDates();
   }, [byTime]);
 
+  const allFields = customFields?.map((item) => ({
+    label: item?.name,
+    value: item?.name,
+  }));
+
   const allLeads = allDebtors
     ? [
         "All Leads",
@@ -254,6 +277,35 @@ export default function PipelineDetail() {
     searchText,
     order,
   ]);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleClear = () => {
+    setPage(0);
+    GetAllPipelineDetail(true);
+    setCustomFieldValue("");
+    handleClose();
+  };
+
+  const handleSave = async () => {
+    handleClose();
+    const payload = {
+      name: selectedField,
+      value: customFieldValue,
+    };
+    const res = await GetPipelineDataByCustomFields(
+      payload,
+      "66d61bfdec80c071397c0385"
+    );
+    if (res?.status === 200) {
+      setData(res?.data?.data);
+    }
+  };
 
   return (
     <Grid
@@ -453,6 +505,124 @@ export default function PipelineDetail() {
             backgroundColor={Colors.BG_LIGHT_GRAY}
             hoverColor={Colors.BG_LIGHT_GRAY}
           />
+        </div>
+        <div>
+          <IconButton
+            id="demo-positioned-button"
+            aria-controls={open ? "demo-positioned-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={handleClick}
+          >
+            <FilterListOutlined
+              sx={{
+                color: Colors.DARK_GRAY,
+                fontSize: { xs: "20px", sm: "30px" },
+              }}
+            />
+          </IconButton>
+          <Menu
+            id="demo-positioned-menu"
+            aria-labelledby="demo-positioned-button"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            transformOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+            sx={{
+              "& .MuiPaper-root": {
+                borderRadius: "12px",
+              },
+            }}
+          >
+            <Grid sx={{ padding: ".5rem .75rem", width: "16rem" }}>
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontSize: FONT_SIZE_XL,
+                  fontWeight: "600",
+                }}
+              >
+                Filter By Custom Field
+              </Typography>
+              <div style={{ marginTop: "10px" }}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontSize: FONT_SIZE_LARGE,
+                    fontWeight: "600",
+                    mt: "10px",
+                  }}
+                >
+                  Custom Field
+                </Typography>
+                <Dropdown
+                  width="100%"
+                  menuItems={allFields}
+                  selectedValue={selectedField}
+                  setSelectedValue={setSelectedField}
+                  backgroundColor={Colors.BG_LIGHT_GRAY}
+                  hoverColor={Colors.BG_LIGHT_GRAY}
+                />
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontSize: FONT_SIZE_LARGE,
+                    fontWeight: "600",
+                    mt: "10px",
+                  }}
+                >
+                  Value
+                </Typography>
+                <input
+                  style={{
+                    width: "100%",
+                    padding: "7px 5px",
+                    borderRadius: "5px",
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    border: "none",
+                    outline: "none",
+                    fontSize: FONT_SIZE_LARGE,
+                    fontFamily: "Nunito",
+                    color: Colors.DIM_LIGHT_GRAY,
+                  }}
+                  placeholder="value"
+                  type="email"
+                  value={customFieldValue}
+                  onChange={(e) => setCustomFieldValue(e.target.value)}
+                />
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  marginTop: "1rem",
+                }}
+              >
+                <TextButton
+                  buttonText="Clear"
+                  height="2rem"
+                  width="45%"
+                  marginRight="10%"
+                  fontColor={Colors.BLACK}
+                  onClick={handleClear}
+                  backgroundColor={Colors.BG_LIGHT_GRAY}
+                  hoverColor={Colors.BG_LIGHT_GRAY}
+                />
+                <TextButton
+                  buttonText="Filter"
+                  height="2rem"
+                  width="45%"
+                  fontColor={Colors.BLACK}
+                  onClick={handleSave}
+                  disabled={!customFieldValue}
+                  backgroundColor={Colors.BG_LIGHT_GRAY}
+                  hoverColor={Colors.BG_LIGHT_GRAY}
+                />
+              </div>
+            </Grid>
+          </Menu>
         </div>
         {pipelineType === "List" && (
           <div

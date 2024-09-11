@@ -1182,3 +1182,26 @@ export const GetPaymentIntervals = async (id) => {
     return error;
   }
 };
+
+export const GetAllCustomFields = async () => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/settings/getCustomFields`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetPipelineDataByCustomFields = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/pipeline/getCasesByCustomFieldAndValue/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
