@@ -14,6 +14,8 @@ export default function EditCreditorDetail({
   handleClose,
   caseData,
   GetCaseDetails,
+  showComponent,
+  setShowComponent,
 }) {
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const { id } = useParams();

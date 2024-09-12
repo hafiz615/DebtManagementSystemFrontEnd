@@ -185,6 +185,7 @@ function CaseDetail() {
           {AUTHORITY_TEXT} <span>{role}</span>
         </Typography>
       </Grid>
+
       {loading || isEmpty(caseData) ? (
         <Grid
           item

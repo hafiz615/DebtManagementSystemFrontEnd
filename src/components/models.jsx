@@ -829,6 +829,8 @@ export default function MuiModels({
               GetCaseDetails={GetCaseDetails}
               connectPayment={connectPayment}
               setConnectPayment={setConnectPayment}
+              show={show}
+              maxHeight={maxHeight}
             />
           ) : (
             ""

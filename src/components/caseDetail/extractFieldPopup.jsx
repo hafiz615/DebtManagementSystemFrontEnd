@@ -5,6 +5,7 @@ import { useToast } from "../../toast/toastContext";
 import { CircularProgress, Grid } from "@mui/material";
 import { Colors } from "../../config/default";
 import EditDebtorDetails from "./../editDebtorDetails";
+import EditCreditorDetail from "../editCreditorDetail";
 
 function ExtractFieldPopup({
   selectedFiles,
@@ -15,6 +16,8 @@ function ExtractFieldPopup({
   connectPayment,
   setConnectPayment,
   handleClose,
+  show,
+  maxHeight,
 }) {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(true);
@@ -71,7 +74,17 @@ function ExtractFieldPopup({
               setShowComponent={setShowComponent}
             />
           ) : (
-            <div>hello</div>
+            <>
+              <div>hello</div>
+              <EditCreditorDetail
+                handleClose={handleClose}
+                caseData={data}
+                GetCaseDetails={GetCaseDetails}
+                maxHeight={maxHeight}
+                showComponent={showComponent}
+                setShowComponent={setShowComponent}
+              />
+            </>
           )}
         </>
       )}
