@@ -33,7 +33,7 @@ function VerifyProfilePage() {
         item
         xs={6}
         sx={{
-          backgroundColor: Colors.NAVY_BLUE,
+          background: Colors.GRADIENT,
           height: "100vh",
           display: largeScreen ? "none" : "flex",
           justifyContent: "center",

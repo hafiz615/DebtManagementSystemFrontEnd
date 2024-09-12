@@ -102,6 +102,7 @@ const ForgotPassword = ({ setShowForgotPassword }) => {
       <Grid container item sx={{ display: "flex", flexDirection: "column" }}>
         <Button
           buttonText="SEND"
+          backgroundColor={Colors.GRADIENT}
           disabled={isButtonDisabled}
           onClick={handleSubmit}
           loading={loading}

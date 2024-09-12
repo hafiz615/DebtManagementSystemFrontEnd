@@ -44,7 +44,7 @@ export default function NavBar({ onClick }) {
         position="fixed"
         elevation={0}
         sx={{
-          backgroundColor: Colors.NAVY_BLUE,
+          background: Colors.GRADIENT,
           height: "4rem",
           zIndex: 1,
         }}

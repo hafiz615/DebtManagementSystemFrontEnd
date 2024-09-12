@@ -68,7 +68,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   alignItems: "center",
   ...theme.mixins.toolbar,
   justifyContent: "flex-end",
-  backgroundColor: Colors.NAVY_BLUE,
+  background: "linear-gradient(140deg, #9333EA, #1E3A8A)",
 }));
 
 export default function PersistentDrawerLeft({ children }) {

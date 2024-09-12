@@ -125,7 +125,7 @@ export default function VerifyProfile() {
           fontSize: "2.5rem",
           fontWeight: "700",
           marginBottom: "2rem",
-          color: Colors.NAVY_BLUE,
+          background: Colors.GRADIENT,
           fontFamily: "Nunito",
         }}
       >
