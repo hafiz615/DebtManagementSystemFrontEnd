@@ -35,7 +35,7 @@ function Auth() {
         item
         xs={6}
         sx={{
-          backgroundColor: Colors.NAVY_BLUE,
+          background: Colors.GRADIENT,
           height: "100vh",
           display: { xs: "none", md: "flex" },
           justifyContent: "center",

@@ -238,6 +238,8 @@ function Login() {
           buttonText={LOGIN_BUTTON_TEXT}
           disabled={isButtonDisabled}
           onClick={handleLoginForm}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
           loading={loading}
           marginTop={smallScreen ? "1rem" : "2rem"}
           height={smallScreen ? "2rem" : "3rem"}
