@@ -64,6 +64,7 @@ export default function NavBar({ onClick }) {
               display: "flex",
               width: widthStyling,
               justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
             <img
@@ -75,6 +76,7 @@ export default function NavBar({ onClick }) {
                 objectFit: "contain",
               }}
             />
+
             <Tooltip title="logout" placement="top-end">
               <IconButton
                 onClick={handleLogout}
@@ -84,7 +86,6 @@ export default function NavBar({ onClick }) {
                 aria-haspopup="true"
                 sx={{
                   color: Colors.WHITE,
-                  borderRadius: "50%",
                 }}
               >
                 <LogoutIcon sx={{ fontSize: "30px" }} />
