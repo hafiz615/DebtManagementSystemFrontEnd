@@ -107,6 +107,11 @@ function Login() {
     }
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !isButtonDisabled) {
+      handleLoginForm();
+    }
+  };
   const isButtonDisabled =
     !email.trim() ||
     !email.includes("@") ||
@@ -196,6 +201,7 @@ function Login() {
             type={showPassword ? "text" : "password"}
             value={password}
             onChange={handlePasswordChange}
+            onKeyDown={handleKeyPress}
             style={{
               fontSize: smallScreen ? FONT_SIZE_SMALL : FONT_SIZE_LARGE,
               fontFamily: "Nunito",

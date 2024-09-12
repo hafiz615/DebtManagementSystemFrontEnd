@@ -422,6 +422,7 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     settlementRange,
     getScores,
   } = data;
+  console.log(data, lumpSumpData, fullProfit, checkboxState, "++++++++++++");
   const doc = new jsPDF();
   doc.setFontSize(18);
 
@@ -438,15 +439,16 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     return typeof value === "number" ? `$${value.toLocaleString()}` : "N/A";
   };
 
-  let currentY = 20;
-  doc.text("Settlement Range Data ", 14, currentY);
-  doc.setFontSize(14);
-  currentY += 10;
+  // let currentY = 20;
+  doc.text("Settlement Range Data ", 14, 20);
+
+  // doc.setFontSize(14);
+  // currentY += 10;
 
   // Debtor Information
   if (checkboxState["Debtor Information"]) {
-    doc.text("Debtor Information", 14, currentY);
-    currentY += 10;
+    doc.text("Debtor Information", 14, 30);
+    // currentY += 10;
     const debtorInfo = [
       ["Full Name", debtor?.basicInformation?.fullName || "N/A"],
       ["Email", debtor?.basicInformation?.email || "N/A"],
@@ -466,16 +468,18 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     doc.autoTable({
       head: [["Field", "Value"]],
       body: debtorInfo,
-      startY: currentY,
+      // startY: currentY,
+      startY: 45,
     });
-    currentY = doc.autoTable.previous.finalY + 10;
+    // currentY = doc.autoTable.previous.finalY + 10;
   }
 
   //Settlement Range
   if (checkboxState["Settlement Range"]) {
     doc.setFontSize(14);
-    doc.text("Settlement Range", 14, currentY);
-    currentY += 10;
+    // doc.text("Settlement Range", 14, currentY);
+    doc.text("Settlement Range", 14, doc.autoTable.previous.finalY + 20);
+    // currentY += 10;
     const settlementRangeSummary = [
       ["Weekly Profit", formatCurrency(settlementRange?.weekly_profit) || 0],
       [
@@ -487,9 +491,9 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     doc.autoTable({
       head: [["Field", "Value"]],
       body: settlementRangeSummary,
-      startY: currentY,
+      startY: doc.autoTable.previous.finalY + 25,
     });
-    currentY = doc.autoTable.previous.finalY + 10;
+    // currentY = doc.autoTable.previous.finalY + 10;
   }
 
   // Add Scores

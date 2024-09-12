@@ -547,9 +547,10 @@ export default function ClientListDetails() {
                           fontWeight: "300",
                           fontSize: "0.9rem",
                           color: Colors.DIM_LIGHT_GRAY,
+                          marginLeft: ".5rem",
                         }}
                       >
-                        {truncateText(item?.value, 20)}
+                        {truncateText(item?.value, 15)}
                       </span>
                     </Tooltip>
                   </Box>

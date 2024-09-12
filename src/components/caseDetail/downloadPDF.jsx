@@ -20,15 +20,16 @@ function DownloadPDF({ allData, lumpSumpData, fullProfit, handleClose }) {
 
   const [checkboxState, setCheckboxState] = useState({
     "Debtor Information": true,
-    "Settlement Range": false,
-    Scores: false,
-    "Creditors Contract Information": false,
-    "Creditors Contract Details Summary": false,
-    "Strategy 1 Recommendations": false,
-    "Strategy 2 Recommendations": false,
-    "Strategy 3 Recommendations": false,
+    "Settlement Range": true,
+    Scores: true,
+    "Creditors Contract Information": true,
+    "Creditors Contract Details Summary": true,
+    "Strategy 1 Recommendations": true,
+    "Strategy 2 Recommendations": true,
+    "Strategy 3 Recommendations": true,
   });
 
+  console.log(checkboxState, "kkkk");
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
 
