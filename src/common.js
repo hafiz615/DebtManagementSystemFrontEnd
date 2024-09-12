@@ -422,7 +422,7 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     settlementRange,
     getScores,
   } = data;
-  console.log(data, lumpSumpData, fullProfit, checkboxState, "++++++++++++");
+
   const doc = new jsPDF();
   doc.setFontSize(18);
 

@@ -29,7 +29,6 @@ function DownloadPDF({ allData, lumpSumpData, fullProfit, handleClose }) {
     "Strategy 3 Recommendations": true,
   });
 
-  console.log(checkboxState, "kkkk");
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
 
