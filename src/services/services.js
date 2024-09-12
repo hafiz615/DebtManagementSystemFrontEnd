@@ -165,6 +165,16 @@ export const UpdateUserPassword = async (payload, token) => {
     return error;
   }
 };
+export const ForgotPassword = async (payload, token) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/user/forgotPasswordUpdate?token=${token}`,
+      payload
+    );
+  } catch (error) {
+    return error;
+  }
+};
 
 export const ResetUserPassword = async (payload) => {
   try {

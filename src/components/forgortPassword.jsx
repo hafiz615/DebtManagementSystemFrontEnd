@@ -35,6 +35,11 @@ const ForgotPassword = ({ setShowForgotPassword }) => {
       setEmailError("");
     }
   };
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !isButtonDisabled) {
+      handleSubmit();
+    }
+  };
   const { INPUT_EMAIL_LABEL } = LoginPage;
 
   const isButtonDisabled =
@@ -46,6 +51,7 @@ const ForgotPassword = ({ setShowForgotPassword }) => {
     const forgotPassRes = await ForgotPasswordRes(params);
     if (forgotPassRes?.status === 200) {
       showToast(forgotPassRes?.data?.message, "success");
+      backToLogin();
     } else {
       const errorMessage = forgotPassRes?.response?.data?.message;
       showToast(errorMessage || forgotPassRes?.message, "error");
@@ -97,11 +103,12 @@ const ForgotPassword = ({ setShowForgotPassword }) => {
         }}
         value={email}
         onChange={handleEmailChange}
+        onKeyDown={handleKeyDown}
       />
       {emailError && <FormHelperText error>{emailError}</FormHelperText>}
       <Grid container item sx={{ display: "flex", flexDirection: "column" }}>
         <Button
-          buttonText="SEND"
+          buttonText="RESEND"
           disabled={isButtonDisabled}
           onClick={handleSubmit}
           loading={loading}
