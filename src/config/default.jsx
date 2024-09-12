@@ -10,5 +10,6 @@ export const Colors = {
   ORANGE_COLOR: "#EA6A47",
   LIGHT_BLUE_COLOR: "#F5F9FE",
   YELLOW: "#EEAC2C",
+  VIOLET: "#E6E6FA",
   GRADIENT: "linear-gradient(90deg, #1E3A8A, #9333EA)",
 };

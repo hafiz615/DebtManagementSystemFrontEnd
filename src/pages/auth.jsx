@@ -4,7 +4,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Colors } from "../config/default";
 import Login from "../components/login";
-import Laptop from "../../src/assets/Laptop.png";
+import AppLogo from "../../src/assets/FC White.png";
 
 function Auth() {
   const smallScreen = useMediaQuery("(min-width:250px) and (max-width:900px)");
@@ -43,11 +43,11 @@ function Auth() {
         }}
       >
         <img
-          src={Laptop}
+          src={AppLogo}
           alt="laptopImage"
           style={{
-            width: "70%",
-            height: "70%",
+            width: "50%",
+            height: "50%",
             objectFit: "contain",
           }}
         />
