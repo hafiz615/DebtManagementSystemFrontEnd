@@ -267,6 +267,7 @@ export default function ListTable({
                       ?.filter(
                         ([key]) =>
                           key !== "id" &&
+                          key !== "caseId" &&
                           (showFailureReason || key !== "failureReason") &&
                           (showDueDate || key !== "dueDate")
                       )
