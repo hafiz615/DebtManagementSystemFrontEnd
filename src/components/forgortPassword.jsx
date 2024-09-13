@@ -112,6 +112,8 @@ const ForgotPassword = ({ setShowForgotPassword }) => {
           disabled={isButtonDisabled}
           onClick={handleSubmit}
           loading={loading}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
           marginTop={smallScreen ? "1rem" : "2rem"}
           height={smallScreen ? "2rem" : "3rem"}
           loginFont="600"

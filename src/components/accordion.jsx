@@ -74,7 +74,7 @@ export default function AccordionUsage({
   if (paymentNumber === "5") {
     backgroundColor = "rgba(234, 106, 71, 0.5)"; // Reddish color
   } else if (paymentNumber === "4") {
-    backgroundColor = "rgba(165, 216, 221, 0.5)"; // Bluish color
+    backgroundColor = Colors.SKY_BLUE; // Bluish color
   } else {
     backgroundColor = "#7E909A"; // Grayish color
   }
@@ -155,7 +155,7 @@ export default function AccordionUsage({
                   fontWeight: "600",
                   fontSize: { xs: FONT_SIZE_MEDIUM, sm: "1rem" },
                   fontFamily: "Nunito",
-                  color: Colors.BLACK,
+                  color: Colors.WHITE,
                 }}
               >
                 {totalData === undefined ? "0" : totalData}

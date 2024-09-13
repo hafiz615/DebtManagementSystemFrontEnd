@@ -155,7 +155,6 @@ export default function VerifyProfile() {
           fontSize: "2.5rem",
           fontWeight: "700",
           marginBottom: "2rem",
-          color: Colors.NAVY_BLUE,
           fontFamily: "Nunito",
         }}
       >
@@ -222,6 +221,8 @@ export default function VerifyProfile() {
       <Button
         disabled={isButtonDisabled}
         loading={loading}
+        backgroundColor={Colors.SKY_BLUE}
+        hoverColor={Colors.SKY_BLUE}
         buttonText="SAVE"
         onClick={handleFormSubmit}
         marginTop="2rem"
