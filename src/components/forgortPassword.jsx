@@ -106,10 +106,23 @@ const ForgotPassword = ({ setShowForgotPassword }) => {
         onKeyDown={handleKeyDown}
       />
       {emailError && <FormHelperText error>{emailError}</FormHelperText>}
+      {timer > 0 && (
+        <Typography
+          sx={{
+            fontSize: ".8rem",
+            fontWeight: "700",
+            color: Colors.NAVY_BLUE,
+            fontFamily: "Nunito",
+            textAlign: "right",
+          }}
+        >
+          {timer} s
+        </Typography>
+      )}
       <Grid container item sx={{ display: "flex", flexDirection: "column" }}>
         <Button
-          buttonText="RESEND"
-          disabled={isButtonDisabled}
+          buttonText={isResend ? "RESEND" : "SEND"}
+          disabled={isButtonDisabled || (isResend && timer > 0)}
           onClick={handleSubmit}
           loading={loading}
           backgroundColor={Colors.SKY_BLUE}
