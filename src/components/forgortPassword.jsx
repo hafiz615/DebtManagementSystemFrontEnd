@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 
 import { Typography, TextField, Grid, FormHelperText } from "@mui/material";
@@ -20,8 +20,6 @@ const ForgotPassword = ({ setShowForgotPassword }) => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [timer, setTimer] = useState(0);
-  const [isResend, setIsResend] = useState(false);
   const smallScreen = useMediaQuery("(min-width:250px) and (max-width:900px)");
 
   const handleEmailChange = (e) => {
@@ -53,9 +51,7 @@ const ForgotPassword = ({ setShowForgotPassword }) => {
     const forgotPassRes = await ForgotPasswordRes(params);
     if (forgotPassRes?.status === 200) {
       showToast(forgotPassRes?.data?.message, "success");
-      setTimer(30);
-      setIsResend(true);
-      // backToLogin();
+      backToLogin();
     } else {
       const errorMessage = forgotPassRes?.response?.data?.message;
       showToast(errorMessage || forgotPassRes?.message, "error");
@@ -65,15 +61,6 @@ const ForgotPassword = ({ setShowForgotPassword }) => {
   const backToLogin = async () => {
     setShowForgotPassword(false);
   };
-  useEffect(() => {
-    let countdown;
-    if (timer > 0) {
-      countdown = setTimeout(() => setTimer((prev) => prev - 1), 1000);
-    } else if (timer === 0 && isResend) {
-      setIsResend(true); // Allow resend after timer completes
-    }
-    return () => clearTimeout(countdown); // Cleanup timer on component unmount
-  }, [timer]);
   return (
     <Grid
       item

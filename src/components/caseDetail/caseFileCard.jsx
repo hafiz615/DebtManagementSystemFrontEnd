@@ -1,14 +1,13 @@
 import React, { useState } from "react";
-import { Grid, Box, Button, Checkbox } from "@mui/material";
+import { Grid, Box, Button } from "@mui/material";
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import { RemoveRedEye } from "@mui/icons-material";
 import ScrollbarStyles from "../customScroll";
 
-function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
+function CaseFileCard({ caseData, GetCaseDetails }) {
   const [url, setUrl] = useState("");
   const [isViewerOpen, setIsViewerOpen] = useState(false);
-  const [selectedFiles, setSelectedFiles] = useState([]);
 
   const handleFileView = (url) => {
     setUrl(url);
@@ -18,18 +17,6 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
   const handleCloseViewer = () => {
     setUrl("");
     setIsViewerOpen(false);
-  };
-  const handleFileSelect = (item) => {
-    setSelectedFiles((prevSelected) => {
-      if (prevSelected.some((file) => file?.key === item?.key)) {
-        return prevSelected.filter((file) => file?.key !== item?.key);
-      } else {
-        return [
-          ...prevSelected,
-          { key: item?.key, originalFileName: item?.originalFileName },
-        ];
-      }
-    });
   };
 
   return (
@@ -96,46 +83,12 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
             >
               {item?.originalFileName}
             </span>
-            <Grid item sx={{ display: "flex" }}>
-              <Checkbox
-                sx={{
-                  color: Colors.DIM_LIGHT_GRAY,
-                  padding: "0",
-                  marginRight: "0.5rem",
-                }}
-                checked={selectedFiles.some((file) => file.key === item?.key)}
-                onChange={() => handleFileSelect(item)}
-              />
-
-              <RemoveRedEye
-                sx={{ color: Colors.SKY_BLUE, cursor: "pointer" }}
-                onClick={() => handleFileView(item?.url)}
-              />
-            </Grid>
+            <RemoveRedEye
+              sx={{ color: Colors.SKY_BLUE, cursor: "pointer" }}
+              onClick={() => handleFileView(item?.url)}
+            />
           </Grid>
         ))}
-        <Grid
-          item
-          xs={12}
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginBottom: ".5rem",
-            marginRight: "3.2rem",
-          }}
-        >
-          <MuiModels
-            show="extractFiles"
-            buttonName="extractFiles"
-            height="80vh"
-            width="80vw"
-            selectedFiles={selectedFiles}
-            setSelectedFiles={setSelectedFiles}
-            caseDataId={caseDataId}
-            caseData={caseData}
-            GetCaseDetails={GetCaseDetails}
-          />
-        </Grid>
       </Grid>
 
       {isViewerOpen && (

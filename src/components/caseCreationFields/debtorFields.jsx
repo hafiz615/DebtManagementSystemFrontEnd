@@ -35,8 +35,6 @@ export default function DebtorFields({
   setConnectPayment,
   walletId,
   show,
-  showFieldError,
-  misMatches,
 }) {
   const [menuItems, setMenuItems] = useState([]);
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
@@ -186,8 +184,8 @@ export default function DebtorFields({
   };
   const handleRemoveNewData = (index) => {
     const updatedList = [...debtorContactDetails];
-    updatedList.splice(index, 1);
-    setDebtorContactDetails(updatedList);
+    updatedList.splice(index, 1); // Remove item at the specified index in the copy
+    setDebtorContactDetails(updatedList); // Update state with the modified copy
   };
 
   const handleInputChange = (index, field, value) => {
@@ -272,11 +270,6 @@ export default function DebtorFields({
             onChangeFunction={(e) =>
               basicInfoInputChange("BasicFullName", e.target.value)
             }
-            border={
-              misMatches?.BasicFullName && showFieldError
-                ? "2px solid red"
-                : "1px solid transparent"
-            }
           />
           <PaymentsTextFields
             type="text"
@@ -288,29 +281,18 @@ export default function DebtorFields({
               basicInfoInputChange("BasicEmailAddress", e.target.value)
             }
             error={errors?.emailValid}
-            border={
-              misMatches?.BasicEmailAddress && showFieldError
-                ? "2px solid red"
-                : "1px solid transparent"
-            }
           />
           <PaymentsTextFields
-            type="number"
+            type="text"
             label="SSN*"
             placeHolderValue="Enter SSN"
             width="100%"
-            value={debtorOwnDetails?.BasicSsid || ""}
+            value={debtorOwnDetails?.BasicSsid}
             onChangeFunction={(e) => {
-              const newValue = e.target.value;
-              basicInfoInputChange("BasicSsid", newValue);
+              basicInfoInputChange("BasicSsid", e.target.value);
+              handleNumberInput(e);
             }}
-            onKeyDown={handleNumberInput}
             error={errors?.ssn}
-            border={
-              misMatches?.BasicSsid && showFieldError
-                ? "2px solid red"
-                : "1px solid transparent"
-            }
           />
         </Grid>
         <Grid
@@ -432,11 +414,6 @@ export default function DebtorFields({
             onChangeFunction={(e) =>
               basicInfoInputChange("BasicState", e.target.value)
             }
-            border={
-              misMatches?.BasicState && showFieldError
-                ? "2px solid red"
-                : "1px solid transparent"
-            }
           />
           <PaymentsTextFields
             label="City*"
@@ -445,11 +422,6 @@ export default function DebtorFields({
             value={debtorOwnDetails?.BasicCity}
             onChangeFunction={(e) =>
               basicInfoInputChange("BasicCity", e.target.value)
-            }
-            border={
-              misMatches?.BasicCity && showFieldError
-                ? "2px solid red"
-                : "1px solid transparent"
             }
           />
           <PaymentsTextFields
@@ -460,11 +432,6 @@ export default function DebtorFields({
             value={debtorOwnDetails?.BasicZipCode}
             onChangeFunction={(e) =>
               basicInfoInputChange("BasicZipCode", e.target.value)
-            }
-            border={
-              misMatches?.BasicZipCode && showFieldError
-                ? "2px solid red"
-                : "1px solid transparent"
             }
             onKeyDown={handleNumberInput}
           />
@@ -491,11 +458,6 @@ export default function DebtorFields({
                   : debtorOwnDetails.BasicPhoneNumber
                 : ""
             }
-            border={
-              misMatches?.BasicPhoneNumber && showFieldError
-                ? "2px solid red"
-                : "1px solid transparent"
-            }
             onChangeFunction={(e) => {
               const numericValue = e.target.value.replace(/\D/g, "");
               basicInfoInputChange("BasicPhoneNumber", numericValue);
@@ -509,11 +471,6 @@ export default function DebtorFields({
             placeHolderValue="Add Your Address"
             width="100%"
             value={debtorOwnDetails?.BasicAddress}
-            border={
-              misMatches?.BasicAddress && showFieldError
-                ? "2px solid red"
-                : "1px solid transparent"
-            }
             onChangeFunction={(e) =>
               basicInfoInputChange("BasicAddress", e.target.value)
             }
@@ -554,11 +511,6 @@ export default function DebtorFields({
             placeHolderValue="Enter Company Name"
             width="100%"
             value={debtorBusinessDetails?.businessCompanyName}
-            border={
-              misMatches?.businessCompanyName && showFieldError
-                ? "2px solid red"
-                : "1px solid transparent"
-            }
             onChangeFunction={(e) =>
               businessInfoInputChange("businessCompanyName", e.target.value)
             }
@@ -573,11 +525,6 @@ export default function DebtorFields({
             onChangeFunction={(e) =>
               businessInfoInputChange("businessEinNumber", e.target.value)
             }
-            border={
-              misMatches?.businessEinNumber && showFieldError
-                ? "2px solid red"
-                : "1px solid transparent"
-            }
             error={errors?.einNumber}
           />
           <PaymentsTextFields
@@ -586,11 +533,6 @@ export default function DebtorFields({
             placeHolderValue="Enter Category"
             width="100%"
             value={debtorBusinessDetails?.businessCategory}
-            border={
-              misMatches?.businessCategory && showFieldError
-                ? "2px solid red"
-                : "1px solid transparent"
-            }
             onChangeFunction={(e) =>
               businessInfoInputChange("businessCategory", e.target.value)
             }
@@ -641,11 +583,6 @@ export default function DebtorFields({
             label="State*"
             placeHolderValue="Enter State Name"
             width="100%"
-            border={
-              misMatches?.businessState && showFieldError
-                ? "2px solid red"
-                : "1px solid transparent"
-            }
             value={debtorBusinessDetails?.businessState}
             onChangeFunction={(e) =>
               businessInfoInputChange("businessState", e.target.value)
@@ -656,11 +593,6 @@ export default function DebtorFields({
             label="City*"
             placeHolderValue="Enter City Name"
             width="100%"
-            border={
-              misMatches?.businessCity && showFieldError
-                ? "2px solid red"
-                : "1px solid transparent"
-            }
             value={debtorBusinessDetails?.businessCity}
             onChangeFunction={(e) =>
               businessInfoInputChange("businessCity", e.target.value)
@@ -671,11 +603,6 @@ export default function DebtorFields({
             label="Zip Code*"
             placeHolderValue="Enter Zip Code"
             width="100%"
-            border={
-              misMatches?.businessZipCode && showFieldError
-                ? "2px solid red"
-                : "1px solid transparent"
-            }
             value={debtorBusinessDetails?.businessZipCode}
             onChangeFunction={(e) =>
               businessInfoInputChange("businessZipCode", e.target.value)
@@ -705,11 +632,6 @@ export default function DebtorFields({
                   : debtorBusinessDetails.businessPhoneNumber
                 : ""
             }
-            border={
-              misMatches?.businessPhoneNumber && showFieldError
-                ? "2px solid red"
-                : "1px solid transparent"
-            }
             onChangeFunction={(e) => {
               const numericValue = e.target.value.replace(/\D/g, "");
               businessInfoInputChange("businessPhoneNumber", numericValue);
@@ -723,11 +645,6 @@ export default function DebtorFields({
             label="Address*"
             placeHolderValue="Add Your Address"
             width="100%"
-            border={
-              misMatches?.businessAddress && showFieldError
-                ? "2px solid red"
-                : "1px solid transparent"
-            }
             value={debtorBusinessDetails?.businessAddress}
             onChangeFunction={(e) =>
               businessInfoInputChange("businessAddress", e.target.value)
