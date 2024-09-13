@@ -165,6 +165,16 @@ export const UpdateUserPassword = async (payload, token) => {
     return error;
   }
 };
+export const ForgotPassword = async (payload, token) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/user/forgotPasswordUpdate?token=${token}`,
+      payload
+    );
+  } catch (error) {
+    return error;
+  }
+};
 
 export const ResetUserPassword = async (payload) => {
   try {
@@ -1161,7 +1171,18 @@ export const SelectJustificationModal = async (payload) => {
   }
 };
 
-export const GetJustifications = async (id) => {
+export const GetPaymentIntervals = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/case/calculateIntervalsAmount/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetSettlementJustifications = async (id) => {
   try {
     return await axios.get(
       BASE_URL + `/v1/case/getSettlementJustifications/${id}`,
@@ -1172,10 +1193,56 @@ export const GetJustifications = async (id) => {
   }
 };
 
-export const GetPaymentIntervals = async (id) => {
+export const GetFullProfitSettlement = async (id) => {
   try {
     return await axios.get(
-      BASE_URL + `/v1/case/calculateIntervalsAmount/${id}`,
+      BASE_URL + `/v1/debtor/getFullProfitJustifications/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetLumpSumJustifications = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/debtor/getLumpSumJustifications/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const ForgotPasswordRes = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + "/v1/user/forgotPassword",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetAllCustomFields = async () => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/settings/getCustomFields`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetPipelineDataByCustomFields = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/pipeline/getCasesByCustomFieldAndValue/${id}`,
+      payload,
       setHeaders()
     );
   } catch (error) {

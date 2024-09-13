@@ -8,12 +8,10 @@ import {
   MenuItem,
   Popover,
 } from "@mui/material";
-import "froala-editor/css/froala_style.min.css";
-import "froala-editor/css/froala_editor.pkgd.min.css";
-import FroalaEditorComponent from "react-froala-wysiwyg";
+
 import TextButton from "./button";
 import { Colors } from "../config/default";
-import { FONT_SIZE_LARGE } from "../constants/appConstants";
+import { FONT_SIZE_LARGE, TEXT_EDITOR_KEY } from "../constants/appConstants";
 import styled from "styled-components";
 import {
   EditSettings,
@@ -23,8 +21,9 @@ import {
   SaveSettings,
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
-import { ArrowRight, ExpandMore } from "@mui/icons-material";
+import { ArrowRight, ExpandMore, Preview } from "@mui/icons-material";
 import Dropdown from "./dropdown";
+import { Editor } from "@tinymce/tinymce-react";
 
 const StyledInput = styled.input`
   font-family: "Nunito";
@@ -38,7 +37,7 @@ const StyledInput = styled.input`
   width: 98%;
 `;
 
-export default function FroalaEditor({
+export default function TextEditor({
   froalaEditor,
   setFroalaEditor,
   templateType,
@@ -71,8 +70,6 @@ export default function FroalaEditor({
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [allEvents, setAllEvents] = useState([]);
   const [customVariables, setCustomVariables] = useState({});
-
-  const editorRef = useRef(null);
 
   useEffect(() => {
     if (row?.content) {
@@ -479,11 +476,17 @@ export default function FroalaEditor({
       </Grid>
 
       {templateType === "email" ? (
-        <FroalaEditorComponent
-          tag="textarea"
-          model={froalaEditor}
-          onModelChange={handleChange}
-          ref={editorRef}
+        <Editor
+          style={{ margin: "0px !important" }}
+          apiKey={TEXT_EDITOR_KEY}
+          init={{
+            menubar: "false",
+            toolbar:
+              "formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat",
+            height: 250,
+          }}
+          value={froalaEditor}
+          onEditorChange={(content) => handleChange(content)}
         />
       ) : (
         <textarea

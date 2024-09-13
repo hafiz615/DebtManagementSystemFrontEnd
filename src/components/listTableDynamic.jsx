@@ -52,7 +52,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
-    backgroundColor: Colors.LIGHT_BLUE_COLOR,
+    backgroundColor: Colors.VIOLET,
     paddingLeft: "1rem",
   },
   padding: "0.5rem",
@@ -203,7 +203,7 @@ export default function ListTableDynamic({
                       >
                         {settings?.editNotificationTemplate ? (
                           <MuiModels
-                            show="froalaEditor"
+                            show="textEditor"
                             froalaEditor={froalaEditor}
                             setFroalaEditor={setFroalaEditor}
                             getSettings={getSettings}

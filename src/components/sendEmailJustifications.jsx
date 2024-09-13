@@ -3,12 +3,12 @@ import { Grid, Box, Typography, Tooltip } from "@mui/material";
 import { useToast } from "../toast/toastContext";
 import { Colors } from "../config/default";
 import TextButton from "./button";
-import FroalaEditorComponent from "react-froala-wysiwyg";
 import ScrollbarStyles from "./customScroll";
 import { SendSettlementEmail } from "../services/services";
-import { FONT_SIZE_MEDIUM } from "../constants/appConstants";
+import { FONT_SIZE_MEDIUM, TEXT_EDITOR_KEY } from "../constants/appConstants";
 import { marked } from "marked";
 import { useParams } from "react-router-dom";
+import { Editor } from "@tinymce/tinymce-react";
 
 const lineStyle = {
   width: "100%",
@@ -116,8 +116,6 @@ export default function SendEmailJustification({ handleClose, data, caseId }) {
 
   const disable = !sendTo || !sendFrom || !subject || !preview;
 
-  const editorRef = useRef(null);
-
   useEffect(() => {
     if (data) {
       const formattedData = data
@@ -215,11 +213,17 @@ export default function SendEmailJustification({ handleClose, data, caseId }) {
       )}
 
       <Grid sx={{ maxHeight: "40vh", overflowY: "auto", ...ScrollbarStyles }}>
-        <FroalaEditorComponent
-          tag="textarea"
-          model={preview}
-          onModelChange={setPreview}
-          ref={editorRef}
+        <Editor
+          style={{ margin: "0px !important" }}
+          apiKey={TEXT_EDITOR_KEY}
+          init={{
+            menubar: "false",
+            toolbar:
+              "formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat",
+            height: 250,
+          }}
+          value={preview}
+          onEditorChange={(content) => setPreview(content)}
         />
       </Grid>
 

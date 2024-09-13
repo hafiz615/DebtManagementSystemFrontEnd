@@ -184,7 +184,7 @@ export default function NotificationTemplatesTabs({
                   </Typography>
                   {settings?.addNotificationTemplate && (
                     <MuiModels
-                      show="froalaEditor"
+                      show="textEditor"
                       froalaEditorButton="Add New"
                       froalaEditor={froalaEditor}
                       setFroalaEditor={setFroalaEditor}
@@ -317,7 +317,7 @@ export default function NotificationTemplatesTabs({
                   </Typography>
 
                   <MuiModels
-                    show="froalaEditor"
+                    show="textEditor"
                     froalaEditorButton="Add New"
                     froalaEditor={froalaEditor}
                     setFroalaEditor={setFroalaEditor}

@@ -60,7 +60,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
-    backgroundColor: Colors.LIGHT_BLUE_COLOR,
+    backgroundColor: Colors.VIOLET,
   },
   "&:hover": {
     backgroundColor: "#DADADA",
@@ -154,7 +154,6 @@ export default function ListTable({
         backgroundColor: Colors.WHITE,
         borderRadius: "10px",
         width: { xs: "65vw", sm: "100%" },
-        height: defaultHeight || accordionHeight,
       }}
     >
       <div
@@ -168,6 +167,7 @@ export default function ListTable({
           sx={{
             flexGrow: 1,
             overflowY: "auto",
+            maxHeight: defaultHeight || accordionHeight,
             ...ScrollbarStyles,
           }}
         >
@@ -267,6 +267,7 @@ export default function ListTable({
                       ?.filter(
                         ([key]) =>
                           key !== "id" &&
+                          key !== "caseId" &&
                           (showFailureReason || key !== "failureReason") &&
                           (showDueDate || key !== "dueDate")
                       )

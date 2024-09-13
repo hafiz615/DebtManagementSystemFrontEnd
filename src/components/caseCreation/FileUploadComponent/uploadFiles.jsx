@@ -268,6 +268,12 @@ const FileUploadComponent = ({
                             onChange={(e) =>
                               handleCheckboxChange(file, e.target.checked)
                             }
+                            sx={{
+                              color: Colors.SKY_BLUE,
+                              "&.Mui-checked": {
+                                color: Colors.SKY_BLUE,
+                              },
+                            }}
                           />
                         </TableCell>
                         <TableCell sx={styles.pathCell}>

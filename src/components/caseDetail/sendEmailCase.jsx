@@ -9,14 +9,13 @@ import {
   Popover,
   Tooltip,
 } from "@mui/material";
-import "froala-editor/css/froala_style.min.css";
-import "froala-editor/css/froala_editor.pkgd.min.css";
-import FroalaEditorComponent from "react-froala-wysiwyg";
+
 import TextButton from "../button";
 import { Colors } from "../../config/default";
 import {
   FONT_SIZE_LARGE,
   FONT_SIZE_MEDIUM,
+  TEXT_EDITOR_KEY,
 } from "../../constants/appConstants";
 import styled from "styled-components";
 import { GetCustomVariable, SendEmailSmsCase } from "../../services/services";
@@ -24,6 +23,7 @@ import { useToast } from "../../toast/toastContext";
 import { ArrowRight, ExpandMore } from "@mui/icons-material";
 import ScrollbarStyles from "./../customScroll";
 import { handleNumberInput } from "../../common";
+import { Editor } from "@tinymce/tinymce-react";
 
 const lineStyle = {
   width: "100%",
@@ -94,13 +94,6 @@ export default function SendEmailCase({
   useEffect(() => {
     getVariableAndEvents();
   }, []);
-
-  const handleSubjectChange = (e) => {
-    setEmailTemplate((prev) => ({
-      ...prev,
-      subject: e.target.value,
-    }));
-  };
 
   const handleCloseMenu = () => {
     setAnchorEl(null);
@@ -495,11 +488,17 @@ export default function SendEmailCase({
             onChange={(e) => setPreview(e.target.value)}
           />
         ) : (
-          <FroalaEditorComponent
-            tag="textarea"
-            model={preview}
-            onModelChange={setPreview}
-            ref={editorRef}
+          <Editor
+            style={{ margin: "0px !important" }}
+            apiKey={TEXT_EDITOR_KEY}
+            init={{
+              menubar: "false",
+              toolbar:
+                "formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat",
+              height: 250,
+            }}
+            value={preview}
+            onEditorChange={(content) => setPreview(content)}
           />
         )}
       </div>

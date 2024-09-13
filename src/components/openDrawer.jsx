@@ -33,6 +33,7 @@ import { Colors } from "../config/default";
 import BasicMenu from "./menuSimple";
 import { useDispatch, useSelector } from "react-redux";
 import { closeDrawer, openDrawer } from "../redux/action/action";
+import AppLogo from "../../src/assets/FC White.png";
 
 const drawerWidth = 240;
 const closedDrawerWidth = 60;
@@ -68,7 +69,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   alignItems: "center",
   ...theme.mixins.toolbar,
   justifyContent: "flex-end",
-  backgroundColor: Colors.NAVY_BLUE,
+  background: "linear-gradient(140deg, #9333EA, #1E3A8A)",
 }));
 
 export default function PersistentDrawerLeft({ children }) {
@@ -83,6 +84,7 @@ export default function PersistentDrawerLeft({ children }) {
   const [selectedItem, setSelectedItem] = useState(routeFound || "Home");
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
   const open = useSelector((state) => state.drawer.open);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -179,6 +181,11 @@ export default function PersistentDrawerLeft({ children }) {
     menuItems.splice(6, 0, { text: "Analytics", icon: <Window /> });
   }
 
+  const handleLogoClick = () => {
+    localStorage.setItem("route", "home");
+    navigate(`/home`);
+  };
+
   return (
     <Box
       sx={{
@@ -211,6 +218,19 @@ export default function PersistentDrawerLeft({ children }) {
         open={open}
       >
         <DrawerHeader>
+          {open && (
+            <div onClick={handleLogoClick} style={{ cursor: "pointer" }}>
+              <img
+                src={AppLogo}
+                alt="laptopImage"
+                style={{
+                  width: "150px",
+                  height: "100%",
+                  objectFit: "contain",
+                }}
+              />
+            </div>
+          )}
           {open ? (
             <IconButton
               size="large"

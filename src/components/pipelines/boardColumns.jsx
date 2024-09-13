@@ -135,6 +135,9 @@ const BoardColumns = ({
     ? "33%"
     : "25%";
 
+  const remainingPerColumn = sortedCases?.reduce((acc, item) => {
+    return acc + (item?.remaining || 0);
+  }, 0);
   return (
     <Grid
       item
@@ -163,7 +166,7 @@ const BoardColumns = ({
               marginBottom: "10px",
             }}
           >
-            {items?.cases?.length} Opportunities
+            {sortedCases?.length} Opportunities
           </Typography>
         </div>
         <Tooltip title="Sort By Debtor Business" placement="top-start">
@@ -206,7 +209,7 @@ const BoardColumns = ({
             color: Colors.WHITE,
           }}
         >
-          ${items?.annualizedValue}
+          ${remainingPerColumn}
         </Typography>
       </div>
 

@@ -11,6 +11,7 @@ import {
   IconButton,
   Menu,
 } from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
 import { LineChart, PieChart, BarChart } from "@mui/x-charts";
 
 import { Colors } from "../../config/default";
@@ -21,10 +22,13 @@ import TextButton from "../button";
 import CustomTextField from "../customTextfield";
 import {
   FONT_SIZE_LARGE,
+  FONT_SIZE_MEDIUM,
+  FONT_SIZE_SMALL,
   FONT_SIZE_XL,
   PAGE_HEIGHT,
 } from "../../constants/appConstants";
-import ScrollbarStyles from "../customScroll";
+import { ChevronLeft, NavigateNext } from "@mui/icons-material";
+import ScrollbarStyles from "./../customScroll";
 
 function DashboardContent() {
   const navigate = useNavigate();
@@ -38,6 +42,7 @@ function DashboardContent() {
   const open = Boolean(anchorEl);
   const [dashboardData, setDashboardData] = useState({});
   const userName = useSelector((state) => state?.signIn?.signIn?.user?.name);
+  const [startIndex, setStartIndex] = useState(0);
 
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -124,13 +129,15 @@ function DashboardContent() {
     }
   }, [saveState, filterActive]);
 
-  const countData = dashboardData?.statusCounts
+  const limitedDataArray = dashboardData?.statusCounts
     ?.filter((item) => item?.count > 0)
     ?.map((item, i) => ({
       id: i,
       value: item?.count,
       label: item?.label,
     }));
+  const countData = limitedDataArray?.slice(0, 20);
+  const itemsPerPage = 7;
   const processedData = dashboardData?.casesByDate?.map((item) => ({
     date: item?.date,
     value: item?.count,
@@ -142,6 +149,60 @@ function DashboardContent() {
   }));
   const valueFormatter = (value) => value;
   const percentageValues = percentageData?.map((item) => item.value);
+  const categories = {
+    Tableau10: [
+      "#24658D",
+      "#429EB0",
+      "#F1A230",
+      "#E95050",
+      "#4E79A7",
+      "#F28E2C",
+      "#E15759",
+      "#76B7B2",
+      "#59A14F",
+      "#EDC949",
+      "#AF7AA1",
+      "#FF9DA7",
+      "#9C755F",
+      "#BAB0AB",
+      "#1B9E77",
+      "#D95F02",
+      "#7570B3",
+      "#E7298A",
+      "#66A61E",
+      "#E6AB02",
+      "#A6761D",
+      "#666666",
+      "#7FC97F",
+      "#BEAED4",
+      "#FDC086",
+      "#FFFF99",
+      "#386CB0",
+      "#F0027F",
+      "#BF5B17",
+      "#666666",
+      "#377EB8",
+      "#4DAF4A",
+      "#984EA3",
+      "#FF7F00",
+      "#FFFF33",
+      "#A65628",
+      "#F781BF",
+      "#999999",
+    ],
+  };
+  const [colorScheme] = useState("Tableau10");
+
+  const handleNext = () => {
+    if (startIndex + itemsPerPage < limitedDataArray?.length) {
+      setStartIndex(startIndex + itemsPerPage);
+    }
+  };
+  const handlePrev = () => {
+    if (startIndex - itemsPerPage >= 0) {
+      setStartIndex(startIndex - itemsPerPage);
+    }
+  };
   return (
     <Grid
       container
@@ -445,36 +506,141 @@ function DashboardContent() {
 
                 <div style={{ height: "10rem" }}>
                   {!isEmpty(countData) ? (
-                    <PieChart
-                      sx={{ width: "100%", ml: { xs: "3rem", sm: "0" } }}
-                      slotProps={{
-                        legend: {
-                          direction: "column",
-                          itemGap: 6,
-                          padding: 40,
-                          labelStyle: {
-                            fontSize: "14px",
-                            fontFamily: "Nunito",
-                          },
-                        },
-                      }}
-                      series={[
-                        {
-                          data: countData,
-                          highlightScope: {
-                            faded: "global",
-                            highlighted: "item",
-                          },
-                        },
-                      ]}
-                      margin={{
-                        top: 10,
-                        bottom: 40,
-                        left: 0,
-                        right: 150,
-                      }}
-                      height={250}
-                    />
+                    <>
+                      <Grid container sx={{ justifyContent: "center" }}>
+                        <Grid
+                          container
+                          item
+                          xs={12}
+                          sm={7}
+                          sx={{
+                            justifyContent: "center",
+                          }}
+                        >
+                          <PieChart
+                            series={[
+                              {
+                                data: countData,
+                                cx: 180,
+                                cy: 40,
+                                highlightScope: {
+                                  faded: "global",
+                                  highlighted: "item",
+                                },
+                              },
+                            ]}
+                            colors={categories[colorScheme]}
+                            slotProps={{
+                              legend: { hidden: true },
+                            }}
+                            height={470}
+                            width={380}
+                          />
+                        </Grid>
+                        <Grid
+                          container
+                          item
+                          xs={12}
+                          sm={5}
+                          sx={{
+                            marginTop: "1rem",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              padding: "1em",
+                              height: "12rem",
+                              width: "80%",
+                              overflowY: "scroll !important",
+                              borderRadius: "15px",
+                              backgroundColor: Colors.BG_LIGHT_GRAY,
+                              position: "relative",
+                            }}
+                          >
+                            <Grid
+                              sx={{
+                                overflowY: "auto",
+                                ...ScrollbarStyles,
+                              }}
+                            >
+                              {countData
+                                ?.slice(startIndex, startIndex + itemsPerPage)
+                                ?.map((item, index) => (
+                                  <div
+                                    key={`${item.label}-${index}`}
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <div
+                                      style={{
+                                        width: "16px",
+                                        height: "16px",
+                                        backgroundColor:
+                                          categories[colorScheme][item?.id],
+                                        marginRight: "5px",
+                                      }}
+                                    />
+                                    <Tooltip title={item?.label} arrow>
+                                      <span
+                                        title={item?.label}
+                                        style={{
+                                          fontSize: FONT_SIZE_MEDIUM,
+                                          whiteSpace: "nowrap",
+                                          overflow: "hidden",
+                                          textOverflow: "ellipsis",
+                                          maxWidth: "150px",
+                                        }}
+                                      >
+                                        {`${item.label.substring(0, 10)}${
+                                          item.label.length > 10 ? "..." : ""
+                                        }`}
+                                      </span>
+                                    </Tooltip>
+                                  </div>
+                                ))}
+                            </Grid>
+                            {limitedDataArray?.length > 7 ? (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "flex-end",
+                                  position: "absolute",
+                                  bottom: "10px",
+                                  right: "10px",
+                                }}
+                              >
+                                <IconButton
+                                  aria-label="prev"
+                                  disabled={startIndex - itemsPerPage < 0}
+                                  onClick={handlePrev}
+                                  color="primary"
+                                >
+                                  <ChevronLeft />
+                                </IconButton>
+                                <IconButton
+                                  aria-label="next"
+                                  disabled={
+                                    startIndex + itemsPerPage >=
+                                    limitedDataArray?.length
+                                  }
+                                  onClick={handleNext}
+                                  color="primary"
+                                >
+                                  <NavigateNext />
+                                </IconButton>
+                              </div>
+                            ) : (
+                              ""
+                            )}
+                          </div>
+                        </Grid>
+                      </Grid>
+                    </>
                   ) : (
                     <div
                       style={{

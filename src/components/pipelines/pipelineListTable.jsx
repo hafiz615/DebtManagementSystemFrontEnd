@@ -45,7 +45,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
-    backgroundColor: Colors.LIGHT_BLUE_COLOR,
+    backgroundColor: Colors.VIOLET,
   },
   "&:hover": {
     backgroundColor: "#DADADA",
@@ -88,7 +88,6 @@ export default function PipelineListTable({
         backgroundColor: Colors.WHITE,
         borderRadius: "10px",
         width: { xs: "65vw", sm: "100%" },
-        height: "55vh",
       }}
     >
       <div
@@ -101,6 +100,7 @@ export default function PipelineListTable({
         <TableContainer
           sx={{
             flexGrow: 1,
+            maxHeight: "55vh",
             overflowY: "auto",
             ...ScrollbarStyles,
           }}

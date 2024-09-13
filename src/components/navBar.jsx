@@ -1,17 +1,20 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
+import { Box, Tooltip } from "@mui/material";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
-import AccountCircle from "@mui/icons-material/AccountCircle";
 import { Colors } from "../config/default";
 import { Logout } from "../services/services";
-import { Typography } from "@mui/material";
-import { FONT_SIZE_XXL } from "../constants/appConstants";
+
+import AppLogo from "../../src/assets/FC White.png";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { useSelector } from "react-redux";
 
 export default function NavBar({ onClick }) {
   const navigate = useNavigate();
+  const drawerOpen = useSelector((state) => state.drawer.open);
+
   const deleteAllCookies = () => {
     const cookies = document.cookie.split(";");
     for (let i = 0; i < cookies.length; i++) {
@@ -21,6 +24,10 @@ export default function NavBar({ onClick }) {
       document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
     }
   };
+
+  const widthStyling = drawerOpen
+    ? "calc(100vw - 250px - 4rem)"
+    : "calc(100vw - 70px - 4rem)";
 
   // Function to clear all cache (localStorage, sessionStorage)
   const clearAllCache = () => {
@@ -38,41 +45,61 @@ export default function NavBar({ onClick }) {
     deleteAllCookies();
   };
 
+  const handleLogoClick = () => {
+    localStorage.setItem("route", "home");
+    navigate(`/home`);
+  };
+
   return (
     <Box>
       <AppBar
         position="fixed"
         elevation={0}
         sx={{
-          backgroundColor: Colors.NAVY_BLUE,
+          background: Colors.GRADIENT,
           height: "4rem",
           zIndex: 1,
         }}
       >
         <Toolbar>
           <Box sx={{ flexGrow: 1 }} />
-
-          <IconButton
-            onClick={handleLogout}
-            size="large"
-            edge="end"
-            aria-label="account of current user"
-            aria-haspopup="true"
-            sx={{
-              color: Colors.WHITE,
-              borderRadius: "50%",
+          <div
+            style={{
+              display: "flex",
+              width: widthStyling,
+              justifyContent: !drawerOpen ? "space-between" : "flex-end",
+              alignItems: "center",
             }}
           >
-            <Typography
-              sx={{
-                fontFamily: "Nunito",
-                fontSize: FONT_SIZE_XXL,
-                fontWeight: "600",
-              }}
-            >
-              LOGOUT
-            </Typography>
-          </IconButton>
+            {!drawerOpen && (
+              <div onClick={handleLogoClick} style={{ cursor: "pointer" }}>
+                <img
+                  src={AppLogo}
+                  alt="laptopImage"
+                  style={{
+                    width: "150px",
+                    height: "4rem",
+                    objectFit: "contain",
+                  }}
+                />
+              </div>
+            )}
+
+            <Tooltip title="logout" placement="top-end">
+              <IconButton
+                onClick={handleLogout}
+                size="large"
+                edge="end"
+                aria-label="account of current user"
+                aria-haspopup="true"
+                sx={{
+                  color: Colors.WHITE,
+                }}
+              >
+                <LogoutIcon sx={{ fontSize: "30px" }} />
+              </IconButton>
+            </Tooltip>
+          </div>
         </Toolbar>
       </AppBar>
     </Box>

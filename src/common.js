@@ -421,8 +421,8 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     creditorsContractDetailsSum,
     settlementRange,
     getScores,
-    chatGpt,
   } = data;
+
   const doc = new jsPDF();
   doc.setFontSize(18);
 
@@ -438,12 +438,17 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
   const formatCurrency = (value) => {
     return typeof value === "number" ? `$${value.toLocaleString()}` : "N/A";
   };
+
+  // let currentY = 20;
   doc.text("Settlement Range Data ", 14, 20);
-  doc.setFontSize(14);
+
+  // doc.setFontSize(14);
+  // currentY += 10;
 
   // Debtor Information
   if (checkboxState["Debtor Information"]) {
-    doc.text("Debtor Information", 14, 40);
+    doc.text("Debtor Information", 14, 30);
+    // currentY += 10;
     const debtorInfo = [
       ["Full Name", debtor?.basicInformation?.fullName || "N/A"],
       ["Email", debtor?.basicInformation?.email || "N/A"],
@@ -463,14 +468,18 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     doc.autoTable({
       head: [["Field", "Value"]],
       body: debtorInfo,
+      // startY: currentY,
       startY: 45,
     });
+    // currentY = doc.autoTable.previous.finalY + 10;
   }
 
   //Settlement Range
   if (checkboxState["Settlement Range"]) {
     doc.setFontSize(14);
+    // doc.text("Settlement Range", 14, currentY);
     doc.text("Settlement Range", 14, doc.autoTable.previous.finalY + 20);
+    // currentY += 10;
     const settlementRangeSummary = [
       ["Weekly Profit", formatCurrency(settlementRange?.weekly_profit) || 0],
       [
@@ -484,6 +493,7 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
       body: settlementRangeSummary,
       startY: doc.autoTable.previous.finalY + 25,
     });
+    // currentY = doc.autoTable.previous.finalY + 10;
   }
 
   // Add Scores
@@ -885,7 +895,7 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
   }
 
   //strategy 3
-  if (checkboxState["Strategy 3 Recommendation"]) {
+  if (checkboxState["Strategy 3 Recommendations"]) {
     doc.setFontSize(14);
     doc.text(
       "Strategy 3 Recommendations Minimum",
@@ -992,3 +1002,14 @@ export function formatDateString(isoDateStr) {
 
   return date.toLocaleString("en-US", options).replace(",", " at");
 }
+
+export const isPhoneNumber = (value) => {
+  const phoneRegex = /^[0-9]{10,}$/;
+  return phoneRegex.test(value);
+};
+export const formatValue = (value) => {
+  if (isPhoneNumber(value)) {
+    return `+1${value}`;
+  }
+  return value;
+};
