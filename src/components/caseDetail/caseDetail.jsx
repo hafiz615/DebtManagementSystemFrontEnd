@@ -76,6 +76,7 @@ function CaseDetail() {
   const [addTaskModal, setAddTaskModal] = useState("");
   const [logs, setLogs] = useState([]);
   const { id } = useParams();
+  console.log(caseData, "caseData");
   const handleOpen = async () => {
     setOpen(true);
   };
@@ -391,6 +392,7 @@ function CaseDetail() {
                         </Box>
                       </div>
                       {caseData?.creditors?.map((item, index) => {
+                        console.log(item, "itttttt");
                         return (
                           <Grid
                             container
@@ -410,9 +412,7 @@ function CaseDetail() {
                               height: "2rem",
                               alignItems: "center",
                             }}
-                            onClick={() =>
-                              navigate(`/all-cases/${item?.caseId}`)
-                            }
+                            onClick={() => navigate(`/all-cases/${item?._id}`)}
                           >
                             <Grid item xs={12} md={8} lg={5}>
                               <span
