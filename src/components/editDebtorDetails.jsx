@@ -8,6 +8,7 @@ import { UpdateDebtor } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import DebtorFields from "./caseCreationFields/debtorFields";
 import { phoneNumberFormat } from "../common";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 export default function EditDebtorDetail({
   handleClose,
@@ -23,6 +24,7 @@ export default function EditDebtorDetail({
   const { id } = useParams();
   const { showToast } = useToast();
   const parseString = (value) => (value ? String(value).replace(/-/g, "") : "");
+  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:1300px)");
 
   const debtorBasicInfo =
     caseData?.debtor?.basicInformation || caseData?.debtor_info;
@@ -174,7 +176,7 @@ export default function EditDebtorDetail({
       const hasMismatch = Object.values(mismatches).some((value) => value);
       if (hasMismatch) {
         setNoteMessage(
-          "Note: Highlighted Information does not match with exiting Case Information"
+          "Note: Highlighted Information does not match with exiting Debtor Information"
         );
       } else {
         setNoteMessage("");
@@ -298,39 +300,131 @@ export default function EditDebtorDetail({
           showFieldError={showFields}
         />
       </Grid>
-      {noteMessage && (
-        <Typography
-          sx={{
-            color: Colors.ORANGE_COLOR,
-            margin: "1rem",
-            fontFamily: "Nunito",
-          }}
-        >
-          {noteMessage}
-        </Typography>
-      )}
-      <Grid container sx={{ justifyContent: "right" }}>
-        <TextButton
-          buttonText="Save"
-          height="2rem"
-          width="8rem"
-          marginRight="1rem"
-          // disabled={!isFormValid}
-          onClick={updateDebtorById}
-          backgroundColor={Colors.SKY_BLUE}
-          hoverColor={Colors.SKY_BLUE}
-          loading={loading}
-        />
-        <TextButton
-          buttonText="Next"
-          height="2rem"
-          width="8rem"
-          marginRight="1rem"
-          onClick={showCreditor}
-          backgroundColor={Colors.DIM_LIGHT_GRAY}
-          hoverColor={Colors.DIM_LIGHT_GRAY}
-          loading={loading}
-        />
+      <Grid container>
+        {noteMessage && (
+          <>
+            <Grid
+              item
+              xs={12}
+              sx={{ display: "flex", justifyContent: "space-between" }}
+            >
+              <Grid item xs={9}>
+                <Typography
+                  sx={{
+                    color: Colors.ORANGE_COLOR,
+                    fontFamily: "Nunito",
+                  }}
+                >
+                  {noteMessage}
+                </Typography>
+              </Grid>
+              <Grid container item xs={3}>
+                <TextButton
+                  buttonText="Save"
+                  height="2rem"
+                  width="8rem"
+                  marginRight="1rem"
+                  // disabled={!isFormValid}
+                  onClick={updateDebtorById}
+                  backgroundColor={Colors.SKY_BLUE}
+                  hoverColor={Colors.SKY_BLUE}
+                  loading={loading}
+                />
+                <TextButton
+                  buttonText="Next"
+                  height="2rem"
+                  width="8rem"
+                  marginTop={smallScreen ? "1rem" : "auto"}
+                  onClick={showCreditor}
+                  backgroundColor={Colors.DIM_LIGHT_GRAY}
+                  hoverColor={Colors.DIM_LIGHT_GRAY}
+                  loading={loading}
+                />
+              </Grid>
+            </Grid>
+            <Grid item xs={6}>
+              <Box
+                sx={{
+                  fontFamily: "Nunito",
+                }}
+              >
+                <Typography variant="h6" sx={{ fontWeight: "600" }}>
+                  Previous Debtor Own Details:
+                </Typography>
+                <Typography>
+                  Full Name: {data?.debtor?.basicInformation?.fullName || "--"}
+                </Typography>
+                <Typography>
+                  Email: {data?.debtor?.basicInformation?.email || "--"}
+                </Typography>
+                <Typography>
+                  SSN: {data?.debtor?.basicInformation?.SSID || "--"}
+                </Typography>
+                <Typography>
+                  State: {data?.debtor?.basicInformation?.state || "--"}
+                </Typography>
+                <Typography>
+                  City: {data?.debtor?.basicInformation?.city || "--"}
+                </Typography>
+                <Typography>
+                  Zip Code: {data?.debtor?.basicInformation?.zipCode || "--"}
+                </Typography>
+                <Typography>
+                  Phone Number: {data?.debtor?.basicInformation?.phone || "--"}
+                </Typography>
+                <Typography>
+                  Address: {data?.debtor?.basicInformation?.address || "--"}
+                </Typography>
+                <Typography>
+                  Weekly Budget:{" "}
+                  {data?.debtor?.basicInformation?.weeklyBudget || "--"}
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={6}>
+              <Box
+                sx={{
+                  fontFamily: "Nunito",
+                }}
+              >
+                <Typography variant="h6" sx={{ fontWeight: "600" }}>
+                  Previous Debtor Business Details:
+                </Typography>
+                <Typography>
+                  Company Name:{" "}
+                  {data?.debtor?.businessInformation?.companyName || "--"}
+                </Typography>
+                <Typography>
+                  EIN: {data?.debtor?.businessInformation?.EIN || "--"}
+                </Typography>
+                <Typography>
+                  Business Category:{" "}
+                  {data?.debtor?.businessInformation?.businessCategory || "--"}
+                </Typography>
+                <Typography>
+                  Business Description:{" "}
+                  {data?.debtor?.businessInformation?.description || "--"}
+                </Typography>
+                <Typography>
+                  State: {data?.debtor?.businessInformation?.state || "--"}
+                </Typography>
+                <Typography>
+                  City: {data?.debtor?.businessInformation?.city || "--"}
+                </Typography>
+                <Typography>
+                  Zip Code: {data?.debtor?.businessInformation?.zipCode || "--"}
+                </Typography>
+                <Typography>
+                  Phone Number:{" "}
+                  {data?.debtor?.businessInformation?.phone || "--"}
+                </Typography>
+                <Typography>
+                  Address: {data?.debtor?.businessInformation?.address || "--"}
+                </Typography>
+              </Box>
+            </Grid>
+          </>
+        )}
       </Grid>
     </>
   );
