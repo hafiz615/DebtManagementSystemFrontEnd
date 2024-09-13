@@ -3,7 +3,7 @@ import { Grid } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Colors } from "../config/default";
-import Laptop from "../../src/assets/Laptop.png";
+import AppLogo from "../../src/assets/FC White.png";
 import VerifyProfile from "../components/verifyProfile";
 
 function VerifyProfilePage() {
@@ -33,7 +33,7 @@ function VerifyProfilePage() {
         item
         xs={6}
         sx={{
-          backgroundColor: Colors.NAVY_BLUE,
+          background: Colors.GRADIENT,
           height: "100vh",
           display: largeScreen ? "none" : "flex",
           justifyContent: "center",
@@ -41,11 +41,11 @@ function VerifyProfilePage() {
         }}
       >
         <img
-          src={Laptop}
+          src={AppLogo}
           alt="laptopImage"
           style={{
-            width: "70%",
-            height: "70%",
+            width: "50%",
+            height: "50%",
             objectFit: "contain",
           }}
         />

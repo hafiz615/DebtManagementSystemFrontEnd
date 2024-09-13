@@ -22,6 +22,8 @@ import TextButton from "../button";
 import CustomTextField from "../customTextfield";
 import {
   FONT_SIZE_LARGE,
+  FONT_SIZE_MEDIUM,
+  FONT_SIZE_SMALL,
   FONT_SIZE_XL,
   PAGE_HEIGHT,
 } from "../../constants/appConstants";
@@ -135,7 +137,7 @@ function DashboardContent() {
       label: item?.label,
     }));
   const countData = limitedDataArray?.slice(0, 20);
-  const itemsPerPage = 6;
+  const itemsPerPage = 7;
   const processedData = dashboardData?.casesByDate?.map((item) => ({
     date: item?.date,
     value: item?.count,
@@ -505,14 +507,28 @@ function DashboardContent() {
                 <div style={{ height: "10rem" }}>
                   {!isEmpty(countData) ? (
                     <>
-                      <Grid container>
-                        <Grid container item xs={12} sm={6}>
+                      <Grid
+                        container
+                        sx={{
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Grid
+                          container
+                          item
+                          xs={12}
+                          sm={7}
+                          sx={{
+                            justifyContent: "center",
+                            marginTop: ".5rem",
+                          }}
+                        >
                           <PieChart
                             series={[
                               {
                                 data: countData,
-                                cx: 200,
-                                cy: 50,
+                                cx: 180,
+                                cy: 40,
                                 highlightScope: {
                                   faded: "global",
                                   highlighted: "item",
@@ -527,13 +543,23 @@ function DashboardContent() {
                             width={380}
                           />
                         </Grid>
-                        <Grid item xs={12} sm={6} sx={{ padding: "1em" }}>
+                        <Grid
+                          container
+                          item
+                          xs={12}
+                          sm={5}
+                          sx={{
+                            marginTop: "1rem",
+                            justifyContent: "center",
+                          }}
+                        >
                           <div
                             style={{
                               display: "flex",
                               flexDirection: "column",
                               padding: "1em",
-                              height: "50%",
+                              height: "12rem",
+                              width: "80%",
                               overflowY: "scroll !important",
                               borderRadius: "15px",
                               backgroundColor: Colors.BG_LIGHT_GRAY,
@@ -542,7 +568,6 @@ function DashboardContent() {
                           >
                             <Grid
                               sx={{
-                                height: "85%",
                                 overflowY: "auto",
                                 ...ScrollbarStyles,
                               }}
@@ -559,17 +584,18 @@ function DashboardContent() {
                                   >
                                     <div
                                       style={{
-                                        width: "20px",
-                                        height: "20px",
+                                        width: "16px",
+                                        height: "16px",
                                         backgroundColor:
                                           categories[colorScheme][item?.id],
                                         marginRight: "5px",
                                       }}
                                     />
-                                    <Tooltip title={item.label} arrow>
+                                    <Tooltip title={item?.label} arrow>
                                       <span
-                                        title={item.label}
+                                        title={item?.label}
                                         style={{
+                                          fontSize: FONT_SIZE_MEDIUM,
                                           whiteSpace: "nowrap",
                                           overflow: "hidden",
                                           textOverflow: "ellipsis",

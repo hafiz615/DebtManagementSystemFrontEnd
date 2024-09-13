@@ -16,6 +16,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "@tinymce/tinymce-react": "^5.1.1",
     "axios": "^1.6.8",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.12",
@@ -48,6 +49,7 @@
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.4.1",
     "styled-components": "^6.1.11",
+    "tinymce": "^7.3.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

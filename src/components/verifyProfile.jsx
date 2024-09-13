@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   TextField,
@@ -14,12 +14,22 @@ import { sign_In } from "../redux/action/action";
 import Button from "./button";
 import { Colors } from "../config/default";
 import { useNavigate } from "react-router-dom";
-import { VerifyLink, UpdateUserPassword } from "../services/services";
+import {
+  VerifyLink,
+  UpdateUserPassword,
+  ForgotPassword,
+} from "../services/services";
 import { useToast } from "../toast/toastContext";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
+import { useLocation } from "react-router-dom";
 
 export default function VerifyProfile() {
+  const location = useLocation();
+  const getQueryParams = () => {
+    return new URLSearchParams(location.search);
+  };
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { showToast } = useToast();
@@ -30,10 +40,17 @@ export default function VerifyProfile() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [type, setType] = useState("");
 
   const currentURL = window.location.href;
   const url = new URL(currentURL);
   const tokenValue = url?.searchParams?.get("token");
+  useEffect(() => {
+    const queryParams = getQueryParams();
+    const typeFromURL = queryParams.get("type");
+    setType(typeFromURL);
+    const tokenValue = queryParams.get("token");
+  }, [location]);
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
@@ -73,7 +90,7 @@ export default function VerifyProfile() {
     }
   };
 
-  const handleFormSubmit = async () => {
+  const handleFormSubmit = async (token) => {
     setLoading(true);
     const verifyUser = await VerifyLink(tokenValue);
 
@@ -82,15 +99,28 @@ export default function VerifyProfile() {
         password: password,
         email: verifyUser?.data?.data?.email,
       };
-      const updateUserPassword = await UpdateUserPassword(params, tokenValue);
-      if (updateUserPassword?.status === 200) {
-        localStorage.clear();
-        dispatch(sign_In(updateUserPassword?.data?.data));
-        const token = updateUserPassword?.data?.data?.token;
-        localStorage.setItem("token", token);
-        navigate("/home");
+      if (type === "forgot") {
+        const forgotPassword = await ForgotPassword(params, tokenValue);
+        if (forgotPassword?.status === 200) {
+          localStorage.clear();
+          // dispatch(sign_In(forgotPassword?.data?.data));
+          // const token = forgotPassword?.data?.data?.token;
+          // localStorage.setItem("token", token);
+          navigate("/");
+        } else {
+          showToast(forgotPassword?.response?.data?.message, "error");
+        }
       } else {
-        showToast(updateUserPassword?.response?.data?.message, "error");
+        const updateUserPassword = await UpdateUserPassword(params, tokenValue);
+        if (updateUserPassword?.status === 200) {
+          localStorage.clear();
+          dispatch(sign_In(updateUserPassword?.data?.data));
+          const token = updateUserPassword?.data?.data?.token;
+          localStorage.setItem("token", token);
+          navigate("/");
+        } else {
+          showToast(updateUserPassword?.response?.data?.message, "error");
+        }
       }
     } else {
       const errorMessage = verifyUser?.response?.data?.message;
@@ -125,11 +155,10 @@ export default function VerifyProfile() {
           fontSize: "2.5rem",
           fontWeight: "700",
           marginBottom: "2rem",
-          color: Colors.NAVY_BLUE,
           fontFamily: "Nunito",
         }}
       >
-        Verify User
+        {type === "forgot" ? "Reset Password" : "Verify User"}
       </Typography>
       <TextField
         type={showPassword ? "text" : "password"}
@@ -163,6 +192,11 @@ export default function VerifyProfile() {
         variant="standard"
         value={confirmPassword}
         onChange={handleConfirmPasswordChange}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !isButtonDisabled) {
+            handleFormSubmit();
+          }
+        }}
         sx={{
           marginBottom: "1rem",
         }}
@@ -187,6 +221,8 @@ export default function VerifyProfile() {
       <Button
         disabled={isButtonDisabled}
         loading={loading}
+        backgroundColor={Colors.SKY_BLUE}
+        hoverColor={Colors.SKY_BLUE}
         buttonText="SAVE"
         onClick={handleFormSubmit}
         marginTop="2rem"

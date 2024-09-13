@@ -22,7 +22,7 @@
   top: 0.75em;
   left: 50%;
   transform: translateX(-50%);
-  border-right: 3em solid #0091d5;
+  border-right: 3em solid #7353f0;
   background-color: white;
   padding: 10px;
   border-radius: 1.15em;
@@ -86,7 +86,7 @@
 }
 
 .custom-toaster-content.success {
-  background-color: #0091d5;
+  background-color: #7353f0;
 }
 
 .custom-toaster-message {

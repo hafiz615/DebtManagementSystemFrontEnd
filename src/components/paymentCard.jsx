@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Grid } from "@mui/material";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import { Colors } from "../config/default";
 
 function PaymentCardDetails({ setConnectPayment }) {
   const [type, setType] = useState("cc");
@@ -42,7 +43,7 @@ function PaymentCardDetails({ setConnectPayment }) {
         aria-label="Payment Type"
       >
         <ToggleButton
-          style={{ fontFamily: "Nunito" }}
+          style={{ fontFamily: "Nunito", backgroundColor: Colors.VIOLET }}
           value="cc"
           onClick={() => window.CollectJS.startPaymentRequest()}
         >

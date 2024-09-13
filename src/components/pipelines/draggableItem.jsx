@@ -125,13 +125,18 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
   return (
     <div
       ref={drag}
+      onClick={
+        generalPermissions?.viewCaseDetails
+          ? () => handleClick(item?._id)
+          : null
+      }
       style={{
         opacity,
         backgroundColor: isDragging ? Colors.LIGHT_BLUE_COLOR : Colors.WHITE,
         margin: "10px",
         padding: "10px",
         borderRadius: "10px",
-        cursor: "pointer",
+        cursor: generalPermissions?.viewCaseDetails ? "pointer" : "none",
       }}
     >
       <div
@@ -150,7 +155,7 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
         >
           {item?.caseCode}
         </Typography>
-        <div style={{ display: "flex" }}>
+        <div onClick={(e) => e.stopPropagation()} style={{ display: "flex" }}>
           <MuiModels
             item={item}
             show="editPipelineCase"
@@ -168,11 +173,6 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
           <IconButton onClick={handleDuplicate}>
             <Difference sx={{ fontSize: "1rem" }} />
           </IconButton>
-          {generalPermissions?.viewCaseDetails && (
-            <IconButton onClick={() => handleClick(item?._id)}>
-              <RemoveRedEye sx={{ fontSize: "1rem" }} />
-            </IconButton>
-          )}
         </div>
       </div>
       <div>

@@ -60,7 +60,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
-    backgroundColor: Colors.LIGHT_BLUE_COLOR,
+    backgroundColor: Colors.VIOLET,
   },
   "&:hover": {
     backgroundColor: "#DADADA",

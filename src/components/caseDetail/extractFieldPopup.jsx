@@ -1,15 +1,19 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { ExtractedCaseFields } from "../../services/services";
+import {
+  ExtractedCaseFields,
+  UpdateMultipleCreditors,
+} from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import { Box, CircularProgress, Grid, Typography } from "@mui/material";
 import { Colors } from "../../config/default";
 import EditDebtorDetails from "./../editDebtorDetails";
 import EditCreditorDetail from "../editCreditorDetail";
 import CreditorFields from "../caseCreationFields/creditorFields";
-import { phoneNumberFormat } from "../../common";
+import { isEmailValid, phoneNumberFormat } from "../../common";
 import TextButton from "../button";
 import { Close } from "@mui/icons-material";
+import { PhoneValidation } from "../../constants/appConstants";
 
 function ExtractFieldPopup({
   selectedFiles,
@@ -21,6 +25,7 @@ function ExtractFieldPopup({
   setConnectPayment,
   handleClose,
 }) {
+  const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const { showToast } = useToast();
   const [loading, setLoading] = useState(true);
   const [showComponent, setShowComponent] = useState(true);
@@ -28,9 +33,9 @@ function ExtractFieldPopup({
   const [finalCaseData, setFinalCaseData] = useState([]);
   const [aiCreditors, setAiCreditors] = useState([]);
   const [finalResult, setFinalResult] = useState([]);
+
   const [digitResultList, setDigitResultList] = useState([]);
   const [businessErrors, setBusinessErrors] = useState({});
-
   const [errors, setErrors] = useState({
     basicPhone: "",
     emailValid: "",
@@ -67,6 +72,7 @@ function ExtractFieldPopup({
       processedData = [
         {
           creditor: {
+            _id: "",
             aggression: 0,
             accountTitle: "",
             basicInformation: {
@@ -97,11 +103,13 @@ function ExtractFieldPopup({
           paidAmount: 0,
           remaining: 0,
           feePayment: "toPay",
+          _id: "",
         },
       ];
     } else {
       processedData = aiCreditors?.map((creditor) => ({
         creditor: {
+          _id: "",
           aggression: 0,
           accountTitle:
             creditor?.creditor_info?.["creditor's bank acc. title"] || "",
@@ -150,6 +158,7 @@ function ExtractFieldPopup({
               .replace(",", "")
           ) || 0,
         feePayment: "toPay",
+        _id: data?._id,
       }));
     }
 
@@ -216,7 +225,7 @@ function ExtractFieldPopup({
       finalCaseData?.forEach((caseItem, caseIndex) => {
         const resultItem = finalResult?.find(
           (result) =>
-            result?.creditor?.basicInformation?.fullName ===
+            result?.creditor?.businessInformation?.companyName ===
             caseItem?.creditor?.basicInformation?.fullName
         );
 
@@ -379,6 +388,44 @@ function ExtractFieldPopup({
 
     compareData();
   }, [finalCaseData, finalResult]);
+  useEffect(() => {
+    const updateIdsInFinalCaseData = () => {
+      let isUpdated = false; // To track if we need to update finalCaseData
+
+      const updatedCaseData = finalCaseData?.map((caseItem) => {
+        // Find a match in data?.creditors based on fullName
+        const matchingCreditor = data?.creditors?.find(
+          (creditor) =>
+            creditor?.creditor?.businessInformation?.companyName ===
+            caseItem?.creditor?.basicInformation?.fullName
+        );
+
+        if (
+          matchingCreditor &&
+          caseItem?.creditor?._id !== matchingCreditor?._id
+        ) {
+          // If a match is found and _id is different, update the _id
+          isUpdated = true; // Mark that we need to update the state
+          return {
+            ...caseItem,
+            creditor: {
+              ...caseItem?.creditor,
+              _id: matchingCreditor?._id, // Set the matched creditor's _id
+            },
+          };
+        }
+
+        return caseItem; // Return the original if no match found or _id is already correct
+      });
+
+      if (isUpdated) {
+        setFinalCaseData(updatedCaseData); // Update finalCaseData only if there are changes
+      }
+    };
+
+    updateIdsInFinalCaseData();
+  }, [finalCaseData, data?.creditors]); // Remove finalCaseData dependency to prevent loop
+  // Run effect when finalCaseData or data.creditors changes
 
   const handleDigitsChange = (caseIndex, newDigits) => {
     const updatedDigitsList = [...digitsList];
@@ -436,6 +483,37 @@ function ExtractFieldPopup({
 
   const showDebtor = () => {
     setShowComponent(true);
+  };
+
+  const updateCreditors = async () => {
+    setLoading(true);
+
+    finalCaseData?.forEach((item) => {
+      if (
+        item.creditor.aggression === null ||
+        isNaN(item.creditor.aggression)
+      ) {
+        item.creditor.aggression = 0;
+      }
+    });
+    const params = {
+      cases: finalCaseData,
+    };
+    const multipleCreditorsRes = await UpdateMultipleCreditors(
+      data?.debtor?._id,
+      params
+    );
+    if (multipleCreditorsRes?.status === 200) {
+      showToast(multipleCreditorsRes?.data?.message, "success");
+      handleClose();
+    } else {
+      showToast(
+        multipleCreditorsRes?.response?.data?.message ||
+          multipleCreditorsRes?.data?.message,
+        "error"
+      );
+    }
+    setLoading(false);
   };
   return (
     <div>
@@ -532,8 +610,7 @@ function ExtractFieldPopup({
                   height="2rem"
                   width="8rem"
                   marginRight="1rem"
-                  // disabled={!isFormValid}
-                  // onClick={updateDebtorById}
+                  onClick={updateCreditors}
                   backgroundColor={Colors.SKY_BLUE}
                   hoverColor={Colors.SKY_BLUE}
                   loading={loading}

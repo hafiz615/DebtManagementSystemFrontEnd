@@ -108,14 +108,16 @@ export default function PipelinesLists({
     return true;
   });
 
-  const sortedCases = [...filteredCasesByDate].sort((a, b) => {
-    if (order === "Ascending") {
-      return a.company.toLowerCase() > b.company.toLowerCase() ? 1 : -1;
-    } else if (order === "Descending") {
-      return a.company.toLowerCase() < b.company.toLowerCase() ? 1 : -1;
-    }
-    return 0;
-  });
+  const sortedCases =
+    filteredCasesByDate &&
+    [...filteredCasesByDate]?.sort((a, b) => {
+      if (order === "Ascending") {
+        return a.company.toLowerCase() > b.company.toLowerCase() ? 1 : -1;
+      } else if (order === "Descending") {
+        return a.company.toLowerCase() < b.company.toLowerCase() ? 1 : -1;
+      }
+      return 0;
+    });
 
   const handleRowClick = (id) => {
     localStorage.setItem("route", "all-cases");
