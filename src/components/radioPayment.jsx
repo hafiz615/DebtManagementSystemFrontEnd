@@ -23,7 +23,7 @@ const SkyBlueRadio = (props) => (
 );
 
 // PaymentProcess component
-export default function PaymentProcess({ feePayment, setFeePayment, border }) {
+export default function PaymentProcess({ feePayment, setFeePayment }) {
   const handleRadioChange = (event) => {
     setFeePayment(event.target.value);
   };
@@ -35,7 +35,7 @@ export default function PaymentProcess({ feePayment, setFeePayment, border }) {
           value={feePayment}
           onChange={handleRadioChange}
           sx={{
-            color: border ? "red" : Colors.DIM_LIGHT_GRAY,
+            color: Colors.DIM_LIGHT_GRAY,
             fontFamily: "Nunito !important",
             flexDirection: "row",
           }}

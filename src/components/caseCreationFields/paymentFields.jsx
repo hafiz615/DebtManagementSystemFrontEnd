@@ -12,8 +12,6 @@ export default function PaymentFields({
   thisCaseData,
   handleCaseDataChange,
   caseIndex,
-  businessErrors,
-  showErrors,
 }) {
   const [status, setStatus] = useState(thisCaseData.status);
   const [feePayment, setFeePayment] = useState(thisCaseData?.feePayment || "");
@@ -49,11 +47,6 @@ export default function PaymentFields({
     }
   };
   const today = new Date().toISOString().split("T")[0];
-  const hasError = (field) => {
-    return businessErrors?.some(
-      (error) => error?.index === caseIndex && error?.field === field
-    );
-  };
   return (
     <>
       <Grid
@@ -91,11 +84,6 @@ export default function PaymentFields({
               )
             }
             onKeyDown={handleNumberInput}
-            border={
-              hasError("totalDebt") && showErrors
-                ? "2px solid red"
-                : "none !important"
-            }
           />
         </Grid>
         <Grid item xs={12} md={4} lg={3}>
@@ -119,11 +107,6 @@ export default function PaymentFields({
               )
             }
             onKeyDown={handleNumberInput}
-            border={
-              hasError("paidAmount") && showErrors
-                ? "2px solid red"
-                : "none !important"
-            }
           />
         </Grid>
         <Grid item xs={12} md={4} lg={3}>
@@ -140,10 +123,7 @@ export default function PaymentFields({
 
           <AmountTextField
             marginRight={smallScreen ? "0rem" : "2rem"}
-            value={
-              parseInt(thisCaseData.totalDebt - thisCaseData.paidAmount) ||
-              parseInt(thisCaseData.remaining)
-            }
+            value={parseInt(thisCaseData.totalDebt - thisCaseData.paidAmount)}
             onChange={(e) =>
               handleCaseDataChange(
                 caseIndex,
@@ -152,11 +132,6 @@ export default function PaymentFields({
               )
             }
             onKeyDown={handleNumberInput}
-            border={
-              hasError("remaining") && showErrors
-                ? "2px solid red"
-                : "none !important"
-            }
           />
         </Grid>
         <Grid item xs={12} md={4} lg={3}>
@@ -184,11 +159,7 @@ export default function PaymentFields({
               height: "2.5rem",
               color: Colors.DIM_LIGHT_GRAY,
               paddingLeft: "1rem",
-              border:
-                hasError("lastPaymentDate") && showErrors
-                  ? "2px solid red"
-                  : "1px solid transparent",
-
+              border: "none",
               outline: "none",
               borderRadius: "5px",
               width: "100%",
@@ -233,7 +204,6 @@ export default function PaymentFields({
           <PaymentProcess
             feePayment={thisCaseData.feePayment}
             setFeePayment={setFeePayment}
-            border={hasError("feePayment") && showErrors ? true : false}
           />
         </Grid>
       </Grid>
