@@ -651,6 +651,7 @@ export default function MuiModels({
                 GetCaseDetails={GetCaseDetails}
                 connectPayment={connectPayment}
                 setConnectPayment={setConnectPayment}
+                showFields={false}
               />
             </>
           ) : show === "editStatus" ? (

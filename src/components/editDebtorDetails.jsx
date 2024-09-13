@@ -239,7 +239,12 @@ export default function EditDebtorDetail({
     const updateDebtor = await UpdateDebtor(caseData?._id || data?._id, params);
     if (updateDebtor?.status === 200) {
       showToast(updateDebtor?.data?.message, "success");
-      handleClose();
+      if (showFields) {
+        setShowComponent(true);
+      } else {
+        handleClose();
+      }
+
       GetCaseDetails(id);
     } else {
       showToast(
@@ -256,7 +261,6 @@ export default function EditDebtorDetail({
   return (
     <>
       <Box
-        onClick={handleClose}
         sx={{
           cursor: "pointer",
           display: "flex",
@@ -268,7 +272,7 @@ export default function EditDebtorDetail({
         >
           Edit Debtor Details
         </Typography>
-        <Close sx={{ marginRight: "1rem" }} />
+        <Close onClick={handleClose} sx={{ marginRight: "1rem" }} />
       </Box>
 
       <Grid
@@ -338,7 +342,6 @@ export default function EditDebtorDetail({
                   onClick={showCreditor}
                   backgroundColor={Colors.DIM_LIGHT_GRAY}
                   hoverColor={Colors.DIM_LIGHT_GRAY}
-                  loading={loading}
                 />
               </Grid>
             </Grid>

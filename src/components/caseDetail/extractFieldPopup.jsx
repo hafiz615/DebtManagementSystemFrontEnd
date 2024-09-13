@@ -547,7 +547,6 @@ function ExtractFieldPopup({
           ) : (
             <>
               <Box
-                onClick={handleClose}
                 sx={{
                   cursor: "pointer",
                   display: "flex",
@@ -563,7 +562,7 @@ function ExtractFieldPopup({
                 >
                   Edit Creditors Details
                 </Typography>
-                <Close sx={{ marginRight: "1rem" }} />
+                <Close onClick={handleClose} sx={{ marginRight: "1rem" }} />
               </Box>
               {finalCaseData?.map((caseEntry, index) => (
                 <>
@@ -622,7 +621,6 @@ function ExtractFieldPopup({
                   onClick={showDebtor}
                   backgroundColor={Colors.DIM_LIGHT_GRAY}
                   hoverColor={Colors.DIM_LIGHT_GRAY}
-                  loading={loading}
                 />
               </Grid>
             </>
