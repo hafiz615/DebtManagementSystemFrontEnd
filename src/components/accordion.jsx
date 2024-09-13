@@ -44,6 +44,7 @@ export default function AccordionUsage({
   const [rows, setRows] = useState([]);
   useEffect(() => {
     const generatedData = rowArray?.map((item, index) => ({
+      caseId: item?.caseId,
       id: item?.id,
       name: item?.fullName || "-",
       dueDate: new Date(item?.dueDate).toLocaleDateString() || "-",
