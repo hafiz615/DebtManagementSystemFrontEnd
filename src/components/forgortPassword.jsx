@@ -129,7 +129,7 @@ const ForgotPassword = ({ setShowForgotPassword }) => {
             textAlign: "right",
           }}
         >
-          ({timer})
+          {timer} s
         </Typography>
       )}
       <Grid container item sx={{ display: "flex", flexDirection: "column" }}>
@@ -144,17 +144,6 @@ const ForgotPassword = ({ setShowForgotPassword }) => {
           height={smallScreen ? "2rem" : "3rem"}
           loginFont="600"
         />
-        {/* <Button
-          buttonText="SEND"
-          disabled={isButtonDisabled}
-          onClick={handleSubmit}
-          loading={loading}
-          backgroundColor={Colors.SKY_BLUE}
-          hoverColor={Colors.SKY_BLUE}
-          marginTop={smallScreen ? "1rem" : "2rem"}
-          height={smallScreen ? "2rem" : "3rem"}
-          loginFont="600"
-        /> */}
         <Button
           buttonText="CANCEL"
           onClick={backToLogin}
