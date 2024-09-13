@@ -72,7 +72,7 @@ export default function AccordionUsage({
   };
   let backgroundColor;
   if (paymentNumber === "5") {
-    backgroundColor = "rgba(234, 106, 71, 0.5)"; // Reddish color
+    backgroundColor = Colors.ORANGE_COLOR; // Reddish color
   } else if (paymentNumber === "4") {
     backgroundColor = Colors.SKY_BLUE; // Bluish color
   } else {

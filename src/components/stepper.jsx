@@ -789,8 +789,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
                 xs: "100%",
                 md: "50%",
               },
-
-              color: Colors.SKY_BLUE,
             }}
           >
             {steps?.map((label, index) => {
@@ -800,13 +798,24 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
                 stepProps.completed = false;
               }
               return (
-                <Step key={label} {...stepProps}>
+                <Step key={label} {...stepProps} sx={{ fill: Colors.SKY_BLUE }}>
                   <StepLabel
                     {...labelProps}
                     sx={{
                       cursor: "pointer",
                       "& .MuiStepLabel-label": {
                         fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+                      },
+                    }}
+                    StepIconProps={{
+                      sx: {
+                        color: Colors.SKY_BLUE,
+                        "&.Mui-active": {
+                          color: Colors.SKY_BLUE,
+                        },
+                        "&.Mui-completed": {
+                          color: Colors.SKY_BLUE,
+                        },
                       },
                     }}
                     onClick={() => {

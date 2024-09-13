@@ -6,8 +6,7 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import { Colors } from "../config/default";
 import { Logout } from "../services/services";
-import { Typography } from "@mui/material";
-import { FONT_SIZE_XXL } from "../constants/appConstants";
+
 import AppLogo from "../../src/assets/FC White.png";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useSelector } from "react-redux";
@@ -46,6 +45,11 @@ export default function NavBar({ onClick }) {
     deleteAllCookies();
   };
 
+  const handleLogoClick = () => {
+    localStorage.setItem("route", "home");
+    navigate(`/home`);
+  };
+
   return (
     <Box>
       <AppBar
@@ -63,19 +67,23 @@ export default function NavBar({ onClick }) {
             style={{
               display: "flex",
               width: widthStyling,
-              justifyContent: "space-between",
+              justifyContent: !drawerOpen ? "space-between" : "flex-end",
               alignItems: "center",
             }}
           >
-            <img
-              src={AppLogo}
-              alt="laptopImage"
-              style={{
-                width: "150px",
-                height: "150px",
-                objectFit: "contain",
-              }}
-            />
+            {!drawerOpen && (
+              <div onClick={handleLogoClick} style={{ cursor: "pointer" }}>
+                <img
+                  src={AppLogo}
+                  alt="laptopImage"
+                  style={{
+                    width: "150px",
+                    height: "4rem",
+                    objectFit: "contain",
+                  }}
+                />
+              </div>
+            )}
 
             <Tooltip title="logout" placement="top-end">
               <IconButton

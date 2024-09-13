@@ -104,7 +104,7 @@ export default function PipelinesBoards({
               alignItems: "center",
             }}
           >
-            <CircularProgress />
+            <CircularProgress sx={{ color: Colors.SKY_BLUE }} />
           </Grid>
         ) : !columns || !allPipelinesName ? (
           <p
