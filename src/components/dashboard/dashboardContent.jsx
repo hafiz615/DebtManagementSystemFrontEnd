@@ -507,7 +507,12 @@ function DashboardContent() {
                 <div style={{ height: "10rem" }}>
                   {!isEmpty(countData) ? (
                     <>
-                      <Grid container sx={{ justifyContent: "center" }}>
+                      <Grid
+                        container
+                        sx={{
+                          justifyContent: "center",
+                        }}
+                      >
                         <Grid
                           container
                           item
@@ -515,6 +520,7 @@ function DashboardContent() {
                           sm={7}
                           sx={{
                             justifyContent: "center",
+                            marginTop: ".5rem",
                           }}
                         >
                           <PieChart

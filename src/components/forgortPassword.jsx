@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 import { Typography, TextField, Grid, FormHelperText } from "@mui/material";
@@ -20,6 +20,8 @@ const ForgotPassword = ({ setShowForgotPassword }) => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
+  const [timer, setTimer] = useState(0);
+  const [isResend, setIsResend] = useState(false);
   const smallScreen = useMediaQuery("(min-width:250px) and (max-width:900px)");
 
   const handleEmailChange = (e) => {
@@ -51,7 +53,9 @@ const ForgotPassword = ({ setShowForgotPassword }) => {
     const forgotPassRes = await ForgotPasswordRes(params);
     if (forgotPassRes?.status === 200) {
       showToast(forgotPassRes?.data?.message, "success");
-      backToLogin();
+      setTimer(30);
+      setIsResend(true);
+      // backToLogin();
     } else {
       const errorMessage = forgotPassRes?.response?.data?.message;
       showToast(errorMessage || forgotPassRes?.message, "error");
@@ -61,6 +65,15 @@ const ForgotPassword = ({ setShowForgotPassword }) => {
   const backToLogin = async () => {
     setShowForgotPassword(false);
   };
+  useEffect(() => {
+    let countdown;
+    if (timer > 0) {
+      countdown = setTimeout(() => setTimer((prev) => prev - 1), 1000);
+    } else if (timer === 0 && isResend) {
+      setIsResend(true); // Allow resend after timer completes
+    }
+    return () => clearTimeout(countdown); // Cleanup timer on component unmount
+  }, [timer]);
   return (
     <Grid
       item
@@ -106,10 +119,23 @@ const ForgotPassword = ({ setShowForgotPassword }) => {
         onKeyDown={handleKeyDown}
       />
       {emailError && <FormHelperText error>{emailError}</FormHelperText>}
+      {timer > 0 && (
+        <Typography
+          sx={{
+            fontSize: ".8rem",
+            fontWeight: "700",
+            color: Colors.NAVY_BLUE,
+            fontFamily: "Nunito",
+            textAlign: "right",
+          }}
+        >
+          ({timer})
+        </Typography>
+      )}
       <Grid container item sx={{ display: "flex", flexDirection: "column" }}>
         <Button
-          buttonText="RESEND"
-          disabled={isButtonDisabled}
+          buttonText={isResend ? "RESEND" : "SEND"}
+          disabled={isButtonDisabled || (isResend && timer > 0)}
           onClick={handleSubmit}
           loading={loading}
           backgroundColor={Colors.SKY_BLUE}
@@ -118,6 +144,17 @@ const ForgotPassword = ({ setShowForgotPassword }) => {
           height={smallScreen ? "2rem" : "3rem"}
           loginFont="600"
         />
+        {/* <Button
+          buttonText="SEND"
+          disabled={isButtonDisabled}
+          onClick={handleSubmit}
+          loading={loading}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+          marginTop={smallScreen ? "1rem" : "2rem"}
+          height={smallScreen ? "2rem" : "3rem"}
+          loginFont="600"
+        /> */}
         <Button
           buttonText="CANCEL"
           onClick={backToLogin}

@@ -49,6 +49,7 @@ import SettlementPayment from "./settlementPlan";
 import SendEmailCase from "./caseDetail/sendEmailCase";
 import DownloadPDF from "./caseDetail/downloadPDF";
 import SendEmailJustification from "./sendEmailJustifications";
+import ExtractFieldPopup from "./caseDetail/extractFieldPopup";
 import TextEditor from "./textEditor";
 
 export default function MuiModels({
@@ -115,6 +116,8 @@ export default function MuiModels({
   setPaymentChanged,
   allData,
   lumpSumpData,
+  selectedFiles,
+  setSelectedFiles,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -408,6 +411,15 @@ export default function MuiModels({
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
         />
+      ) : buttonName === "extractFiles" ? (
+        <TextButton
+          buttonText="Extract Files"
+          height="2rem"
+          width="8rem"
+          onClick={handleOpen}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
       ) : show === "downloadPDF" ? (
         <TextButton
           buttonText={"Download PDF"}
@@ -639,6 +651,7 @@ export default function MuiModels({
                 GetCaseDetails={GetCaseDetails}
                 connectPayment={connectPayment}
                 setConnectPayment={setConnectPayment}
+                showFields={false}
               />
             </>
           ) : show === "editStatus" ? (
@@ -807,6 +820,19 @@ export default function MuiModels({
               lumpSumpData={lumpSumpData}
               fullProfit={fullProfit}
               handleClose={handleClose}
+            />
+          ) : show === "extractFiles" ? (
+            <ExtractFieldPopup
+              selectedFiles={selectedFiles}
+              setSelectedFiles={setSelectedFiles}
+              handleClose={handleClose}
+              caseDataId={caseDataId}
+              data={caseData}
+              GetCaseDetails={GetCaseDetails}
+              connectPayment={connectPayment}
+              setConnectPayment={setConnectPayment}
+              show={show}
+              maxHeight={maxHeight}
             />
           ) : (
             ""

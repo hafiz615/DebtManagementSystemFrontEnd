@@ -37,6 +37,9 @@ function DownloadPDF({ allData, lumpSumpData, fullProfit, handleClose }) {
       [name]: checked,
     }));
   };
+  const isDownloadDisabled = !Object.values(checkboxState).some(
+    (isChecked) => isChecked
+  );
   return (
     <Grid
       container
@@ -110,6 +113,7 @@ function DownloadPDF({ allData, lumpSumpData, fullProfit, handleClose }) {
           onClick={() =>
             generatePDF(allData, lumpSumpData, fullProfit, checkboxState)
           }
+          disabled={isDownloadDisabled}
         />
       </Grid>
     </Grid>
