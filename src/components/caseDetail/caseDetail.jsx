@@ -423,7 +423,7 @@ function CaseDetail() {
                                   fontSize: "11px",
                                 }}
                               >
-                                <Hidden mdDown>
+                                <Hidden smDown>
                                   <span
                                     style={{
                                       fontWeight: "700",
@@ -434,10 +434,13 @@ function CaseDetail() {
                                     Name
                                   </span>
                                 </Hidden>
-                                {item?.name}
+                                {
+                                  item?.creditor?.businessInformation
+                                    ?.companyName
+                                }
                               </span>
                             </Grid>
-                            <Hidden mdDown>
+                            <Hidden smDown>
                               <Grid item xs={3} sm={4} lg={6}>
                                 <span
                                   style={{
