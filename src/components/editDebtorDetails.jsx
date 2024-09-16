@@ -27,9 +27,9 @@ export default function EditDebtorDetail({
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:1300px)");
 
   const debtorBasicInfo =
-    caseData?.debtor?.basicInformation || caseData?.debtor_info;
+    caseData?.debtor?.basicInformation || caseData?.DebtorInfo;
   const debtorBusinessInfo =
-    caseData?.debtor?.businessInformation || caseData?.bussiness_info;
+    caseData?.debtor?.businessInformation || caseData?.BusinessInfo;
 
   const [loading, setLoading] = useState(false);
   const [debtorOwnDetails, setDebtorOwnDetails] = useState({
@@ -176,7 +176,7 @@ export default function EditDebtorDetail({
       const hasMismatch = Object.values(mismatches).some((value) => value);
       if (hasMismatch) {
         setNoteMessage(
-          "Note: Highlighted Information does not match with exiting Debtor Information"
+          "Note: Highlighted Information does not match with existing Debtor Information"
         );
       } else {
         setNoteMessage("");
@@ -322,28 +322,6 @@ export default function EditDebtorDetail({
                   {noteMessage}
                 </Typography>
               </Grid>
-              <Grid container item xs={3}>
-                <TextButton
-                  buttonText="Save"
-                  height="2rem"
-                  width="8rem"
-                  marginRight="1rem"
-                  // disabled={!isFormValid}
-                  onClick={updateDebtorById}
-                  backgroundColor={Colors.SKY_BLUE}
-                  hoverColor={Colors.SKY_BLUE}
-                  loading={loading}
-                />
-                <TextButton
-                  buttonText="Next"
-                  height="2rem"
-                  width="8rem"
-                  marginTop={smallScreen ? "1rem" : "auto"}
-                  onClick={showCreditor}
-                  backgroundColor={Colors.DIM_LIGHT_GRAY}
-                  hoverColor={Colors.DIM_LIGHT_GRAY}
-                />
-              </Grid>
             </Grid>
             <Grid item xs={6}>
               <Box
@@ -425,6 +403,41 @@ export default function EditDebtorDetail({
                   Address: {data?.debtor?.businessInformation?.address || "--"}
                 </Typography>
               </Box>
+            </Grid>
+            <Grid
+              container
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginBottom: ".8rem",
+                marginTop: ".8rem",
+                position: "sticky",
+                bottom: 0,
+                zIndex: 1,
+              }}
+            >
+              <TextButton
+                buttonText="Save"
+                height="2rem"
+                width="8rem"
+                marginRight="1rem"
+                // disabled={!isFormValid}
+                onClick={updateDebtorById}
+                backgroundColor={Colors.SKY_BLUE}
+                hoverColor={Colors.SKY_BLUE}
+                loading={loading}
+              />
+              <TextButton
+                buttonText="Next"
+                height="2rem"
+                width="8rem"
+                marginTop={smallScreen ? "1rem" : "auto"}
+                onClick={showCreditor}
+                backgroundColor={Colors.ORANGE_COLOR}
+                hoverColor={Colors.ORANGE_COLOR}
+              />
             </Grid>
           </>
         )}

@@ -78,8 +78,7 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
             sx={{
               display: "flex",
               justifyContent: "space-between",
-              backgroundColor:
-                index % 2 === 0 ? Colors.WHITE : "rgba(85, 148, 242, 0.06)",
+              backgroundColor: index % 2 === 0 ? Colors.WHITE : Colors.VIOLET,
               paddingRight: ".2rem",
               paddingLeft: ".2rem",
               height: "2rem",
@@ -99,6 +98,9 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
             <Grid item sx={{ display: "flex" }}>
               <Checkbox
                 sx={{
+                  "&.Mui-checked": {
+                    color: Colors.SKY_BLUE, // Color when checked
+                  },
                   color: Colors.DIM_LIGHT_GRAY,
                   padding: "0",
                   marginRight: "0.5rem",
@@ -119,9 +121,14 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
           xs={12}
           sx={{
             display: "flex",
-            justifyContent: "flex-end",
-            marginBottom: ".5rem",
-            marginRight: "3.2rem",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: ".8rem",
+            marginTop: ".8rem",
+            marginRight: "5rem",
+            position: "sticky",
+            bottom: 0,
+            zIndex: 1,
           }}
         >
           <MuiModels

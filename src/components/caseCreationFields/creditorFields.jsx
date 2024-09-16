@@ -660,6 +660,23 @@ export default function CreditorFields({
             step={1}
             marks
             valueLabelDisplay="auto"
+            sx={{
+              "& .MuiSlider-track": {
+                backgroundColor: Colors.SKY_BLUE,
+              },
+              "& .MuiSlider-rail": {
+                backgroundColor: "#ccc",
+              },
+              "& .MuiSlider-thumb": {
+                backgroundColor: Colors.SKY_BLUE,
+              },
+              "& .MuiSlider-mark": {
+                backgroundColor: "#ccc",
+              },
+              "& .MuiSlider-markActive": {
+                backgroundColor: Colors.SKY_BLUE,
+              },
+            }}
           />
         </Box>
       </Grid>

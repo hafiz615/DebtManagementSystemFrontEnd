@@ -10,10 +10,11 @@ import { Colors } from "../../config/default";
 import EditDebtorDetails from "./../editDebtorDetails";
 import EditCreditorDetail from "../editCreditorDetail";
 import CreditorFields from "../caseCreationFields/creditorFields";
-import { isEmailValid, phoneNumberFormat } from "../../common";
+import { isEmailValid, phoneNumberFormat, sanitizeText } from "../../common";
 import TextButton from "../button";
 import { Close } from "@mui/icons-material";
 import { PhoneValidation } from "../../constants/appConstants";
+import { isEmpty } from "lodash";
 
 function ExtractFieldPopup({
   selectedFiles,
@@ -43,16 +44,60 @@ function ExtractFieldPopup({
   const [digitsList, setDigitsList] = useState(
     data?.creditors?.map((caseEntry) => [caseEntry?.aggression]) || [0]
   );
+
   const ExtractFields = async () => {
     setLoading(true);
     const params = {
       documents: selectedFiles,
     };
+
     const extractRes = await ExtractedCaseFields(caseDataId, params);
 
     if (extractRes?.status === 200) {
       showToast(extractRes?.data?.message, "success");
-      setCaseData(extractRes?.data?.data?.extracted_fields[0]);
+      let debtorObject = {};
+
+      const extractedFields = extractRes?.data?.data?.extracted_fields || [];
+
+      extractedFields.forEach((item) => {
+        if (isEmpty(item)) return; // Skip empty items
+
+        // Merge business info
+        for (let key in item.bussiness_info) {
+          if (
+            key === "Business EIN Number" &&
+            debtorObject?.BusinessInfo?.[key]?.length !== 9
+          ) {
+            const ein = sanitizeText(item.bussiness_info[key]);
+            if (ein.length === 9) {
+              debtorObject.BusinessInfo = {
+                ...debtorObject.BusinessInfo,
+                [key]: ein,
+              };
+            }
+          } else if (
+            item.bussiness_info[key] !== null &&
+            item.bussiness_info[key] !== ""
+          ) {
+            debtorObject.BusinessInfo = {
+              ...debtorObject.BusinessInfo,
+              [key]: item.bussiness_info[key],
+            };
+          }
+        }
+
+        // Merge debtor info
+        for (let key in item.debtor_info) {
+          if (item.debtor_info[key] !== null && item.debtor_info[key] !== "") {
+            debtorObject.DebtorInfo = {
+              ...debtorObject.DebtorInfo,
+              [key]: item.debtor_info[key],
+            };
+          }
+        }
+        setCaseData(debtorObject);
+      });
+
       setAiCreditors(extractRes?.data?.data?.extracted_fields);
     } else {
       showToast(
@@ -60,8 +105,10 @@ function ExtractFieldPopup({
         "error"
       );
     }
+
     setLoading(false);
   };
+
   useEffect(() => {
     ExtractFields();
   }, []);
@@ -388,6 +435,7 @@ function ExtractFieldPopup({
 
     compareData();
   }, [finalCaseData, finalResult]);
+
   useEffect(() => {
     const updateIdsInFinalCaseData = () => {
       let isUpdated = false; // To track if we need to update finalCaseData
@@ -619,8 +667,8 @@ function ExtractFieldPopup({
                   height="2rem"
                   width="8rem"
                   onClick={showDebtor}
-                  backgroundColor={Colors.DIM_LIGHT_GRAY}
-                  hoverColor={Colors.DIM_LIGHT_GRAY}
+                  backgroundColor={Colors.ORANGE_COLOR}
+                  hoverColor={Colors.ORANGE_COLOR}
                 />
               </Grid>
             </>
