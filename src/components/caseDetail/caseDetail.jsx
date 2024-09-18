@@ -185,6 +185,7 @@ function CaseDetail() {
           {AUTHORITY_TEXT} <span>{role}</span>
         </Typography>
       </Grid>
+
       {loading || isEmpty(caseData) ? (
         <Grid
           item
@@ -283,12 +284,24 @@ function CaseDetail() {
                   sx={{ borderBottom: 1, borderColor: "divider" }}
                   onClick={(event) => event.stopPropagation()}
                 >
-                  <Tabs value={value} onChange={handleChange}>
+                  <Tabs
+                    value={value}
+                    onChange={handleChange}
+                    TabIndicatorProps={{
+                      style: {
+                        backgroundColor: Colors.SKY_BLUE,
+                      },
+                    }}
+                  >
                     <Tab
                       sx={{
                         fontWeight: "600",
                         textTransform: "none",
                         fontFamily: "Nunito",
+
+                        "&.Mui-selected": {
+                          color: value ? Colors.SKY_BLUE : "inherit",
+                        },
                       }}
                       label="Debtor"
                       value="Debtor"
@@ -298,6 +311,9 @@ function CaseDetail() {
                         fontWeight: "600",
                         textTransform: "none",
                         fontFamily: "Nunito",
+                        "&.Mui-selected": {
+                          color: value ? Colors.SKY_BLUE : "inherit",
+                        },
                       }}
                       label="Creditor"
                       value="Creditor"
@@ -307,6 +323,9 @@ function CaseDetail() {
                         fontWeight: "600",
                         textTransform: "none",
                         fontFamily: "Nunito",
+                        "&.Mui-selected": {
+                          color: value ? Colors.SKY_BLUE : "inherit",
+                        },
                       }}
                       label="Other Creditors"
                       value="Other Creditors"
@@ -316,6 +335,9 @@ function CaseDetail() {
                         fontWeight: "600",
                         textTransform: "none",
                         fontFamily: "Nunito",
+                        "&.Mui-selected": {
+                          color: value ? Colors.SKY_BLUE : "inherit",
+                        },
                       }}
                       label="Files"
                       value="Files"
@@ -398,9 +420,7 @@ function CaseDetail() {
                             sx={{
                               display: "flex",
                               backgroundColor:
-                                index % 2 === 0
-                                  ? Colors.WHITE
-                                  : "rgba(85, 148, 242, 0.06)",
+                                index % 2 === 0 ? Colors.WHITE : Colors.VIOLET,
                               "&:hover": {
                                 backgroundColor: Colors.BG_LIGHT_GRAY,
                               },
@@ -468,6 +488,7 @@ function CaseDetail() {
                   ) : (
                     <CaseFileCard
                       caseData={caseData}
+                      caseDataId={id}
                       GetCaseDetails={GetCaseDetails}
                     />
                   )}

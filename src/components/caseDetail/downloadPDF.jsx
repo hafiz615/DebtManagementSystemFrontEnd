@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { Colors } from "../../config/default";
 import { Typography, Grid, Checkbox, FormControlLabel } from "@mui/material";
@@ -29,6 +29,14 @@ function DownloadPDF({ allData, lumpSumpData, fullProfit, handleClose }) {
     "Strategy 3 Recommendations": true,
   });
 
+  useEffect(() => {
+    setCheckboxState((prevState) => ({
+      ...prevState,
+      "Debtor Information": true,
+      "Settlement Range": true,
+      Scores: true,
+    }));
+  }, []);
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
 
@@ -37,6 +45,9 @@ function DownloadPDF({ allData, lumpSumpData, fullProfit, handleClose }) {
       [name]: checked,
     }));
   };
+  const isDownloadDisabled = !Object.values(checkboxState).some(
+    (isChecked) => isChecked
+  );
   return (
     <Grid
       container
@@ -110,6 +121,7 @@ function DownloadPDF({ allData, lumpSumpData, fullProfit, handleClose }) {
           onClick={() =>
             generatePDF(allData, lumpSumpData, fullProfit, checkboxState)
           }
+          disabled={isDownloadDisabled}
         />
       </Grid>
     </Grid>

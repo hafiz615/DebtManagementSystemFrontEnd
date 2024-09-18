@@ -10,7 +10,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 // Custom percentage formatting function
 const parsePercentage = (value) => {
   if (!value) return "";
-  const percentage = value.replace('%', '').trim();
+  const percentage = value.replace("%", "").trim();
   const parsedValue = parseFloat(percentage);
   return isNaN(parsedValue) ? value : parsedValue;
 };
@@ -111,7 +111,8 @@ export default function AmountTextField({
   marginTop,
   marginLeft,
   label,
-  type
+  type,
+  border,
 }) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
 
@@ -131,7 +132,8 @@ export default function AmountTextField({
           display: "flex",
           fontFamily: "Nunito",
           justifyContent: "center",
-          border: "none !important",
+          border: border || "none !important",
+
           "& .MuiInputBase-input": {
             color: Colors.DIM_LIGHT_GRAY,
             fontSize: ".8rem",
@@ -150,17 +152,17 @@ export default function AmountTextField({
             borderBottom: "none",
           },
         }}
-        placeholder={value ? "" : type === 'percentage' ? "%" : "$"} // Show placeholder only if value is empty
+        placeholder={value ? "" : type === "percentage" ? "%" : "$"} // Show placeholder only if value is empty
         onChange={onChange}
-        value={
-          type === 'percentage' ? parsePercentage(value) :
-            value || ""
-        }
+        value={type === "percentage" ? parsePercentage(value) : value || ""}
         onKeyDown={onKeyDown}
         name="numberformat"
         id="formatted-numberformat-input"
         InputProps={{
-          inputComponent: type === 'percentage' ? PercentageFormatCustom : NumericFormatCustom,
+          inputComponent:
+            type === "percentage"
+              ? PercentageFormatCustom
+              : NumericFormatCustom,
         }}
         variant="standard"
       />
