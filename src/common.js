@@ -362,13 +362,17 @@ export const handleNumberInput = (e) => {
     "ArrowLeft",
     "ArrowRight",
     "Control",
-    "v", // for paste
-    "c", // for copy
-    "x", // for cut
+    "v",
+    "c",
+    "x",
     "a",
     "z",
+    "y",
   ];
-  if (e.ctrlKey && ["v", "c", "x", "a", "z"].includes(e.key.toLowerCase())) {
+  if (
+    e.ctrlKey &&
+    ["v", "c", "x", "a", "z", "y"].includes(e.key.toLowerCase())
+  ) {
     return; // Allow the copy-paste or cut operation
   }
   if (!allowedKeys.includes(e.key)) {
