@@ -1039,7 +1039,15 @@ export default function SettlementRange() {
                     {key?.charAt(0)?.toUpperCase() + key?.slice(1)}
                   </div>
 
-                  <Tooltip title={debtor[key]?.toString()} placement="top-end">
+                  <Tooltip
+                    title={
+                      allData?.debtor?.weeklyBudgetUpdated &&
+                      key === "weeklyBudget"
+                        ? "Updated Weekly Budget"
+                        : debtor[key]?.toString()
+                    }
+                    placement="top-end"
+                  >
                     <span
                       style={{
                         fontFamily: "Nunito",
