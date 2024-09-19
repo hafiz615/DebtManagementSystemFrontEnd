@@ -15,7 +15,7 @@ function Auth() {
         height: "100vh",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: smallScreen ? Colors.NAVY_BLUE : "",
+        backgroundColor: smallScreen ? Colors.SKY_BLUE : "",
       }}
     >
       <Grid
