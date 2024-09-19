@@ -1013,3 +1013,20 @@ export const formatValue = (value) => {
   }
   return value;
 };
+
+export const formatCsvValues = (value) => {
+  return value?.replace(/[-\s]/g, "");
+};
+
+export function sanitizePhoneNumber(phoneNumber) {
+  let sanitizedNumber = phoneNumber?.startsWith("+1")
+    ? phoneNumber?.slice(2)
+    : phoneNumber;
+  sanitizedNumber = sanitizedNumber?.replace(/[-\s]/g, "");
+  return sanitizedNumber;
+}
+
+export function sanitizeBudget(budget) {
+  let sanitizedBudget = budget.replace(/[$,\s]/g, "");
+  return parseInt(sanitizedBudget, 10);
+}

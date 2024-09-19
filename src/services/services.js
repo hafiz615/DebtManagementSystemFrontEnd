@@ -1249,3 +1249,15 @@ export const GetPipelineDataByCustomFields = async (payload, id) => {
     return error;
   }
 };
+
+export const createMultipleDebtors = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/createMultipleDebtors`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
