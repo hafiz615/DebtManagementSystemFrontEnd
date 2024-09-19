@@ -410,9 +410,7 @@ function CaseDetail() {
                               height: "2rem",
                               alignItems: "center",
                             }}
-                            onClick={() =>
-                              navigate(`/all-cases/${item?.caseId}`)
-                            }
+                            onClick={() => navigate(`/all-cases/${item?._id}`)}
                           >
                             <Grid item xs={12} md={8} lg={5}>
                               <span
@@ -423,7 +421,7 @@ function CaseDetail() {
                                   fontSize: "11px",
                                 }}
                               >
-                                <Hidden mdDown>
+                                <Hidden smDown>
                                   <span
                                     style={{
                                       fontWeight: "700",
@@ -434,10 +432,13 @@ function CaseDetail() {
                                     Name
                                   </span>
                                 </Hidden>
-                                {item?.name}
+                                {
+                                  item?.creditor?.businessInformation
+                                    ?.companyName
+                                }
                               </span>
                             </Grid>
-                            <Hidden mdDown>
+                            <Hidden smDown>
                               <Grid item xs={3} sm={4} lg={6}>
                                 <span
                                   style={{
