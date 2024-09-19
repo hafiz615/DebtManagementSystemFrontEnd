@@ -1096,7 +1096,7 @@ export default function SettlementRange() {
             <GridItem
               key="Weekly Profit"
               title="Weekly Profit"
-              tooltip="Weekly Profit With Payment"
+              tooltip="Weekly Profit Without Payment"
               value={
                 apiData?.weekly_profit
                   ? `$ ${new Intl.NumberFormat().format(apiData.weekly_profit)}`

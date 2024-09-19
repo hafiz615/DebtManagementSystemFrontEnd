@@ -82,7 +82,7 @@ export default function PaymentFields({
             Total Receivable
           </Typography>
           <AmountTextField
-            value={parseInt(thisCaseData.totalDebt)}
+            value={parseInt(thisCaseData?.totalDebt)}
             onChange={(e) =>
               handleCaseDataChange(
                 caseIndex,
@@ -92,7 +92,9 @@ export default function PaymentFields({
             }
             onKeyDown={handleNumberInput}
             border={
-              hasError("totalDebt") && showErrors
+              thisCaseData?.totalDebt === 0
+                ? "2px solid red"
+                : "auto" && hasError("totalDebt") && showErrors
                 ? "2px solid red"
                 : "none !important"
             }

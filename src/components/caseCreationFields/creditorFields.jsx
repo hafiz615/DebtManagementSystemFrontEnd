@@ -160,7 +160,10 @@ export default function CreditorFields({
                   )
                 }
                 border={
-                  hasError("companyName") && showErrors
+                  thisCaseData?.creditor?.businessInformation?.companyName ===
+                  ""
+                    ? "2px solid red"
+                    : "auto" && hasError("companyName") && showErrors
                     ? "2px solid red"
                     : "1px solid transparent"
                 }
@@ -181,7 +184,10 @@ export default function CreditorFields({
                   )
                 }
                 border={
-                  hasError("businessCategory") && showErrors
+                  thisCaseData?.creditor?.businessInformation
+                    ?.businessCategory === ""
+                    ? "2px solid red"
+                    : "auto" && hasError("businessCategory") && showErrors
                     ? "2px solid red"
                     : "1px solid transparent"
                 }
@@ -334,7 +340,9 @@ export default function CreditorFields({
                   )
                 }
                 border={
-                  hasError("fullName") && showErrors
+                  thisCaseData?.creditor?.basicInformation?.fullName === ""
+                    ? "2px solid red"
+                    : "auto" && hasError("fullName") && showErrors
                     ? "2px solid red"
                     : "1px solid transparent"
                 }
@@ -354,7 +362,9 @@ export default function CreditorFields({
                 }
                 error={errors?.emailValid}
                 border={
-                  hasError("email") && showErrors
+                  thisCaseData?.creditor?.basicInformation?.email === ""
+                    ? "2px solid red"
+                    : "auto" && hasError("email") && showErrors
                     ? "2px solid red"
                     : "1px solid transparent"
                 }
@@ -385,7 +395,9 @@ export default function CreditorFields({
                 error={errors?.basicPhone}
                 onKeyDown={handleNumberInput}
                 border={
-                  hasError("phone") && showErrors
+                  thisCaseData?.creditor?.basicInformation?.phone === ""
+                    ? "2px solid red"
+                    : "auto" && hasError("phone") && showErrors
                     ? "2px solid red"
                     : "1px solid transparent"
                 }
@@ -469,7 +481,9 @@ export default function CreditorFields({
             }
             max={today}
             border={
-              hasError("lastFundedDate") && showErrors
+              thisCaseData?.creditor?.lastFundedDate === ""
+                ? "2px solid red"
+                : "auto" && hasError("lastFundedDate") && showErrors
                 ? "2px solid red"
                 : "1px solid transparent"
             }
