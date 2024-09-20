@@ -18,6 +18,7 @@ function PaymentsTextFields({
   value,
   max,
   onKeyDown,
+  border,
 }) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
 
@@ -68,7 +69,12 @@ function PaymentsTextFields({
           color: Colors.DIM_LIGHT_GRAY,
           paddingLeft: "1rem",
           outline: "none",
-          border: error && value ? "1px solid red" : "1px solid transparent",
+          border:
+            error && value
+              ? "1px solid red"
+              : border
+              ? border
+              : "1px solid transparent",
           borderRadius: "5px",
           marginBottom: marginBottom,
           width: width,

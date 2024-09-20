@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { Grid, Box, Button } from "@mui/material";
+import { Grid, Box, Button, Checkbox } from "@mui/material";
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import { RemoveRedEye } from "@mui/icons-material";
 import ScrollbarStyles from "../customScroll";
 
-function CaseFileCard({ caseData, GetCaseDetails }) {
+function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
   const [url, setUrl] = useState("");
   const [isViewerOpen, setIsViewerOpen] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
   const handleFileView = (url) => {
     setUrl(url);
@@ -18,7 +19,19 @@ function CaseFileCard({ caseData, GetCaseDetails }) {
     setUrl("");
     setIsViewerOpen(false);
   };
-
+  const handleFileSelect = (item) => {
+    setSelectedFiles((prevSelected) => {
+      if (prevSelected.some((file) => file?.key === item?.key)) {
+        return prevSelected.filter((file) => file?.key !== item?.key);
+      } else {
+        return [
+          ...prevSelected,
+          { key: item?.key, originalFileName: item?.originalFileName },
+        ];
+      }
+    });
+  };
+  const hasFiles = caseData?.debtor?.documents?.length > 0;
   return (
     <Grid
       item
@@ -56,39 +69,99 @@ function CaseFileCard({ caseData, GetCaseDetails }) {
       </div>
       <Grid
         container
-        sx={{ overflowY: "auto", ...ScrollbarStyles, height: "10rem" }}
+        sx={{
+          overflowY: "auto",
+          ...ScrollbarStyles,
+          height: "10rem",
+        }}
       >
-        {caseData?.debtor?.documents?.map((item, index) => (
-          <Grid
-            container
-            key={index}
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              backgroundColor:
-                index % 2 === 0 ? Colors.WHITE : "rgba(85, 148, 242, 0.06)",
-              paddingRight: ".2rem",
-              paddingLeft: ".2rem",
-              height: "2rem",
-              alignItems: "center",
-            }}
-          >
-            <span
-              style={{
-                color: Colors.DIM_LIGHT_GRAY,
-                fontWeight: "700",
-                fontFamily: "Nunito",
-                fontSize: "11px",
+        {caseData?.debtor?.documents?.length > 0 ? (
+          caseData?.debtor?.documents?.map((item, index) => (
+            <Grid
+              container
+              key={index}
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                backgroundColor: index % 2 === 0 ? Colors.WHITE : Colors.VIOLET,
+                paddingRight: ".2rem",
+                paddingLeft: ".2rem",
+                height: "2rem",
+                alignItems: "center",
               }}
             >
-              {item?.originalFileName}
-            </span>
-            <RemoveRedEye
-              sx={{ color: Colors.SKY_BLUE, cursor: "pointer" }}
-              onClick={() => handleFileView(item?.url)}
-            />
+              <span
+                style={{
+                  color: Colors.DIM_LIGHT_GRAY,
+                  fontWeight: "700",
+                  fontFamily: "Nunito",
+                  fontSize: "11px",
+                }}
+              >
+                {item?.originalFileName}
+              </span>
+              <Grid item sx={{ display: "flex" }}>
+                <Checkbox
+                  sx={{
+                    "&.Mui-checked": {
+                      color: Colors.SKY_BLUE, // Color when checked
+                    },
+                    color: Colors.DIM_LIGHT_GRAY,
+                    padding: "0",
+                    marginRight: "0.5rem",
+                  }}
+                  checked={selectedFiles.some((file) => file.key === item?.key)}
+                  onChange={() => handleFileSelect(item)}
+                />
+
+                <RemoveRedEye
+                  sx={{ color: Colors.SKY_BLUE, cursor: "pointer" }}
+                  onClick={() => handleFileView(item?.url)}
+                />
+              </Grid>
+            </Grid>
+          ))
+        ) : (
+          <Grid item xs={12} sx={{ textAlign: "center", marginTop: "2rem" }}>
+            <p
+              style={{
+                color: Colors.DIM_LIGHT_GRAY,
+                fontFamily: "Nunito",
+                fontSize: "13px",
+              }}
+            >
+              No files available.
+            </p>
           </Grid>
-        ))}
+        )}
+
+        <Grid
+          item
+          xs={12}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: ".8rem",
+            marginTop: ".8rem",
+            position: "sticky",
+            bottom: 0,
+            zIndex: 1,
+          }}
+        >
+          <MuiModels
+            show="extractFiles"
+            buttonName="extractFiles"
+            height="80vh"
+            width="80vw"
+            selectedFiles={selectedFiles}
+            setSelectedFiles={setSelectedFiles}
+            caseDataId={caseDataId}
+            caseData={caseData}
+            GetCaseDetails={GetCaseDetails}
+            disabled={!hasFiles}
+          />
+        </Grid>
       </Grid>
 
       {isViewerOpen && (

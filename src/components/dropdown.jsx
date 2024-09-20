@@ -25,6 +25,7 @@ export default function Dropdown({
   disabled,
   show,
   setId,
+  showCaseStatus,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -67,6 +68,7 @@ export default function Dropdown({
           color: Colors.DARK_GRAY,
           marginBottom: marginBottom,
           marginTop: marginTop,
+          border: showCaseStatus ? "2px solid red" : "1px solid transparent",
           fontFamily: "Nunito",
           borderRadius: "5px",
           textTransform: "none",
