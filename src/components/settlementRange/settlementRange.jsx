@@ -1039,15 +1039,7 @@ export default function SettlementRange() {
                     {key?.charAt(0)?.toUpperCase() + key?.slice(1)}
                   </div>
 
-                  <Tooltip
-                    title={
-                      allData?.debtor?.weeklyBudgetUpdated &&
-                      key === "weeklyBudget"
-                        ? "Updated Weekly Budget"
-                        : debtor[key]?.toString()
-                    }
-                    placement="top-end"
-                  >
+                  <Tooltip title={debtor[key]?.toString()} placement="top-end">
                     <span
                       style={{
                         fontFamily: "Nunito",
@@ -1057,10 +1049,11 @@ export default function SettlementRange() {
                         marginTop: "0.5rem",
                       }}
                     >
-                      {key === "weeklyBudget"
-                        ? `$${debtor[key]?.toString().slice(0, 15)}${
-                            debtor[key]?.toString().length > 15 ? "..." : ""
-                          }`
+                      {allData?.debtor?.weeklyBudgetUpdated &&
+                      key === "weeklyBudget"
+                        ? `$${debtor[key]} (Calculated)`
+                        : key === "weeklyBudget"
+                        ? `$${debtor[key]}`
                         : `${debtor[key]?.toString().slice(0, 15)}${
                             debtor[key]?.toString().length > 15 ? "..." : ""
                           }`}
