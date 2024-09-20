@@ -160,7 +160,10 @@ export default function CreditorFields({
                   )
                 }
                 border={
-                  hasError("companyName") && showErrors
+                  thisCaseData?.creditor?.businessInformation?.companyName ===
+                  ""
+                    ? "2px solid red"
+                    : "auto" && hasError("companyName") && showErrors
                     ? "2px solid red"
                     : "1px solid transparent"
                 }
@@ -181,7 +184,10 @@ export default function CreditorFields({
                   )
                 }
                 border={
-                  hasError("businessCategory") && showErrors
+                  thisCaseData?.creditor?.businessInformation
+                    ?.businessCategory === ""
+                    ? "2px solid red"
+                    : "auto" && hasError("businessCategory") && showErrors
                     ? "2px solid red"
                     : "1px solid transparent"
                 }
@@ -197,7 +203,7 @@ export default function CreditorFields({
                       color: Colors.DARK_GRAY,
                     }}
                   >
-                    Account Title
+                    Account Title*
                   </Typography>
                   <Autocomplete
                     sx={{
@@ -211,7 +217,9 @@ export default function CreditorFields({
                       fontFamily: "Nunito",
                       justifyContent: "center",
                       border:
-                        hasError("accountTitle") && showErrors
+                        thisCaseData?.creditor?.accountTitle === ""
+                          ? "2px solid red"
+                          : "auto" && hasError("accountTitle") && showErrors
                           ? "2px solid red"
                           : "none !important",
 
@@ -290,7 +298,7 @@ export default function CreditorFields({
               ) : (
                 <PaymentsTextFields
                   type="Account Title"
-                  label="Account Title"
+                  label="Account Title*"
                   placeHolderValue="Enter Account Title"
                   width="100%"
                   value={thisCaseData?.creditor?.accountTitle}
@@ -302,7 +310,9 @@ export default function CreditorFields({
                     )
                   }
                   border={
-                    hasError("accountTitle") && showErrors
+                    thisCaseData?.creditor?.accountTitle === ""
+                      ? "2px solid red"
+                      : "auto" && hasError("accountTitle") && showErrors
                       ? "2px solid red"
                       : "1px solid transparent"
                   }
@@ -334,7 +344,9 @@ export default function CreditorFields({
                   )
                 }
                 border={
-                  hasError("fullName") && showErrors
+                  thisCaseData?.creditor?.basicInformation?.fullName === ""
+                    ? "2px solid red"
+                    : "auto" && hasError("fullName") && showErrors
                     ? "2px solid red"
                     : "1px solid transparent"
                 }
@@ -354,7 +366,9 @@ export default function CreditorFields({
                 }
                 error={errors?.emailValid}
                 border={
-                  hasError("email") && showErrors
+                  thisCaseData?.creditor?.basicInformation?.email === ""
+                    ? "2px solid red"
+                    : "auto" && hasError("email") && showErrors
                     ? "2px solid red"
                     : "1px solid transparent"
                 }
@@ -385,7 +399,9 @@ export default function CreditorFields({
                 error={errors?.basicPhone}
                 onKeyDown={handleNumberInput}
                 border={
-                  hasError("phone") && showErrors
+                  thisCaseData?.creditor?.basicInformation?.phone === ""
+                    ? "2px solid red"
+                    : "auto" && hasError("phone") && showErrors
                     ? "2px solid red"
                     : "1px solid transparent"
                 }
@@ -469,7 +485,9 @@ export default function CreditorFields({
             }
             max={today}
             border={
-              hasError("lastFundedDate") && showErrors
+              thisCaseData?.creditor?.lastFundedDate === ""
+                ? "2px solid red"
+                : "auto" && hasError("lastFundedDate") && showErrors
                 ? "2px solid red"
                 : "1px solid transparent"
             }

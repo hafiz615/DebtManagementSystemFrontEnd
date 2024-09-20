@@ -80,6 +80,7 @@ function TransactionRow({ data, heading, GetCasePaymentDetails }) {
               display: "flex",
               gap: "10px",
               alignItems: "center",
+              width: "100%",
               color: heading ? Colors.BLACK : colorScheme,
             }}
           >
@@ -93,7 +94,6 @@ function TransactionRow({ data, heading, GetCasePaymentDetails }) {
                 fontSize: "11px",
                 fontFamily: "Nunito",
                 fontWeight: "500",
-                width: "100px",
                 justifyContent: "space-between",
                 alignItems: "center",
               }}

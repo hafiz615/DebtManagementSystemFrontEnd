@@ -273,7 +273,9 @@ export default function DebtorFields({
               basicInfoInputChange("BasicFullName", e.target.value)
             }
             border={
-              misMatches?.BasicFullName && showFieldError
+              debtorOwnDetails?.BasicFullName === ""
+                ? "2px solid red"
+                : "auto" && misMatches?.BasicFullName && showFieldError
                 ? "2px solid red"
                 : "1px solid transparent"
             }
@@ -289,7 +291,9 @@ export default function DebtorFields({
             }
             error={errors?.emailValid}
             border={
-              misMatches?.BasicEmailAddress && showFieldError
+              debtorOwnDetails?.BasicEmailAddress === ""
+                ? "2px solid red"
+                : "auto" && misMatches?.BasicEmailAddress && showFieldError
                 ? "2px solid red"
                 : "1px solid transparent"
             }
@@ -307,7 +311,9 @@ export default function DebtorFields({
             onKeyDown={handleNumberInput}
             error={errors?.ssn}
             border={
-              misMatches?.BasicSsid && showFieldError
+              debtorOwnDetails?.BasicSsid === ""
+                ? "2px solid red"
+                : "auto" && misMatches?.BasicSsid && showFieldError
                 ? "2px solid red"
                 : "1px solid transparent"
             }
@@ -353,6 +359,7 @@ export default function DebtorFields({
               width={smallScreen ? "100%" : "98%"}
               selectedValue={selectedValue}
               setSelectedValue={setSelectedValue}
+              showCaseStatus={selectedValue === "" && true}
             />
           </Grid>
           <Grid
@@ -433,7 +440,9 @@ export default function DebtorFields({
               basicInfoInputChange("BasicState", e.target.value)
             }
             border={
-              misMatches?.BasicState && showFieldError
+              debtorOwnDetails?.BasicState === ""
+                ? "2px solid red"
+                : "auto" && misMatches?.BasicState && showFieldError
                 ? "2px solid red"
                 : "1px solid transparent"
             }
@@ -447,7 +456,9 @@ export default function DebtorFields({
               basicInfoInputChange("BasicCity", e.target.value)
             }
             border={
-              misMatches?.BasicCity && showFieldError
+              debtorOwnDetails?.BasicCity === ""
+                ? "2px solid red"
+                : "auto" && misMatches?.BasicCity && showFieldError
                 ? "2px solid red"
                 : "1px solid transparent"
             }
@@ -462,7 +473,9 @@ export default function DebtorFields({
               basicInfoInputChange("BasicZipCode", e.target.value)
             }
             border={
-              misMatches?.BasicZipCode && showFieldError
+              debtorOwnDetails?.BasicZipCode === ""
+                ? "2px solid red"
+                : "auto" && misMatches?.BasicZipCode && showFieldError
                 ? "2px solid red"
                 : "1px solid transparent"
             }
@@ -492,7 +505,9 @@ export default function DebtorFields({
                 : ""
             }
             border={
-              misMatches?.BasicPhoneNumber && showFieldError
+              debtorOwnDetails?.BasicPhoneNumber === ""
+                ? "2px solid red"
+                : "auto" && misMatches?.BasicPhoneNumber && showFieldError
                 ? "2px solid red"
                 : "1px solid transparent"
             }
@@ -510,7 +525,9 @@ export default function DebtorFields({
             width="100%"
             value={debtorOwnDetails?.BasicAddress}
             border={
-              misMatches?.BasicAddress && showFieldError
+              debtorOwnDetails?.BasicAddress === ""
+                ? "2px solid red"
+                : "auto" && misMatches?.BasicAddress && showFieldError
                 ? "2px solid red"
                 : "1px solid transparent"
             }
@@ -555,7 +572,9 @@ export default function DebtorFields({
             width="100%"
             value={debtorBusinessDetails?.businessCompanyName}
             border={
-              misMatches?.businessCompanyName && showFieldError
+              debtorBusinessDetails?.businessCompanyName === ""
+                ? "2px solid red"
+                : "auto" && misMatches?.businessCompanyName && showFieldError
                 ? "2px solid red"
                 : "1px solid transparent"
             }
@@ -574,7 +593,9 @@ export default function DebtorFields({
               businessInfoInputChange("businessEinNumber", e.target.value)
             }
             border={
-              misMatches?.businessEinNumber && showFieldError
+              debtorBusinessDetails?.businessEinNumber === ""
+                ? "2px solid red"
+                : "auto" && misMatches?.businessEinNumber && showFieldError
                 ? "2px solid red"
                 : "1px solid transparent"
             }
@@ -587,7 +608,9 @@ export default function DebtorFields({
             width="100%"
             value={debtorBusinessDetails?.businessCategory}
             border={
-              misMatches?.businessCategory && showFieldError
+              debtorBusinessDetails?.businessCategory === ""
+                ? "2px solid red"
+                : "auto" && misMatches?.businessCategory && showFieldError
                 ? "2px solid red"
                 : "1px solid transparent"
             }
@@ -642,7 +665,9 @@ export default function DebtorFields({
             placeHolderValue="Enter State Name"
             width="100%"
             border={
-              misMatches?.businessState && showFieldError
+              debtorBusinessDetails?.businessState === ""
+                ? "2px solid red"
+                : "auto" && misMatches?.businessState && showFieldError
                 ? "2px solid red"
                 : "1px solid transparent"
             }
@@ -657,7 +682,9 @@ export default function DebtorFields({
             placeHolderValue="Enter City Name"
             width="100%"
             border={
-              misMatches?.businessCity && showFieldError
+              debtorBusinessDetails?.businessCity === ""
+                ? "2px solid red"
+                : "auto" && misMatches?.businessCity && showFieldError
                 ? "2px solid red"
                 : "1px solid transparent"
             }
@@ -672,7 +699,9 @@ export default function DebtorFields({
             placeHolderValue="Enter Zip Code"
             width="100%"
             border={
-              misMatches?.businessZipCode && showFieldError
+              debtorBusinessDetails?.businessZipCode === ""
+                ? "2px solid red"
+                : "auto" && misMatches?.businessZipCode && showFieldError
                 ? "2px solid red"
                 : "1px solid transparent"
             }
@@ -706,7 +735,9 @@ export default function DebtorFields({
                 : ""
             }
             border={
-              misMatches?.businessPhoneNumber && showFieldError
+              debtorBusinessDetails?.businessPhoneNumber === ""
+                ? "2px solid red"
+                : "auto" && misMatches?.businessPhoneNumber && showFieldError
                 ? "2px solid red"
                 : "1px solid transparent"
             }
@@ -724,7 +755,9 @@ export default function DebtorFields({
             placeHolderValue="Add Your Address"
             width="100%"
             border={
-              misMatches?.businessAddress && showFieldError
+              debtorBusinessDetails?.businessAddress === ""
+                ? "2px solid red"
+                : "auto" && misMatches?.businessAddress && showFieldError
                 ? "2px solid red"
                 : "1px solid transparent"
             }

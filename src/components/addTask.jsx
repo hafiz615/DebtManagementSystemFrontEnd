@@ -163,6 +163,7 @@ export default function AddTask({
             width="15rem"
             onChange={(e) => handleDropdownChange("dueDate", e.target.value)}
             value={addTasks?.dueDate}
+            min={dayjs().format("YYYY-MM-DD")}
           />
         </div>
 

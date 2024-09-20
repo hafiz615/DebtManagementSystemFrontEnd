@@ -16,6 +16,7 @@ export default function CustomTextField({
   max,
   disabled,
   paddingLeft,
+  min,
 }) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
 
@@ -59,7 +60,7 @@ export default function CustomTextField({
             ? "20rem"
             : "",
         }}
-        min={type === "number" ? "0" : undefined}
+        min={type === "number" ? "0" : min}
       />
       {error && value ? (
         <Box

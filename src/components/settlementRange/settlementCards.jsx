@@ -154,66 +154,75 @@ export default function SettlementCards({
               }}
               key={index}
             >
-              {!isLumpSumPayment && (
-                <Grid item xs={6.5} sx={{ paddingLeft: "6%" }}>
-                  <Typography
-                    sx={{
-                      ...commonTextStyles,
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    {rangeNames[index]?.label}
-
-                    <Tooltip
-                      title={rangeNames[index]?.tooltip}
-                      placement="top-end"
+              {!isLumpSumPayment &&
+                !(
+                  rangeNames[index]?.label === "New Default Risk" &&
+                  isFullPayment
+                ) && (
+                  <Grid item xs={6.5} sx={{ paddingLeft: "6%" }}>
+                    <Typography
+                      sx={{
+                        ...commonTextStyles,
+                        display: "flex",
+                        alignItems: "center",
+                      }}
                     >
-                      <InfoIcon
-                        sx={{ fontSize: "17px", color: Colors.SKY_BLUE }}
-                      />
-                    </Tooltip>
-                  </Typography>
-                </Grid>
-              )}
+                      {rangeNames[index]?.label}
+
+                      <Tooltip
+                        title={rangeNames[index]?.tooltip}
+                        placement="top-end"
+                      >
+                        <InfoIcon
+                          sx={{ fontSize: "17px", color: Colors.SKY_BLUE }}
+                        />
+                      </Tooltip>
+                    </Typography>
+                  </Grid>
+                )}
 
               {isFullPayment ? (
                 <>
-                  <Grid item xs={5}>
-                    <div
-                      style={{
-                        width: "100%",
-                        display: "flex",
-                      }}
-                    >
+                  {!(
+                    rangeNames[index]?.label === "New Default Risk" &&
+                    isFullPayment
+                  ) && (
+                    <Grid item xs={5}>
                       <div
                         style={{
-                          width: "75%",
-                          fontFamily: "Nunito",
-                          color: Colors.ORANGE_COLOR,
+                          width: "100%",
+                          display: "flex",
                         }}
                       >
-                        <Tooltip title={"Minimum"} placement="top-end">
-                          {mediumScreen ? "Min" : "Minimum"}
-                        </Tooltip>
+                        <div
+                          style={{
+                            width: "75%",
+                            fontFamily: "Nunito",
+                            color: Colors.ORANGE_COLOR,
+                          }}
+                        >
+                          <Tooltip title={"Minimum"} placement="top-end">
+                            {mediumScreen ? "Min" : "Minimum"}
+                          </Tooltip>
+                        </div>
+                        <div style={textStyles}>{item?.[title]["min"]}</div>
                       </div>
-                      <div style={textStyles}>{item?.[title]["min"]}</div>
-                    </div>
-                    <div style={{ width: "100%", display: "flex" }}>
-                      <div
-                        style={{
-                          width: "75%",
-                          fontFamily: "Nunito",
-                          color: Colors.SKY_BLUE,
-                        }}
-                      >
-                        <Tooltip title={"Maximum"} placement="top-end">
-                          {mediumScreen ? "Max" : "Maximum"}
-                        </Tooltip>
+                      <div style={{ width: "100%", display: "flex" }}>
+                        <div
+                          style={{
+                            width: "75%",
+                            fontFamily: "Nunito",
+                            color: Colors.SKY_BLUE,
+                          }}
+                        >
+                          <Tooltip title={"Maximum"} placement="top-end">
+                            {mediumScreen ? "Max" : "Maximum"}
+                          </Tooltip>
+                        </div>
+                        <div style={textStyles}>{item?.[title]["max"]}</div>
                       </div>
-                      <div style={textStyles}>{item?.[title]["max"]}</div>
-                    </div>
-                  </Grid>
+                    </Grid>
+                  )}
                 </>
               ) : isLumpSumPayment ? (
                 <>

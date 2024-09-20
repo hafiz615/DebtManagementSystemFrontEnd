@@ -82,7 +82,7 @@ export default function PaymentFields({
             Total Receivable
           </Typography>
           <AmountTextField
-            value={parseInt(thisCaseData.totalDebt)}
+            value={parseInt(thisCaseData?.totalDebt)}
             onChange={(e) =>
               handleCaseDataChange(
                 caseIndex,
@@ -92,7 +92,9 @@ export default function PaymentFields({
             }
             onKeyDown={handleNumberInput}
             border={
-              hasError("totalDebt") && showErrors
+              thisCaseData?.totalDebt === 0
+                ? "2px solid red"
+                : "auto" && hasError("totalDebt") && showErrors
                 ? "2px solid red"
                 : "none !important"
             }
@@ -153,7 +155,9 @@ export default function PaymentFields({
             }
             onKeyDown={handleNumberInput}
             border={
-              hasError("remaining") && showErrors
+              thisCaseData?.remaining === 0
+                ? "2px solid red"
+                : "auto" && hasError("remaining") && showErrors
                 ? "2px solid red"
                 : "none !important"
             }
@@ -174,7 +178,7 @@ export default function PaymentFields({
           <input
             type="date"
             placeholder="4/2/2024"
-            value={thisCaseData.lastPaymentDate}
+            value={thisCaseData?.lastPaymentDate}
             onChange={(e) =>
               handleCaseDataChange(caseIndex, "lastPaymentDate", e.target.value)
             }
@@ -184,10 +188,14 @@ export default function PaymentFields({
               height: "2.5rem",
               color: Colors.DIM_LIGHT_GRAY,
               paddingLeft: "1rem",
-              border:
-                hasError("lastPaymentDate") && showErrors
-                  ? "2px solid red"
-                  : "1px solid transparent",
+              border: !thisCaseData?.lastPaymentDate
+                ? "2px solid red"
+                : "auto" &&
+                  hasError("remaining") &&
+                  hasError("lastPaymentDate") &&
+                  showErrors
+                ? "2px solid red"
+                : "1px solid transparent",
 
               outline: "none",
               borderRadius: "5px",
