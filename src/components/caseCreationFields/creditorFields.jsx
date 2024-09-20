@@ -203,7 +203,7 @@ export default function CreditorFields({
                       color: Colors.DARK_GRAY,
                     }}
                   >
-                    Account Title
+                    Account Title*
                   </Typography>
                   <Autocomplete
                     sx={{
@@ -217,7 +217,9 @@ export default function CreditorFields({
                       fontFamily: "Nunito",
                       justifyContent: "center",
                       border:
-                        hasError("accountTitle") && showErrors
+                        thisCaseData?.creditor?.accountTitle === ""
+                          ? "2px solid red"
+                          : "auto" && hasError("accountTitle") && showErrors
                           ? "2px solid red"
                           : "none !important",
 
@@ -296,7 +298,7 @@ export default function CreditorFields({
               ) : (
                 <PaymentsTextFields
                   type="Account Title"
-                  label="Account Title"
+                  label="Account Title*"
                   placeHolderValue="Enter Account Title"
                   width="100%"
                   value={thisCaseData?.creditor?.accountTitle}
@@ -308,7 +310,9 @@ export default function CreditorFields({
                     )
                   }
                   border={
-                    hasError("accountTitle") && showErrors
+                    thisCaseData?.creditor?.accountTitle === ""
+                      ? "2px solid red"
+                      : "auto" && hasError("accountTitle") && showErrors
                       ? "2px solid red"
                       : "1px solid transparent"
                   }
