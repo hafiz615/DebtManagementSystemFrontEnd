@@ -188,14 +188,12 @@ export default function PaymentFields({
               height: "2.5rem",
               color: Colors.DIM_LIGHT_GRAY,
               paddingLeft: "1rem",
-              border: !thisCaseData?.lastPaymentDate
-                ? "2px solid red"
-                : "auto" &&
-                  hasError("remaining") &&
-                  hasError("lastPaymentDate") &&
-                  showErrors
-                ? "2px solid red"
-                : "1px solid transparent",
+              border:
+                hasError("remaining") &&
+                hasError("lastPaymentDate") &&
+                showErrors
+                  ? "2px solid red"
+                  : "1px solid transparent",
 
               outline: "none",
               borderRadius: "5px",
