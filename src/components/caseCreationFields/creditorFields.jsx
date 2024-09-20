@@ -485,9 +485,7 @@ export default function CreditorFields({
             }
             max={today}
             border={
-              thisCaseData?.creditor?.lastFundedDate === ""
-                ? "2px solid red"
-                : "auto" && hasError("lastFundedDate") && showErrors
+              hasError("lastFundedDate") && showErrors
                 ? "2px solid red"
                 : "1px solid transparent"
             }

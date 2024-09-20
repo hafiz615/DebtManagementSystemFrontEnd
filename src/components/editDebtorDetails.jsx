@@ -426,7 +426,7 @@ export default function EditDebtorDetail({
               }}
             >
               <TextButton
-                buttonText="Save"
+                buttonText="Update"
                 height="2rem"
                 width="8rem"
                 marginRight="1rem"
@@ -437,7 +437,7 @@ export default function EditDebtorDetail({
                 loading={loading}
               />
               <TextButton
-                buttonText="Next"
+                buttonText="Skip"
                 height="2rem"
                 width="8rem"
                 marginTop={smallScreen ? "1rem" : "auto"}

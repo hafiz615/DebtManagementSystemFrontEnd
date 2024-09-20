@@ -145,20 +145,22 @@ export default function SettlementCards({
             No Data
           </Typography>
         ) : (
-          allRanges?.map((item, index) => (
-            <Grid
-              container
-              sx={{
-                width: "100%",
-                padding: !isLumpSumPayment && "10px 8px",
-              }}
-              key={index}
-            >
-              {!isLumpSumPayment &&
-                !(
-                  rangeNames[index]?.label === "New Default Risk" &&
-                  isFullPayment
-                ) && (
+          allRanges?.map((item, index) => {
+            const shouldShowContent =
+              !isLumpSumPayment &&
+              !(
+                rangeNames[index]?.label === "New Default Risk" && isFullPayment
+              );
+            return (
+              <Grid
+                container
+                sx={{
+                  width: "100%",
+                  padding: shouldShowContent && "10px 8px",
+                }}
+                key={index}
+              >
+                {shouldShowContent ? (
                   <Grid item xs={6.5} sx={{ paddingLeft: "6%" }}>
                     <Typography
                       sx={{
@@ -169,31 +171,109 @@ export default function SettlementCards({
                     >
                       {rangeNames[index]?.label}
 
-                      <Tooltip
-                        title={rangeNames[index]?.tooltip}
-                        placement="top-end"
-                      >
-                        <InfoIcon
-                          sx={{ fontSize: "17px", color: Colors.SKY_BLUE }}
-                        />
-                      </Tooltip>
+                      {rangeNames[index]?.tooltip && (
+                        <Tooltip
+                          title={rangeNames[index]?.tooltip}
+                          placement="top-end"
+                        >
+                          <InfoIcon
+                            sx={{ fontSize: "17px", color: Colors.SKY_BLUE }}
+                          />
+                        </Tooltip>
+                      )}
                     </Typography>
                   </Grid>
-                )}
+                ) : null}
 
-              {isFullPayment ? (
-                <>
-                  {!(
-                    rangeNames[index]?.label === "New Default Risk" &&
-                    isFullPayment
-                  ) && (
-                    <Grid item xs={5}>
-                      <div
-                        style={{
-                          width: "100%",
-                          display: "flex",
+                {isFullPayment ? (
+                  <>
+                    {!(
+                      rangeNames[index]?.label === "New Default Risk" &&
+                      isFullPayment
+                    ) && (
+                      <Grid item xs={5}>
+                        <div
+                          style={{
+                            width: "100%",
+                            display: "flex",
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: "75%",
+                              fontFamily: "Nunito",
+                              color: Colors.ORANGE_COLOR,
+                            }}
+                          >
+                            <Tooltip title={"Minimum"} placement="top-end">
+                              {mediumScreen ? "Min" : "Minimum"}
+                            </Tooltip>
+                          </div>
+                          <div style={textStyles}>{item?.[title]["min"]}</div>
+                        </div>
+                        <div style={{ width: "100%", display: "flex" }}>
+                          <div
+                            style={{
+                              width: "75%",
+                              fontFamily: "Nunito",
+                              color: Colors.SKY_BLUE,
+                            }}
+                          >
+                            <Tooltip title={"Maximum"} placement="top-end">
+                              {mediumScreen ? "Max" : "Maximum"}
+                            </Tooltip>
+                          </div>
+                          <div style={textStyles}>{item?.[title]["max"]}</div>
+                        </div>
+                      </Grid>
+                    )}
+                  </>
+                ) : isLumpSumPayment ? (
+                  <>
+                    {item !== null && (
+                      <Grid
+                        item
+                        xs={12}
+                        sx={{
+                          paddingLeft: "6%",
+                          paddingRight: "6%",
                         }}
                       >
+                        <div style={{ width: "100%", display: "flex" }}>
+                          <div
+                            style={{
+                              width: "75%",
+                              fontFamily: "Nunito",
+                              color: Colors.SKY_BLUE,
+                            }}
+                          >
+                            Repaid Debt
+                          </div>
+                          <div style={textStyles}>
+                            ${item?.repaid_debt || "--"}
+                          </div>
+                        </div>
+                        <div style={{ width: "100%", display: "flex" }}>
+                          <div
+                            style={{
+                              width: "75%",
+                              fontFamily: "Nunito",
+                              color: Colors.ORANGE_COLOR,
+                            }}
+                          >
+                            Remaining Amount
+                          </div>
+                          <div style={textStyles}>
+                            ${item?.remaining_principle_amount || "--"}
+                          </div>
+                        </div>
+                      </Grid>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <Grid item xs={5}>
+                      <div style={{ width: "100%", display: "flex" }}>
                         <div
                           style={{
                             width: "75%",
@@ -205,7 +285,26 @@ export default function SettlementCards({
                             {mediumScreen ? "Min" : "Minimum"}
                           </Tooltip>
                         </div>
-                        <div style={textStyles}>{item?.[title]["min"]}</div>
+                        <div style={textStyles}>
+                          {rangeNames[index]?.label === "Weeks Till Paid"
+                            ? rangeNames[index]?.label === "Weeks Till Paid"
+                              ? item?.[weeksTillPaidTitle]?.["min"] ||
+                                item?.[weeksTillPaidTitle][0]
+                              : ""
+                            : rangeNames[index]?.label === "New Default Risk"
+                            ? item?.[title]?.["min"] || "-"
+                            : rangeNames[index]?.label?.includes("%")
+                            ? `${
+                                parseFloat(
+                                  item?.[title]?.["min"]?.toFixed(2)
+                                ) || "-"
+                              }%`
+                            : `$${
+                                parseFloat(
+                                  item?.[title]?.["min"]?.toFixed(2)
+                                ) || "-"
+                              }`}
+                        </div>
                       </div>
                       <div style={{ width: "100%", display: "flex" }}>
                         <div
@@ -219,123 +318,33 @@ export default function SettlementCards({
                             {mediumScreen ? "Max" : "Maximum"}
                           </Tooltip>
                         </div>
-                        <div style={textStyles}>{item?.[title]["max"]}</div>
-                      </div>
-                    </Grid>
-                  )}
-                </>
-              ) : isLumpSumPayment ? (
-                <>
-                  {item !== null && (
-                    <Grid
-                      item
-                      xs={12}
-                      sx={{
-                        paddingLeft: "6%",
-                        paddingRight: "6%",
-                      }}
-                    >
-                      <div style={{ width: "100%", display: "flex" }}>
-                        <div
-                          style={{
-                            width: "75%",
-                            fontFamily: "Nunito",
-                            color: Colors.SKY_BLUE,
-                          }}
-                        >
-                          Repaid Debt
-                        </div>
                         <div style={textStyles}>
-                          ${item?.repaid_debt || "--"}
-                        </div>
-                      </div>
-                      <div style={{ width: "100%", display: "flex" }}>
-                        <div
-                          style={{
-                            width: "75%",
-                            fontFamily: "Nunito",
-                            color: Colors.ORANGE_COLOR,
-                          }}
-                        >
-                          Remaining Amount
-                        </div>
-                        <div style={textStyles}>
-                          ${item?.remaining_principle_amount || "--"}
+                          {rangeNames[index]?.label === "Weeks Till Paid"
+                            ? rangeNames[index]?.label === "Weeks Till Paid"
+                              ? item?.[weeksTillPaidTitle]?.["max"] ||
+                                item?.[weeksTillPaidTitle][1]
+                              : ""
+                            : rangeNames[index]?.label === "New Default Risk"
+                            ? item?.[title]?.["max"] || "-"
+                            : rangeNames[index]?.label?.includes("%")
+                            ? `${
+                                parseFloat(
+                                  item?.[title]?.["max"]?.toFixed(2)
+                                ) || "-"
+                              }%`
+                            : `$${
+                                parseFloat(
+                                  item?.[title]?.["max"]?.toFixed(2)
+                                ) || "-"
+                              }`}
                         </div>
                       </div>
                     </Grid>
-                  )}
-                </>
-              ) : (
-                <>
-                  <Grid item xs={5}>
-                    <div style={{ width: "100%", display: "flex" }}>
-                      <div
-                        style={{
-                          width: "75%",
-                          fontFamily: "Nunito",
-                          color: Colors.ORANGE_COLOR,
-                        }}
-                      >
-                        <Tooltip title={"Minimum"} placement="top-end">
-                          {mediumScreen ? "Min" : "Minimum"}
-                        </Tooltip>
-                      </div>
-                      <div style={textStyles}>
-                        {rangeNames[index]?.label === "Weeks Till Paid"
-                          ? rangeNames[index]?.label === "Weeks Till Paid"
-                            ? item?.[weeksTillPaidTitle]?.["min"] ||
-                              item?.[weeksTillPaidTitle][0]
-                            : ""
-                          : rangeNames[index]?.label === "New Default Risk"
-                          ? item?.[title]?.["min"] || "-"
-                          : rangeNames[index]?.label?.includes("%")
-                          ? `${
-                              parseFloat(item?.[title]?.["min"]?.toFixed(2)) ||
-                              "-"
-                            }%`
-                          : `$${
-                              parseFloat(item?.[title]?.["min"]?.toFixed(2)) ||
-                              "-"
-                            }`}
-                      </div>
-                    </div>
-                    <div style={{ width: "100%", display: "flex" }}>
-                      <div
-                        style={{
-                          width: "75%",
-                          fontFamily: "Nunito",
-                          color: Colors.SKY_BLUE,
-                        }}
-                      >
-                        <Tooltip title={"Maximum"} placement="top-end">
-                          {mediumScreen ? "Max" : "Maximum"}
-                        </Tooltip>
-                      </div>
-                      <div style={textStyles}>
-                        {rangeNames[index]?.label === "Weeks Till Paid"
-                          ? rangeNames[index]?.label === "Weeks Till Paid"
-                            ? item?.[weeksTillPaidTitle]?.["max"] ||
-                              item?.[weeksTillPaidTitle][1]
-                            : ""
-                          : rangeNames[index]?.label === "New Default Risk"
-                          ? item?.[title]?.["max"] || "-"
-                          : rangeNames[index]?.label?.includes("%")
-                          ? `${
-                              parseFloat(item?.[title]?.["max"]?.toFixed(2)) ||
-                              "-"
-                            }%`
-                          : `$${
-                              parseFloat(item?.[title]?.["max"]?.toFixed(2)) ||
-                              "-"
-                            }`}
-                      </div>
-                    </div>
-                  </Grid>
-                </>
-              )}
-            </Grid>
-          ))
+                  </>
+                )}
+              </Grid>
+            );
+          })
         )}
       </Grid>
 

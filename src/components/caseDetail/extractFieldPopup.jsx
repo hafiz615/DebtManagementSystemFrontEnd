@@ -653,7 +653,7 @@ function ExtractFieldPopup({
                 }}
               >
                 <TextButton
-                  buttonText="Save"
+                  buttonText="Update"
                   height="2rem"
                   width="8rem"
                   marginRight="1rem"

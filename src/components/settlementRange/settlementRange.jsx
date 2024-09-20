@@ -1097,7 +1097,7 @@ export default function SettlementRange() {
             <GridItem
               key="Weekly Profit"
               title="Weekly Profit"
-              tooltip="Weekly Profit Without Payment"
+              tooltip="Weekly Profit With Payment"
               value={
                 apiData?.weekly_profit
                   ? `$ ${new Intl.NumberFormat().format(apiData.weekly_profit)}`
@@ -1255,28 +1255,37 @@ export default function SettlementRange() {
                         : "--";
 
                       return (
-                        <Grid
-                          key={index}
-                          item
-                          xs={12}
-                          sm={5.8}
-                          md={3.8}
-                          lg={2.8}
-                          container
-                          sx={commonStyles}
+                        <Tooltip
+                          title={
+                            detail?.label === "Weekly Budget"
+                              ? "Weekly Profit without Payment"
+                              : ""
+                          }
+                          placement="top-start"
                         >
-                          <Typography sx={commonTextStyles}>
-                            {detail?.label}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              ...commonTextStyles,
-                              color: Colors.SKY_BLUE,
-                            }}
+                          <Grid
+                            key={index}
+                            item
+                            xs={12}
+                            sm={5.8}
+                            md={3.8}
+                            lg={2.8}
+                            container
+                            sx={commonStyles}
                           >
-                            {formattedValue}
-                          </Typography>
-                        </Grid>
+                            <Typography sx={commonTextStyles}>
+                              {detail?.label}
+                            </Typography>
+                            <Typography
+                              sx={{
+                                ...commonTextStyles,
+                                color: Colors.SKY_BLUE,
+                              }}
+                            >
+                              {formattedValue}
+                            </Typography>
+                          </Grid>
+                        </Tooltip>
                       );
                     })}
                   </Grid>
