@@ -1049,10 +1049,11 @@ export default function SettlementRange() {
                         marginTop: "0.5rem",
                       }}
                     >
-                      {key === "weeklyBudget"
-                        ? `$${debtor[key]?.toString().slice(0, 15)}${
-                            debtor[key]?.toString().length > 15 ? "..." : ""
-                          }`
+                      {allData?.debtor?.weeklyBudgetUpdated &&
+                      key === "weeklyBudget"
+                        ? `$${debtor[key]} (Calculated)`
+                        : key === "weeklyBudget"
+                        ? `$${debtor[key]}`
                         : `${debtor[key]?.toString().slice(0, 15)}${
                             debtor[key]?.toString().length > 15 ? "..." : ""
                           }`}
