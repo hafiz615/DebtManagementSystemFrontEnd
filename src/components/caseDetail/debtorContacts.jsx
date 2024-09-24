@@ -184,7 +184,7 @@ export default function DebtorContacts({
           <Grid container item xs={12} md={8}>
             <PaymentsTextFields
               type="text"
-              label="Name"
+              label="Name*"
               placeHolderValue="Enter Name"
               width={smallScreen ? "100%" : "97%"}
               value={debtorContactDetails?.name}
@@ -194,7 +194,7 @@ export default function DebtorContacts({
             />
             <PaymentsTextFields
               type="text"
-              label="Title"
+              label="Title*"
               placeHolderValue="Enter Title"
               width={smallScreen ? "100%" : "97%"}
               value={debtorContactDetails?.title}
@@ -218,7 +218,7 @@ export default function DebtorContacts({
 
             <PaymentsTextFields
               type="text"
-              label="Enter Email"
+              label="Enter Email*"
               placeHolderValue="Enter Email"
               width={smallScreen ? "100%" : "97%"}
               value={debtorContactDetails?.email}
@@ -230,7 +230,7 @@ export default function DebtorContacts({
 
             <PaymentsTextFields
               type="text"
-              label="State (Optional)"
+              label="State"
               placeHolderValue="Enter State"
               width={smallScreen ? "100%" : "97%"}
               value={debtorContactDetails?.state}
@@ -239,7 +239,7 @@ export default function DebtorContacts({
               }
             />
             <PaymentsTextFields
-              label="City (Optional)"
+              label="City"
               placeHolderValue="Enter City"
               width={smallScreen ? "100%" : "97%"}
               value={debtorContactDetails?.city}
@@ -249,7 +249,7 @@ export default function DebtorContacts({
             />
             <PaymentsTextFields
               type="number"
-              label="Zip Code (Optional)"
+              label="Zip Code"
               placeHolderValue="Enter Zip Code"
               width={smallScreen ? "100%" : "97%"}
               value={debtorContactDetails?.zipCode}
@@ -269,8 +269,8 @@ export default function DebtorContacts({
               }}
             >
               {show === "Debtor" || show === "EditDebtor"
-                ? "Relation with Debtor (Optional)"
-                : "Relation with Creditor (Optional)"}
+                ? "Relation with Debtor"
+                : "Relation with Creditor"}
             </Typography>
             <input
               type="text"

@@ -35,7 +35,7 @@ import { isEmpty } from "lodash";
 import { hasAnyValue, phoneNumberFormat, sanitizeText } from "../common";
 import ScrollbarStyles from "./customScroll";
 
-const steps = ["File upload ", "Debtor", "Creditor", "Payment", "Preview"];
+const steps = ["File upload ", "Debtor", "Creditor"];
 
 export default function HorizontalLinearStepper({ hide, caseData }) {
   const { showToast } = useToast();

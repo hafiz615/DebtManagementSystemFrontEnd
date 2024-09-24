@@ -375,7 +375,7 @@ export default function CreditorFields({
               />
               <PaymentsTextFields
                 type="text"
-                label="Phone #"
+                label="Phone #*"
                 placeHolderValue="Enter Phone Number"
                 width="100%"
                 value={
