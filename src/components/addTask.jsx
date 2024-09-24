@@ -273,6 +273,7 @@ export default function AddTask({
         <textarea
           name="notes"
           rows="6"
+          placeholder="Type Here..."
           style={{
             backgroundColor: Colors.BG_LIGHT_GRAY,
             border: "none",
@@ -280,6 +281,9 @@ export default function AddTask({
             marginTop: "1em",
             minWidth: "100%",
             maxWidth: "100%",
+            borderRadius: "10px",
+            fontFamily: "Nunito",
+            padding: "10px",
           }}
           onChange={handleChange}
           value={addTasks?.notes}

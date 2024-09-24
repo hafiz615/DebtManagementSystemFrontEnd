@@ -911,7 +911,7 @@ export default function SettlementRange() {
             alignItems: "center",
           }}
         >
-          <CircularProgress size={100} />
+          <CircularProgress size={100} sx={{ color: Colors.SKY_BLUE }} />
         </Grid>
       ) : (
         <>
@@ -1458,7 +1458,10 @@ export default function SettlementRange() {
                   }}
                 >
                   {justificationLoading ? (
-                    <CircularProgress size={20} />
+                    <CircularProgress
+                      size={20}
+                      sx={{ color: Colors.SKY_BLUE }}
+                    />
                   ) : (
                     <Typography variant="body1">
                       <ReactMarkdown>
