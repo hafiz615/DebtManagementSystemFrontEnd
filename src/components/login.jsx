@@ -23,6 +23,7 @@ import { GetRoleByName, SignIn } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import Button from "./button";
 import ForgotPassword from "./forgortPassword";
+import { isEmailValid } from "../common";
 
 function Login() {
   const { showToast } = useToast();
@@ -77,12 +78,10 @@ function Login() {
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
+
     if (!e.target.value.trim()) {
       setEmailError("Email is required");
-    } else if (
-      !e.target.value.includes("@") ||
-      !e.target.value.includes(".co")
-    ) {
+    } else if (!isEmailValid(e.target.value)) {
       setEmailError("Invalid email format");
     } else {
       setEmailError("");
@@ -114,8 +113,7 @@ function Login() {
   };
   const isButtonDisabled =
     !email.trim() ||
-    !email.includes("@") ||
-    !email.includes(".co") ||
+    !isEmailValid(email) || // Use the email validation function here
     password.length < 8 ||
     !/(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/.test(
       password
