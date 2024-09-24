@@ -8,7 +8,7 @@ import {
   FormHelperText,
 } from "@mui/material";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { sign_In } from "../redux/action/action";
 
 import Button from "./button";
@@ -18,11 +18,13 @@ import {
   VerifyLink,
   UpdateUserPassword,
   ForgotPassword,
+  GetRoleByName,
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
 import { useLocation } from "react-router-dom";
+import { permissions } from "../redux/action/action";
 
 export default function VerifyProfile() {
   const location = useLocation();
@@ -95,6 +97,14 @@ export default function VerifyProfile() {
     const verifyUser = await VerifyLink(tokenValue);
 
     if (verifyUser?.status === 200) {
+      const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
+      const GetRoleName = await GetRoleByName(role);
+      if (GetRoleName?.status === 200) {
+        dispatch(permissions(GetRoleName?.data?.data));
+      } else {
+        const errorMessage = GetRoleName?.response?.data?.message;
+        showToast(errorMessage || GetRoleName?.message, "error");
+      }
       const params = {
         password: password,
         email: verifyUser?.data?.data?.email,
@@ -103,9 +113,6 @@ export default function VerifyProfile() {
         const forgotPassword = await ForgotPassword(params, tokenValue);
         if (forgotPassword?.status === 200) {
           localStorage.clear();
-          // dispatch(sign_In(forgotPassword?.data?.data));
-          // const token = forgotPassword?.data?.data?.token;
-          // localStorage.setItem("token", token);
           navigate("/");
         } else {
           showToast(forgotPassword?.response?.data?.message, "error");
