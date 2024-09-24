@@ -97,14 +97,6 @@ export default function VerifyProfile() {
     const verifyUser = await VerifyLink(tokenValue);
 
     if (verifyUser?.status === 200) {
-      const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
-      const GetRoleName = await GetRoleByName(role);
-      if (GetRoleName?.status === 200) {
-        dispatch(permissions(GetRoleName?.data?.data));
-      } else {
-        const errorMessage = GetRoleName?.response?.data?.message;
-        showToast(errorMessage || GetRoleName?.message, "error");
-      }
       const params = {
         password: password,
         email: verifyUser?.data?.data?.email,
@@ -120,6 +112,13 @@ export default function VerifyProfile() {
       } else {
         const updateUserPassword = await UpdateUserPassword(params, tokenValue);
         if (updateUserPassword?.status === 200) {
+          const GetRoleName = await GetRoleByName(verifyUser?.data?.data?.role);
+          if (GetRoleName?.status === 200) {
+            dispatch(permissions(GetRoleName?.data?.data));
+          } else {
+            const errorMessage = GetRoleName?.response?.data?.message;
+            showToast(errorMessage || GetRoleName?.message, "error");
+          }
           localStorage.clear();
           dispatch(sign_In(updateUserPassword?.data?.data));
           const token = updateUserPassword?.data?.data?.token;
