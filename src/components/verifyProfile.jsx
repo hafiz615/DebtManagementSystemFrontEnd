@@ -112,6 +112,7 @@ export default function VerifyProfile() {
       } else {
         const updateUserPassword = await UpdateUserPassword(params, tokenValue);
         if (updateUserPassword?.status === 200) {
+          localStorage.setItem("token", updateUserPassword?.data?.data?.token);
           const GetRoleName = await GetRoleByName(verifyUser?.data?.data?.role);
           if (GetRoleName?.status === 200) {
             dispatch(permissions(GetRoleName?.data?.data));
