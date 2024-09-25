@@ -30,9 +30,14 @@ export default function UploadCsv({ handleModalClose }) {
         header: true,
         complete: (results) => {
           const csvData = results;
-          if (results.meta.fields[0] !== "debtor_name") {
-            showToast("CSV format is not correct.", "error");
-            setData(null);
+          const filledRows = csvData?.data?.filter((row) =>
+            Object.values(row).some((value) => value)
+          ).length;
+          if (filledRows > 5) {
+            showToast(
+              "The CSV file should not have more than 5 filled rows.",
+              "error"
+            );
             setFilename(null);
             return;
           }
@@ -65,13 +70,11 @@ export default function UploadCsv({ handleModalClose }) {
     if (data) {
       localStorage.setItem("route", "bulk-cases");
       navigate("/bulk-cases");
-
       handleModalClose();
     } else {
       showToast("Please upload a CSV file first.", "error");
     }
   };
-  const isDisabled = !data;
 
   return (
     <Box
@@ -103,7 +106,7 @@ export default function UploadCsv({ handleModalClose }) {
           alignItems: "center",
           justifyContent: "center",
           borderRadius: "15px",
-          backgroundColor: Colors.LIGHT_BLUE_COLOR,
+          backgroundColor: Colors.VIOLET,
           cursor: "pointer",
           flexDirection: "column",
           padding: "0 2rem",
@@ -146,7 +149,7 @@ export default function UploadCsv({ handleModalClose }) {
         }}
       >
         <TextButton
-          disabled={isDisabled}
+          disabled={!data}
           buttonText="Upload"
           height="2rem"
           width="8rem"

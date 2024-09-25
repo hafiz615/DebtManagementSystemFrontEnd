@@ -1273,3 +1273,15 @@ export const UpdateMultipleCreditors = async (id, payload) => {
 };
 
 //ssssg
+
+export const createMultipleDebtors = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/createMultipleDebtors`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

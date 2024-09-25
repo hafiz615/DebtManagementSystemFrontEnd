@@ -10,20 +10,22 @@ import { PAGE_HEIGHT, UserListPage } from "../../constants/appConstants";
 import TextButton from ".././button";
 import MappingDetails from "./mappingDetails";
 import ClientImport from "./clientImport";
-import { CreateCase } from "../../services/services";
+import { createMultipleDebtors } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import ScrollbarStyles from "../customScroll";
 
 function BulkImportCase() {
   const [activeStep, setActiveStep] = useState(0);
+  const [dropdownStates, setDropdownStates] = useState();
   const [completedSteps, setCompletedSteps] = useState(new Set());
-  const [apiData, setApiData] = useState([]);
-  const { showToast } = useToast();
-  const navigate = useNavigate();
+  const [apiData, setApiData] = useState();
+  const [loading, setLoading] = useState(false);
 
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { AUTHORITY_TEXT } = UserListPage;
+  const { showToast } = useToast();
+  const navigate = useNavigate();
 
   const steps = ["Mapping", "Preview"];
 
@@ -39,9 +41,6 @@ function BulkImportCase() {
       setActiveStep(step);
     }
   };
-  const handleReset = () => {
-    setActiveStep(0);
-  };
 
   const handleNext = () => {
     if (activeStep === 0) {
@@ -53,10 +52,10 @@ function BulkImportCase() {
   };
 
   const handleSave = async () => {
-    const caseCreation = await CreateCase(apiData, true);
+    setLoading(true);
+    const caseCreation = await createMultipleDebtors(apiData);
     if (caseCreation?.status === 201) {
       localStorage.removeItem("Columns");
-      localStorage.removeItem("dropdownState");
       localStorage.removeItem("csvData");
       localStorage.setItem("route", "Home");
       navigate("/home");
@@ -65,6 +64,7 @@ function BulkImportCase() {
       const errorMessage = caseCreation?.response?.data?.message;
       showToast(errorMessage, "error");
     }
+    setLoading(false);
   };
 
   return (
@@ -131,7 +131,7 @@ function BulkImportCase() {
           alternativeLabel
           sx={{ width: { xs: "100%", md: "50%" } }}
         >
-          {steps.map((label, index) => {
+          {steps?.map((label, index) => {
             const stepProps = {};
             const labelProps = {};
 
@@ -141,6 +141,17 @@ function BulkImportCase() {
                   {...labelProps}
                   sx={{
                     cursor: "pointer",
+                  }}
+                  StepIconProps={{
+                    sx: {
+                      color: Colors.SKY_BLUE,
+                      "&.Mui-active": {
+                        color: Colors.SKY_BLUE,
+                      },
+                      "&.Mui-completed": {
+                        color: Colors.SKY_BLUE,
+                      },
+                    },
                   }}
                   onClick={() => {
                     handleStep(index)();
@@ -154,9 +165,16 @@ function BulkImportCase() {
         </Stepper>
       </Grid>
       {activeStep === 0 ? (
-        <MappingDetails />
+        <MappingDetails
+          allDropdownStates={dropdownStates}
+          setAllDropdownStates={setDropdownStates}
+        />
       ) : (
-        <ClientImport setApiData={setApiData} />
+        <ClientImport
+          apiData={apiData}
+          allDropdownStates={dropdownStates}
+          setApiData={setApiData}
+        />
       )}
       <Grid
         item
@@ -193,16 +211,7 @@ function BulkImportCase() {
             height="2rem"
             marginRight="1rem"
           />
-          <TextButton
-            buttonText="RESET"
-            onClick={handleReset}
-            backgroundColor={Colors.DARK_GRAY}
-            hoverColor={Colors.DARK_GRAY}
-            paddingLeft="2rem"
-            paddingRight="2rem"
-            height="2rem"
-            marginRight="1rem"
-          />
+
           <TextButton
             buttonText={activeStep === steps.length - 1 ? "SAVE" : "NEXT"}
             backgroundColor={Colors.SKY_BLUE}
@@ -213,6 +222,7 @@ function BulkImportCase() {
             onClick={() => {
               activeStep === 0 ? handleNext() : handleSave();
             }}
+            loading={loading}
             marginRight="1rem"
           />
         </Grid>
