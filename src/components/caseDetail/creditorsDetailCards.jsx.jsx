@@ -24,6 +24,7 @@ import { formatDollarAmount, formatValue } from "../../common";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { getTruncatedText } from "../../common";
 import ScrollbarStyles from "./../customScroll";
+import PaynoteButton from "../payments/seamlessChexPaynote";
 import {
   creditorBusinessDetails,
   creditorPeronsalDetails,
@@ -276,9 +277,9 @@ export default function CreditorsDetailCards({
             </div>
           ))}
         </>
-        {/* <span style={{ display: "flex", justifyContent: "center" }}>
-          <div className="wrapper-pay-buttons" />
-        </span> */}
+        <span style={{ display: "flex", justifyContent: "center" }}>
+          <PaynoteButton caseData={caseData} />
+        </span>
       </Grid>
       <Grid
         item
