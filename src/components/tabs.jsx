@@ -285,7 +285,7 @@ export default function CustomizedTabs() {
         >
           {generalPermissions?.addNewUser && (
             <BasicModal
-              modelButton="ADD USERS"
+              modelButton="Add Users"
               modalType="add"
               GetUsers={GetUsers}
             />

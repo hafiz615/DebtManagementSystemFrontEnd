@@ -41,6 +41,7 @@ export default function BasicModal({ modelButton, GetUsers, modalType, id }) {
             paddingRight: "1rem",
             width: { xs: "65vw", sm: "auto" },
             color: Colors.WHITE,
+            textTransform: "none",
             backgroundColor: Colors.SKY_BLUE,
             "&:hover": {
               background: Colors.SKY_BLUE,
