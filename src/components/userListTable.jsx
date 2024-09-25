@@ -219,7 +219,7 @@ export default function UserListTable({
                       {(requiredCustomFieldIcons && role === "Admin") ||
                       role === "Super User" ? (
                         <BasicModal
-                          modelButton="ADD USERS"
+                          modelButton="Add Users"
                           modalType="edit"
                           GetUsers={GetUsers}
                           id={row?.id}

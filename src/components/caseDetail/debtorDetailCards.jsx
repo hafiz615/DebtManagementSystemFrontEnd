@@ -76,7 +76,7 @@ export default function DebtorDetailsCards({
   const formatKeys = (keys) => {
     const formattedKeys = keys
       ?.replace(/([A-Z])/g, " $1")
-      ?.replace(/^./, (str) => str.toUpperCase());
+      ?.replace(/^./, (str) => str?.toUpperCase());
     return formattedKeys;
   };
 
@@ -312,8 +312,6 @@ export default function DebtorDetailsCards({
           padding: "0px 10px",
           height: "13rem",
           marginBottom: "0.5rem",
-          // overflow: "auto",
-          // ...ScrollbarStyles,
         }}
       >
         <Grid

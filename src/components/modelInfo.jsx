@@ -53,11 +53,7 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
       getUser();
     }
   }, [id]);
-  // const menuItems = [
-  //   { label: "Manager", value: "Manager" },
-  //   { label: "Negotiator", value: "Negotiator" },
-  //   // { label: "Admin", value: "Admin" },
-  // ];
+
   const AllRoles = async () => {
     const rolesRes = await GetAllRoles(true);
     if (rolesRes?.status === 200) {
@@ -434,11 +430,12 @@ function ModelInfo({ modalType, setOpen, GetUsers, id }) {
             >
               <TextButton
                 loading={loading}
-                buttonText={modalType === "edit" ? "UPDATE" : "ADD"}
+                buttonText={modalType === "edit" ? "Update" : "Add"}
                 height="2rem"
                 marginTop="1rem"
                 marginBottom="2rem"
                 width="5rem"
+                backgroundColor={Colors.SKY_BLUE}
                 onClick={modalType === "edit" ? handleEdit : handleSubmit}
                 disabled={!isFormValid()}
               />

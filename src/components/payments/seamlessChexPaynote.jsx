@@ -3,10 +3,11 @@ import React, { useEffect, useMemo, useState } from "react";
 const PaynoteButton = ({ caseData }) => {
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const objRequestIframe = useMemo(() => {
-    let casedataName = caseData?.creditor?.basicInformation?.fullName;
-    const parts = casedataName.split(" ");
-    const firstPart = parts[0].trim(); // "Funding Metrics"
-    const secondPart = parts[1] ? parts[1].trim() : "";
+    let casedataName =
+      caseData && caseData?.creditor?.basicInformation?.fullName;
+    const parts = casedataName?.split(" ");
+    const firstPart = parts && parts[0]?.trim();
+    const secondPart = parts && parts[1] ? parts[1]?.trim() : "";
 
     return {
       publicKey: "pk_test_01H8PVPA6Y7T7TBHPNJHYHKZ2C",
