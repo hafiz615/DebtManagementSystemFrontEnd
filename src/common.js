@@ -414,8 +414,8 @@ export const convertCamelCaseToTitle = (str) => {
     .replace(/^./, (char) => char.toUpperCase()); // Capitalize the first letter
 };
 export const getTruncatedText = (text, maxLength) => {
-  if (text.length > maxLength) {
-    return text.slice(0, maxLength) + "...";
+  if (text?.length > maxLength) {
+    return text?.slice(0, maxLength) + "...";
   }
   return text;
 };
