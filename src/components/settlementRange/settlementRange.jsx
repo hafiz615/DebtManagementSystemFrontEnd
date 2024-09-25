@@ -911,7 +911,7 @@ export default function SettlementRange() {
             alignItems: "center",
           }}
         >
-          <CircularProgress size={100} />
+          <CircularProgress size={100} sx={{ color: Colors.SKY_BLUE }} />
         </Grid>
       ) : (
         <>
@@ -1049,10 +1049,11 @@ export default function SettlementRange() {
                         marginTop: "0.5rem",
                       }}
                     >
-                      {key === "weeklyBudget"
-                        ? `$${debtor[key]?.toString().slice(0, 15)}${
-                            debtor[key]?.toString().length > 15 ? "..." : ""
-                          }`
+                      {allData?.debtor?.weeklyBudgetUpdated &&
+                      key === "weeklyBudget"
+                        ? `$${debtor[key]} (Calculated)`
+                        : key === "weeklyBudget"
+                        ? `$${debtor[key]}`
                         : `${debtor[key]?.toString().slice(0, 15)}${
                             debtor[key]?.toString().length > 15 ? "..." : ""
                           }`}
@@ -1254,28 +1255,37 @@ export default function SettlementRange() {
                         : "--";
 
                       return (
-                        <Grid
-                          key={index}
-                          item
-                          xs={12}
-                          sm={5.8}
-                          md={3.8}
-                          lg={2.8}
-                          container
-                          sx={commonStyles}
+                        <Tooltip
+                          title={
+                            detail?.label === "Weekly Budget"
+                              ? "Weekly Profit without Payment"
+                              : ""
+                          }
+                          placement="top-start"
                         >
-                          <Typography sx={commonTextStyles}>
-                            {detail?.label}
-                          </Typography>
-                          <Typography
-                            sx={{
-                              ...commonTextStyles,
-                              color: Colors.SKY_BLUE,
-                            }}
+                          <Grid
+                            key={index}
+                            item
+                            xs={12}
+                            sm={5.8}
+                            md={3.8}
+                            lg={2.8}
+                            container
+                            sx={commonStyles}
                           >
-                            {formattedValue}
-                          </Typography>
-                        </Grid>
+                            <Typography sx={commonTextStyles}>
+                              {detail?.label}
+                            </Typography>
+                            <Typography
+                              sx={{
+                                ...commonTextStyles,
+                                color: Colors.SKY_BLUE,
+                              }}
+                            >
+                              {formattedValue}
+                            </Typography>
+                          </Grid>
+                        </Tooltip>
                       );
                     })}
                   </Grid>
@@ -1448,7 +1458,10 @@ export default function SettlementRange() {
                   }}
                 >
                   {justificationLoading ? (
-                    <CircularProgress size={20} />
+                    <CircularProgress
+                      size={20}
+                      sx={{ color: Colors.SKY_BLUE }}
+                    />
                   ) : (
                     <Typography variant="body1">
                       <ReactMarkdown>

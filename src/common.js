@@ -361,7 +361,20 @@ export const handleNumberInput = (e) => {
     "Backspace",
     "ArrowLeft",
     "ArrowRight",
+    "Control",
+    "v",
+    "c",
+    "x",
+    "a",
+    "z",
+    "y",
   ];
+  if (
+    e.ctrlKey &&
+    ["v", "c", "x", "a", "z", "y"].includes(e.key.toLowerCase())
+  ) {
+    return; // Allow the copy-paste or cut operation
+  }
   if (!allowedKeys.includes(e.key)) {
     e.preventDefault();
   }
@@ -439,16 +452,19 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     return typeof value === "number" ? `$${value.toLocaleString()}` : "N/A";
   };
 
-  // let currentY = 20;
-  doc.text("Settlement Range Data ", 14, 20);
+  const startY = 20;
+  let currentY = startY;
 
-  // doc.setFontSize(14);
-  // currentY += 10;
+  // Title
+  doc.text("Settlement Range Data", 14, currentY);
+  currentY += 10;
 
   // Debtor Information
   if (checkboxState["Debtor Information"]) {
-    doc.text("Debtor Information", 14, 30);
-    // currentY += 10;
+    doc.setFontSize(14);
+    doc.text("Debtor Information", 14, currentY);
+    currentY += 10;
+
     const debtorInfo = [
       ["Full Name", debtor?.basicInformation?.fullName || "N/A"],
       ["Email", debtor?.basicInformation?.email || "N/A"],
@@ -468,18 +484,18 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     doc.autoTable({
       head: [["Field", "Value"]],
       body: debtorInfo,
-      // startY: currentY,
-      startY: 45,
+      startY: currentY,
     });
-    // currentY = doc.autoTable.previous.finalY + 10;
+
+    currentY = doc.autoTable.previous.finalY + 10;
   }
 
-  //Settlement Range
+  // Settlement Range
   if (checkboxState["Settlement Range"]) {
     doc.setFontSize(14);
-    // doc.text("Settlement Range", 14, currentY);
-    doc.text("Settlement Range", 14, doc.autoTable.previous.finalY + 20);
-    // currentY += 10;
+    doc.text("Settlement Range", 14, currentY);
+    currentY += 10;
+
     const settlementRangeSummary = [
       ["Weekly Profit", formatCurrency(settlementRange?.weekly_profit) || 0],
       [
@@ -488,37 +504,41 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
       ],
       ["Profitability", formatPercentage(settlementRange?.profitability) || 0],
     ];
+
     doc.autoTable({
       head: [["Field", "Value"]],
       body: settlementRangeSummary,
-      startY: doc.autoTable.previous.finalY + 25,
+      startY: currentY,
     });
-    // currentY = doc.autoTable.previous.finalY + 10;
+
+    currentY = doc.autoTable.previous.finalY + 10;
   }
 
   // Add Scores
   if (checkboxState.Scores) {
     doc.setFontSize(14);
-    doc.text("Scores", 14, doc.autoTable.previous.finalY + 20);
+    doc.text("Scores", 14, currentY);
+    currentY += 10;
+
     const scoresSummary = [
       ["Default Risk Score", getScores?.Scores?.["Default Risk Score"] || 0],
       ["UCC Score", getScores?.Scores?.["UCC Score"] || 0],
     ];
+
     doc.autoTable({
       head: [["Field", "Value"]],
       body: scoresSummary,
-      startY: doc.autoTable.previous.finalY + 25,
+      startY: currentY,
     });
+
+    currentY = doc.autoTable.previous.finalY + 10;
   }
 
   // Creditors Information
   if (checkboxState["Creditors Contract Information"]) {
     doc.setFontSize(14);
-    doc.text(
-      "Creditors Contract Information",
-      14,
-      doc.autoTable.previous.finalY + 20
-    );
+    doc.text("Creditors Contract Information", 14, currentY);
+    currentY += 10;
 
     const creditorDetails = creditors?.map((creditor) => {
       return [
@@ -531,7 +551,6 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
         formatCurrencyConditional(
           creditor?.contractDetails?.repayment_amount || 0
         ),
-
         formatCurrency(
           settlementRange?.weekly_budget[creditor?.creditorAccountTitle] || 0
         ),
@@ -550,18 +569,17 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
         ],
       ],
       body: creditorDetails,
-      startY: doc.autoTable.previous.finalY + 25,
+      startY: currentY,
     });
+
+    currentY = doc.autoTable.previous.finalY + 10;
   }
 
   // Creditors Summary
   if (checkboxState["Creditors Contract Details Summary"]) {
     doc.setFontSize(14);
-    doc.text(
-      "Creditors Contract Details Summary",
-      14,
-      doc.autoTable.previous.finalY + 20
-    );
+    doc.text("Creditors Contract Details Summary", 14, currentY);
+    currentY += 10;
 
     const creditorsSummary = [
       [
@@ -577,20 +595,18 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     doc.autoTable({
       head: [["Field", "Value"]],
       body: creditorsSummary,
-      startY: doc.autoTable.previous.finalY + 25,
+      startY: currentY,
     });
+
+    currentY = doc.autoTable.previous.finalY + 10;
   }
 
-  //Recommendations
+  // Recommendations
   if (checkboxState["Strategy 1 Recommendations"]) {
     doc.setFontSize(14);
-    doc.text(
-      "Strategy 1 Recommendation 1 Minimum",
-      14,
-      doc.autoTable.previous.finalY + 10
-    );
+    doc.text("Strategy 1 Recommendation 1 Minimum", 14, currentY);
+    currentY += 10;
 
-    // Recommendations one min
     const recommendationOneMin = creditors?.map((creditor) => {
       const title = creditor?.creditorAccountTitle || "N/A";
       return [
@@ -621,23 +637,20 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
         [
           "Creditors",
           "Commission Range",
-          "Settlement Range ",
+          "Settlement Range",
           "Weekly Budget %",
           "Weekly True Revenue",
         ],
       ],
       body: recommendationOneMin,
-      startY: doc.autoTable.previous.finalY + 20,
+      startY: currentY,
     });
 
-    doc.setFontSize(14);
-    doc.text(
-      "Strategy 1 Recommendation 1 Maximum",
-      14,
-      doc.autoTable.previous.finalY + 10
-    );
+    currentY = doc.autoTable.previous.finalY + 10;
 
-    // Recommendations one max
+    doc.setFontSize(14);
+    doc.text("Strategy 1 Recommendation 1 Maximum", 14, currentY);
+    currentY += 10;
 
     const recommendationOneMax = creditors?.map((creditor) => {
       const title = creditor?.creditorAccountTitle || "N/A";
@@ -669,23 +682,21 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
         [
           "Creditors",
           "Commission Range",
-          "Settlement Range ",
+          "Settlement Range",
           "Weekly Budget %",
           "Weekly True Revenue",
         ],
       ],
       body: recommendationOneMax,
-      startY: doc.autoTable.previous.finalY + 20,
+      startY: currentY,
     });
 
-    doc.setFontSize(14);
-    doc.text(
-      "Strategy 1 Recommendation 2 Minimum",
-      14,
-      doc.autoTable.previous.finalY + 10
-    );
+    currentY = doc.autoTable.previous.finalY + 10;
 
-    // Recommendations two min
+    doc.setFontSize(14);
+    doc.text("Strategy 1 Recommendation 2 Minimum", 14, currentY);
+    currentY += 10;
+
     const recommendationTwoMin = creditors?.map((creditor) => {
       const title = creditor?.creditorAccountTitle || "N/A";
       return [
@@ -716,22 +727,21 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
         [
           "Creditors",
           "Commission Range",
-          "Settlement Range ",
+          "Settlement Range",
           "Weekly Budget %",
           "Weekly True Revenue",
         ],
       ],
       body: recommendationTwoMin,
-      startY: doc.autoTable.previous.finalY + 20,
+      startY: currentY,
     });
 
+    currentY = doc.autoTable.previous.finalY + 10;
+
     doc.setFontSize(14);
-    doc.text(
-      "Strategy 1 Recommendation 2 Maximum",
-      14,
-      doc.autoTable.previous.finalY + 10
-    );
-    // Recommendations two max
+    doc.text("Strategy 1 Recommendation 2 Maximum", 14, currentY);
+    currentY += 10;
+
     const recommendationTwoMax = creditors?.map((creditor) => {
       const title = creditor?.creditorAccountTitle || "N/A";
       return [
@@ -744,12 +754,12 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
           settlementRange?.settlement_range?.[title]?.["recommendation 2"]
             ?.max || 0
         ),
-        formatCurrencyConditional(
+        formatPercentage(
           settlementRange?.percentage_settlement_over_weekly_budget?.[title]?.[
             "recommendation 2"
           ]?.max || 0
         ),
-        formatCurrencyConditional(
+        formatPercentage(
           settlementRange?.percentage_settlement_over_weekly_true_revenue?.[
             title
           ]?.["recommendation 2"]?.max || 0
@@ -762,22 +772,21 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
         [
           "Creditors",
           "Commission Range",
-          "Settlement Range ",
+          "Settlement Range",
           "Weekly Budget %",
           "Weekly True Revenue",
         ],
       ],
       body: recommendationTwoMax,
-      startY: doc.autoTable.previous.finalY + 20,
+      startY: currentY,
     });
 
+    currentY = doc.autoTable.previous.finalY + 10;
+
     doc.setFontSize(14);
-    doc.text(
-      "Strategy 1 Recommendation 3 Minimum",
-      14,
-      doc.autoTable.previous.finalY + 10
-    );
-    // Recommendations three min
+    doc.text("Strategy 1 Recommendation 3 Minimum", 14, currentY);
+    currentY += 10;
+
     const recommendationThreeMin = creditors?.map((creditor) => {
       const title = creditor?.creditorAccountTitle || "N/A";
       return [
@@ -814,16 +823,14 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
         ],
       ],
       body: recommendationThreeMin,
-      startY: doc.autoTable.previous.finalY + 20,
+      startY: currentY,
     });
-
-    doc.setFontSize(14);
-    doc.text(
-      "Strategy 1 Recommendation 3 Maximum",
-      14,
-      doc.autoTable.previous.finalY + 10
-    );
+    currentY = doc.autoTable.previous.finalY + 10;
     // Recommendations three max
+    doc.setFontSize(14);
+    doc.text("Strategy 1 Recommendation 3 Maximum", 14, currentY);
+    currentY += 10;
+
     const recommendationThreeMax = creditors.map((creditor) => {
       const title = creditor?.creditorAccountTitle || "N/A";
       return [
@@ -860,18 +867,16 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
         ],
       ],
       body: recommendationThreeMax,
-      startY: doc.autoTable.previous.finalY + 20,
+      startY: currentY,
     });
+    currentY = doc.autoTable.previous.finalY + 10;
   }
 
-  //strategy 2
+  //   //strategy 2
   if (checkboxState["Strategy 2 Recommendations"]) {
     doc.setFontSize(14);
-    doc.text(
-      "Strategy 2 Recommendations ",
-      14,
-      doc.autoTable.previous.finalY + 10
-    );
+    doc.text("Strategy 2 Recommendations ", 14, currentY);
+    currentY += 10;
     const recommendationTwo = creditors.map((creditor) => {
       const title = creditor?.creditorAccountTitle || "N/A";
       return [
@@ -890,18 +895,15 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     doc.autoTable({
       head: [["Creditors", "Remaining Amount ", "Repaid Debt"]],
       body: recommendationTwo,
-      startY: doc.autoTable.previous.finalY + 20,
+      startY: currentY,
     });
+    currentY = doc.autoTable.previous.finalY + 10;
   }
-
-  //strategy 3
+  // strategy 3
   if (checkboxState["Strategy 3 Recommendations"]) {
     doc.setFontSize(14);
-    doc.text(
-      "Strategy 3 Recommendations Minimum",
-      14,
-      doc.autoTable.previous.finalY + 10
-    );
+    doc.text("Strategy 3 Recommendations Minimum", 14, currentY);
+    currentY += 10;
 
     const recommendationThreeMinVal = creditors?.map((creditor) => {
       const title = creditor?.creditorAccountTitle || "N/A";
@@ -936,14 +938,13 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
         ],
       ],
       body: recommendationThreeMinVal,
-      startY: doc.autoTable.previous.finalY + 20,
+      startY: currentY,
     });
+    currentY = doc.autoTable.previous.finalY + 10;
+
     doc.setFontSize(14);
-    doc.text(
-      "Strategy 3 Recommendation Maximum",
-      14,
-      doc.autoTable.previous.finalY + 10
-    );
+    doc.text("Strategy 3 Recommendation Maximum", 14, currentY);
+    currentY += 10;
 
     const recommendationThree = creditors?.map((creditor) => {
       const title = creditor?.creditorAccountTitle || "N/A";
@@ -978,11 +979,12 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
         ],
       ],
       body: recommendationThree,
-      startY: doc.autoTable.previous.finalY + 20,
+      startY: currentY,
     });
+    currentY = doc.autoTable.previous.finalY + 10;
   }
 
-  doc.save("Debtor_and_Creditor_Details.pdf");
+  doc.save("document.pdf");
 };
 
 export default generatePDF;

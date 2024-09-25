@@ -21,6 +21,8 @@ export default function CreditorFields({
   digits,
   setDigits,
   errors,
+  businessErrors,
+  showErrors,
 }) {
   const accountMenuList =
     debtorCaseData &&
@@ -31,7 +33,7 @@ export default function CreditorFields({
     }));
 
   const [accountTitle, setAccountTitle] = useState(
-    thisCaseData?.creditor?.accountTitle || ""
+    thisCaseData?.creditor?.accountTitle || thisCaseData?.accountTitle || ""
   );
 
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
@@ -109,7 +111,11 @@ export default function CreditorFields({
   React.useEffect(() => {
     handleCaseDataChange(caseIndex, "creditor.accountTitle", accountTitle);
   }, [accountTitle]);
-
+  const hasError = (field) => {
+    return businessErrors?.some(
+      (error) => error?.index === caseIndex && error?.field === field
+    );
+  };
   return (
     <>
       <Grid
@@ -153,6 +159,14 @@ export default function CreditorFields({
                     e.target.value
                   )
                 }
+                border={
+                  thisCaseData?.creditor?.businessInformation?.companyName ===
+                  ""
+                    ? "2px solid red"
+                    : "auto" && hasError("companyName") && showErrors
+                    ? "2px solid red"
+                    : "1px solid transparent"
+                }
               />
               <PaymentsTextFields
                 type="text"
@@ -169,8 +183,16 @@ export default function CreditorFields({
                     e.target.value
                   )
                 }
+                border={
+                  thisCaseData?.creditor?.businessInformation
+                    ?.businessCategory === ""
+                    ? "2px solid red"
+                    : "auto" && hasError("businessCategory") && showErrors
+                    ? "2px solid red"
+                    : "1px solid transparent"
+                }
               />
-              {/* {typeof debtorCaseData?.creditorNames !== "string" &&
+              {typeof debtorCaseData?.creditorNames !== "string" &&
               debtorCaseData?.creditorNames?.creditor_names?.length > 0 ? (
                 <Grid item xs={12} md={4} lg={4}>
                   <Typography
@@ -181,7 +203,7 @@ export default function CreditorFields({
                       color: Colors.DARK_GRAY,
                     }}
                   >
-                    Account Title
+                    Account Title*
                   </Typography>
                   <Autocomplete
                     sx={{
@@ -194,7 +216,13 @@ export default function CreditorFields({
                       display: "flex",
                       fontFamily: "Nunito",
                       justifyContent: "center",
-                      border: "none !important",
+                      border:
+                        thisCaseData?.creditor?.accountTitle === ""
+                          ? "2px solid red"
+                          : "auto" && hasError("accountTitle") && showErrors
+                          ? "2px solid red"
+                          : "none !important",
+
                       "& .MuiInputBase-input": {
                         color: Colors.DIM_LIGHT_GRAY,
                         fontSize: ".8rem",
@@ -240,7 +268,10 @@ export default function CreditorFields({
                           paddingTop: "2%",
                           backgroundColor: Colors.BG_LIGHT_GRAY,
                           width: smallScreen ? "100%" : "97%",
-                          border: "none !important",
+                          border:
+                            hasError("accountTitle") && showErrors
+                              ? "2px solid red"
+                              : "none !important",
                           "& .MuiInputBase-input": {
                             color: Colors.DIM_LIGHT_GRAY,
                             fontSize: ".8rem",
@@ -264,22 +295,29 @@ export default function CreditorFields({
                     )}
                   />
                 </Grid>
-              ) : ( */}
-              <PaymentsTextFields
-                type="Account Title"
-                label="Account Title"
-                placeHolderValue="Enter Account Title"
-                width="100%"
-                value={thisCaseData?.creditor?.accountTitle}
-                onChangeFunction={(e) =>
-                  handleCaseDataChange(
-                    caseIndex,
-                    "creditor.accountTitle",
-                    e.target.value
-                  )
-                }
-              />
-              {/* )} */}
+              ) : (
+                <PaymentsTextFields
+                  type="Account Title"
+                  label="Account Title*"
+                  placeHolderValue="Enter Account Title"
+                  width="100%"
+                  value={thisCaseData?.creditor?.accountTitle}
+                  onChangeFunction={(e) =>
+                    handleCaseDataChange(
+                      caseIndex,
+                      "creditor.accountTitle",
+                      e.target.value
+                    )
+                  }
+                  border={
+                    thisCaseData?.creditor?.accountTitle === ""
+                      ? "2px solid red"
+                      : "auto" && hasError("accountTitle") && showErrors
+                      ? "2px solid red"
+                      : "1px solid transparent"
+                  }
+                />
+              )}
             </Grid>
             <Typography
               sx={{
@@ -305,6 +343,13 @@ export default function CreditorFields({
                     e.target.value
                   )
                 }
+                border={
+                  thisCaseData?.creditor?.basicInformation?.fullName === ""
+                    ? "2px solid red"
+                    : "auto" && hasError("fullName") && showErrors
+                    ? "2px solid red"
+                    : "1px solid transparent"
+                }
               />
               <PaymentsTextFields
                 type="text"
@@ -320,10 +365,17 @@ export default function CreditorFields({
                   )
                 }
                 error={errors?.emailValid}
+                border={
+                  thisCaseData?.creditor?.basicInformation?.email === ""
+                    ? "2px solid red"
+                    : "auto" && hasError("email") && showErrors
+                    ? "2px solid red"
+                    : "1px solid transparent"
+                }
               />
               <PaymentsTextFields
                 type="text"
-                label="Phone #"
+                label="Phone #*"
                 placeHolderValue="Enter Phone Number"
                 width="100%"
                 value={
@@ -346,6 +398,13 @@ export default function CreditorFields({
                 }}
                 error={errors?.basicPhone}
                 onKeyDown={handleNumberInput}
+                border={
+                  thisCaseData?.creditor?.basicInformation?.phone === ""
+                    ? "2px solid red"
+                    : "auto" && hasError("phone") && showErrors
+                    ? "2px solid red"
+                    : "1px solid transparent"
+                }
               />
             </Grid>
             <Typography
@@ -374,7 +433,9 @@ export default function CreditorFields({
                 height: "2.5rem",
                 color: Colors.DIM_LIGHT_GRAY,
                 paddingLeft: "1rem",
-                border: "none",
+                border:
+                  hasError("notes") && showErrors ? "2px solid red" : "none",
+
                 outline: "none",
                 borderRadius: "5px",
                 width: smallScreen ? "100%" : "97%",
@@ -423,6 +484,11 @@ export default function CreditorFields({
               )
             }
             max={today}
+            border={
+              hasError("lastFundedDate") && showErrors
+                ? "2px solid red"
+                : "1px solid transparent"
+            }
           />
         </Grid>
 
@@ -452,6 +518,11 @@ export default function CreditorFields({
                   )
                 }
                 onKeyDown={handleNumberInput}
+                border={
+                  hasError("historicalRange.minimum") && showErrors
+                    ? "2px solid red"
+                    : "none !important"
+                }
               />
             </Grid>
             <Grid item xs={6}>
@@ -475,6 +546,11 @@ export default function CreditorFields({
                   )
                 }
                 onKeyDown={handleNumberInput}
+                border={
+                  hasError("historicalRange.maximum") && showErrors
+                    ? "2px solid red"
+                    : "none !important"
+                }
               />
             </Grid>
           </Grid>
@@ -509,6 +585,11 @@ export default function CreditorFields({
                   e.target.value
                 )
               }
+              border={
+                hasError("loan_amount") && showErrors
+                  ? "2px solid red"
+                  : "none !important"
+              }
             />
           </Grid>
 
@@ -525,6 +606,11 @@ export default function CreditorFields({
                 e.target.value
               )
             }
+            border={
+              hasError("purchased_percentage") && showErrors
+                ? "2px solid red"
+                : "1px solid transparent"
+            }
           />
 
           <PaymentsTextFields
@@ -540,6 +626,11 @@ export default function CreditorFields({
                 e.target.value
               )
             }
+            border={
+              hasError("repayment_amount") && showErrors
+                ? "2px solid red"
+                : "1px solid transparent"
+            }
           />
         </Grid>
       </Grid>
@@ -550,6 +641,8 @@ export default function CreditorFields({
         finalCaseData={finalCaseData}
         setFinalCaseData={setFinalCaseData}
         caseIndex={caseIndex}
+        businessErrors={businessErrors}
+        showErrors={showErrors}
       />
       <Grid
         item
@@ -583,6 +676,23 @@ export default function CreditorFields({
             step={1}
             marks
             valueLabelDisplay="auto"
+            sx={{
+              "& .MuiSlider-track": {
+                backgroundColor: Colors.SKY_BLUE,
+              },
+              "& .MuiSlider-rail": {
+                backgroundColor: "#ccc",
+              },
+              "& .MuiSlider-thumb": {
+                backgroundColor: Colors.SKY_BLUE,
+              },
+              "& .MuiSlider-mark": {
+                backgroundColor: "#ccc",
+              },
+              "& .MuiSlider-markActive": {
+                backgroundColor: Colors.SKY_BLUE,
+              },
+            }}
           />
         </Box>
       </Grid>

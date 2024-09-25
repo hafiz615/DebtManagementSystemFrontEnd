@@ -43,14 +43,21 @@ function PaymentCardDetails({ setConnectPayment }) {
         aria-label="Payment Type"
       >
         <ToggleButton
-          style={{ fontFamily: "Nunito", backgroundColor: Colors.VIOLET }}
+          style={{
+            fontFamily: "Nunito",
+            backgroundColor: Colors.VIOLET,
+            color: Colors.SKY_BLUE,
+          }}
           value="cc"
           onClick={() => window.CollectJS.startPaymentRequest()}
         >
           CC
         </ToggleButton>
         <ToggleButton
-          style={{ fontFamily: "Nunito" }}
+          style={{
+            fontFamily: "Nunito",
+            color: Colors.SKY_BLUE,
+          }}
           value="ck"
           onClick={() => window.CollectJS.startPaymentRequest()}
         >

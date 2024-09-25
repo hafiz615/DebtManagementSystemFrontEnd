@@ -1249,6 +1249,30 @@ export const GetPipelineDataByCustomFields = async (payload, id) => {
     return error;
   }
 };
+export const ExtractedCaseFields = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/getExtractedFields/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateMultipleCreditors = async (id, payload) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/creditor/updateMultipleCreditors/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+//ssssg
 
 export const createMultipleDebtors = async (payload) => {
   try {

@@ -35,7 +35,8 @@ export default function ResponsiveTimePickers({ value, onChange }) {
         }}
         value={value}
         onChange={onChange}
-        format="HH:mm" // Adjust the format if needed
+        ampm={false}
+        format="HH:mm"
       />
     </LocalizationProvider>
   );

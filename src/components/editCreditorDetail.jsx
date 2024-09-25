@@ -193,8 +193,8 @@ export default function EditCreditorDetail({
         sx={{
           justifyContent: "flex-end",
           position: "sticky",
-          bottom: 0, // Ensures it sticks to the bottom when scrolling up
-          zIndex: 1, // Ensures the button stays above other content
+          bottom: 0,
+          zIndex: 1,
         }}
       >
         <TextButton
