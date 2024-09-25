@@ -24,6 +24,7 @@ import { formatDollarAmount, formatValue } from "../../common";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { getTruncatedText } from "../../common";
 import ScrollbarStyles from "./../customScroll";
+import PaynoteButton from "../payments/seamlessChexPaynote";
 import {
   creditorBusinessDetails,
   creditorPeronsalDetails,
