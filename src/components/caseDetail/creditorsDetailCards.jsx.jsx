@@ -276,9 +276,9 @@ export default function CreditorsDetailCards({
             </div>
           ))}
         </>
-        {/* <span style={{ display: "flex", justifyContent: "center" }}>
-          <div className="wrapper-pay-buttons" />
-        </span> */}
+        <span style={{ display: "flex", justifyContent: "center" }}>
+          <PaynoteButton caseData={caseData} />
+        </span>
       </Grid>
       <Grid
         item
