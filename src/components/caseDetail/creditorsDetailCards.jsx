@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Grid,
   Typography,
@@ -29,8 +29,6 @@ import {
   creditorBusinessDetails,
   creditorPeronsalDetails,
 } from "../../constants/appConstants";
-import { useEffect } from "react";
-import PaynoteButton from "../payments/seamlessChexPaynote";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
