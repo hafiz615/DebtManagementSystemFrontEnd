@@ -1,15 +1,5 @@
 import React, { useState } from "react";
-import {
-  Grid,
-  Typography,
-  Checkbox,
-  Divider,
-  Switch,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-} from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Grid, Typography, Divider } from "@mui/material";
 import { Colors } from "../config/default";
 import TextButton from "./button";
 import { CreateCustomField } from "../services/services";
@@ -113,57 +103,13 @@ export default function AddCustomField({ handleClose, handleModalClose }) {
             minWidth: "100%",
             maxWidth: "100%",
             padding: "1em",
+            fontFamily: "Nunito",
+            borderRadius: "10px",
           }}
           value={formData.description}
           onChange={(e) => handleChange("description", e.target.value)}
         />
       </div>
-      <div style={{ fontFamily: "Nunito" }}>
-        <Checkbox
-          checked={formData.shared}
-          onChange={(e) => handleChange("shared", e.target.checked)}
-        />
-        Share
-      </div>
-      <Accordion
-        sx={{
-          boxShadow: "none",
-          borderBottom: `1px solid ${Colors.LIGHT_GRAY}`,
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1-content"
-          id="panel1-header"
-          sx={{
-            borderTop: `1px solid ${Colors.LIGHT_GRAY}`,
-            borderBottom: `1px solid ${Colors.LIGHT_GRAY}`,
-            fontFamily: "Nunito",
-          }}
-        >
-          Field Options
-        </AccordionSummary>
-        <AccordionDetails sx={{ fontFamily: "Nunito" }}>
-          <Typography
-            sx={{ fontWeight: "600", margin: ".5em 0em", fontFamily: "Nunito" }}
-          >
-            Permission
-          </Typography>
-
-          <div style={{ display: "flex" }}>
-            <Switch />
-            <Typography
-              sx={{
-                fontWeight: "500",
-                margin: ".5em 0em",
-                fontFamily: "Nunito",
-              }}
-            >
-              Restrict
-            </Typography>
-          </div>
-        </AccordionDetails>
-      </Accordion>
 
       <div
         style={{

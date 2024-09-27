@@ -375,7 +375,7 @@ export default function CreditorFields({
               />
               <PaymentsTextFields
                 type="text"
-                label="Phone #"
+                label="Phone #*"
                 placeHolderValue="Enter Phone Number"
                 width="100%"
                 value={
@@ -669,7 +669,7 @@ export default function CreditorFields({
           </Typography>
           <Slider
             aria-labelledby="aggression-level-slider"
-            value={digits[0]}
+            value={digits?.[0] || 0}
             onChange={handleSliderChange}
             min={0}
             max={10}

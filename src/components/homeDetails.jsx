@@ -4,12 +4,17 @@ import { useNavigate } from "react-router";
 import { Grid, Typography, CircularProgress } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Colors } from "../config/default";
-import { PAGE_HEIGHT, HomePageDetails } from "../constants/appConstants";
+import {
+  PAGE_HEIGHT,
+  HomePageDetails,
+  FONT_SIZE_XL,
+} from "../constants/appConstants";
 import AccordionUsage from "./accordion";
 import Dropdown from "./dropdown";
-import { GetHomePayments } from "../services/services";
+import { GetBulkRecords, GetHomePayments } from "../services/services";
 import { get_payments } from "../redux/action/action";
 import ScrollbarStyles from "./customScroll";
+import BulkImportAccordions from "./bulkImportAccordion";
 // import SelectMenu from "./select";
 
 function HomeDetails() {
@@ -18,6 +23,7 @@ function HomeDetails() {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const [homeData, setHomeData] = useState({});
+  const [bulkData, setBulkData] = useState({});
   const [loading, setLoading] = useState(false);
   const [paginationRows, setPaginationRows] = useState({
     failedAuthorizations: "5",
@@ -26,7 +32,15 @@ function HomeDetails() {
     upcomingPayments: "5",
     successPayments: "5",
   });
+  const [bulkPaginationRows, setBulkPaginationRows] = useState({
+    pending: "5",
+    success: "5",
+    failed: "5",
+    actionRequired: "5",
+    duplicate: "5",
+  });
   const [totalData, setTotalData] = useState({});
+  const [bulkTotalData, setBulkTotalData] = useState({});
   const [selectedValue, setSelectedValue] = useState(3);
   const [currentPage, setCurrentPage] = useState({
     failedAuthorizations: 1,
@@ -34,6 +48,13 @@ function HomeDetails() {
     successAuthorizations: 1,
     upcomingPayments: 1,
     successPayments: 1,
+  });
+  const [bulkCurrentPage, setBulkCurrentPages] = useState({
+    pending: 1,
+    success: 1,
+    failed: 1,
+    actionRequired: 1,
+    duplicate: 1,
   });
 
   const accordionData = [
@@ -50,6 +71,20 @@ function HomeDetails() {
     },
     { key: "successPayments", heading: "Successful Payments", number: "4" },
     { key: "upcomingPayments", heading: "Upcoming Payments", number: "4" },
+  ];
+
+  const bulkAccordionData = [
+    {
+      key: "pending",
+      heading: "Pending",
+    },
+    { key: "success", heading: "Success" },
+    {
+      key: "failed",
+      heading: "Failed",
+    },
+    { key: "actionRequired", heading: "Need Attention" },
+    { key: "duplicate", heading: "Duplicate" },
   ];
 
   const menuItems = [
@@ -83,38 +118,35 @@ function HomeDetails() {
       if (result?.status === 200) {
         if (!result?.data?.data) {
           setTotalData({
-            "failedPayments": 0,
-            "successPayments": 0,
-            "failedAuthorizations": 0,
-            "successAuthorizations": 0,
-            "upcomingPayments": 0
-          })
+            failedPayments: 0,
+            successPayments: 0,
+            failedAuthorizations: 0,
+            successAuthorizations: 0,
+            upcomingPayments: 0,
+          });
           setHomeData({
-            "failedPayments": [],
-            "successPayments": [],
-            "failedAuthorizations": [],
-            "successAuthorizations": [],
-            "upcomingPayments": []
-          })
-        }
-        else {
+            failedPayments: [],
+            successPayments: [],
+            failedAuthorizations: [],
+            successAuthorizations: [],
+            upcomingPayments: [],
+          });
+        } else {
           key === "default"
             ? setTotalData(result?.data?.data?.counts)
             : setTotalData((prev) => ({
-              ...prev,
-              [key]: result?.data?.data?.counts[key],
-            }));
+                ...prev,
+                [key]: result?.data?.data?.counts[key],
+              }));
 
           key === "default"
             ? setHomeData(result?.data?.data?.payments)
             : setHomeData((prev) => ({
-              ...prev,
-              [key]: result?.data?.data?.payments[key],
-            }));
+                ...prev,
+                [key]: result?.data?.data?.payments[key],
+              }));
           dispatch(get_payments(result?.data?.data?.payments));
         }
-
-
       } else if (
         result?.response?.status === 401 ||
         result?.response?.status === 403
@@ -129,6 +161,43 @@ function HomeDetails() {
     }
   };
 
+  const getBulkData = async (key, pageNumber, pageLimit) => {
+    let limit = pageLimit || bulkPaginationRows[key];
+    const res = await GetBulkRecords(key, pageNumber, limit);
+    if (res?.status === 200) {
+      if (!res?.data?.data) {
+        setBulkTotalData({
+          pending: 0,
+          success: 0,
+          failed: 0,
+          actionRequired: 0,
+          duplicate: 0,
+        });
+        setBulkData({
+          pending: [],
+          success: [],
+          failed: [],
+          actionRequired: [],
+          duplicate: [],
+        });
+      } else {
+        key === "default"
+          ? setBulkTotalData(res?.data?.data?.count)
+          : setBulkTotalData((prev) => ({
+              ...prev,
+              [key]: res?.data?.data?.count[key],
+            }));
+
+        key === "default"
+          ? setBulkData(res?.data?.data)
+          : setBulkData((prev) => ({
+              ...prev,
+              [key]: res?.data?.data?.[key],
+            }));
+      }
+    }
+  };
+
   useEffect(() => {
     setPaginationRows({
       failedAuthorizations: 5,
@@ -137,6 +206,13 @@ function HomeDetails() {
       upcomingPayments: 5,
       successPayments: 5,
     });
+    setBulkPaginationRows({
+      pending: 5,
+      success: 5,
+      failed: 5,
+      actionRequired: 5,
+      duplicate: 5,
+    });
     setCurrentPage({
       failedAuthorizations: 1,
       failedPayments: 1,
@@ -144,18 +220,36 @@ function HomeDetails() {
       upcomingPayments: 1,
       successPayments: 1,
     });
+    setBulkCurrentPages({
+      pending: 1,
+      success: 1,
+      failed: 1,
+      actionRequired: 1,
+      duplicate: 1,
+    });
     getHomeData("default", 1, 5, true);
+    getBulkData("default", 1, 5);
   }, [selectedValue]);
 
   const handlePageChange = (key, page) => {
     setCurrentPage((prev) => ({ ...prev, [key]: page }));
     getHomeData(key, page);
   };
+  const handleBulkPageChange = (key, page) => {
+    setBulkCurrentPages((prev) => ({ ...prev, [key]: page }));
+    getBulkData(key, page);
+  };
 
   const handleRowChange = (key, newRow) => {
     setCurrentPage((prev) => ({ ...prev, [key]: 1 }));
     setPaginationRows((prev) => ({ ...prev, [key]: newRow }));
-    getHomeData(key, 1, newRow, false);
+    getHomeData(key, 1, newRow);
+  };
+
+  const handleBulkRowChange = (key, newRow) => {
+    setBulkCurrentPages((prev) => ({ ...prev, [key]: 1 }));
+    setBulkPaginationRows((prev) => ({ ...prev, [key]: newRow }));
+    getBulkData(key, 1, newRow);
   };
 
   const renderAccordion = (data, index) => (
@@ -230,61 +324,136 @@ function HomeDetails() {
           {HOME_HEADING}
         </Typography>
       </Grid>
-      <Grid
-        item
-        xs={12}
-        sx={{
-          display: "flex",
-          justifyContent: smallScreen ? "flex-start" : "flex-end",
-          marginTop: "1.5rem",
-        }}
-      >
-        <Typography
+      {loading ? (
+        <Grid
+          item
+          xs={12}
           sx={{
-            fontWeight: "500",
-            fontFamily: "Nunito",
             display: "flex",
             alignItems: "center",
-            color: Colors.BLACK,
+            justifyContent: "center",
+            height: "70vh",
           }}
         >
-          <span style={{ marginRight: ".5rem" }}>{VIEW_DAYS}</span>
-          <Dropdown
-            menuWidth="4rem"
-            menuItems={menuItems}
-            defaultSelectedItem={3}
-            backgroundColor={Colors.WHITE}
-            selectedValue={selectedValue}
-            setSelectedValue={setSelectedValue}
-          />
-          {/* <SelectMenu /> */}
-          <span style={{ marginLeft: ".5rem" }}>{DAYS_TEXT}</span>
-        </Typography>
-      </Grid>
-      <Grid
-        container
-        item
-        xs={12}
-        sx={{ marginTop: "1rem" }}
-        spacing={smallScreen ? 0 : 2}
-      >
-        {loading ? (
+          <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
+        </Grid>
+      ) : (
+        <>
           <Grid
+            container
             item
             xs={12}
             sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              height: "50vh",
+              margin: "1rem 0rem",
+              backgroundColor: Colors.PALE_GRAY,
+              paddingRight: "1rem",
+              paddingBottom: "1rem",
+              borderRadius: "10px",
             }}
+            spacing={smallScreen ? 0 : 2}
           >
-            <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
+            <Grid
+              container
+              sx={{ justifyContent: "space-between", padding: "0 1rem" }}
+            >
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontWeight: "700",
+                  fontSize: "1.5rem",
+                  color: Colors.BLACK,
+                  mt: "1.5rem",
+                }}
+              >
+                Payment
+              </Typography>
+              <Grid
+                item
+                sx={{
+                  marginTop: "1.5rem",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontWeight: "500",
+                    fontFamily: "Nunito",
+                    display: "flex",
+                    alignItems: "center",
+                    color: Colors.BLACK,
+                  }}
+                >
+                  <span style={{ marginRight: ".5rem" }}>{VIEW_DAYS}</span>
+                  <Dropdown
+                    menuWidth="4rem"
+                    menuItems={menuItems}
+                    defaultSelectedItem={3}
+                    backgroundColor={Colors.WHITE}
+                    selectedValue={selectedValue}
+                    setSelectedValue={setSelectedValue}
+                  />
+                  <span style={{ marginLeft: ".5rem" }}>{DAYS_TEXT}</span>
+                </Typography>
+              </Grid>
+            </Grid>
+            {accordionData?.map(renderAccordion)}
           </Grid>
-        ) : (
-          accordionData?.map(renderAccordion)
-        )}
-      </Grid>
+          <Grid
+            container
+            item
+            xs={12}
+            sx={{
+              margin: "1rem 0rem",
+              backgroundColor: Colors.PALE_GRAY,
+              paddingRight: "1rem",
+              paddingBottom: "1rem",
+              borderRadius: "10px",
+            }}
+            spacing={smallScreen ? 0 : 2}
+          >
+            <Grid
+              item
+              xs={12}
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "700",
+                fontSize: "1.5rem",
+                color: Colors.BLACK,
+                mt: "1.5rem",
+              }}
+            >
+              Bulk Upload
+            </Grid>
+            {bulkAccordionData?.map((data, index) => (
+              <Grid
+                item
+                xs={12}
+                lg={6}
+                sx={{ marginBottom: "0.5rem" }}
+                key={data.key}
+              >
+                <BulkImportAccordions
+                  paginationRows={bulkPaginationRows[data?.key]}
+                  setPaginationRows={(newRow) =>
+                    handleBulkRowChange(data?.key, newRow)
+                  }
+                  index={index}
+                  totalPages={Math.ceil(
+                    bulkTotalData[data?.key] / bulkPaginationRows[data?.key]
+                  )}
+                  totalData={bulkTotalData[data?.key]}
+                  arrayName={data?.key}
+                  currentPage={bulkCurrentPage[data?.key]}
+                  setCurrentPage={(page) =>
+                    handleBulkPageChange(data?.key, page)
+                  }
+                  tableHeading={data?.heading}
+                  rowArray={bulkData[data?.key]}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        </>
+      )}
     </Grid>
   );
 }

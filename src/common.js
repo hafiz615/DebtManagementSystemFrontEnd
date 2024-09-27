@@ -414,8 +414,8 @@ export const convertCamelCaseToTitle = (str) => {
     .replace(/^./, (char) => char.toUpperCase()); // Capitalize the first letter
 };
 export const getTruncatedText = (text, maxLength) => {
-  if (text.length > maxLength) {
-    return text.slice(0, maxLength) + "...";
+  if (text?.length > maxLength) {
+    return text?.slice(0, maxLength) + "...";
   }
   return text;
 };
@@ -993,16 +993,24 @@ export function formatDateString(isoDateStr) {
   const date = isoDateStr === "now" ? new Date() : new Date(isoDateStr);
 
   const options = {
-    year: "numeric",
-    month: "long",
+    year: "2-digit",
+    month: "short",
     day: "numeric",
     hour: "numeric",
     minute: "numeric",
-    second: "numeric",
     hour12: true,
   };
 
-  return date.toLocaleString("en-US", options).replace(",", " at");
+  const formattedDate = date.toLocaleDateString("en-US", options);
+  const formattedTime = date.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
+
+  const [month, day, year] = formattedDate.split(" ");
+
+  return `${day} ${month},${year} at ${formattedTime}`;
 }
 
 export const isPhoneNumber = (value) => {
@@ -1015,3 +1023,20 @@ export const formatValue = (value) => {
   }
   return value;
 };
+
+export const formatCsvValues = (value) => {
+  return value?.replace(/[-\s]/g, "");
+};
+
+export function sanitizePhoneNumber(phoneNumber) {
+  let sanitizedNumber = phoneNumber?.startsWith("+1")
+    ? phoneNumber?.slice(2)
+    : phoneNumber;
+  sanitizedNumber = sanitizedNumber?.replace(/[-\s]/g, "");
+  return sanitizedNumber;
+}
+
+export function sanitizeBudget(budget) {
+  let sanitizedBudget = budget.replace(/[$,\s]/g, "");
+  return parseInt(sanitizedBudget, 10);
+}

@@ -424,6 +424,17 @@ export const UpdateDebtor = async (id, payload, type) => {
     return error;
   }
 };
+export const UpdateBulkDebtor = async (id, payload) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/debtor/updateDebtorBulk/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
 export const UpdateCreditor = async (id, payload, type) => {
   try {
     return await axios.put(
@@ -1260,10 +1271,10 @@ export const ExtractedCaseFields = async (id, payload) => {
     return error;
   }
 };
-export const UpdateMultipleCreditors = async (id, payload) => {
+export const UpdateMultipleCreditors = async (id, payload, caseId) => {
   try {
     return await axios.put(
-      BASE_URL + `/v1/creditor/updateMultipleCreditors/${id}`,
+      BASE_URL + `/v1/creditor/updateMultipleCreditors/${id}?bulk=${caseId}`,
       payload,
       setHeaders()
     );
@@ -1272,4 +1283,37 @@ export const UpdateMultipleCreditors = async (id, payload) => {
   }
 };
 
-//ssssg
+export const createMultipleDebtors = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/createMultipleDebtors`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetBulkRecords = async (arrayName, page, limit) => {
+  try {
+    return await axios.get(
+      BASE_URL +
+        `/v1/bulk/bulkUploadAnalytics?array=${arrayName}&page=${page}&limit=${limit}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetBulkCaseDetail = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/bulk/getBulkCasesDetails/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
