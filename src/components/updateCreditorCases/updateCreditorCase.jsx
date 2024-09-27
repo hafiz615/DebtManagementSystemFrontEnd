@@ -111,38 +111,39 @@ export default function UpdateCreditorCase() {
       setCaseData(
         resCreditorsData?.map((item) => ({
           contractDetails: {
-            loan_amount: item?.contractDetails?.loan_amount,
-            repayment_amount: item?.contractDetails?.repayment_amount,
-            purchased_percentage: item?.contractDetails?.purchased_percentage,
+            loan_amount: item?.contractDetails?.loan_amount || 0,
+            repayment_amount: item?.contractDetails?.repayment_amount || 0,
+            purchased_percentage:
+              item?.contractDetails?.purchased_percentage || 0,
           },
           creditor: {
             aggression: item?.creditor?.aggression || 0,
-            accountTitle: item?.creditor?.accountTitle,
+            accountTitle: item?.creditor?.accountTitle || "",
             basicInformation: {
-              email: item?.creditor?.basicInformation?.email,
-              fullName: item?.creditor?.basicInformation?.fullName,
-              phone: item?.creditor?.basicInformation?.phone,
+              email: item?.creditor?.basicInformation?.email || "",
+              fullName: item?.creditor?.basicInformation?.fullName || "",
+              phone: item?.creditor?.basicInformation?.phone || "",
             },
             businessInformation: {
               businessCategory:
-                item?.creditor?.businessInformation?.businessCategory,
-              companyName: item?.creditor?.businessInformation?.companyName,
+                item?.creditor?.businessInformation?.businessCategory || "",
+              companyName:
+                item?.creditor?.businessInformation?.companyName || "",
             },
             historicalRange: {
-              maximum: item?.creditor?.historicalRange?.maximum,
-              minimum: item?.creditor?.historicalRange?.minimum,
+              maximum: item?.creditor?.historicalRange?.maximum || 0,
+              minimum: item?.creditor?.historicalRange?.minimum || 0,
             },
-            notes: item?.creditor?.notes,
+            notes: item?.creditor?.notes || "",
             _id: item?.creditor?._id,
-            lastFundedDate: item?.creditor?.lastFundedDate,
+            lastFundedDate: item?.creditor?.lastFundedDate || "",
           },
           feePayment: item?.feePayment,
-          lastPaymentDate: item?.lastPaymentDate,
-          paidAmount: item?.paidAmount,
-          remaining: item?.remaining,
-          status: item?.status,
-          totalDebt: item?.totalDebt,
-
+          lastPaymentDate: item?.lastPaymentDate || "",
+          paidAmount: item?.paidAmount || 0,
+          remaining: item?.remaining || 0,
+          status: item?.status || "",
+          totalDebt: item?.totalDebt || 0,
           _id: item?._id,
         }))
       );
@@ -253,6 +254,15 @@ export default function UpdateCreditorCase() {
   useEffect(() => {
     getBulkCaseDetail();
   }, []);
+
+  const handleBackClick = () => {
+    if (activeStep === 0) {
+      localStorage.setItem("route", "home");
+      navigate(`/home`);
+    } else {
+      setActiveStep(0);
+    }
+  };
 
   return (
     <Grid
@@ -411,14 +421,13 @@ export default function UpdateCreditorCase() {
         }}
       >
         <TextButton
-          buttonText="Back"
+          buttonText={activeStep === 0 ? "Exit" : "Back"}
           height="2rem"
           width="8rem"
           marginRight="1rem"
           marginTop=".5rem"
           marginBottom=".5rem"
-          disabled={activeStep === 0}
-          onClick={() => setActiveStep(0)}
+          onClick={handleBackClick}
           backgroundColor={Colors.ORANGE_COLOR}
           hoverColor={Colors.ORANGE_COLOR}
         />
@@ -434,18 +443,20 @@ export default function UpdateCreditorCase() {
           hoverColor={Colors.SKY_BLUE}
           loading={buttonLoading}
         />
-        <TextButton
-          buttonText="Next"
-          height="2rem"
-          width="8rem"
-          marginRight="1rem"
-          marginTop=".5rem"
-          marginBottom=".5rem"
-          disabled={activeStep === 1}
-          onClick={() => setActiveStep(1)}
-          backgroundColor={Colors.NAVY_BLUE}
-          hoverColor={Colors.NAVY_BLUE}
-        />
+        {activeStep === 0 && (
+          <TextButton
+            buttonText="Next"
+            height="2rem"
+            width="8rem"
+            marginRight="1rem"
+            marginTop=".5rem"
+            marginBottom=".5rem"
+            disabled={activeStep === 1}
+            onClick={() => setActiveStep(1)}
+            backgroundColor={Colors.NAVY_BLUE}
+            hoverColor={Colors.NAVY_BLUE}
+          />
+        )}
       </Grid>
     </Grid>
   );
