@@ -68,7 +68,7 @@ export default function ClientImport({ setApiData, allDropdownStates }) {
           address: getDataBySelectedDropdown("Address", index) || "",
           weeklyBudget:
             sanitizeBudget(getDataBySelectedDropdown("Weekly Budget", index)) ||
-            "",
+            0,
         },
         businessInformation: {
           companyName: getDataBySelectedDropdown("Company", index) || "",
