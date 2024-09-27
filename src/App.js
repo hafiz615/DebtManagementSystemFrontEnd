@@ -18,6 +18,7 @@ import CreditorListPage from "./pages/creditorListPage";
 import PipelinesPage from "./pages/pipelinePage";
 import SettlementRangePage from "./pages/settlementRangePage";
 import SettlementRange from "./components/settlementRange/settlementRange";
+import UpdateCase from "./pages/updateCase";
 // import PaymentsCardPage from "./pages/paymentPage";
 function App() {
   return (
@@ -67,6 +68,16 @@ function App() {
         element={
           <Protected>
             <BulkCases />
+          </Protected>
+        }
+      />
+
+      <Route
+        exact
+        path="/update-cases/:id"
+        element={
+          <Protected>
+            <UpdateCase />
           </Protected>
         }
       />

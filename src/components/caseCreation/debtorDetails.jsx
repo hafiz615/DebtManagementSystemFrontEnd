@@ -35,6 +35,7 @@ function DebtorDetails({
   connectPayment,
   setConnectPayment,
   walletId,
+  hideComponents,
 }) {
   const handleSearchChange = (value) => {
     setSearchText(value);
@@ -52,27 +53,30 @@ function DebtorDetails({
 
   return (
     <>
-      <Grid
-        container
-        item
-        xs={12}
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginTop: "1rem",
-        }}
-      >
-        <SearchBar
-          searchText={searchText}
-          placeholder="Search by Email,Phone and SSN..."
-          onChange={handleSearchChange}
-          filteredArray={filteredArray}
-          handleSelect={handleSelect}
-          setFilteredArray={setFilteredArray}
-          setSearchText={setSearchText}
-        />
-      </Grid>
+      {!hideComponents && (
+        <Grid
+          container
+          item
+          xs={12}
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginTop: "1rem",
+          }}
+        >
+          <SearchBar
+            searchText={searchText}
+            placeholder="Search by Email,Phone and SSN..."
+            onChange={handleSearchChange}
+            filteredArray={filteredArray}
+            handleSelect={handleSelect}
+            setFilteredArray={setFilteredArray}
+            setSearchText={setSearchText}
+          />
+        </Grid>
+      )}
+
       {loading ? (
         <Grid
           container

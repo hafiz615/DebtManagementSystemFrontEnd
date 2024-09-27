@@ -993,16 +993,24 @@ export function formatDateString(isoDateStr) {
   const date = isoDateStr === "now" ? new Date() : new Date(isoDateStr);
 
   const options = {
-    year: "numeric",
-    month: "long",
+    year: "2-digit",
+    month: "short",
     day: "numeric",
     hour: "numeric",
     minute: "numeric",
-    second: "numeric",
     hour12: true,
   };
 
-  return date.toLocaleString("en-US", options).replace(",", " at");
+  const formattedDate = date.toLocaleDateString("en-US", options);
+  const formattedTime = date.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
+
+  const [month, day, year] = formattedDate.split(" ");
+
+  return `${day} ${month},${year} at ${formattedTime}`;
 }
 
 export const isPhoneNumber = (value) => {

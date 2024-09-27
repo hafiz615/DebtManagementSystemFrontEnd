@@ -31,6 +31,7 @@ export default function CreditorDetails({
   handleSelect,
   errors,
   setErrors,
+  hideComponents,
 }) {
   const [digitsList, setDigitsList] = useState(
     finalCaseData?.map((caseEntry) => [caseEntry?.creditor?.aggression]) || [0]
@@ -249,11 +250,13 @@ export default function CreditorDetails({
 
   return (
     <>
-      <Grid container sx={{ justifyContent: "flex-end" }}>
-        <IconButton onClick={addNewCreditor}>
-          <Add sx={{ color: Colors.SKY_BLUE }} />
-        </IconButton>
-      </Grid>
+      {!hideComponents && (
+        <Grid container sx={{ justifyContent: "flex-end" }}>
+          <IconButton onClick={addNewCreditor}>
+            <Add sx={{ color: Colors.SKY_BLUE }} />
+          </IconButton>
+        </Grid>
+      )}
       {loading ? (
         <Grid
           container
@@ -304,13 +307,14 @@ export default function CreditorDetails({
                 >
                   {caseEntry.creditor.businessInformation.companyName || ""}
                 </Typography>
-
-                <IconButton
-                  onClick={(e) => handleRemoveCase(index, e)}
-                  color="error"
-                >
-                  <Delete />
-                </IconButton>
+                {!hideComponents && (
+                  <IconButton
+                    onClick={(e) => handleRemoveCase(index, e)}
+                    color="error"
+                  >
+                    <Delete />
+                  </IconButton>
+                )}
               </Grid>
             </AccordionSummary>
             <AccordionDetails
@@ -342,19 +346,21 @@ export default function CreditorDetails({
                     position: "relative",
                   }}
                 >
-                  <Grid item xs={12} lg={4}>
-                    <SearchBar
-                      searchText={searchText}
-                      onChange={handleSearchChange}
-                      placeholder="Search by Email and Phone..."
-                      filteredArray={filteredArray}
-                      handleSelect={handleSelect}
-                      setFilteredArray={setFilteredArray}
-                      setSearchText={setSearchText}
-                      backgroundColor={Colors.BG_LIGHT_GRAY}
-                      idx={index}
-                    />
-                  </Grid>
+                  {!hideComponents && (
+                    <Grid item xs={12} lg={4}>
+                      <SearchBar
+                        searchText={searchText}
+                        onChange={handleSearchChange}
+                        placeholder="Search by Email and Phone..."
+                        filteredArray={filteredArray}
+                        handleSelect={handleSelect}
+                        setFilteredArray={setFilteredArray}
+                        setSearchText={setSearchText}
+                        backgroundColor={Colors.BG_LIGHT_GRAY}
+                        idx={index}
+                      />
+                    </Grid>
+                  )}
 
                   <CreditorFields
                     thisCaseData={caseEntry}

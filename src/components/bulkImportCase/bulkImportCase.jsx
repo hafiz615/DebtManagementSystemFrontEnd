@@ -54,10 +54,10 @@ function BulkImportCase() {
   const handleSave = async () => {
     setLoading(true);
     const caseCreation = await createMultipleDebtors(apiData);
-    if (caseCreation?.status === 201) {
+    if (caseCreation?.status === 200) {
       localStorage.removeItem("Columns");
       localStorage.removeItem("csvData");
-      localStorage.setItem("route", "Home");
+      localStorage.setItem("route", "home");
       navigate("/home");
       showToast(caseCreation?.data?.message, "success");
     } else if (caseCreation?.response?.status === 400) {
