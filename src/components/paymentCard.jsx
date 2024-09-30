@@ -11,7 +11,7 @@ function PaymentCardDetails({ setConnectPayment }) {
     if (newAlignment !== null) {
       handleTypeChange(newAlignment);
     } else {
-      window.CollectJS.startPaymentRequest();
+      window?.CollectJS?.startPaymentRequest();
     }
   };
 
@@ -20,7 +20,7 @@ function PaymentCardDetails({ setConnectPayment }) {
   };
 
   useEffect(() => {
-    window.CollectJS.configure({
+    window?.CollectJS?.configure({
       variant: "lightbox",
       paymentType: type,
       callback: (token) => {

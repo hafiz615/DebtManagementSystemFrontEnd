@@ -33,9 +33,9 @@ export default function UploadCsv({ handleModalClose }) {
           const filledRows = csvData?.data?.filter((row) =>
             Object.values(row).some((value) => value)
           ).length;
-          if (filledRows > 5) {
+          if (filledRows > 10) {
             showToast(
-              "The CSV file should not have more than 5 filled rows.",
+              "Uploaded CSV file can only accept 10 or less filled rows.",
               "error"
             );
             setFilename(null);

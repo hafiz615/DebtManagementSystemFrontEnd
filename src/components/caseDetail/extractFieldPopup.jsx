@@ -534,7 +534,6 @@ function ExtractFieldPopup({
 
   const updateCreditors = async () => {
     setLoading(true);
-
     finalCaseData?.forEach((item) => {
       if (
         item.creditor.aggression === null ||

@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Grid,
   Typography,
@@ -29,7 +29,6 @@ import {
   creditorBusinessDetails,
   creditorPeronsalDetails,
 } from "../../constants/appConstants";
-import { useEffect } from "react";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -81,67 +80,6 @@ export default function CreditorsDetailCards({
       setStartIndex(startIndex - itemsPerPage);
     }
   };
-  // useEffect(() => {
-  //   const script = document.createElement("script");
-  //   script.src =
-  //     "https://developers.seamlesschex.com/docs/checkoutjs/sdk-min.js";
-  //   script.async = true;
-  //   script.defer = true;
-  //   // Define a function to initialize the PAYNOTE iframe
-  //   let casedataName = caseData?.creditor?.basicInformation?.fullName;
-  //   const parts = casedataName.split(" ");
-  //   const firstPart = parts[0].trim(); // "Funding Metrics"
-  //   const secondPart = parts[1] ? parts[1].trim() : "";
-
-  //   const initializePaynote = () => {
-  //     try {
-  //       const objRequestIframe = {
-  //         publicKey: "pk_test_01H8PVPA6Y7T7TBHPNJHYHKZ2C",
-  //         sandbox: true,
-  //         // authorizationOnly: true, // set this to true
-  //         displayMethod: "iframe",
-  //         paymentToken: "pay_tok_SPECIMEN-" + Math.random(),
-  //         widgetContainerSelector: "wrapper-pay-buttons",
-  //         saveBankDetails: true,
-  //         storeName: "AlphaBetaGamma",
-  //         checkout: {
-  //           totalValue: 3,
-  //           currency: "USD",
-  //           description: "Sign up to System",
-  //           items: [{ title: "Enrollment", price: 3 }],
-  //           customerEmail: `${caseData?.creditor?.basicInformation?.email}`,
-  //           customerFirstName: `${firstPart}`,
-  //           customerLastName: `${secondPart}`,
-  //         },
-  //         style: {
-  //           buttonClass: "btn green-btn btn-block no-overflow",
-  //           buttonColor: "#0091D5",
-  //           buttonLabelColor: "#ffffff",
-  //           buttonLabel: "Add Account Details",
-  //         },
-  //         onSuccess: function () {
-  //           console.log("Payment successful!");
-  //         },
-  //         onError: function () {
-  //           console.log("Error during payment!");
-  //         },
-  //       };
-  //       const paynoteIframe = new PAYNOTE(objRequestIframe);
-  //       paynoteIframe.render();
-  //     } catch (error) {
-  //       alert("Error initializing PAYNOTE: " + error.message);
-  //     }
-  //   };
-
-  //   // Set up script loading
-  //   script.onload = initializePaynote;
-  //   document.body.appendChild(script);
-
-  //   // Cleanup function to remove script
-  //   return () => {
-  //     document.body.removeChild(script);
-  //   };
-  // }, []);
 
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const formatDate = (dateString) => {
