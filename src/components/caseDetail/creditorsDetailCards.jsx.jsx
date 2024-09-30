@@ -277,8 +277,21 @@ export default function CreditorsDetailCards({
             </div>
           ))}
         </>
-        <span style={{ display: "flex", justifyContent: "center" }}>
+        <span
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
           <PaynoteButton caseData={caseData} />
+          <MuiModels
+            show="paynoteForm"
+            button="paynoteForm"
+            width="55vw"
+            // caseData={caseData}
+            // GetCaseDetails={GetCaseDetails}
+          />
         </span>
       </Grid>
       <Grid

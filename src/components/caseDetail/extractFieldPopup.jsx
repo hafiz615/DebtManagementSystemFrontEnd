@@ -463,17 +463,16 @@ function ExtractFieldPopup({
           };
         }
 
-        return caseItem; // Return the original if no match found or _id is already correct
+        return caseItem;
       });
 
       if (isUpdated) {
-        setFinalCaseData(updatedCaseData); // Update finalCaseData only if there are changes
+        setFinalCaseData(updatedCaseData);
       }
     };
 
     updateIdsInFinalCaseData();
-  }, [finalCaseData, data?.creditors]); // Remove finalCaseData dependency to prevent loop
-  // Run effect when finalCaseData or data.creditors changes
+  }, [finalCaseData, data?.creditors]);
 
   const handleDigitsChange = (caseIndex, newDigits) => {
     const updatedDigitsList = [...digitsList];

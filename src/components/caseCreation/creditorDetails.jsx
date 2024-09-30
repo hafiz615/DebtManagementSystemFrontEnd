@@ -302,7 +302,7 @@ export default function CreditorDetails({
                     color: Colors.WHITE,
                   }}
                 >
-                  {caseEntry.creditor.businessInformation.companyName || ""}
+                  {caseEntry?.creditor?.businessInformation?.companyName || ""}
                 </Typography>
 
                 <IconButton
