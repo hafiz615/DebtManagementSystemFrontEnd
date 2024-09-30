@@ -21,7 +21,7 @@ export default function MappingDetails({
   const debtorDetails = [
     { name: "Full Name" },
     { name: "Email" },
-    { name: "SSID" },
+    { name: "SSN" },
     { name: "Status" },
     { name: "State" },
     { name: "City" },
@@ -52,7 +52,7 @@ export default function MappingDetails({
     initialDropdownStates[`Email`] = getFieldIndex(
       "primary_contact_primary_email"
     );
-    initialDropdownStates[`SSID`] = getFieldIndex("custom.SSN");
+    initialDropdownStates[`SSN`] = getFieldIndex("custom.SSN");
     initialDropdownStates[`Status`] = getFieldIndex("status_label");
     initialDropdownStates[`Weekly Budget`] = getFieldIndex(
       "custom.Weekly Payment"
