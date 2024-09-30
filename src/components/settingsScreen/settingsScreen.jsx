@@ -16,6 +16,7 @@ import PipelineAccordion from "./pipelineAccordion";
 import RoleAndPermission from "./roleAndPermission";
 import NotificationConfiguration from "../notificationConfigure";
 import JustificationModal from "./justificationModal";
+import AddUrlsAccordion from "./addUrlsAccordion";
 
 export default function SettingsScreen() {
   const navigate = useNavigate();
@@ -155,6 +156,7 @@ export default function SettingsScreen() {
           getSettings={getSettings}
           selectJustification={selectJustification}
         />
+        <AddUrlsAccordion />
         {settings?.viewCaseStatuses && <CaseStatuses />}
 
         {settings?.viewPipeline && <PipelineAccordion />}
