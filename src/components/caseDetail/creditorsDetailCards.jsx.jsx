@@ -271,7 +271,7 @@ export default function CreditorsDetailCards({
                     textAlign: "right",
                   }}
                 >
-                  {getTruncatedText(formatValue(item?.value), 15)}
+                  {getTruncatedText(formatValue(item?.value), 15) || "--"}
                 </Typography>
               </Tooltip>
             </div>
@@ -289,8 +289,7 @@ export default function CreditorsDetailCards({
             show="paynoteForm"
             button="paynoteForm"
             width="55vw"
-            // caseData={caseData}
-            // GetCaseDetails={GetCaseDetails}
+            caseData={caseData}
           />
         </span>
       </Grid>
@@ -318,15 +317,16 @@ export default function CreditorsDetailCards({
         {[
           {
             label: "Company",
-            value: caseData?.creditor?.businessInformation?.companyName,
+            value: caseData?.creditor?.businessInformation?.companyName || "--",
           },
           {
             label: "Category",
-            value: caseData?.creditor?.businessInformation?.businessCategory,
+            value:
+              caseData?.creditor?.businessInformation?.businessCategory || "--",
           },
           {
             label: "Account Title",
-            value: caseData?.creditor?.accountTitle,
+            value: caseData?.creditor?.accountTitle || "--",
           },
         ]?.map((item, index) => (
           <div

@@ -8,14 +8,14 @@ import Dropdown from "../dropdown";
 import { handleNumberInput } from "../../common";
 import { encrypt, decrypt, compare } from "n-krypta";
 
-function PaynoteForm({ handleClose }) {
+function PaynoteForm({ handleClose, caseData }) {
   const [errors, setErrors] = useState({});
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [selectedValue, setSelectedValue] = useState("Choose Type");
   const [paynoteForm, setPaynoteForm] = useState({
-    number: "", // Updated field name
-    routing: "", // Updated field name
-    bank: "", // Updated field name
+    number: "",
+    routing: "",
+    bank: "",
   });
 
   const menuItems = [
@@ -70,19 +70,20 @@ function PaynoteForm({ handleClose }) {
     setIsButtonDisabled(!(allFieldsFilled && !hasErrors));
   }, [paynoteForm, errors, selectedValue]);
 
-  const { encrypt, decrypt } = require("n-krypta");
+  const creditorId = caseData?.creditor?._id;
+  console.log(creditorId, "idddd");
+  const { encrypt } = require("n-krypta");
+
   const securityKey = process.env.REACT_APP_SECURITY_KEY;
   const handleSubmit = () => {
     const encryptedData = {
-      accountNo: encrypt(paynoteForm?.number, securityKey),
-      routingNo: encrypt(paynoteForm?.routing, securityKey),
+      number: paynoteForm?.number,
+      routing: paynoteForm?.routing,
       type: selectedValue,
-      bankName: paynoteForm.bank,
+      bank: paynoteForm?.bank,
     };
-    console.log(process.env.securityKey);
 
-    console.log("Submitted Data:", encryptedData);
-    alert("Form Submitted");
+    console.log("Submitted Data:", encrypt(encryptedData, securityKey));
   };
 
   return (
@@ -118,7 +119,7 @@ function PaynoteForm({ handleClose }) {
           }}
         >
           <PaymentsTextFields
-            type="text"
+            type="number"
             label="Account Number*"
             placeHolderValue="Enter Account Number"
             width="98%"
@@ -132,7 +133,7 @@ function PaynoteForm({ handleClose }) {
           />
 
           <PaymentsTextFields
-            type="text"
+            type="number"
             label="Routing Number*"
             placeHolderValue="Enter Routing Number"
             width="98%"

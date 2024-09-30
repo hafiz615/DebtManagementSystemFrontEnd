@@ -834,7 +834,7 @@ export default function MuiModels({
               handleClose={handleClose}
             />
           ) : show === "paynoteForm" ? (
-            <PaynoteForm handleClose={handleClose} />
+            <PaynoteForm handleClose={handleClose} caseData={caseData} />
           ) : show === "extractFiles" ? (
             <ExtractFieldPopup
               selectedFiles={selectedFiles}
