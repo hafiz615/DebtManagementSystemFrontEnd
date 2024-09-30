@@ -141,10 +141,32 @@ export default function ExportPipeline({ handleClose, data }) {
             >
               <FormControlLabel
                 value="csv/excel"
-                control={<Radio />}
+                control={
+                  <Radio
+                    sx={{
+                      color: Colors.SKY_BLUE,
+                      "&.Mui-checked": {
+                        color: Colors.SKY_BLUE,
+                      },
+                    }}
+                  />
+                }
                 label="CSV/Excel"
               />
-              <FormControlLabel value="json" control={<Radio />} label="JSON" />
+              <FormControlLabel
+                value="json"
+                control={
+                  <Radio
+                    sx={{
+                      color: Colors.SKY_BLUE,
+                      "&.Mui-checked": {
+                        color: Colors.SKY_BLUE,
+                      },
+                    }}
+                  />
+                }
+                label="JSON"
+              />
             </RadioGroup>
           </FormControl>
         </div>
@@ -166,12 +188,30 @@ export default function ExportPipeline({ handleClose, data }) {
           >
             <FormControlLabel
               value="All Fields"
-              control={<Radio />}
+              control={
+                <Radio
+                  sx={{
+                    color: Colors.SKY_BLUE,
+                    "&.Mui-checked": {
+                      color: Colors.SKY_BLUE,
+                    },
+                  }}
+                />
+              }
               label="All Fields"
             />
             <FormControlLabel
               value="Common Fields"
-              control={<Radio />}
+              control={
+                <Radio
+                  sx={{
+                    color: Colors.SKY_BLUE,
+                    "&.Mui-checked": {
+                      color: Colors.SKY_BLUE,
+                    },
+                  }}
+                />
+              }
               label="Common Fields"
             />
           </RadioGroup>
