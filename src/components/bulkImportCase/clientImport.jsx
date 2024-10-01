@@ -19,7 +19,7 @@ export default function ClientImport({ setApiData, allDropdownStates }) {
   const debtorDetails = [
     { name: "Full Name" },
     { name: "Email" },
-    { name: "SSID" },
+    { name: "SSN" },
     { name: "Status" },
     { name: "State" },
     { name: "City" },
@@ -57,7 +57,7 @@ export default function ClientImport({ setApiData, allDropdownStates }) {
         basicInformation: {
           fullName: getDataBySelectedDropdown("Full Name", index) || "",
           email: getDataBySelectedDropdown("Email", index) || "",
-          SSID: formatCsvValues(getDataBySelectedDropdown("SSID", index)) || "",
+          SSID: formatCsvValues(getDataBySelectedDropdown("SSN", index)) || "",
           status: getDataBySelectedDropdown("Status", index) || "",
           state: getDataBySelectedDropdown("State", index) || "",
           city: getDataBySelectedDropdown("City", index) || "",
