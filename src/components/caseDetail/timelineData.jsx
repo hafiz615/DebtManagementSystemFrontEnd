@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Typography } from "@mui/material";
+import { Box, Card, Typography } from "@mui/material";
 import {
   Timeline,
   TimelineItem,
@@ -95,7 +95,7 @@ export default function TimelineData({ value, date, notes }) {
               {Object.entries(value)
                 .filter(([key]) => key !== "Action" && key !== "Time")
                 ?.map(([key, value]) => (
-                  <>
+                  <Box key={key}>
                     {key === "Content" ? (
                       <>
                         <Typography
@@ -168,7 +168,7 @@ export default function TimelineData({ value, date, notes }) {
                           : value}
                       </Typography>
                     )}
-                  </>
+                  </Box>
                 ))}
             </Card>
           )}
