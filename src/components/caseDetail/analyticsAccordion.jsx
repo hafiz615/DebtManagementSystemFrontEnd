@@ -20,6 +20,10 @@ export default function AnalyticsAccordion({ loading, paymentDetails }) {
       value: paymentDetails?.paymentCounts?.successAuthorizations || 0,
     },
     {
+      name: "Successful Captures",
+      value: paymentDetails?.paymentCounts?.successCaptures || 0,
+    },
+    {
       name: "Successful Payments",
       value: paymentDetails?.paymentCounts?.successPayments || 0,
     },
@@ -28,8 +32,8 @@ export default function AnalyticsAccordion({ loading, paymentDetails }) {
       value: paymentDetails?.paymentCounts?.failedAuthorizations || 0,
     },
     {
-      name: "Failed Payments",
-      value: paymentDetails?.paymentCounts?.failedPayments || 0,
+      name: "Failed Captures",
+      value: paymentDetails?.paymentCounts?.failedCaptures || 0,
     },
   ];
   return (

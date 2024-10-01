@@ -576,8 +576,8 @@ export default function ClientListDetails() {
               >
                 {[
                   {
-                    title: "Failed Payments",
-                    value: clientData?.paymentCounts?.failedPayments,
+                    title: "Failed Captures",
+                    value: clientData?.paymentCounts?.failedCaptures,
                     color: Colors.BLACK,
                   },
                   {
@@ -593,6 +593,11 @@ export default function ClientListDetails() {
                   {
                     title: "Successful Authorizations",
                     value: clientData?.paymentCounts?.successfulAuthorizations,
+                    color: Colors.SKY_BLUE,
+                  },
+                  {
+                    title: "Successful Captures",
+                    value: clientData?.paymentCounts?.successfulCaptures,
                     color: Colors.SKY_BLUE,
                   },
                 ]?.map((item, index) => (

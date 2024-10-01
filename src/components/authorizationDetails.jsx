@@ -177,10 +177,12 @@ export default function AuthorizationDetails() {
     } else if (value === 1) {
       arrayName = "successAuthorizations";
     } else if (value === 2) {
-      arrayName = "failedPayments";
+      arrayName = "successCaptures";
     } else if (value === 3) {
-      arrayName = "successPayments";
+      arrayName = "failedCaptures";
     } else if (value === 4) {
+      arrayName = "successPayments";
+    } else if (value === 5) {
       arrayName = "upcomingPayments";
     }
     const filterObj = createFilterObject(

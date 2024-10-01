@@ -44,10 +44,11 @@ function HomeDetails() {
   const [selectedValue, setSelectedValue] = useState(3);
   const [currentPage, setCurrentPage] = useState({
     failedAuthorizations: 1,
-    failedPayments: 1,
+    failedCaptures: 1,
     successAuthorizations: 1,
     upcomingPayments: 1,
     successPayments: 1,
+    successCaptures: 1,
   });
   const [bulkCurrentPage, setBulkCurrentPages] = useState({
     pending: 1,
@@ -63,13 +64,14 @@ function HomeDetails() {
       heading: "Failed Authorizations",
       number: "5",
     },
-    { key: "failedPayments", heading: "Failed Payments", number: "5" },
+    { key: "failedCaptures", heading: "Failed Captures", number: "5" },
     {
       key: "successAuthorizations",
       heading: "Successful Authorizations",
       number: "4",
     },
     { key: "successPayments", heading: "Successful Payments", number: "4" },
+    { key: "successCaptures", heading: "Successful Captures", number: "4" },
     { key: "upcomingPayments", heading: "Upcoming Payments", number: "4" },
   ];
 
@@ -118,18 +120,20 @@ function HomeDetails() {
       if (result?.status === 200) {
         if (!result?.data?.data) {
           setTotalData({
-            failedPayments: 0,
-            successPayments: 0,
             failedAuthorizations: 0,
+            failedCaptures: 0,
             successAuthorizations: 0,
             upcomingPayments: 0,
+            successPayments: 0,
+            successCaptures: 0,
           });
           setHomeData({
-            failedPayments: [],
-            successPayments: [],
             failedAuthorizations: [],
+            failedCaptures: [],
             successAuthorizations: [],
             upcomingPayments: [],
+            successPayments: [],
+            successCaptures: [],
           });
         } else {
           key === "default"
@@ -201,10 +205,11 @@ function HomeDetails() {
   useEffect(() => {
     setPaginationRows({
       failedAuthorizations: 5,
-      failedPayments: 5,
+      failedCaptures: 5,
       successAuthorizations: 5,
       upcomingPayments: 5,
       successPayments: 5,
+      successCaptures: 5,
     });
     setBulkPaginationRows({
       pending: 5,
@@ -215,10 +220,11 @@ function HomeDetails() {
     });
     setCurrentPage({
       failedAuthorizations: 1,
-      failedPayments: 1,
+      failedCaptures: 1,
       successAuthorizations: 1,
       upcomingPayments: 1,
       successPayments: 1,
+      successCaptures: 1,
     });
     setBulkCurrentPages({
       pending: 1,
@@ -269,13 +275,13 @@ function HomeDetails() {
         getHomeData={getHomeData}
         showFailureReason={
           data?.heading !== "Upcoming Payments" &&
-          data?.heading !== "Successful Payments" &&
+          data?.heading !== "Successful Captures" &&
           data?.heading !== "Successful Authorizations"
         }
         showDueDate={
-          data?.heading !== "Successful Payments" &&
+          data?.heading !== "Successful Captures" &&
           data?.heading !== "Successful Authorizations" &&
-          data?.heading !== "Failed Payments" &&
+          data?.heading !== "Failed Captures" &&
           data?.heading !== "Failed Authorizations"
         }
       />
