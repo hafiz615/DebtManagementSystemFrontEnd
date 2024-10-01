@@ -48,12 +48,30 @@ export default function SettlementPayment({
         >
           <FormControlLabel
             value="Minimum"
-            control={<Radio />}
+            control={
+              <Radio
+                sx={{
+                  color: Colors.SKY_BLUE,
+                  "&.Mui-checked": {
+                    color: Colors.SKY_BLUE,
+                  },
+                }}
+              />
+            }
             label="Minimum"
           />
           <FormControlLabel
             value="Maximum"
-            control={<Radio />}
+            control={
+              <Radio
+                sx={{
+                  color: Colors.SKY_BLUE,
+                  "&.Mui-checked": {
+                    color: Colors.SKY_BLUE,
+                  },
+                }}
+              />
+            }
             label="Maximum"
           />
         </RadioGroup>

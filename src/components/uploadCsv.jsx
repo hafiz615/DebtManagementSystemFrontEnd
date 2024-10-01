@@ -24,15 +24,40 @@ export default function UploadCsv({ handleModalClose }) {
   );
 
   const onDrop = (acceptedFiles, fileRejections) => {
+    const requiredHeaders = [
+      "display_name",
+      "primary_contact_primary_email",
+      "custom.SSN",
+      "status_label",
+      "custom.Weekly Payment",
+      "custom.Plaintiffs",
+      "custom.EIN",
+      "custom.ClearoutPhone Location",
+      "description",
+      "primary_contact_primary_phone",
+      "url",
+    ];
+
     if (acceptedFiles?.length > 0) {
       const file = acceptedFiles[0];
       Papa.parse(file, {
         header: true,
         complete: (results) => {
           const csvData = results;
+          const parsedHeaders = results.meta.fields;
+          const missingHeaders = requiredHeaders?.filter(
+            (header) => !parsedHeaders?.includes(header)
+          );
+
+          if (missingHeaders?.length > 0) {
+            showToast(`CSV format is not correct.`, "error");
+            setFilename(null);
+            return;
+          }
           const filledRows = csvData?.data?.filter((row) =>
             Object.values(row).some((value) => value)
           ).length;
+
           if (filledRows > 10) {
             showToast(
               "Uploaded CSV file can only accept 10 or less filled rows.",
@@ -41,6 +66,7 @@ export default function UploadCsv({ handleModalClose }) {
             setFilename(null);
             return;
           }
+
           setFilename(file.name);
           setData(csvData);
           const numColumns = results.meta.fields.length;
@@ -52,10 +78,6 @@ export default function UploadCsv({ handleModalClose }) {
           setFilename(null);
         },
       });
-    }
-    if (fileRejections?.length > 0) {
-      setFilename(null);
-      showToast("Please upload a valid CSV file.", "error");
     }
   };
 
