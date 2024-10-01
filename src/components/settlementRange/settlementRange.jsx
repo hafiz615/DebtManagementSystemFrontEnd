@@ -1056,12 +1056,47 @@ export default function SettlementRange() {
                         ? `$${debtor[key]}`
                         : `${debtor[key]?.toString().slice(0, 15)}${
                             debtor[key]?.toString().length > 15 ? "..." : ""
-                          }`}
+                          }` || "--"}
                     </span>
                   </Tooltip>
                 </Box>
               </Grid>
             ))}
+            <Grid item xs={12} lg={6}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: { xs: "space-between", md: "unset" },
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    color: Colors.DARK_GRAY,
+                    width: "10rem",
+                    marginTop: "0.5rem",
+                  }}
+                >
+                  Company Name
+                </div>
+
+                <Tooltip title={debtorInfo?.companyName} placement="top-end">
+                  <span
+                    style={{
+                      fontFamily: "Nunito",
+                      fontWeight: "300",
+                      fontSize: "0.9rem",
+                      color: Colors.DIM_LIGHT_GRAY,
+                      marginTop: "0.5rem",
+                    }}
+                  >
+                    {debtorInfo?.companyName || "--"}
+                  </span>
+                </Tooltip>
+              </Box>
+            </Grid>
           </Grid>
           <Grid xs={12}>
             <Typography
@@ -1074,8 +1109,8 @@ export default function SettlementRange() {
               Update Commission Percentage
             </Typography>
             <input
-              min={0}
-              max={100}
+              min={1}
+              max={50}
               style={inputStyles}
               type="number"
               placeholder="Commission Percentage"
@@ -1089,7 +1124,11 @@ export default function SettlementRange() {
               onClick={handleCommissionUpdate}
               backgroundColor={Colors.SKY_BLUE}
               hoverColor={Colors.SKY_BLUE}
-              disabled={!commissionPercentage || commissionPercentage < 20}
+              disabled={
+                !commissionPercentage ||
+                commissionPercentage > 50 ||
+                commissionPercentage < 1
+              }
             />
           </Grid>
 
