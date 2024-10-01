@@ -539,6 +539,10 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     doc.setFontSize(14);
     doc.text("Creditors Contract Information", 14, currentY);
     currentY += 10;
+    const formatPurchasedPercentage = (value) => {
+      const match = value?.toString().match(/[\d.]+%/);
+      return match ? match[0] : "0%";
+    };
 
     const creditorDetails = creditors?.map((creditor) => {
       return [
@@ -547,12 +551,11 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
         formatCurrencyConditional(
           creditor?.contractDetails?.payable_amount || 0
         ),
-        creditor?.contractDetails?.purchased_percentage || 0,
+        formatPurchasedPercentage(
+          creditor?.contractDetails?.purchased_percentage || 0
+        ),
         formatCurrencyConditional(
           creditor?.contractDetails?.repayment_amount || 0
-        ),
-        formatCurrency(
-          settlementRange?.weekly_budget[creditor?.creditorAccountTitle] || 0
         ),
       ];
     });
@@ -565,7 +568,6 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
           "Payable Amount",
           "Purchased %",
           "Repayment Amount",
-          "Weekly Budget",
         ],
       ],
       body: creditorDetails,

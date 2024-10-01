@@ -7,17 +7,21 @@ import { Colors } from "../../config/default";
 import Dropdown from "../dropdown";
 import { handleNumberInput } from "../../common";
 import { encrypt, decrypt, compare } from "n-krypta";
+import { useToast } from "../../toast/toastContext";
+import { AddCreditorAccount } from "../../services/services";
 
 function PaynoteForm({ handleClose, caseData }) {
   const [errors, setErrors] = useState({});
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [loading, setLoading] = useState(true);
+
   const [selectedValue, setSelectedValue] = useState("Choose Type");
   const [paynoteForm, setPaynoteForm] = useState({
     number: "",
     routing: "",
     bank: "",
   });
-
+  const { showToast } = useToast();
   const menuItems = [
     { label: "checking", value: "checking" },
     { label: "savings", value: "savings" },
@@ -71,19 +75,29 @@ function PaynoteForm({ handleClose, caseData }) {
   }, [paynoteForm, errors, selectedValue]);
 
   const creditorId = caseData?.creditor?._id;
-  console.log(creditorId, "idddd");
   const { encrypt } = require("n-krypta");
 
   const securityKey = process.env.REACT_APP_SECURITY_KEY;
-  const handleSubmit = () => {
-    const encryptedData = {
+  const handleSubmit = async () => {
+    setLoading(true);
+    const data = {
       number: paynoteForm?.number,
       routing: paynoteForm?.routing,
       type: selectedValue,
       bank: paynoteForm?.bank,
     };
-
-    console.log("Submitted Data:", encrypt(encryptedData, securityKey));
+    const encryptedData = encrypt(data, securityKey);
+    const finalData = {
+      data: encryptedData,
+    };
+    const addCreditorAccount = await AddCreditorAccount(finalData, creditorId);
+    if (addCreditorAccount?.status === 200) {
+      showToast(addCreditorAccount?.data?.message, "success");
+      handleClose();
+    } else {
+      showToast(addCreditorAccount?.response?.data?.message, "error");
+    }
+    setLoading(false);
   };
 
   return (
@@ -115,7 +129,6 @@ function PaynoteForm({ handleClose, caseData }) {
           sx={{
             display: "flex",
             justifyContent: "space-around",
-            // border: "1px solid red",
           }}
         >
           <PaymentsTextFields
@@ -206,6 +219,7 @@ function PaynoteForm({ handleClose, caseData }) {
           onClick={handleSubmit}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
+          // loading={loading}
           disabled={isButtonDisabled}
         />
       </Grid>
