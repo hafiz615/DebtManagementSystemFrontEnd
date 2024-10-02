@@ -43,10 +43,10 @@ function PaynoteForm({ handleClose, caseData }) {
     }
 
     if (field === "number") {
-      if (value.length !== 15) {
+      if (value.length !== 8) {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          number: "Account Number must be 15 digits",
+          number: "Account Number must be 8 digits",
         }));
       } else {
         setErrors((prevErrors) => ({
