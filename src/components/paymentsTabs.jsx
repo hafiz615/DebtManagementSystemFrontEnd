@@ -137,7 +137,7 @@ export default function PaymentsTabs({
               fontWeight: "600",
               height: "3.5rem",
             }}
-            label="Failed Payments"
+            label="Failed Captures"
           />
           <AntTab
             sx={{

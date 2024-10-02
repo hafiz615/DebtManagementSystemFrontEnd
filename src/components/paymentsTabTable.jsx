@@ -145,7 +145,9 @@ export default function PaymentTabsTable({
         caseId: item?.caseId,
         id: item?.id,
         name: item?.fullName || "-",
-        tryDate: new Date(item?.tryDate)?.toLocaleDateString() || "-",
+        tryDate:
+          (item?.tryDate && new Date(item?.tryDate)?.toLocaleDateString()) ||
+          "-",
         totalDebt: formatDollarAmount(item?.totalDebt) || "-",
         ssid: item?.SSID || "-",
         caseOwner: item?.caseOwner || "-",
