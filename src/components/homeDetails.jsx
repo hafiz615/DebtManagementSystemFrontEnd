@@ -276,7 +276,8 @@ function HomeDetails() {
         showFailureReason={
           data?.heading !== "Upcoming Payments" &&
           data?.heading !== "Successful Captures" &&
-          data?.heading !== "Successful Authorizations"
+          data?.heading !== "Successful Authorizations" &&
+          data?.heading !== "Successful Payments"
         }
         showDueDate={
           data?.heading !== "Successful Captures" &&

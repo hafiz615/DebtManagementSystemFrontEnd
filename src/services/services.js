@@ -1341,3 +1341,13 @@ export const AddDebtorAccount = async (payload, id) => {
     return error;
   }
 };
+export const SendPayment = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/payment/sendPaymentPaynote/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

@@ -19,13 +19,14 @@ import {
   EditCalendar,
   OpenInNew,
   Sync,
+  Paid,
 } from "@mui/icons-material";
 import { Colors } from "../config/default";
 import { isEmpty, isEqual } from "lodash";
 import { formatDollarAmount } from "../common";
 import Prompt from "./prompt";
 import { useToast } from "../toast/toastContext";
-import { RetryAuth, RetryCapture } from "../services/services";
+import { RetryAuth, RetryCapture, SendPayment } from "../services/services";
 import {
   FONT_SIZE_LARGE,
   FONT_SIZE_SMALL,
@@ -86,11 +87,11 @@ const IconsContainer = styled("div")({
   display: "none",
   justifyContent: "center",
   alignItems: "center",
-  width: "calc(100% - 10%)",
+  width: "calc(100% - 16%)",
   marginTop: "1rem",
   position: "absolute",
   left: 0,
-  top: 0,
+  top: 5,
   backgroundColor: "transparent",
   zIndex: 1,
 });
@@ -141,6 +142,7 @@ export default function PaymentTabsTable({
   useEffect(() => {
     const generatedData = data?.map((item) => {
       const formattedItem = {
+        caseId: item?.caseId,
         id: item?.id,
         name: item?.fullName || "-",
         tryDate: new Date(item?.tryDate)?.toLocaleDateString() || "-",
@@ -202,6 +204,15 @@ export default function PaymentTabsTable({
         result?.response?.data?.message || result?.response?.data?.message,
         "error"
       );
+    }
+  };
+  const sendPaymentCreditor = async (id) => {
+    const sendPaymentRes = await SendPayment(id);
+    if (sendPaymentRes?.status === 200) {
+      showToast(sendPaymentRes?.data?.message, "success");
+    } else {
+      const errorMessage = sendPaymentRes?.response?.data?.message;
+      showToast(errorMessage, "error");
     }
   };
 
@@ -288,20 +299,27 @@ export default function PaymentTabsTable({
                       tabIndex={-1}
                       selected={isSelected(id)}
                     >
-                      {Object.values(rowData).map((value, i) => (
-                        <StyledTableCell
-                          sx={{
-                            fontSize: {
-                              xs: "10px !important",
-                              sm: "14px !important",
-                            },
-                            paddingRight: { xs: "0.5rem !important", sm: "0" },
-                          }}
-                          key={i}
-                        >
-                          {value}
-                        </StyledTableCell>
-                      ))}
+                      {Object.entries(rowData).map(
+                        ([key, value], i) =>
+                          key !== "caseId" && (
+                            <StyledTableCell
+                              sx={{
+                                fontSize: {
+                                  xs: "10px !important",
+                                  sm: "14px !important",
+                                },
+                                paddingRight: {
+                                  xs: "0.5rem !important",
+                                  sm: "0",
+                                },
+                              }}
+                              key={i}
+                            >
+                              {value}
+                            </StyledTableCell>
+                          )
+                      )}
+
                       {(value === 0 || value === 3) && (
                         <StyledTableCell
                           align="left"
@@ -319,6 +337,32 @@ export default function PaymentTabsTable({
                               showPayment={true}
                             />
                           )}
+                        </StyledTableCell>
+                      )}
+                      {value === 2 && (
+                        <StyledTableCell
+                          align="left"
+                          sx={{
+                            fontWeight: "700",
+                            fontSize: {
+                              xs: FONT_SIZE_SMALL,
+                              sm: FONT_SIZE_LARGE,
+                            },
+                            paddingLeft: "2rem !important",
+                          }}
+                        >
+                          <IconButton
+                            onClick={(e) => {
+                              sendPaymentCreditor(id);
+                              e.stopPropagation();
+                            }}
+                          >
+                            <Paid
+                              sx={{
+                                color: Colors.SKY_BLUE,
+                              }}
+                            />
+                          </IconButton>
                         </StyledTableCell>
                       )}
                       <IconsContainer className="icons">
