@@ -302,7 +302,7 @@ export default function PaymentTabsTable({
                           {value}
                         </StyledTableCell>
                       ))}
-                      {(value === 0 || value === 2) && (
+                      {(value === 0 || value === 3) && (
                         <StyledTableCell
                           align="left"
                           sx={{

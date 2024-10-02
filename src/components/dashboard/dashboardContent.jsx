@@ -332,13 +332,16 @@ function DashboardContent() {
                 </div>
                 <hr style={{ background: "lightgrey" }} />
                 <Grid
-                  container
+                  item
                   sx={{
+                    display: "flex",
                     marginTop: "1rem",
-                    height: "16rem",
-                    gap: { xs: "1em", md: "0" },
-                    overflowY: "auto",
+                    height: "80%",
+                    width: "98%",
+                    gap: "5%",
+                    overflowX: "auto",
                     "&::-webkit-scrollbar": {
+                      height: "10px",
                       width: "10px",
                     },
                     "&::-webkit-scrollbar-thumb": {
@@ -397,7 +400,7 @@ function DashboardContent() {
                       >
                         <SpinnerWithPercentage
                           value={
-                            dashboardData?.paymentStats[0]?.totalFailedPayments
+                            dashboardData?.paymentStats[0]?.totalFailedCaptures
                           }
                           color={Colors.YELLOW}
                         />
@@ -411,7 +414,7 @@ function DashboardContent() {
                             marginTop: "2rem",
                           }}
                         >
-                          Failed Payments
+                          Failed Captures
                         </Typography>
                       </Grid>
                       <Grid
@@ -474,6 +477,37 @@ function DashboardContent() {
                           }}
                         >
                           Successful Payments
+                        </Typography>
+                      </Grid>
+                      <Grid
+                        item
+                        xs={12}
+                        md={3}
+                        sx={{
+                          flexDirection: "column",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <SpinnerWithPercentage
+                          value={
+                            dashboardData?.paymentStats[0]
+                              ?.totalSuccessfulCaptures
+                          }
+                          color={Colors.YELLOW}
+                        />
+                        <Typography
+                          style={{
+                            fontSize: "14px",
+                            fontFamily: "Nunito",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            marginTop: "2rem",
+                          }}
+                        >
+                          Success Captures
                         </Typography>
                       </Grid>
                     </>
