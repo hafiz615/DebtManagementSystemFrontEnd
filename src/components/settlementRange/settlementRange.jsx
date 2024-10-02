@@ -749,7 +749,7 @@ export default function SettlementRange() {
       formatCurrency: true,
     },
     {
-      label: "Payable Amount",
+      label: "Current Balance",
       value: selectedCreditorDetails?.contractDetails?.payable_amount,
       formatCurrency: true,
     },
@@ -769,7 +769,7 @@ export default function SettlementRange() {
       value: selectedCreditorDetails?.contractDetails?.purchased_percentage,
     },
     {
-      label: "Repayment Amount",
+      label: "Original Payment",
       value: selectedCreditorDetails?.contractDetails?.repayment_amount,
     },
   ];
@@ -777,7 +777,7 @@ export default function SettlementRange() {
   const headerData = [
     { key: "creditorName", heading: "Creditors", width: "15%" },
     { key: "loanAmount", heading: "Loan Amount", width: "15%" },
-    { key: "payableAmount", heading: "Payable Amount", width: "15%" },
+    { key: "payableAmount", heading: "Current Balance", width: "15%" },
     { key: "weeklyBudget", heading: "Weekly Budget", width: "15%" },
     {
       key: "purchased_percentage",
@@ -786,7 +786,7 @@ export default function SettlementRange() {
     },
     {
       key: "repayment_amount",
-      heading: "Repayment Amount",
+      heading: "Original Payment",
       width: "15%",
     },
   ];
