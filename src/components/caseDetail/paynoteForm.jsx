@@ -6,9 +6,10 @@ import TextButton from "../button";
 import { Colors } from "../../config/default";
 import Dropdown from "../dropdown";
 import { handleNumberInput } from "../../common";
-import { encrypt, decrypt, compare } from "n-krypta";
+import { encrypt } from "n-krypta";
 import { useToast } from "../../toast/toastContext";
 import { AddCreditorAccount } from "../../services/services";
+import { REACT_APP_SECURITY_KEY } from "../../constants/appConstants";
 
 function PaynoteForm({ handleClose, caseData }) {
   const [errors, setErrors] = useState({});
@@ -57,17 +58,10 @@ function PaynoteForm({ handleClose, caseData }) {
     }
   };
 
-  // const handleInputChange = (field, value) => {
-  //   setPaynoteForm({
-  //     ...paynoteForm,
-  //     [field]: value,
-  //   });
-  //   validateFields(field, value);
-  // };
   const handleInputChange = (field, value) => {
     setPaynoteForm({
       ...paynoteForm,
-      [field]: value ? value?.trim() : "",
+      [field]: value,
     });
     validateFields(field, value);
   };
@@ -82,9 +76,8 @@ function PaynoteForm({ handleClose, caseData }) {
   }, [paynoteForm, errors, selectedValue]);
 
   const creditorId = caseData?.creditor?._id;
-  const { encrypt } = require("n-krypta");
+  // const { encrypt } = require("n-krypta");
 
-  const securityKey = process.env.REACT_APP_SECURITY_KEY;
   const handleSubmit = async () => {
     setLoading(true);
     const data = {
@@ -93,7 +86,7 @@ function PaynoteForm({ handleClose, caseData }) {
       type: selectedValue,
       bank: paynoteForm?.bank,
     };
-    const encryptedData = encrypt(data, securityKey);
+    const encryptedData = encrypt(data, REACT_APP_SECURITY_KEY);
     const finalData = {
       data: encryptedData,
     };
