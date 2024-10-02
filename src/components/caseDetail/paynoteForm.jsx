@@ -43,10 +43,10 @@ function PaynoteForm({ handleClose, caseData }) {
     }
 
     if (field === "number") {
-      if (value.length !== 15) {
+      if (value.length !== 8) {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          number: "Account Number must be 15 digits",
+          number: "Account Number must be 8 digits",
         }));
       } else {
         setErrors((prevErrors) => ({
@@ -57,12 +57,21 @@ function PaynoteForm({ handleClose, caseData }) {
     }
   };
 
+  // const handleInputChange = (field, value) => {
+  //   setPaynoteForm({
+  //     ...paynoteForm,
+  //     [field]: value,
+  //   });
+  //   validateFields(field, value);
+  // };
   const handleInputChange = (field, value) => {
-    setPaynoteForm({
-      ...paynoteForm,
-      [field]: value,
-    });
-    validateFields(field, value);
+    if (value !== undefined) {
+      setPaynoteForm({
+        ...paynoteForm,
+        [field]: value.trim(),
+      });
+      validateFields(field, value);
+    }
   };
 
   useEffect(() => {
