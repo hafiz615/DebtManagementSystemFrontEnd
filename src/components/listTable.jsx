@@ -23,7 +23,7 @@ import { Colors } from "../config/default";
 import MuiModels from "./models";
 import Prompt from "./prompt";
 import { useToast } from "../toast/toastContext";
-import { RetryAuth, RetryCapture } from "../services/services";
+import { RetryAuth, RetryCapture, SendPayment } from "../services/services";
 import {
   FONT_SIZE_LARGE,
   FONT_SIZE_SMALL,
@@ -33,6 +33,7 @@ import { useSelector } from "react-redux";
 import { isEmpty } from "lodash";
 import Dropdown from "./dropdown";
 import ScrollbarStyles from "././customScroll";
+import { Paid } from "@mui/icons-material";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -142,6 +143,15 @@ export default function ListTable({
       );
     }
   };
+  const sendPaymentCreditor = async (id) => {
+    const sendPaymentRes = await SendPayment(id);
+    if (sendPaymentRes?.status === 200) {
+      showToast(sendPaymentRes?.data?.message, "success");
+    } else {
+      const errorMessage = sendPaymentRes?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+  };
   const rowsOptions = [
     { label: "5", value: "5" },
     { label: "15", value: "15" },
@@ -217,6 +227,18 @@ export default function ListTable({
                       Retry
                     </StyledTableCell>
                   )}
+                {arrayName === "successCaptures" && (
+                  <StyledTableCell
+                    align="left"
+                    sx={{
+                      fontWeight: "700",
+                      fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+                      paddingRight: "0.5rem !important",
+                    }}
+                  >
+                    Send Payment
+                  </StyledTableCell>
+                )}
               </TableRow>
             </TableHead>
             {loading ? (
@@ -364,6 +386,28 @@ export default function ListTable({
                             showPayment={true}
                           />
                         )}
+                      </StyledTableCell>
+                    )}
+                    {arrayName === "successCaptures" && (
+                      <StyledTableCell
+                        align="left"
+                        sx={{
+                          fontWeight: "700",
+                          fontSize: {
+                            xs: FONT_SIZE_SMALL,
+                            sm: FONT_SIZE_LARGE,
+                          },
+                          paddingRight: "0.5rem !important",
+                        }}
+                      >
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            sendPaymentCreditor(row?.id);
+                          }}
+                        >
+                          <Paid sx={{ color: Colors.SKY_BLUE }} />
+                        </IconButton>
                       </StyledTableCell>
                     )}
                   </StyledTableRow>
