@@ -1329,3 +1329,15 @@ export const AddCreditorAccount = async (payload, id) => {
     return error;
   }
 };
+
+export const AddDebtorAccount = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/addDebtorAccount/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

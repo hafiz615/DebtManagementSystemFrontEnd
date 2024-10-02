@@ -424,9 +424,9 @@ export default function MuiModels({
         />
       ) : button === "paynoteForm" ? (
         <TextButton
-          buttonText="PAY Note"
+          buttonText="PAY"
           height="2rem"
-          width="8rem"
+          width="6rem"
           onClick={handleOpen}
           disabled={disabled}
           backgroundColor={Colors.SKY_BLUE}

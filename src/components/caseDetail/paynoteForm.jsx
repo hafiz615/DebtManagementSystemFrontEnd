@@ -13,7 +13,7 @@ import { AddCreditorAccount } from "../../services/services";
 function PaynoteForm({ handleClose, caseData }) {
   const [errors, setErrors] = useState({});
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [selectedValue, setSelectedValue] = useState("Choose Type");
   const [paynoteForm, setPaynoteForm] = useState({
@@ -219,7 +219,7 @@ function PaynoteForm({ handleClose, caseData }) {
           onClick={handleSubmit}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
-          // loading={loading}
+          loading={loading}
           disabled={isButtonDisabled}
         />
       </Grid>

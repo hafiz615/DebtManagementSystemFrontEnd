@@ -218,11 +218,11 @@ export default function CreditorsDetailCards({
         <span
           style={{
             display: "flex",
-            justifyContent: "space-between",
             alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <PaynoteButton caseData={caseData} />
+          {/* <PaynoteButton caseData={caseData} /> */}
           <MuiModels
             show="paynoteForm"
             button="paynoteForm"
