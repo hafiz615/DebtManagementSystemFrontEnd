@@ -209,14 +209,26 @@ export default function CreditorsDetailCards({
                     textAlign: "right",
                   }}
                 >
-                  {getTruncatedText(formatValue(item?.value), 15)}
+                  {getTruncatedText(formatValue(item?.value), 15) || "--"}
                 </Typography>
               </Tooltip>
             </div>
           ))}
         </>
-        <span style={{ display: "flex", justifyContent: "center" }}>
-          <PaynoteButton caseData={caseData} />
+        <span
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {/* <PaynoteButton caseData={caseData} /> */}
+          <MuiModels
+            show="paynoteForm"
+            button="paynoteForm"
+            width="55vw"
+            caseData={caseData}
+          />
         </span>
       </Grid>
       <Grid
@@ -243,15 +255,16 @@ export default function CreditorsDetailCards({
         {[
           {
             label: "Company",
-            value: caseData?.creditor?.businessInformation?.companyName,
+            value: caseData?.creditor?.businessInformation?.companyName || "--",
           },
           {
             label: "Category",
-            value: caseData?.creditor?.businessInformation?.businessCategory,
+            value:
+              caseData?.creditor?.businessInformation?.businessCategory || "--",
           },
           {
             label: "Account Title",
-            value: caseData?.creditor?.accountTitle,
+            value: caseData?.creditor?.accountTitle || "--",
           },
         ]?.map((item, index) => (
           <div

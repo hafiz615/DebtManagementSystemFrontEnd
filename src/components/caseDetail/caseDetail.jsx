@@ -586,8 +586,13 @@ function CaseDetail() {
                 </span>
 
                 {logs?.length > 0 ? (
-                  logs?.map((item) => (
-                    <TimelineData notes={false} value={item} date={null} />
+                  logs?.map((item, index) => (
+                    <TimelineData
+                      notes={false}
+                      value={item}
+                      date={null}
+                      key={index}
+                    />
                   ))
                 ) : (
                   <TimelineData notes={true} value={"No Data"} date={null} />

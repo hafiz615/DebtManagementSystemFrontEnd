@@ -231,7 +231,7 @@ export default function DebtorDetailsCards({
                         wordBreak: "break-word",
                       }}
                     >
-                      {getTruncatedText(formatValue(value), 15)}
+                      {getTruncatedText(formatValue(value), 15) || "--"}
                     </Typography>
                   </Tooltip>
                 </div>

@@ -1318,6 +1318,18 @@ export const GetBulkCaseDetail = async (id) => {
   }
 };
 
+export const AddCreditorAccount = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/payment/addACHDetailsCreditor/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
 export const AddDebtorAccount = async (payload, id) => {
   try {
     return await axios.post(
