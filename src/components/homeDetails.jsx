@@ -4,18 +4,21 @@ import { useNavigate } from "react-router";
 import { Grid, Typography, CircularProgress } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Colors } from "../config/default";
-import {
-  PAGE_HEIGHT,
-  HomePageDetails,
-  FONT_SIZE_XL,
-} from "../constants/appConstants";
+import { PAGE_HEIGHT, HomePageDetails } from "../constants/appConstants";
 import AccordionUsage from "./accordion";
 import Dropdown from "./dropdown";
 import { GetBulkRecords, GetHomePayments } from "../services/services";
 import { get_payments } from "../redux/action/action";
 import ScrollbarStyles from "./customScroll";
 import BulkImportAccordions from "./bulkImportAccordion";
-// import SelectMenu from "./select";
+import UrlAccordion from "./urlAccordion";
+
+const urlData = [
+  { signedUrl: "rwerwererrfsdfsdffsde" },
+  { signedUrl: "rwerwer342fdsdf34erre" },
+  { signedUrl: "rwerwwrerdsfgdfererre" },
+  { signedUrl: "rwerwergfddsfgdfgerre" },
+];
 
 function HomeDetails() {
   const dispatch = useDispatch();
@@ -458,6 +461,40 @@ function HomeDetails() {
                 />
               </Grid>
             ))}
+          </Grid>
+          <Grid
+            container
+            item
+            xs={12}
+            sx={{
+              margin: "1rem 0rem",
+              backgroundColor: Colors.PALE_GRAY,
+              paddingRight: "1rem",
+              paddingBottom: "1rem",
+              borderRadius: "10px",
+            }}
+            spacing={smallScreen ? 0 : 2}
+          >
+            <Grid
+              item
+              xs={12}
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "700",
+                fontSize: "1.5rem",
+                color: Colors.BLACK,
+                mt: "1.5rem",
+              }}
+            >
+              URL's
+            </Grid>
+            <Grid item xs={12} lg={6} sx={{ marginBottom: "0.5rem" }}>
+              <UrlAccordion
+                rowArray={urlData}
+                totalData={urlData?.length}
+                tableHeading={"Debtors Urls"}
+              />
+            </Grid>
           </Grid>
         </>
       )}

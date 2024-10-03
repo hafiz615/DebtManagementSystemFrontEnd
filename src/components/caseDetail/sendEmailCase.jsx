@@ -236,7 +236,7 @@ export default function SendEmailCase({
   };
   return (
     <>
-      <Grid container>
+      <Grid container sx={{ justifyContent: "space-between" }}>
         <Typography
           sx={{
             fontFamily: "Nunito",
@@ -247,6 +247,16 @@ export default function SendEmailCase({
         >
           {headerName ? "SEND SMS" : "SEND EMAIL"}
         </Typography>
+        {!headerName && (
+          <TextButton
+            buttonText="Email as debtor"
+            height="2rem"
+            width="16rem"
+            // onClick={handleClose}
+            backgroundColor={Colors.SKY_BLUE}
+            hoverColor={Colors.SKY_BLUE}
+          />
+        )}
       </Grid>
       <Box sx={lineStyle} />
       <Grid
