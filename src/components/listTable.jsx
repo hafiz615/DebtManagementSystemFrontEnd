@@ -95,6 +95,9 @@ export default function ListTable({
   defaultHeight,
   setPaginationRows,
   paginationRows,
+  requiredLinkIcons,
+  getLinks,
+  handleModalClose,
 }) {
   const navigate = useNavigate();
   const generalPermissions = useSelector(
@@ -309,6 +312,25 @@ export default function ListTable({
                             : value}
                         </StyledTableCell>
                       ))}
+                    {requiredLinkIcons && (
+                      <StyledTableCell
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          height: "3rem",
+                          marginRight: "4rem",
+                        }}
+                      >
+                        <Prompt
+                          deleting="Url's"
+                          heading="Delete Url's"
+                          text={`Are you sure you want to delete this link ?`}
+                          id={row?.id}
+                          getLinks={getLinks}
+                          handleModalClose={handleModalClose}
+                        />
+                      </StyledTableCell>
+                    )}
                     {requiredIcons && (
                       <StyledTableCell
                         sx={{

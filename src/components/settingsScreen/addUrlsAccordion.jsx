@@ -1,14 +1,14 @@
-// Asd123<>?
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Colors } from "../../config/default";
-import { Typography, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import TextButton from "../button";
 import { useToast } from "../../toast/toastContext";
 import { styled } from "@mui/material/styles";
+import { VerifySenderIdentity } from "../../services/services.js";
 
 const StyledAccordion = styled(Accordion)({
   "&:before": {
@@ -37,8 +37,27 @@ const StyledAccordionDetails = styled(AccordionDetails)({
 export default function AddUrlsAccordion() {
   const { showToast } = useToast();
   const [url, setUrl] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSaveUrl = () => {};
+  const VerifySenderInformation = async () => {
+    setLoading(true);
+    const params = { url };
+    const VerifySenderInfoResponse = await VerifySenderIdentity(params);
+    if (VerifySenderInfoResponse?.status === 200) {
+      showToast(VerifySenderInfoResponse?.data?.message, "success");
+      setUrl("");
+    } else if (VerifySenderInfoResponse?.response?.status === 400) {
+      const errorMessage = VerifySenderInfoResponse?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setLoading(false);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && url) {
+      VerifySenderInformation();
+    }
+  };
 
   return (
     <StyledAccordion>
@@ -75,6 +94,7 @@ export default function AddUrlsAccordion() {
             }}
             value={url}
             onChange={(e) => setUrl(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
           <TextButton
             buttonText="SAVE"
@@ -86,7 +106,8 @@ export default function AddUrlsAccordion() {
             marginRight="1rem"
             marginTop="1rem"
             disabled={!url}
-            onClick={handleSaveUrl}
+            onClick={VerifySenderInformation}
+            loading={loading}
           />
         </Grid>
       </StyledAccordionDetails>

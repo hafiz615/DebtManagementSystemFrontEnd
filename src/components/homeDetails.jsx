@@ -13,13 +13,6 @@ import ScrollbarStyles from "./customScroll";
 import BulkImportAccordions from "./bulkImportAccordion";
 import UrlAccordion from "./urlAccordion";
 
-const urlData = [
-  { signedUrl: "rwerwererrfsdfsdffsde" },
-  { signedUrl: "rwerwer342fdsdf34erre" },
-  { signedUrl: "rwerwwrerdsfgdfererre" },
-  { signedUrl: "rwerwergfddsfgdfgerre" },
-];
-
 function HomeDetails() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -488,12 +481,8 @@ function HomeDetails() {
             >
               URL's
             </Grid>
-            <Grid item xs={12} lg={6} sx={{ marginBottom: "0.5rem" }}>
-              <UrlAccordion
-                rowArray={urlData}
-                totalData={urlData?.length}
-                tableHeading={"Debtors Urls"}
-              />
+            <Grid item xs={12} sx={{ marginBottom: "0.5rem" }}>
+              <UrlAccordion tableHeading={"Debtors Urls"} />
             </Grid>
           </Grid>
         </>

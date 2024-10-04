@@ -17,8 +17,12 @@ import {
   FONT_SIZE_SMALL,
   FONT_SIZE_XL,
 } from "../constants/appConstants";
+import ListTableDynamic from "./listTableDynamic";
+import { GetAllLinks } from "../services/services";
+import { getTruncatedText } from "../common";
 
-const headers = ["Url's"];
+const headers = ["Url's", "Actions"];
+// const headerData = [{ key: "link", heading: "Url's", width: "80%" }];
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   padding: theme.spacing(0),
 }));
@@ -26,7 +30,6 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 export default function UrlAccordion({
   tableHeading,
   arrayName,
-  rowArray,
   totalPages,
   currentPage,
   setCurrentPage,
@@ -35,26 +38,38 @@ export default function UrlAccordion({
   setPaginationRows,
 }) {
   const [rows, setRows] = useState([]);
+  const [links, setLinks] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const generatedData = rowArray?.map((item, index) => ({
-      signedUrl: item?.signedUrl,
-      caseId: item?.signedUrl,
-      id: index,
-    }));
-    if (!isEqual(generatedData, rowArray)) {
-      setRows(generatedData);
+  const getLinks = async () => {
+    const linkRes = await GetAllLinks();
+    if (linkRes?.status === 200) {
+      setLinks(linkRes?.data?.data);
+    } else if (linkRes?.response?.status === 400) {
+      const errorMessage = linkRes?.response?.data?.message;
+      showToast(errorMessage, "error");
     }
-  }, [rowArray]);
+  };
+  useEffect(() => {
+    getLinks();
+  }, []);
+  useEffect(() => {
+    const generatedData = links?.map((item, index) => ({
+      id: item?._id,
+      link: getTruncatedText(item?.link, 120),
+      caseId: item?.link,
+    }));
 
-  const handleRowClick = (url) => {
-    window.open(url, "_blank");
+    setRows(generatedData);
+  }, [links]);
+
+  const handleRowClick = (link) => {
+    window.open(link, "_blank");
   };
 
   return (
     <Accordion
-      defaultExpanded={rowArray?.length > 0}
+      defaultExpanded={links?.length > 0}
       sx={{
         borderRadius: "1rem !important",
         backgroundColor: Colors.WHITE,
@@ -123,7 +138,7 @@ export default function UrlAccordion({
                   color: Colors.WHITE,
                 }}
               >
-                {totalData === undefined ? "0" : totalData}
+                {links?.length ? links.length : 0}
               </Typography>
             </Box>
           </Grid>
@@ -136,13 +151,15 @@ export default function UrlAccordion({
           currentPage={currentPage}
           totalPages={totalPages}
           setCurrentPage={setCurrentPage}
-          apiPagination={true}
+          apiPagination={false}
           data={rows}
           headerData={headers}
           arrayName={arrayName}
           accordionHeight="40vh"
           paginationRows={paginationRows}
           setPaginationRows={setPaginationRows}
+          requiredLinkIcons={true}
+          getLinks={getLinks}
         />
       </AccordionDetails>
     </Accordion>
