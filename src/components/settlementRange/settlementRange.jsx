@@ -1264,7 +1264,7 @@ export default function SettlementRange() {
                     <>
                       <div
                         style={{
-                          width: "50%",
+                          width: "40%",
                           height: "100%",
                         }}
                       >
@@ -1293,6 +1293,7 @@ export default function SettlementRange() {
                           flexDirection: "column",
                           padding: "1em",
                           height: "80%",
+                          width: "40%",
                           overflowY: "scroll !important",
                           borderRadius: "15px",
                           backgroundColor: Colors.BG_LIGHT_GRAY,
