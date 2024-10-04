@@ -55,8 +55,8 @@ export default function SendEmailCase({
 }) {
   const [loading, setLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [sendTo, setSendTo] = useState(to || "");
-  const [sendFrom, setSendFrom] = useState(from || "");
+  const [sendTo, setSendTo] = useState(from || "");
+  const [sendFrom, setSendFrom] = useState(to || "");
   const [subject, setSubject] = useState(emailSubject || "");
   const [cc, setCc] = useState([]);
   const [inputValue, setInputValue] = useState("");
