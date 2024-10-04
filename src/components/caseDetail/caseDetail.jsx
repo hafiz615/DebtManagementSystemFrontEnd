@@ -35,6 +35,7 @@ import DebtorDetailsCards from "./debtorDetailCards.jsx";
 import TimelineData from "./timelineData.jsx";
 import {
   AddNotesCase,
+  AddSenderIdentity,
   GetCaseById,
   GetCasePaymentById,
   GetLogs,
@@ -153,7 +154,22 @@ function CaseDetail() {
       handleClose();
     }
   };
-
+  const emailData = caseData?.debtor?.basicInformation;
+  const AddSenderInformation = async () => {
+    const params = {
+      from_email: emailData?.email || "",
+      from_name: emailData?.fullName || "",
+      address: emailData?.address || "",
+      city: emailData?.city || "",
+    };
+    const SenderInfoResponse = await AddSenderIdentity(params);
+    if (SenderInfoResponse?.status === 200) {
+      showToast(SenderInfoResponse?.data?.message, "success");
+    } else if (SenderInfoResponse?.response?.status === 400) {
+      const errorMessage = SenderInfoResponse?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+  };
   return (
     <Grid
       container
@@ -229,6 +245,15 @@ function CaseDetail() {
                 gap: "1.2%",
               }}
             >
+              <TextButton
+                buttonText="Add Debtor Identity"
+                height="2.5rem"
+                width="14rem"
+                onClick={AddSenderInformation}
+                backgroundColor={Colors.SKY_BLUE}
+                hoverColor={Colors.SKY_BLUE}
+              />
+
               <MuiModels
                 show="sendEmailCase"
                 buttonName="sendEmailCase"
@@ -587,12 +612,16 @@ function CaseDetail() {
 
                 {logs?.length > 0 ? (
                   logs?.map((item, index) => (
-                    <TimelineData
-                      notes={false}
-                      value={item}
-                      date={null}
-                      key={index}
-                    />
+                    <>
+                      <TimelineData
+                        notes={false}
+                        value={item}
+                        date={null}
+                        key={index}
+                        caseDataId={id}
+                        GetLogsById={GetLogsById}
+                      />
+                    </>
                   ))
                 ) : (
                   <TimelineData notes={true} value={"No Data"} date={null} />

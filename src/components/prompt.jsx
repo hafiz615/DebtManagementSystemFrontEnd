@@ -15,6 +15,7 @@ import {
   DeleteSettings,
   DeleteRole,
   DeleteTasks,
+  DeleteLink,
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import TextButton from "./button";
@@ -57,6 +58,7 @@ export default function Prompt({
   permissionData,
   data,
   getAllCaseTasks,
+  getLinks,
 }) {
   const { showToast } = useToast();
   const [open, setOpen] = React.useState(false);
@@ -151,6 +153,22 @@ export default function Prompt({
     }
     setLoading(true);
   };
+  const deleteLink = async () => {
+    setLoading(true);
+    const deleteUrlRes = await DeleteLink(id);
+    if (deleteUrlRes?.status === 200) {
+      setOpen(false);
+      showToast(deleteUrlRes?.data?.message, "success");
+      getLinks();
+    } else {
+      showToast(
+        deleteUrlRes?.response?.data?.message || deletion?.data?.message,
+        "error"
+      );
+    }
+    setLoading(false);
+  };
+
   const handleClickOpen = (event) => {
     event.stopPropagation();
     setOpen(true);
@@ -179,6 +197,8 @@ export default function Prompt({
       await deleteTasks();
     } else if (deleting === "Delete User") {
       await deleteUserById();
+    } else if (deleting === "Url's") {
+      await deleteLink();
     } else if (deleteRole) {
       await deleteRole();
     } else {

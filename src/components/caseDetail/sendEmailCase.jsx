@@ -48,15 +48,19 @@ export default function SendEmailCase({
   headerName,
   caseDataId,
   GetLogsById,
+  from,
+  to,
+  content,
+  // emailSubject,
 }) {
   const [loading, setLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [sendTo, setSendTo] = useState("");
-  const [sendFrom, setSendFrom] = useState("");
+  const [sendTo, setSendTo] = useState(to || "");
+  const [sendFrom, setSendFrom] = useState(from || "");
   const [subject, setSubject] = useState("");
   const [cc, setCc] = useState([]);
   const [inputValue, setInputValue] = useState("");
-  const [preview, setPreview] = useState("");
+  const [preview, setPreview] = useState(content || "");
   const editorRef = useRef(null);
   const { showToast } = useToast();
   const [errors, setErrors] = useState("");
@@ -199,12 +203,12 @@ export default function SendEmailCase({
     fontFamily: "Nunito",
     borderRadius: "5px",
   };
-  const disable =
-    !sendTo.trim() ||
-    (!headerName && !sendFrom.trim()) ||
-    (!headerName && !subject.trim()) ||
-    !preview.trim() ||
-    (headerName && errors);
+  const disable = "";
+  //   !sendTo?.trim() ||
+  //   (!headerName && !sendFrom?.trim()) ||
+  //   (!headerName && !subject?.trim()) ||
+  //   !preview?.trim() ||
+  //   (headerName && errors);
 
   const handleSend = async () => {
     setLoading(true);
@@ -247,16 +251,6 @@ export default function SendEmailCase({
         >
           {headerName ? "SEND SMS" : "SEND EMAIL"}
         </Typography>
-        {!headerName && (
-          <TextButton
-            buttonText="Email as debtor"
-            height="2rem"
-            width="16rem"
-            // onClick={handleClose}
-            backgroundColor={Colors.SKY_BLUE}
-            hoverColor={Colors.SKY_BLUE}
-          />
-        )}
       </Grid>
       <Box sx={lineStyle} />
       <Grid

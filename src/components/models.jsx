@@ -119,6 +119,11 @@ export default function MuiModels({
   lumpSumpData,
   selectedFiles,
   setSelectedFiles,
+  replyButton,
+  from,
+  to,
+  content,
+  // emailSubject,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -455,9 +460,9 @@ export default function MuiModels({
         />
       ) : buttonName === "sendEmailCase" ? (
         <TextButton
-          buttonText="Send Email"
+          buttonText={replyButton ? "Reply" : "Send Email"}
           height="2.5rem"
-          width="9rem"
+          width={replyButton ? "5rem" : "9rem"}
           onClick={handleOpen}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
@@ -702,6 +707,10 @@ export default function MuiModels({
               headerName={headerName}
               caseDataId={caseDataId}
               GetLogsById={GetLogsById}
+              from={from}
+              to={to}
+              content={content}
+              // emailSubject={emailSubject}
             />
           ) : show === "editPipeline" ? (
             <EditPipeline
