@@ -19,9 +19,12 @@ import {
   LinearProgress,
   Checkbox,
 } from "@mui/material";
+import { PieChart } from "@mui/x-charts";
+
 import RefreshIcon from "@mui/icons-material/Refresh";
 import {
   FONT_SIZE_LARGE,
+  FONT_SIZE_MEDIUM,
   FONT_SIZE_SMALL,
   FONT_SIZE_XL,
   PAGE_HEIGHT,
@@ -195,6 +198,7 @@ export default function SettlementRange() {
   const [allData, setAllData] = useState();
   const [strategyTab, setStrategyTab] = useState(0);
   const [justificationLoading, setJustificationLoading] = useState(false);
+  const [colorScheme] = useState("Tableau10");
   const [justificationValue, setJustificationValue] = useState(
     "justification_gemini"
   );
@@ -854,6 +858,61 @@ export default function SettlementRange() {
 
   const isAnyChecked = Object.values(checkboxStates).some((checked) => checked);
 
+  const countData =
+    scores &&
+    scores?.Scores?.top_payees?.map((item, i) => {
+      const label = Object.keys(item)[0];
+      const value = Object.values(item)[0];
+      return {
+        id: i,
+        value: value,
+        label: label,
+      };
+    });
+
+  const categories = {
+    Tableau10: [
+      "#24658D",
+      "#429EB0",
+      "#F1A230",
+      "#E95050",
+      "#4E79A7",
+      "#F28E2C",
+      "#E15759",
+      "#76B7B2",
+      "#59A14F",
+      "#EDC949",
+      "#AF7AA1",
+      "#FF9DA7",
+      "#9C755F",
+      "#BAB0AB",
+      "#1B9E77",
+      "#D95F02",
+      "#7570B3",
+      "#E7298A",
+      "#66A61E",
+      "#E6AB02",
+      "#A6761D",
+      "#666666",
+      "#7FC97F",
+      "#BEAED4",
+      "#FDC086",
+      "#FFFF99",
+      "#386CB0",
+      "#F0027F",
+      "#BF5B17",
+      "#666666",
+      "#377EB8",
+      "#4DAF4A",
+      "#984EA3",
+      "#FF7F00",
+      "#FFFF33",
+      "#A65628",
+      "#F781BF",
+      "#999999",
+    ],
+  };
+
   return (
     <Grid
       container
@@ -1132,7 +1191,12 @@ export default function SettlementRange() {
             />
           </Grid>
 
-          <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
+          <Grid
+            container
+            item
+            xs={12}
+            sx={{ gap: "2%", mt: "1rem", justifyContent: "space-between" }}
+          >
             <GridItem
               key="Weekly Profit"
               title="Weekly Profit"
@@ -1174,7 +1238,7 @@ export default function SettlementRange() {
                 <GridItem
                   key="UCC Score"
                   title="UCC Score"
-                  value={scores?.Scores?.["UCC Score"] ?? "No Data"}
+                  value={`${scores?.Scores?.["UCC Score"]}%` ?? "No Data"}
                   rawValue={scores?.Scores?.["UCC Score"]}
                 />
                 <GridItem
@@ -1183,6 +1247,115 @@ export default function SettlementRange() {
                   value={scores?.Scores?.["Default Risk Score"] ?? "No Data"}
                   rawValue={scores?.Scores?.["Default Risk Score"]}
                 />
+                <Grid
+                  container
+                  item
+                  xs={5}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-around",
+                    alignItems: "center",
+                    backgroundColor: Colors.WHITE,
+                    borderRadius: "10px",
+                    height: "30vh",
+                  }}
+                >
+                  {countData ? (
+                    <>
+                      <div
+                        style={{
+                          width: "50%",
+                          height: "100%",
+                        }}
+                      >
+                        <PieChart
+                          series={[
+                            {
+                              data: countData,
+                              cx: 100,
+                              cy: 100,
+                              highlightScope: {
+                                faded: "global",
+                                highlighted: "item",
+                              },
+                            },
+                          ]}
+                          colors={categories[colorScheme]}
+                          slotProps={{
+                            legend: { hidden: true },
+                          }}
+                          width={250}
+                        />
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          padding: "1em",
+                          height: "80%",
+                          overflowY: "scroll !important",
+                          borderRadius: "15px",
+                          backgroundColor: Colors.BG_LIGHT_GRAY,
+                        }}
+                      >
+                        <Grid
+                          sx={{
+                            overflowY: "auto",
+                            ...ScrollbarStyles,
+                          }}
+                        >
+                          {countData?.map((item, index) => (
+                            <div
+                              key={index}
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  width: "16px",
+                                  height: "16px",
+                                  backgroundColor:
+                                    categories[colorScheme][item?.id],
+                                  marginRight: "5px",
+                                }}
+                              />
+                              <Tooltip
+                                title={item?.label}
+                                placement="top"
+                                arrow
+                              >
+                                <span
+                                  style={{
+                                    fontSize: FONT_SIZE_MEDIUM,
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    maxWidth: "150px",
+                                  }}
+                                >
+                                  {`${item?.label?.substring(0, 15)}${
+                                    item?.label?.length > 10 ? "..." : ""
+                                  }`}
+                                </span>
+                              </Tooltip>
+                            </div>
+                          ))}
+                        </Grid>
+                      </div>
+                    </>
+                  ) : (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      No Data
+                    </div>
+                  )}
+                </Grid>
               </>
             )}
           </Grid>
@@ -1193,7 +1366,7 @@ export default function SettlementRange() {
             xs={12}
             sx={{
               width: widthStyling,
-              mt: "1rem",
+              mt: "2rem",
               backgroundColor: Colors.WHITE,
             }}
           >
