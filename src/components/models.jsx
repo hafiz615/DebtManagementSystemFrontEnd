@@ -123,7 +123,7 @@ export default function MuiModels({
   from,
   to,
   content,
-  // emailSubject,
+  emailSubject,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -710,7 +710,7 @@ export default function MuiModels({
               from={from}
               to={to}
               content={content}
-              // emailSubject={emailSubject}
+              emailSubject={emailSubject}
             />
           ) : show === "editPipeline" ? (
             <EditPipeline

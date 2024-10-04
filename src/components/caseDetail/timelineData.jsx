@@ -108,7 +108,7 @@ export default function TimelineData({
                     from={value?.From}
                     to={value?.To}
                     content={value?.Content}
-                    // emailSubject={value?.Subject}
+                    emailSubject={value?.Subject}
                     buttonName="sendEmailCase"
                     iconColor={Colors.BLACK}
                     maxHeight="78vh"

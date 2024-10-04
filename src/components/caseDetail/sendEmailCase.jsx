@@ -51,13 +51,13 @@ export default function SendEmailCase({
   from,
   to,
   content,
-  // emailSubject,
+  emailSubject,
 }) {
   const [loading, setLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [sendTo, setSendTo] = useState(to || "");
   const [sendFrom, setSendFrom] = useState(from || "");
-  const [subject, setSubject] = useState("");
+  const [subject, setSubject] = useState(emailSubject || "");
   const [cc, setCc] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [preview, setPreview] = useState(content || "");
@@ -203,12 +203,12 @@ export default function SendEmailCase({
     fontFamily: "Nunito",
     borderRadius: "5px",
   };
-  const disable = "";
-  //   !sendTo?.trim() ||
-  //   (!headerName && !sendFrom?.trim()) ||
-  //   (!headerName && !subject?.trim()) ||
-  //   !preview?.trim() ||
-  //   (headerName && errors);
+  const disable =
+    !sendTo?.trim() ||
+    (!headerName && !sendFrom?.trim()) ||
+    (!headerName && !subject?.trim()) ||
+    !preview?.trim() ||
+    (headerName && errors);
 
   const handleSend = async () => {
     setLoading(true);
