@@ -51,6 +51,7 @@ import DownloadPDF from "./caseDetail/downloadPDF";
 import SendEmailJustification from "./sendEmailJustifications";
 import ExtractFieldPopup from "./caseDetail/extractFieldPopup";
 import TextEditor from "./textEditor";
+import PaynoteForm from "./caseDetail/paynoteForm";
 
 export default function MuiModels({
   buttonName,
@@ -118,6 +119,11 @@ export default function MuiModels({
   lumpSumpData,
   selectedFiles,
   setSelectedFiles,
+  replyButton,
+  from,
+  to,
+  content,
+  emailSubject,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -421,6 +427,16 @@ export default function MuiModels({
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
         />
+      ) : button === "paynoteForm" ? (
+        <TextButton
+          buttonText="PAY"
+          height="2rem"
+          width="6rem"
+          onClick={handleOpen}
+          disabled={disabled}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
       ) : show === "downloadPDF" ? (
         <TextButton
           buttonText={"Download PDF"}
@@ -444,9 +460,9 @@ export default function MuiModels({
         />
       ) : buttonName === "sendEmailCase" ? (
         <TextButton
-          buttonText="Send Email"
+          buttonText={replyButton ? "Reply" : "Send Email"}
           height="2.5rem"
-          width="9rem"
+          width={replyButton ? "5rem" : "9rem"}
           onClick={handleOpen}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
@@ -691,6 +707,10 @@ export default function MuiModels({
               headerName={headerName}
               caseDataId={caseDataId}
               GetLogsById={GetLogsById}
+              from={from}
+              to={to}
+              content={content}
+              emailSubject={emailSubject}
             />
           ) : show === "editPipeline" ? (
             <EditPipeline
@@ -822,6 +842,8 @@ export default function MuiModels({
               fullProfit={fullProfit}
               handleClose={handleClose}
             />
+          ) : show === "paynoteForm" ? (
+            <PaynoteForm handleClose={handleClose} caseData={caseData} />
           ) : show === "extractFiles" ? (
             <ExtractFieldPopup
               selectedFiles={selectedFiles}

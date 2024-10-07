@@ -4,18 +4,14 @@ import { useNavigate } from "react-router";
 import { Grid, Typography, CircularProgress } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Colors } from "../config/default";
-import {
-  PAGE_HEIGHT,
-  HomePageDetails,
-  FONT_SIZE_XL,
-} from "../constants/appConstants";
+import { PAGE_HEIGHT, HomePageDetails } from "../constants/appConstants";
 import AccordionUsage from "./accordion";
 import Dropdown from "./dropdown";
 import { GetBulkRecords, GetHomePayments } from "../services/services";
 import { get_payments } from "../redux/action/action";
 import ScrollbarStyles from "./customScroll";
 import BulkImportAccordions from "./bulkImportAccordion";
-// import SelectMenu from "./select";
+import UrlAccordion from "./urlAccordion";
 
 function HomeDetails() {
   const dispatch = useDispatch();
@@ -44,10 +40,11 @@ function HomeDetails() {
   const [selectedValue, setSelectedValue] = useState(3);
   const [currentPage, setCurrentPage] = useState({
     failedAuthorizations: 1,
-    failedPayments: 1,
+    failedCaptures: 1,
     successAuthorizations: 1,
     upcomingPayments: 1,
     successPayments: 1,
+    successCaptures: 1,
   });
   const [bulkCurrentPage, setBulkCurrentPages] = useState({
     pending: 1,
@@ -63,13 +60,14 @@ function HomeDetails() {
       heading: "Failed Authorizations",
       number: "5",
     },
-    { key: "failedPayments", heading: "Failed Payments", number: "5" },
+    { key: "failedCaptures", heading: "Failed Captures", number: "5" },
     {
       key: "successAuthorizations",
       heading: "Successful Authorizations",
       number: "4",
     },
     { key: "successPayments", heading: "Successful Payments", number: "4" },
+    { key: "successCaptures", heading: "Successful Captures", number: "4" },
     { key: "upcomingPayments", heading: "Upcoming Payments", number: "4" },
   ];
 
@@ -118,18 +116,20 @@ function HomeDetails() {
       if (result?.status === 200) {
         if (!result?.data?.data) {
           setTotalData({
-            failedPayments: 0,
-            successPayments: 0,
             failedAuthorizations: 0,
+            failedCaptures: 0,
             successAuthorizations: 0,
             upcomingPayments: 0,
+            successPayments: 0,
+            successCaptures: 0,
           });
           setHomeData({
-            failedPayments: [],
-            successPayments: [],
             failedAuthorizations: [],
+            failedCaptures: [],
             successAuthorizations: [],
             upcomingPayments: [],
+            successPayments: [],
+            successCaptures: [],
           });
         } else {
           key === "default"
@@ -201,10 +201,11 @@ function HomeDetails() {
   useEffect(() => {
     setPaginationRows({
       failedAuthorizations: 5,
-      failedPayments: 5,
+      failedCaptures: 5,
       successAuthorizations: 5,
       upcomingPayments: 5,
       successPayments: 5,
+      successCaptures: 5,
     });
     setBulkPaginationRows({
       pending: 5,
@@ -215,10 +216,11 @@ function HomeDetails() {
     });
     setCurrentPage({
       failedAuthorizations: 1,
-      failedPayments: 1,
+      failedCaptures: 1,
       successAuthorizations: 1,
       upcomingPayments: 1,
       successPayments: 1,
+      successCaptures: 1,
     });
     setBulkCurrentPages({
       pending: 1,
@@ -269,13 +271,14 @@ function HomeDetails() {
         getHomeData={getHomeData}
         showFailureReason={
           data?.heading !== "Upcoming Payments" &&
-          data?.heading !== "Successful Payments" &&
-          data?.heading !== "Successful Authorizations"
+          data?.heading !== "Successful Captures" &&
+          data?.heading !== "Successful Authorizations" &&
+          data?.heading !== "Successful Payments"
         }
         showDueDate={
-          data?.heading !== "Successful Payments" &&
+          data?.heading !== "Successful Captures" &&
           data?.heading !== "Successful Authorizations" &&
-          data?.heading !== "Failed Payments" &&
+          data?.heading !== "Failed Captures" &&
           data?.heading !== "Failed Authorizations"
         }
       />
@@ -451,6 +454,36 @@ function HomeDetails() {
                 />
               </Grid>
             ))}
+          </Grid>
+          <Grid
+            container
+            item
+            xs={12}
+            sx={{
+              margin: "1rem 0rem",
+              backgroundColor: Colors.PALE_GRAY,
+              paddingRight: "1rem",
+              paddingBottom: "1rem",
+              borderRadius: "10px",
+            }}
+            spacing={smallScreen ? 0 : 2}
+          >
+            <Grid
+              item
+              xs={12}
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "700",
+                fontSize: "1.5rem",
+                color: Colors.BLACK,
+                mt: "1.5rem",
+              }}
+            >
+              URL's
+            </Grid>
+            <Grid item xs={12} sx={{ marginBottom: "0.5rem" }}>
+              <UrlAccordion tableHeading={"Debtors Urls"} />
+            </Grid>
           </Grid>
         </>
       )}

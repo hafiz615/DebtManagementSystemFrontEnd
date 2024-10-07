@@ -137,7 +137,7 @@ export default function PaymentFields({
               marginLeft: "1rem",
             }}
           >
-            Remaining
+            Current Balance
           </Typography>
 
           <AmountTextField

@@ -61,7 +61,9 @@ export default function PaymentsTabs({
     (state) => state?.permissions?.permissions?.generalPermissions
   );
   const headers = ["Name", "Try Date", "Total Debt", "SSN", "Case Owner"];
-
+  if (value === 2) {
+    headers.push("Send Payment");
+  }
   if (value === 4) {
     headers.push("Due Date");
   }
@@ -126,7 +128,16 @@ export default function PaymentsTabs({
               fontWeight: "600",
               height: "3.5rem",
             }}
-            label="Failed Payments"
+            label="Successful Captures"
+          />
+          <AntTab
+            sx={{
+              bgcolor: Colors.WHITE,
+              width: { xs: "30%", sm: "max-content" },
+              fontWeight: "600",
+              height: "3.5rem",
+            }}
+            label="Failed Captures"
           />
           <AntTab
             sx={{
@@ -194,7 +205,7 @@ export default function PaymentsTabs({
             onRowClick={
               generalPermissions?.viewCaseDetails ? handleRowClick : undefined
             }
-            data={data?.failedPayments}
+            data={data?.successCaptures}
             headerData={headers}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
@@ -212,7 +223,7 @@ export default function PaymentsTabs({
             onRowClick={
               generalPermissions?.viewCaseDetails ? handleRowClick : undefined
             }
-            data={data?.successPayments}
+            data={data?.failedCaptures}
             headerData={headers}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
@@ -228,6 +239,23 @@ export default function PaymentsTabs({
             onRowClick={
               generalPermissions?.viewCaseDetails ? handleRowClick : undefined
             }
+            data={data?.successPayments}
+            headerData={headers}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            totalPages={totalPages}
+            apiPagination={true}
+            value={value}
+            loading={loading}
+            paginationRows={paginationRows}
+            setPaginationRows={setPaginationRows}
+          />
+        )}
+        {value === 5 && (
+          <PaymentTabsTable
+            onRowClick={
+              generalPermissions?.viewCaseDetails ? handleRowClick : undefined
+            }
             data={data?.upcomingPayments}
             headerData={headers}
             currentPage={currentPage}
@@ -235,6 +263,7 @@ export default function PaymentsTabs({
             totalPages={totalPages}
             apiPagination={true}
             value={value}
+            getHomeData={getHomeData}
             loading={loading}
             paginationRows={paginationRows}
             setPaginationRows={setPaginationRows}

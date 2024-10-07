@@ -299,7 +299,7 @@ export default function DebtorFields({
             }
           />
           <PaymentsTextFields
-            type="number"
+            type="text"
             label="SSN*"
             placeHolderValue="Enter SSN"
             width="100%"
@@ -583,7 +583,7 @@ export default function DebtorFields({
             }
           />
           <PaymentsTextFields
-            type="number"
+            type="text"
             label="EIN Number*"
             placeHolderValue="Enter Ein Number"
             width="100%"

@@ -48,15 +48,19 @@ export default function SendEmailCase({
   headerName,
   caseDataId,
   GetLogsById,
+  from,
+  to,
+  content,
+  emailSubject,
 }) {
   const [loading, setLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [sendTo, setSendTo] = useState("");
-  const [sendFrom, setSendFrom] = useState("");
-  const [subject, setSubject] = useState("");
+  const [sendTo, setSendTo] = useState(from || "");
+  const [sendFrom, setSendFrom] = useState(to || "");
+  const [subject, setSubject] = useState(emailSubject || "");
   const [cc, setCc] = useState([]);
   const [inputValue, setInputValue] = useState("");
-  const [preview, setPreview] = useState("");
+  const [preview, setPreview] = useState(content || "");
   const editorRef = useRef(null);
   const { showToast } = useToast();
   const [errors, setErrors] = useState("");
@@ -200,10 +204,10 @@ export default function SendEmailCase({
     borderRadius: "5px",
   };
   const disable =
-    !sendTo.trim() ||
-    (!headerName && !sendFrom.trim()) ||
-    (!headerName && !subject.trim()) ||
-    !preview.trim() ||
+    !sendTo?.trim() ||
+    (!headerName && !sendFrom?.trim()) ||
+    (!headerName && !subject?.trim()) ||
+    !preview?.trim() ||
     (headerName && errors);
 
   const handleSend = async () => {
@@ -236,7 +240,7 @@ export default function SendEmailCase({
   };
   return (
     <>
-      <Grid container>
+      <Grid container sx={{ justifyContent: "space-between" }}>
         <Typography
           sx={{
             fontFamily: "Nunito",

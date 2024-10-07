@@ -9,6 +9,7 @@ import {
   IconButton,
 } from "@mui/material";
 import { Search, ChevronLeft, NavigateNext } from "@mui/icons-material";
+import { useToast } from "../../toast/toastContext";
 
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
@@ -21,6 +22,7 @@ import {
   debtorPeronsalDetails,
 } from "../../constants/appConstants";
 import PaymentCardDetails from "../paymentCard";
+import { AddDebtorAccount } from "../../services/services";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -115,7 +117,23 @@ export default function DebtorDetailsCards({
     paymentToken: "",
     paymentType: "",
   });
-
+  const debtorId = caseData?.debtor?._id;
+  const { showToast } = useToast();
+  const addDebtorDetails = async () => {
+    const params = connectPayment;
+    const debtorAccountDetails = await AddDebtorAccount(params, debtorId);
+    if (debtorAccountDetails?.status === 200) {
+      showToast(debtorAccountDetails?.data?.message, "success");
+    } else if (debtorAccountDetails?.response?.status === 400) {
+      const errorMessage = debtorAccountDetails?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+  };
+  useEffect(() => {
+    if (connectPayment?.paymentToken && connectPayment?.paymentType) {
+      addDebtorDetails();
+    }
+  }, [connectPayment]);
   useEffect(() => {
     setStartIndex(0);
   }, [searchText]);
@@ -213,7 +231,7 @@ export default function DebtorDetailsCards({
                         wordBreak: "break-word",
                       }}
                     >
-                      {getTruncatedText(formatValue(value), 15)}
+                      {getTruncatedText(formatValue(value), 15) || "--"}
                     </Typography>
                   </Tooltip>
                 </div>

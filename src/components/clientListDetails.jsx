@@ -368,27 +368,30 @@ export default function ClientListDetails() {
   const { AUTHORITY_TEXT } = UserListPage;
   const dataUser = clientData?.debtor || clientData?.creditor;
   const infoItems = [
-    { label: "Email", value: truncateText(dataUser?.email, 25) },
-    { label: "Total Debt", value: formatDollarAmount(dataUser?.totalDebt) },
+    { label: "Email", value: truncateText(dataUser?.email, 25) || "--" },
+    {
+      label: "Total Debt",
+      value: formatDollarAmount(dataUser?.totalDebt) || "--",
+    },
   ];
 
   if (userRole === "client") {
     infoItems.push(
-      { label: "SSN", value: dataUser?.SSN },
-      { label: "Address", value: dataUser?.address }
+      { label: "SSN", value: dataUser?.SSN || "--" },
+      { label: "Address", value: dataUser?.address || "--" }
     );
   }
   const financialInfo = [
     {
       label: "Outstanding Balance",
-      value: formatDollarAmount(dataUser?.outstandingDebt),
+      value: formatDollarAmount(dataUser?.outstandingDebt) || "--",
     },
   ];
 
   if (userRole === "client") {
     financialInfo.push(
-      { label: "Organization Name", value: dataUser?.companyName },
-      { label: "Account Status", value: dataUser?.status }
+      { label: "Organization Name", value: dataUser?.companyName || "--" },
+      { label: "Account Status", value: dataUser?.status || "--" }
     );
   }
   useEffect(() => {
@@ -512,7 +515,7 @@ export default function ClientListDetails() {
                           color: Colors.DIM_LIGHT_GRAY,
                         }}
                       >
-                        {truncateText(item?.value, 20)}
+                        {truncateText(item?.value, 20) || "--"}
                       </span>
                     </Tooltip>
                   </Box>
@@ -576,8 +579,8 @@ export default function ClientListDetails() {
               >
                 {[
                   {
-                    title: "Failed Payments",
-                    value: clientData?.paymentCounts?.failedPayments,
+                    title: "Failed Captures",
+                    value: clientData?.paymentCounts?.failedCaptures,
                     color: Colors.BLACK,
                   },
                   {
@@ -593,6 +596,11 @@ export default function ClientListDetails() {
                   {
                     title: "Successful Authorizations",
                     value: clientData?.paymentCounts?.successfulAuthorizations,
+                    color: Colors.SKY_BLUE,
+                  },
+                  {
+                    title: "Successful Captures",
+                    value: clientData?.paymentCounts?.successfulCaptures,
                     color: Colors.SKY_BLUE,
                   },
                 ]?.map((item, index) => (

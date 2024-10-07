@@ -2,12 +2,13 @@ import React from "react";
 import { isEmpty } from "lodash";
 import { useParams } from "react-router-dom";
 import { Colors } from "../config/default";
-import { Typography, Box } from "@mui/material";
+import { Typography, Box, IconButton } from "@mui/material";
 import { formatDollarAmount } from "../common";
 import { useToast } from "../toast/toastContext";
 import Prompt from "./prompt";
-import { RetryAuth, RetryCapture } from "../services/services";
+import { RetryAuth, RetryCapture, SendPayment } from "../services/services";
 import { useSelector } from "react-redux";
+import { Paid } from "@mui/icons-material";
 
 function TransactionRow({ data, heading, GetCasePaymentDetails }) {
   const generalPermissions = useSelector(
@@ -51,6 +52,15 @@ function TransactionRow({ data, heading, GetCasePaymentDetails }) {
     fontWeight: "500",
     width: "25%",
   };
+  const sendPaymentCreditor = async (id) => {
+    const sendPaymentRes = await SendPayment(id);
+    if (sendPaymentRes?.status === 200) {
+      showToast(sendPaymentRes?.data?.message, "success");
+    } else {
+      const errorMessage = sendPaymentRes?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+  };
 
   return (
     <>
@@ -80,6 +90,7 @@ function TransactionRow({ data, heading, GetCasePaymentDetails }) {
               display: "flex",
               gap: "10px",
               alignItems: "center",
+              height: "15%",
               width: "100%",
               color: heading ? Colors.BLACK : colorScheme,
             }}
@@ -96,11 +107,15 @@ function TransactionRow({ data, heading, GetCasePaymentDetails }) {
                 fontWeight: "500",
                 justifyContent: "space-between",
                 alignItems: "center",
+                width: "50%",
               }}
             >
               {heading
                 ? item?.status || "-"
+                : item?.type === "payment"
+                ? "Capture"
                 : capitalizeFirstLetter(item?.type) || "-"}
+
               {(item?.type === "authorization" &&
                 item?.authorized === "Failed") ||
               (item?.type === "payment" && item?.captured === "Failed") ? (
@@ -114,6 +129,17 @@ function TransactionRow({ data, heading, GetCasePaymentDetails }) {
                       show={true}
                     />
                   )}
+                </Box>
+              ) : item?.type === "payment" && item?.captured === "Success" ? (
+                <Box sx={{ cursor: "pointer" }}>
+                  <IconButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      sendPaymentCreditor(item?.id);
+                    }}
+                  >
+                    <Paid sx={{ color: Colors.SKY_BLUE }} />
+                  </IconButton>
                 </Box>
               ) : null}
             </p>

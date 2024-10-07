@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Typography } from "@mui/material";
+import { Box, Card, Typography } from "@mui/material";
 import {
   Timeline,
   TimelineItem,
@@ -9,8 +9,16 @@ import {
   TimelineOppositeContent,
 } from "@mui/lab";
 import EmailIcon from "@mui/icons-material/Email";
+import MuiModels from "../models";
+import { Colors } from "../../config/default";
 
-export default function TimelineData({ value, date, notes }) {
+export default function TimelineData({
+  value,
+  date,
+  notes,
+  caseDataId,
+  GetLogsById,
+}) {
   const formattedDate = new Date(date);
 
   // Convert the Date object to EST time zone
@@ -82,20 +90,37 @@ export default function TimelineData({ value, date, notes }) {
                 borderRadius: "10px",
               }}
             >
-              <Typography
-                sx={{
-                  fontSize: "13px",
-                  fontFamily: "Nunito",
-                  mb: "10px",
-                  fontWeight: "700",
-                }}
-              >
-                {value?.Action} {formatDate(value?.Time)}
-              </Typography>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography
+                  sx={{
+                    fontSize: "13px",
+                    fontFamily: "Nunito",
+                    mb: "10px",
+                    fontWeight: "700",
+                  }}
+                >
+                  {value?.Action} {formatDate(value?.Time)}
+                </Typography>
+                {value?.Action === "EMAIL" && (
+                  <MuiModels
+                    show="sendEmailCase"
+                    replyButton={true}
+                    from={value?.From}
+                    to={value?.To}
+                    content={value?.Content}
+                    emailSubject={value?.Subject}
+                    buttonName="sendEmailCase"
+                    iconColor={Colors.BLACK}
+                    maxHeight="78vh"
+                    caseDataId={caseDataId}
+                    GetLogsById={GetLogsById}
+                  />
+                )}
+              </div>
               {Object.entries(value)
                 .filter(([key]) => key !== "Action" && key !== "Time")
                 ?.map(([key, value]) => (
-                  <>
+                  <Box key={key}>
                     {key === "Content" ? (
                       <>
                         <Typography
@@ -168,7 +193,7 @@ export default function TimelineData({ value, date, notes }) {
                           : value}
                       </Typography>
                     )}
-                  </>
+                  </Box>
                 ))}
             </Card>
           )}

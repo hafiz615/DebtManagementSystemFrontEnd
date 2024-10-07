@@ -19,9 +19,12 @@ import {
   LinearProgress,
   Checkbox,
 } from "@mui/material";
+import { PieChart } from "@mui/x-charts";
+
 import RefreshIcon from "@mui/icons-material/Refresh";
 import {
   FONT_SIZE_LARGE,
+  FONT_SIZE_MEDIUM,
   FONT_SIZE_SMALL,
   FONT_SIZE_XL,
   PAGE_HEIGHT,
@@ -168,6 +171,7 @@ export default function SettlementRange() {
   const { showToast } = useToast();
   const [value, setValue] = useState(0);
   const [tabValue, setTabValue] = useState(0);
+  const [optionValue, setOptuonValue] = useState(0);
   const [errorMessage, setErrorMessage] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
@@ -194,7 +198,9 @@ export default function SettlementRange() {
   const [paymentChanged, setPaymentChanged] = useState(false);
   const [allData, setAllData] = useState();
   const [strategyTab, setStrategyTab] = useState(0);
+  const [optionStats, setOptionStats] = useState();
   const [justificationLoading, setJustificationLoading] = useState(false);
+  const [colorScheme] = useState("Tableau10");
   const [justificationValue, setJustificationValue] = useState(
     "justification_gemini"
   );
@@ -248,6 +254,9 @@ export default function SettlementRange() {
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
+  };
+  const handleOptionTabChange = (event, newValue) => {
+    setOptuonValue(newValue);
   };
   const currentCreditor = allCreditorNames[tabValue];
 
@@ -405,6 +414,47 @@ export default function SettlementRange() {
         )}
       </>
     )),
+    4: recommendations?.map((item, index) => (
+      <>
+        <SettlementCards
+          setPaymentChanged={setPaymentChanged}
+          remainingAmount={
+            allCreditorNames[tabValue] === "Summary"
+              ? summaryAmount?.loanAmount.toString()
+              : selectedCreditorDetails?.contractDetails?.loan_amount
+          }
+          caseId={caseId}
+          title={item}
+          weeksTillPaidTitle={getWeeksRemainingMessage(item)}
+          settlementRange={
+            optionStats?.settlement_range?.[
+              allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          commissionRange={
+            optionStats?.commission_range?.[
+              allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          percentageSettlementOverWeeklyBudget={
+            optionStats?.percentage_settlement_over_weekly_budget?.[
+              allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          percentageSettlementOverWeeklyTrueRevenue={
+            optionStats?.percentage_settlement_over_weekly_true_revenue?.[
+              allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          weeksTillPaid={
+            optionStats?.weeks_till_paid?.[
+              allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          optionValue={true}
+        />
+      </>
+    )),
   };
 
   const handleInputChange = (e) => {
@@ -499,6 +549,9 @@ export default function SettlementRange() {
             creditorAccountTitles.push("Summary");
           }
           setAllCreditorsNames(creditorAccountTitles);
+          setOptionStats(
+            resCommission?.data?.data?.settlementRange?.option_2_stats
+          );
           showToast(resCommission?.data?.message, "success");
           getLumpSumAmountData();
           getFullProfitData();
@@ -587,6 +640,9 @@ export default function SettlementRange() {
             creditorAccountTitles.push("Summary");
           }
           setAllCreditorsNames(creditorAccountTitles);
+          setOptionStats(
+            settlementRangeData?.data?.data?.settlementRange?.option_2_stats
+          );
           showToast(settlementRangeData?.data?.message, "success");
 
           getLumpSumAmountData();
@@ -749,7 +805,7 @@ export default function SettlementRange() {
       formatCurrency: true,
     },
     {
-      label: "Payable Amount",
+      label: "Current Balance",
       value: selectedCreditorDetails?.contractDetails?.payable_amount,
       formatCurrency: true,
     },
@@ -769,7 +825,7 @@ export default function SettlementRange() {
       value: selectedCreditorDetails?.contractDetails?.purchased_percentage,
     },
     {
-      label: "Repayment Amount",
+      label: "Original Payment",
       value: selectedCreditorDetails?.contractDetails?.repayment_amount,
     },
   ];
@@ -777,7 +833,7 @@ export default function SettlementRange() {
   const headerData = [
     { key: "creditorName", heading: "Creditors", width: "15%" },
     { key: "loanAmount", heading: "Loan Amount", width: "15%" },
-    { key: "payableAmount", heading: "Payable Amount", width: "15%" },
+    { key: "payableAmount", heading: "Current Balance", width: "15%" },
     { key: "weeklyBudget", heading: "Weekly Budget", width: "15%" },
     {
       key: "purchased_percentage",
@@ -786,7 +842,7 @@ export default function SettlementRange() {
     },
     {
       key: "repayment_amount",
-      heading: "Repayment Amount",
+      heading: "Original Payment",
       width: "15%",
     },
   ];
@@ -853,6 +909,61 @@ export default function SettlementRange() {
   );
 
   const isAnyChecked = Object.values(checkboxStates).some((checked) => checked);
+
+  const countData =
+    scores &&
+    scores?.Scores?.top_payees?.map((item, i) => {
+      const label = Object.keys(item)[0];
+      const value = Object.values(item)[0];
+      return {
+        id: i,
+        value: value,
+        label: label,
+      };
+    });
+
+  const categories = {
+    Tableau10: [
+      "#24658D",
+      "#429EB0",
+      "#F1A230",
+      "#E95050",
+      "#4E79A7",
+      "#F28E2C",
+      "#E15759",
+      "#76B7B2",
+      "#59A14F",
+      "#EDC949",
+      "#AF7AA1",
+      "#FF9DA7",
+      "#9C755F",
+      "#BAB0AB",
+      "#1B9E77",
+      "#D95F02",
+      "#7570B3",
+      "#E7298A",
+      "#66A61E",
+      "#E6AB02",
+      "#A6761D",
+      "#666666",
+      "#7FC97F",
+      "#BEAED4",
+      "#FDC086",
+      "#FFFF99",
+      "#386CB0",
+      "#F0027F",
+      "#BF5B17",
+      "#666666",
+      "#377EB8",
+      "#4DAF4A",
+      "#984EA3",
+      "#FF7F00",
+      "#FFFF33",
+      "#A65628",
+      "#F781BF",
+      "#999999",
+    ],
+  };
 
   return (
     <Grid
@@ -1056,12 +1167,47 @@ export default function SettlementRange() {
                         ? `$${debtor[key]}`
                         : `${debtor[key]?.toString().slice(0, 15)}${
                             debtor[key]?.toString().length > 15 ? "..." : ""
-                          }`}
+                          }` || "--"}
                     </span>
                   </Tooltip>
                 </Box>
               </Grid>
             ))}
+            <Grid item xs={12} lg={6}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: { xs: "space-between", md: "unset" },
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    color: Colors.DARK_GRAY,
+                    width: "10rem",
+                    marginTop: "0.5rem",
+                  }}
+                >
+                  Company Name
+                </div>
+
+                <Tooltip title={debtorInfo?.companyName} placement="top-end">
+                  <span
+                    style={{
+                      fontFamily: "Nunito",
+                      fontWeight: "300",
+                      fontSize: "0.9rem",
+                      color: Colors.DIM_LIGHT_GRAY,
+                      marginTop: "0.5rem",
+                    }}
+                  >
+                    {debtorInfo?.companyName || "--"}
+                  </span>
+                </Tooltip>
+              </Box>
+            </Grid>
           </Grid>
           <Grid xs={12}>
             <Typography
@@ -1074,8 +1220,8 @@ export default function SettlementRange() {
               Update Commission Percentage
             </Typography>
             <input
-              min={0}
-              max={100}
+              min={1}
+              max={50}
               style={inputStyles}
               type="number"
               placeholder="Commission Percentage"
@@ -1089,11 +1235,20 @@ export default function SettlementRange() {
               onClick={handleCommissionUpdate}
               backgroundColor={Colors.SKY_BLUE}
               hoverColor={Colors.SKY_BLUE}
-              disabled={!commissionPercentage || commissionPercentage < 20}
+              disabled={
+                !commissionPercentage ||
+                commissionPercentage > 50 ||
+                commissionPercentage < 1
+              }
             />
           </Grid>
 
-          <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
+          <Grid
+            container
+            item
+            xs={12}
+            sx={{ gap: "2%", mt: "1rem", justifyContent: "space-between" }}
+          >
             <GridItem
               key="Weekly Profit"
               title="Weekly Profit"
@@ -1135,7 +1290,7 @@ export default function SettlementRange() {
                 <GridItem
                   key="UCC Score"
                   title="UCC Score"
-                  value={scores?.Scores?.["UCC Score"] ?? "No Data"}
+                  value={`${scores?.Scores?.["UCC Score"]}%` ?? "No Data"}
                   rawValue={scores?.Scores?.["UCC Score"]}
                 />
                 <GridItem
@@ -1144,46 +1299,185 @@ export default function SettlementRange() {
                   value={scores?.Scores?.["Default Risk Score"] ?? "No Data"}
                   rawValue={scores?.Scores?.["Default Risk Score"]}
                 />
+
+                <Grid
+                  container
+                  item
+                  xs={5}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-around",
+                    alignItems: "center",
+                    backgroundColor: Colors.WHITE,
+                    borderRadius: "10px",
+                    height: "30vh",
+                  }}
+                >
+                  {countData ? (
+                    <>
+                      <div
+                        style={{
+                          width: "40%",
+                          height: "100%",
+                        }}
+                      >
+                        <PieChart
+                          series={[
+                            {
+                              data: countData,
+                              cx: 100,
+                              cy: 100,
+                              highlightScope: {
+                                faded: "global",
+                                highlighted: "item",
+                              },
+                            },
+                          ]}
+                          colors={categories[colorScheme]}
+                          slotProps={{
+                            legend: { hidden: true },
+                          }}
+                          width={250}
+                        />
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          padding: "1em",
+                          height: "80%",
+                          width: "40%",
+                          overflowY: "scroll !important",
+                          borderRadius: "15px",
+                          backgroundColor: Colors.BG_LIGHT_GRAY,
+                        }}
+                      >
+                        <Grid
+                          sx={{
+                            overflowY: "auto",
+                            ...ScrollbarStyles,
+                          }}
+                        >
+                          {countData?.map((item, index) => (
+                            <div
+                              key={index}
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  width: "16px",
+                                  height: "16px",
+                                  backgroundColor:
+                                    categories[colorScheme][item?.id],
+                                  marginRight: "5px",
+                                }}
+                              />
+                              <Tooltip
+                                title={item?.label}
+                                placement="top"
+                                arrow
+                              >
+                                <span
+                                  style={{
+                                    fontSize: FONT_SIZE_MEDIUM,
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    maxWidth: "150px",
+                                  }}
+                                >
+                                  {`${item?.label?.substring(0, 15)}${
+                                    item?.label?.length > 10 ? "..." : ""
+                                  }`}
+                                </span>
+                              </Tooltip>
+                            </div>
+                          ))}
+                        </Grid>
+                      </div>
+                    </>
+                  ) : (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      No Data
+                    </div>
+                  )}
+                </Grid>
               </>
             )}
           </Grid>
-
-          <Grid
-            container
-            item
-            xs={12}
-            sx={{
-              width: widthStyling,
-              mt: "1rem",
-              backgroundColor: Colors.WHITE,
-            }}
-          >
+          <Grid container sx={{ backgroundColor: Colors.WHITE, mt: "2rem" }}>
             <AntTabs
-              value={strategyTab}
-              onChange={handleStrategyChange}
-              aria-label="strategy tabs"
-              variant="scrollable"
-              scrollButtons="auto"
-              sx={{
-                minWidth: "100%",
-                borderTopLeftRadius: "10px",
-                borderTopRightRadius: "10px",
-              }}
+              value={optionValue}
+              onChange={handleOptionTabChange}
+              aria-label="options tabs"
             >
-              {tabs?.map((item, index) => (
-                <AntTab
-                  key={index}
-                  sx={{
-                    bgcolor: Colors.WHITE,
-                    width: "max-content",
-                    fontWeight: "600",
-                    height: "3.5rem",
-                  }}
-                  label={item}
-                />
-              ))}
+              <AntTab
+                sx={{
+                  bgcolor: Colors.WHITE,
+                  width: "max-content",
+                  fontWeight: "600",
+                  height: "3.5rem",
+                }}
+                label="Option 1"
+              />
+              <AntTab
+                sx={{
+                  bgcolor: Colors.WHITE,
+                  width: "max-content",
+                  fontWeight: "600",
+                  height: "3.5rem",
+                }}
+                label="Option 2"
+              />
             </AntTabs>
           </Grid>
+
+          {optionValue === 0 && (
+            <Grid
+              container
+              item
+              xs={12}
+              sx={{
+                width: widthStyling,
+                mt: "1rem",
+                backgroundColor: Colors.WHITE,
+              }}
+            >
+              <AntTabs
+                value={strategyTab}
+                onChange={handleStrategyChange}
+                aria-label="strategy tabs"
+                variant="scrollable"
+                scrollButtons="auto"
+                sx={{
+                  minWidth: "100%",
+                  borderTopLeftRadius: "10px",
+                  borderTopRightRadius: "10px",
+                }}
+              >
+                {tabs?.map((item, index) => (
+                  <AntTab
+                    key={index}
+                    sx={{
+                      bgcolor: Colors.WHITE,
+                      width: "max-content",
+                      fontWeight: "600",
+                      height: "3.5rem",
+                    }}
+                    label={item}
+                  />
+                ))}
+              </AntTabs>
+            </Grid>
+          )}
 
           <Grid
             item
@@ -1323,18 +1617,34 @@ export default function SettlementRange() {
               </Grid>
             )}
           </Grid>
-          <Grid
-            container
-            item
-            xs={12}
-            sx={{
-              borderRadius: "10px",
-              mt: "1rem",
-              justifyContent: "space-between",
-            }}
-          >
-            {cardData[strategyTab]}
-          </Grid>
+          {optionValue === 0 ? (
+            <Grid
+              container
+              item
+              xs={12}
+              sx={{
+                borderRadius: "10px",
+                mt: "1rem",
+                justifyContent: "space-between",
+              }}
+            >
+              {cardData[strategyTab]}
+            </Grid>
+          ) : (
+            <Grid
+              container
+              item
+              xs={12}
+              sx={{
+                borderRadius: "10px",
+                mt: "1rem",
+                justifyContent: "space-between",
+              }}
+            >
+              {cardData[4]}
+            </Grid>
+          )}
+
           <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
             {scores?.message && (
               <GridItemMessage

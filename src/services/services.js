@@ -1317,3 +1317,76 @@ export const GetBulkCaseDetail = async (id) => {
     return error;
   }
 };
+
+export const AddCreditorAccount = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/payment/addACHDetailsCreditor/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const AddDebtorAccount = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/addDebtorAccount/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const SendPayment = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/payment/sendPaymentPaynote/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const AddSenderIdentity = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + "/v1/user/addSenderIdentity",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const VerifySenderIdentity = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + "/v1/user/verifySenderIdentity",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetAllLinks = async () => {
+  try {
+    return await axios.get(BASE_URL + "/v1/email/getAllLinks", setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+export const DeleteLink = async (id) => {
+  try {
+    return await axios.delete(
+      BASE_URL + `/v1/email/deleteLink/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
