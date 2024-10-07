@@ -171,6 +171,7 @@ export default function SettlementRange() {
   const { showToast } = useToast();
   const [value, setValue] = useState(0);
   const [tabValue, setTabValue] = useState(0);
+  const [optionValue, setOptuonValue] = useState(0);
   const [errorMessage, setErrorMessage] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
@@ -197,6 +198,7 @@ export default function SettlementRange() {
   const [paymentChanged, setPaymentChanged] = useState(false);
   const [allData, setAllData] = useState();
   const [strategyTab, setStrategyTab] = useState(0);
+  const [optionStats, setOptionStats] = useState();
   const [justificationLoading, setJustificationLoading] = useState(false);
   const [colorScheme] = useState("Tableau10");
   const [justificationValue, setJustificationValue] = useState(
@@ -252,6 +254,9 @@ export default function SettlementRange() {
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
+  };
+  const handleOptionTabChange = (event, newValue) => {
+    setOptuonValue(newValue);
   };
   const currentCreditor = allCreditorNames[tabValue];
 
@@ -409,6 +414,47 @@ export default function SettlementRange() {
         )}
       </>
     )),
+    4: recommendations?.map((item, index) => (
+      <>
+        <SettlementCards
+          setPaymentChanged={setPaymentChanged}
+          remainingAmount={
+            allCreditorNames[tabValue] === "Summary"
+              ? summaryAmount?.loanAmount.toString()
+              : selectedCreditorDetails?.contractDetails?.loan_amount
+          }
+          caseId={caseId}
+          title={item}
+          weeksTillPaidTitle={getWeeksRemainingMessage(item)}
+          settlementRange={
+            optionStats?.settlement_range?.[
+              allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          commissionRange={
+            optionStats?.commission_range?.[
+              allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          percentageSettlementOverWeeklyBudget={
+            optionStats?.percentage_settlement_over_weekly_budget?.[
+              allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          percentageSettlementOverWeeklyTrueRevenue={
+            optionStats?.percentage_settlement_over_weekly_true_revenue?.[
+              allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          weeksTillPaid={
+            optionStats?.weeks_till_paid?.[
+              allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          optionValue={true}
+        />
+      </>
+    )),
   };
 
   const handleInputChange = (e) => {
@@ -503,6 +549,9 @@ export default function SettlementRange() {
             creditorAccountTitles.push("Summary");
           }
           setAllCreditorsNames(creditorAccountTitles);
+          setOptionStats(
+            resCommission?.data?.data?.settlementRange?.option_2_stats
+          );
           showToast(resCommission?.data?.message, "success");
           getLumpSumAmountData();
           getFullProfitData();
@@ -591,6 +640,9 @@ export default function SettlementRange() {
             creditorAccountTitles.push("Summary");
           }
           setAllCreditorsNames(creditorAccountTitles);
+          setOptionStats(
+            settlementRangeData?.data?.data?.settlementRange?.option_2_stats
+          );
           showToast(settlementRangeData?.data?.message, "success");
 
           getLumpSumAmountData();
@@ -1247,6 +1299,7 @@ export default function SettlementRange() {
                   value={scores?.Scores?.["Default Risk Score"] ?? "No Data"}
                   rawValue={scores?.Scores?.["Default Risk Score"]}
                 />
+
                 <Grid
                   container
                   item
@@ -1360,43 +1413,71 @@ export default function SettlementRange() {
               </>
             )}
           </Grid>
-
-          <Grid
-            container
-            item
-            xs={12}
-            sx={{
-              width: widthStyling,
-              mt: "2rem",
-              backgroundColor: Colors.WHITE,
-            }}
-          >
+          <Grid container sx={{ backgroundColor: Colors.WHITE, mt: "2rem" }}>
             <AntTabs
-              value={strategyTab}
-              onChange={handleStrategyChange}
-              aria-label="strategy tabs"
-              variant="scrollable"
-              scrollButtons="auto"
-              sx={{
-                minWidth: "100%",
-                borderTopLeftRadius: "10px",
-                borderTopRightRadius: "10px",
-              }}
+              value={optionValue}
+              onChange={handleOptionTabChange}
+              aria-label="options tabs"
             >
-              {tabs?.map((item, index) => (
-                <AntTab
-                  key={index}
-                  sx={{
-                    bgcolor: Colors.WHITE,
-                    width: "max-content",
-                    fontWeight: "600",
-                    height: "3.5rem",
-                  }}
-                  label={item}
-                />
-              ))}
+              <AntTab
+                sx={{
+                  bgcolor: Colors.WHITE,
+                  width: "max-content",
+                  fontWeight: "600",
+                  height: "3.5rem",
+                }}
+                label="Option 1"
+              />
+              <AntTab
+                sx={{
+                  bgcolor: Colors.WHITE,
+                  width: "max-content",
+                  fontWeight: "600",
+                  height: "3.5rem",
+                }}
+                label="Option 2"
+              />
             </AntTabs>
           </Grid>
+
+          {optionValue === 0 && (
+            <Grid
+              container
+              item
+              xs={12}
+              sx={{
+                width: widthStyling,
+                mt: "1rem",
+                backgroundColor: Colors.WHITE,
+              }}
+            >
+              <AntTabs
+                value={strategyTab}
+                onChange={handleStrategyChange}
+                aria-label="strategy tabs"
+                variant="scrollable"
+                scrollButtons="auto"
+                sx={{
+                  minWidth: "100%",
+                  borderTopLeftRadius: "10px",
+                  borderTopRightRadius: "10px",
+                }}
+              >
+                {tabs?.map((item, index) => (
+                  <AntTab
+                    key={index}
+                    sx={{
+                      bgcolor: Colors.WHITE,
+                      width: "max-content",
+                      fontWeight: "600",
+                      height: "3.5rem",
+                    }}
+                    label={item}
+                  />
+                ))}
+              </AntTabs>
+            </Grid>
+          )}
 
           <Grid
             item
@@ -1536,18 +1617,34 @@ export default function SettlementRange() {
               </Grid>
             )}
           </Grid>
-          <Grid
-            container
-            item
-            xs={12}
-            sx={{
-              borderRadius: "10px",
-              mt: "1rem",
-              justifyContent: "space-between",
-            }}
-          >
-            {cardData[strategyTab]}
-          </Grid>
+          {optionValue === 0 ? (
+            <Grid
+              container
+              item
+              xs={12}
+              sx={{
+                borderRadius: "10px",
+                mt: "1rem",
+                justifyContent: "space-between",
+              }}
+            >
+              {cardData[strategyTab]}
+            </Grid>
+          ) : (
+            <Grid
+              container
+              item
+              xs={12}
+              sx={{
+                borderRadius: "10px",
+                mt: "1rem",
+                justifyContent: "space-between",
+              }}
+            >
+              {cardData[4]}
+            </Grid>
+          )}
+
           <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
             {scores?.message && (
               <GridItemMessage
