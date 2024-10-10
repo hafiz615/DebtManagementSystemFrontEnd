@@ -48,7 +48,11 @@ import {
   GetPaymentIntervals,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
-import { formatDateString, generatePdfFromApiData } from "../../common";
+import {
+  formatDateString,
+  formatPurchasedPercentage,
+  generatePdfFromApiData,
+} from "../../common";
 import MuiModels from "../models";
 import CheckboxAutocomplete from "../checkboxAutocomplete";
 import { useParams } from "react-router-dom";
@@ -822,18 +826,24 @@ export default function SettlementRange() {
     },
     {
       label: "Purchased Percentage",
-      value: selectedCreditorDetails?.contractDetails?.purchased_percentage,
+      value: formatPurchasedPercentage(
+        selectedCreditorDetails?.contractDetails?.purchased_percentage
+      ),
     },
     {
-      label: "Original Payment",
+      label: "Repayment Amount",
       value: selectedCreditorDetails?.contractDetails?.repayment_amount,
     },
   ];
 
   const headerData = [
     { key: "creditorName", heading: "Creditors", width: "15%" },
-    { key: "loanAmount", heading: "Loan Amount", width: "15%" },
+    // { key: "fundedAmount", heading: "Funded Amount", width: "15%" },
+    // { key: "paybackAmount", heading: "Payback Amount", width: "15%" },
     { key: "payableAmount", heading: "Current Balance", width: "15%" },
+    // { key: "breakEvenPoint", heading: "Break Even Point", width: "15%" },
+    { key: "loanAmount", heading: "Loan Amount", width: "15%" },
+
     { key: "weeklyBudget", heading: "Weekly Budget", width: "15%" },
     {
       key: "purchased_percentage",
@@ -842,7 +852,7 @@ export default function SettlementRange() {
     },
     {
       key: "repayment_amount",
-      heading: "Original Payment",
+      heading: "Repayment Amount",
       width: "15%",
     },
   ];

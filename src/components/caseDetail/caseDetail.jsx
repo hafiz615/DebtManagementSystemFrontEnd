@@ -281,6 +281,14 @@ function CaseDetail() {
                 backgroundColor={Colors.SKY_BLUE}
                 hoverColor={Colors.SKY_BLUE}
               />
+              <MuiModels
+                show="WeeklyBudget"
+                buttonName="WeeklyBudget"
+                iconColor={Colors.BLACK}
+                maxHeight="78vh"
+                caseData={caseData}
+                // caseDataId={id}
+              />
             </div>
           </Grid>
 

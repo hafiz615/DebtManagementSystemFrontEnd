@@ -52,6 +52,7 @@ import SendEmailJustification from "./sendEmailJustifications";
 import ExtractFieldPopup from "./caseDetail/extractFieldPopup";
 import TextEditor from "./textEditor";
 import PaynoteForm from "./caseDetail/paynoteForm";
+import CommissionDetails from "./caseDetail/commissionDetails";
 
 export default function MuiModels({
   buttonName,
@@ -408,6 +409,15 @@ export default function MuiModels({
             }}
           />
         </IconButton>
+      ) : buttonName === "WeeklyBudget" ? (
+        <TextButton
+          buttonText="WeeklyBudget"
+          height="2.5rem"
+          width="12rem"
+          onClick={handleOpen}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
       ) : buttonName === "setPaymentPlan" ? (
         <TextButton
           buttonText="Set Payment Plan"
@@ -834,6 +844,12 @@ export default function MuiModels({
               handleClose={handleClose}
               data={data}
               caseId={caseId}
+            />
+          ) : show === "WeeklyBudget" ? (
+            <CommissionDetails
+              handleClose={handleClose}
+              data={caseData}
+              // caseId={caseId}
             />
           ) : show === "downloadPDF" ? (
             <DownloadPDF
