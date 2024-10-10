@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import InfoIcon from "@mui/icons-material/Info";
 
 import {
   Grid,
@@ -142,17 +143,25 @@ const GridItem = ({ title, value, rawValue, tooltip }) => (
     container
     sx={{ ...commonStyles, mb: "1rem" }}
   >
-    <Tooltip title={tooltip} placement="top-start">
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+      }}
+    >
       <Typography sx={commonTextStyles}>{title}</Typography>
-      <Typography
-        sx={{
-          ...commonTextStyles,
-          color: isNegative(rawValue) ? Colors.ORANGE_COLOR : Colors.SKY_BLUE,
-        }}
-      >
-        {value}
-      </Typography>
-    </Tooltip>
+      <Tooltip title={tooltip} placement="top">
+        <InfoIcon sx={{ fontSize: "17px", color: Colors.SKY_BLUE }} />
+      </Tooltip>
+    </Box>
+    <Typography
+      sx={{
+        ...commonTextStyles,
+        color: isNegative(rawValue) ? Colors.ORANGE_COLOR : Colors.SKY_BLUE,
+      }}
+    >
+      {value}
+    </Typography>
   </Grid>
 );
 
@@ -1262,7 +1271,7 @@ export default function SettlementRange() {
             <GridItem
               key="Weekly Profit"
               title="Weekly Profit"
-              tooltip="Weekly Profit With Payment"
+              tooltip="Your net profit after making debt payments."
               value={
                 apiData?.weekly_profit
                   ? `$ ${new Intl.NumberFormat().format(apiData.weekly_profit)}`
@@ -1274,6 +1283,7 @@ export default function SettlementRange() {
             <GridItem
               key="Weekly True Revenue"
               title="Weekly True Revenue"
+              tooltip="Total revenue earned by the business each week."
               value={
                 apiData?.weekly_true_revenue
                   ? `$ ${new Intl.NumberFormat().format(
@@ -1286,6 +1296,7 @@ export default function SettlementRange() {
             <GridItem
               key="Profitability"
               title="Profitability"
+              tooltip=" Measure of how much profit your business makes after expenses."
               value={
                 apiData?.profitability
                   ? `${new Intl.NumberFormat().format(
@@ -1300,12 +1311,14 @@ export default function SettlementRange() {
                 <GridItem
                   key="UCC Score"
                   title="UCC Score"
+                  tooltip="A score representing the creditor's claim on your business assets."
                   value={`${scores?.Scores?.["UCC Score"]}%` ?? "No Data"}
                   rawValue={scores?.Scores?.["UCC Score"]}
                 />
                 <GridItem
                   key="Default Risk Score"
                   title="Default Risk Score"
+                  tooltip="The likelihood of missing a payment or defaulting on your loan."
                   value={scores?.Scores?.["Default Risk Score"] ?? "No Data"}
                   rawValue={scores?.Scores?.["Default Risk Score"]}
                 />
@@ -1558,38 +1571,54 @@ export default function SettlementRange() {
                           : detail?.value
                         : "--";
 
+                      const tooltipContent = {
+                        "Loan Amount":
+                          "The total amount borrowed from the creditor.",
+                        "Current Balance":
+                          "The remaining amount you owe to the creditor.",
+                        "Weekly Budget":
+                          "Your profit before making any debt payments.",
+                        "Purchased Percentage":
+                          "The percentage of the loan amount that has been repaid.",
+                        "Original Payment":
+                          "The initial amount borrowed before any repayments.",
+                      };
+
                       return (
-                        <Tooltip
-                          title={
-                            detail?.label === "Weekly Budget"
-                              ? "Weekly Profit without Payment"
-                              : ""
-                          }
-                          placement="top-start"
+                        <Grid
+                          item
+                          xs={12}
+                          sm={5.8}
+                          md={3.8}
+                          lg={2.8}
+                          container
+                          sx={commonStyles}
                         >
-                          <Grid
-                            key={index}
-                            item
-                            xs={12}
-                            sm={5.8}
-                            md={3.8}
-                            lg={2.8}
-                            container
-                            sx={commonStyles}
-                          >
+                          <Box sx={{ display: "flex", alignItems: "center" }}>
                             <Typography sx={commonTextStyles}>
                               {detail?.label}
                             </Typography>
-                            <Typography
-                              sx={{
-                                ...commonTextStyles,
-                                color: Colors.SKY_BLUE,
-                              }}
+                            <Tooltip
+                              title={tooltipContent[detail?.label] || ""}
+                              placement="top"
                             >
-                              {formattedValue}
-                            </Typography>
-                          </Grid>
-                        </Tooltip>
+                              <InfoIcon
+                                sx={{
+                                  fontSize: "17px",
+                                  color: Colors.SKY_BLUE,
+                                }}
+                              />
+                            </Tooltip>
+                          </Box>
+                          <Typography
+                            sx={{
+                              ...commonTextStyles,
+                              color: Colors.SKY_BLUE,
+                            }}
+                          >
+                            {formattedValue}
+                          </Typography>
+                        </Grid>
                       );
                     })}
                   </Grid>

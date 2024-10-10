@@ -151,7 +151,9 @@ export default function DataSummaryTable({
                   <StyledTableRow key={i}>
                     {headerData?.map(({ key, width }, i) => (
                       <StyledTableCell key={i} sx={{ width }}>
-                        {row[key]}
+                        {key === "purchased_percentage"
+                          ? row[key].replace(/\s*\(.*?\)/, "")
+                          : row[key]}
                       </StyledTableCell>
                     ))}
                   </StyledTableRow>
