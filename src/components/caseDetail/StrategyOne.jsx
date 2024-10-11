@@ -9,6 +9,7 @@ import {
 import { handleNumberInput } from "../../common";
 import { Colors } from "../../config/default";
 import AmountTextField from "../amountTextField";
+
 function StrategyOne({
   selectedOption,
   setSelectedOption,
@@ -23,6 +24,7 @@ function StrategyOne({
       color: Colors.SKY_BLUE,
     },
   };
+
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
   };
@@ -30,6 +32,13 @@ function StrategyOne({
   const handleCustomValueChange = (event) => {
     setCustomValue(event.target.value);
   };
+
+  const isMaxProfitAvailable =
+    data?.debtor?.strategy1MaxProfit || popUpDebtorData?.strategy1MaxProfit;
+  const isWeeklyBudgetAvailable =
+    data?.debtor?.basicInformation?.weeklyBudget ||
+    popUpDebtorData?.basicInformation?.weeklyBudget;
+
   return (
     <FormControl component="fieldset">
       <RadioGroup value={selectedOption} onChange={handleOptionChange}>
@@ -37,23 +46,27 @@ function StrategyOne({
           value="strategy1Profit"
           control={<Radio sx={radioStyle} />}
           label={`67% of maximum profit: ${
-            data?.debtor?.strategy1MaxProfit
-              ? `$${data.debtor.strategy1MaxProfit}`
-              : popUpDebtorData?.strategy1MaxProfit
-              ? `$${popUpDebtorData.strategy1MaxProfit}`
-              : "Max Profit was not found in Bank Statement"
+            isMaxProfitAvailable
+              ? `$${
+                  data?.debtor?.strategy1MaxProfit ||
+                  popUpDebtorData?.strategy1MaxProfit
+                }`
+              : "Max Profit Margin Yet to be Calculated"
           }`}
+          disabled={!isMaxProfitAvailable} // Disable if max profit is not available
         />
         <FormControlLabel
           value="strategy1Weekly"
           control={<Radio sx={radioStyle} />}
           label={`Budget debtor signed up for: ${
-            data?.debtor?.basicInformation?.weeklyBudget
-              ? `$${data.debtor.basicInformation.weeklyBudget}`
-              : popUpDebtorData?.basicInformation?.weeklyBudget
-              ? `$${popUpDebtorData.basicInformation.weeklyBudget}`
+            isWeeklyBudgetAvailable
+              ? `$${
+                  data?.debtor?.basicInformation?.weeklyBudget ||
+                  popUpDebtorData?.basicInformation?.weeklyBudget
+                }`
               : "Weekly Budget not entered when case was created"
           }`}
+          disabled={!isWeeklyBudgetAvailable} // Disable if weekly budget is not available
         />
         <FormControlLabel
           value="strategy1Custom"

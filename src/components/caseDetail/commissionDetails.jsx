@@ -96,7 +96,9 @@ function CommissionDetails({ handleClose, data, caseId, popUpDebtorData }) {
         }}
       >
         <Typography sx={{ fontWeight: "600", fontFamily: "Nunito" }}>
-          {isStrategyOneSaved ? "Percentage Receivable" : "Max Profit"}
+          {isStrategyOneSaved
+            ? "Percentage Receivable to be used for Percentage Receivable Strategy"
+            : "Weekly Budget to be used for Max Profit Strategy"}
         </Typography>
         <Close onClick={handleClose} sx={{ marginRight: "1rem" }} />
       </Box>
