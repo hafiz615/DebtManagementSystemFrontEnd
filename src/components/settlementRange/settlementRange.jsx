@@ -256,11 +256,7 @@ export default function SettlementRange() {
   };
 
   const tabs = ["Max Profit", "Lump Sum", "Percentage Recievable"];
-  const recommendations = [
-    "recommendation 1",
-    "recommendation 2",
-    "recommendation 3",
-  ];
+  const recommendations = ["recommendation 1"];
   const strat3Recommendations = ["recommendation 1"];
   const strat2Recommendations = ["lump Sum"];
 
@@ -284,6 +280,7 @@ export default function SettlementRange() {
     0: recommendations?.map((item, index) => (
       <>
         <SettlementCards
+          strategy="strategy1"
           setPaymentChanged={setPaymentChanged}
           remainingAmount={
             allCreditorNames[tabValue] === "Summary"
@@ -369,6 +366,7 @@ export default function SettlementRange() {
       <>
         {!isEmpty(fullProfit) ? (
           <SettlementCards
+            strategy="strategy3"
             setPaymentChanged={setPaymentChanged}
             remainingAmount={
               allCreditorNames[tabValue] === "Summary"
@@ -378,38 +376,30 @@ export default function SettlementRange() {
             caseId={caseId}
             isFullPayment={true}
             title={item}
-            weeksTillPaidTitle={
-              item === "recommendation 1"
-                ? "Weeks remaining based on recommendation 1"
-                : ""
-            }
+            weeksTillPaidTitle={getWeeksRemainingMessage(item)}
             settlementRange={
-              fullProfit?.settlement_range?.[
+              apiData?.settlement_range?.[
                 allCreditorNames[parseInt(tabValue)]
               ] || null
             }
             commissionRange={
-              fullProfit?.commission_range?.[
+              apiData?.commission_range?.[
                 allCreditorNames[parseInt(tabValue)]
               ] || null
             }
-            newDefaultRiskScore={
-              fullProfit?.new_default_risk_score || {
-                "recommendation 1": ["-", "-"],
-              }
-            }
+            newDefaultRiskScore={apiData?.new_default_risk_score || null}
             percentageSettlementOverWeeklyBudget={
-              fullProfit?.percentage_settlement_over_weekly_budget?.[
+              apiData?.percentage_settlement_over_weekly_budget?.[
                 allCreditorNames[parseInt(tabValue)]
               ] || null
             }
             percentageSettlementOverWeeklyTrueRevenue={
-              fullProfit?.percentage_settlement_over_weekly_true_revenue?.[
+              apiData?.percentage_settlement_over_weekly_true_revenue?.[
                 allCreditorNames[parseInt(tabValue)]
               ] || null
             }
             weeksTillPaid={
-              fullProfit?.weeks_till_paid?.[
+              apiData?.weeks_till_paid?.[
                 allCreditorNames[parseInt(tabValue)]
               ] || null
             }
@@ -867,7 +857,10 @@ export default function SettlementRange() {
     const fundedAmount = creditor?.contractDetails?.funded_amount || "--";
     const paybackAmount = creditor?.remainingAmountPaid || "--";
     const payableAmount =
-      creditor?.remaining - creditor?.remainingAmountPaid || "--";
+      creditor?.remaining !== undefined &&
+      creditor?.remainingAmountPaid !== undefined
+        ? `$${(creditor?.remaining - creditor?.remainingAmountPaid).toFixed(2)}`
+        : "--";
     const breakEvenPoint = creditor?.breakEven || "--";
     const purchased_percentage = formatSummaryCurrency(
       creditor?.contractDetails?.purchased_percentage || "--"
