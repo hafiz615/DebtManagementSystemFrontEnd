@@ -126,6 +126,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   const [remainingAmount, setRemainingAmount] = useState(null);
   const [lastPaymentDate, setLastPaymentDate] = useState("");
   const [debtorDetailsStatus, setDebtorDetailsStatus] = useState("");
+  const [profitMargin, setProfitMargin] = useState("");
   const [feePayment, setFeePayment] = useState("");
   const today = new Date().toISOString().split("T")[0];
   const [newDataList, setNewDataList] = useState([
@@ -549,6 +550,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               : "",
             address: debtorBusinessDetails?.businessAddress,
           },
+          profitMargin: parseInt(profitMargin),
           contacts: debtorContacts,
           paymentToken: connectPayment?.paymentToken,
           paymentType: connectPayment?.paymentType,
@@ -872,6 +874,8 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               setFilteredArray={setFilteredArray}
               connectPayment={connectPayment}
               setConnectPayment={setConnectPayment}
+              setProfitMargin={setProfitMargin}
+              profitMargin={profitMargin}
               walletId={walletId}
             />
           ) : activeStep === 2 && creditors ? (

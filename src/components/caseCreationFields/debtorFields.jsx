@@ -37,6 +37,8 @@ export default function DebtorFields({
   show,
   showFieldError,
   misMatches,
+  setProfitMargin,
+  profitMargin,
 }) {
   const [menuItems, setMenuItems] = useState([]);
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
@@ -534,6 +536,15 @@ export default function DebtorFields({
             onChangeFunction={(e) =>
               basicInfoInputChange("BasicAddress", e.target.value)
             }
+          />
+          <PaymentsTextFields
+            type="number"
+            label="Profit Margin %*"
+            placeHolderValue="Profit Margin"
+            width="100%"
+            value={profitMargin}
+            border={profitMargin === "" ? "2px solid red" : "none"}
+            onChangeFunction={(e) => setProfitMargin(e.target.value)}
           />
         </Grid>
       </Grid>

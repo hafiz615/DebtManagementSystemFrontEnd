@@ -25,6 +25,9 @@ export default function EditDebtorDetail({
   const { showToast } = useToast();
   const parseString = (value) => (value ? String(value).replace(/-/g, "") : "");
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:1300px)");
+  const [profitMargin, setProfitMargin] = useState(
+    caseData?.debtor?.profitMargin || ""
+  );
 
   const debtorBasicInfo =
     caseData?.debtor?.basicInformation || caseData?.DebtorInfo;
@@ -238,6 +241,7 @@ export default function EditDebtorDetail({
         phone: debtorBusinessDetails?.businessPhoneNumber,
         address: debtorBusinessDetails?.businessAddress,
       },
+      profitMargin: parseInt(profitMargin),
       paymentToken: connectPayment?.paymentToken,
       paymentType: connectPayment?.paymentType,
     };
@@ -307,6 +311,8 @@ export default function EditDebtorDetail({
           setErrors={setErrors}
           misMatches={mismatches}
           showFieldError={showFields}
+          profitMargin={profitMargin}
+          setProfitMargin={setProfitMargin}
         />
       </Grid>
       {showFields && (
