@@ -423,6 +423,7 @@ export default function SettlementRange() {
     4: recommendations?.map((item, index) => (
       <>
         <SettlementCards
+          strategy="strategy1"
           setPaymentChanged={setPaymentChanged}
           remainingAmount={
             allCreditorNames[tabValue] === "Summary"
@@ -806,8 +807,13 @@ export default function SettlementRange() {
 
   const creditorDetails = [
     {
-      label: "Loan Amount",
+      label: "Funded Amount",
       value: selectedCreditorDetails?.contractDetails?.loan_amount,
+      formatCurrency: true,
+    },
+    {
+      label: "Payback Amount",
+      value: selectedCreditorDetails?.remainingAmountPaid || "0",
       formatCurrency: true,
     },
     {
@@ -816,15 +822,9 @@ export default function SettlementRange() {
       formatCurrency: true,
     },
     {
-      label: "Weekly Budget",
-      value: (() => {
-        const weeklyBudget =
-          apiData?.weekly_budget?.[allCreditorNames[parseInt(tabValue)]];
-        return weeklyBudget != null
-          ? `$${new Intl.NumberFormat().format(weeklyBudget)}`
-          : "--";
-      })(),
-      formatCurrency: false,
+      label: "Break Even",
+      value: selectedCreditorDetails?.breakEven,
+      formatCurrency: true,
     },
     {
       label: "Purchased Percentage",
@@ -1274,7 +1274,9 @@ export default function SettlementRange() {
                   key="Default Risk Score"
                   title="Default Risk Score"
                   tooltip="The likelihood of missing a payment or defaulting on your loan."
-                  value={scores?.Scores?.["Default Risk Score"] ?? "No Data"}
+                  value={
+                    `${scores?.Scores?.["Default Risk Score"]}%` ?? "No Data"
+                  }
                   rawValue={scores?.Scores?.["Default Risk Score"]}
                 />
 
@@ -1391,68 +1393,69 @@ export default function SettlementRange() {
               </>
             )}
           </Grid>
-          <Grid container sx={{ backgroundColor: Colors.WHITE, mt: "2rem" }}>
+
+          <Grid
+            container
+            item
+            xs={12}
+            sx={{
+              width: widthStyling,
+              mt: "1rem",
+              backgroundColor: Colors.WHITE,
+            }}
+          >
             <AntTabs
-              value={optionValue}
-              onChange={handleOptionTabChange}
-              aria-label="options tabs"
+              value={strategyTab}
+              onChange={handleStrategyChange}
+              aria-label="strategy tabs"
+              variant="scrollable"
+              scrollButtons="auto"
+              sx={{
+                minWidth: "100%",
+                borderTopLeftRadius: "10px",
+                borderTopRightRadius: "10px",
+              }}
             >
-              <AntTab
-                sx={{
-                  bgcolor: Colors.WHITE,
-                  width: "max-content",
-                  fontWeight: "600",
-                  height: "3.5rem",
-                }}
-                label="Negotiation manager Weekly budget"
-              />
-              <AntTab
-                sx={{
-                  bgcolor: Colors.WHITE,
-                  width: "max-content",
-                  fontWeight: "600",
-                  height: "3.5rem",
-                }}
-                label="Weekly budget as per Bank statement"
-              />
+              {tabs?.map((item, index) => (
+                <AntTab
+                  key={index}
+                  sx={{
+                    bgcolor: Colors.WHITE,
+                    width: "max-content",
+                    fontWeight: "600",
+                    height: "3.5rem",
+                  }}
+                  label={item}
+                />
+              ))}
             </AntTabs>
           </Grid>
 
-          {optionValue === 1 && (
-            <Grid
-              container
-              item
-              xs={12}
-              sx={{
-                width: widthStyling,
-                mt: "1rem",
-                backgroundColor: Colors.WHITE,
-              }}
-            >
+          {strategyTab === 0 && (
+            <Grid container sx={{ backgroundColor: Colors.WHITE, mt: "1rem" }}>
               <AntTabs
-                value={strategyTab}
-                onChange={handleStrategyChange}
-                aria-label="strategy tabs"
-                variant="scrollable"
-                scrollButtons="auto"
-                sx={{
-                  minWidth: "100%",
-                  borderTopLeftRadius: "10px",
-                  borderTopRightRadius: "10px",
-                }}
+                value={optionValue}
+                onChange={handleOptionTabChange}
+                aria-label="options tabs"
               >
-                {tabs?.map((item, index) => (
-                  <AntTab
-                    key={index}
-                    sx={{
-                      bgcolor: Colors.WHITE,
-                      width: "max-content",
-                      fontWeight: "600",
-                      height: "3.5rem",
-                    }}
-                    label={item}
-                  />
-                ))}
+                <AntTab
+                  sx={{
+                    bgcolor: Colors.WHITE,
+                    width: "max-content",
+                    fontWeight: "600",
+                    height: "3.5rem",
+                  }}
+                  label="Negotiation manager Weekly budget"
+                />
+                <AntTab
+                  sx={{
+                    bgcolor: Colors.WHITE,
+                    width: "max-content",
+                    fontWeight: "600",
+                    height: "3.5rem",
+                  }}
+                  label="Weekly budget as per Bank statement"
+                />
               </AntTabs>
             </Grid>
           )}
@@ -1527,15 +1530,16 @@ export default function SettlementRange() {
                         : "--";
 
                       const tooltipContent = {
-                        "Loan Amount":
+                        "Funded Amount":
                           "The total amount borrowed from the creditor.",
+                        "Payback Amount": "The Amount given to the creditor.",
                         "Current Balance":
                           "The remaining amount you owe to the creditor.",
                         "Weekly Budget":
                           "Your profit before making any debt payments.",
                         "Purchased Percentage":
                           "The percentage of the loan amount that has been repaid.",
-                        "Original Payment":
+                        "Repayment Amount":
                           "The initial amount borrowed before any repayments.",
                       };
 
@@ -1611,7 +1615,8 @@ export default function SettlementRange() {
               </Grid>
             )}
           </Grid>
-          {optionValue === 1 ? (
+
+          {strategyTab === 0 && optionValue === 1 ? (
             <Grid
               container
               item
@@ -1622,7 +1627,7 @@ export default function SettlementRange() {
                 justifyContent: "space-between",
               }}
             >
-              {cardData[strategyTab]}
+              {cardData[4]}
             </Grid>
           ) : (
             <Grid
@@ -1635,7 +1640,7 @@ export default function SettlementRange() {
                 justifyContent: "space-between",
               }}
             >
-              {cardData[4]}
+              {cardData[strategyTab]}
             </Grid>
           )}
 
