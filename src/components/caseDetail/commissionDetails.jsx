@@ -5,60 +5,86 @@ import TextButton from "../button";
 import { Close } from "@mui/icons-material";
 import StrategyOne from "./StrategyOne";
 import StrategyThree from "./StrategyThree";
+import { GetSettlementRangeWithScores } from "../../services/services";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "../../toast/toastContext";
 
-function CommissionDetails({ handleClose, data }) {
+function CommissionDetails({ handleClose, data, caseId, popUpDebtorData }) {
   const [selectedOption, setSelectedOption] = useState("");
-  const [customValue, setCustomValue] = useState("");
+  const [customValue, setCustomValue] = useState(
+    data?.debtor?.strategy1BudgetCustom ||
+      popUpDebtorData?.strategy1BudgetCustom ||
+      ""
+  );
   const [selectedOptionThree, setSelectedOptionThree] = useState("");
-  const [customValueThree, setCustomValueThree] = useState("");
+  const [customValueThree, setCustomValueThree] = useState(
+    data?.debtor?.strategy3BudgetCustom ||
+      popUpDebtorData?.strategy3BudgetCustom ||
+      ""
+  );
+  const [isStrategyOneSaved, setIsStrategyOneSaved] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const debtorDetails = data?.debtor?.basicInformation;
+  const navigate = useNavigate();
+  const { showToast } = useToast();
 
-  const [isStrategyOneSaved, setIsStrategyOneSaved] = useState(false); // New state to track save progress
+  const payload = {
+    strategy1Profit:
+      selectedOption === "strategy1Profit"
+        ? debtorDetails?.strategy1MaxProfit
+        : 0,
+    strategy1Weekly:
+      selectedOption === "strategy1Weekly"
+        ? debtorDetails?.weeklyBudgetStrategy1
+        : 0,
+    strategy1Custom:
+      selectedOption === "strategy1Custom"
+        ? Number(customValue)
+        : 0 || debtorDetails?.strategy1BudgetCustom,
 
-  const weeklyBudget = data?.debtor?.basicInformation?.weeklyBudget;
-
-  const handleSave = () => {
-    if (!isStrategyOneSaved) {
-      let keyChoosen = "";
-
-      if (selectedOption === "profit") {
-        keyChoosen = "profit";
-      } else if (selectedOption === "weekly") {
-        keyChoosen = "weekly";
-      } else if (selectedOption === "choose" && customValue) {
-        keyChoosen = "custom";
-      }
-
-      const strategyOneDetails = {
-        profit: selectedOption === "profit" ? weeklyBudget : 0,
-        weekly: selectedOption === "weekly" ? weeklyBudget : 0,
-        custom: selectedOption === "choose" ? Number(customValue) : 0,
-        keyChoosen,
-      };
-
-      console.log("Strategy 1 Details: ", strategyOneDetails);
-      setIsStrategyOneSaved(true);
-    } else {
-      let keyChoosen = "";
-
-      if (selectedOptionThree === "profit") {
-        keyChoosen = "profit";
-      } else if (selectedOptionThree === "weekly") {
-        keyChoosen = "weekly";
-      } else if (selectedOptionThree === "choose" && customValueThree) {
-        keyChoosen = "custom";
-      }
-
-      const strategyThreeDetails = {
-        profit: selectedOptionThree === "profit" ? weeklyBudget : 0,
-        weekly: selectedOptionThree === "weekly" ? weeklyBudget : 0,
-        custom: selectedOptionThree === "choose" ? Number(customValueThree) : 0,
-        keyChoosen,
-      };
-
-      console.log("Strategy 3 Details: ", strategyThreeDetails);
-    }
+    strategy1Choosen: selectedOption,
+    strategy3Profit:
+      selectedOptionThree === "strategy3Profit"
+        ? debtorDetails?.strategy3MaxProfit
+        : 0,
+    strategy3ProfitMargin:
+      selectedOptionThree === "strategy3ProfitMargin"
+        ? debtorDetails?.weeklyBudgetStrategy3
+        : 0,
+    strategy3Custom:
+      selectedOptionThree === "strategy3Custom"
+        ? Number(customValueThree)
+        : 0 || debtorDetails?.strategy3BudgetCustom,
+    strategy3Choosen: selectedOptionThree,
   };
 
+  const handleSave = async () => {
+    setLoading(true);
+    if (!isStrategyOneSaved) {
+      setIsStrategyOneSaved(true);
+    } else {
+      const settlementRangeData = await GetSettlementRangeWithScores(
+        payload,
+        popUpDebtorData ? caseId : data?._id,
+        true,
+        true
+      );
+      if (settlementRangeData?.status === 200) {
+        showToast(settlementRangeData?.data?.message, "success");
+        navigate(`/settlementRange/${data?._id}`);
+        handleClose();
+      } else {
+        const errorMessage = settlementRangeData?.response?.data?.message;
+        showToast(errorMessage, "error");
+      }
+    }
+    setLoading(false);
+  };
+  // Check if the button should be disabled
+  const isButtonDisabled = !(
+    (isStrategyOneSaved && (selectedOptionThree || customValueThree)) ||
+    (!isStrategyOneSaved && (selectedOption || customValue))
+  );
   return (
     <Grid container>
       <Box
@@ -70,9 +96,7 @@ function CommissionDetails({ handleClose, data }) {
         }}
       >
         <Typography sx={{ fontWeight: "600", fontFamily: "Nunito" }}>
-          {isStrategyOneSaved
-            ? "Weekly Commission for Strategy 3"
-            : "Weekly Commission for Strategy 1"}
+          {isStrategyOneSaved ? "Percentage Receivable" : "Max Profit"}
         </Typography>
         <Close onClick={handleClose} sx={{ marginRight: "1rem" }} />
       </Box>
@@ -83,6 +107,8 @@ function CommissionDetails({ handleClose, data }) {
           setSelectedOption={setSelectedOption}
           customValue={customValue}
           setCustomValue={setCustomValue}
+          data={data}
+          popUpDebtorData={popUpDebtorData}
         />
       ) : (
         <StrategyThree
@@ -90,6 +116,8 @@ function CommissionDetails({ handleClose, data }) {
           setSelectedOptionThree={setSelectedOptionThree}
           customValueThree={customValueThree}
           setCustomValueThree={setCustomValueThree}
+          data={data}
+          popUpDebtorData={popUpDebtorData}
         />
       )}
 
@@ -123,6 +151,8 @@ function CommissionDetails({ handleClose, data }) {
           hoverColor={Colors.SKY_BLUE}
           borderRadius="5px"
           onClick={handleSave}
+          loading={loading}
+          disabled={isButtonDisabled}
         />
       </Grid>
     </Grid>

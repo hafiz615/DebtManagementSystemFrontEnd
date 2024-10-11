@@ -6,14 +6,16 @@ import {
   FormControlLabel,
   Grid,
 } from "@mui/material";
-import PaymentsTextFields from "../caseTextField";
 import { handleNumberInput } from "../../common";
 import { Colors } from "../../config/default";
+import AmountTextField from "../amountTextField";
 function StrategyOne({
   selectedOption,
   setSelectedOption,
   customValue,
   setCustomValue,
+  data,
+  popUpDebtorData,
 }) {
   const radioStyle = {
     color: Colors.SKY_BLUE,
@@ -32,29 +34,43 @@ function StrategyOne({
     <FormControl component="fieldset">
       <RadioGroup value={selectedOption} onChange={handleOptionChange}>
         <FormControlLabel
-          value="profit"
+          value="strategy1Profit"
           control={<Radio sx={radioStyle} />}
-          label="67% of maximum profit"
+          label={`67% of maximum profit: ${
+            data?.debtor?.strategy1MaxProfit
+              ? `$${data.debtor.strategy1MaxProfit}`
+              : popUpDebtorData?.strategy1MaxProfit
+              ? `$${popUpDebtorData.strategy1MaxProfit}`
+              : "Max Profit was not found in Bank Statement"
+          }`}
         />
         <FormControlLabel
-          value="weekly"
+          value="strategy1Weekly"
           control={<Radio sx={radioStyle} />}
-          label="Budget debtor signed up for"
+          label={`Budget debtor signed up for: ${
+            data?.debtor?.basicInformation?.weeklyBudget
+              ? `$${data.debtor.basicInformation.weeklyBudget}`
+              : popUpDebtorData?.basicInformation?.weeklyBudget
+              ? `$${popUpDebtorData.basicInformation.weeklyBudget}`
+              : "Weekly Budget not entered when case was created"
+          }`}
         />
         <FormControlLabel
-          value="choose"
+          value="strategy1Custom"
           control={<Radio sx={radioStyle} />}
           label="Choose one or create your own"
         />
       </RadioGroup>
 
-      {selectedOption === "choose" && (
+      {selectedOption === "strategy1Custom" && (
         <Grid container item xs={12}>
-          <PaymentsTextFields
-            type="text"
-            placeHolderValue="Enter Custom Value"
+          <AmountTextField
+            width="50%"
+            marginLeft=".2rem"
             value={customValue}
-            onChangeFunction={handleCustomValueChange}
+            onChange={(e) => {
+              setCustomValue(e.target.value);
+            }}
             onKeyDown={handleNumberInput}
           />
         </Grid>

@@ -32,6 +32,7 @@ import {
   Edit,
   Sms,
   Download,
+  Refresh,
 } from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
@@ -125,6 +126,8 @@ export default function MuiModels({
   to,
   content,
   emailSubject,
+  buttonIcon,
+  popUpDebtorData,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -203,6 +206,21 @@ export default function MuiModels({
               color: Colors.DARK_GRAY,
               cursor: "pointer",
               fontSize: "16px",
+            }}
+          />
+        </IconButton>
+      ) : buttonIcon === "settlementRangeReload" ? (
+        <IconButton
+          sx={{ display: "flex", alignItems: "center" }}
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <Refresh
+            sx={{
+              color: Colors.SKY_BLUE,
+              cursor: "pointer",
+              fontSize: "2rem",
             }}
           />
         </IconButton>
@@ -409,9 +427,9 @@ export default function MuiModels({
             }}
           />
         </IconButton>
-      ) : buttonName === "WeeklyBudget" ? (
+      ) : buttonName === "Get Settlement Range" ? (
         <TextButton
-          buttonText="WeeklyBudget"
+          buttonText="Get Settlement Range"
           height="2.5rem"
           width="12rem"
           onClick={handleOpen}
@@ -849,7 +867,8 @@ export default function MuiModels({
             <CommissionDetails
               handleClose={handleClose}
               data={caseData}
-              // caseId={caseId}
+              caseId={caseId}
+              popUpDebtorData={popUpDebtorData}
             />
           ) : show === "downloadPDF" ? (
             <DownloadPDF

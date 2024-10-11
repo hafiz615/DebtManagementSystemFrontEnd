@@ -300,7 +300,7 @@ export default function SettlementCards({
                                 item?.[weeksTillPaidTitle][0]
                               : ""
                             : rangeNames[index]?.label === "New Default Risk"
-                            ? item?.[title]?.["min"] || "-"
+                            ? `${item?.[title]?.["min"] || "-"}%`
                             : rangeNames[index]?.label?.includes("%")
                             ? `${
                                 parseFloat(
@@ -333,7 +333,7 @@ export default function SettlementCards({
                                 item?.[weeksTillPaidTitle][1]
                               : ""
                             : rangeNames[index]?.label === "New Default Risk"
-                            ? item?.[title]?.["max"] || "-"
+                            ? `${item?.[title]?.["max"] || "-"}%`
                             : rangeNames[index]?.label?.includes("%")
                             ? `${
                                 parseFloat(

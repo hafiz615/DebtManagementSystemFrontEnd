@@ -271,24 +271,26 @@ function CaseDetail() {
                 caseDataId={id}
                 GetLogsById={GetLogsById}
               />
-              <TextButton
-                buttonText="Get Settlement Range"
-                height="2.5rem"
-                width="14rem"
-                onClick={() => {
-                  navigate(`/settlementRange/${id}`);
-                }}
-                backgroundColor={Colors.SKY_BLUE}
-                hoverColor={Colors.SKY_BLUE}
-              />
-              <MuiModels
-                show="WeeklyBudget"
-                buttonName="WeeklyBudget"
-                iconColor={Colors.BLACK}
-                maxHeight="78vh"
-                caseData={caseData}
-                // caseDataId={id}
-              />
+              {caseData?.settlementRange ? (
+                <TextButton
+                  buttonText="Get Settlement Range"
+                  height="2.5rem"
+                  width="14rem"
+                  onClick={() => {
+                    navigate(`/settlementRange/${id}`);
+                  }}
+                  backgroundColor={Colors.SKY_BLUE}
+                  hoverColor={Colors.SKY_BLUE}
+                />
+              ) : (
+                <MuiModels
+                  show="WeeklyBudget"
+                  buttonName="Get Settlement Range"
+                  iconColor={Colors.BLACK}
+                  maxHeight="78vh"
+                  caseData={caseData}
+                />
+              )}
             </div>
           </Grid>
 
