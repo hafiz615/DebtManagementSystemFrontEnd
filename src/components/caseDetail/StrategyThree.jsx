@@ -10,6 +10,7 @@ import {
 import { handleNumberInput } from "../../common";
 import { Colors } from "../../config/default";
 import AmountTextField from "../amountTextField";
+import PaymentsTextFields from "../caseTextField";
 
 function StrategyThree({
   selectedOptionThree,
@@ -25,6 +26,7 @@ function StrategyThree({
       color: Colors.SKY_BLUE,
     },
   };
+
   const handleOptionChange = (event) => {
     setSelectedOptionThree(event.target.value);
   };
@@ -32,6 +34,12 @@ function StrategyThree({
   const handleCustomValueChange = (event) => {
     setCustomValueThree(event.target.value);
   };
+
+  const isMaxProfitAvailable =
+    data?.debtor?.strategy3MaxProfit || popUpDebtorData?.strategy3MaxProfit;
+  const isProfitMarginAvailable =
+    data?.debtor?.profitMargin || popUpDebtorData?.profitMargin;
+
   return (
     <FormControl component="fieldset">
       <RadioGroup value={selectedOptionThree} onChange={handleOptionChange}>
@@ -39,23 +47,26 @@ function StrategyThree({
           value="strategy3Profit"
           control={<Radio sx={radioStyle} />}
           label={`67% of maximum profit margin: ${
-            data?.debtor?.strategy3MaxProfit
-              ? `${data.debtor.strategy3MaxProfit}%`
-              : popUpDebtorData?.strategy3MaxProfit
-              ? `${popUpDebtorData.strategy3MaxProfit}%`
-              : "Max Profit was not found in Bank Statement"
+            isMaxProfitAvailable
+              ? `${
+                  data?.debtor?.strategy3MaxProfit ||
+                  popUpDebtorData?.strategy3MaxProfit
+                }%`
+              : "Max Profit Margin yet to be Calculated"
           }`}
+          disabled={!isMaxProfitAvailable} // Disable if max profit is not available
         />
         <FormControlLabel
           value="strategy3ProfitMargin"
           control={<Radio sx={radioStyle} />}
           label={`Stated profit margin of debtor: ${
-            data?.debtor?.profitMargin
-              ? `$${data.debtor.profitMargin}`
-              : popUpDebtorData?.profitMargin
-              ? `$${popUpDebtorData.profitMargin}`
-              : "Max Profit was not found in Bank Statement"
+            isProfitMarginAvailable
+              ? `${
+                  data?.debtor?.profitMargin || popUpDebtorData?.profitMargin
+                }%`
+              : "Max Profit Margin was not entered when case was created"
           }`}
+          disabled={!isProfitMarginAvailable} // Disable if profit margin is not available
         />
         <FormControlLabel
           value="strategy3Custom"
@@ -65,15 +76,13 @@ function StrategyThree({
       </RadioGroup>
 
       {selectedOptionThree === "strategy3Custom" && (
-        <Grid container item xs={12}>
-          <AmountTextField
-            width="50%"
-            marginLeft=".2rem"
+        <Grid container item>
+          <PaymentsTextFields
+            type="number"
+            width="13.5rem"
+            placeHolderValue="%"
             value={customValueThree}
-            onChange={(e) => {
-              setCustomValueThree(e.target.value);
-            }}
-            onKeyDown={handleNumberInput}
+            onChangeFunction={(e) => setCustomValueThree(e.target.value)}
           />
         </Grid>
       )}

@@ -841,6 +841,12 @@ export default function SettlementRange() {
       label: "Repayment Amount",
       value: selectedCreditorDetails?.contractDetails?.repayment_amount,
     },
+    {
+      label: "Percentage Receivables",
+      value: selectedCreditorDetails?.percentageReceivable
+        ? `${selectedCreditorDetails.percentageReceivable}%`
+        : "0%",
+    },
   ];
 
   const formatSummaryCurrency = (value) => {
@@ -1222,12 +1228,7 @@ export default function SettlementRange() {
             />
           </Grid>
 
-          <Grid
-            container
-            item
-            xs={12}
-            sx={{ gap: "2%", mt: "1rem", justifyContent: "space-between" }}
-          >
+          <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
             <GridItem
               key="Weekly Profit"
               title="Weekly Profit"
@@ -1266,6 +1267,21 @@ export default function SettlementRange() {
               }
               rawValue={apiData?.profitability}
             />
+
+            {strategyTab === 2 && (
+              <GridItem
+                key="percentageReceivableCommission"
+                title="Receivable Commission"
+                tooltip="Receivable Commission"
+                value={
+                  allData?.percentageReceivableCommission !== undefined
+                    ? `${allData.percentageReceivableCommission}%`
+                    : "--"
+                }
+                rawValue={scores?.Scores?.["Default Risk Score"]}
+              />
+            )}
+
             {scores?.Scores && (
               <>
                 <GridItem
@@ -1527,6 +1543,12 @@ export default function SettlementRange() {
                 <>
                   <Grid container item xs={12} sx={{ gap: "1rem", mt: "1rem" }}>
                     {creditorDetails?.map((detail, index) => {
+                      if (
+                        detail?.label === "Percentage Receivables" &&
+                        strategyTab !== 2
+                      ) {
+                        return null;
+                      }
                       const formattedValue = detail?.value
                         ? detail?.formatCurrency &&
                           !detail?.value?.includes("$")
@@ -1535,16 +1557,17 @@ export default function SettlementRange() {
                         : "--";
 
                       const tooltipContent = {
-                        "Funded Amount":
+                        "Loan Amount":
                           "The total amount borrowed from the creditor.",
-                        "Payback Amount": "The Amount given to the creditor.",
                         "Current Balance":
                           "The remaining amount you owe to the creditor.",
                         "Weekly Budget":
                           "Your profit before making any debt payments.",
                         "Purchased Percentage":
                           "The percentage of the loan amount that has been repaid.",
-                        "Repayment Amount":
+                        "Original Payment":
+                          "The initial amount borrowed before any repayments.",
+                        "Percentage Receivables":
                           "The initial amount borrowed before any repayments.",
                       };
 
@@ -1558,7 +1581,12 @@ export default function SettlementRange() {
                           container
                           sx={commonStyles}
                         >
-                          <Box sx={{ display: "flex", alignItems: "center" }}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
                             <Typography sx={commonTextStyles}>
                               {detail?.label}
                             </Typography>
