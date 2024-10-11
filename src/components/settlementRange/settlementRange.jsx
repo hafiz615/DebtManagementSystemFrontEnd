@@ -808,9 +808,14 @@ export default function SettlementRange() {
   const creditorDetails = [
     {
       label: "Funded Amount",
-      value: selectedCreditorDetails?.contractDetails?.loan_amount,
+      value: selectedCreditorDetails?.contractDetails?.funded_amount,
       formatCurrency: true,
     },
+    // {
+    //   label: "Loan Amount",
+    //   value: selectedCreditorDetails?.contractDetails?.loan_amount,
+    //   formatCurrency: true,
+    // },
     {
       label: "Payback Amount",
       value: selectedCreditorDetails?.remainingAmountPaid || "0",
@@ -855,7 +860,7 @@ export default function SettlementRange() {
 
   const creditorNamesDetails = creditorNames?.map((creditor) => {
     const fundedAmount = creditor?.contractDetails?.funded_amount || "--";
-    const paybackAmount = creditor?.remainingAmountPaid || "--";
+    const paybackAmount = creditor?.remainingAmountPaid || "0";
     const payableAmount =
       creditor?.remaining !== undefined &&
       creditor?.remainingAmountPaid !== undefined
