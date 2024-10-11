@@ -49,7 +49,11 @@ import {
   GetPaymentIntervals,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
-import { formatDateString, generatePdfFromApiData } from "../../common";
+import {
+  formatDateString,
+  formatPurchasedPercentage,
+  generatePdfFromApiData,
+} from "../../common";
 import MuiModels from "../models";
 import CheckboxAutocomplete from "../checkboxAutocomplete";
 import { useParams } from "react-router-dom";
@@ -206,6 +210,9 @@ export default function SettlementRange() {
   const [paymentData, setPaymentData] = useState();
   const [paymentChanged, setPaymentChanged] = useState(false);
   const [allData, setAllData] = useState();
+
+  const debtorCompanyName = allData?.debtor?.businessInformation?.companyName;
+  const popUpDebtorData = allData?.debtor;
   const [strategyTab, setStrategyTab] = useState(0);
   const [optionStats, setOptionStats] = useState();
   const [justificationLoading, setJustificationLoading] = useState(false);
@@ -831,10 +838,12 @@ export default function SettlementRange() {
     },
     {
       label: "Purchased Percentage",
-      value: selectedCreditorDetails?.contractDetails?.purchased_percentage,
+      value: formatPurchasedPercentage(
+        selectedCreditorDetails?.contractDetails?.purchased_percentage
+      ),
     },
     {
-      label: "Original Payment",
+      label: "Repayment Amount",
       value: selectedCreditorDetails?.contractDetails?.repayment_amount,
     },
   ];
@@ -855,18 +864,14 @@ export default function SettlementRange() {
   };
 
   const creditorNamesDetails = creditorNames?.map((creditor) => {
-    const fundedAmount = formatSummaryCurrency(
-      creditor?.contractDetails?.funded_amount || "--"
+    const fundedAmount = creditor?.contractDetails?.funded_amount || "--";
+    const paybackAmount = creditor?.remainingAmountPaid || "--";
+    const payableAmount =
+      creditor?.remaining - creditor?.remainingAmountPaid || "--";
+    const breakEvenPoint = creditor?.breakEven || "--";
+    const purchased_percentage = formatSummaryCurrency(
+      creditor?.contractDetails?.purchased_percentage || "--"
     );
-    const paybackAmount = formatSummaryCurrency(
-      creditor?.remainingAmountPaid || "--"
-    );
-    const payableAmount = formatSummaryCurrency(
-      creditor?.remaining - creditor?.remainingAmountPaid || "--"
-    );
-    const breakEvenPoint = formatSummaryCurrency(creditor?.breakEven || "--");
-    const purchased_percentage =
-      creditor?.contractDetails?.purchased_percentage || "--";
     const repayment_amount =
       creditor?.contractDetails?.repayment_amount || "--";
 
@@ -992,9 +997,14 @@ export default function SettlementRange() {
       >
         <Grid item xs={12} lg={6}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <IconButton onClick={() => handleUpdate(true)}>
-              <RefreshIcon sx={{ color: Colors.SKY_BLUE, fontSize: "2rem" }} />
-            </IconButton>
+            <MuiModels
+              buttonIcon="settlementRangeReload"
+              show="WeeklyBudget"
+              iconColor={Colors.BLACK}
+              maxHeight="78vh"
+              caseId={caseId}
+              popUpDebtorData={popUpDebtorData}
+            />
             <Typography
               sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
             >
@@ -1045,12 +1055,12 @@ export default function SettlementRange() {
             <Typography
               sx={{
                 fontWeight: "600",
-                fontSize: "2rem",
+                fontSize: "1.5rem",
                 fontFamily: "Nunito",
                 color: Colors.BLACK,
               }}
             >
-              Settlement Range
+              {`${debtorCompanyName} - Settlement Range`}
             </Typography>
 
             <div style={{ display: "flex", gap: "10px" }}>
@@ -1168,9 +1178,9 @@ export default function SettlementRange() {
                     >
                       {allData?.debtor?.weeklyBudgetUpdated &&
                       key === "weeklyBudget"
-                        ? `$${debtor[key]} (Calculated)`
+                        ? `$${parseFloat(debtor[key]).toFixed(2)}`
                         : key === "weeklyBudget"
-                        ? `$${debtor[key]}`
+                        ? `$${parseFloat(debtor[key]).toFixed(2)}`
                         : `${debtor[key]?.toString().slice(0, 15)}${
                             debtor[key]?.toString().length > 15 ? "..." : ""
                           }` || "--"}
@@ -1179,41 +1189,6 @@ export default function SettlementRange() {
                 </Box>
               </Grid>
             ))}
-            <Grid item xs={12} lg={6}>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: { xs: "space-between", md: "unset" },
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: "Nunito",
-                    fontWeight: "600",
-                    color: Colors.DARK_GRAY,
-                    width: "10rem",
-                    marginTop: "0.5rem",
-                  }}
-                >
-                  Company Name
-                </div>
-
-                <Tooltip title={debtorInfo?.companyName} placement="top-end">
-                  <span
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "300",
-                      fontSize: "0.9rem",
-                      color: Colors.DIM_LIGHT_GRAY,
-                      marginTop: "0.5rem",
-                    }}
-                  >
-                    {debtorInfo?.companyName || "--"}
-                  </span>
-                </Tooltip>
-              </Box>
-            </Grid>
           </Grid>
           <Grid xs={12}>
             <Typography

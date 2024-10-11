@@ -426,6 +426,10 @@ export const truncateText = (text, length) => {
   }
   return text;
 };
+export const formatPurchasedPercentage = (value) => {
+  const match = value?.toString().match(/[\d.]+%/);
+  return match ? match[0] : "0%";
+};
 
 const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
   const {
@@ -539,10 +543,6 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     doc.setFontSize(14);
     doc.text("Creditors Contract Information", 14, currentY);
     currentY += 10;
-    const formatPurchasedPercentage = (value) => {
-      const match = value?.toString().match(/[\d.]+%/);
-      return match ? match[0] : "0%";
-    };
 
     const creditorDetails = creditors?.map((creditor) => {
       return [
