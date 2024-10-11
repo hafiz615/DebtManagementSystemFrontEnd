@@ -115,8 +115,8 @@ export default function PaymentPopup({
       intervals: newDataList,
       feePayment: feePayment,
       isExempt: isExempt,
-      totalCommission: feePayment === "toPay" ? totalCommission : 0,
-      commission: feePayment === "toPay" ? commission : 0,
+      totalCommission: feePayment === "toPay" ? parseInt(totalCommission) : 0,
+      commission: feePayment === "toPay" ? parseInt(commission) : 0,
     };
     const updateCaseId = caseId || data?._id;
     const resCaseUpdate = await UpdateCase(params, updateCaseId);
