@@ -255,7 +255,7 @@ export default function SettlementRange() {
     });
   };
 
-  const tabs = ["Strategy 1", "Strategy 2", "Strategy 3"];
+  const tabs = ["Max Profit", "Lump Sum", "Percentage Recievable"];
   const recommendations = [
     "recommendation 1",
     "recommendation 2",
@@ -848,27 +848,6 @@ export default function SettlementRange() {
     },
   ];
 
-  const headerData = [
-    { key: "creditorName", heading: "Creditors", width: "15%" },
-    // { key: "fundedAmount", heading: "Funded Amount", width: "15%" },
-    // { key: "paybackAmount", heading: "Payback Amount", width: "15%" },
-    { key: "payableAmount", heading: "Current Balance", width: "15%" },
-    // { key: "breakEvenPoint", heading: "Break Even Point", width: "15%" },
-    { key: "loanAmount", heading: "Loan Amount", width: "15%" },
-
-    { key: "weeklyBudget", heading: "Weekly Budget", width: "15%" },
-    {
-      key: "purchased_percentage",
-      heading: "Purchased Percentage",
-      width: "15%",
-    },
-    {
-      key: "repayment_amount",
-      heading: "Repayment Amount",
-      width: "15%",
-    },
-  ];
-
   const formatSummaryCurrency = (value) => {
     if (value === "--" || typeof value !== "string") return value;
     return !value.startsWith("$") ? `$${value}` : value;
@@ -885,48 +864,58 @@ export default function SettlementRange() {
   };
 
   const creditorNamesDetails = creditorNames?.map((creditor) => {
-    const weeklyBudget =
-      apiData?.weekly_budget?.[
-        creditor?.accountTitleMapping[0]?.accountTitle
-      ] != null
-        ? `$${new Intl.NumberFormat().format(
-            apiData?.weekly_budget?.[
-              creditor?.accountTitleMapping[0]?.accountTitle
-            ]
-          )}`
-        : "--";
-    const loanAmount = formatSummaryCurrency(
-      creditor?.contractDetails?.loan_amount || "--"
+    const fundedAmount = creditor?.contractDetails?.funded_amount || "--";
+    const paybackAmount = creditor?.remainingAmountPaid || "--";
+    const payableAmount =
+      creditor?.remaining - creditor?.remainingAmountPaid || "--";
+    const breakEvenPoint = creditor?.breakEven || "--";
+    const purchased_percentage = formatSummaryCurrency(
+      creditor?.contractDetails?.purchased_percentage || "--"
     );
-    const payableAmount = formatSummaryCurrency(
-      creditor?.contractDetails?.payable_amount || "--"
-    );
-    const purchased_percentage =
-      creditor?.contractDetails?.purchased_percentage || "--";
     const repayment_amount =
       creditor?.contractDetails?.repayment_amount || "--";
 
     return {
       creditorName: creditor?.accountTitleMapping[0]?.accountTitle,
-      loanAmount,
+      fundedAmount,
+      paybackAmount,
       payableAmount,
-      weeklyBudget,
+      breakEvenPoint,
       purchased_percentage,
       repayment_amount,
     };
   });
 
+  const headerData = [
+    { key: "creditorName", heading: "Creditors", width: "11%" },
+    { key: "fundedAmount", heading: "Funded Amount", width: "11%" },
+    { key: "paybackAmount", heading: "Payback Amount", width: "11%" },
+    { key: "payableAmount", heading: "Current Balance", width: "11%" },
+    { key: "breakEvenPoint", heading: "Break Even Point", width: "11%" },
+    {
+      key: "purchased_percentage",
+      heading: "Purchased Percentage",
+      width: "11%",
+    },
+    {
+      key: "repayment_amount",
+      heading: "Repayment Amount",
+      width: "11%",
+    },
+  ];
+
   const summaryDetails = {
     creditorName: "Summary",
-    loanAmount: formatSummary(summaryAmount?.loanAmount),
+    fundedAmount: formatSummary(summaryAmount?.fundedAmount) || "--",
+    paybackAmount: "--",
     payableAmount: formatSummary(summaryAmount?.payableAmount),
-    weeklyBudget: formatSummary(apiData?.weekly_budget?.Summary),
+    breakEvenPoint: "--",
     purchased_percentage: "--",
     repayment_amount: "--",
   };
 
   const updatedCreditorNamesDetails = [...creditorNamesDetails, summaryDetails];
-  const filteredData = updatedCreditorNamesDetails.filter(
+  const filteredData = updatedCreditorNamesDetails?.filter(
     (item) => item.creditorName !== "Summary"
   );
 
@@ -1422,7 +1411,7 @@ export default function SettlementRange() {
                   fontWeight: "600",
                   height: "3.5rem",
                 }}
-                label="Option 1"
+                label="Negotiation manager Weekly budget"
               />
               <AntTab
                 sx={{
@@ -1431,12 +1420,12 @@ export default function SettlementRange() {
                   fontWeight: "600",
                   height: "3.5rem",
                 }}
-                label="Option 2"
+                label="Weekly budget as per Bank statement"
               />
             </AntTabs>
           </Grid>
 
-          {optionValue === 0 && (
+          {optionValue === 1 && (
             <Grid
               container
               item
@@ -1629,7 +1618,7 @@ export default function SettlementRange() {
               </Grid>
             )}
           </Grid>
-          {optionValue === 0 ? (
+          {optionValue === 1 ? (
             <Grid
               container
               item
