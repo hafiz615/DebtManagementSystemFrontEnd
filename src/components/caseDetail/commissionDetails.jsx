@@ -87,7 +87,8 @@ function CommissionDetails({ handleClose, data, caseId, popUpDebtorData }) {
       );
       if (settlementRangeData?.status === 200) {
         showToast(settlementRangeData?.data?.message, "success");
-        navigate(`/settlementRange/${data?._id}`);
+        const settlementId = popUpDebtorData ? caseId : data?._id;
+        navigate(`/settlementRange/${settlementId}`);
         handleClose();
       } else {
         const errorMessage = settlementRangeData?.response?.data?.message;
