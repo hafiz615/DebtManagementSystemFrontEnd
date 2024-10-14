@@ -362,7 +362,8 @@ export default function SettlementCards({
             style={{
               display: "flex",
               justifyContent: "space-between",
-              padding: "0px 7%",
+              paddingLeft: "7.5%",
+              paddingRight: "7%",
               width: "100%",
             }}
           >
