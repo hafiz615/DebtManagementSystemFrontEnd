@@ -184,6 +184,7 @@ export default function SettlementRange() {
   const { showToast } = useToast();
   const [value, setValue] = useState(0);
   const [tabValue, setTabValue] = useState(0);
+
   const [optionValue, setOptuonValue] = useState(0);
   const [errorMessage, setErrorMessage] = useState(null);
   const [inputValue, setInputValue] = useState("");
@@ -366,6 +367,7 @@ export default function SettlementRange() {
       <>
         {!isEmpty(fullProfit) ? (
           <SettlementCards
+            tabValue={tabValue}
             strategy="strategy3"
             setPaymentChanged={setPaymentChanged}
             remainingAmount={
