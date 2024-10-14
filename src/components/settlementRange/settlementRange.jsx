@@ -854,7 +854,7 @@ export default function SettlementRange() {
   ];
 
   const formatSummaryPercentage = (value) => {
-    if (value === "--" || typeof value !== "string" || value.includes("%"))
+    if (value === "--" || typeof value !== "string" || value?.includes("%"))
       return value;
     return value;
   };
@@ -862,7 +862,7 @@ export default function SettlementRange() {
     if (typeof value === "number") {
       return `$${value.toFixed(2)}`;
     }
-    if (typeof value === "string" && !value.includes("$")) {
+    if (typeof value === "string" && !value?.includes("$")) {
       return `$${parseFloat(value).toFixed(2)}`;
     }
     return value || "--";
@@ -1558,7 +1558,7 @@ export default function SettlementRange() {
                       }
                       const formattedValue = detail?.value
                         ? detail?.formatCurrency &&
-                          !detail?.value?.includes("$")
+                          !String(detail?.value)?.includes("$") // Convert to string before calling includes
                           ? `$${detail?.value}`
                           : detail?.value
                         : "--";
