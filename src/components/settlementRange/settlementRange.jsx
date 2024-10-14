@@ -1558,7 +1558,7 @@ export default function SettlementRange() {
                       }
                       const formattedValue = detail?.value
                         ? detail?.formatCurrency &&
-                          !String(detail?.value)?.includes("$") // Convert to string before calling includes
+                          !String(detail?.value)?.includes("$")
                           ? `$${detail?.value}`
                           : detail?.value
                         : "--";
