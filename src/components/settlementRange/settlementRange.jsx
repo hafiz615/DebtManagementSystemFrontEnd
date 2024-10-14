@@ -1008,6 +1008,7 @@ export default function SettlementRange() {
               maxHeight="78vh"
               caseId={caseId}
               popUpDebtorData={popUpDebtorData}
+              getAllRanges={getAllRanges}
             />
             <Typography
               sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}

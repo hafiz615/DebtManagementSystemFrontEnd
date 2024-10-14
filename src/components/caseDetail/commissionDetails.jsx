@@ -9,7 +9,13 @@ import { GetSettlementRangeWithScores } from "../../services/services";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../toast/toastContext";
 
-function CommissionDetails({ handleClose, data, caseId, popUpDebtorData }) {
+function CommissionDetails({
+  handleClose,
+  data,
+  caseId,
+  popUpDebtorData,
+  getAllRanges,
+}) {
   const [selectedOption, setSelectedOption] = useState("");
   const [customValue, setCustomValue] = useState(
     data?.debtor?.strategy1BudgetCustom ||
@@ -89,6 +95,7 @@ function CommissionDetails({ handleClose, data, caseId, popUpDebtorData }) {
         showToast(settlementRangeData?.data?.message, "success");
         const settlementId = popUpDebtorData ? caseId : data?._id;
         navigate(`/settlementRange/${settlementId}`);
+        getAllRanges && getAllRanges([], false);
         handleClose();
       } else {
         const errorMessage = settlementRangeData?.response?.data?.message;
