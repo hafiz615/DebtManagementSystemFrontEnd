@@ -849,11 +849,11 @@ export default function SettlementRange() {
     },
   ];
 
-  const formatSummaryCurrency = (value) => {
-    if (value === "--" || typeof value !== "string") return value;
-    return !value.startsWith("$") ? `$${value}` : value;
+  const formatSummaryPercentage = (value) => {
+    if (value === "--" || typeof value !== "string" || value.includes("%"))
+      return value;
+    return value;
   };
-
   const formatSummary = (value) => {
     if (typeof value === "number") {
       return `$${value.toFixed(2)}`;
@@ -873,7 +873,7 @@ export default function SettlementRange() {
         ? `$${(creditor?.remaining - creditor?.remainingAmountPaid).toFixed(2)}`
         : "--";
     const breakEvenPoint = creditor?.breakEven || "--";
-    const purchased_percentage = formatSummaryCurrency(
+    const purchased_percentage = formatSummaryPercentage(
       creditor?.contractDetails?.purchased_percentage || "--"
     );
     const repayment_amount =
