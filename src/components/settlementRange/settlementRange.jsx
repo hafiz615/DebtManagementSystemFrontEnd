@@ -409,6 +409,9 @@ export default function SettlementRange() {
               allData?.creditors?.[parseInt(tabValue)]
                 ?.percentageReceivableAmount
             }
+            percentageReceivable={
+              allData?.creditors?.[parseInt(tabValue)]?.percentageReceivable
+            }
           />
         ) : (
           <Grid
@@ -873,7 +876,9 @@ export default function SettlementRange() {
       creditor?.remainingAmountPaid !== undefined
         ? `$${(creditor?.remaining - creditor?.remainingAmountPaid).toFixed(2)}`
         : "--";
-    const breakEvenPoint = creditor?.breakEven || "--";
+    const breakEvenPoint = creditor?.breakEven
+      ? `$${parseFloat(creditor.breakEven).toFixed(2)}`
+      : "--";
     const purchased_percentage = formatSummaryPercentage(
       creditor?.contractDetails?.purchased_percentage || "--"
     );
