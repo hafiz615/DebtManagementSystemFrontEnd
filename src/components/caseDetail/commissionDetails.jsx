@@ -75,7 +75,7 @@ function CommissionDetails({
         : 0,
     strategy3Custom:
       selectedOptionThree === "strategy3Custom"
-        ? Number(customValueThree)
+        ? Number(customValueThree) / 100
         : 0 || debtorDetails?.strategy3BudgetCustom,
     strategy3Choosen: selectedOptionThree, // This value reflects the selected option for StrategyThree
   };
