@@ -525,8 +525,11 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     currentY += 10;
 
     const scoresSummary = [
-      ["Default Risk Score", getScores?.Scores?.["Default Risk Score"] || 0],
-      ["UCC Score", getScores?.Scores?.["UCC Score"] || 0],
+      [
+        "Default Risk Score",
+        formatPercentage(getScores?.Scores?.["Default Risk Score"]) || 0,
+      ],
+      ["UCC Score", formatPercentage(getScores?.Scores?.["UCC Score"]) || 0],
     ];
 
     doc.autoTable({
