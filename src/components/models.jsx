@@ -32,6 +32,7 @@ import {
   Edit,
   Sms,
   Download,
+  Refresh,
 } from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
@@ -52,6 +53,7 @@ import SendEmailJustification from "./sendEmailJustifications";
 import ExtractFieldPopup from "./caseDetail/extractFieldPopup";
 import TextEditor from "./textEditor";
 import PaynoteForm from "./caseDetail/paynoteForm";
+import CommissionDetails from "./caseDetail/commissionDetails";
 
 export default function MuiModels({
   buttonName,
@@ -124,6 +126,9 @@ export default function MuiModels({
   to,
   content,
   emailSubject,
+  buttonIcon,
+  popUpDebtorData,
+  getAllRanges,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -202,6 +207,21 @@ export default function MuiModels({
               color: Colors.DARK_GRAY,
               cursor: "pointer",
               fontSize: "16px",
+            }}
+          />
+        </IconButton>
+      ) : buttonIcon === "settlementRangeReload" ? (
+        <IconButton
+          sx={{ display: "flex", alignItems: "center" }}
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <Refresh
+            sx={{
+              color: Colors.SKY_BLUE,
+              cursor: "pointer",
+              fontSize: "2rem",
             }}
           />
         </IconButton>
@@ -408,6 +428,15 @@ export default function MuiModels({
             }}
           />
         </IconButton>
+      ) : buttonName === "Get Settlement Range" ? (
+        <TextButton
+          buttonText="Get Settlement Range"
+          height="2.5rem"
+          width="12rem"
+          onClick={handleOpen}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
       ) : buttonName === "setPaymentPlan" ? (
         <TextButton
           buttonText="Set Payment Plan"
@@ -834,6 +863,14 @@ export default function MuiModels({
               handleClose={handleClose}
               data={data}
               caseId={caseId}
+            />
+          ) : show === "WeeklyBudget" ? (
+            <CommissionDetails
+              handleClose={handleClose}
+              data={caseData}
+              caseId={caseId}
+              popUpDebtorData={popUpDebtorData}
+              getAllRanges={getAllRanges}
             />
           ) : show === "downloadPDF" ? (
             <DownloadPDF

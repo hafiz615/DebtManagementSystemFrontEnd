@@ -843,13 +843,18 @@ export const GetRoleByName = async (name) => {
   }
 };
 
-export const GetSettlementRangeWithScores = async (payload, id, status) => {
+export const GetSettlementRangeWithScores = async (
+  payload,
+  id,
+  status,
+  all = "true"
+) => {
   try {
+    const allParam = all !== "true" ? all : isEmpty(payload);
+
     return await axios.post(
       BASE_URL +
-        `/v1/case/getScoresSettlementRange/${id}?all=${isEmpty(
-          payload
-        )}&hardReload=${status}`,
+        `/v1/case/getScoresSettlementRange/${id}?all=${allParam}&hardReload=${status}`,
       payload,
       setHeaders()
     );

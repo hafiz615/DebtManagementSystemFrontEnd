@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import InfoIcon from "@mui/icons-material/Info";
 
 import {
   Grid,
@@ -48,7 +49,11 @@ import {
   GetPaymentIntervals,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
-import { formatDateString, generatePdfFromApiData } from "../../common";
+import {
+  formatDateString,
+  formatPurchasedPercentage,
+  generatePdfFromApiData,
+} from "../../common";
 import MuiModels from "../models";
 import CheckboxAutocomplete from "../checkboxAutocomplete";
 import { useParams } from "react-router-dom";
@@ -138,17 +143,25 @@ const GridItem = ({ title, value, rawValue, tooltip }) => (
     container
     sx={{ ...commonStyles, mb: "1rem" }}
   >
-    <Tooltip title={tooltip} placement="top-start">
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+      }}
+    >
       <Typography sx={commonTextStyles}>{title}</Typography>
-      <Typography
-        sx={{
-          ...commonTextStyles,
-          color: isNegative(rawValue) ? Colors.ORANGE_COLOR : Colors.SKY_BLUE,
-        }}
-      >
-        {value}
-      </Typography>
-    </Tooltip>
+      <Tooltip title={tooltip} placement="top">
+        <InfoIcon sx={{ fontSize: "17px", color: Colors.SKY_BLUE }} />
+      </Tooltip>
+    </Box>
+    <Typography
+      sx={{
+        ...commonTextStyles,
+        color: isNegative(rawValue) ? Colors.ORANGE_COLOR : Colors.SKY_BLUE,
+      }}
+    >
+      {value}
+    </Typography>
   </Grid>
 );
 
@@ -197,6 +210,9 @@ export default function SettlementRange() {
   const [paymentData, setPaymentData] = useState();
   const [paymentChanged, setPaymentChanged] = useState(false);
   const [allData, setAllData] = useState();
+
+  const debtorCompanyName = allData?.debtor?.businessInformation?.companyName;
+  const popUpDebtorData = allData?.debtor;
   const [strategyTab, setStrategyTab] = useState(0);
   const [optionStats, setOptionStats] = useState();
   const [justificationLoading, setJustificationLoading] = useState(false);
@@ -239,12 +255,8 @@ export default function SettlementRange() {
     });
   };
 
-  const tabs = ["Strategy 1", "Strategy 2", "Strategy 3"];
-  const recommendations = [
-    "recommendation 1",
-    "recommendation 2",
-    "recommendation 3",
-  ];
+  const tabs = ["Max Profit", "Lump Sum", "Percentage Recievable"];
+  const recommendations = ["recommendation 1"];
   const strat3Recommendations = ["recommendation 1"];
   const strat2Recommendations = ["lump Sum"];
 
@@ -268,6 +280,7 @@ export default function SettlementRange() {
     0: recommendations?.map((item, index) => (
       <>
         <SettlementCards
+          strategy="strategy1"
           setPaymentChanged={setPaymentChanged}
           remainingAmount={
             allCreditorNames[tabValue] === "Summary"
@@ -353,6 +366,7 @@ export default function SettlementRange() {
       <>
         {!isEmpty(fullProfit) ? (
           <SettlementCards
+            strategy="strategy3"
             setPaymentChanged={setPaymentChanged}
             remainingAmount={
               allCreditorNames[tabValue] === "Summary"
@@ -362,40 +376,36 @@ export default function SettlementRange() {
             caseId={caseId}
             isFullPayment={true}
             title={item}
-            weeksTillPaidTitle={
-              item === "recommendation 1"
-                ? "Weeks remaining based on recommendation 1"
-                : ""
-            }
+            weeksTillPaidTitle={getWeeksRemainingMessage(item)}
             settlementRange={
-              fullProfit?.settlement_range?.[
+              apiData?.settlement_range?.[
                 allCreditorNames[parseInt(tabValue)]
               ] || null
             }
             commissionRange={
-              fullProfit?.commission_range?.[
+              apiData?.commission_range?.[
                 allCreditorNames[parseInt(tabValue)]
               ] || null
             }
-            newDefaultRiskScore={
-              fullProfit?.new_default_risk_score || {
-                "recommendation 1": ["-", "-"],
-              }
-            }
+            newDefaultRiskScore={apiData?.new_default_risk_score || null}
             percentageSettlementOverWeeklyBudget={
-              fullProfit?.percentage_settlement_over_weekly_budget?.[
+              apiData?.percentage_settlement_over_weekly_budget?.[
                 allCreditorNames[parseInt(tabValue)]
               ] || null
             }
             percentageSettlementOverWeeklyTrueRevenue={
-              fullProfit?.percentage_settlement_over_weekly_true_revenue?.[
+              apiData?.percentage_settlement_over_weekly_true_revenue?.[
                 allCreditorNames[parseInt(tabValue)]
               ] || null
             }
             weeksTillPaid={
-              fullProfit?.weeks_till_paid?.[
+              apiData?.weeks_till_paid?.[
                 allCreditorNames[parseInt(tabValue)]
               ] || null
+            }
+            percentageReceivableAmount={
+              allData?.creditors?.[parseInt(tabValue)]
+                ?.percentageReceivableAmount
             }
           />
         ) : (
@@ -417,6 +427,7 @@ export default function SettlementRange() {
     4: recommendations?.map((item, index) => (
       <>
         <SettlementCards
+          strategy="strategy1"
           setPaymentChanged={setPaymentChanged}
           remainingAmount={
             allCreditorNames[tabValue] === "Summary"
@@ -800,8 +811,19 @@ export default function SettlementRange() {
 
   const creditorDetails = [
     {
-      label: "Loan Amount",
-      value: selectedCreditorDetails?.contractDetails?.loan_amount,
+      label: "Funded Amount",
+      value:
+        selectedCreditorDetails?.contractDetails?.funded_amount ||
+        `(${selectedCreditorDetails?.contractDetails?.loan_amount || "--"})`,
+      formatCurrency: true,
+      tooltip: selectedCreditorDetails?.contractDetails?.funded_amount
+        ? "Funded Amount"
+        : "Funded amount was not present, so we are showing the loan amount.",
+    },
+
+    {
+      label: "Payback Amount",
+      value: selectedCreditorDetails?.remainingAmountPaid || "0",
       formatCurrency: true,
     },
     {
@@ -810,48 +832,27 @@ export default function SettlementRange() {
       formatCurrency: true,
     },
     {
-      label: "Weekly Budget",
-      value: (() => {
-        const weeklyBudget =
-          apiData?.weekly_budget?.[allCreditorNames[parseInt(tabValue)]];
-        return weeklyBudget != null
-          ? `$${new Intl.NumberFormat().format(weeklyBudget)}`
-          : "--";
-      })(),
-      formatCurrency: false,
+      label: "Break Even",
+      value: selectedCreditorDetails?.breakEven,
+      formatCurrency: true,
     },
     {
       label: "Purchased Percentage",
-      value: selectedCreditorDetails?.contractDetails?.purchased_percentage,
+      value: formatPurchasedPercentage(
+        selectedCreditorDetails?.contractDetails?.purchased_percentage
+      ),
     },
     {
-      label: "Original Payment",
+      label: "Repayment Amount",
       value: selectedCreditorDetails?.contractDetails?.repayment_amount,
     },
   ];
 
-  const headerData = [
-    { key: "creditorName", heading: "Creditors", width: "15%" },
-    { key: "loanAmount", heading: "Loan Amount", width: "15%" },
-    { key: "payableAmount", heading: "Current Balance", width: "15%" },
-    { key: "weeklyBudget", heading: "Weekly Budget", width: "15%" },
-    {
-      key: "purchased_percentage",
-      heading: "Purchased Percentage",
-      width: "15%",
-    },
-    {
-      key: "repayment_amount",
-      heading: "Original Payment",
-      width: "15%",
-    },
-  ];
-
-  const formatSummaryCurrency = (value) => {
-    if (value === "--" || typeof value !== "string") return value;
-    return !value.startsWith("$") ? `$${value}` : value;
+  const formatSummaryPercentage = (value) => {
+    if (value === "--" || typeof value !== "string" || value.includes("%"))
+      return value;
+    return value;
   };
-
   const formatSummary = (value) => {
     if (typeof value === "number") {
       return `$${value.toFixed(2)}`;
@@ -863,48 +864,61 @@ export default function SettlementRange() {
   };
 
   const creditorNamesDetails = creditorNames?.map((creditor) => {
-    const weeklyBudget =
-      apiData?.weekly_budget?.[
-        creditor?.accountTitleMapping[0]?.accountTitle
-      ] != null
-        ? `$${new Intl.NumberFormat().format(
-            apiData?.weekly_budget?.[
-              creditor?.accountTitleMapping[0]?.accountTitle
-            ]
-          )}`
+    const fundedAmount = creditor?.contractDetails?.funded_amount || "--";
+    const paybackAmount = creditor?.remainingAmountPaid || "0";
+    const payableAmount =
+      creditor?.remaining !== undefined &&
+      creditor?.remainingAmountPaid !== undefined
+        ? `$${(creditor?.remaining - creditor?.remainingAmountPaid).toFixed(2)}`
         : "--";
-    const loanAmount = formatSummaryCurrency(
-      creditor?.contractDetails?.loan_amount || "--"
+    const breakEvenPoint = creditor?.breakEven || "--";
+    const purchased_percentage = formatSummaryPercentage(
+      creditor?.contractDetails?.purchased_percentage || "--"
     );
-    const payableAmount = formatSummaryCurrency(
-      creditor?.contractDetails?.payable_amount || "--"
-    );
-    const purchased_percentage =
-      creditor?.contractDetails?.purchased_percentage || "--";
     const repayment_amount =
       creditor?.contractDetails?.repayment_amount || "--";
 
     return {
       creditorName: creditor?.accountTitleMapping[0]?.accountTitle,
-      loanAmount,
+      fundedAmount,
+      paybackAmount,
       payableAmount,
-      weeklyBudget,
+      breakEvenPoint,
       purchased_percentage,
       repayment_amount,
     };
   });
 
+  const headerData = [
+    { key: "creditorName", heading: "Creditors", width: "11%" },
+    { key: "fundedAmount", heading: "Funded Amount", width: "11%" },
+    { key: "paybackAmount", heading: "Payback Amount", width: "11%" },
+    { key: "payableAmount", heading: "Current Balance", width: "11%" },
+    { key: "breakEvenPoint", heading: "Break Even Point", width: "11%" },
+    {
+      key: "purchased_percentage",
+      heading: "Purchased Percentage",
+      width: "11%",
+    },
+    {
+      key: "repayment_amount",
+      heading: "Repayment Amount",
+      width: "11%",
+    },
+  ];
+
   const summaryDetails = {
     creditorName: "Summary",
-    loanAmount: formatSummary(summaryAmount?.loanAmount),
+    fundedAmount: formatSummary(summaryAmount?.fundedAmount) || "--",
+    paybackAmount: "--",
     payableAmount: formatSummary(summaryAmount?.payableAmount),
-    weeklyBudget: formatSummary(apiData?.weekly_budget?.Summary),
+    breakEvenPoint: "--",
     purchased_percentage: "--",
     repayment_amount: "--",
   };
 
   const updatedCreditorNamesDetails = [...creditorNamesDetails, summaryDetails];
-  const filteredData = updatedCreditorNamesDetails.filter(
+  const filteredData = updatedCreditorNamesDetails?.filter(
     (item) => item.creditorName !== "Summary"
   );
 
@@ -986,9 +1000,15 @@ export default function SettlementRange() {
       >
         <Grid item xs={12} lg={6}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <IconButton onClick={() => handleUpdate(true)}>
-              <RefreshIcon sx={{ color: Colors.SKY_BLUE, fontSize: "2rem" }} />
-            </IconButton>
+            <MuiModels
+              buttonIcon="settlementRangeReload"
+              show="WeeklyBudget"
+              iconColor={Colors.BLACK}
+              maxHeight="78vh"
+              caseId={caseId}
+              popUpDebtorData={popUpDebtorData}
+              getAllRanges={getAllRanges}
+            />
             <Typography
               sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
             >
@@ -1039,12 +1059,12 @@ export default function SettlementRange() {
             <Typography
               sx={{
                 fontWeight: "600",
-                fontSize: "2rem",
+                fontSize: "1.5rem",
                 fontFamily: "Nunito",
                 color: Colors.BLACK,
               }}
             >
-              Settlement Range
+              {`${debtorCompanyName} - Settlement Range`}
             </Typography>
 
             <div style={{ display: "flex", gap: "10px" }}>
@@ -1162,9 +1182,9 @@ export default function SettlementRange() {
                     >
                       {allData?.debtor?.weeklyBudgetUpdated &&
                       key === "weeklyBudget"
-                        ? `$${debtor[key]} (Calculated)`
+                        ? `$${parseFloat(debtor[key]).toFixed(2)}`
                         : key === "weeklyBudget"
-                        ? `$${debtor[key]}`
+                        ? `$${parseFloat(debtor[key]).toFixed(2)}`
                         : `${debtor[key]?.toString().slice(0, 15)}${
                             debtor[key]?.toString().length > 15 ? "..." : ""
                           }` || "--"}
@@ -1173,41 +1193,6 @@ export default function SettlementRange() {
                 </Box>
               </Grid>
             ))}
-            <Grid item xs={12} lg={6}>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: { xs: "space-between", md: "unset" },
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: "Nunito",
-                    fontWeight: "600",
-                    color: Colors.DARK_GRAY,
-                    width: "10rem",
-                    marginTop: "0.5rem",
-                  }}
-                >
-                  Company Name
-                </div>
-
-                <Tooltip title={debtorInfo?.companyName} placement="top-end">
-                  <span
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "300",
-                      fontSize: "0.9rem",
-                      color: Colors.DIM_LIGHT_GRAY,
-                      marginTop: "0.5rem",
-                    }}
-                  >
-                    {debtorInfo?.companyName || "--"}
-                  </span>
-                </Tooltip>
-              </Box>
-            </Grid>
           </Grid>
           <Grid xs={12}>
             <Typography
@@ -1243,16 +1228,11 @@ export default function SettlementRange() {
             />
           </Grid>
 
-          <Grid
-            container
-            item
-            xs={12}
-            sx={{ gap: "2%", mt: "1rem", justifyContent: "space-between" }}
-          >
+          <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
             <GridItem
               key="Weekly Profit"
               title="Weekly Profit"
-              tooltip="Weekly Profit With Payment"
+              tooltip="Your net profit after making debt payments."
               value={
                 apiData?.weekly_profit
                   ? `$ ${new Intl.NumberFormat().format(apiData.weekly_profit)}`
@@ -1264,6 +1244,7 @@ export default function SettlementRange() {
             <GridItem
               key="Weekly True Revenue"
               title="Weekly True Revenue"
+              tooltip="Total revenue earned by the business each week."
               value={
                 apiData?.weekly_true_revenue
                   ? `$ ${new Intl.NumberFormat().format(
@@ -1276,6 +1257,7 @@ export default function SettlementRange() {
             <GridItem
               key="Profitability"
               title="Profitability"
+              tooltip=" Measure of how much profit your business makes after expenses."
               value={
                 apiData?.profitability
                   ? `${new Intl.NumberFormat().format(
@@ -1285,18 +1267,37 @@ export default function SettlementRange() {
               }
               rawValue={apiData?.profitability}
             />
+
+            {strategyTab === 2 && (
+              <GridItem
+                key="percentageReceivableCommission"
+                title="Receivable Commission"
+                tooltip="Receivable Commission"
+                value={
+                  allData?.percentageReceivableCommission !== undefined
+                    ? `${allData.percentageReceivableCommission}%`
+                    : "--"
+                }
+                rawValue={scores?.Scores?.["Default Risk Score"]}
+              />
+            )}
+
             {scores?.Scores && (
               <>
                 <GridItem
                   key="UCC Score"
                   title="UCC Score"
+                  tooltip="A score representing the creditor's claim on your business assets."
                   value={`${scores?.Scores?.["UCC Score"]}%` ?? "No Data"}
                   rawValue={scores?.Scores?.["UCC Score"]}
                 />
                 <GridItem
                   key="Default Risk Score"
                   title="Default Risk Score"
-                  value={scores?.Scores?.["Default Risk Score"] ?? "No Data"}
+                  tooltip="The likelihood of missing a payment or defaulting on your loan."
+                  value={
+                    `${scores?.Scores?.["Default Risk Score"]}%` ?? "No Data"
+                  }
                   rawValue={scores?.Scores?.["Default Risk Score"]}
                 />
 
@@ -1413,68 +1414,69 @@ export default function SettlementRange() {
               </>
             )}
           </Grid>
-          <Grid container sx={{ backgroundColor: Colors.WHITE, mt: "2rem" }}>
+
+          <Grid
+            container
+            item
+            xs={12}
+            sx={{
+              width: widthStyling,
+              mt: "1rem",
+              backgroundColor: Colors.WHITE,
+            }}
+          >
             <AntTabs
-              value={optionValue}
-              onChange={handleOptionTabChange}
-              aria-label="options tabs"
+              value={strategyTab}
+              onChange={handleStrategyChange}
+              aria-label="strategy tabs"
+              variant="scrollable"
+              scrollButtons="auto"
+              sx={{
+                minWidth: "100%",
+                borderTopLeftRadius: "10px",
+                borderTopRightRadius: "10px",
+              }}
             >
-              <AntTab
-                sx={{
-                  bgcolor: Colors.WHITE,
-                  width: "max-content",
-                  fontWeight: "600",
-                  height: "3.5rem",
-                }}
-                label="Option 1"
-              />
-              <AntTab
-                sx={{
-                  bgcolor: Colors.WHITE,
-                  width: "max-content",
-                  fontWeight: "600",
-                  height: "3.5rem",
-                }}
-                label="Option 2"
-              />
+              {tabs?.map((item, index) => (
+                <AntTab
+                  key={index}
+                  sx={{
+                    bgcolor: Colors.WHITE,
+                    width: "max-content",
+                    fontWeight: "600",
+                    height: "3.5rem",
+                  }}
+                  label={item}
+                />
+              ))}
             </AntTabs>
           </Grid>
 
-          {optionValue === 0 && (
-            <Grid
-              container
-              item
-              xs={12}
-              sx={{
-                width: widthStyling,
-                mt: "1rem",
-                backgroundColor: Colors.WHITE,
-              }}
-            >
+          {strategyTab === 0 && (
+            <Grid container sx={{ backgroundColor: Colors.WHITE, mt: "1rem" }}>
               <AntTabs
-                value={strategyTab}
-                onChange={handleStrategyChange}
-                aria-label="strategy tabs"
-                variant="scrollable"
-                scrollButtons="auto"
-                sx={{
-                  minWidth: "100%",
-                  borderTopLeftRadius: "10px",
-                  borderTopRightRadius: "10px",
-                }}
+                value={optionValue}
+                onChange={handleOptionTabChange}
+                aria-label="options tabs"
               >
-                {tabs?.map((item, index) => (
-                  <AntTab
-                    key={index}
-                    sx={{
-                      bgcolor: Colors.WHITE,
-                      width: "max-content",
-                      fontWeight: "600",
-                      height: "3.5rem",
-                    }}
-                    label={item}
-                  />
-                ))}
+                <AntTab
+                  sx={{
+                    bgcolor: Colors.WHITE,
+                    width: "max-content",
+                    fontWeight: "600",
+                    height: "3.5rem",
+                  }}
+                  label="Negotiation manager Weekly budget"
+                />
+                <AntTab
+                  sx={{
+                    bgcolor: Colors.WHITE,
+                    width: "max-content",
+                    fontWeight: "600",
+                    height: "3.5rem",
+                  }}
+                  label="Weekly budget as per Bank statement"
+                />
               </AntTabs>
             </Grid>
           )}
@@ -1541,6 +1543,12 @@ export default function SettlementRange() {
                 <>
                   <Grid container item xs={12} sx={{ gap: "1rem", mt: "1rem" }}>
                     {creditorDetails?.map((detail, index) => {
+                      if (
+                        detail?.label === "Percentage Receivables" &&
+                        strategyTab !== 2
+                      ) {
+                        return null;
+                      }
                       const formattedValue = detail?.value
                         ? detail?.formatCurrency &&
                           !detail?.value?.includes("$")
@@ -1548,38 +1556,60 @@ export default function SettlementRange() {
                           : detail?.value
                         : "--";
 
+                      const tooltipContent = {
+                        "Funded Amount": detail?.tooltip,
+                        "Payback Amount": "Payback Amount",
+                        "Break Even": "Break Even",
+                        "Current Balance":
+                          "The remaining amount you owe to the creditor.",
+                        "Weekly Budget":
+                          "Your profit before making any debt payments.",
+                        "Purchased Percentage":
+                          "The percentage of the loan amount that has been repaid.",
+                        "Repayment Amount":
+                          "The initial amount borrowed before any repayments.",
+                      };
+
                       return (
-                        <Tooltip
-                          title={
-                            detail?.label === "Weekly Budget"
-                              ? "Weekly Profit without Payment"
-                              : ""
-                          }
-                          placement="top-start"
+                        <Grid
+                          item
+                          xs={12}
+                          sm={5.8}
+                          md={3.8}
+                          lg={2.8}
+                          container
+                          sx={commonStyles}
                         >
-                          <Grid
-                            key={index}
-                            item
-                            xs={12}
-                            sm={5.8}
-                            md={3.8}
-                            lg={2.8}
-                            container
-                            sx={commonStyles}
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
                           >
                             <Typography sx={commonTextStyles}>
                               {detail?.label}
                             </Typography>
-                            <Typography
-                              sx={{
-                                ...commonTextStyles,
-                                color: Colors.SKY_BLUE,
-                              }}
+                            <Tooltip
+                              title={tooltipContent[detail?.label] || ""}
+                              placement="top"
                             >
-                              {formattedValue}
-                            </Typography>
-                          </Grid>
-                        </Tooltip>
+                              <InfoIcon
+                                sx={{
+                                  fontSize: "17px",
+                                  color: Colors.SKY_BLUE,
+                                }}
+                              />
+                            </Tooltip>
+                          </Box>
+                          <Typography
+                            sx={{
+                              ...commonTextStyles,
+                              color: Colors.SKY_BLUE,
+                            }}
+                          >
+                            {formattedValue}
+                          </Typography>
+                        </Grid>
                       );
                     })}
                   </Grid>
@@ -1617,7 +1647,8 @@ export default function SettlementRange() {
               </Grid>
             )}
           </Grid>
-          {optionValue === 0 ? (
+
+          {strategyTab === 0 && optionValue === 1 ? (
             <Grid
               container
               item
@@ -1628,7 +1659,7 @@ export default function SettlementRange() {
                 justifyContent: "space-between",
               }}
             >
-              {cardData[strategyTab]}
+              {cardData[4]}
             </Grid>
           ) : (
             <Grid
@@ -1641,7 +1672,7 @@ export default function SettlementRange() {
                 justifyContent: "space-between",
               }}
             >
-              {cardData[4]}
+              {cardData[strategyTab]}
             </Grid>
           )}
 

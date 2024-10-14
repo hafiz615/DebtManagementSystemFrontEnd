@@ -45,6 +45,8 @@ export default function UpdateCreditorCase() {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
+  const [profitMargin, setProfitMargin] = useState("");
+
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const { AUTHORITY_TEXT } = UserListPage;
@@ -231,7 +233,7 @@ export default function UpdateCreditorCase() {
           : "",
         address: debtorBusinessDetails?.businessAddress,
       },
-
+      profitMargin: parseInt(profitMargin),
       contacts: areAllObjectsEmpty(debtorContactDetails)
         ? []
         : debtorContactDetails,
@@ -395,6 +397,8 @@ export default function UpdateCreditorCase() {
             errors={errors}
             setErrors={setErrors}
             hideComponents={true}
+            profitMargin={profitMargin}
+            setProfitMargin={setProfitMargin}
           />
         ) : activeStep === 1 ? (
           <CreditorDetails

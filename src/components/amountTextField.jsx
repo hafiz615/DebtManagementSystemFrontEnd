@@ -12,7 +12,8 @@ const parsePercentage = (value) => {
   if (!value) return "";
   const percentage = value.replace("%", "").trim();
   const parsedValue = parseFloat(percentage);
-  return isNaN(parsedValue) ? value : parsedValue;
+  // Ensure parsedValue is handled correctly
+  return !isNaN(parsedValue) ? parsedValue.toFixed(2) : value;
 };
 
 const USPhoneMaskCustom = React.forwardRef(function USPhoneMaskCustom(
@@ -152,7 +153,7 @@ export default function AmountTextField({
             borderBottom: "none",
           },
         }}
-        placeholder={value ? "" : type === "percentage" ? "%" : "$"} // Show placeholder only if value is empty
+        placeholder={value ? "" : type === "percentage" ? "%" : "$"}
         onChange={onChange}
         value={type === "percentage" ? parsePercentage(value) : value || ""}
         onKeyDown={onKeyDown}

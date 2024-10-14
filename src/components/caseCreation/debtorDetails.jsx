@@ -36,6 +36,8 @@ function DebtorDetails({
   setConnectPayment,
   walletId,
   hideComponents,
+  setProfitMargin,
+  profitMargin,
 }) {
   const handleSearchChange = (value) => {
     setSearchText(value);
@@ -121,6 +123,8 @@ function DebtorDetails({
             setEmailContactError={setEmailContactError}
             connectPayment={connectPayment}
             setConnectPayment={setConnectPayment}
+            setProfitMargin={setProfitMargin}
+            profitMargin={profitMargin}
             walletId={walletId}
           />
         </Grid>

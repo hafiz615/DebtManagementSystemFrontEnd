@@ -17,14 +17,15 @@ export default function SettlementCards({
   percentageSettlementOverWeeklyTrueRevenue,
   weeksTillPaid,
   weeksTillPaidTitle,
-  isFullPayment,
   caseId,
   remainingAmount,
   isLumpSumPayment,
   warning,
   strategy,
   setPaymentChanged,
+  percentageReceivableAmount,
   optionValue,
+  isFullPayment,
 }) {
   const commonStyles = {
     backgroundColor: Colors.WHITE,
@@ -106,6 +107,19 @@ export default function SettlementCards({
     !percentageSettlementOverWeeklyTrueRevenue &&
     !weeksTillPaid;
 
+  const excludedLabelsStrategy1 = [
+    "Weekly Budget %",
+    "Weekly True Revenue %",
+    "New Default Risk",
+  ];
+
+  const excludedLabelsStrategy3 = [
+    "Settlement Range",
+    "Commission Range",
+    "Weekly Budget %",
+    "Weeks Till Paid",
+  ];
+
   return (
     <>
       <Grid item xs={12} md={5.8} lg={3.8} container sx={commonStyles}>
@@ -118,19 +132,9 @@ export default function SettlementCards({
           }}
         >
           <Typography sx={commonTextStyles}>
-            {capitalizeFirstWord(title)}
+            {strategy === "strategy2" ? "Lump Sum" : "Recommended Strategy"}
           </Typography>
-          {strategy === "strategy2" ? (
-            <MuiModels
-              width="70vw"
-              show="payments"
-              buttonName="settlmentPayment"
-              settlementRange={settlementRange?.remaining_principle_amount}
-              remainingAmount={remainingAmount}
-              setPaymentChanged={setPaymentChanged}
-              caseId={caseId}
-            />
-          ) : (
+          {strategy === "strategy1" ? (
             <MuiModels
               width="35vw"
               show="settlmentPayment"
@@ -138,6 +142,20 @@ export default function SettlementCards({
               settlementRange={settlementRange?.[title]}
               weeksTillPaid={weeksTillPaid?.[weeksTillPaidTitle]}
               commissionRange={commissionRange?.[title]}
+              remainingAmount={remainingAmount}
+              setPaymentChanged={setPaymentChanged}
+              caseId={caseId}
+            />
+          ) : (
+            <MuiModels
+              width="70vw"
+              show="payments"
+              buttonName="settlmentPayment"
+              settlementRange={
+                strategy === "strategy3"
+                  ? percentageReceivableAmount
+                  : settlementRange?.remaining_principle_amount
+              }
               remainingAmount={remainingAmount}
               setPaymentChanged={setPaymentChanged}
               caseId={caseId}
@@ -151,14 +169,21 @@ export default function SettlementCards({
           </Typography>
         ) : (
           allRanges?.map((item, index) => {
-            if (optionValue && rangeNames[index].label === "New Default Risk") {
+            if (
+              strategy === "strategy1" &&
+              excludedLabelsStrategy1?.includes(rangeNames[index].label)
+            ) {
               return null;
             }
-            const shouldShowContent =
-              !isLumpSumPayment &&
-              !(
-                rangeNames[index]?.label === "New Default Risk" && isFullPayment
-              );
+
+            if (
+              strategy === "strategy3" &&
+              excludedLabelsStrategy3?.includes(rangeNames[index].label)
+            ) {
+              return null;
+            }
+
+            const shouldShowContent = !isLumpSumPayment;
             return (
               <Grid
                 container
@@ -193,50 +218,7 @@ export default function SettlementCards({
                   </Grid>
                 ) : null}
 
-                {isFullPayment ? (
-                  <>
-                    {!(
-                      rangeNames[index]?.label === "New Default Risk" &&
-                      isFullPayment
-                    ) && (
-                      <Grid item xs={5}>
-                        <div
-                          style={{
-                            width: "100%",
-                            display: "flex",
-                          }}
-                        >
-                          <div
-                            style={{
-                              width: "75%",
-                              fontFamily: "Nunito",
-                              color: Colors.ORANGE_COLOR,
-                            }}
-                          >
-                            <Tooltip title={"Minimum"} placement="top-end">
-                              {mediumScreen ? "Min" : "Minimum"}
-                            </Tooltip>
-                          </div>
-                          <div style={textStyles}>{item?.[title]["min"]}</div>
-                        </div>
-                        <div style={{ width: "100%", display: "flex" }}>
-                          <div
-                            style={{
-                              width: "75%",
-                              fontFamily: "Nunito",
-                              color: Colors.SKY_BLUE,
-                            }}
-                          >
-                            <Tooltip title={"Maximum"} placement="top-end">
-                              {mediumScreen ? "Max" : "Maximum"}
-                            </Tooltip>
-                          </div>
-                          <div style={textStyles}>{item?.[title]["max"]}</div>
-                        </div>
-                      </Grid>
-                    )}
-                  </>
-                ) : isLumpSumPayment ? (
+                {isLumpSumPayment ? (
                   <>
                     {item !== null && (
                       <Grid
@@ -300,7 +282,7 @@ export default function SettlementCards({
                                 item?.[weeksTillPaidTitle][0]
                               : ""
                             : rangeNames[index]?.label === "New Default Risk"
-                            ? item?.[title]?.["min"] || "-"
+                            ? `${item?.[title]?.["min"] || "-"}%`
                             : rangeNames[index]?.label?.includes("%")
                             ? `${
                                 parseFloat(
@@ -333,7 +315,7 @@ export default function SettlementCards({
                                 item?.[weeksTillPaidTitle][1]
                               : ""
                             : rangeNames[index]?.label === "New Default Risk"
-                            ? item?.[title]?.["max"] || "-"
+                            ? `${item?.[title]?.["max"] || "-"}%`
                             : rangeNames[index]?.label?.includes("%")
                             ? `${
                                 parseFloat(
@@ -353,6 +335,41 @@ export default function SettlementCards({
               </Grid>
             );
           })
+        )}
+        {strategy === "strategy3" && (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              padding: "0px 7%",
+              width: "100%",
+            }}
+          >
+            <Typography
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: FONT_SIZE_LARGE,
+                fontFamily: "Nunito",
+                fontWeight: "700",
+              }}
+            >
+              Percentage Receivable
+              <Tooltip title={"Percentage Receivable"} placement="top-end">
+                <InfoIcon
+                  sx={{
+                    fontSize: "17px",
+                    color: Colors.SKY_BLUE,
+                  }}
+                />
+              </Tooltip>
+            </Typography>
+
+            <Typography>
+              {`$${parseFloat(percentageReceivableAmount).toFixed(2)}`}
+            </Typography>
+          </div>
         )}
       </Grid>
 
