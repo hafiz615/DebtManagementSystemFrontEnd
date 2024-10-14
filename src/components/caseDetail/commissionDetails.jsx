@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Grid, Box, Typography } from "@mui/material";
 import { Colors } from "../../config/default";
 import TextButton from "../button";
@@ -28,6 +28,22 @@ function CommissionDetails({ handleClose, data, caseId, popUpDebtorData }) {
   const navigate = useNavigate();
   const { showToast } = useToast();
 
+  useEffect(() => {
+    if (!isStrategyOneSaved) {
+      setSelectedOption(
+        data?.debtor?.weeklyBudgetKeyStrategy1 ||
+          popUpDebtorData?.weeklyBudgetKeyStrategy1 ||
+          ""
+      );
+    } else {
+      setSelectedOptionThree(
+        data?.debtor?.weeklyBudgetKeyStrategy3 ||
+          popUpDebtorData?.weeklyBudgetKeyStrategy3 ||
+          ""
+      );
+    }
+  }, [data, popUpDebtorData, isStrategyOneSaved]);
+
   const payload = {
     strategy1Profit:
       selectedOption === "strategy1Profit"
@@ -42,7 +58,7 @@ function CommissionDetails({ handleClose, data, caseId, popUpDebtorData }) {
         ? Number(customValue)
         : 0 || debtorDetails?.strategy1BudgetCustom,
 
-    strategy1Choosen: selectedOption,
+    strategy1Choosen: selectedOption, // This value reflects the selected option
     strategy3Profit:
       selectedOptionThree === "strategy3Profit"
         ? debtorDetails?.strategy3MaxProfit
@@ -55,7 +71,7 @@ function CommissionDetails({ handleClose, data, caseId, popUpDebtorData }) {
       selectedOptionThree === "strategy3Custom"
         ? Number(customValueThree)
         : 0 || debtorDetails?.strategy3BudgetCustom,
-    strategy3Choosen: selectedOptionThree,
+    strategy3Choosen: selectedOptionThree, // This value reflects the selected option for StrategyThree
   };
 
   const handleSave = async () => {
@@ -80,11 +96,13 @@ function CommissionDetails({ handleClose, data, caseId, popUpDebtorData }) {
     }
     setLoading(false);
   };
+
   // Check if the button should be disabled
   const isButtonDisabled = !(
     (isStrategyOneSaved && (selectedOptionThree || customValueThree)) ||
     (!isStrategyOneSaved && (selectedOption || customValue))
   );
+
   return (
     <Grid container>
       <Box

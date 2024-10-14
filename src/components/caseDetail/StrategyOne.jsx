@@ -75,7 +75,7 @@ function StrategyOne({
         />
       </RadioGroup>
 
-      {selectedOption === "strategy1Custom" && (
+      {(selectedOption === "strategy1Custom" || customValue) && (
         <Grid container item xs={12}>
           <AmountTextField
             width="50%"
