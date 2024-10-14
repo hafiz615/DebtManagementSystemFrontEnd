@@ -1560,7 +1560,7 @@ export default function SettlementRange() {
                       }
                       const formattedValue = detail?.value
                         ? detail?.formatCurrency &&
-                          !detail?.value?.includes("$")
+                          !String(detail?.value)?.includes("$")
                           ? `$${detail?.value}`
                           : detail?.value
                         : "--";
