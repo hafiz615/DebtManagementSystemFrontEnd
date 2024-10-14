@@ -23,6 +23,7 @@ export default function SettlementCards({
   warning,
   strategy,
   setPaymentChanged,
+  percentageReceivableAmount,
   optionValue,
   isFullPayment,
 }) {
@@ -115,7 +116,7 @@ export default function SettlementCards({
   const excludedLabelsStrategy3 = [
     "Settlement Range",
     "Commission Range",
-
+    "Weekly Budget %",
     "Weeks Till Paid",
   ];
 
@@ -131,19 +132,9 @@ export default function SettlementCards({
           }}
         >
           <Typography sx={commonTextStyles}>
-            {capitalizeFirstWord(title)}
+            {strategy === "strategy2" ? "Lump Sum" : "Recommended Strategy"}
           </Typography>
-          {strategy === "strategy2" ? (
-            <MuiModels
-              width="70vw"
-              show="payments"
-              buttonName="settlmentPayment"
-              settlementRange={settlementRange?.remaining_principle_amount}
-              remainingAmount={remainingAmount}
-              setPaymentChanged={setPaymentChanged}
-              caseId={caseId}
-            />
-          ) : (
+          {strategy === "strategy1" ? (
             <MuiModels
               width="35vw"
               show="settlmentPayment"
@@ -151,6 +142,20 @@ export default function SettlementCards({
               settlementRange={settlementRange?.[title]}
               weeksTillPaid={weeksTillPaid?.[weeksTillPaidTitle]}
               commissionRange={commissionRange?.[title]}
+              remainingAmount={remainingAmount}
+              setPaymentChanged={setPaymentChanged}
+              caseId={caseId}
+            />
+          ) : (
+            <MuiModels
+              width="70vw"
+              show="payments"
+              buttonName="settlmentPayment"
+              settlementRange={
+                strategy === "strategy3"
+                  ? percentageReceivableAmount
+                  : settlementRange?.remaining_principle_amount
+              }
               remainingAmount={remainingAmount}
               setPaymentChanged={setPaymentChanged}
               caseId={caseId}
@@ -330,6 +335,41 @@ export default function SettlementCards({
               </Grid>
             );
           })
+        )}
+        {strategy === "strategy3" && (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              padding: "0px 7%",
+              width: "100%",
+            }}
+          >
+            <Typography
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: FONT_SIZE_LARGE,
+                fontFamily: "Nunito",
+                fontWeight: "700",
+              }}
+            >
+              Percentage Receivable
+              <Tooltip title={"Percentage Receivable"} placement="top-end">
+                <InfoIcon
+                  sx={{
+                    fontSize: "17px",
+                    color: Colors.SKY_BLUE,
+                  }}
+                />
+              </Tooltip>
+            </Typography>
+
+            <Typography>
+              {`$${parseFloat(percentageReceivableAmount).toFixed(2)}`}
+            </Typography>
+          </div>
         )}
       </Grid>
 
