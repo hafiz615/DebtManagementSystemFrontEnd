@@ -480,6 +480,8 @@ export default function SettlementRange() {
     }
   };
 
+  console.log("-------", JSON.stringify(selectedCreditorDetails));
+
   const handleClick = async () => {
     if (!inputValue) return;
     setChatHistory((prev) => [...prev, { type: "user", text: inputValue }]);
