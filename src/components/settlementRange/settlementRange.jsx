@@ -409,6 +409,9 @@ export default function SettlementRange() {
               allData?.creditors?.[parseInt(tabValue)]
                 ?.percentageReceivableAmount
             }
+            percentageReceivable={
+              allData?.creditors?.[parseInt(tabValue)]?.percentageReceivable
+            }
           />
         ) : (
           <Grid

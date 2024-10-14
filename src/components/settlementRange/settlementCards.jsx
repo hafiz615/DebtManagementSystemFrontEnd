@@ -25,6 +25,7 @@ export default function SettlementCards({
   setPaymentChanged,
   percentageReceivableAmount,
   tabValue,
+  percentageReceivable,
   optionValue,
   isFullPayment,
 }) {
@@ -264,57 +265,76 @@ export default function SettlementCards({
                 ) : (
                   <>
                     <Grid item xs={5}>
-                      <div style={{ width: "100%", display: "flex" }}>
-                        <div
-                          style={{
-                            width: "75%",
-                            fontFamily: "Nunito",
-                            color: Colors.ORANGE_COLOR,
-                          }}
-                        >
-                          <Tooltip title={"Minimum"} placement="top-end">
-                            {mediumScreen ? "Min" : "Minimum"}
-                          </Tooltip>
+                      {!(
+                        strategy === "strategy3" &&
+                        (rangeNames[index]?.label === "New Default Risk" ||
+                          rangeNames[index]?.label === "Weekly True Revenue %")
+                      ) && (
+                        <div style={{ width: "100%", display: "flex" }}>
+                          <div
+                            style={{
+                              width: "75%",
+                              fontFamily: "Nunito",
+                              color: Colors.ORANGE_COLOR,
+                            }}
+                          >
+                            <Tooltip title={"Minimum"} placement="top-end">
+                              {mediumScreen ? "Min" : "Minimum"}
+                            </Tooltip>
+                          </div>
+                          <div style={textStyles}>
+                            {rangeNames[index]?.label === "Weeks Till Paid"
+                              ? rangeNames[index]?.label === "Weeks Till Paid"
+                                ? item?.[weeksTillPaidTitle]?.["min"] ||
+                                  item?.[weeksTillPaidTitle][0]
+                                : ""
+                              : rangeNames[index]?.label === "New Default Risk"
+                              ? `${item?.[title]?.["min"] || "-"}%`
+                              : rangeNames[index]?.label?.includes("%")
+                              ? `${
+                                  parseFloat(
+                                    item?.[title]?.["min"]?.toFixed(2)
+                                  ) || "-"
+                                }%`
+                              : `$${
+                                  parseFloat(
+                                    item?.[title]?.["min"]?.toFixed(2)
+                                  ) || "-"
+                                }`}
+                          </div>
                         </div>
+                      )}
+
+                      <div
+                        style={{
+                          width: "100%",
+                          display: "flex",
+                          justifyContent:
+                            strategy === "strategy3" ? "flex-end" : "auto",
+                        }}
+                      >
+                        {!(
+                          strategy === "strategy3" &&
+                          (rangeNames[index]?.label === "New Default Risk" ||
+                            rangeNames[index]?.label ===
+                              "Weekly True Revenue %")
+                        ) && (
+                          <div
+                            style={{
+                              width: "75%",
+                              fontFamily: "Nunito",
+                              color: Colors.SKY_BLUE,
+                            }}
+                          >
+                            <Tooltip title={"Maximum"} placement="top-end">
+                              {mediumScreen ? "Max" : "Maximum"}
+                            </Tooltip>
+                          </div>
+                        )}
                         <div style={textStyles}>
                           {rangeNames[index]?.label === "Weeks Till Paid"
-                            ? rangeNames[index]?.label === "Weeks Till Paid"
-                              ? item?.[weeksTillPaidTitle]?.["min"] ||
-                                item?.[weeksTillPaidTitle][0]
-                              : ""
-                            : rangeNames[index]?.label === "New Default Risk"
-                            ? `${item?.[title]?.["min"] || "-"}%`
-                            : rangeNames[index]?.label?.includes("%")
-                            ? `${
-                                parseFloat(
-                                  item?.[title]?.["min"]?.toFixed(2)
-                                ) || "-"
-                              }%`
-                            : `$${
-                                parseFloat(
-                                  item?.[title]?.["min"]?.toFixed(2)
-                                ) || "-"
-                              }`}
-                        </div>
-                      </div>
-                      <div style={{ width: "100%", display: "flex" }}>
-                        <div
-                          style={{
-                            width: "75%",
-                            fontFamily: "Nunito",
-                            color: Colors.SKY_BLUE,
-                          }}
-                        >
-                          <Tooltip title={"Maximum"} placement="top-end">
-                            {mediumScreen ? "Max" : "Maximum"}
-                          </Tooltip>
-                        </div>
-                        <div style={textStyles}>
-                          {rangeNames[index]?.label === "Weeks Till Paid"
-                            ? rangeNames[index]?.label === "Weeks Till Paid"
-                              ? item?.[weeksTillPaidTitle]?.["max"] ||
-                                item?.[weeksTillPaidTitle][1]
-                              : ""
+                            ? item?.[weeksTillPaidTitle]?.["max"] ||
+                              item?.[weeksTillPaidTitle][1]
                             : rangeNames[index]?.label === "New Default Risk"
                             ? `${item?.[title]?.["max"] || "-"}%`
                             : rangeNames[index]?.label?.includes("%")
@@ -368,7 +388,7 @@ export default function SettlementCards({
             </Typography>
 
             <Typography>
-              {`$${parseFloat(percentageReceivableAmount).toFixed(2)}` || 0}
+              {`${parseFloat(percentageReceivable).toFixed(2)}%` || "--"}
             </Typography>
           </div>
         )}
