@@ -128,6 +128,7 @@ export default function MuiModels({
   emailSubject,
   buttonIcon,
   popUpDebtorData,
+  getAllRanges,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -869,6 +870,7 @@ export default function MuiModels({
               data={caseData}
               caseId={caseId}
               popUpDebtorData={popUpDebtorData}
+              getAllRanges={getAllRanges}
             />
           ) : show === "downloadPDF" ? (
             <DownloadPDF
