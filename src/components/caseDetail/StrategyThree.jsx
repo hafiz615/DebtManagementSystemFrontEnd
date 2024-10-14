@@ -66,7 +66,7 @@ function StrategyThree({
                 }%`
               : "Max Profit Margin was not entered when case was created"
           }`}
-          disabled={!isProfitMarginAvailable} // Disable if profit margin is not available
+          disabled={!isProfitMarginAvailable}
         />
         <FormControlLabel
           value="strategy3Custom"
@@ -75,7 +75,7 @@ function StrategyThree({
         />
       </RadioGroup>
 
-      {selectedOptionThree === "strategy3Custom" && (
+      {(selectedOptionThree === "strategy3Custom" || customValueThree) && (
         <Grid container item>
           <PaymentsTextFields
             type="number"
