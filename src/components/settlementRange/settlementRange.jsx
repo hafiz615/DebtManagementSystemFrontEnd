@@ -403,6 +403,10 @@ export default function SettlementRange() {
                 allCreditorNames[parseInt(tabValue)]
               ] || null
             }
+            percentageReceivableAmount={
+              allData?.creditors?.[parseInt(tabValue)]
+                ?.percentageReceivableAmount
+            }
           />
         ) : (
           <Grid
@@ -808,14 +812,15 @@ export default function SettlementRange() {
   const creditorDetails = [
     {
       label: "Funded Amount",
-      value: selectedCreditorDetails?.contractDetails?.funded_amount,
+      value:
+        selectedCreditorDetails?.contractDetails?.funded_amount ||
+        `(${selectedCreditorDetails?.contractDetails?.loan_amount || "--"})`,
       formatCurrency: true,
+      tooltip: selectedCreditorDetails?.contractDetails?.funded_amount
+        ? "Funded Amount"
+        : "Funded amount was not present, so we are showing the loan amount.",
     },
-    // {
-    //   label: "Loan Amount",
-    //   value: selectedCreditorDetails?.contractDetails?.loan_amount,
-    //   formatCurrency: true,
-    // },
+
     {
       label: "Payback Amount",
       value: selectedCreditorDetails?.remainingAmountPaid || "0",
@@ -840,12 +845,6 @@ export default function SettlementRange() {
     {
       label: "Repayment Amount",
       value: selectedCreditorDetails?.contractDetails?.repayment_amount,
-    },
-    {
-      label: "Percentage Receivables",
-      value: selectedCreditorDetails?.percentageReceivable
-        ? `${selectedCreditorDetails.percentageReceivable}%`
-        : "0%",
     },
   ];
 
@@ -1558,17 +1557,16 @@ export default function SettlementRange() {
                         : "--";
 
                       const tooltipContent = {
-                        "Loan Amount":
-                          "The total amount borrowed from the creditor.",
+                        "Funded Amount": detail?.tooltip,
+                        "Payback Amount": "Payback Amount",
+                        "Break Even": "Break Even",
                         "Current Balance":
                           "The remaining amount you owe to the creditor.",
                         "Weekly Budget":
                           "Your profit before making any debt payments.",
                         "Purchased Percentage":
                           "The percentage of the loan amount that has been repaid.",
-                        "Original Payment":
-                          "The initial amount borrowed before any repayments.",
-                        "Percentage Receivables":
+                        "Repayment Amount":
                           "The initial amount borrowed before any repayments.",
                       };
 
