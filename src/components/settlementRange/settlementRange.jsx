@@ -854,15 +854,15 @@ export default function SettlementRange() {
   ];
 
   const formatSummaryPercentage = (value) => {
-    if (value === "--" || typeof value !== "string" || value.includes("%"))
+    if (value === "--" || typeof value !== "string" || value?.includes("%"))
       return value;
-    return value;
+    return "";
   };
   const formatSummary = (value) => {
     if (typeof value === "number") {
       return `$${value.toFixed(2)}`;
     }
-    if (typeof value === "string" && !value.includes("$")) {
+    if (typeof value === "string" && !value?.includes("$")) {
       return `$${parseFloat(value).toFixed(2)}`;
     }
     return value || "--";
