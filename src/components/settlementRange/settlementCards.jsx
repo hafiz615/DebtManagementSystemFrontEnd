@@ -24,6 +24,7 @@ export default function SettlementCards({
   strategy,
   setPaymentChanged,
   percentageReceivableAmount,
+  tabValue,
   optionValue,
   isFullPayment,
 }) {
@@ -336,7 +337,7 @@ export default function SettlementCards({
             );
           })
         )}
-        {strategy === "strategy3" && (
+        {strategy === "strategy3" && tabValue !== 2 && (
           <div
             style={{
               display: "flex",
@@ -367,7 +368,7 @@ export default function SettlementCards({
             </Typography>
 
             <Typography>
-              {`$${parseFloat(percentageReceivableAmount).toFixed(2)}`}
+              {`$${parseFloat(percentageReceivableAmount).toFixed(2)}` || 0}
             </Typography>
           </div>
         )}
