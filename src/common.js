@@ -545,12 +545,22 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     currentY += 10;
 
     const creditorDetails = creditors?.map((creditor) => {
+      const payableAmount =
+        creditor?.remaining !== undefined &&
+        creditor?.remainingAmountPaid !== undefined
+          ? `$${(creditor?.remaining - creditor?.remainingAmountPaid).toFixed(
+              2
+            )}`
+          : "--";
       return [
         creditor?.creditorAccountTitle || "N/A",
-        formatCurrencyConditional(creditor?.contractDetails?.loan_amount || 0),
         formatCurrencyConditional(
-          creditor?.contractDetails?.payable_amount || 0
+          creditor?.contractDetails?.funded_amount || 0
         ),
+        formatCurrencyConditional(creditor?.remainingAmountPaid || 0),
+
+        formatCurrencyConditional(payableAmount || 0),
+        formatCurrencyConditional(creditor?.breakEven || 0),
         formatPurchasedPercentage(
           creditor?.contractDetails?.purchased_percentage || 0
         ),
@@ -564,8 +574,10 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
       head: [
         [
           "Name",
-          "Loan Amount",
-          "Payable Amount",
+          "Funded Amount",
+          "Payback Amount",
+          "Current Balance",
+          "Break Even Point",
           "Purchased %",
           "Repayment Amount",
         ],
@@ -606,7 +618,7 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
   // Recommendations
   if (checkboxState["Strategy 1 Recommendations"]) {
     doc.setFontSize(14);
-    doc.text("Strategy 1 Recommendation 1 Minimum", 14, currentY);
+    doc.text("Max Profit Recommendation 1 Minimum", 14, currentY);
     currentY += 10;
 
     const recommendationOneMin = creditors?.map((creditor) => {
@@ -621,29 +633,11 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
           settlementRange?.settlement_range?.[title]?.["recommendation 1"]
             ?.min || 0
         ),
-        formatPercentage(
-          settlementRange?.percentage_settlement_over_weekly_budget?.[title]?.[
-            "recommendation 1"
-          ]?.min || 0
-        ),
-        formatPercentage(
-          settlementRange?.percentage_settlement_over_weekly_true_revenue?.[
-            title
-          ]?.["recommendation 1"]?.min || 0
-        ),
       ];
     });
 
     doc.autoTable({
-      head: [
-        [
-          "Creditors",
-          "Commission Range",
-          "Settlement Range",
-          "Weekly Budget %",
-          "Weekly True Revenue",
-        ],
-      ],
+      head: [["Creditors", "Commission Range", "Settlement Range"]],
       body: recommendationOneMin,
       startY: currentY,
     });
@@ -651,7 +645,7 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     currentY = doc.autoTable.previous.finalY + 10;
 
     doc.setFontSize(14);
-    doc.text("Strategy 1 Recommendation 1 Maximum", 14, currentY);
+    doc.text("Max Profit Recommendation 1 Maximum", 14, currentY);
     currentY += 10;
 
     const recommendationOneMax = creditors?.map((creditor) => {
@@ -666,218 +660,22 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
           settlementRange?.settlement_range?.[title]?.["recommendation 1"]
             ?.max || 0
         ),
-        formatPercentage(
-          settlementRange?.percentage_settlement_over_weekly_budget?.[title]?.[
-            "recommendation 1"
-          ]?.max || 0
-        ),
-        formatPercentage(
-          settlementRange?.percentage_settlement_over_weekly_true_revenue?.[
-            title
-          ]?.["recommendation 1"]?.max || 0
-        ),
       ];
     });
 
     doc.autoTable({
-      head: [
-        [
-          "Creditors",
-          "Commission Range",
-          "Settlement Range",
-          "Weekly Budget %",
-          "Weekly True Revenue",
-        ],
-      ],
+      head: [["Creditors", "Commission Range", "Settlement Range"]],
       body: recommendationOneMax,
       startY: currentY,
     });
 
-    currentY = doc.autoTable.previous.finalY + 10;
-
-    doc.setFontSize(14);
-    doc.text("Strategy 1 Recommendation 2 Minimum", 14, currentY);
-    currentY += 10;
-
-    const recommendationTwoMin = creditors?.map((creditor) => {
-      const title = creditor?.creditorAccountTitle || "N/A";
-      return [
-        title,
-        formatCurrencyConditional(
-          settlementRange?.commission_range?.[title]?.["recommendation 2"]
-            ?.min || 0
-        ),
-        formatCurrencyConditional(
-          settlementRange?.settlement_range?.[title]?.["recommendation 2"]
-            ?.min || 0
-        ),
-        formatPercentage(
-          settlementRange?.percentage_settlement_over_weekly_budget?.[title]?.[
-            "recommendation 2"
-          ]?.min || 0
-        ),
-        formatPercentage(
-          settlementRange?.percentage_settlement_over_weekly_true_revenue?.[
-            title
-          ]?.["recommendation 2"]?.min || 0
-        ),
-      ];
-    });
-
-    doc.autoTable({
-      head: [
-        [
-          "Creditors",
-          "Commission Range",
-          "Settlement Range",
-          "Weekly Budget %",
-          "Weekly True Revenue",
-        ],
-      ],
-      body: recommendationTwoMin,
-      startY: currentY,
-    });
-
-    currentY = doc.autoTable.previous.finalY + 10;
-
-    doc.setFontSize(14);
-    doc.text("Strategy 1 Recommendation 2 Maximum", 14, currentY);
-    currentY += 10;
-
-    const recommendationTwoMax = creditors?.map((creditor) => {
-      const title = creditor?.creditorAccountTitle || "N/A";
-      return [
-        title,
-        formatCurrencyConditional(
-          settlementRange?.commission_range?.[title]?.["recommendation 2"]
-            ?.max || 0
-        ),
-        formatCurrencyConditional(
-          settlementRange?.settlement_range?.[title]?.["recommendation 2"]
-            ?.max || 0
-        ),
-        formatPercentage(
-          settlementRange?.percentage_settlement_over_weekly_budget?.[title]?.[
-            "recommendation 2"
-          ]?.max || 0
-        ),
-        formatPercentage(
-          settlementRange?.percentage_settlement_over_weekly_true_revenue?.[
-            title
-          ]?.["recommendation 2"]?.max || 0
-        ),
-      ];
-    });
-
-    doc.autoTable({
-      head: [
-        [
-          "Creditors",
-          "Commission Range",
-          "Settlement Range",
-          "Weekly Budget %",
-          "Weekly True Revenue",
-        ],
-      ],
-      body: recommendationTwoMax,
-      startY: currentY,
-    });
-
-    currentY = doc.autoTable.previous.finalY + 10;
-
-    doc.setFontSize(14);
-    doc.text("Strategy 1 Recommendation 3 Minimum", 14, currentY);
-    currentY += 10;
-
-    const recommendationThreeMin = creditors?.map((creditor) => {
-      const title = creditor?.creditorAccountTitle || "N/A";
-      return [
-        title,
-        formatCurrencyConditional(
-          settlementRange?.commission_range?.[title]?.["recommendation 3"]
-            ?.min || 0
-        ),
-        formatCurrencyConditional(
-          settlementRange?.settlement_range?.[title]?.["recommendation 3"]
-            ?.min || 0
-        ),
-        formatPercentage(
-          settlementRange?.percentage_settlement_over_weekly_budget?.[title]?.[
-            "recommendation 3"
-          ]?.min || 0
-        ),
-        formatPercentage(
-          settlementRange?.percentage_settlement_over_weekly_true_revenue?.[
-            title
-          ]?.["recommendation 3"]?.min || 0
-        ),
-      ];
-    });
-
-    doc.autoTable({
-      head: [
-        [
-          "Creditors",
-          "Commission Range",
-          "Settlement Range ",
-          "Weekly Budget %",
-          "Weekly True Revenue",
-        ],
-      ],
-      body: recommendationThreeMin,
-      startY: currentY,
-    });
-    currentY = doc.autoTable.previous.finalY + 10;
-    // Recommendations three max
-    doc.setFontSize(14);
-    doc.text("Strategy 1 Recommendation 3 Maximum", 14, currentY);
-    currentY += 10;
-
-    const recommendationThreeMax = creditors.map((creditor) => {
-      const title = creditor?.creditorAccountTitle || "N/A";
-      return [
-        title,
-        formatCurrencyConditional(
-          settlementRange?.commission_range?.[title]?.["recommendation 3"]
-            ?.max || 0
-        ),
-        formatCurrencyConditional(
-          settlementRange?.settlement_range?.[title]?.["recommendation 3"]
-            ?.max || 0
-        ),
-        formatPercentage(
-          settlementRange?.percentage_settlement_over_weekly_budget?.[title]?.[
-            "recommendation 3"
-          ]?.max || 0
-        ),
-        formatPercentage(
-          settlementRange?.percentage_settlement_over_weekly_true_revenue?.[
-            title
-          ]?.["recommendation 3"]?.max || 0
-        ),
-      ];
-    });
-
-    doc.autoTable({
-      head: [
-        [
-          "Creditors",
-          "Commission Range",
-          "Settlement Range ",
-          "Weekly Budget %",
-          "Weekly True Revenue",
-        ],
-      ],
-      body: recommendationThreeMax,
-      startY: currentY,
-    });
     currentY = doc.autoTable.previous.finalY + 10;
   }
 
   //   //strategy 2
   if (checkboxState["Strategy 2 Recommendations"]) {
     doc.setFontSize(14);
-    doc.text("Strategy 2 Recommendations ", 14, currentY);
+    doc.text("Lump Sum", 14, currentY);
     currentY += 10;
     const recommendationTwo = creditors.map((creditor) => {
       const title = creditor?.creditorAccountTitle || "N/A";
@@ -904,28 +702,27 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
   // strategy 3
   if (checkboxState["Strategy 3 Recommendations"]) {
     doc.setFontSize(14);
-    doc.text("Strategy 3 Recommendations Minimum", 14, currentY);
+    doc.text("Percentage Recievable Minimum", 14, currentY);
     currentY += 10;
 
     const recommendationThreeMinVal = creditors?.map((creditor) => {
       const title = creditor?.creditorAccountTitle || "N/A";
       return [
         title,
-        formatCurrencyConditional(
-          fullProfit?.commission_range?.[title]?.["recommendation 1"]?.min || 0
-        ),
-        formatCurrencyConditional(
-          fullProfit?.settlement_range?.[title]?.["recommendation 1"]?.min || 0
-        ),
+
         formatPercentage(
-          fullProfit?.percentage_settlement_over_weekly_budget?.[title]?.[
+          settlementRange?.percentage_settlement_over_weekly_budget?.[title]?.[
             "recommendation 1"
           ]?.min || 0
         ),
         formatPercentage(
-          fullProfit?.percentage_settlement_over_weekly_true_revenue?.[title]?.[
-            "recommendation 1"
-          ]?.min || 0
+          settlementRange?.percentage_settlement_over_weekly_true_revenue?.[
+            title
+          ]?.["recommendation 1"]?.min || 0
+        ),
+        formatPercentage(
+          settlementRange?.new_default_risk_score?.["recommendation 1"]?.min ||
+            0
         ),
       ];
     });
@@ -933,10 +730,9 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
       head: [
         [
           "Creditors",
-          "Commission Range",
-          "Settlement Range ",
           "Weekly Budget %",
           "Weekly True Revenue",
+          "New Default Risk",
         ],
       ],
       body: recommendationThreeMinVal,
@@ -945,28 +741,27 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
     currentY = doc.autoTable.previous.finalY + 10;
 
     doc.setFontSize(14);
-    doc.text("Strategy 3 Recommendation Maximum", 14, currentY);
+    doc.text("Percentage Recievable Maximum", 14, currentY);
     currentY += 10;
 
     const recommendationThree = creditors?.map((creditor) => {
       const title = creditor?.creditorAccountTitle || "N/A";
       return [
         title,
-        formatCurrencyConditional(
-          fullProfit?.commission_range?.[title]?.["recommendation 1"]?.max || 0
-        ),
-        formatCurrencyConditional(
-          fullProfit?.settlement_range?.[title]?.["recommendation 1"]?.max || 0
-        ),
+
         formatPercentage(
-          fullProfit?.percentage_settlement_over_weekly_budget?.[title]?.[
+          settlementRange?.percentage_settlement_over_weekly_budget?.[title]?.[
             "recommendation 1"
           ]?.max || 0
         ),
         formatPercentage(
-          fullProfit?.percentage_settlement_over_weekly_true_revenue?.[title]?.[
-            "recommendation 1"
-          ]?.max || 0
+          settlementRange?.percentage_settlement_over_weekly_true_revenue?.[
+            title
+          ]?.["recommendation 1"]?.max || 0
+        ),
+        formatPercentage(
+          settlementRange?.new_default_risk_score?.["recommendation 1"]?.max ||
+            0
         ),
       ];
     });
@@ -974,10 +769,9 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
       head: [
         [
           "Creditors",
-          "Commission Range",
-          "Settlement Range ",
           "Weekly Budget %",
           "Weekly True Revenue",
+          "New Default Risk",
         ],
       ],
       body: recommendationThree,
