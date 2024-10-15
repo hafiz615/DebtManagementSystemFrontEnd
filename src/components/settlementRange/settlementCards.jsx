@@ -151,6 +151,19 @@ export default function SettlementCards({
               setPaymentChanged={setPaymentChanged}
               caseId={caseId}
             />
+          ) : strategy === "strategy3" ? (
+            <MuiModels
+              width="35vw"
+              show="strategy3choices"
+              buttonName="settlmentPayment"
+              title={title}
+              settlementRange={percentageReceivableAmount}
+              weeksTillPaid={weeklyTrueRevenueAmount}
+              commissionRange={commissionRange?.[title]}
+              remainingAmount={remainingAmount}
+              setPaymentChanged={setPaymentChanged}
+              caseId={caseId}
+            />
           ) : (
             <MuiModels
               width="70vw"
