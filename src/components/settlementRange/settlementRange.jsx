@@ -480,6 +480,8 @@ export default function SettlementRange() {
     }
   };
 
+  console.log("-------", JSON.stringify(selectedCreditorDetails));
+
   const handleClick = async () => {
     if (!inputValue) return;
     setChatHistory((prev) => [...prev, { type: "user", text: inputValue }]);
@@ -854,15 +856,15 @@ export default function SettlementRange() {
   ];
 
   const formatSummaryPercentage = (value) => {
-    if (value === "--" || typeof value !== "string" || value.includes("%"))
+    if (value === "--" || typeof value !== "string" || value?.includes("%"))
       return value;
-    return value;
+    return "";
   };
   const formatSummary = (value) => {
     if (typeof value === "number") {
       return `$${value.toFixed(2)}`;
     }
-    if (typeof value === "string" && !value.includes("$")) {
+    if (typeof value === "string" && !value?.includes("$")) {
       return `$${parseFloat(value).toFixed(2)}`;
     }
     return value || "--";
@@ -1558,7 +1560,7 @@ export default function SettlementRange() {
                       }
                       const formattedValue = detail?.value
                         ? detail?.formatCurrency &&
-                          !detail?.value?.includes("$")
+                          !String(detail?.value)?.includes("$")
                           ? `$${detail?.value}`
                           : detail?.value
                         : "--";
