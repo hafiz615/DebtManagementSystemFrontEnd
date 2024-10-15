@@ -833,8 +833,8 @@ export default function SettlementRange() {
     },
 
     {
-      label: "Paid Amount",
-      value: selectedCreditorDetails?.remainingAmountPaid || "0",
+      label: "Payable Amount",
+      value: selectedCreditorDetails?.contractDetails?.payable_amount || "0",
       formatCurrency: true,
     },
     {
@@ -866,8 +866,10 @@ export default function SettlementRange() {
       ? `$${creditor?.contractDetails?.funded_amount?.toFixed(2)}`
       : "--";
 
-    const paybackAmount = creditor?.remainingAmountPaid
-      ? `$${creditor?.remainingAmountPaid?.toFixed(2)}`
+    const paybackAmount = creditor?.contractDetails?.payable_amount
+      ? `$${Number(
+          creditor?.contractDetails?.payable_amount?.replace(/[$,]/g, "")
+        )?.toFixed(2)}`
       : "--";
     const payableAmount =
       creditor?.remaining !== undefined &&
@@ -899,7 +901,7 @@ export default function SettlementRange() {
   const headerData = [
     { key: "creditorName", heading: "Creditors", width: "11%" },
     { key: "fundedAmount", heading: "Funded Amount", width: "11%" },
-    { key: "paybackAmount", heading: "Paid Amount", width: "11%" },
+    { key: "paybackAmount", heading: "Payable Amount ", width: "11%" },
     { key: "payableAmount", heading: "Current Balance", width: "11%" },
     { key: "breakEvenPoint", heading: "Break Even Point", width: "11%" },
     {
@@ -913,7 +915,13 @@ export default function SettlementRange() {
       width: "11%",
     },
   ];
-
+  const totalPayableAmount = creditorNames?.reduce((total, creditor) => {
+    const payableAmount = creditor?.contractDetails?.payable_amount?.replace(
+      /[$,]/g,
+      ""
+    );
+    return total + (parseFloat(payableAmount) || 0);
+  }, 0);
   const summaryDetails = {
     creditorName: "Summary",
     fundedAmount:
@@ -928,16 +936,7 @@ export default function SettlementRange() {
         : "--",
 
     paybackAmount:
-      creditorNames?.reduce((total, creditor) => {
-        return total + (creditor?.remainingAmountPaid || 0);
-      }, 0) > 0
-        ? `$${creditorNames
-            ?.reduce((total, creditor) => {
-              return total + (creditor?.remainingAmountPaid || 0);
-            }, 0)
-            .toFixed(2)}`
-        : "--",
-
+      totalPayableAmount > 0 ? `$${totalPayableAmount?.toFixed(2)}` : "--",
     payableAmount:
       creditorNames?.reduce((total, creditor) => {
         return (
@@ -1603,12 +1602,15 @@ export default function SettlementRange() {
                       ) {
                         return null;
                       }
-                      const formattedValue = detail?.value
-                        ? detail?.formatCurrency &&
-                          !String(detail?.value)?.includes("$")
-                          ? `$${detail?.value}`
-                          : detail?.value
-                        : "--";
+                      const formattedValue =
+                        detail?.value !== undefined && detail?.value !== null
+                          ? detail?.formatCurrency &&
+                            !String(detail?.value)?.includes("$")
+                            ? `$${new Intl.NumberFormat("en-US", {
+                                minimumFractionDigits: 2,
+                              })?.format(Number(detail?.value))}`
+                            : String(detail?.value)
+                          : "--";
 
                       const tooltipContent = {
                         "Funded Amount": detail?.tooltip,
