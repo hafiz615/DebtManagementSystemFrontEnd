@@ -129,6 +129,9 @@ export default function MuiModels({
   buttonIcon,
   popUpDebtorData,
   getAllRanges,
+  selectedOption,
+  setSelectedOption,
+  strategy,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -846,6 +849,9 @@ export default function MuiModels({
               remainingAmount={remainingAmount}
               commissionRange={commissionRange}
               setPaymentChanged={setPaymentChanged}
+              selectedOption={selectedOption}
+              setSelectedOption={setSelectedOption}
+              strategy={strategy}
             />
           ) : show === "settlmentPayment" ? (
             <SettlementPayment

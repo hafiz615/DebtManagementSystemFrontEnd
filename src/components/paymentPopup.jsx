@@ -1,4 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
+import {
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormControl,
+} from "@mui/material";
 import { useParams } from "react-router-dom";
 
 import { Box, Grid, Typography } from "@mui/material";
@@ -42,7 +48,13 @@ export default function PaymentPopup({
   closePopup,
   commissionRange,
   setPaymentChanged,
+  selectedOption,
+  setSelectedOption,
+  strategy,
 }) {
+  const handleRadioChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
   const [saveDisabled, setSaveDisabled] = useState(false);
   const [totalCommission, setTotalCommission] = useState("");
   const [commission, setCommission] = useState("");
@@ -55,6 +67,7 @@ export default function PaymentPopup({
   const { id } = useParams();
   const today = new Date().toISOString().split("T")[0];
   const [isExempt, setIsExempt] = useState(data?.isExempt || false);
+
   const [newDataList, setNewDataList] = useState([
     {
       amount: settlementRange || "",
@@ -63,6 +76,15 @@ export default function PaymentPopup({
       frequency: weeksTillPaid || 1,
     },
   ]);
+  useEffect(() => {
+    if (settlementRange) {
+      const updatedDataList = newDataList?.map((item) => ({
+        ...item,
+        amount: settlementRange,
+      }));
+      setNewDataList(updatedDataList);
+    }
+  }, [settlementRange]);
 
   const prevFrequenciesRef = useRef(
     newDataList?.map((item) => item?.frequency)
@@ -187,7 +209,12 @@ export default function PaymentPopup({
     }
     prevAmountsRef.current = currentAmounts;
   }, [newDataList, remaining]);
-
+  const radioStyle = {
+    color: Colors.SKY_BLUE,
+    "&.Mui-checked": {
+      color: Colors.SKY_BLUE,
+    },
+  };
   return (
     <div>
       <Typography
@@ -221,6 +248,7 @@ export default function PaymentPopup({
         Total amount after given interval:
         <b> ${isNaN(totalAmount) ? 0 : totalAmount?.toFixed(2)}</b>
       </Typography>
+
       {saveDisabled && feePayment === "toPay" && (
         <Typography
           sx={{
@@ -232,6 +260,28 @@ export default function PaymentPopup({
           Commission is calculated using this percentage:
           <b> {commissionPercentage}%</b>
         </Typography>
+      )}
+      {strategy === "strategy3" && (
+        <FormControl component="fieldset">
+          <RadioGroup
+            row
+            aria-label="paymentOption"
+            name="paymentOption"
+            value={selectedOption}
+            onChange={handleRadioChange}
+          >
+            <FormControlLabel
+              value="percentageReceivable"
+              control={<Radio sx={radioStyle} />}
+              label="Percentage Receivable Amount"
+            />
+            <FormControlLabel
+              value="weeklyRevenue"
+              control={<Radio sx={radioStyle} />}
+              label="Weekly True Revenue Amount"
+            />
+          </RadioGroup>
+        </FormControl>
       )}
 
       <PaymentDetails

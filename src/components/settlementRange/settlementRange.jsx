@@ -221,6 +221,7 @@ export default function SettlementRange() {
   const [justificationValue, setJustificationValue] = useState(
     "justification_gemini"
   );
+  const [selectedOption, setSelectedOption] = useState("percentageReceivable");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const drawerOpen = useSelector((state) => state.drawer.open);
   const { AUTHORITY_TEXT } = UserListPage;
@@ -412,6 +413,11 @@ export default function SettlementRange() {
             percentageReceivable={
               allData?.creditors?.[parseInt(tabValue)]?.percentageReceivable
             }
+            weeklyTrueRevenueAmount={
+              allData?.creditors?.[parseInt(tabValue)]?.weeklyTrueRevenueAmount
+            }
+            selectedOption={selectedOption}
+            setSelectedOption={setSelectedOption}
           />
         ) : (
           <Grid
@@ -827,13 +833,15 @@ export default function SettlementRange() {
     },
 
     {
-      label: "Payback Amount",
+      label: "Paid Amount",
       value: selectedCreditorDetails?.remainingAmountPaid || "0",
       formatCurrency: true,
     },
     {
       label: "Current Balance",
-      value: selectedCreditorDetails?.contractDetails?.payable_amount,
+      value:
+        selectedCreditorDetails?.totalDebt -
+        selectedCreditorDetails?.remainingAmountPaid,
       formatCurrency: true,
     },
     {
@@ -853,33 +861,25 @@ export default function SettlementRange() {
     },
   ];
 
-  const formatSummaryPercentage = (value) => {
-    if (value === "--" || typeof value !== "string" || value.includes("%"))
-      return value;
-    return value;
-  };
-  const formatSummary = (value) => {
-    if (typeof value === "number") {
-      return `$${value.toFixed(2)}`;
-    }
-    if (typeof value === "string" && !value.includes("$")) {
-      return `$${parseFloat(value).toFixed(2)}`;
-    }
-    return value || "--";
-  };
-
   const creditorNamesDetails = creditorNames?.map((creditor) => {
-    const fundedAmount = creditor?.contractDetails?.funded_amount || "--";
-    const paybackAmount = creditor?.remainingAmountPaid || "0";
+    const fundedAmount = creditor?.contractDetails?.funded_amount
+      ? `$${creditor?.contractDetails?.funded_amount?.toFixed(2)}`
+      : "--";
+
+    const paybackAmount = creditor?.remainingAmountPaid
+      ? `$${creditor?.remainingAmountPaid?.toFixed(2)}`
+      : "--";
     const payableAmount =
       creditor?.remaining !== undefined &&
       creditor?.remainingAmountPaid !== undefined
-        ? `$${(creditor?.remaining - creditor?.remainingAmountPaid).toFixed(2)}`
+        ? `$${(creditor?.totalDebt - creditor?.remainingAmountPaid)?.toFixed(
+            2
+          )}`
         : "--";
     const breakEvenPoint = creditor?.breakEven
-      ? `$${parseFloat(creditor.breakEven).toFixed(2)}`
+      ? `$${parseFloat(creditor.breakEven)?.toFixed(2)}`
       : "--";
-    const purchased_percentage = formatSummaryPercentage(
+    const purchased_percentage = formatPurchasedPercentage(
       creditor?.contractDetails?.purchased_percentage || "--"
     );
     const repayment_amount =
@@ -899,7 +899,7 @@ export default function SettlementRange() {
   const headerData = [
     { key: "creditorName", heading: "Creditors", width: "11%" },
     { key: "fundedAmount", heading: "Funded Amount", width: "11%" },
-    { key: "paybackAmount", heading: "Payback Amount", width: "11%" },
+    { key: "paybackAmount", heading: "Paid Amount", width: "11%" },
     { key: "payableAmount", heading: "Current Balance", width: "11%" },
     { key: "breakEvenPoint", heading: "Break Even Point", width: "11%" },
     {
@@ -916,10 +916,57 @@ export default function SettlementRange() {
 
   const summaryDetails = {
     creditorName: "Summary",
-    fundedAmount: formatSummary(summaryAmount?.fundedAmount) || "--",
-    paybackAmount: "--",
-    payableAmount: formatSummary(summaryAmount?.payableAmount),
-    breakEvenPoint: "--",
+    fundedAmount:
+      creditorNames?.reduce((total, creditor) => {
+        return total + (creditor?.contractDetails?.funded_amount || 0);
+      }, 0) > 0
+        ? `$${creditorNames
+            ?.reduce((total, creditor) => {
+              return total + (creditor?.contractDetails?.funded_amount || 0);
+            }, 0)
+            .toFixed(2)}`
+        : "--",
+
+    paybackAmount:
+      creditorNames?.reduce((total, creditor) => {
+        return total + (creditor?.remainingAmountPaid || 0);
+      }, 0) > 0
+        ? `$${creditorNames
+            ?.reduce((total, creditor) => {
+              return total + (creditor?.remainingAmountPaid || 0);
+            }, 0)
+            .toFixed(2)}`
+        : "--",
+
+    payableAmount:
+      creditorNames?.reduce((total, creditor) => {
+        return (
+          total +
+          ((creditor?.totalDebt || 0) - (creditor?.remainingAmountPaid || 0))
+        );
+      }, 0) > 0
+        ? `$${creditorNames
+            ?.reduce((total, creditor) => {
+              return (
+                total +
+                ((creditor?.totalDebt || 0) -
+                  (creditor?.remainingAmountPaid || 0))
+              );
+            }, 0)
+            .toFixed(2)}`
+        : "--",
+
+    breakEvenPoint:
+      creditorNames?.reduce((total, creditor) => {
+        return total + (creditor?.breakEven || 0);
+      }, 0) > 0
+        ? `$${creditorNames
+            ?.reduce((total, creditor) => {
+              return total + (creditor?.breakEven || 0);
+            }, 0)
+            .toFixed(2)}`
+        : "--",
+
     purchased_percentage: "--",
     repayment_amount: "--",
   };
@@ -1558,7 +1605,7 @@ export default function SettlementRange() {
                       }
                       const formattedValue = detail?.value
                         ? detail?.formatCurrency &&
-                          !detail?.value?.includes("$")
+                          !String(detail?.value)?.includes("$")
                           ? `$${detail?.value}`
                           : detail?.value
                         : "--";

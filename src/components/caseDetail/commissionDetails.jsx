@@ -17,6 +17,7 @@ function CommissionDetails({
   getAllRanges,
 }) {
   const [selectedOption, setSelectedOption] = useState("");
+
   const [customValue, setCustomValue] = useState(
     data?.debtor?.strategy1BudgetCustom ||
       popUpDebtorData?.strategy1BudgetCustom ||
@@ -28,6 +29,7 @@ function CommissionDetails({
       popUpDebtorData?.strategy3BudgetCustom ||
       ""
   );
+
   const [isStrategyOneSaved, setIsStrategyOneSaved] = useState(false);
   const [loading, setLoading] = useState(false);
   const debtorDetails = data?.debtor?.basicInformation;
@@ -37,13 +39,17 @@ function CommissionDetails({
   useEffect(() => {
     if (!isStrategyOneSaved) {
       setSelectedOption(
-        data?.debtor?.weeklyBudgetKeyStrategy1 ||
+        (prev) =>
+          prev ||
+          data?.debtor?.weeklyBudgetKeyStrategy1 ||
           popUpDebtorData?.weeklyBudgetKeyStrategy1 ||
           ""
       );
     } else {
       setSelectedOptionThree(
-        data?.debtor?.weeklyBudgetKeyStrategy3 ||
+        (prev) =>
+          prev ||
+          data?.debtor?.weeklyBudgetKeyStrategy3 ||
           popUpDebtorData?.weeklyBudgetKeyStrategy3 ||
           ""
       );
@@ -52,32 +58,41 @@ function CommissionDetails({
 
   const payload = {
     strategy1Profit:
-      selectedOption === "strategy1Profit"
-        ? debtorDetails?.strategy1MaxProfit
-        : 0,
-    strategy1Weekly:
-      selectedOption === "strategy1Weekly"
-        ? debtorDetails?.weeklyBudgetStrategy1
-        : 0,
-    strategy1Custom:
-      selectedOption === "strategy1Custom"
-        ? Number(customValue)
-        : 0 || debtorDetails?.strategy1BudgetCustom,
+      debtorDetails?.strategy1MaxProfit ||
+      data?.debtor?.strategy1MaxProfit ||
+      popUpDebtorData?.strategy1MaxProfit ||
+      0,
 
-    strategy1Choosen: selectedOption, // This value reflects the selected option
+    strategy1Weekly:
+      data?.debtor?.basicInformation?.weeklyBudget ||
+      popUpDebtorData?.basicInformation?.weeklyBudget ||
+      0,
+
+    strategy1Custom:
+      customValue !== undefined && customValue !== null
+        ? Number(customValue)
+        : data?.debtor?.strategy1BudgetCustom || 0,
+
+    strategy1Choosen: selectedOption || "",
+
     strategy3Profit:
-      selectedOptionThree === "strategy3Profit"
-        ? debtorDetails?.strategy3MaxProfit
-        : 0,
+      debtorDetails?.strategy3MaxProfit ||
+      data?.debtor?.strategy3MaxProfit ||
+      popUpDebtorData?.strategy3MaxProfit ||
+      0,
+
     strategy3ProfitMargin:
-      selectedOptionThree === "strategy3ProfitMargin"
-        ? debtorDetails?.weeklyBudgetStrategy3
-        : 0,
+      debtorDetails?.weeklyBudgetStrategy3 ||
+      data?.debtor?.weeklyBudgetStrategy3 ||
+      popUpDebtorData?.profitMargin ||
+      0,
+
     strategy3Custom:
-      selectedOptionThree === "strategy3Custom"
-        ? Number(customValueThree) / 100
-        : 0 || debtorDetails?.strategy3BudgetCustom,
-    strategy3Choosen: selectedOptionThree, // This value reflects the selected option for StrategyThree
+      customValueThree !== undefined && customValueThree !== null
+        ? Number(customValueThree)
+        : data?.debtor?.strategy3BudgetCustom || 0,
+
+    strategy3Choosen: selectedOptionThree || "",
   };
 
   const handleSave = async () => {
