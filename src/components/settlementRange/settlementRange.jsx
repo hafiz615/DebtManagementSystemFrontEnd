@@ -825,7 +825,7 @@ export default function SettlementRange() {
       label: "Funded Amount",
       value:
         selectedCreditorDetails?.contractDetails?.funded_amount ||
-        `(${selectedCreditorDetails?.contractDetails?.loan_amount || "--"})`,
+        `${selectedCreditorDetails?.contractDetails?.loan_amount}`,
       formatCurrency: true,
       tooltip: selectedCreditorDetails?.contractDetails?.funded_amount
         ? "Funded Amount"
@@ -858,6 +858,7 @@ export default function SettlementRange() {
     {
       label: "Repayment Amount",
       value: selectedCreditorDetails?.contractDetails?.repayment_amount,
+      formatCurrency: true,
     },
   ];
 
@@ -1606,9 +1607,17 @@ export default function SettlementRange() {
                         detail?.value !== undefined && detail?.value !== null
                           ? detail?.formatCurrency &&
                             !String(detail?.value)?.includes("$")
-                            ? `$${new Intl.NumberFormat("en-US", {
-                                minimumFractionDigits: 2,
-                              })?.format(Number(detail?.value))}`
+                            ? (() => {
+                                const formatted = `$${new Intl.NumberFormat(
+                                  "en-US",
+                                  {
+                                    minimumFractionDigits: 2,
+                                  }
+                                )?.format(Number(detail?.value))}`;
+                                return isNaN(Number(detail?.value))
+                                  ? "--"
+                                  : formatted;
+                              })()
                             : String(detail?.value)
                           : "--";
 
