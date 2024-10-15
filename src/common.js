@@ -560,7 +560,9 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
         formatCurrencyConditional(
           creditor?.contractDetails?.funded_amount || 0
         ),
-        formatCurrencyConditional(creditor?.remainingAmountPaid || 0),
+        formatCurrencyConditional(
+          creditor?.contractDetails?.payable_amount || 0
+        ),
 
         formatCurrencyConditional(payableAmount || 0),
         formatCurrencyConditional(creditor?.breakEven || 0),
@@ -578,7 +580,7 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
         [
           "Name",
           "Funded Amount",
-          "Paid Amount",
+          "Payable Amount",
           "Current Balance",
           "Break Even Point",
           "Purchased %",
