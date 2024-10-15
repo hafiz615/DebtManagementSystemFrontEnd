@@ -28,7 +28,6 @@ export default function EditDebtorDetail({
   const [profitMargin, setProfitMargin] = useState(
     caseData?.debtor?.profitMargin || ""
   );
-
   const debtorBasicInfo =
     caseData?.debtor?.basicInformation || caseData?.DebtorInfo;
   const debtorBusinessInfo =
@@ -241,10 +240,11 @@ export default function EditDebtorDetail({
         phone: debtorBusinessDetails?.businessPhoneNumber,
         address: debtorBusinessDetails?.businessAddress,
       },
-      profitMargin: parseInt(profitMargin),
+      profitMargin: Number(profitMargin),
       paymentToken: connectPayment?.paymentToken,
       paymentType: connectPayment?.paymentType,
     };
+
     const updateDebtor = await UpdateDebtor(caseData?._id || data?._id, params);
     if (updateDebtor?.status === 200) {
       showToast(updateDebtor?.data?.message, "success");
