@@ -578,7 +578,7 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
         [
           "Name",
           "Funded Amount",
-          "Payback Amount",
+          "Paid Amount",
           "Current Balance",
           "Break Even Point",
           "Purchased %",

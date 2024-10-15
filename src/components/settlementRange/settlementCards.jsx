@@ -26,6 +26,9 @@ export default function SettlementCards({
   percentageReceivableAmount,
   tabValue,
   percentageReceivable,
+  weeklyTrueRevenueAmount,
+  selectedOption,
+  setSelectedOption,
   optionValue,
   isFullPayment,
 }) {
@@ -155,12 +158,17 @@ export default function SettlementCards({
               buttonName="settlmentPayment"
               settlementRange={
                 strategy === "strategy3"
-                  ? percentageReceivableAmount
+                  ? selectedOption === "percentageReceivable"
+                    ? percentageReceivableAmount
+                    : weeklyTrueRevenueAmount
                   : settlementRange?.remaining_principle_amount
               }
               remainingAmount={remainingAmount}
               setPaymentChanged={setPaymentChanged}
               caseId={caseId}
+              selectedOption={selectedOption}
+              setSelectedOption={setSelectedOption}
+              strategy="strategy3"
             />
           )}
         </div>
@@ -270,7 +278,12 @@ export default function SettlementCards({
                         (rangeNames[index]?.label === "New Default Risk" ||
                           rangeNames[index]?.label === "Weekly True Revenue %")
                       ) && (
-                        <div style={{ width: "100%", display: "flex" }}>
+                        <div
+                          style={{
+                            width: "100%",
+                            display: "flex",
+                          }}
+                        >
                           <div
                             style={{
                               width: "75%",
@@ -358,40 +371,46 @@ export default function SettlementCards({
           })
         )}
         {strategy === "strategy3" && tabValue !== 2 && (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              paddingLeft: "7.5%",
-              paddingRight: "7%",
+          <Grid
+            container
+            sx={{
               width: "100%",
+              padding: "10px 8px",
             }}
           >
-            <Typography
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: FONT_SIZE_LARGE,
-                fontFamily: "Nunito",
-                fontWeight: "700",
-              }}
-            >
-              Percentage Receivable
-              <Tooltip title={"Percentage Receivable"} placement="top-end">
-                <InfoIcon
-                  sx={{
-                    fontSize: "17px",
-                    color: Colors.SKY_BLUE,
-                  }}
-                />
-              </Tooltip>
-            </Typography>
-
-            <Typography>
-              {`${parseFloat(percentageReceivable).toFixed(2)}%` || "--"}
-            </Typography>
-          </div>
+            <Grid item xs={6.5} sx={{ paddingLeft: "6%" }}>
+              <Typography
+                sx={{
+                  ...commonTextStyles,
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                Percentage Receivable
+                <Tooltip title={"Percentage Receivable"} placement="top-end">
+                  <InfoIcon
+                    sx={{
+                      fontSize: "17px",
+                      color: Colors.SKY_BLUE,
+                    }}
+                  />
+                </Tooltip>
+              </Typography>
+            </Grid>
+            <Grid item xs={5}>
+              <div
+                style={{
+                  fontSize: FONT_SIZE_LARGE,
+                  fontFamily: "Nunito",
+                  fontWeight: "500",
+                  float: "right",
+                  color: Colors.DARK_GRAY,
+                }}
+              >
+                {`${parseFloat(percentageReceivable).toFixed(2)}%` || "--"}
+              </div>
+            </Grid>
+          </Grid>
         )}
       </Grid>
 
