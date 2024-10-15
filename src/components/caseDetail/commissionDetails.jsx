@@ -82,8 +82,8 @@ function CommissionDetails({
       0,
 
     strategy3ProfitMargin:
-      debtorDetails?.weeklyBudgetStrategy3 ||
-      data?.debtor?.weeklyBudgetStrategy3 ||
+      debtorDetails?.profitMargin ||
+      data?.debtor?.profitMargin ||
       popUpDebtorData?.profitMargin ||
       0,
 
