@@ -60,7 +60,9 @@ export default function Strategy3choices({
                 }}
               />
             }
-            label="Percentage Receivable Amount"
+            label={`Percentage Receivable Amount: ${
+              settlementRange ? `$${settlementRange}` : "--"
+            }`}
           />
           <FormControlLabel
             value="weeklyTrueRevenueAmount"
@@ -74,7 +76,9 @@ export default function Strategy3choices({
                 }}
               />
             }
-            label="Weekly True Revenue Amount"
+            label={`Weekly True Revenue Amount: ${
+              weeksTillPaid ? `$${weeksTillPaid}` : "--"
+            }`}
           />
         </RadioGroup>
       </FormControl>
