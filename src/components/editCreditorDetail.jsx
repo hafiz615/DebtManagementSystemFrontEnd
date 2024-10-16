@@ -117,11 +117,11 @@ export default function EditCreditorDetail({
           },
         },
         status: caseData?.status || "",
-        totalDebt: parseInt(caseData?.creditors[0]?.totalDebt) || 0,
+        totalDebt: parseInt(caseData?.totalDebt) || 0,
         lastPaymentDate: caseData?.lastPaymentDate
           ? new Date(caseData?.lastPaymentDate).toISOString().split("T")[0]
           : "",
-        contractDetails: caseData?.creditors[0]?.contractDetails,
+        contractDetails: caseData?.contractDetails,
         paidAmount: parseInt(caseData?.paidAmount) || 0,
         remaining: parseInt(caseData?.remaining) || 0,
         feePayment: caseData?.feePayment,
