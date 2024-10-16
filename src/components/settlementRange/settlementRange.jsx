@@ -369,6 +369,7 @@ export default function SettlementRange() {
         {!isEmpty(fullProfit) ? (
           <SettlementCards
             tabValue={tabValue}
+            allCreditorNames={allCreditorNames}
             strategy="strategy3"
             setPaymentChanged={setPaymentChanged}
             remainingAmount={

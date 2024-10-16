@@ -29,6 +29,7 @@ export default function SettlementCards({
   weeklyTrueRevenueAmount,
   selectedOption,
   setSelectedOption,
+  allCreditorNames,
   optionValue,
   isFullPayment,
 }) {
@@ -383,48 +384,49 @@ export default function SettlementCards({
             );
           })
         )}
-        {strategy === "strategy3" && tabValue !== 2 && (
-          <Grid
-            container
-            sx={{
-              width: "100%",
-              padding: "10px 8px",
-            }}
-          >
-            <Grid item xs={6.5} sx={{ paddingLeft: "6%" }}>
-              <Typography
-                sx={{
-                  ...commonTextStyles,
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                Percentage Receivable
-                <Tooltip title={"Percentage Receivable"} placement="top-end">
-                  <InfoIcon
-                    sx={{
-                      fontSize: "17px",
-                      color: Colors.SKY_BLUE,
-                    }}
-                  />
-                </Tooltip>
-              </Typography>
+        {strategy === "strategy3" &&
+          allCreditorNames[tabValue] !== "Summary" && (
+            <Grid
+              container
+              sx={{
+                width: "100%",
+                padding: "10px 8px",
+              }}
+            >
+              <Grid item xs={6.5} sx={{ paddingLeft: "6%" }}>
+                <Typography
+                  sx={{
+                    ...commonTextStyles,
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  Percentage Receivable
+                  <Tooltip title={"Percentage Receivable"} placement="top-end">
+                    <InfoIcon
+                      sx={{
+                        fontSize: "17px",
+                        color: Colors.SKY_BLUE,
+                      }}
+                    />
+                  </Tooltip>
+                </Typography>
+              </Grid>
+              <Grid item xs={5}>
+                <div
+                  style={{
+                    fontSize: FONT_SIZE_LARGE,
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    float: "right",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  {`${parseFloat(percentageReceivable).toFixed(2)}%` || "--"}
+                </div>
+              </Grid>
             </Grid>
-            <Grid item xs={5}>
-              <div
-                style={{
-                  fontSize: FONT_SIZE_LARGE,
-                  fontFamily: "Nunito",
-                  fontWeight: "500",
-                  float: "right",
-                  color: Colors.DARK_GRAY,
-                }}
-              >
-                {`${parseFloat(percentageReceivable).toFixed(2)}%` || "--"}
-              </div>
-            </Grid>
-          </Grid>
-        )}
+          )}
       </Grid>
 
       {warning !== "" && isLumpSumPayment && (
