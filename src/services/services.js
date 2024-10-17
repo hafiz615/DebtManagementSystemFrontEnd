@@ -31,7 +31,7 @@ const convertJpgToPdf = async (file) => {
 
 export const ExtractContractData = async (files) => {
   try {
-    const apiUrl = `${URL}/extract-fields-multiple-files?enable_cache=false`;
+    const apiUrl = `${URL}/extract-fields-multiple-files?enable_cache=true`;
     const formData = new FormData();
 
     files.map(async (file) => {
