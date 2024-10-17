@@ -255,7 +255,7 @@ function HomeDetails() {
   };
 
   const renderAccordion = (data, index) => (
-    <Grid item xs={12} lg={6} sx={{ marginBottom: "0.5rem" }} key={data.key}>
+    <Grid item xs={12} sx={{ marginBottom: "0.5rem" }} key={data.key}>
       <AccordionUsage
         paginationRows={paginationRows[data?.key]}
         setPaginationRows={(newRow) => handleRowChange(data?.key, newRow)}
@@ -285,6 +285,18 @@ function HomeDetails() {
     </Grid>
   );
 
+  const groupOne = accordionData?.filter(
+    (data) =>
+      data.heading === "Failed Authorizations" ||
+      data.heading === "Successful Authorizations" ||
+      data.heading === "Successful Captures"
+  );
+  const groupTwo = accordionData?.filter(
+    (data) =>
+      data.heading === "Failed Captures" ||
+      data.heading === "Successful Payments" ||
+      data.heading === "Upcoming Payments"
+  );
   return (
     <Grid
       container
@@ -349,15 +361,19 @@ function HomeDetails() {
             sx={{
               margin: "1rem 0rem",
               backgroundColor: Colors.PALE_GRAY,
-              paddingRight: "1rem",
-              paddingBottom: "1rem",
+              // paddingRight: "1rem",
+              // paddingBottom: "1rem",
               borderRadius: "10px",
             }}
             spacing={smallScreen ? 0 : 2}
           >
             <Grid
               container
-              sx={{ justifyContent: "space-between", padding: "0 1rem" }}
+              sx={{
+                justifyContent: "space-between",
+                padding: "0 1rem",
+                mb: { xs: "1rem", lg: "auto" },
+              }}
             >
               <Typography
                 sx={{
@@ -365,7 +381,7 @@ function HomeDetails() {
                   fontWeight: "700",
                   fontSize: "1.5rem",
                   color: Colors.BLACK,
-                  mt: "1.5rem",
+                  mt: "1.5rem ",
                 }}
               >
                 Payment
@@ -398,8 +414,30 @@ function HomeDetails() {
                 </Typography>
               </Grid>
             </Grid>
-            {accordionData?.map(renderAccordion)}
+
+            {/* {accordionData?.map(renderAccordion)} */}
+            <>
+              <Grid
+                container
+                item
+                xs={12}
+                sx={{
+                  display: "flex",
+                  padding: "1rem !important",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Grid item xs={12} lg={5.9}>
+                  {groupOne?.map(renderAccordion)}
+                </Grid>
+
+                <Grid item xs={12} lg={5.9}>
+                  {groupTwo?.map(renderAccordion)}
+                </Grid>
+              </Grid>
+            </>
           </Grid>
+
           <Grid
             container
             item
