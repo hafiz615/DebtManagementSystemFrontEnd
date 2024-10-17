@@ -823,18 +823,18 @@ export default function SettlementRange() {
 
   const creditorDetails = [
     {
-      label: "Funded Amount",
-      value:
-        selectedCreditorDetails?.contractDetails?.funded_amount ||
-        `${selectedCreditorDetails?.contractDetails?.loan_amount}`,
+      label: "Purchase Price",
+      value: `${selectedCreditorDetails?.contractDetails?.loan_amount}`,
       formatCurrency: true,
-      tooltip: selectedCreditorDetails?.contractDetails?.funded_amount
-        ? "Funded Amount"
-        : "Funded amount was not present, so we are showing the loan amount.",
+    },
+    {
+      label: "Net Funded Amount",
+      value: selectedCreditorDetails?.contractDetails?.funded_amount,
+      formatCurrency: true,
     },
 
     {
-      label: "Payable Amount",
+      label: "Purchased Amount",
       value: selectedCreditorDetails?.contractDetails?.payable_amount || "0",
       formatCurrency: true,
     },
@@ -857,13 +857,14 @@ export default function SettlementRange() {
       ),
     },
     {
-      label: "Repayment Amount",
+      label: "Current Payment Amount",
       value: selectedCreditorDetails?.contractDetails?.repayment_amount,
       formatCurrency: true,
     },
   ];
 
   const creditorNamesDetails = creditorNames?.map((creditor) => {
+    const purchasePrice = creditor?.contractDetails?.loan_amount || "--";
     const fundedAmount = creditor?.contractDetails?.funded_amount
       ? `$${creditor?.contractDetails?.funded_amount?.toFixed(2)}`
       : "--";
@@ -874,7 +875,7 @@ export default function SettlementRange() {
         )?.toFixed(2)}`
       : "--";
     const payableAmount =
-      creditor?.remaining !== undefined &&
+      creditor?.totalDebt !== undefined &&
       creditor?.remainingAmountPaid !== undefined
         ? `$${(creditor?.totalDebt - creditor?.remainingAmountPaid)?.toFixed(
             2
@@ -891,6 +892,7 @@ export default function SettlementRange() {
 
     return {
       creditorName: creditor?.accountTitleMapping[0]?.accountTitle,
+      purchasePrice,
       fundedAmount,
       paybackAmount,
       payableAmount,
@@ -902,8 +904,9 @@ export default function SettlementRange() {
 
   const headerData = [
     { key: "creditorName", heading: "Creditors", width: "11%" },
-    { key: "fundedAmount", heading: "Funded Amount", width: "11%" },
-    { key: "paybackAmount", heading: "Payable Amount ", width: "11%" },
+    { key: "purchasePrice", heading: "Purchase Price", width: "11%" },
+    { key: "fundedAmount", heading: "Net Funded Amount", width: "11%" },
+    { key: "paybackAmount", heading: "Purchased Amount ", width: "11%" },
     { key: "payableAmount", heading: "Current Balance", width: "11%" },
     { key: "breakEvenPoint", heading: "Break Even Point", width: "11%" },
     {
@@ -913,7 +916,7 @@ export default function SettlementRange() {
     },
     {
       key: "repayment_amount",
-      heading: "Repayment Amount",
+      heading: "Current Payment Amount",
       width: "11%",
     },
   ];
@@ -924,8 +927,27 @@ export default function SettlementRange() {
     );
     return total + (parseFloat(payableAmount) || 0);
   }, 0);
+  const parseCurrency = (amount) => {
+    return parseFloat(amount?.replace(/[$,]/g, "") || 0);
+  };
   const summaryDetails = {
     creditorName: "Summary",
+    purchasePrice:
+      creditorNames?.reduce((total, creditor) => {
+        const purchasePrice = parseCurrency(
+          creditor?.contractDetails?.loan_amount
+        );
+        return total + purchasePrice;
+      }, 0) > 0
+        ? `$${creditorNames
+            ?.reduce((total, creditor) => {
+              const purchasePrice = parseCurrency(
+                creditor?.contractDetails?.loan_amount
+              );
+              return total + purchasePrice;
+            }, 0)
+            .toFixed(2)}`
+        : "--",
     fundedAmount:
       creditorNames?.reduce((total, creditor) => {
         return total + (creditor?.contractDetails?.funded_amount || 0);
@@ -1623,8 +1645,9 @@ export default function SettlementRange() {
                           : "--";
 
                       const tooltipContent = {
-                        "Funded Amount": detail?.tooltip,
-                        "Payback Amount": "Payback Amount",
+                        "Purchase Price": "Purchase Price",
+                        "Net Funded Amount": "Net Funded Amount",
+                        "Purchased Amount": "Purchase Amount",
                         "Break Even": "Break Even",
                         "Current Balance":
                           "The remaining amount you owe to the creditor.",
@@ -1632,7 +1655,7 @@ export default function SettlementRange() {
                           "Your profit before making any debt payments.",
                         "Purchased Percentage":
                           "The percentage of the loan amount that has been repaid.",
-                        "Repayment Amount":
+                        "Current Payment Amount":
                           "The initial amount borrowed before any repayments.",
                       };
 

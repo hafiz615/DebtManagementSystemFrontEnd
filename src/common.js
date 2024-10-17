@@ -549,14 +549,15 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
 
     const creditorDetails = creditors?.map((creditor) => {
       const payableAmount =
-        creditor?.remaining !== undefined &&
+        creditor?.totalDebt !== undefined &&
         creditor?.remainingAmountPaid !== undefined
-          ? `$${(creditor?.remaining - creditor?.remainingAmountPaid).toFixed(
+          ? `$${(creditor?.totalDebt - creditor?.remainingAmountPaid).toFixed(
               2
             )}`
           : "--";
       return [
         creditor?.creditorAccountTitle || "N/A",
+        formatCurrencyConditional(creditor?.contractDetails?.loan_amount || 0),
         formatCurrencyConditional(
           creditor?.contractDetails?.funded_amount || 0
         ),
@@ -579,12 +580,13 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
       head: [
         [
           "Name",
-          "Funded Amount",
-          "Payable Amount",
+          "Purchase Price",
+          "Net Funded Amount",
+          "Purchased Amount",
           "Current Balance",
           "Break Even Point",
-          "Purchased %",
-          "Repayment Amount",
+          "Purchased Percentage",
+          "Cuurent Payment Amount",
         ],
       ],
       body: creditorDetails,
