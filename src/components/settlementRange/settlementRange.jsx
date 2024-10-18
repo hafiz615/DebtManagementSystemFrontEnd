@@ -858,36 +858,61 @@ export default function SettlementRange() {
     },
     {
       label: "Current Payment Amount",
-      value: selectedCreditorDetails?.contractDetails?.repayment_amount,
-      formatCurrency: true,
+
+      value: selectedCreditorDetails?.contractDetails?.repayment_amount
+        ? `$${selectedCreditorDetails?.contractDetails?.repayment_amount?.replace(
+            /[$,]/g,
+            ""
+          )}`
+        : "--",
     },
   ];
 
   const creditorNamesDetails = creditorNames?.map((creditor) => {
-    const purchasePrice = creditor?.contractDetails?.loan_amount
-      ? `$${Number(creditor?.contractDetails?.loan_amount).toFixed(2)}`
+    const cleanLoanAmount = creditor?.contractDetails?.loan_amount
+      ? creditor?.contractDetails?.loan_amount?.replace(/[$,]/g, "")
       : "--";
 
-    const fundedAmount = creditor?.contractDetails?.funded_amount
-      ? `$${Number(creditor?.contractDetails?.funded_amount).toFixed(2)}`
+    const purchasePrice =
+      cleanLoanAmount !== "--" && !isNaN(Number(cleanLoanAmount))
+        ? `$${Number(cleanLoanAmount)?.toFixed(2)}`
+        : "--";
+
+    const cleanFundedAmount = creditor?.contractDetails?.funded_amount
+      ? creditor?.contractDetails?.funded_amount?.replace(/[$,]/g, "")
       : "--";
 
-    const paybackAmount = creditor?.contractDetails?.payable_amount
-      ? `$${Number(
-          creditor?.contractDetails?.payable_amount?.replace(/[$,]/g, "")
-        ).toFixed(2)}`
+    const fundedAmount =
+      cleanFundedAmount !== "--" && !isNaN(Number(cleanFundedAmount))
+        ? `$${Number(cleanFundedAmount)?.toFixed(2)}`
+        : "--";
+
+    const cleanPayableAmount = creditor?.contractDetails?.payable_amount
+      ? creditor?.contractDetails?.payable_amount.replace(/[$,]/g, "")
       : "--";
+
+    const paybackAmount =
+      cleanPayableAmount !== "--" && !isNaN(Number(cleanPayableAmount))
+        ? `$${Number(cleanPayableAmount).toFixed(2)}`
+        : "--";
 
     const payableAmount =
       creditor?.totalDebt !== undefined &&
       creditor?.remainingAmountPaid !== undefined
-        ? `$${(
+        ? isNaN(
             Number(creditor?.totalDebt) - Number(creditor?.remainingAmountPaid)
-          ).toFixed(2)}`
+          )
+          ? "--"
+          : `$${(
+              Number(creditor?.totalDebt) -
+              Number(creditor?.remainingAmountPaid)
+            ).toFixed(2)}`
         : "--";
 
     const breakEvenPoint = creditor?.breakEven
-      ? `$${parseFloat(creditor?.breakEven).toFixed(2)}`
+      ? isNaN(parseFloat(creditor?.breakEven))
+        ? "--"
+        : `$${parseFloat(creditor?.breakEven).toFixed(2)}`
       : "--";
 
     const purchased_percentage = formatPurchasedPercentage(
@@ -895,7 +920,7 @@ export default function SettlementRange() {
     );
 
     const repayment_amount = creditor?.contractDetails?.repayment_amount
-      ? `$${Number(creditor?.contractDetails?.repayment_amount).toFixed(2)}`
+      ? `$${creditor?.contractDetails?.repayment_amount.replace(/[$,]/g, "")}`
       : "--";
 
     return {
@@ -960,13 +985,24 @@ export default function SettlementRange() {
 
     fundedAmount:
       creditorNames?.reduce((total, creditor) => {
-        return total + Number(creditor?.contractDetails?.funded_amount || 0);
+        const cleanedAmount = creditor?.contractDetails?.funded_amount
+          ? Number(
+              creditor?.contractDetails?.funded_amount?.replace(/[$,]/g, "")
+            )
+          : 0;
+        return total + cleanedAmount;
       }, 0) > 0
         ? `$${creditorNames
             ?.reduce((total, creditor) => {
-              return (
-                total + Number(creditor?.contractDetails?.funded_amount || 0)
-              );
+              const cleanedAmount = creditor?.contractDetails?.funded_amount
+                ? Number(
+                    creditor?.contractDetails?.funded_amount?.replace(
+                      /[$,]/g,
+                      ""
+                    )
+                  )
+                : 0;
+              return total + cleanedAmount;
             }, 0)
             ?.toFixed(2)}`
         : "--",
@@ -1028,6 +1064,24 @@ export default function SettlementRange() {
         label: label,
       };
     });
+
+  const formatCurrencyValue = (value) => {
+    if (value === null || value === undefined) return "--";
+
+    // Convert to string if the value is a number
+    const valueStr = typeof value === "number" ? value?.toString() : value;
+
+    // Remove any unwanted characters, but keep numeric values
+    const cleanedValue = valueStr?.replace(/[^0-9.-]/g, "");
+
+    // Check if cleanedValue is a valid number
+    const numericValue = parseFloat(cleanedValue);
+    if (!isNaN(numericValue)) {
+      return `$${numericValue?.toFixed(2)}`; // Format to two decimal places
+    }
+
+    return "--";
+  };
 
   const categories = {
     Tableau10: [
@@ -1642,23 +1696,18 @@ export default function SettlementRange() {
                       ) {
                         return null;
                       }
-                      const formattedValue =
-                        detail?.value !== undefined && detail?.value !== null
-                          ? detail?.formatCurrency &&
-                            !String(detail?.value)?.includes("$")
-                            ? (() => {
-                                const formatted = `$${new Intl.NumberFormat(
-                                  "en-US",
-                                  {
-                                    minimumFractionDigits: 2,
-                                  }
-                                )?.format(Number(detail?.value))}`;
-                                return isNaN(Number(detail?.value))
-                                  ? "--"
-                                  : formatted;
-                              })()
-                            : String(detail?.value)
-                          : "--";
+
+                      // Use the formatCurrencyValue function to format detail.value
+                      const formattedValue = (() => {
+                        if (
+                          detail?.label === "Current Payment Amount" ||
+                          detail?.label === "Purchased Percentage"
+                        ) {
+                          return String(detail?.value) || "--";
+                        } else {
+                          return formatCurrencyValue(detail?.value);
+                        }
+                      })();
 
                       const tooltipContent = {
                         "Purchase Price": "Purchase Price",
@@ -1684,6 +1733,7 @@ export default function SettlementRange() {
                           lg={2.8}
                           container
                           sx={commonStyles}
+                          key={index} // Added a key prop for mapping
                         >
                           <Box
                             sx={{
