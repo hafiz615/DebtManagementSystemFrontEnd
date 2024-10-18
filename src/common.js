@@ -586,7 +586,7 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
           "Current Balance",
           "Break Even Point",
           "Purchased Percentage",
-          "Cuurent Payment Amount",
+          "Current Payment Amount",
         ],
       ],
       body: creditorDetails,
