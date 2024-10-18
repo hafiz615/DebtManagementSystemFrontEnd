@@ -824,30 +824,30 @@ export default function SettlementRange() {
   const creditorDetails = [
     {
       label: "Purchase Price",
-      value: `${selectedCreditorDetails?.contractDetails?.loan_amount}`,
+      value: `${selectedCreditorDetails?.contractDetails?.loan_amount}` || "--",
       formatCurrency: true,
     },
     {
       label: "Net Funded Amount",
-      value: selectedCreditorDetails?.contractDetails?.funded_amount,
+      value: selectedCreditorDetails?.contractDetails?.funded_amount || "--",
       formatCurrency: true,
     },
 
     {
       label: "Purchased Amount",
-      value: selectedCreditorDetails?.contractDetails?.payable_amount || "0",
+      value: selectedCreditorDetails?.contractDetails?.payable_amount || "--",
       formatCurrency: true,
     },
     {
       label: "Current Balance",
       value:
         selectedCreditorDetails?.totalDebt -
-        selectedCreditorDetails?.remainingAmountPaid,
+          selectedCreditorDetails?.remainingAmountPaid || "--",
       formatCurrency: true,
     },
     {
       label: "Break Even",
-      value: selectedCreditorDetails?.breakEven,
+      value: selectedCreditorDetails?.breakEven || "--",
       formatCurrency: true,
     },
     {
