@@ -864,31 +864,39 @@ export default function SettlementRange() {
   ];
 
   const creditorNamesDetails = creditorNames?.map((creditor) => {
-    const purchasePrice = creditor?.contractDetails?.loan_amount || "--";
+    const purchasePrice = creditor?.contractDetails?.loan_amount
+      ? Number(creditor?.contractDetails?.loan_amount).toFixed(2)
+      : "--";
+
     const fundedAmount = creditor?.contractDetails?.funded_amount
-      ? `$${creditor?.contractDetails?.funded_amount?.toFixed(2)}`
+      ? `$${Number(creditor?.contractDetails?.funded_amount).toFixed(2)}`
       : "--";
 
     const paybackAmount = creditor?.contractDetails?.payable_amount
       ? `$${Number(
           creditor?.contractDetails?.payable_amount?.replace(/[$,]/g, "")
-        )?.toFixed(2)}`
+        ).toFixed(2)}`
       : "--";
+
     const payableAmount =
       creditor?.totalDebt !== undefined &&
       creditor?.remainingAmountPaid !== undefined
-        ? `$${(creditor?.totalDebt - creditor?.remainingAmountPaid)?.toFixed(
-            2
-          )}`
+        ? `$${(
+            Number(creditor?.totalDebt) - Number(creditor?.remainingAmountPaid)
+          ).toFixed(2)}`
         : "--";
+
     const breakEvenPoint = creditor?.breakEven
-      ? `$${parseFloat(creditor.breakEven)?.toFixed(2)}`
+      ? `$${parseFloat(creditor?.breakEven).toFixed(2)}`
       : "--";
+
     const purchased_percentage = formatPurchasedPercentage(
       creditor?.contractDetails?.purchased_percentage || "--"
     );
-    const repayment_amount =
-      creditor?.contractDetails?.repayment_amount || "--";
+
+    const repayment_amount = creditor?.contractDetails?.repayment_amount
+      ? Number(creditor?.contractDetails?.repayment_amount).toFixed(2)
+      : "--";
 
     return {
       creditorName: creditor?.accountTitleMapping[0]?.accountTitle,
@@ -932,62 +940,70 @@ export default function SettlementRange() {
   };
   const summaryDetails = {
     creditorName: "Summary",
+
     purchasePrice:
       creditorNames?.reduce((total, creditor) => {
         const purchasePrice = parseCurrency(
-          creditor?.contractDetails?.loan_amount
+          creditor?.contractDetails?.loan_amount || "0"
         );
-        return total + purchasePrice;
+        return total + Number(purchasePrice);
       }, 0) > 0
         ? `$${creditorNames
             ?.reduce((total, creditor) => {
               const purchasePrice = parseCurrency(
-                creditor?.contractDetails?.loan_amount
+                creditor?.contractDetails?.loan_amount || "0"
               );
-              return total + purchasePrice;
+              return total + Number(purchasePrice);
             }, 0)
-            .toFixed(2)}`
+            ?.toFixed(2)}`
         : "--",
+
     fundedAmount:
       creditorNames?.reduce((total, creditor) => {
-        return total + (creditor?.contractDetails?.funded_amount || 0);
+        return total + Number(creditor?.contractDetails?.funded_amount || 0);
       }, 0) > 0
         ? `$${creditorNames
             ?.reduce((total, creditor) => {
-              return total + (creditor?.contractDetails?.funded_amount || 0);
+              return (
+                total + Number(creditor?.contractDetails?.funded_amount || 0)
+              );
             }, 0)
-            .toFixed(2)}`
+            ?.toFixed(2)}`
         : "--",
 
     paybackAmount:
-      totalPayableAmount > 0 ? `$${totalPayableAmount?.toFixed(2)}` : "--",
+      totalPayableAmount > 0
+        ? `$${Number(totalPayableAmount)?.toFixed(2)}`
+        : "--",
+
     payableAmount:
       creditorNames?.reduce((total, creditor) => {
         return (
           total +
-          ((creditor?.totalDebt || 0) - (creditor?.remainingAmountPaid || 0))
+          (Number(creditor?.totalDebt || 0) -
+            Number(creditor?.remainingAmountPaid || 0))
         );
       }, 0) > 0
         ? `$${creditorNames
             ?.reduce((total, creditor) => {
               return (
                 total +
-                ((creditor?.totalDebt || 0) -
-                  (creditor?.remainingAmountPaid || 0))
+                (Number(creditor?.totalDebt || 0) -
+                  Number(creditor?.remainingAmountPaid || 0))
               );
             }, 0)
-            .toFixed(2)}`
+            ?.toFixed(2)}`
         : "--",
 
     breakEvenPoint:
       creditorNames?.reduce((total, creditor) => {
-        return total + (creditor?.breakEven || 0);
+        return total + Number(creditor?.breakEven || 0);
       }, 0) > 0
         ? `$${creditorNames
             ?.reduce((total, creditor) => {
-              return total + (creditor?.breakEven || 0);
+              return total + Number(creditor?.breakEven || 0);
             }, 0)
-            .toFixed(2)}`
+            ?.toFixed(2)}`
         : "--",
 
     purchased_percentage: "--",
