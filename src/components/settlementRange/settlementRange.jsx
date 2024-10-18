@@ -865,7 +865,7 @@ export default function SettlementRange() {
 
   const creditorNamesDetails = creditorNames?.map((creditor) => {
     const purchasePrice = creditor?.contractDetails?.loan_amount
-      ? Number(creditor?.contractDetails?.loan_amount).toFixed(2)
+      ? `$${Number(creditor?.contractDetails?.loan_amount).toFixed(2)}`
       : "--";
 
     const fundedAmount = creditor?.contractDetails?.funded_amount
@@ -895,7 +895,7 @@ export default function SettlementRange() {
     );
 
     const repayment_amount = creditor?.contractDetails?.repayment_amount
-      ? Number(creditor?.contractDetails?.repayment_amount).toFixed(2)
+      ? `$${Number(creditor?.contractDetails?.repayment_amount).toFixed(2)}`
       : "--";
 
     return {
