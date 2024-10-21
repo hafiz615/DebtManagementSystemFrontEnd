@@ -1710,10 +1710,14 @@ export default function SettlementRange() {
                       })();
 
                       const tooltipContent = {
-                        "Purchase Price": "Purchase Price",
-                        "Net Funded Amount": "Net Funded Amount",
-                        "Purchased Amount": "Purchase Amount",
-                        "Break Even": "Break Even",
+                        "Purchase Price":
+                          "This is the amount being paid for the Receivables Purchased Amount.",
+                        "Net Funded Amount":
+                          "This is the net amount being paid after deduction of applicable fees, if any.",
+                        "Purchased Amount":
+                          " This is the amount of Receivables.",
+                        "Break Even":
+                          "1.2x of Net Funded Amount Minus Amount Paid Back.",
                         "Current Balance":
                           "The remaining amount you owe to the creditor.",
                         "Weekly Budget":
@@ -1733,7 +1737,7 @@ export default function SettlementRange() {
                           lg={2.8}
                           container
                           sx={commonStyles}
-                          key={index} // Added a key prop for mapping
+                          key={index}
                         >
                           <Box
                             sx={{

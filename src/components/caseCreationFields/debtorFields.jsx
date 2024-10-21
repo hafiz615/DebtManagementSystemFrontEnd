@@ -275,7 +275,8 @@ export default function DebtorFields({
               basicInfoInputChange("BasicFullName", e.target.value)
             }
             border={
-              debtorOwnDetails?.BasicFullName === ""
+              debtorOwnDetails?.BasicFullName === "" ||
+              debtorOwnDetails?.BasicFullName === undefined
                 ? "2px solid red"
                 : "auto" && misMatches?.BasicFullName && showFieldError
                 ? "2px solid red"
@@ -293,7 +294,8 @@ export default function DebtorFields({
             }
             error={errors?.emailValid}
             border={
-              debtorOwnDetails?.BasicEmailAddress === ""
+              debtorOwnDetails?.BasicEmailAddress === "" ||
+              debtorOwnDetails?.BasicEmailAddress === undefined
                 ? "2px solid red"
                 : "auto" && misMatches?.BasicEmailAddress && showFieldError
                 ? "2px solid red"
@@ -301,7 +303,7 @@ export default function DebtorFields({
             }
           />
           <PaymentsTextFields
-            type="text"
+            type="number"
             label="SSN*"
             placeHolderValue="Enter SSN"
             width="100%"
@@ -313,7 +315,8 @@ export default function DebtorFields({
             onKeyDown={handleNumberInput}
             error={errors?.ssn}
             border={
-              debtorOwnDetails?.BasicSsid === ""
+              debtorOwnDetails?.BasicSsid === "" ||
+              debtorOwnDetails?.BasicSsid === undefined
                 ? "2px solid red"
                 : "auto" && misMatches?.BasicSsid && showFieldError
                 ? "2px solid red"
@@ -442,7 +445,8 @@ export default function DebtorFields({
               basicInfoInputChange("BasicState", e.target.value)
             }
             border={
-              debtorOwnDetails?.BasicState === ""
+              debtorOwnDetails?.BasicState === "" ||
+              debtorOwnDetails?.BasicState === undefined
                 ? "2px solid red"
                 : "auto" && misMatches?.BasicState && showFieldError
                 ? "2px solid red"
@@ -458,7 +462,8 @@ export default function DebtorFields({
               basicInfoInputChange("BasicCity", e.target.value)
             }
             border={
-              debtorOwnDetails?.BasicCity === ""
+              debtorOwnDetails?.BasicCity === "" ||
+              debtorOwnDetails?.BasicCity === undefined
                 ? "2px solid red"
                 : "auto" && misMatches?.BasicCity && showFieldError
                 ? "2px solid red"
@@ -475,7 +480,8 @@ export default function DebtorFields({
               basicInfoInputChange("BasicZipCode", e.target.value)
             }
             border={
-              debtorOwnDetails?.BasicZipCode === ""
+              debtorOwnDetails?.BasicZipCode === "" ||
+              debtorOwnDetails?.BasicZipCode === undefined
                 ? "2px solid red"
                 : "auto" && misMatches?.BasicZipCode && showFieldError
                 ? "2px solid red"
@@ -507,7 +513,8 @@ export default function DebtorFields({
                 : ""
             }
             border={
-              debtorOwnDetails?.BasicPhoneNumber === ""
+              debtorOwnDetails?.BasicPhoneNumber === "" ||
+              debtorOwnDetails?.BasicPhoneNumber === undefined
                 ? "2px solid red"
                 : "auto" && misMatches?.BasicPhoneNumber && showFieldError
                 ? "2px solid red"
@@ -527,7 +534,8 @@ export default function DebtorFields({
             width="100%"
             value={debtorOwnDetails?.BasicAddress}
             border={
-              debtorOwnDetails?.BasicAddress === ""
+              debtorOwnDetails?.BasicAddress === "" ||
+              debtorOwnDetails?.BasicAddress === undefined
                 ? "2px solid red"
                 : "auto" && misMatches?.BasicAddress && showFieldError
                 ? "2px solid red"
@@ -583,7 +591,8 @@ export default function DebtorFields({
             width="100%"
             value={debtorBusinessDetails?.businessCompanyName}
             border={
-              debtorBusinessDetails?.businessCompanyName === ""
+              debtorBusinessDetails?.businessCompanyName === "" ||
+              debtorBusinessDetails?.businessCompanyName === undefined
                 ? "2px solid red"
                 : "auto" && misMatches?.businessCompanyName && showFieldError
                 ? "2px solid red"
@@ -594,7 +603,7 @@ export default function DebtorFields({
             }
           />
           <PaymentsTextFields
-            type="text"
+            type="number"
             label="EIN Number*"
             placeHolderValue="Enter Ein Number"
             width="100%"
@@ -604,7 +613,8 @@ export default function DebtorFields({
               businessInfoInputChange("businessEinNumber", e.target.value)
             }
             border={
-              debtorBusinessDetails?.businessEinNumber === ""
+              debtorBusinessDetails?.businessEinNumber === "" ||
+              debtorBusinessDetails?.businessEinNumber === undefined
                 ? "2px solid red"
                 : "auto" && misMatches?.businessEinNumber && showFieldError
                 ? "2px solid red"
@@ -619,7 +629,8 @@ export default function DebtorFields({
             width="100%"
             value={debtorBusinessDetails?.businessCategory}
             border={
-              debtorBusinessDetails?.businessCategory === ""
+              debtorBusinessDetails?.businessCategory === "" ||
+              debtorBusinessDetails?.businessCategory === undefined
                 ? "2px solid red"
                 : "auto" && misMatches?.businessCategory && showFieldError
                 ? "2px solid red"
@@ -676,7 +687,8 @@ export default function DebtorFields({
             placeHolderValue="Enter State Name"
             width="100%"
             border={
-              debtorBusinessDetails?.businessState === ""
+              debtorBusinessDetails?.businessState === "" ||
+              debtorBusinessDetails?.businessState === undefined
                 ? "2px solid red"
                 : "auto" && misMatches?.businessState && showFieldError
                 ? "2px solid red"
@@ -693,7 +705,8 @@ export default function DebtorFields({
             placeHolderValue="Enter City Name"
             width="100%"
             border={
-              debtorBusinessDetails?.businessCity === ""
+              debtorBusinessDetails?.businessCity === "" ||
+              debtorBusinessDetails?.businessCity === undefined
                 ? "2px solid red"
                 : "auto" && misMatches?.businessCity && showFieldError
                 ? "2px solid red"
@@ -710,7 +723,8 @@ export default function DebtorFields({
             placeHolderValue="Enter Zip Code"
             width="100%"
             border={
-              debtorBusinessDetails?.businessZipCode === ""
+              debtorBusinessDetails?.businessZipCode === "" ||
+              debtorBusinessDetails?.businessZipCode === undefined
                 ? "2px solid red"
                 : "auto" && misMatches?.businessZipCode && showFieldError
                 ? "2px solid red"
@@ -746,7 +760,8 @@ export default function DebtorFields({
                 : ""
             }
             border={
-              debtorBusinessDetails?.businessPhoneNumber === ""
+              debtorBusinessDetails?.businessPhoneNumber === "" ||
+              debtorBusinessDetails?.businessPhoneNumber === undefined
                 ? "2px solid red"
                 : "auto" && misMatches?.businessPhoneNumber && showFieldError
                 ? "2px solid red"
@@ -766,7 +781,8 @@ export default function DebtorFields({
             placeHolderValue="Add Your Address"
             width="100%"
             border={
-              debtorBusinessDetails?.businessAddress === ""
+              debtorBusinessDetails?.businessAddress === "" ||
+              debtorBusinessDetails?.businessAddress === undefined
                 ? "2px solid red"
                 : "auto" && misMatches?.businessAddress && showFieldError
                 ? "2px solid red"
