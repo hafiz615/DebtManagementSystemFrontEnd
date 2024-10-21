@@ -1377,11 +1377,11 @@ export default function SettlementRange() {
               title="Weekly Profit"
               tooltip="Your net profit after making debt payments."
               value={
-                apiData?.weekly_profit
-                  ? `$ ${new Intl.NumberFormat().format(apiData.weekly_profit)}`
+                apiData?.true_profit
+                  ? `$ ${new Intl.NumberFormat().format(apiData.true_profit)}`
                   : "No Data"
               }
-              rawValue={apiData?.weekly_profit}
+              rawValue={apiData?.true_profit}
             />
 
             <GridItem
