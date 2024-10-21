@@ -366,62 +366,58 @@ export default function SettlementRange() {
 
     2: strat3Recommendations?.map((item, index) => (
       <>
-        {!isEmpty(fullProfit) ? (
-          <SettlementCards
-            tabValue={tabValue}
-            allCreditorNames={allCreditorNames}
-            strategy="strategy3"
-            setPaymentChanged={setPaymentChanged}
-            remainingAmount={
-              allCreditorNames[tabValue] === "Summary"
-                ? summaryAmount?.loanAmount.toString()
-                : selectedCreditorDetails?.contractDetails?.loan_amount
-            }
-            caseId={caseId}
-            isFullPayment={true}
-            title={item}
-            weeksTillPaidTitle={getWeeksRemainingMessage(item)}
-            settlementRange={
-              apiData?.settlement_range?.[
-                allCreditorNames[parseInt(tabValue)]
-              ] || null
-            }
-            commissionRange={
-              apiData?.commission_range?.[
-                allCreditorNames[parseInt(tabValue)]
-              ] || null
-            }
-            newDefaultRiskScore={apiData?.new_default_risk_score || null}
-            percentageSettlementOverWeeklyBudget={
-              apiData?.percentage_settlement_over_weekly_budget?.[
-                allCreditorNames[parseInt(tabValue)]
-              ] || null
-            }
-            percentageSettlementOverWeeklyTrueRevenue={
-              apiData?.percentage_settlement_over_weekly_true_revenue?.[
-                allCreditorNames[parseInt(tabValue)]
-              ] || null
-            }
-            weeksTillPaid={
-              apiData?.weeks_till_paid?.[
-                allCreditorNames[parseInt(tabValue)]
-              ] || null
-            }
-            percentageReceivableAmount={
-              allData?.creditors?.[parseInt(tabValue)]
-                ?.percentageReceivableAmount
-            }
-            percentageReceivable={
-              allData?.creditors?.[parseInt(tabValue)]?.percentageReceivable
-            }
-            weeklyTrueRevenueAmount={
-              allData?.creditors?.[parseInt(tabValue)]?.weeklyTrueRevenueAmount
-            }
-            selectedOption={selectedOption}
-            setSelectedOption={setSelectedOption}
-          />
-        ) : (
-          <Grid
+        {/* {!isEmpty(fullProfit) ? ( */}
+        <SettlementCards
+          tabValue={tabValue}
+          allCreditorNames={allCreditorNames}
+          strategy="strategy3"
+          setPaymentChanged={setPaymentChanged}
+          remainingAmount={
+            allCreditorNames[tabValue] === "Summary"
+              ? summaryAmount?.loanAmount.toString()
+              : selectedCreditorDetails?.contractDetails?.loan_amount
+          }
+          caseId={caseId}
+          isFullPayment={true}
+          title={item}
+          weeksTillPaidTitle={getWeeksRemainingMessage(item)}
+          settlementRange={
+            apiData?.settlement_range?.[allCreditorNames[parseInt(tabValue)]] ||
+            null
+          }
+          commissionRange={
+            apiData?.commission_range?.[allCreditorNames[parseInt(tabValue)]] ||
+            null
+          }
+          newDefaultRiskScore={apiData?.new_default_risk_score || null}
+          percentageSettlementOverWeeklyBudget={
+            apiData?.percentage_settlement_over_weekly_budget?.[
+              allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          percentageSettlementOverWeeklyTrueRevenue={
+            apiData?.percentage_settlement_over_weekly_true_revenue?.[
+              allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          weeksTillPaid={
+            apiData?.weeks_till_paid?.[allCreditorNames[parseInt(tabValue)]] ||
+            null
+          }
+          percentageReceivableAmount={
+            allData?.creditors?.[parseInt(tabValue)]?.percentageReceivableAmount
+          }
+          percentageReceivable={
+            allData?.creditors?.[parseInt(tabValue)]?.percentageReceivable
+          }
+          weeklyTrueRevenueAmount={
+            allData?.creditors?.[parseInt(tabValue)]?.weeklyTrueRevenueAmount
+          }
+          selectedOption={selectedOption}
+          setSelectedOption={setSelectedOption}
+        />
+        {/* ) : ( */}
+        {/* <Grid
             item
             xs={12}
             container
@@ -432,8 +428,8 @@ export default function SettlementRange() {
             }}
           >
             {errorfullProfitMessage}
-          </Grid>
-        )}
+          </Grid> */}
+        {/* )} */}
       </>
     )),
     4: recommendations?.map((item, index) => (
