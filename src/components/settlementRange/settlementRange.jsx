@@ -1292,50 +1292,59 @@ export default function SettlementRange() {
             lg={8}
             sx={{ justifyContent: { xs: "left", md: "space-between" } }}
           >
-            {Object?.keys(debtor)?.map((key) => (
-              <Grid item xs={12} lg={6} key={key}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: { xs: "space-between", md: "unset" },
-                  }}
-                >
-                  <div
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "600",
-                      color: Colors.DARK_GRAY,
-                      width: "10rem",
-                      marginTop: "0.5rem",
+            {Object?.keys(debtor)?.map((key) => {
+              // Replace "weeklyBudget" with "monthlyBudget"
+              const displayKey = key === "weeklyBudget" ? "monthlyBudget" : key;
+
+              return (
+                <Grid item xs={12} lg={6} key={key}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: { xs: "space-between", md: "unset" },
                     }}
                   >
-                    {key?.charAt(0)?.toUpperCase() + key?.slice(1)}
-                  </div>
-
-                  <Tooltip title={debtor[key]?.toString()} placement="top-end">
-                    <span
+                    <div
                       style={{
                         fontFamily: "Nunito",
-                        fontWeight: "300",
-                        fontSize: "0.9rem",
-                        color: Colors.DIM_LIGHT_GRAY,
+                        fontWeight: "600",
+                        color: Colors.DARK_GRAY,
+                        width: "10rem",
                         marginTop: "0.5rem",
                       }}
                     >
-                      {allData?.debtor?.weeklyBudgetUpdated &&
-                      key === "weeklyBudget"
-                        ? `$${parseFloat(debtor[key]).toFixed(2)}`
-                        : key === "weeklyBudget"
-                        ? `$${parseFloat(debtor[key]).toFixed(2)}`
-                        : `${debtor[key]?.toString().slice(0, 15)}${
-                            debtor[key]?.toString().length > 15 ? "..." : ""
-                          }` || "--"}
-                    </span>
-                  </Tooltip>
-                </Box>
-              </Grid>
-            ))}
+                      {displayKey?.charAt(0)?.toUpperCase() +
+                        displayKey?.slice(1)}
+                    </div>
+
+                    <Tooltip
+                      title={debtor[key]?.toString()}
+                      placement="top-end"
+                    >
+                      <span
+                        style={{
+                          fontFamily: "Nunito",
+                          fontWeight: "300",
+                          fontSize: "0.9rem",
+                          color: Colors.DIM_LIGHT_GRAY,
+                          marginTop: "0.5rem",
+                        }}
+                      >
+                        {allData?.debtor?.weeklyBudgetUpdated &&
+                        key === "weeklyBudget"
+                          ? `$${parseFloat(debtor[key]).toFixed(2)}`
+                          : key === "weeklyBudget"
+                          ? `$${parseFloat(debtor[key]).toFixed(2)}`
+                          : `${debtor[key]?.toString().slice(0, 15)}${
+                              debtor[key]?.toString().length > 15 ? "..." : ""
+                            }` || "--"}
+                      </span>
+                    </Tooltip>
+                  </Box>
+                </Grid>
+              );
+            })}
           </Grid>
           <Grid xs={12}>
             <Typography
@@ -1374,7 +1383,7 @@ export default function SettlementRange() {
           <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
             <GridItem
               key="Weekly Profit"
-              title="Weekly Profit"
+              title="Monthly Profit"
               tooltip="Your net profit after making debt payments."
               value={
                 apiData?.weekly_profit
@@ -1386,7 +1395,7 @@ export default function SettlementRange() {
 
             <GridItem
               key="Weekly True Revenue"
-              title="Weekly True Revenue"
+              title="Monthly True Revenue"
               tooltip="Total revenue earned by the business each week."
               value={
                 apiData?.weekly_true_revenue
