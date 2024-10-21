@@ -173,7 +173,12 @@ export default function DebtorDetailsCards({
           >
             {debtorPeronsalDetails}
           </p>
-          <span style={{ display: "flex", justifyContent: "end" }}>
+          <span
+            style={{
+              display: "flex",
+              justifyContent: "end",
+            }}
+          >
             <MuiModels
               show="debtorDetail"
               button="create"

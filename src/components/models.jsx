@@ -54,6 +54,7 @@ import ExtractFieldPopup from "./caseDetail/extractFieldPopup";
 import TextEditor from "./textEditor";
 import PaynoteForm from "./caseDetail/paynoteForm";
 import CommissionDetails from "./caseDetail/commissionDetails";
+import Strategy3choices from "./strategy3choices";
 
 export default function MuiModels({
   buttonName,
@@ -129,6 +130,9 @@ export default function MuiModels({
   buttonIcon,
   popUpDebtorData,
   getAllRanges,
+  selectedOption,
+  setSelectedOption,
+  strategy,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -846,9 +850,23 @@ export default function MuiModels({
               remainingAmount={remainingAmount}
               commissionRange={commissionRange}
               setPaymentChanged={setPaymentChanged}
+              selectedOption={selectedOption}
+              setSelectedOption={setSelectedOption}
+              strategy={strategy}
             />
           ) : show === "settlmentPayment" ? (
             <SettlementPayment
+              title={title}
+              handleClose={handleClose}
+              settlementRange={settlementRange}
+              weeksTillPaid={weeksTillPaid}
+              caseId={caseId}
+              remainingAmount={remainingAmount}
+              commissionRange={commissionRange}
+              setPaymentChanged={setPaymentChanged}
+            />
+          ) : show === "strategy3choices" ? (
+            <Strategy3choices
               title={title}
               handleClose={handleClose}
               settlementRange={settlementRange}

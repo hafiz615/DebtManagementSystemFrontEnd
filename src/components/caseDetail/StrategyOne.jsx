@@ -66,12 +66,12 @@ function StrategyOne({
                 }`
               : "Weekly Budget not entered when case was created"
           }`}
-          disabled={!isWeeklyBudgetAvailable} // Disable if weekly budget is not available
+          disabled={!isWeeklyBudgetAvailable}
         />
         <FormControlLabel
           value="strategy1Custom"
           control={<Radio sx={radioStyle} />}
-          label="Choose one or create your own"
+          label="Create your own"
         />
       </RadioGroup>
 

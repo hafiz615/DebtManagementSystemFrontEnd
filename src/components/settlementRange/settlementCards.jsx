@@ -26,6 +26,10 @@ export default function SettlementCards({
   percentageReceivableAmount,
   tabValue,
   percentageReceivable,
+  weeklyTrueRevenueAmount,
+  selectedOption,
+  setSelectedOption,
+  allCreditorNames,
   optionValue,
   isFullPayment,
 }) {
@@ -148,6 +152,19 @@ export default function SettlementCards({
               setPaymentChanged={setPaymentChanged}
               caseId={caseId}
             />
+          ) : strategy === "strategy3" ? (
+            <MuiModels
+              width="35vw"
+              show="strategy3choices"
+              buttonName="settlmentPayment"
+              title={title}
+              settlementRange={percentageReceivableAmount}
+              weeksTillPaid={weeklyTrueRevenueAmount}
+              commissionRange={commissionRange?.[title]}
+              remainingAmount={remainingAmount}
+              setPaymentChanged={setPaymentChanged}
+              caseId={caseId}
+            />
           ) : (
             <MuiModels
               width="70vw"
@@ -155,12 +172,17 @@ export default function SettlementCards({
               buttonName="settlmentPayment"
               settlementRange={
                 strategy === "strategy3"
-                  ? percentageReceivableAmount
+                  ? selectedOption === "percentageReceivable"
+                    ? percentageReceivableAmount
+                    : weeklyTrueRevenueAmount
                   : settlementRange?.remaining_principle_amount
               }
               remainingAmount={remainingAmount}
               setPaymentChanged={setPaymentChanged}
               caseId={caseId}
+              selectedOption={selectedOption}
+              setSelectedOption={setSelectedOption}
+              strategy="strategy3"
             />
           )}
         </div>
@@ -270,7 +292,12 @@ export default function SettlementCards({
                         (rangeNames[index]?.label === "New Default Risk" ||
                           rangeNames[index]?.label === "Weekly True Revenue %")
                       ) && (
-                        <div style={{ width: "100%", display: "flex" }}>
+                        <div
+                          style={{
+                            width: "100%",
+                            display: "flex",
+                          }}
+                        >
                           <div
                             style={{
                               width: "75%",
@@ -357,42 +384,49 @@ export default function SettlementCards({
             );
           })
         )}
-        {strategy === "strategy3" && tabValue !== 2 && (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              paddingLeft: "7.5%",
-              paddingRight: "7%",
-              width: "100%",
-            }}
-          >
-            <Typography
+        {strategy === "strategy3" &&
+          allCreditorNames[tabValue] !== "Summary" && (
+            <Grid
+              container
               sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: FONT_SIZE_LARGE,
-                fontFamily: "Nunito",
-                fontWeight: "700",
+                width: "100%",
+                padding: "10px 8px",
               }}
             >
-              Percentage Receivable
-              <Tooltip title={"Percentage Receivable"} placement="top-end">
-                <InfoIcon
+              <Grid item xs={6.5} sx={{ paddingLeft: "6%" }}>
+                <Typography
                   sx={{
-                    fontSize: "17px",
-                    color: Colors.SKY_BLUE,
+                    ...commonTextStyles,
+                    display: "flex",
+                    alignItems: "center",
                   }}
-                />
-              </Tooltip>
-            </Typography>
-
-            <Typography>
-              {`${parseFloat(percentageReceivable).toFixed(2)}%` || "--"}
-            </Typography>
-          </div>
-        )}
+                >
+                  Percentage Receivable
+                  <Tooltip title={"Percentage Receivable"} placement="top-end">
+                    <InfoIcon
+                      sx={{
+                        fontSize: "17px",
+                        color: Colors.SKY_BLUE,
+                      }}
+                    />
+                  </Tooltip>
+                </Typography>
+              </Grid>
+              <Grid item xs={5}>
+                <div
+                  style={{
+                    fontSize: FONT_SIZE_LARGE,
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    float: "right",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  {`${parseFloat(percentageReceivable).toFixed(2)}%` || "--"}
+                </div>
+              </Grid>
+            </Grid>
+          )}
       </Grid>
 
       {warning !== "" && isLumpSumPayment && (

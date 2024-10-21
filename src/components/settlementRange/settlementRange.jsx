@@ -221,6 +221,7 @@ export default function SettlementRange() {
   const [justificationValue, setJustificationValue] = useState(
     "justification_gemini"
   );
+  const [selectedOption, setSelectedOption] = useState("percentageReceivable");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const drawerOpen = useSelector((state) => state.drawer.open);
   const { AUTHORITY_TEXT } = UserListPage;
@@ -368,6 +369,7 @@ export default function SettlementRange() {
         {!isEmpty(fullProfit) ? (
           <SettlementCards
             tabValue={tabValue}
+            allCreditorNames={allCreditorNames}
             strategy="strategy3"
             setPaymentChanged={setPaymentChanged}
             remainingAmount={
@@ -412,6 +414,11 @@ export default function SettlementRange() {
             percentageReceivable={
               allData?.creditors?.[parseInt(tabValue)]?.percentageReceivable
             }
+            weeklyTrueRevenueAmount={
+              allData?.creditors?.[parseInt(tabValue)]?.weeklyTrueRevenueAmount
+            }
+            selectedOption={selectedOption}
+            setSelectedOption={setSelectedOption}
           />
         ) : (
           <Grid
@@ -479,8 +486,6 @@ export default function SettlementRange() {
       setInputValue(value);
     }
   };
-
-  console.log("-------", JSON.stringify(selectedCreditorDetails));
 
   const handleClick = async () => {
     if (!inputValue) return;
@@ -818,29 +823,31 @@ export default function SettlementRange() {
 
   const creditorDetails = [
     {
-      label: "Funded Amount",
-      value:
-        selectedCreditorDetails?.contractDetails?.funded_amount ||
-        `(${selectedCreditorDetails?.contractDetails?.loan_amount || "--"})`,
+      label: "Purchase Price",
+      value: `${selectedCreditorDetails?.contractDetails?.loan_amount}` || "--",
       formatCurrency: true,
-      tooltip: selectedCreditorDetails?.contractDetails?.funded_amount
-        ? "Funded Amount"
-        : "Funded amount was not present, so we are showing the loan amount.",
+    },
+    {
+      label: "Net Funded Amount",
+      value: selectedCreditorDetails?.contractDetails?.funded_amount || "--",
+      formatCurrency: true,
     },
 
     {
-      label: "Payback Amount",
-      value: selectedCreditorDetails?.remainingAmountPaid || "0",
+      label: "Purchased Amount",
+      value: selectedCreditorDetails?.contractDetails?.payable_amount || "--",
       formatCurrency: true,
     },
     {
       label: "Current Balance",
-      value: selectedCreditorDetails?.contractDetails?.payable_amount,
+      value:
+        selectedCreditorDetails?.totalDebt -
+          selectedCreditorDetails?.remainingAmountPaid || "--",
       formatCurrency: true,
     },
     {
       label: "Break Even",
-      value: selectedCreditorDetails?.breakEven,
+      value: selectedCreditorDetails?.breakEven || "--",
       formatCurrency: true,
     },
     {
@@ -850,45 +857,75 @@ export default function SettlementRange() {
       ),
     },
     {
-      label: "Repayment Amount",
-      value: selectedCreditorDetails?.contractDetails?.repayment_amount,
+      label: "Current Payment Amount",
+
+      value: selectedCreditorDetails?.contractDetails?.repayment_amount
+        ? `$${selectedCreditorDetails?.contractDetails?.repayment_amount?.replace(
+            /[$,]/g,
+            ""
+          )}`
+        : "--",
     },
   ];
 
-  const formatSummaryPercentage = (value) => {
-    if (value === "--" || typeof value !== "string" || value?.includes("%"))
-      return value;
-    return "";
-  };
-  const formatSummary = (value) => {
-    if (typeof value === "number") {
-      return `$${value.toFixed(2)}`;
-    }
-    if (typeof value === "string" && !value?.includes("$")) {
-      return `$${parseFloat(value).toFixed(2)}`;
-    }
-    return value || "--";
-  };
-
   const creditorNamesDetails = creditorNames?.map((creditor) => {
-    const fundedAmount = creditor?.contractDetails?.funded_amount || "--";
-    const paybackAmount = creditor?.remainingAmountPaid || "0";
-    const payableAmount =
-      creditor?.remaining !== undefined &&
-      creditor?.remainingAmountPaid !== undefined
-        ? `$${(creditor?.remaining - creditor?.remainingAmountPaid).toFixed(2)}`
-        : "--";
-    const breakEvenPoint = creditor?.breakEven
-      ? `$${parseFloat(creditor.breakEven).toFixed(2)}`
+    const cleanLoanAmount = creditor?.contractDetails?.loan_amount
+      ? creditor?.contractDetails?.loan_amount?.replace(/[$,]/g, "")
       : "--";
-    const purchased_percentage = formatSummaryPercentage(
+
+    const purchasePrice =
+      cleanLoanAmount !== "--" && !isNaN(Number(cleanLoanAmount))
+        ? `$${Number(cleanLoanAmount)?.toFixed(2)}`
+        : "--";
+
+    const cleanFundedAmount = creditor?.contractDetails?.funded_amount
+      ? creditor?.contractDetails?.funded_amount?.replace(/[$,]/g, "")
+      : "--";
+
+    const fundedAmount =
+      cleanFundedAmount !== "--" && !isNaN(Number(cleanFundedAmount))
+        ? `$${Number(cleanFundedAmount)?.toFixed(2)}`
+        : "--";
+
+    const cleanPayableAmount = creditor?.contractDetails?.payable_amount
+      ? creditor?.contractDetails?.payable_amount.replace(/[$,]/g, "")
+      : "--";
+
+    const paybackAmount =
+      cleanPayableAmount !== "--" && !isNaN(Number(cleanPayableAmount))
+        ? `$${Number(cleanPayableAmount).toFixed(2)}`
+        : "--";
+
+    const payableAmount =
+      creditor?.totalDebt !== undefined &&
+      creditor?.remainingAmountPaid !== undefined
+        ? isNaN(
+            Number(creditor?.totalDebt) - Number(creditor?.remainingAmountPaid)
+          )
+          ? "--"
+          : `$${(
+              Number(creditor?.totalDebt) -
+              Number(creditor?.remainingAmountPaid)
+            ).toFixed(2)}`
+        : "--";
+
+    const breakEvenPoint = creditor?.breakEven
+      ? isNaN(parseFloat(creditor?.breakEven))
+        ? "--"
+        : `$${parseFloat(creditor?.breakEven).toFixed(2)}`
+      : "--";
+
+    const purchased_percentage = formatPurchasedPercentage(
       creditor?.contractDetails?.purchased_percentage || "--"
     );
-    const repayment_amount =
-      creditor?.contractDetails?.repayment_amount || "--";
+
+    const repayment_amount = creditor?.contractDetails?.repayment_amount
+      ? `$${creditor?.contractDetails?.repayment_amount.replace(/[$,]/g, "")}`
+      : "--";
 
     return {
       creditorName: creditor?.accountTitleMapping[0]?.accountTitle,
+      purchasePrice,
       fundedAmount,
       paybackAmount,
       payableAmount,
@@ -900,8 +937,9 @@ export default function SettlementRange() {
 
   const headerData = [
     { key: "creditorName", heading: "Creditors", width: "11%" },
-    { key: "fundedAmount", heading: "Funded Amount", width: "11%" },
-    { key: "paybackAmount", heading: "Payback Amount", width: "11%" },
+    { key: "purchasePrice", heading: "Purchase Price", width: "11%" },
+    { key: "fundedAmount", heading: "Net Funded Amount", width: "11%" },
+    { key: "paybackAmount", heading: "Purchased Amount ", width: "11%" },
     { key: "payableAmount", heading: "Current Balance", width: "11%" },
     { key: "breakEvenPoint", heading: "Break Even Point", width: "11%" },
     {
@@ -911,17 +949,99 @@ export default function SettlementRange() {
     },
     {
       key: "repayment_amount",
-      heading: "Repayment Amount",
+      heading: "Current Payment Amount",
       width: "11%",
     },
   ];
-
+  const totalPayableAmount = creditorNames?.reduce((total, creditor) => {
+    const payableAmount = creditor?.contractDetails?.payable_amount?.replace(
+      /[$,]/g,
+      ""
+    );
+    return total + (parseFloat(payableAmount) || 0);
+  }, 0);
+  const parseCurrency = (amount) => {
+    return parseFloat(amount?.replace(/[$,]/g, "") || 0);
+  };
   const summaryDetails = {
     creditorName: "Summary",
-    fundedAmount: formatSummary(summaryAmount?.fundedAmount) || "--",
-    paybackAmount: "--",
-    payableAmount: formatSummary(summaryAmount?.payableAmount),
-    breakEvenPoint: "--",
+
+    purchasePrice:
+      creditorNames?.reduce((total, creditor) => {
+        const purchasePrice = parseCurrency(
+          creditor?.contractDetails?.loan_amount || "0"
+        );
+        return total + Number(purchasePrice);
+      }, 0) > 0
+        ? `$${creditorNames
+            ?.reduce((total, creditor) => {
+              const purchasePrice = parseCurrency(
+                creditor?.contractDetails?.loan_amount || "0"
+              );
+              return total + Number(purchasePrice);
+            }, 0)
+            ?.toFixed(2)}`
+        : "--",
+
+    fundedAmount:
+      creditorNames?.reduce((total, creditor) => {
+        const cleanedAmount = creditor?.contractDetails?.funded_amount
+          ? Number(
+              creditor?.contractDetails?.funded_amount?.replace(/[$,]/g, "")
+            )
+          : 0;
+        return total + cleanedAmount;
+      }, 0) > 0
+        ? `$${creditorNames
+            ?.reduce((total, creditor) => {
+              const cleanedAmount = creditor?.contractDetails?.funded_amount
+                ? Number(
+                    creditor?.contractDetails?.funded_amount?.replace(
+                      /[$,]/g,
+                      ""
+                    )
+                  )
+                : 0;
+              return total + cleanedAmount;
+            }, 0)
+            ?.toFixed(2)}`
+        : "--",
+
+    paybackAmount:
+      totalPayableAmount > 0
+        ? `$${Number(totalPayableAmount)?.toFixed(2)}`
+        : "--",
+
+    payableAmount:
+      creditorNames?.reduce((total, creditor) => {
+        return (
+          total +
+          (Number(creditor?.totalDebt || 0) -
+            Number(creditor?.remainingAmountPaid || 0))
+        );
+      }, 0) > 0
+        ? `$${creditorNames
+            ?.reduce((total, creditor) => {
+              return (
+                total +
+                (Number(creditor?.totalDebt || 0) -
+                  Number(creditor?.remainingAmountPaid || 0))
+              );
+            }, 0)
+            ?.toFixed(2)}`
+        : "--",
+
+    breakEvenPoint:
+      creditorNames?.reduce((total, creditor) => {
+        return total + Number(creditor?.breakEven || 0);
+      }, 0) > 0
+        ? `$${creditorNames
+            ?.reduce((total, creditor) => {
+              return total + Number(creditor?.breakEven || 0);
+            }, 0)
+            ?.toFixed(2)}`
+        : "--",
+
     purchased_percentage: "--",
     repayment_amount: "--",
   };
@@ -944,6 +1064,24 @@ export default function SettlementRange() {
         label: label,
       };
     });
+
+  const formatCurrencyValue = (value) => {
+    if (value === null || value === undefined) return "--";
+
+    // Convert to string if the value is a number
+    const valueStr = typeof value === "number" ? value?.toString() : value;
+
+    // Remove any unwanted characters, but keep numeric values
+    const cleanedValue = valueStr?.replace(/[^0-9.-]/g, "");
+
+    // Check if cleanedValue is a valid number
+    const numericValue = parseFloat(cleanedValue);
+    if (!isNaN(numericValue)) {
+      return `$${numericValue?.toFixed(2)}`; // Format to two decimal places
+    }
+
+    return "--";
+  };
 
   const categories = {
     Tableau10: [
@@ -1558,24 +1696,35 @@ export default function SettlementRange() {
                       ) {
                         return null;
                       }
-                      const formattedValue = detail?.value
-                        ? detail?.formatCurrency &&
-                          !String(detail?.value)?.includes("$")
-                          ? `$${detail?.value}`
-                          : detail?.value
-                        : "--";
+
+                      // Use the formatCurrencyValue function to format detail.value
+                      const formattedValue = (() => {
+                        if (
+                          detail?.label === "Current Payment Amount" ||
+                          detail?.label === "Purchased Percentage"
+                        ) {
+                          return String(detail?.value) || "--";
+                        } else {
+                          return formatCurrencyValue(detail?.value);
+                        }
+                      })();
 
                       const tooltipContent = {
-                        "Funded Amount": detail?.tooltip,
-                        "Payback Amount": "Payback Amount",
-                        "Break Even": "Break Even",
+                        "Purchase Price":
+                          "This is the amount being paid for the Receivables Purchased Amount.",
+                        "Net Funded Amount":
+                          "This is the net amount being paid after deduction of applicable fees, if any.",
+                        "Purchased Amount":
+                          " This is the amount of Receivables.",
+                        "Break Even":
+                          "1.2x of Net Funded Amount Minus Amount Paid Back.",
                         "Current Balance":
                           "The remaining amount you owe to the creditor.",
                         "Weekly Budget":
                           "Your profit before making any debt payments.",
                         "Purchased Percentage":
                           "The percentage of the loan amount that has been repaid.",
-                        "Repayment Amount":
+                        "Current Payment Amount":
                           "The initial amount borrowed before any repayments.",
                       };
 
@@ -1588,6 +1737,7 @@ export default function SettlementRange() {
                           lg={2.8}
                           container
                           sx={commonStyles}
+                          key={index}
                         >
                           <Box
                             sx={{

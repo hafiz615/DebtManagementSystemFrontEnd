@@ -7,9 +7,7 @@ import {
   Grid,
 } from "@mui/material";
 
-import { handleNumberInput } from "../../common";
 import { Colors } from "../../config/default";
-import AmountTextField from "../amountTextField";
 import PaymentsTextFields from "../caseTextField";
 
 function StrategyThree({
@@ -46,7 +44,7 @@ function StrategyThree({
         <FormControlLabel
           value="strategy3Profit"
           control={<Radio sx={radioStyle} />}
-          label={`67% of maximum profit margin: ${
+          label={`67% of receivable margin: ${
             isMaxProfitAvailable
               ? `${
                   data?.debtor?.strategy3MaxProfit ||
@@ -59,7 +57,7 @@ function StrategyThree({
         <FormControlLabel
           value="strategy3ProfitMargin"
           control={<Radio sx={radioStyle} />}
-          label={`Stated profit margin of debtor: ${
+          label={`Stated receivable margin of debtor: ${
             isProfitMarginAvailable
               ? `${
                   data?.debtor?.profitMargin || popUpDebtorData?.profitMargin
@@ -71,7 +69,7 @@ function StrategyThree({
         <FormControlLabel
           value="strategy3Custom"
           control={<Radio sx={radioStyle} />}
-          label="Choose one or create your own"
+          label="Create your own"
         />
       </RadioGroup>
 

@@ -1,4 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
+import {
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormControl,
+} from "@mui/material";
 import { useParams } from "react-router-dom";
 
 import { Box, Grid, Typography } from "@mui/material";
@@ -42,7 +48,13 @@ export default function PaymentPopup({
   closePopup,
   commissionRange,
   setPaymentChanged,
+  selectedOption,
+  setSelectedOption,
+  strategy,
 }) {
+  const handleRadioChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
   const [saveDisabled, setSaveDisabled] = useState(false);
   const [totalCommission, setTotalCommission] = useState("");
   const [commission, setCommission] = useState("");
@@ -55,6 +67,7 @@ export default function PaymentPopup({
   const { id } = useParams();
   const today = new Date().toISOString().split("T")[0];
   const [isExempt, setIsExempt] = useState(data?.isExempt || false);
+
   const [newDataList, setNewDataList] = useState([
     {
       amount: settlementRange || "",
@@ -187,7 +200,12 @@ export default function PaymentPopup({
     }
     prevAmountsRef.current = currentAmounts;
   }, [newDataList, remaining]);
-
+  const radioStyle = {
+    color: Colors.SKY_BLUE,
+    "&.Mui-checked": {
+      color: Colors.SKY_BLUE,
+    },
+  };
   return (
     <div>
       <Typography
@@ -221,6 +239,7 @@ export default function PaymentPopup({
         Total amount after given interval:
         <b> ${isNaN(totalAmount) ? 0 : totalAmount?.toFixed(2)}</b>
       </Typography>
+
       {saveDisabled && feePayment === "toPay" && (
         <Typography
           sx={{
