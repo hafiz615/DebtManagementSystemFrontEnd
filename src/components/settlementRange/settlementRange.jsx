@@ -1396,7 +1396,7 @@ export default function SettlementRange() {
             <GridItem
               key="Weekly True Revenue"
               title="Monthly True Revenue"
-              tooltip="Total revenue earned by the business each week."
+              tooltip="Total revenue earned by the business each monthly."
               value={
                 apiData?.weekly_true_revenue
                   ? `$ ${new Intl.NumberFormat().format(
