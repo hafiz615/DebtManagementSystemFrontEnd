@@ -10,6 +10,8 @@ import { Provider } from "react-redux";
 import { store, persistor } from "./redux/store/store";
 import { PersistGate } from "redux-persist/integration/react";
 import CustomToaster from "./toast/customToaster";
+import FallBack from "./components/showError";
+import { ErrorBoundary } from "react-error-boundary";
 
 // Get the root element from the DOM
 const container = document.getElementById("root");
@@ -22,7 +24,9 @@ if (container) {
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <ToastProvider>
-            <App />
+            <ErrorBoundary FallbackComponent={FallBack}>
+              <App />
+            </ErrorBoundary>
             <CustomToaster />
           </ToastProvider>
         </PersistGate>
