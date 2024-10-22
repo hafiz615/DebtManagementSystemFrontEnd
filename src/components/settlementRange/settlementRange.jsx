@@ -1445,18 +1445,48 @@ export default function SettlementRange() {
               }
               rawValue={apiData?.weekly_true_revenue}
             />
+            {strategyTab === 0 && (
+              <GridItem
+                key="percentageReceivableAmount"
+                title="Weekly Receivable Amount"
+                tooltip="Weekly Receivable Amount"
+                value={
+                  allData?.percentageReceivableCommissionAmount
+                    ? `$ ${new Intl.NumberFormat().format(
+                        allData?.percentageReceivableCommissionAmount
+                      )}`
+                    : "No Data"
+                }
+                rawValue={allData?.percentageReceivableCommissionAmount}
+              />
+            )}
+            {strategyTab === 1 && (
+              <GridItem
+                key="totalCommission"
+                title="Total Commission"
+                tooltip="Total Commission"
+                value={
+                  allData?.totalCommission
+                    ? `$ ${new Intl.NumberFormat().format(
+                        allData?.totalCommission
+                      )}`
+                    : "No Data"
+                }
+                rawValue={allData?.totalCommission}
+              />
+            )}
 
             {strategyTab === 2 && (
               <GridItem
                 key="percentageReceivableCommission"
-                title="Receivable Commission"
+                title="Weekly Receivable Commission"
                 tooltip="Receivable Commission"
                 value={
                   allData?.percentageReceivableCommission !== undefined
                     ? `${allData.percentageReceivableCommission}%`
                     : "--"
                 }
-                rawValue={scores?.Scores?.["Default Risk Score"]}
+                rawValue={allData?.percentageReceivableCommission}
               />
             )}
 
