@@ -102,7 +102,7 @@ const commonStyles = {
   backgroundColor: Colors.WHITE,
   height: "15vh",
   borderRadius: "10px",
-  paddingLeft: "2%",
+  paddingLeft: "1%",
   justifyContent: "center",
   flexDirection: "column",
   gap: "10px",
@@ -1383,7 +1383,7 @@ export default function SettlementRange() {
           <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
             <GridItem
               key="Weekly Profit"
-              title="Monthly Profit"
+              title="Monthly Profit With Payments"
               tooltip="Your net profit after making debt payments."
               value={
                 apiData?.true_profit
@@ -1408,7 +1408,7 @@ export default function SettlementRange() {
             />
             <GridItem
               key="Profitability"
-              title="Profitability"
+              title="Profitability with Payments"
               tooltip=" Measure of how much profit your business makes after expenses."
               value={
                 apiData?.profitability
@@ -1418,6 +1418,32 @@ export default function SettlementRange() {
                   : "No Data"
               }
               rawValue={apiData?.profitability}
+            />
+            <GridItem
+              key="Monthly Profit Without Payments"
+              title="Monthly Profit Without Payments"
+              tooltip="Your net profit after making debt payments."
+              value={
+                apiData?.weekly_profit
+                  ? `$ ${new Intl.NumberFormat().format(
+                      apiData?.weekly_profit
+                    )}`
+                  : "No Data"
+              }
+              rawValue={apiData?.weekly_profit}
+            />
+            <GridItem
+              key="Profitability Without Payments"
+              title="Profitability without payments"
+              tooltip=" Measure of how much profit your business makes after expenses."
+              value={
+                apiData?.profitability_without_creditor_payments
+                  ? `${new Intl.NumberFormat().format(
+                      apiData?.profitability_without_creditor_payments
+                    )} %`
+                  : "No Data"
+              }
+              rawValue={apiData?.profitability_without_creditor_payments}
             />
 
             {strategyTab === 2 && (
