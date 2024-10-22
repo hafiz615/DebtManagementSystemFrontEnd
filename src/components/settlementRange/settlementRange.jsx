@@ -1490,6 +1490,7 @@ export default function SettlementRange() {
                     backgroundColor: Colors.WHITE,
                     borderRadius: "10px",
                     height: "30vh",
+                    marginBottom: "0.5rem",
                   }}
                 >
                   {countData ? (
