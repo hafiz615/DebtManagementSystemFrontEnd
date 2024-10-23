@@ -1296,7 +1296,7 @@ export default function SettlementRange() {
           >
             {Object?.keys(debtor)?.map((key) => {
               // Replace "weeklyBudget" with "monthlyBudget"
-              const displayKey = key === "weeklyBudget" ? "monthlyBudget" : key;
+              // const displayKey = key === "weeklyBudget" ? key : "";
 
               return (
                 <Grid item xs={12} lg={6} key={key}>
@@ -1316,8 +1316,7 @@ export default function SettlementRange() {
                         marginTop: "0.5rem",
                       }}
                     >
-                      {displayKey?.charAt(0)?.toUpperCase() +
-                        displayKey?.slice(1)}
+                      {key?.charAt(0)?.toUpperCase() + key?.slice(1)}
                     </div>
 
                     <Tooltip
@@ -1384,9 +1383,9 @@ export default function SettlementRange() {
 
           <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
             <GridItem
-              key="Weekly Profit Excluding Payments"
-              title="Weekly Profit Excluding Payments"
-              tooltip="Your net profit after making debt payments."
+              key="Weekly Profit Including Payments"
+              title="Weekly Profit Including Payments"
+              tooltip="Weekly Profit Including not making the creditor Payments."
               value={
                 apiData?.true_profit
                   ? `$${new Intl.NumberFormat().format(apiData?.true_profit)}`
@@ -1407,9 +1406,9 @@ export default function SettlementRange() {
               rawValue={apiData?.profitability}
             />
             <GridItem
-              key="Weekly Profit Including Payments"
-              title="Weekly Profit Including Payments"
-              tooltip="Weekly Profit including the creditor Payment Paid"
+              key="Weekly Profit Excluding Payments"
+              title="Weekly Profit Excluding Payments"
+              tooltip="Weekly Profit Excluding after making the creditor Payments."
               value={
                 apiData?.weekly_profit
                   ? `$${new Intl.NumberFormat().format(apiData?.weekly_profit)}`
