@@ -751,9 +751,9 @@ export default function SettlementRange() {
     getAllSummary();
   }, []);
 
-  useEffect(() => {
-    getAllJustifications(strategyTab);
-  }, [strategyTab]);
+  // useEffect(() => {
+  //   getAllJustifications(strategyTab);
+  // }, [strategyTab]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -1290,7 +1290,9 @@ export default function SettlementRange() {
             item
             xs={12}
             lg={8}
-            sx={{ justifyContent: { xs: "left", md: "space-between" } }}
+            sx={{
+              justifyContent: { xs: "left", md: "space-between" },
+            }}
           >
             {Object?.keys(debtor)?.map((key) => {
               // Replace "weeklyBudget" with "monthlyBudget"
@@ -1382,12 +1384,12 @@ export default function SettlementRange() {
 
           <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
             <GridItem
-              key="Weekly Profit"
-              title="Monthly Profit Including Payments"
+              key="Weekly Profit Excluding Payments"
+              title="Weekly Profit Excluding Payments"
               tooltip="Your net profit after making debt payments."
               value={
                 apiData?.true_profit
-                  ? `$ ${new Intl.NumberFormat().format(apiData?.true_profit)}`
+                  ? `$${new Intl.NumberFormat().format(apiData?.true_profit)}`
                   : "No Data"
               }
               rawValue={apiData?.true_profit}
@@ -1396,25 +1398,21 @@ export default function SettlementRange() {
             <GridItem
               key="Profitability"
               title="Profitability Including Payments"
-              tooltip=" Measure of how much profit your business makes after expenses."
+              tooltip="Measure of how much profit your business makes after expenses."
               value={
                 apiData?.profitability
-                  ? `${new Intl.NumberFormat().format(
-                      apiData?.profitability
-                    )} %`
+                  ? `${new Intl.NumberFormat().format(apiData?.profitability)}%`
                   : "No Data"
               }
               rawValue={apiData?.profitability}
             />
             <GridItem
-              key="Monthly Profit Excluding Payments"
-              title="Monthly Profit Excluding Payments"
-              tooltip="Monthly Profit Excluding Payments"
+              key="Weekly Profit Including Payments"
+              title="Weekly Profit Including Payments"
+              tooltip="Weekly Profit including the creditor Payment Paid"
               value={
                 apiData?.weekly_profit
-                  ? `$ ${new Intl.NumberFormat().format(
-                      apiData?.weekly_profit
-                    )}`
+                  ? `$${new Intl.NumberFormat().format(apiData?.weekly_profit)}`
                   : "No Data"
               }
               rawValue={apiData?.weekly_profit}
@@ -1422,23 +1420,23 @@ export default function SettlementRange() {
             <GridItem
               key="Profitability Excluding Payments"
               title="Profitability Excluding payments"
-              tooltip="Profitability Excluding payments"
+              tooltip="Profitability excluding the creditor Payment"
               value={
                 apiData?.profitability_without_creditor_payments
                   ? `${new Intl.NumberFormat().format(
                       apiData?.profitability_without_creditor_payments
-                    )} %`
+                    )}%`
                   : "No Data"
               }
               rawValue={apiData?.profitability_without_creditor_payments}
             />
             <GridItem
               key="Weekly True Revenue"
-              title="Monthly True Revenue"
+              title="Weekly True Revenue"
               tooltip="Total revenue earned by the business each monthly."
               value={
                 apiData?.weekly_true_revenue
-                  ? `$ ${new Intl.NumberFormat().format(
+                  ? `$${new Intl.NumberFormat().format(
                       apiData?.weekly_true_revenue
                     )}`
                   : "No Data"
@@ -1447,12 +1445,12 @@ export default function SettlementRange() {
             />
             {strategyTab === 0 && (
               <GridItem
-                key="percentageReceivableAmount"
+                key="Weekly Receivable Amount"
                 title="Weekly Receivable Amount"
-                tooltip="Weekly Receivable Amount"
+                tooltip="Weekly payment Which we receive."
                 value={
                   allData?.percentageReceivableCommissionAmount
-                    ? `$ ${new Intl.NumberFormat().format(
+                    ? `$${new Intl.NumberFormat().format(
                         allData?.percentageReceivableCommissionAmount
                       )}`
                     : "No Data"
@@ -1462,12 +1460,12 @@ export default function SettlementRange() {
             )}
             {strategyTab === 1 && (
               <GridItem
-                key="totalCommission"
+                key="Total Commission"
                 title="Total Commission"
-                tooltip="Total Commission"
+                tooltip="Total Commission which we will collect."
                 value={
                   allData?.totalCommission
-                    ? `$ ${new Intl.NumberFormat().format(
+                    ? `$${new Intl.NumberFormat().format(
                         allData?.totalCommission
                       )}`
                     : "No Data"
@@ -1478,9 +1476,9 @@ export default function SettlementRange() {
 
             {strategyTab === 2 && (
               <GridItem
-                key="percentageReceivableCommission"
+                key="Weekly Receivable Commission"
                 title="Weekly Receivable Commission"
-                tooltip="Receivable Commission"
+                tooltip="Weekly Commission which we receive."
                 value={
                   allData?.percentageReceivableCommission !== undefined
                     ? `${allData.percentageReceivableCommission}%`
@@ -1907,7 +1905,15 @@ export default function SettlementRange() {
               />
             )}
           </Grid>
-
+          <Grid item xs={12}>
+            <TextButton
+              buttonText="GET JUSTIFICATION"
+              height="2.5rem"
+              width="12rem"
+              backgroundColor={Colors.SKY_BLUE}
+              onClick={getAllJustifications}
+            />
+          </Grid>
           <Grid
             item
             xs={12}
