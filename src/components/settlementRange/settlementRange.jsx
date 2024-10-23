@@ -1444,8 +1444,8 @@ export default function SettlementRange() {
             />
             {strategyTab === 0 && (
               <GridItem
-                key="Weekly Receivable Amount"
-                title="Weekly Receivable Amount"
+                key="Weekly Receivable Commission"
+                title="Weekly Receivable Commission"
                 tooltip="Weekly payment Which we receive."
                 value={
                   allData?.percentageReceivableCommissionAmount
