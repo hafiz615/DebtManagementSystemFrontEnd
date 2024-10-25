@@ -725,7 +725,7 @@ export default function SettlementRange() {
     }
   };
 
-  const getAllJustifications = async (activeStrategy) => {
+  const getAllJustification = async (activeStrategy) => {
     setJustificationLoading(true);
     let response;
     switch (activeStrategy) {
@@ -1383,7 +1383,7 @@ export default function SettlementRange() {
             <GridItem
               key="Weekly Profit Including Payments"
               title="Weekly Profit Including Payments"
-              tooltip="Weekly Profit Including not making the creditor Payments."
+              tooltip="Weekly profit by not making the creditor payments."
               value={
                 apiData?.true_profit
                   ? `$${formatAmountValue(apiData?.true_profit)}`
@@ -1408,7 +1408,7 @@ export default function SettlementRange() {
             <GridItem
               key="Weekly Profit Excluding Payments"
               title="Weekly Profit Excluding Payments"
-              tooltip="Weekly Profit Excluding after making the creditor Payments."
+              tooltip="Weekly profit after making the creditor payments."
               value={
                 apiData?.weekly_profit
                   ? `$${formatAmountValue(apiData?.weekly_profit)}`
@@ -1589,11 +1589,11 @@ export default function SettlementRange() {
                                     whiteSpace: "nowrap",
                                     overflow: "hidden",
                                     textOverflow: "ellipsis",
-                                    maxWidth: "150px",
+                                    maxWidth: "180px",
                                   }}
                                 >
-                                  {`${item?.label?.substring(0, 15)}${
-                                    item?.label?.length > 10 ? "..." : ""
+                                  {`${item?.label?.substring(0, 30)}${
+                                    item?.label?.length > 30 ? "..." : ""
                                   }`}
                                 </span>
                               </Tooltip>
@@ -1968,7 +1968,7 @@ export default function SettlementRange() {
                   height="2.5rem"
                   width="12rem"
                   backgroundColor={Colors.SKY_BLUE}
-                  onClick={getAllJustifications}
+                  onClick={() => getAllJustification(strategyTab)}
                 />
                 <MuiModels
                   show="sendEmailJustification"
