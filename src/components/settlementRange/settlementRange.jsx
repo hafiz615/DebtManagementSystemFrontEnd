@@ -1475,10 +1475,8 @@ export default function SettlementRange() {
                 title="Weekly Receivable Commission"
                 tooltip="Weekly Commission which we receive."
                 value={
-                  allData.percentageReceivableCommission
-                    ? `$${formatAmountValue(
-                        allData?.percentageReceivableCommission
-                      )}`
+                  allData?.percentageReceivableCommission
+                    ? `${allData?.percentageReceivableCommission}%`
                     : "No Data"
                 }
                 rawValue={allData?.percentageReceivableCommission}
@@ -1507,7 +1505,7 @@ export default function SettlementRange() {
                 <Grid
                   container
                   item
-                  xs={5}
+                  xs={5.8}
                   sx={{
                     display: "flex",
                     justifyContent: "space-around",
@@ -1515,7 +1513,7 @@ export default function SettlementRange() {
                     backgroundColor: Colors.WHITE,
                     borderRadius: "10px",
                     height: "30vh",
-                    marginBottom: "0.5rem",
+                    marginBottom: "1.5rem",
                   }}
                 >
                   {countData ? (
@@ -1902,15 +1900,6 @@ export default function SettlementRange() {
               />
             )}
           </Grid>
-          <Grid item xs={12}>
-            <TextButton
-              buttonText="GET JUSTIFICATION"
-              height="2.5rem"
-              width="12rem"
-              backgroundColor={Colors.SKY_BLUE}
-              onClick={getAllJustifications}
-            />
-          </Grid>
           <Grid
             item
             xs={12}
@@ -1973,12 +1962,21 @@ export default function SettlementRange() {
             </AntTabs>
 
             <div style={{ marginRight: "16px" }}>
-              <MuiModels
-                show="sendEmailJustification"
-                disabled={!isAnyChecked}
-                data={selectedData}
-                caseId={caseId}
-              />
+              <div style={{ display: "flex", gap: "2%" }}>
+                <TextButton
+                  buttonText="GET JUSTIFICATION"
+                  height="2.5rem"
+                  width="12rem"
+                  backgroundColor={Colors.SKY_BLUE}
+                  onClick={getAllJustifications}
+                />
+                <MuiModels
+                  show="sendEmailJustification"
+                  disabled={!isAnyChecked}
+                  data={selectedData}
+                  caseId={caseId}
+                />
+              </div>
             </div>
           </Grid>
 
