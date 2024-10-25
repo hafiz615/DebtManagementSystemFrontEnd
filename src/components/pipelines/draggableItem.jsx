@@ -12,6 +12,7 @@ import { FONT_SIZE_LARGE } from "../../constants/appConstants";
 import { CreateCase, DeleteCase } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import { useNavigate } from "react-router-dom";
+import { formatAmountValue } from "../../common";
 
 const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
   const generalPermissions = useSelector(
@@ -193,7 +194,7 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
         <Typography
           sx={{ fontSize: FONT_SIZE_LARGE, fontFamily: "Nunito", mb: "5px" }}
         >
-          ${item?.remaining}
+          ${formatAmountValue(item?.remaining)}
         </Typography>
       </div>
       <div>

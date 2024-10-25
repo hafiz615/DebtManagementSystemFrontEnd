@@ -3,7 +3,7 @@ import { Card, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import ErrorIcon from "../assets/Error.png";
 import { Colors } from "../config/default";
-import TextButton from "./button";
+import TextButton from "../../src/components/button";
 export default function FallBack() {
   const navigate = useNavigate();
   const handleHomeNavigation = () => {
