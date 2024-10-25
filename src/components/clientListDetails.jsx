@@ -461,7 +461,8 @@ export default function ClientListDetails() {
                 color: Colors.BLACK,
               }}
             >
-              {dataUser?.fullName}
+              {clientData?.debtor?.companyName ||
+                clientData?.creditor?.fullName}
             </Typography>
           </Grid>
           <Grid
