@@ -843,3 +843,21 @@ export function sanitizeBudget(budget) {
   let sanitizedBudget = budget.replace(/[$,\s]/g, "");
   return parseInt(sanitizedBudget, 10);
 }
+export const formatAmountValue = (value) => {
+  const numericValue = typeof value === "string" ? parseFloat(value) : value;
+
+  return numericValue
+    ? new Intl.NumberFormat("en-US", {
+        style: "decimal",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(numericValue)
+    : "0.00";
+};
+export const formatWeeklyBudget = (value) => {
+  if (value === null || value === undefined || isNaN(value)) return "--";
+  return Number(value).toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};

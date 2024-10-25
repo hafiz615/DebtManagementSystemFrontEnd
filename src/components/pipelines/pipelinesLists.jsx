@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import PipelineListTable from "./pipelineListTable";
 import Dropdown from "../dropdown";
 import { Colors } from "../../config/default";
+import { formatAmountValue } from "../../common";
 
 export default function PipelinesLists({
   data,
@@ -42,7 +43,7 @@ export default function PipelinesLists({
           id: c?._id,
           lead: c?.debtor?.basicInformation?.fullName,
           company: c?.debtor?.businessInformation?.companyName,
-          totalDebt: `$${c?.totalDebt}`,
+          totalDebt: `$${formatAmountValue(c?.totalDebt)}`,
           confidence: c?.confidence,
           closeDate: c?.closeDate || "-",
           status: c?.status,

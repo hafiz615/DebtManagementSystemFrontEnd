@@ -6,6 +6,7 @@ import { FONT_SIZE_LARGE } from "../../constants/appConstants";
 import { Colors } from "../../config/default";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Dropdown from "../dropdown";
+import { formatAmountValue } from "../../common";
 
 const BoardColumns = ({
   columnId,
@@ -209,7 +210,7 @@ const BoardColumns = ({
             color: Colors.WHITE,
           }}
         >
-          ${remainingPerColumn}
+          ${formatAmountValue(remainingPerColumn)}
         </Typography>
       </div>
 

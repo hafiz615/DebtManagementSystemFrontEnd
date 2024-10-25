@@ -50,8 +50,10 @@ import {
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import {
+  formatAmountValue,
   formatDateString,
   formatPurchasedPercentage,
+  formatWeeklyBudget,
   generatePdfFromApiData,
 } from "../../common";
 import MuiModels from "../models";
@@ -855,14 +857,35 @@ export default function SettlementRange() {
     {
       label: "Current Payment Amount",
 
-      value: selectedCreditorDetails?.contractDetails?.repayment_amount
-        ? `$${selectedCreditorDetails?.contractDetails?.repayment_amount?.replace(
-            /[$,]/g,
-            ""
-          )}`
-        : "--",
+      value:
+        selectedCreditorDetails?.contractDetails?.repayment_amount &&
+        !isNaN(
+          parseFloat(
+            selectedCreditorDetails.contractDetails.repayment_amount?.replace(
+              /[$,]/g,
+              ""
+            )
+          )
+        )
+          ? `$${parseFloat(
+              selectedCreditorDetails?.contractDetails?.repayment_amount?.replace(
+                /[$,]/g,
+                ""
+              )
+            ).toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })} (daily)`
+          : "--",
     },
   ];
+
+  const formatCurrencyTable = (value) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    })?.format(value);
+  };
 
   const creditorNamesDetails = creditorNames?.map((creditor) => {
     const cleanLoanAmount = creditor?.contractDetails?.loan_amount
@@ -871,7 +894,7 @@ export default function SettlementRange() {
 
     const purchasePrice =
       cleanLoanAmount !== "--" && !isNaN(Number(cleanLoanAmount))
-        ? `$${Number(cleanLoanAmount)?.toFixed(2)}`
+        ? formatCurrencyTable(Number(cleanLoanAmount))
         : "--";
 
     const cleanFundedAmount = creditor?.contractDetails?.funded_amount
@@ -880,16 +903,16 @@ export default function SettlementRange() {
 
     const fundedAmount =
       cleanFundedAmount !== "--" && !isNaN(Number(cleanFundedAmount))
-        ? `$${Number(cleanFundedAmount)?.toFixed(2)}`
+        ? formatCurrencyTable(Number(cleanFundedAmount))
         : "--";
 
     const cleanPayableAmount = creditor?.contractDetails?.payable_amount
-      ? creditor?.contractDetails?.payable_amount.replace(/[$,]/g, "")
+      ? creditor?.contractDetails?.payable_amount?.replace(/[$,]/g, "")
       : "--";
 
     const paybackAmount =
       cleanPayableAmount !== "--" && !isNaN(Number(cleanPayableAmount))
-        ? `$${Number(cleanPayableAmount).toFixed(2)}`
+        ? formatCurrencyTable(Number(cleanPayableAmount))
         : "--";
 
     const payableAmount =
@@ -899,16 +922,16 @@ export default function SettlementRange() {
             Number(creditor?.totalDebt) - Number(creditor?.remainingAmountPaid)
           )
           ? "--"
-          : `$${(
+          : formatCurrencyTable(
               Number(creditor?.totalDebt) -
-              Number(creditor?.remainingAmountPaid)
-            ).toFixed(2)}`
+                Number(creditor?.remainingAmountPaid)
+            )
         : "--";
 
     const breakEvenPoint = creditor?.breakEven
       ? isNaN(parseFloat(creditor?.breakEven))
         ? "--"
-        : `$${parseFloat(creditor?.breakEven).toFixed(2)}`
+        : formatCurrencyTable(parseFloat(creditor?.breakEven))
       : "--";
 
     const purchased_percentage = formatPurchasedPercentage(
@@ -916,7 +939,7 @@ export default function SettlementRange() {
     );
 
     const repayment_amount = creditor?.contractDetails?.repayment_amount
-      ? `$${creditor?.contractDetails?.repayment_amount.replace(/[$,]/g, "")}`
+      ? `$${creditor?.contractDetails?.repayment_amount?.replace(/[$,]/g, "")}`
       : "--";
 
     return {
@@ -959,27 +982,27 @@ export default function SettlementRange() {
   const parseCurrency = (amount) => {
     return parseFloat(amount?.replace(/[$,]/g, "") || 0);
   };
+  const formatSummaryDetails = (value) => {
+    if (value === null || value === undefined || isNaN(value)) return "--";
+    return `$${Number(value)?.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+  };
+
   const summaryDetails = {
     creditorName: "Summary",
 
-    purchasePrice:
+    purchasePrice: formatSummaryDetails(
       creditorNames?.reduce((total, creditor) => {
         const purchasePrice = parseCurrency(
           creditor?.contractDetails?.loan_amount || "0"
         );
         return total + Number(purchasePrice);
-      }, 0) > 0
-        ? `$${creditorNames
-            ?.reduce((total, creditor) => {
-              const purchasePrice = parseCurrency(
-                creditor?.contractDetails?.loan_amount || "0"
-              );
-              return total + Number(purchasePrice);
-            }, 0)
-            ?.toFixed(2)}`
-        : "--",
+      }, 0)
+    ),
 
-    fundedAmount:
+    fundedAmount: formatSummaryDetails(
       creditorNames?.reduce((total, creditor) => {
         const cleanedAmount = creditor?.contractDetails?.funded_amount
           ? Number(
@@ -987,56 +1010,27 @@ export default function SettlementRange() {
             )
           : 0;
         return total + cleanedAmount;
-      }, 0) > 0
-        ? `$${creditorNames
-            ?.reduce((total, creditor) => {
-              const cleanedAmount = creditor?.contractDetails?.funded_amount
-                ? Number(
-                    creditor?.contractDetails?.funded_amount?.replace(
-                      /[$,]/g,
-                      ""
-                    )
-                  )
-                : 0;
-              return total + cleanedAmount;
-            }, 0)
-            ?.toFixed(2)}`
-        : "--",
+      }, 0)
+    ),
 
     paybackAmount:
-      totalPayableAmount > 0
-        ? `$${Number(totalPayableAmount)?.toFixed(2)}`
-        : "--",
+      totalPayableAmount > 0 ? formatSummaryDetails(totalPayableAmount) : "--",
 
-    payableAmount:
+    payableAmount: formatSummaryDetails(
       creditorNames?.reduce((total, creditor) => {
         return (
           total +
           (Number(creditor?.totalDebt || 0) -
             Number(creditor?.remainingAmountPaid || 0))
         );
-      }, 0) > 0
-        ? `$${creditorNames
-            ?.reduce((total, creditor) => {
-              return (
-                total +
-                (Number(creditor?.totalDebt || 0) -
-                  Number(creditor?.remainingAmountPaid || 0))
-              );
-            }, 0)
-            ?.toFixed(2)}`
-        : "--",
+      }, 0)
+    ),
 
-    breakEvenPoint:
+    breakEvenPoint: formatSummaryDetails(
       creditorNames?.reduce((total, creditor) => {
         return total + Number(creditor?.breakEven || 0);
-      }, 0) > 0
-        ? `$${creditorNames
-            ?.reduce((total, creditor) => {
-              return total + Number(creditor?.breakEven || 0);
-            }, 0)
-            ?.toFixed(2)}`
-        : "--",
+      }, 0)
+    ),
 
     purchased_percentage: "--",
     repayment_amount: "--",
@@ -1065,15 +1059,19 @@ export default function SettlementRange() {
     if (value === null || value === undefined) return "--";
 
     // Convert to string if the value is a number
-    const valueStr = typeof value === "number" ? value?.toString() : value;
+    const valueStr = typeof value === "number" ? value.toString() : value;
 
-    // Remove any unwanted characters, but keep numeric values
-    const cleanedValue = valueStr?.replace(/[^0-9.-]/g, "");
+    // Remove any unwanted characters, keep only numbers and decimal point
+    const cleanedValue = valueStr.replace(/[^0-9.]/g, "");
 
-    // Check if cleanedValue is a valid number
+    // Convert to a number to check its validity
     const numericValue = parseFloat(cleanedValue);
     if (!isNaN(numericValue)) {
-      return `$${numericValue?.toFixed(2)}`; // Format to two decimal places
+      // Use Intl.NumberFormat to format with commas and two decimal places
+      return `$${numericValue?.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`;
     }
 
     return "--";
@@ -1334,9 +1332,9 @@ export default function SettlementRange() {
                       >
                         {allData?.debtor?.weeklyBudgetUpdated &&
                         key === "weeklyBudget"
-                          ? `$${parseFloat(debtor[key]).toFixed(2)}`
+                          ? `$${formatWeeklyBudget(debtor[key])}`
                           : key === "weeklyBudget"
-                          ? `$${parseFloat(debtor[key]).toFixed(2)}`
+                          ? `$${formatWeeklyBudget(debtor[key])}`
                           : `${debtor[key]?.toString().slice(0, 15)}${
                               debtor[key]?.toString().length > 15 ? "..." : ""
                             }` || "--"}
@@ -1388,7 +1386,7 @@ export default function SettlementRange() {
               tooltip="Weekly Profit Including not making the creditor Payments."
               value={
                 apiData?.true_profit
-                  ? `$${new Intl.NumberFormat().format(apiData?.true_profit)}`
+                  ? `$${formatAmountValue(apiData?.true_profit)}`
                   : "No Data"
               }
               rawValue={apiData?.true_profit}
@@ -1400,7 +1398,9 @@ export default function SettlementRange() {
               tooltip="Measure of how much profit your business makes after expenses."
               value={
                 apiData?.profitability
-                  ? `${new Intl.NumberFormat().format(apiData?.profitability)}%`
+                  ? `${new Intl.NumberFormat()?.format(
+                      apiData?.profitability
+                    )}%`
                   : "No Data"
               }
               rawValue={apiData?.profitability}
@@ -1411,7 +1411,7 @@ export default function SettlementRange() {
               tooltip="Weekly Profit Excluding after making the creditor Payments."
               value={
                 apiData?.weekly_profit
-                  ? `$${new Intl.NumberFormat().format(apiData?.weekly_profit)}`
+                  ? `$${formatAmountValue(apiData?.weekly_profit)}`
                   : "No Data"
               }
               rawValue={apiData?.weekly_profit}
@@ -1422,7 +1422,7 @@ export default function SettlementRange() {
               tooltip="Profitability excluding the creditor Payment"
               value={
                 apiData?.profitability_without_creditor_payments
-                  ? `${new Intl.NumberFormat().format(
+                  ? `${new Intl.NumberFormat()?.format(
                       apiData?.profitability_without_creditor_payments
                     )}%`
                   : "No Data"
@@ -1435,9 +1435,7 @@ export default function SettlementRange() {
               tooltip="Total revenue earned by the business each monthly."
               value={
                 apiData?.weekly_true_revenue
-                  ? `$${new Intl.NumberFormat().format(
-                      apiData?.weekly_true_revenue
-                    )}`
+                  ? `$${formatAmountValue(apiData?.weekly_true_revenue)}`
                   : "No Data"
               }
               rawValue={apiData?.weekly_true_revenue}
@@ -1449,7 +1447,7 @@ export default function SettlementRange() {
                 tooltip="Weekly payment Which we receive."
                 value={
                   allData?.percentageReceivableCommissionAmount
-                    ? `$${new Intl.NumberFormat().format(
+                    ? `$${formatAmountValue(
                         allData?.percentageReceivableCommissionAmount
                       )}`
                     : "No Data"
@@ -1464,9 +1462,7 @@ export default function SettlementRange() {
                 tooltip="Total Commission which we will collect."
                 value={
                   allData?.totalCommission
-                    ? `$${new Intl.NumberFormat().format(
-                        allData?.totalCommission
-                      )}`
+                    ? `$${formatAmountValue(allData?.totalCommission)}`
                     : "No Data"
                 }
                 rawValue={allData?.totalCommission}
@@ -1479,9 +1475,11 @@ export default function SettlementRange() {
                 title="Weekly Receivable Commission"
                 tooltip="Weekly Commission which we receive."
                 value={
-                  allData?.percentageReceivableCommission !== undefined
-                    ? `${allData.percentageReceivableCommission}%`
-                    : "--"
+                  allData.percentageReceivableCommission
+                    ? `$${formatAmountValue(
+                        allData?.percentageReceivableCommission
+                      )}`
+                    : "No Data"
                 }
                 rawValue={allData?.percentageReceivableCommission}
               />
