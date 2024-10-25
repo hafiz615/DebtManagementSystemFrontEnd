@@ -18,6 +18,7 @@ import {
   Modal,
   TextField,
   Button,
+  Tooltip,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -227,16 +228,26 @@ function CaseDetail() {
             container
             sx={{ justifyContent: "space-between", alignItems: "center" }}
           >
-            <Typography
-              sx={{
-                fontWeight: "600",
-                fontSize: "2rem",
-                fontFamily: "Nunito",
-                color: Colors.BLACK,
-              }}
+            <Tooltip
+              title={caseData?.debtor?.businessInformation?.companyName}
+              placement="top"
             >
-              {caseData?.caseCode}
-            </Typography>
+              <Typography
+                sx={{
+                  fontWeight: "600",
+                  fontSize: "1.5rem",
+                  fontFamily: "Nunito",
+                  color: Colors.BLACK,
+                }}
+              >
+                {caseData?.debtor?.businessInformation?.companyName?.length > 20
+                  ? `${caseData?.debtor?.businessInformation?.companyName?.slice(
+                      0,
+                      20
+                    )}...`
+                  : caseData?.debtor?.businessInformation?.companyName}
+              </Typography>
+            </Tooltip>
             <div
               style={{
                 display: "flex",
