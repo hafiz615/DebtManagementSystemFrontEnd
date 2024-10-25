@@ -311,10 +311,28 @@ export default function SettlementCards({
                             </Tooltip>
                           </div>
                           <div style={textStyles}>
-                            {rangeNames[index]?.label === "Weeks Till Paid"
+                            {rangeNames[index]?.label === "Settlement Range"
+                              ? rangeNames[index]?.label === "Settlement Range"
+                                ? `$${(item?.["recommendation 1"]?.["max"] < 0
+                                    ? -item?.["recommendation 1"]?.["max"] -
+                                      item?.["recommendation 1"]?.["max"] * 0.2
+                                    : item?.["recommendation 1"]?.["max"] -
+                                      item?.["recommendation 1"]?.["max"] * 0.2
+                                  ).toFixed(2)}`
+                                : ""
+                              : rangeNames[index]?.label === "Weeks Till Paid"
                               ? rangeNames[index]?.label === "Weeks Till Paid"
-                                ? item?.[weeksTillPaidTitle]?.["min"] ||
-                                  item?.[weeksTillPaidTitle][0]
+                                ? item?.[weeksTillPaidTitle]?.["max"] < 0
+                                  ? Math.round(
+                                      item?.[weeksTillPaidTitle]?.["max"] +
+                                        item?.[weeksTillPaidTitle]?.["max"] *
+                                          0.2
+                                    )
+                                  : Math.round(
+                                      item?.[weeksTillPaidTitle]?.["max"] +
+                                        item?.[weeksTillPaidTitle]?.["max"] *
+                                          0.2
+                                    )
                                 : ""
                               : rangeNames[index]?.label === "New Default Risk"
                               ? `${item?.[title]?.["min"] || "-"}%`

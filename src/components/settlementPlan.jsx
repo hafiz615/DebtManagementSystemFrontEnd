@@ -84,12 +84,16 @@ export default function SettlementPayment({
           caseId={caseId}
           settlementRange={
             selectedField === "Minimum"
-              ? settlementRange?.min
+              ? settlementRange?.max < 0
+                ? -settlementRange?.max - settlementRange?.max * 0.2
+                : settlementRange?.max - settlementRange?.max * 0.2
               : settlementRange?.max
           }
           weeksTillPaid={
             selectedField === "Minimum"
-              ? weeksTillPaid?.min
+              ? weeksTillPaid?.max < 0
+                ? weeksTillPaid?.max + weeksTillPaid?.max * 0.2
+                : weeksTillPaid?.max + weeksTillPaid?.max * 0.2
               : weeksTillPaid?.max
           }
           commissionRange={
