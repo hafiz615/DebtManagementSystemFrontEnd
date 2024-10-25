@@ -116,6 +116,7 @@ export default function SettlementCards({
   const excludedLabelsStrategy1 = [
     "Weekly Budget %",
     "Weekly True Revenue %",
+    "Commission Range",
     "New Default Risk",
   ];
 
