@@ -134,6 +134,7 @@ export default function MuiModels({
   setSelectedOption,
   strategy,
   commission,
+  replyCheck,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -745,6 +746,7 @@ export default function MuiModels({
               to={to}
               content={content}
               emailSubject={emailSubject}
+              replyCheck={replyCheck}
             />
           ) : show === "editPipeline" ? (
             <EditPipeline

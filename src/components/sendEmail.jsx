@@ -5,7 +5,7 @@ import { Colors } from "../config/default";
 import TextButton from "./button";
 import { Editor } from "@tinymce/tinymce-react";
 import ScrollbarStyles from "./customScroll";
-import { SendSettlementEmail } from "../services/services";
+import { GetAllSenders, SendSettlementEmail } from "../services/services";
 import {
   FONT_SIZE_MEDIUM,
   initialHtmlContent,
@@ -72,7 +72,8 @@ export default function SendEmail({
   paymentData,
 }) {
   const [sendTo, setSendTo] = useState("");
-  const [sendFrom, setSendFrom] = useState("");
+  const [sendFrom, setSendFrom] = useState([]);
+  const [selectedValue, setSelectedValue] = useState("");
   const [strategy, setStrategy] = useState("Strategy 1");
   const [recommendation, setRecommendation] = useState("recommendation 1");
   const [rangeMinToMax, setRangeMinToMax] = useState("min");
@@ -119,12 +120,25 @@ export default function SendEmail({
   const handleRemoveEmail = (index) => {
     setCc(cc?.filter((_, i) => i !== index));
   };
+  const menu =
+    sendFrom &&
+    sendFrom?.map((name) => ({
+      label: name,
+      value: name,
+    }));
+  const getAllSenders = async () => {
+    const senderRes = await GetAllSenders();
+    setSendFrom(senderRes?.data?.data);
+  };
 
+  useEffect(() => {
+    getAllSenders();
+  }, []);
   const handleSend = async () => {
     setLoading(true);
     const payload = {
       sendTo: sendTo,
-      from: sendFrom,
+      from: selectedValue,
       subject: subject,
       content: preview,
       cc: cc,
@@ -212,12 +226,16 @@ export default function SendEmail({
           onChange={(e) => setSendTo(e.target.value)}
           style={inputStyling}
         />
-        <input
-          type="text"
+        <Dropdown
+          height="2.5rem"
+          menuItems={menu}
+          menuWidth="11.7rem"
           placeholder="Send From*"
-          value={sendFrom}
-          onChange={(e) => setSendFrom(e.target.value)}
-          style={inputStyling}
+          backgroundColor={Colors.BG_LIGHT_GRAY}
+          hoverColor={Colors.BG_LIGHT_GRAY}
+          width={"48%"}
+          selectedValue={selectedValue}
+          setSelectedValue={setSelectedValue}
         />
       </div>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
