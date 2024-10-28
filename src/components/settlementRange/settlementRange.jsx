@@ -1351,8 +1351,8 @@ export default function SettlementRange() {
 
           <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
             <GridItem
-              key="Weekly Profit Including Payments"
-              title="Weekly Profit Including Payments"
+              key="Weekly Profit Excluding Payments"
+              title="Weekly Profit Excluding Payments"
               tooltip="Weekly profit by not making the creditor payments."
               value={
                 apiData?.true_profit
@@ -1364,7 +1364,7 @@ export default function SettlementRange() {
 
             <GridItem
               key="Profitability"
-              title="Profitability Including Payments"
+              title="Profitability Excluding Payments"
               tooltip="Measure of how much profit your business makes after expenses."
               value={
                 apiData?.profitability
@@ -1376,8 +1376,8 @@ export default function SettlementRange() {
               rawValue={apiData?.profitability}
             />
             <GridItem
-              key="Weekly Profit Excluding Payments"
-              title="Weekly Profit Excluding Payments"
+              key="Weekly Profit Including Payments"
+              title="Weekly Profit Including Payments"
               tooltip="Weekly profit after making the creditor payments."
               value={
                 apiData?.weekly_profit
@@ -1387,9 +1387,9 @@ export default function SettlementRange() {
               rawValue={apiData?.weekly_profit}
             />
             <GridItem
-              key="Profitability Excluding Payments"
-              title="Profitability Excluding payments"
-              tooltip="Profitability excluding the creditor Payment"
+              key="Profitability Including Payments"
+              title="Profitability Including payments"
+              tooltip="Profitability Including the creditor Payment"
               value={
                 apiData?.profitability_without_creditor_payments
                   ? `${new Intl.NumberFormat()?.format(
