@@ -30,8 +30,7 @@ export default function SettlementCards({
   selectedOption,
   setSelectedOption,
   allCreditorNames,
-  optionValue,
-  isFullPayment,
+  commission,
 }) {
   const commonStyles = {
     backgroundColor: Colors.WHITE,
@@ -152,21 +151,9 @@ export default function SettlementCards({
               remainingAmount={remainingAmount}
               setPaymentChanged={setPaymentChanged}
               caseId={caseId}
+              commission={commission}
             />
-          ) : strategy === "strategy3" ? (
-            <MuiModels
-              width="35vw"
-              show="strategy3choices"
-              buttonName="settlmentPayment"
-              title={title}
-              settlementRange={percentageReceivableAmount}
-              weeksTillPaid={weeklyTrueRevenueAmount}
-              commissionRange={commissionRange?.[title]}
-              remainingAmount={remainingAmount}
-              setPaymentChanged={setPaymentChanged}
-              caseId={caseId}
-            />
-          ) : (
+          ) : strategy === "strategy2" ? (
             <MuiModels
               width="70vw"
               show="payments"
@@ -184,6 +171,21 @@ export default function SettlementCards({
               selectedOption={selectedOption}
               setSelectedOption={setSelectedOption}
               strategy="strategy3"
+              commission={commission}
+            />
+          ) : (
+            <MuiModels
+              width="35vw"
+              show="strategy3choices"
+              buttonName="settlmentPayment"
+              title={title}
+              settlementRange={percentageReceivableAmount}
+              weeksTillPaid={weeklyTrueRevenueAmount}
+              commissionRange={commissionRange?.[title]}
+              remainingAmount={remainingAmount}
+              setPaymentChanged={setPaymentChanged}
+              caseId={caseId}
+              commission={commission}
             />
           )}
         </div>

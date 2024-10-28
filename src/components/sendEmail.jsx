@@ -68,7 +68,6 @@ export default function SendEmail({
   data,
   selectedCreditor,
   lumpSump,
-  fullProfit,
   caseId,
   paymentData,
 }) {
@@ -160,15 +159,15 @@ export default function SendEmail({
 
     const payment =
       strategy === "Strategy 1"
-        ? data?.settlement_range?.[selectedCreditor]?.[recommendation]?.[
+        ? data?.settlement_range?.[selectedCreditor]?.["recommendation 1"]?.[
             rangeMinToMax
           ]
         : strategy === "Strategy 2"
         ? lumpSump?.lumpsum_settlement?.[selectedCreditor]
             ?.remaining_principle_amount
-        : fullProfit?.settlement_range?.[selectedCreditor]?.[
-            "recommendation 1"
-          ]?.[rangeMinToMax];
+        : data?.settlement_range?.[selectedCreditor]?.["recommendation 1"]?.[
+            rangeMinToMax
+          ];
 
     const formatedPayment =
       typeof payment === "string"
@@ -262,13 +261,13 @@ export default function SendEmail({
         {!paymentData && strategy === "Strategy 1" ? (
           <Dropdown
             menuWidth="22rem"
-            menuItems={allRecommendation}
+            menuItems={allRanges}
             placeholder="Type"
             backgroundColor={Colors.BG_LIGHT_GRAY}
             hoverColor={Colors.BG_LIGHT_GRAY}
             width="48%"
-            selectedValue={recommendation}
-            setSelectedValue={setRecommendation}
+            selectedValue={rangeMinToMax}
+            setSelectedValue={setRangeMinToMax}
           />
         ) : !paymentData && strategy === "Strategy 3" ? (
           <Dropdown
@@ -285,20 +284,7 @@ export default function SendEmail({
           ""
         )}
       </div>
-      <div style={{ margin: "16px 0px" }}>
-        {!paymentData && strategy === "Strategy 1" && recommendation && (
-          <Dropdown
-            menuWidth="22rem"
-            menuItems={allRanges}
-            placeholder="Type"
-            backgroundColor={Colors.BG_LIGHT_GRAY}
-            hoverColor={Colors.BG_LIGHT_GRAY}
-            width="48%"
-            selectedValue={rangeMinToMax}
-            setSelectedValue={setRangeMinToMax}
-          />
-        )}
-      </div>
+
       {cc?.length > 0 && (
         <div style={inputContainerStyle}>
           {cc?.map((email, index) => (
