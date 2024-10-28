@@ -431,7 +431,7 @@ export const formatPurchasedPercentage = (value) => {
   return match ? match[0] : "0%";
 };
 
-const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
+const generatePDF = (data, lumpSumpData, checkboxState) => {
   const {
     creditors,
     debtor,

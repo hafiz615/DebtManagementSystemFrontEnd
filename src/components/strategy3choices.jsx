@@ -20,6 +20,7 @@ export default function Strategy3choices({
   remainingAmount,
   commissionRange,
   setPaymentChanged,
+  commission,
 }) {
   const [selectedField, setSelectedField] = useState(
     "percentageReceivableAmount"
@@ -96,6 +97,7 @@ export default function Strategy3choices({
           remainingAmount={remainingAmount}
           closePopup={handleClose}
           setPaymentChanged={setPaymentChanged}
+          commission={commission}
         />
       </Grid>
     </div>

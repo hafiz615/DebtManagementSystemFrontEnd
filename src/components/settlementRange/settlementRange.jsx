@@ -202,8 +202,6 @@ export default function SettlementRange() {
   const [debtorInfo, setDebtorInfo] = useState({});
   const [lumpSumpData, setLumpSumpData] = useState({});
   const [errorLumpSumMessage, setErrorLumSumtMessage] = useState("");
-  const [fullProfit, setFullProfit] = useState({});
-  const [errorfullProfitMessage, setErrorFullProfitMessage] = useState("");
   const [commissionPercentage, setCommissionPercentage] = useState("");
   const [summaryAmount, setSummaryAmount] = useState({});
   const [justification, setJustification] = useState();
@@ -289,9 +287,9 @@ export default function SettlementRange() {
           remainingAmount={
             allCreditorNames[tabValue] === "Summary"
               ? summaryAmount?.loanAmount.toString()
-              : selectedCreditorDetails?.contractDetails?.loan_amount
+              : selectedCreditorDetails?.remaining
           }
-          caseId={caseId}
+          caseId={allData?.creditors?.[parseInt(tabValue)]?.caseId}
           title={item}
           weeksTillPaidTitle={getWeeksRemainingMessage(item)}
           settlementRange={
@@ -317,6 +315,7 @@ export default function SettlementRange() {
             apiData?.weeks_till_paid?.[allCreditorNames[parseInt(tabValue)]] ||
             null
           }
+          commission={allData?.maxProfitCommission}
         />
       </>
     )),
@@ -328,7 +327,7 @@ export default function SettlementRange() {
             remainingAmount={
               allCreditorNames[tabValue] === "Summary"
                 ? summaryAmount?.loanAmount.toString()
-                : selectedCreditorDetails?.contractDetails?.loan_amount
+                : selectedCreditorDetails?.remaining
             }
             isLumpSumPayment={true}
             title={item}
@@ -347,7 +346,8 @@ export default function SettlementRange() {
               lumpSumpData?.warning?.[allCreditorNames[parseInt(tabValue)]] ||
               ""
             }
-            caseId={caseId}
+            caseId={allData?.creditors?.[parseInt(tabValue)]?.caseId}
+            commission={allData?.totalCommission}
           />
         ) : (
           <Grid
@@ -368,7 +368,6 @@ export default function SettlementRange() {
 
     2: strat3Recommendations?.map((item, index) => (
       <>
-        {/* {!isEmpty(fullProfit) ? ( */}
         <SettlementCards
           tabValue={tabValue}
           allCreditorNames={allCreditorNames}
@@ -377,9 +376,9 @@ export default function SettlementRange() {
           remainingAmount={
             allCreditorNames[tabValue] === "Summary"
               ? summaryAmount?.loanAmount.toString()
-              : selectedCreditorDetails?.contractDetails?.loan_amount
+              : selectedCreditorDetails?.remaining
           }
-          caseId={caseId}
+          caseId={allData?.creditors?.[parseInt(tabValue)]?.caseId}
           isFullPayment={true}
           title={item}
           weeksTillPaidTitle={getWeeksRemainingMessage(item)}
@@ -417,21 +416,8 @@ export default function SettlementRange() {
           }
           selectedOption={selectedOption}
           setSelectedOption={setSelectedOption}
+          commission={allData?.percentageReceivableCommissionAmount}
         />
-        {/* ) : ( */}
-        {/* <Grid
-            item
-            xs={12}
-            container
-            sx={{
-              backgroundColor: Colors.WHITE,
-              padding: "1rem",
-              borderRadius: "10px",
-            }}
-          >
-            {errorfullProfitMessage}
-          </Grid> */}
-        {/* )} */}
       </>
     )),
     4: recommendations?.map((item, index) => (
@@ -442,9 +428,9 @@ export default function SettlementRange() {
           remainingAmount={
             allCreditorNames[tabValue] === "Summary"
               ? summaryAmount?.loanAmount.toString()
-              : selectedCreditorDetails?.contractDetails?.loan_amount
+              : selectedCreditorDetails?.remaining
           }
-          caseId={caseId}
+          caseId={allData?.creditors?.[parseInt(tabValue)]?.caseId}
           title={item}
           weeksTillPaidTitle={getWeeksRemainingMessage(item)}
           settlementRange={
@@ -473,6 +459,7 @@ export default function SettlementRange() {
             ] || null
           }
           optionValue={true}
+          commission={allData?.maxProfitCommission}
         />
       </>
     )),
@@ -575,7 +562,6 @@ export default function SettlementRange() {
           );
           showToast(resCommission?.data?.message, "success");
           getLumpSumAmountData();
-          getFullProfitData();
         } else if (
           resCommission?.response?.status === 401 ||
           resCommission?.response?.status === 403
@@ -667,7 +653,6 @@ export default function SettlementRange() {
           showToast(settlementRangeData?.data?.message, "success");
 
           getLumpSumAmountData();
-          getFullProfitData();
         } else if (
           settlementRangeData?.response?.status === 401 ||
           settlementRangeData?.response?.status === 403
@@ -707,19 +692,6 @@ export default function SettlementRange() {
       } else {
         const errorMessage = GetLumpSumDataRes?.response?.data?.message;
         setErrorLumSumtMessage(errorMessage);
-        showToast(errorMessage, "error");
-      }
-    }
-  };
-
-  const getFullProfitData = async () => {
-    if (caseId) {
-      const GetFullProfitDataRes = await GetFullProfit(caseId);
-      if (GetFullProfitDataRes?.status === 200) {
-        setFullProfit(GetFullProfitDataRes?.data?.data);
-      } else {
-        const errorMessage = GetFullProfitDataRes?.response?.data?.message;
-        setErrorFullProfitMessage(errorMessage);
         showToast(errorMessage, "error");
       }
     }
@@ -1215,7 +1187,6 @@ export default function SettlementRange() {
                 maxHeight="85vh"
                 allData={allData}
                 lumpSumpData={lumpSumpData}
-                fullProfit={fullProfit}
                 disabled={!apiData}
               />
 
@@ -1235,7 +1206,6 @@ export default function SettlementRange() {
                 data={apiData}
                 selectedCreditor={allCreditorNames[tabValue]}
                 lumpSump={lumpSumpData}
-                fullProfit={fullProfit}
                 caseId={caseId}
                 paymentData={paymentData}
               />
