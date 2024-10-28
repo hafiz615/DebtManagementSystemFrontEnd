@@ -278,6 +278,7 @@ export default function SendEmail({
         style={{
           display: "flex",
           justifyContent: "space-between",
+          marginBottom: "0.5rem",
         }}
       >
         {!paymentData && (
