@@ -1395,3 +1395,13 @@ export const DeleteLink = async (id) => {
     return error;
   }
 };
+export const GetAllSenders = async () => {
+  try {
+    return await axios.get(
+      BASE_URL + "/v1/user/getVerifySenders",
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

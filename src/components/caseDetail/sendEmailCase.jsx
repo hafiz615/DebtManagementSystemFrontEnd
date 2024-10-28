@@ -18,12 +18,17 @@ import {
   TEXT_EDITOR_KEY,
 } from "../../constants/appConstants";
 import styled from "styled-components";
-import { GetCustomVariable, SendEmailSmsCase } from "../../services/services";
+import {
+  GetAllSenders,
+  GetCustomVariable,
+  SendEmailSmsCase,
+} from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import { ArrowRight, ExpandMore } from "@mui/icons-material";
 import ScrollbarStyles from "./../customScroll";
 import { handleNumberInput } from "../../common";
 import { Editor } from "@tinymce/tinymce-react";
+import Dropdown from "../dropdown";
 
 const lineStyle = {
   width: "100%",
@@ -52,11 +57,13 @@ export default function SendEmailCase({
   to,
   content,
   emailSubject,
+  replyCheck,
 }) {
   const [loading, setLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [sendTo, setSendTo] = useState(from || "");
-  const [sendFrom, setSendFrom] = useState(to || "");
+  const [sendFrom, setSendFrom] = useState(replyCheck ? to || "" : []);
+  const [selectedValue, setSelectedValue] = useState(to || "");
   const [subject, setSubject] = useState(emailSubject || "");
   const [cc, setCc] = useState([]);
   const [inputValue, setInputValue] = useState("");
@@ -205,10 +212,25 @@ export default function SendEmailCase({
   };
   const disable =
     !sendTo?.trim() ||
-    (!headerName && !sendFrom?.trim()) ||
+    (!headerName && !selectedValue?.trim()) ||
     (!headerName && !subject?.trim()) ||
     !preview?.trim() ||
     (headerName && errors);
+  const menu = replyCheck
+    ? []
+    : sendFrom?.map((name) => ({
+        label: name,
+        value: name,
+      }));
+  const getAllSenders = async () => {
+    const senderRes = await GetAllSenders();
+    setSendFrom(senderRes?.data?.data);
+  };
+  useEffect(() => {
+    if (!replyCheck) {
+      getAllSenders();
+    }
+  }, []);
 
   const handleSend = async () => {
     setLoading(true);
@@ -217,7 +239,7 @@ export default function SendEmailCase({
       content: preview,
       ...(headerName ? {} : { subject: subject }),
       ...(headerName ? {} : { cc: cc }),
-      ...(headerName ? {} : { from: sendFrom }),
+      ...(headerName ? {} : { from: replyCheck ? sendFrom : selectedValue }),
     };
     const resEmail = await SendEmailSmsCase(
       caseDataId,
@@ -323,12 +345,28 @@ export default function SendEmailCase({
               >
                 From
               </Typography>
-              <StyledInput
-                type="text"
-                placeholder="Send From*"
-                value={sendFrom}
-                onChange={(e) => setSendFrom(e.target.value)}
-              />
+              {!replyCheck && (
+                <Dropdown
+                  height="2.5rem"
+                  menuItems={menu}
+                  menuWidth="11.7rem"
+                  placeholder="Send From"
+                  backgroundColor={Colors.BG_LIGHT_GRAY}
+                  hoverColor={Colors.BG_LIGHT_GRAY}
+                  width="98%"
+                  selectedValue={selectedValue}
+                  setSelectedValue={setSelectedValue}
+                />
+              )}
+
+              {replyCheck && (
+                <StyledInput
+                  type="text"
+                  placeholder="Send From*"
+                  value={sendFrom}
+                  onChange={(e) => setSendFrom(e.target.value)}
+                />
+              )}
             </>
           </Grid>
         )}
