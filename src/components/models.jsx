@@ -133,6 +133,8 @@ export default function MuiModels({
   selectedOption,
   setSelectedOption,
   strategy,
+  commission,
+  replyCheck,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -744,6 +746,7 @@ export default function MuiModels({
               to={to}
               content={content}
               emailSubject={emailSubject}
+              replyCheck={replyCheck}
             />
           ) : show === "editPipeline" ? (
             <EditPipeline
@@ -853,6 +856,7 @@ export default function MuiModels({
               selectedOption={selectedOption}
               setSelectedOption={setSelectedOption}
               strategy={strategy}
+              commission={commission}
             />
           ) : show === "settlmentPayment" ? (
             <SettlementPayment
@@ -864,6 +868,7 @@ export default function MuiModels({
               remainingAmount={remainingAmount}
               commissionRange={commissionRange}
               setPaymentChanged={setPaymentChanged}
+              commission={commission}
             />
           ) : show === "strategy3choices" ? (
             <Strategy3choices
@@ -875,6 +880,7 @@ export default function MuiModels({
               remainingAmount={remainingAmount}
               commissionRange={commissionRange}
               setPaymentChanged={setPaymentChanged}
+              commission={commission}
             />
           ) : show === "sendEmailJustification" ? (
             <SendEmailJustification

@@ -405,7 +405,7 @@ export default function ClientListDetails() {
         backgroundColor: Colors.BG_LIGHT_GRAY,
         paddingLeft: "2rem",
         paddingRight: "2rem",
-        height: PAGE_HEIGHT,
+        maxHeight: PAGE_HEIGHT,
         overflowY: "auto",
         ...ScrollbarStyles,
       }}

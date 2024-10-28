@@ -114,6 +114,7 @@ export default function TimelineData({
                     maxHeight="78vh"
                     caseDataId={caseDataId}
                     GetLogsById={GetLogsById}
+                    replyCheck={true}
                   />
                 )}
               </div>
