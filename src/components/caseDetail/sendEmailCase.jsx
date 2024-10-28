@@ -68,6 +68,7 @@ export default function SendEmailCase({
   const [cc, setCc] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [preview, setPreview] = useState(content || "");
+  const [fromNumber, setFromNumber] = useState("2564880968");
   const editorRef = useRef(null);
   const { showToast } = useToast();
   const [errors, setErrors] = useState("");
@@ -275,6 +276,30 @@ export default function SendEmailCase({
         </Typography>
       </Grid>
       <Box sx={lineStyle} />
+      {headerName && (
+        <Grid container item sx={{ marginBottom: "0.5rem" }}>
+          <Grid item xs={12}>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "600",
+                color: Colors.DARK_GRAY,
+                fontSize: FONT_SIZE_LARGE,
+              }}
+            >
+              From
+            </Typography>
+            <StyledInput
+              type="number"
+              placeholder="Exclude Country Code*"
+              value={fromNumber}
+              onChange={(e) => setFromNumber(e.target.value)}
+              onKeyDown={handleNumberInput}
+              disabled
+            />
+          </Grid>
+        </Grid>
+      )}
       <Grid
         container
         item
@@ -332,6 +357,7 @@ export default function SendEmailCase({
             />
           )}
         </Grid>
+
         {headerName ? null : (
           <Grid xs={6}>
             <>
