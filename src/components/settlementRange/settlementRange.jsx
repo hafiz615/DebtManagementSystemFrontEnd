@@ -561,7 +561,9 @@ export default function SettlementRange() {
             resCommission?.data?.data?.settlementRange?.option_2_stats
           );
           showToast(resCommission?.data?.message, "success");
-          getLumpSumAmountData();
+          if (typeof resCommission?.data?.data?.getScores !== "string") {
+            getLumpSumAmountData();
+          }
         } else if (
           resCommission?.response?.status === 401 ||
           resCommission?.response?.status === 403
@@ -651,8 +653,9 @@ export default function SettlementRange() {
             settlementRangeData?.data?.data?.settlementRange?.option_2_stats
           );
           showToast(settlementRangeData?.data?.message, "success");
-
-          getLumpSumAmountData();
+          if (typeof settlementRangeData?.data?.data?.getScores !== "string") {
+            getLumpSumAmountData();
+          }
         } else if (
           settlementRangeData?.response?.status === 401 ||
           settlementRangeData?.response?.status === 403
@@ -1970,6 +1973,16 @@ export default function SettlementRange() {
               >
                 <div>
                   <Checkbox
+                    sx={{
+                      "&.Mui-checked": {
+                        color: Colors.SKY_BLUE,
+                      },
+                    }}
+                    disabled={
+                      !justification?.[justificationValue]?.[
+                        allCreditorNames[tabValue]
+                      ]
+                    }
                     checked={checkboxStates["justification"]}
                     onChange={() =>
                       handleCheckboxChange(
@@ -2045,6 +2058,11 @@ export default function SettlementRange() {
                   >
                     <div>
                       <Checkbox
+                        sx={{
+                          "&.Mui-checked": {
+                            color: Colors.SKY_BLUE,
+                          },
+                        }}
                         checked={checkboxStates[`summary_${index}`]}
                         onChange={() =>
                           handleCheckboxChange(`summary_${index}`, item?.chat)
@@ -2088,6 +2106,11 @@ export default function SettlementRange() {
                   {message.type === "bound" && (
                     <div>
                       <Checkbox
+                        sx={{
+                          "&.Mui-checked": {
+                            color: Colors.SKY_BLUE,
+                          },
+                        }}
                         checked={checkboxStates[`chatHistory_${index}`]}
                         onChange={() =>
                           handleCheckboxChange(
@@ -2131,7 +2154,7 @@ export default function SettlementRange() {
             </Grid>
             {tableLoading && (
               <Grid xs={12}>
-                <LinearProgress />
+                <LinearProgress sx={{ backgroundColor: Colors.SKY_BLUE }} />
               </Grid>
             )}
 

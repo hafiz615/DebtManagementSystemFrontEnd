@@ -213,7 +213,7 @@ export default function SendEmailCase({
   };
   const disable =
     !sendTo?.trim() ||
-    (!headerName && !selectedValue?.trim()) ||
+    (!headerName && !selectedValue) ||
     (!headerName && !subject?.trim()) ||
     !preview?.trim() ||
     (headerName && errors);
