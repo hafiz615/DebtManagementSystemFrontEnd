@@ -50,7 +50,7 @@ function StrategyThree({
                   data?.debtor?.strategy3MaxProfit ||
                   popUpDebtorData?.strategy3MaxProfit
                 }%`
-              : "Max Profit Margin yet to be Calculated"
+              : "Percentage receivable margin yet to be Calculated"
           }`}
           disabled={!isMaxProfitAvailable} // Disable if max profit is not available
         />
@@ -62,7 +62,7 @@ function StrategyThree({
               ? `${
                   data?.debtor?.profitMargin || popUpDebtorData?.profitMargin
                 }%`
-              : "Max Profit Margin was not entered when case was created"
+              : "Profit Margin was not entered when case was created"
           }`}
           disabled={!isProfitMarginAvailable}
         />

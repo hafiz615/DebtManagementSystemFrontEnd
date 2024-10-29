@@ -126,12 +126,11 @@ export default function TransactionAccordion({
           </Grid>
         ) : (
           <Grid container item xs={12}>
-            <div>
-              <TransactionRow
-                data={paymentDetails?.transactions?.previous}
-                GetCasePaymentDetails={GetCasePaymentDetails}
-              />
-            </div>
+            <TransactionRow
+              data={paymentDetails?.transactions?.previous}
+              GetCasePaymentDetails={GetCasePaymentDetails}
+            />
+
             <TransactionRow
               data={paymentDetails?.transactions?.upcomingPayments}
               heading="Upcoming"

@@ -193,7 +193,7 @@ export default function NotificationConfiguration({ data }) {
                 height: "30vh",
               }}
             >
-              <CircularProgress />
+              <CircularProgress sx={{ color: Colors.SKY_BLUE }} />
             </Grid>
           ) : (
             <>
