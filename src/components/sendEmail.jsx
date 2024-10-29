@@ -257,10 +257,28 @@ export default function SendEmail({
           />
         </Tooltip>
       </div>
+      <div>
+        {cc?.length > 0 && (
+          <div style={inputContainerStyle}>
+            {cc?.map((email, index) => (
+              <div key={index} style={emailChipStyle}>
+                {email}
+                <span
+                  onClick={() => handleRemoveEmail(index)}
+                  style={removeIconStyle}
+                >
+                  ×
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
+          marginBottom: "0.5rem",
         }}
       >
         {!paymentData && (
@@ -302,22 +320,6 @@ export default function SendEmail({
           ""
         )}
       </div>
-
-      {cc?.length > 0 && (
-        <div style={inputContainerStyle}>
-          {cc?.map((email, index) => (
-            <div key={index} style={emailChipStyle}>
-              {email}
-              <span
-                onClick={() => handleRemoveEmail(index)}
-                style={removeIconStyle}
-              >
-                ×
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
 
       <Grid sx={{ maxHeight: "40vh", overflowY: "auto", ...ScrollbarStyles }}>
         <Editor
