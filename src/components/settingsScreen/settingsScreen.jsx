@@ -17,6 +17,7 @@ import RoleAndPermission from "./roleAndPermission";
 import NotificationConfiguration from "../notificationConfigure";
 import JustificationModal from "./justificationModal";
 import AddUrlsAccordion from "./addUrlsAccordion";
+import EmailIdentityAccordion from "./emailIdentityAccordion";
 
 export default function SettingsScreen() {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ export default function SettingsScreen() {
 
   const [retryInterval, setRetryInterval] = useState({
     failedAuthorization: { unit: "days", value: 0, maxRetry: 0, retryCount: 0 },
-    failedPayment: { unit: "hours", value: 0, maxRetry: 0, retryCount: 0 },
+    failedPayment: { unit: "days", value: 0, maxRetry: 0, retryCount: 0 },
   });
   const [authorizationInterval, setAuthorizationInterval] = useState({
     custom: { unit: "hours", value: 0 },
@@ -50,31 +51,25 @@ export default function SettingsScreen() {
       localStorage.clear();
       navigate("/");
     }
-    setRetryInterval(
-      allSettings?.data?.data?.paymentsAuthorizations?.retryInterval || {
-        failedAuthorization: {
-          unit: "days",
-          value: 0,
-          maxRetry: 0,
-          retryCount: 0,
-        },
-        failedPayment: { unit: "hours", value: 0, maxRetry: 0, retryCount: 0 },
-      }
-    );
-    setAuthorizationInterval(
-      allSettings?.data?.data?.paymentsAuthorizations
-        ?.authorizationInterval || {
-        custom: { unit: "hours", value: 0 },
-        daily: { unit: "hours", value: 0 },
-        weekly: { unit: "days", value: 0 },
-        fortnightly: { unit: "days", value: 0 },
-        monthly: { unit: "days", value: 0 },
-      }
-    );
-    setNotificationTemplates(allSettings?.data?.data?.notificationTemplates);
-    setCustomFields(allSettings?.data?.data?.customFields);
-    setSelectJustification(allSettings?.data?.data?.justification);
-    setLoading(false);
+    if (allSettings?.status === 200) {
+      setRetryInterval(
+        allSettings?.data?.data?.paymentsAuthorizations?.retryInterval
+      );
+      setAuthorizationInterval(
+        allSettings?.data?.data?.paymentsAuthorizations
+          ?.authorizationInterval || {
+          custom: { unit: "hours", value: 0 },
+          daily: { unit: "hours", value: 0 },
+          weekly: { unit: "days", value: 0 },
+          fortnightly: { unit: "days", value: 0 },
+          monthly: { unit: "days", value: 0 },
+        }
+      );
+      setNotificationTemplates(allSettings?.data?.data?.notificationTemplates);
+      setCustomFields(allSettings?.data?.data?.customFields);
+      setSelectJustification(allSettings?.data?.data?.justification);
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -128,10 +123,9 @@ export default function SettingsScreen() {
         <SettingsAccordion
           retryInterval={retryInterval}
           authorizationInterval={authorizationInterval}
-          {...{
-            setRetryInterval,
-            setAuthorizationInterval,
-          }}
+          setRetryInterval={setRetryInterval}
+          setAuthorizationInterval={setAuthorizationInterval}
+          loading={loading}
         />
         {settings?.viewNotificationTemplates && (
           <NotificationTemplatesTabs
@@ -156,6 +150,7 @@ export default function SettingsScreen() {
           getSettings={getSettings}
           selectJustification={selectJustification}
         />
+        <EmailIdentityAccordion />
         <AddUrlsAccordion />
         {settings?.viewCaseStatuses && <CaseStatuses />}
 

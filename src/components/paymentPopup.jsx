@@ -65,13 +65,10 @@ export default function PaymentPopup({
       frequency: weeksTillPaid || 1,
     },
   ]);
-
   const prevFrequenciesRef = useRef(
     newDataList?.map((item) => item?.frequency)
   );
-
   const prevAmountsRef = useRef(newDataList?.map((item) => item?.amount));
-
   let remaining = remainingAmount;
 
   const calculateTotalAmount = (data) => {
@@ -123,52 +120,51 @@ export default function PaymentPopup({
   }, [data]);
 
   useEffect(() => {
-    const currentFrequencies = newDataList?.map((item) => item.frequency);
-    const prevFrequencies = prevFrequenciesRef.current;
-    const hasLengthChanged =
-      currentFrequencies?.length !== prevFrequencies?.length;
-    const hasFrequencyChanged = currentFrequencies?.some(
-      (freq, index) => freq !== prevFrequencies?.[index]
-    );
-    const totalFrequency = currentFrequencies.reduce(
-      (acc, freq) => acc + freq,
-      0
-    );
-    if (hasFrequencyChanged || hasLengthChanged) {
-      const newAmount = totalFrequency ? remaining / totalFrequency : 0;
-      const updatedDataList = newDataList.map((item) => ({
-        ...item,
-        amount: item.frequency ? newAmount : item.amount,
-      }));
-      setNewDataList(updatedDataList);
+    if (!isExempt) {
+      const currentFrequencies = newDataList?.map((item) => item.frequency);
+      const prevFrequencies = prevFrequenciesRef.current;
+      const hasLengthChanged =
+        currentFrequencies?.length !== prevFrequencies?.length;
+      const hasFrequencyChanged = currentFrequencies?.some(
+        (freq, index) => freq !== prevFrequencies?.[index]
+      );
+      const totalFrequency = currentFrequencies.reduce(
+        (acc, freq) => acc + freq,
+        0
+      );
+      if (hasFrequencyChanged || hasLengthChanged) {
+        const newAmount = totalFrequency ? remaining / totalFrequency : 0;
+        const updatedDataList = newDataList.map((item) => ({
+          ...item,
+          amount: item.frequency ? newAmount : item.amount,
+        }));
+        setNewDataList(updatedDataList);
+      }
+      prevFrequenciesRef.current = currentFrequencies;
     }
-    prevFrequenciesRef.current = currentFrequencies;
   }, [newDataList, remaining]);
 
   useEffect(() => {
-    const currentAmounts = newDataList?.map((item) => item.amount);
-    const prevAmounts = prevAmountsRef.current;
-    const hasLengthChanged = currentAmounts?.length !== prevAmounts?.length;
-    const hasAmountChanged = currentAmounts?.some(
-      (amount, index) => amount !== prevAmounts?.[index]
-    );
-    const totalAmount = currentAmounts.reduce((acc, amo) => acc + amo, 0);
-    if (hasAmountChanged || hasLengthChanged) {
-      const newFrequency = totalAmount ? remaining / totalAmount : 0;
-      const updatedDataList = newDataList.map((item) => ({
-        ...item,
-        frequency: item.amount ? Math.round(newFrequency) : item.frequency,
-      }));
-      setNewDataList(updatedDataList);
+    if (!isExempt) {
+      const currentAmounts = newDataList?.map((item) => item.amount);
+      const prevAmounts = prevAmountsRef.current;
+      const hasLengthChanged = currentAmounts?.length !== prevAmounts?.length;
+      const hasAmountChanged = currentAmounts?.some(
+        (amount, index) => amount !== prevAmounts?.[index]
+      );
+      const totalAmount = currentAmounts.reduce((acc, amo) => acc + amo, 0);
+      if (hasAmountChanged || hasLengthChanged) {
+        const newFrequency = totalAmount ? remaining / totalAmount : 0;
+        const updatedDataList = newDataList.map((item) => ({
+          ...item,
+          frequency: item.amount ? Math.round(newFrequency) : item.frequency,
+        }));
+        setNewDataList(updatedDataList);
+      }
+      prevAmountsRef.current = currentAmounts;
     }
-    prevAmountsRef.current = currentAmounts;
   }, [newDataList, remaining]);
-  const radioStyle = {
-    color: Colors.SKY_BLUE,
-    "&.Mui-checked": {
-      color: Colors.SKY_BLUE,
-    },
-  };
+
   return (
     <div>
       <Typography
@@ -216,7 +212,10 @@ export default function PaymentPopup({
           type="checkbox"
           checked={isExempt}
           onChange={() => setIsExempt(!isExempt)}
-          style={{ appearance: "radio" }}
+          style={{
+            appearance: "radio",
+            accentColor: Colors.SKY_BLUE,
+          }}
         />
         <Typography
           sx={{

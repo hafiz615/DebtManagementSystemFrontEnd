@@ -18,6 +18,7 @@ export default function TimelineData({
   notes,
   caseDataId,
   GetLogsById,
+  caseData,
 }) {
   const formattedDate = new Date(date);
 
@@ -101,7 +102,7 @@ export default function TimelineData({
                 >
                   {value?.Action} {formatDate(value?.Time)}
                 </Typography>
-                {value?.Action === "EMAIL" && (
+                {value?.Action === "EMAIL" && !Array.isArray(value?.To) && (
                   <MuiModels
                     show="sendEmailCase"
                     replyButton={true}
@@ -115,6 +116,7 @@ export default function TimelineData({
                     caseDataId={caseDataId}
                     GetLogsById={GetLogsById}
                     replyCheck={true}
+                    data={caseData}
                   />
                 )}
               </div>

@@ -163,7 +163,10 @@ function CaseDetail() {
       address: emailData?.address || "",
       city: emailData?.city || "",
     };
-    const SenderInfoResponse = await AddSenderIdentity(params);
+    const SenderInfoResponse = await AddSenderIdentity(
+      params,
+      caseData?.debtor?._id
+    );
     if (SenderInfoResponse?.status === 200) {
       showToast(SenderInfoResponse?.data?.message, "success");
     } else if (SenderInfoResponse?.response?.status === 400) {
@@ -272,6 +275,7 @@ function CaseDetail() {
                 maxHeight="78vh"
                 caseDataId={id}
                 GetLogsById={GetLogsById}
+                data={caseData}
               />
               <MuiModels
                 show="sendEmailCase"
@@ -281,6 +285,7 @@ function CaseDetail() {
                 maxHeight="78vh"
                 caseDataId={id}
                 GetLogsById={GetLogsById}
+                data={caseData}
               />
               {caseData?.settlementRange ? (
                 <TextButton
@@ -645,7 +650,12 @@ function CaseDetail() {
                     </>
                   ))
                 ) : (
-                  <TimelineData notes={true} value={"No Data"} date={null} />
+                  <TimelineData
+                    notes={true}
+                    value={"No Data"}
+                    date={null}
+                    caseData={caseData}
+                  />
                 )}
               </Grid>
             </Grid>

@@ -58,6 +58,7 @@ export default function SendEmailCase({
   content,
   emailSubject,
   replyCheck,
+  data,
 }) {
   const [loading, setLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -213,7 +214,7 @@ export default function SendEmailCase({
   };
   const disable =
     !sendTo?.trim() ||
-    (!headerName && !selectedValue?.trim()) ||
+    (!headerName && !selectedValue) ||
     (!headerName && !subject?.trim()) ||
     !preview?.trim() ||
     (headerName && errors);
@@ -224,7 +225,7 @@ export default function SendEmailCase({
         value: name,
       }));
   const getAllSenders = async () => {
-    const senderRes = await GetAllSenders();
+    const senderRes = await GetAllSenders(data?.debtor?._id);
     setSendFrom(senderRes?.data?.data);
   };
   useEffect(() => {
