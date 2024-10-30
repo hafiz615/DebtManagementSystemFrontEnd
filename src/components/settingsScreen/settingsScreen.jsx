@@ -17,6 +17,7 @@ import RoleAndPermission from "./roleAndPermission";
 import NotificationConfiguration from "../notificationConfigure";
 import JustificationModal from "./justificationModal";
 import AddUrlsAccordion from "./addUrlsAccordion";
+import EmailIdentityAccordion from "./emailIdentityAccordion";
 
 export default function SettingsScreen() {
   const navigate = useNavigate();
@@ -149,6 +150,7 @@ export default function SettingsScreen() {
           getSettings={getSettings}
           selectJustification={selectJustification}
         />
+        <EmailIdentityAccordion />
         <AddUrlsAccordion />
         {settings?.viewCaseStatuses && <CaseStatuses />}
 

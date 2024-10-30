@@ -215,48 +215,6 @@ export const UploadFiles = async (data) => {
   }
 };
 
-// export const ExtractContractData = async (files) => {
-//   // return extractContractDataResponse;
-//   const processFile = async (file) => {
-//     try {
-//       // Example API endpoint
-//       const apiUrl = "https://dms-negotiation.hpdemos.co/extract-fields";
-
-//       // Create form data
-//       const formData = new FormData();
-//       const originalFileName = file.file.name;
-//       const cleanedFileName = originalFileName.replace("MCA Contracts/", "");
-//       const cleanedFile = new File([file.file], cleanedFileName, { type: file.file.type });
-//       console.log("cleanedFile", cleanedFile);
-//       formData.append("MCA_pdf", cleanedFile);
-//       // formData.append("MCA_pdf", file.file); // Ensure file.file is a File object
-
-//       // Call API
-//       const response = await axios.post(apiUrl, formData, {
-//         headers: {
-//           'Accept': 'application/json',
-//           'Content-Type': 'multipart/form-data', // This is often auto-set by axios
-//         }
-//       });
-
-//       // Return the result of the API call
-//       return response.data;
-//     } catch (error) {
-//       console.error(`Error uploading ${file.name}:`, error);
-//       // Return an empty object in case of failure
-//       return {};
-//     }
-//   };
-
-//   const results = await Promise.all(files.map((file) => {
-//     if (!isEmpty(file)){
-//       return processFile(file)
-//     }
-//     return file
-//   }));
-//   return results; // Return the array of results
-// };
-
 export const GetDebtorSearch = async (payload) => {
   try {
     return await axios.post(
@@ -1356,10 +1314,10 @@ export const SendPayment = async (id) => {
     return error;
   }
 };
-export const AddSenderIdentity = async (payload) => {
+export const AddSenderIdentity = async (payload, id) => {
   try {
     return await axios.post(
-      BASE_URL + "/v1/user/addSenderIdentity",
+      BASE_URL + `/v1/user/addSenderIdentity/${id}`,
       payload,
       setHeaders()
     );
@@ -1395,10 +1353,21 @@ export const DeleteLink = async (id) => {
     return error;
   }
 };
-export const GetAllSenders = async () => {
+export const GetAllSenders = async (id) => {
   try {
     return await axios.get(
-      BASE_URL + "/v1/user/getVerifySenders",
+      BASE_URL + `/v1/user/getVerifySenders/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const VerfiyEmailIdentity = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + "/v1/user/addUserSender",
+      payload,
       setHeaders()
     );
   } catch (error) {

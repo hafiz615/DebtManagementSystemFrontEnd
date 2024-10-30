@@ -462,6 +462,7 @@ export default function DebtorDetailsCards({
                       caseDataId={caseDataId}
                       maxHeight="78vh"
                       GetLogsById={GetLogsById}
+                      data={caseData}
                     />
                     <MuiModels
                       show="sendEmailCase"
@@ -471,6 +472,7 @@ export default function DebtorDetailsCards({
                       caseDataId={caseDataId}
                       maxHeight="78vh"
                       GetLogsById={GetLogsById}
+                      data={caseData}
                     />
                     <MuiModels
                       show="editDebtorContacts"
