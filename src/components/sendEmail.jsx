@@ -70,6 +70,7 @@ export default function SendEmail({
   lumpSump,
   caseId,
   paymentData,
+  debtorId,
 }) {
   const [sendTo, setSendTo] = useState("");
   const [sendFrom, setSendFrom] = useState([]);
@@ -79,7 +80,6 @@ export default function SendEmail({
   const [rangeMinToMax, setRangeMinToMax] = useState("min");
   const [cc, setCc] = useState([]);
   const [inputValue, setInputValue] = useState("");
-
   const [subject, setSubject] = useState("");
   const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
@@ -89,12 +89,6 @@ export default function SendEmail({
     { label: "Strategy 1", value: "Strategy 1" },
     { label: "Strategy 2", value: "Strategy 2" },
     { label: "Strategy 3", value: "Strategy 3" },
-  ];
-
-  const allRecommendation = [
-    { label: "Recommendation 1", value: "recommendation 1" },
-    { label: "Recommendation 2", value: "recommendation 2" },
-    { label: "Recommendation 3", value: "recommendation 3" },
   ];
 
   const allRanges = [
@@ -127,7 +121,7 @@ export default function SendEmail({
       value: name,
     }));
   const getAllSenders = async () => {
-    const senderRes = await GetAllSenders();
+    const senderRes = await GetAllSenders(debtorId);
     setSendFrom(senderRes?.data?.data);
   };
 

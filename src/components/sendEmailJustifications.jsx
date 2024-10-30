@@ -58,11 +58,15 @@ const inputStyling = {
   borderRadius: "5px",
   width: "48%",
 };
-export default function SendEmailJustification({ handleClose, data, caseId }) {
+export default function SendEmailJustification({
+  handleClose,
+  data,
+  caseId,
+  debtorId,
+}) {
   const [sendTo, setSendTo] = useState("");
   const [sendFrom, setSendFrom] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
-  const [strategy, setStrategy] = useState("Strategy 1");
   const [cc, setCc] = useState([]);
   const [inputValue, setInputValue] = useState("");
 
@@ -70,7 +74,6 @@ export default function SendEmailJustification({ handleClose, data, caseId }) {
   const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
-  const { id } = useParams();
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" || e.key === "Tab" || e.key === ",") {
@@ -98,7 +101,7 @@ export default function SendEmailJustification({ handleClose, data, caseId }) {
       value: name,
     }));
   const getAllSenders = async () => {
-    const senderRes = await GetAllSenders();
+    const senderRes = await GetAllSenders(debtorId);
     setSendFrom(senderRes?.data?.data);
   };
 

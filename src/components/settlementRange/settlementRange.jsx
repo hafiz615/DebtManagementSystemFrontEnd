@@ -1211,6 +1211,7 @@ export default function SettlementRange() {
                 lumpSump={lumpSumpData}
                 caseId={caseId}
                 paymentData={paymentData}
+                debtorId={allData?.debtor?._id}
               />
               <TextButton
                 disabled={!apiData}
@@ -1948,6 +1949,7 @@ export default function SettlementRange() {
                   disabled={!isAnyChecked}
                   data={selectedData}
                   caseId={caseId}
+                  debtorId={allData?.debtor?._id}
                 />
               </div>
             </div>

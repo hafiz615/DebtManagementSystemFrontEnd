@@ -14,7 +14,6 @@ import { Colors } from "../config/default";
 import TextButton from "./button";
 import EditCreditorDetail from "./editCreditorDetail";
 import EditDebtorDetails from "./editDebtorDetails";
-import FroalaEditor from "./textEditor";
 import CaseModel from "./caseModel";
 import CaseCustomField from "./caseCustomField";
 import EditCaseCustomField from "./editCaseCustomField";
@@ -91,7 +90,6 @@ export default function MuiModels({
   GetRoles,
   selectedRole,
   selectedData,
-  rolesId,
   selectedRoleData,
   setSelectedRole,
   getAllCaseTasks,
@@ -135,6 +133,7 @@ export default function MuiModels({
   strategy,
   commission,
   replyCheck,
+  debtorId,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -747,6 +746,7 @@ export default function MuiModels({
               content={content}
               emailSubject={emailSubject}
               replyCheck={replyCheck}
+              data={data}
             />
           ) : show === "editPipeline" ? (
             <EditPipeline
@@ -834,6 +834,7 @@ export default function MuiModels({
               fullProfit={fullProfit}
               caseId={caseId}
               paymentData={paymentData}
+              debtorId={debtorId}
             />
           ) : show === "uploadFile" ? (
             <UploadFilePopup
@@ -887,6 +888,7 @@ export default function MuiModels({
               handleClose={handleClose}
               data={data}
               caseId={caseId}
+              debtorId={debtorId}
             />
           ) : show === "WeeklyBudget" ? (
             <CommissionDetails

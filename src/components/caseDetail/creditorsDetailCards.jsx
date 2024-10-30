@@ -548,6 +548,7 @@ export default function CreditorsDetailCards({
                       iconColor={Colors.BLACK}
                       maxHeight="78vh"
                       GetLogsById={GetLogsById}
+                      data={caseData}
                     />
                     <MuiModels
                       show="sendEmailCase"
@@ -556,6 +557,7 @@ export default function CreditorsDetailCards({
                       iconColor={Colors.BLACK}
                       maxHeight="78vh"
                       GetLogsById={GetLogsById}
+                      data={caseData}
                     />
                     <MuiModels
                       show="editCreditorContacts"
