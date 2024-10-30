@@ -222,6 +222,7 @@ export default function SendEmail({
         />
         <Dropdown
           height="2.5rem"
+          disabled={menu?.length === 0}
           menuItems={menu}
           menuWidth="11.7rem"
           placeholder="Send From*"

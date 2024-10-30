@@ -59,6 +59,7 @@ export default function SendEmailCase({
   emailSubject,
   replyCheck,
   data,
+  verifiedSenders,
 }) {
   const [loading, setLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -220,19 +221,10 @@ export default function SendEmailCase({
     (headerName && errors);
   const menu = replyCheck
     ? []
-    : sendFrom?.map((name) => ({
+    : verifiedSenders?.map((name) => ({
         label: name,
         value: name,
       }));
-  const getAllSenders = async () => {
-    const senderRes = await GetAllSenders(data?.debtor?._id);
-    setSendFrom(senderRes?.data?.data);
-  };
-  useEffect(() => {
-    if (!replyCheck) {
-      getAllSenders();
-    }
-  }, []);
 
   const handleSend = async () => {
     setLoading(true);
@@ -375,6 +367,7 @@ export default function SendEmailCase({
               {!replyCheck && (
                 <Dropdown
                   height="2.5rem"
+                  disabled={menu?.length === 0}
                   menuItems={menu}
                   menuWidth="11.7rem"
                   placeholder="Send From"

@@ -65,6 +65,7 @@ export default function CreditorsDetailCards({
   caseData,
   GetCaseDetails,
   GetLogsById,
+  verifiedSenders,
 }) {
   const [searchText, setSearchText] = useState("");
 
@@ -549,6 +550,7 @@ export default function CreditorsDetailCards({
                       maxHeight="78vh"
                       GetLogsById={GetLogsById}
                       data={caseData}
+                      verifiedSenders={verifiedSenders}
                     />
                     <MuiModels
                       show="sendEmailCase"

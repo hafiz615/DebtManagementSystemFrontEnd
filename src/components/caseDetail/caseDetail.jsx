@@ -37,6 +37,7 @@ import TimelineData from "./timelineData.jsx";
 import {
   AddNotesCase,
   AddSenderIdentity,
+  GetAllSenders,
   GetCaseById,
   GetCasePaymentById,
   GetLogs,
@@ -76,6 +77,7 @@ function CaseDetail() {
   const [caseData, setCaseData] = useState({});
   const [paymentDetails, setPaymentDetails] = useState({});
   const [addTaskModal, setAddTaskModal] = useState("");
+  const [verifiedSenders, setVerified] = useState([]);
   const [logs, setLogs] = useState([]);
   const { id } = useParams();
   const handleOpen = async () => {
@@ -90,6 +92,13 @@ function CaseDetail() {
       setCaseData(caseDetails?.data?.data);
       dispatch(setCaseId(id));
       dispatch(setCaseCreditorId(caseDetails?.data?.data?.creditor?._id));
+
+      const senderRes = await GetAllSenders(
+        caseDetails?.data?.data?.debtor?._id
+      );
+      if (senderRes?.status === 200) {
+        setVerified(senderRes?.data?.data);
+      }
     } else if (
       caseDetails?.response?.status === 401 ||
       caseDetails?.response?.status === 403
@@ -174,6 +183,7 @@ function CaseDetail() {
       showToast(errorMessage, "error");
     }
   };
+
   return (
     <Grid
       container
@@ -276,6 +286,7 @@ function CaseDetail() {
                 caseDataId={id}
                 GetLogsById={GetLogsById}
                 data={caseData}
+                verifiedSenders={verifiedSenders}
               />
               <MuiModels
                 show="sendEmailCase"
@@ -413,6 +424,7 @@ function CaseDetail() {
                 >
                   {value === "Debtor" ? (
                     <DebtorDetailsCards
+                      verifiedSenders={verifiedSenders}
                       caseData={caseData}
                       GetCaseDetails={GetCaseDetails}
                       caseDataId={id}
@@ -420,6 +432,7 @@ function CaseDetail() {
                     />
                   ) : value === "Creditor" ? (
                     <CreditorsDetailCards
+                      verifiedSenders={verifiedSenders}
                       caseData={caseData}
                       GetCaseDetails={GetCaseDetails}
                       caseDataId={id}
