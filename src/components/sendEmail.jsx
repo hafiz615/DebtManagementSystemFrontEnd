@@ -114,20 +114,11 @@ export default function SendEmail({
   const handleRemoveEmail = (index) => {
     setCc(cc?.filter((_, i) => i !== index));
   };
-  const menu =
-    sendFrom &&
-    sendFrom?.map((name) => ({
-      label: name,
-      value: name,
-    }));
-  const getAllSenders = async () => {
-    const senderRes = await GetAllSenders(debtorId);
-    setSendFrom(senderRes?.data?.data);
-  };
+  const menu = debtorId?.map((name) => ({
+    label: name,
+    value: name,
+  }));
 
-  useEffect(() => {
-    getAllSenders();
-  }, []);
   const handleSend = async () => {
     setLoading(true);
     const payload = {
@@ -222,7 +213,6 @@ export default function SendEmail({
         />
         <Dropdown
           height="2.5rem"
-          disabled={menu?.length === 0}
           menuItems={menu}
           menuWidth="11.7rem"
           placeholder="Send From*"
@@ -231,6 +221,7 @@ export default function SendEmail({
           width={"48%"}
           selectedValue={selectedValue}
           setSelectedValue={setSelectedValue}
+          emptyMessage="No Verfied Sender"
         />
       </div>
       <div style={{ display: "flex", justifyContent: "space-between" }}>

@@ -367,7 +367,6 @@ export default function SendEmailCase({
               {!replyCheck && (
                 <Dropdown
                   height="2.5rem"
-                  disabled={menu?.length === 0}
                   menuItems={menu}
                   menuWidth="11.7rem"
                   placeholder="Send From"
@@ -376,6 +375,7 @@ export default function SendEmailCase({
                   width="98%"
                   selectedValue={selectedValue}
                   setSelectedValue={setSelectedValue}
+                  emptyMessage="No Verfied Sender"
                 />
               )}
 
