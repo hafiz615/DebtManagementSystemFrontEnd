@@ -49,6 +49,7 @@ import TextButton from "../button.jsx";
 import { setCaseCreditorId, setCaseId } from "../../redux/action/action.js";
 import CaseFileCard from "./caseFileCard.jsx";
 import { useToast } from "../../toast/toastContext.jsx";
+import { formatValue } from "../../common.js";
 
 const style = {
   position: "absolute",
@@ -560,6 +561,26 @@ function CaseDetail() {
                 </Grid>
               </AccordionDetails>
             </Accordion>
+            <a
+              href={`tel:${formatValue(
+                caseData?.debtor?.basicInformation?.phone
+              )}`}
+            >
+              {formatValue(caseData?.debtor?.basicInformation?.phone)}
+            </a>
+            <div>{formatValue(caseData?.debtor?.basicInformation?.phone)}</div>
+            <div>
+              <a
+                href={`/countries/united-states/${formatValue(
+                  caseData?.debtor?.basicInformation?.phone
+                )}`}
+              >
+                <span>
+                  {formatValue(caseData?.debtor?.basicInformation?.phone)}
+                </span>
+              </a>
+            </div>
+            <span>561-555-7781</span>
 
             <Grid container>
               <Grid item xs={12} md={3}>
