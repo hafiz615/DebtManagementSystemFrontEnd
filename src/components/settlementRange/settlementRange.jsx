@@ -202,7 +202,6 @@ export default function SettlementRange() {
   const [debtor, setDebtor] = useState({});
   const [debtorInfo, setDebtorInfo] = useState({});
   const [lumpSumpData, setLumpSumpData] = useState({});
-  const [errorLumpSumMessage, setErrorLumSumtMessage] = useState("");
   const [commissionPercentage, setCommissionPercentage] = useState("");
   const [summaryAmount, setSummaryAmount] = useState({});
   const [justification, setJustification] = useState();
@@ -323,7 +322,7 @@ export default function SettlementRange() {
     )),
     1: strat2Recommendations?.map((item, index) => (
       <>
-        {!isEmpty(lumpSumpData) ? (
+        {!isEmpty(lumpSumpData) && (
           <SettlementCards
             setPaymentChanged={setPaymentChanged}
             remainingAmount={
@@ -351,19 +350,6 @@ export default function SettlementRange() {
             caseId={allData?.creditors?.[parseInt(tabValue)]?.caseId}
             commission={allData?.totalCommission}
           />
-        ) : (
-          <Grid
-            item
-            xs={12}
-            container
-            sx={{
-              backgroundColor: Colors.WHITE,
-              padding: "1rem",
-              borderRadius: "10px",
-            }}
-          >
-            {errorLumpSumMessage}
-          </Grid>
         )}
       </>
     )),
@@ -702,7 +688,6 @@ export default function SettlementRange() {
         setLumpSumpData(GetLumpSumDataRes?.data?.data);
       } else {
         const errorMessage = GetLumpSumDataRes?.response?.data?.message;
-        setErrorLumSumtMessage(errorMessage);
         showToast(errorMessage, "error");
       }
     }
