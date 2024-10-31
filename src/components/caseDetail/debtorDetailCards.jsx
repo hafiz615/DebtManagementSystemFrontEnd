@@ -60,6 +60,7 @@ export default function DebtorDetailsCards({
   GetCaseDetails,
   caseDataId,
   GetLogsById,
+  verifiedSenders,
 }) {
   const [searchText, setSearchText] = useState("");
   const [startIndex, setStartIndex] = useState(0);
@@ -456,6 +457,7 @@ export default function DebtorDetailsCards({
                 <Grid item xs={4} sx={gridActionStyle}>
                   <span style={cellStyle}>
                     <MuiModels
+                      verifiedSenders={verifiedSenders}
                       show="sendEmailCase"
                       buttonName="sendEmail"
                       iconColor={Colors.BLACK}

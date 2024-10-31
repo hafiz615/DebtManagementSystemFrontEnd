@@ -94,20 +94,11 @@ export default function SendEmailJustification({
   const handleRemoveEmail = (index) => {
     setCc(cc?.filter((_, i) => i !== index));
   };
-  const menu =
-    sendFrom &&
-    sendFrom?.map((name) => ({
-      label: name,
-      value: name,
-    }));
-  const getAllSenders = async () => {
-    const senderRes = await GetAllSenders(debtorId);
-    setSendFrom(senderRes?.data?.data);
-  };
+  const menu = debtorId?.map((name) => ({
+    label: name,
+    value: name,
+  }));
 
-  useEffect(() => {
-    getAllSenders();
-  }, []);
   const handleSend = async () => {
     setLoading(true);
     const payload = {
@@ -196,6 +187,7 @@ export default function SendEmailJustification({
           width={"48%"}
           selectedValue={selectedValue}
           setSelectedValue={setSelectedValue}
+          emptyMessage="No Verfied Sender"
         />
       </div>
       <div style={{ display: "flex", justifyContent: "space-between" }}>

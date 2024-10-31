@@ -134,6 +134,7 @@ export default function MuiModels({
   commission,
   replyCheck,
   debtorId,
+  verifiedSenders,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -736,6 +737,7 @@ export default function MuiModels({
             />
           ) : show === "sendEmailCase" ? (
             <SendEmailCase
+              verifiedSenders={verifiedSenders}
               buttonText={buttonText}
               handleClose={handleClose}
               headerName={headerName}

@@ -47,6 +47,7 @@ import {
   GetLumpSumJustifications,
   GetFullProfitSettlement,
   GetPaymentIntervals,
+  GetAllSenders,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import {
@@ -217,6 +218,7 @@ export default function SettlementRange() {
   const [strategyTab, setStrategyTab] = useState(0);
   const [optionStats, setOptionStats] = useState();
   const [justificationLoading, setJustificationLoading] = useState(false);
+  const [verifiedSender, setVerifiedSender] = useState([]);
   const [colorScheme] = useState("Tableau10");
   const [justificationValue, setJustificationValue] = useState(
     "justification_gemini"
@@ -656,6 +658,12 @@ export default function SettlementRange() {
           if (typeof settlementRangeData?.data?.data?.getScores !== "string") {
             getLumpSumAmountData();
           }
+          const senderRes = await GetAllSenders(
+            settlementRangeData?.data?.data?.debtor?._id
+          );
+          if (senderRes?.status === 200) {
+            setVerifiedSender(senderRes?.data?.data);
+          }
         } else if (
           settlementRangeData?.response?.status === 401 ||
           settlementRangeData?.response?.status === 403
@@ -727,10 +735,6 @@ export default function SettlementRange() {
     getAllRanges([], false);
     getAllSummary();
   }, []);
-
-  // useEffect(() => {
-  //   getAllJustifications(strategyTab);
-  // }, [strategyTab]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -1211,7 +1215,7 @@ export default function SettlementRange() {
                 lumpSump={lumpSumpData}
                 caseId={caseId}
                 paymentData={paymentData}
-                debtorId={allData?.debtor?._id}
+                debtorId={verifiedSender}
               />
               <TextButton
                 disabled={!apiData}
@@ -1949,7 +1953,7 @@ export default function SettlementRange() {
                   disabled={!isAnyChecked}
                   data={selectedData}
                   caseId={caseId}
-                  debtorId={allData?.debtor?._id}
+                  debtorId={verifiedSender}
                 />
               </div>
             </div>
