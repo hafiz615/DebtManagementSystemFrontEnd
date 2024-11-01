@@ -223,6 +223,7 @@ export default function SettlementRange() {
     "justification_gemini"
   );
   const [selectedOption, setSelectedOption] = useState("percentageReceivable");
+  const [scoresBackend, setScoresBackend] = useState(false);
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const drawerOpen = useSelector((state) => state.drawer.open);
   const { AUTHORITY_TEXT } = UserListPage;
@@ -317,40 +318,38 @@ export default function SettlementRange() {
             null
           }
           commission={allData?.maxProfitCommission}
+          scoresBackend={scoresBackend}
         />
       </>
     )),
     1: strat2Recommendations?.map((item, index) => (
       <>
-        {!isEmpty(lumpSumpData) && (
-          <SettlementCards
-            setPaymentChanged={setPaymentChanged}
-            remainingAmount={
-              allCreditorNames[tabValue] === "Summary"
-                ? summaryAmount?.loanAmount.toString()
-                : selectedCreditorDetails?.remaining
-            }
-            isLumpSumPayment={true}
-            title={item}
-            strategy="strategy2"
-            weeksTillPaidTitle={
-              item === "lump Sum"
-                ? "Amount based on Lump Sum Recommendation"
-                : ""
-            }
-            settlementRange={
-              lumpSumpData?.lumpsum_settlement?.[
-                allCreditorNames[parseInt(tabValue)]
-              ] || null
-            }
-            warning={
-              lumpSumpData?.warning?.[allCreditorNames[parseInt(tabValue)]] ||
-              ""
-            }
-            caseId={allData?.creditors?.[parseInt(tabValue)]?.caseId}
-            commission={allData?.totalCommission}
-          />
-        )}
+        <SettlementCards
+          setPaymentChanged={setPaymentChanged}
+          breakEven={selectedCreditorDetails?.breakEven}
+          remainingAmount={
+            allCreditorNames[tabValue] === "Summary"
+              ? summaryAmount?.loanAmount.toString()
+              : selectedCreditorDetails?.remaining
+          }
+          isLumpSumPayment={true}
+          title={item}
+          strategy="strategy2"
+          weeksTillPaidTitle={
+            item === "lump Sum" ? "Amount based on Lump Sum Recommendation" : ""
+          }
+          settlementRange={
+            lumpSumpData?.lumpsum_settlement?.[
+              allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          warning={
+            lumpSumpData?.warning?.[allCreditorNames[parseInt(tabValue)]] || ""
+          }
+          caseId={allData?.creditors?.[parseInt(tabValue)]?.caseId}
+          commission={allData?.totalCommission}
+          scoresBackend={scoresBackend}
+        />
       </>
     )),
 
@@ -405,6 +404,7 @@ export default function SettlementRange() {
           selectedOption={selectedOption}
           setSelectedOption={setSelectedOption}
           commission={allData?.percentageReceivableCommissionAmount}
+          scoresBackend={scoresBackend}
         />
       </>
     )),
@@ -516,12 +516,14 @@ export default function SettlementRange() {
         if (resCommission?.status === 200) {
           setLoading(false);
           if (typeof resCommission?.data?.data?.getScores === "string") {
+            setScoresBackend(true);
             setScores({ message: resCommission?.data?.data?.getScores });
             showToast(
               resCommission?.data?.data?.getScores + " Couldn't fetch scores",
               "error"
             );
           } else {
+            setScoresBackend(false);
             setScores(resCommission?.data?.data?.getScores);
           }
           setSummaryAmount(
@@ -606,6 +608,7 @@ export default function SettlementRange() {
         if (settlementRangeData?.status === 200) {
           setLoading(false);
           if (typeof settlementRangeData?.data?.data?.getScores === "string") {
+            setScoresBackend(true);
             setScores({ message: settlementRangeData?.data?.data?.getScores });
             showToast(
               settlementRangeData?.data?.data?.getScores +
@@ -613,6 +616,7 @@ export default function SettlementRange() {
               "error"
             );
           } else {
+            setScoresBackend(false);
             setScores(settlementRangeData?.data?.data?.getScores);
           }
           setAllData(settlementRangeData?.data?.data);
@@ -1579,6 +1583,16 @@ export default function SettlementRange() {
               </>
             )}
           </Grid>
+          {scores?.message && (
+            <Grid container item xs={6} sx={{ gap: "2%", mt: "1rem" }}>
+              <GridItemMessage
+                key="No Score Reason"
+                title="No Score Reason"
+                value="Mca companies not found, data calculated based on weekly budget"
+                rawValue="Mca companies not found, data calculated based on weekly budget"
+              />
+            </Grid>
+          )}
 
           <Grid
             container
@@ -1633,15 +1647,17 @@ export default function SettlementRange() {
                   }}
                   label="Negotiation manager Weekly budget"
                 />
-                <AntTab
-                  sx={{
-                    bgcolor: Colors.WHITE,
-                    width: "max-content",
-                    fontWeight: "600",
-                    height: "3.5rem",
-                  }}
-                  label="Weekly budget as per Bank statement"
-                />
+                {!scoresBackend && (
+                  <AntTab
+                    sx={{
+                      bgcolor: Colors.WHITE,
+                      width: "max-content",
+                      fontWeight: "600",
+                      height: "3.5rem",
+                    }}
+                    label="Weekly budget as per Bank statement"
+                  />
+                )}
               </AntTabs>
             </Grid>
           )}
@@ -1853,16 +1869,6 @@ export default function SettlementRange() {
             </Grid>
           )}
 
-          <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
-            {scores?.message && (
-              <GridItemMessage
-                key="No Score Reason"
-                title="No Score Reason"
-                value={scores?.message}
-                rawValue={scores?.message}
-              />
-            )}
-          </Grid>
           <Grid
             item
             xs={12}
