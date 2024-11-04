@@ -135,6 +135,7 @@ export default function MuiModels({
   replyCheck,
   debtorId,
   verifiedSenders,
+  scoresBackend,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -884,6 +885,7 @@ export default function MuiModels({
               commissionRange={commissionRange}
               setPaymentChanged={setPaymentChanged}
               commission={commission}
+              scoresBackend={scoresBackend}
             />
           ) : show === "sendEmailJustification" ? (
             <SendEmailJustification

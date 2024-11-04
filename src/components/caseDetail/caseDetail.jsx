@@ -561,7 +561,7 @@ function CaseDetail() {
                 </Grid>
               </AccordionDetails>
             </Accordion>
-            <a
+            {/* <a
               href={`tel:${formatValue(
                 caseData?.debtor?.basicInformation?.phone
               )}`}
@@ -580,7 +580,7 @@ function CaseDetail() {
                 </span>
               </a>
             </div>
-            <span>561-555-7781</span>
+            <span>561-555-7781</span> */}
 
             <Grid container>
               <Grid item xs={12} md={3}>
