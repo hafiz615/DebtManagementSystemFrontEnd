@@ -561,27 +561,6 @@ function CaseDetail() {
                 </Grid>
               </AccordionDetails>
             </Accordion>
-            {/* <a
-              href={`tel:${formatValue(
-                caseData?.debtor?.basicInformation?.phone
-              )}`}
-            >
-              {formatValue(caseData?.debtor?.basicInformation?.phone)}
-            </a>
-            <div>{formatValue(caseData?.debtor?.basicInformation?.phone)}</div>
-            <div>
-              <a
-                href={`/countries/united-states/${formatValue(
-                  caseData?.debtor?.basicInformation?.phone
-                )}`}
-              >
-                <span>
-                  {formatValue(caseData?.debtor?.basicInformation?.phone)}
-                </span>
-              </a>
-            </div>
-            <span>561-555-7781</span>
-             */}
 
             <Grid container>
               <Grid item xs={12} md={3}>
