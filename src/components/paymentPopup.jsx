@@ -46,20 +46,9 @@ export default function PaymentPopup({
   caseId,
   remainingAmount,
   closePopup,
-  commissionRange,
+  commission,
   setPaymentChanged,
-  selectedOption,
-  setSelectedOption,
-  strategy,
 }) {
-  const handleRadioChange = (event) => {
-    setSelectedOption(event.target.value);
-  };
-  const [saveDisabled, setSaveDisabled] = useState(false);
-  const [totalCommission, setTotalCommission] = useState("");
-  const [commission, setCommission] = useState("");
-  const [commissionPercentage, setCommissionPercentage] = useState("");
-  const [commissionLoading, setCommissionLoading] = useState(false);
   const [feePayment, setFeePayment] = useState(data?.feePayment || "toPay");
   const [totalAmount, setTotalAmount] = useState();
   const [loading, setLoading] = useState(false);
@@ -76,15 +65,11 @@ export default function PaymentPopup({
       frequency: weeksTillPaid || 1,
     },
   ]);
-
   const prevFrequenciesRef = useRef(
     newDataList?.map((item) => item?.frequency)
   );
-
   const prevAmountsRef = useRef(newDataList?.map((item) => item?.amount));
-
-  let remaining =
-    remainingAmount && remainingAmount.replace("$", "").replace(",", "");
+  let remaining = remainingAmount;
 
   const calculateTotalAmount = (data) => {
     let total = 0;
@@ -95,41 +80,16 @@ export default function PaymentPopup({
     return total;
   };
 
-  const calculateTotalCommission = async () => {
-    setCommissionLoading(true);
-    if (feePayment === "toPay") {
-      const payload = {
-        intervals: newDataList,
-      };
-      const updateCaseId = caseId || data?._id;
-      const response = await GetWeeklyAndTotalCommission(payload, updateCaseId);
-      if (response?.status === 200) {
-        showToast(response?.data?.message, "success");
-        setTotalCommission(response?.data?.data?.totalCommission);
-        setCommissionPercentage(response?.data?.data?.commissionPercentage);
-        if (commissionRange) {
-          setCommission(commissionRange);
-        } else {
-          setCommission(response?.data?.data?.commission);
-        }
-        setSaveDisabled(true);
-      } else {
-        const errorMessage = response?.response?.data?.message;
-        showToast(errorMessage, "error");
-        setSaveDisabled(false);
-      }
-    }
-    setCommissionLoading(false);
-  };
-
   const handleUpdate = async () => {
     setLoading(true);
     const params = {
-      intervals: newDataList,
+      intervals: newDataList?.map((data) => ({
+        ...data,
+        frequency: data?.frequency === "" ? 1 : data?.frequency,
+      })),
       feePayment: feePayment,
       isExempt: isExempt,
-      totalCommission: feePayment === "toPay" ? parseInt(totalCommission) : 0,
-      commission: feePayment === "toPay" ? parseInt(commission) : 0,
+      commission: commission,
     };
     const updateCaseId = caseId || data?._id;
     const resCaseUpdate = await UpdateCase(params, updateCaseId);
@@ -160,52 +120,51 @@ export default function PaymentPopup({
   }, [data]);
 
   useEffect(() => {
-    const currentFrequencies = newDataList?.map((item) => item.frequency);
-    const prevFrequencies = prevFrequenciesRef.current;
-    const hasLengthChanged =
-      currentFrequencies?.length !== prevFrequencies?.length;
-    const hasFrequencyChanged = currentFrequencies?.some(
-      (freq, index) => freq !== prevFrequencies?.[index]
-    );
-    const totalFrequency = currentFrequencies.reduce(
-      (acc, freq) => acc + freq,
-      0
-    );
-    if (hasFrequencyChanged || hasLengthChanged) {
-      const newAmount = totalFrequency ? remaining / totalFrequency : 0;
-      const updatedDataList = newDataList.map((item) => ({
-        ...item,
-        amount: item.frequency ? newAmount : item.amount,
-      }));
-      setNewDataList(updatedDataList);
+    if (!isExempt) {
+      const currentFrequencies = newDataList?.map((item) => item.frequency);
+      const prevFrequencies = prevFrequenciesRef.current;
+      const hasLengthChanged =
+        currentFrequencies?.length !== prevFrequencies?.length;
+      const hasFrequencyChanged = currentFrequencies?.some(
+        (freq, index) => freq !== prevFrequencies?.[index]
+      );
+      const totalFrequency = currentFrequencies.reduce(
+        (acc, freq) => acc + freq,
+        0
+      );
+      if (hasFrequencyChanged || hasLengthChanged) {
+        const newAmount = totalFrequency ? remaining / totalFrequency : 0;
+        const updatedDataList = newDataList.map((item) => ({
+          ...item,
+          amount: item.frequency ? newAmount : item.amount,
+        }));
+        setNewDataList(updatedDataList);
+      }
+      prevFrequenciesRef.current = currentFrequencies;
     }
-    prevFrequenciesRef.current = currentFrequencies;
   }, [newDataList, remaining]);
 
   useEffect(() => {
-    const currentAmounts = newDataList?.map((item) => item.amount);
-    const prevAmounts = prevAmountsRef.current;
-    const hasLengthChanged = currentAmounts?.length !== prevAmounts?.length;
-    const hasAmountChanged = currentAmounts?.some(
-      (amount, index) => amount !== prevAmounts?.[index]
-    );
-    const totalAmount = currentAmounts.reduce((acc, amo) => acc + amo, 0);
-    if (hasAmountChanged || hasLengthChanged) {
-      const newFrequency = totalAmount ? remaining / totalAmount : 0;
-      const updatedDataList = newDataList.map((item) => ({
-        ...item,
-        frequency: item.amount ? Math.round(newFrequency) : item.frequency,
-      }));
-      setNewDataList(updatedDataList);
+    if (!isExempt) {
+      const currentAmounts = newDataList?.map((item) => item.amount);
+      const prevAmounts = prevAmountsRef.current;
+      const hasLengthChanged = currentAmounts?.length !== prevAmounts?.length;
+      const hasAmountChanged = currentAmounts?.some(
+        (amount, index) => amount !== prevAmounts?.[index]
+      );
+      const totalAmount = currentAmounts.reduce((acc, amo) => acc + amo, 0);
+      if (hasAmountChanged || hasLengthChanged) {
+        const newFrequency = totalAmount ? remaining / totalAmount : 0;
+        const updatedDataList = newDataList.map((item) => ({
+          ...item,
+          frequency: item.amount ? Math.round(newFrequency) : item.frequency,
+        }));
+        setNewDataList(updatedDataList);
+      }
+      prevAmountsRef.current = currentAmounts;
     }
-    prevAmountsRef.current = currentAmounts;
   }, [newDataList, remaining]);
-  const radioStyle = {
-    color: Colors.SKY_BLUE,
-    "&.Mui-checked": {
-      color: Colors.SKY_BLUE,
-    },
-  };
+
   return (
     <div>
       <Typography
@@ -240,19 +199,6 @@ export default function PaymentPopup({
         <b> ${isNaN(totalAmount) ? 0 : totalAmount?.toFixed(2)}</b>
       </Typography>
 
-      {saveDisabled && feePayment === "toPay" && (
-        <Typography
-          sx={{
-            fontSize: FONT_SIZE_LARGE,
-            fontFamily: "Nunito",
-            margin: "10px 0px",
-          }}
-        >
-          Commission is calculated using this percentage:
-          <b> {commissionPercentage}%</b>
-        </Typography>
-      )}
-
       <PaymentDetails
         remainingAmount={remaining || data?.remaining}
         newDataList={newDataList}
@@ -260,73 +206,16 @@ export default function PaymentPopup({
         totalAmount={totalAmount}
         isExempt={isExempt}
       />
-      {saveDisabled && feePayment === "toPay" && (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            padding: "0px 1rem",
-            marginTop: "10px",
-          }}
-        >
-          <div style={{ width: "24%" }}>
-            <Typography
-              sx={{
-                fontSize: FONT_SIZE_LARGE,
-                fontFamily: "Nunito",
-              }}
-            >
-              Total Commission
-            </Typography>
-            <input
-              type="text"
-              placeholder="Total Commission"
-              style={inputStyling}
-              value={
-                totalCommission !== null && totalCommission !== undefined
-                  ? `$${totalCommission}`
-                  : "$0"
-              }
-              onChange={(e) => {
-                const value = e.target.value.replace(/[^0-9.]/g, "");
-                setTotalCommission(value);
-              }}
-            />
-          </div>
-          <div>
-            <Typography
-              sx={{
-                fontSize: FONT_SIZE_LARGE,
-                fontFamily: "Nunito",
-              }}
-            >
-              Weekly Commission
-            </Typography>
-            <input
-              type="text"
-              placeholder="Commission"
-              style={inputStyling}
-              value={
-                commission !== null && commission !== undefined
-                  ? `$${commission}`
-                  : "$0"
-              }
-              onChange={(e) => {
-                const value = e.target.value.replace(/[^0-9.]/g, "");
-                setCommission(value);
-              }}
-            />
-          </div>
-        </div>
-      )}
 
       <div style={{ display: "flex", margin: "1rem 0rem" }}>
         <input
           type="checkbox"
           checked={isExempt}
           onChange={() => setIsExempt(!isExempt)}
-          style={{ appearance: "radio" }}
+          style={{
+            appearance: "radio",
+            accentColor: Colors.SKY_BLUE,
+          }}
         />
         <Typography
           sx={{
@@ -338,24 +227,10 @@ export default function PaymentPopup({
           Exempt
         </Typography>
       </div>
-      <Typography sx={{ fontWeight: "600", fontFamily: "Nunito" }}>
-        Commission Payment
-      </Typography>
+
       <PaymentProcess feePayment={feePayment} setFeePayment={setFeePayment} />
 
       <Grid container sx={{ mt: "1rem", justifyContent: "right", gap: "10px" }}>
-        {feePayment === "toPay" && (
-          <TextButton
-            buttonText="Calculate Commission"
-            height="2rem"
-            width="14rem"
-            onClick={calculateTotalCommission}
-            backgroundColor={Colors.SKY_BLUE}
-            hoverColor={Colors.SKY_BLUE}
-            loading={commissionLoading}
-          />
-        )}
-
         <TextButton
           buttonText="Save"
           height="2rem"
@@ -364,7 +239,7 @@ export default function PaymentPopup({
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
           loading={loading}
-          disabled={!saveDisabled && feePayment === "toPay"}
+          disabled={!newDataList[0]?.amount}
         />
       </Grid>
     </div>

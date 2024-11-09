@@ -18,6 +18,7 @@ import {
   Modal,
   TextField,
   Button,
+  Tooltip,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -36,6 +37,7 @@ import TimelineData from "./timelineData.jsx";
 import {
   AddNotesCase,
   AddSenderIdentity,
+  GetAllSenders,
   GetCaseById,
   GetCasePaymentById,
   GetLogs,
@@ -47,6 +49,7 @@ import TextButton from "../button.jsx";
 import { setCaseCreditorId, setCaseId } from "../../redux/action/action.js";
 import CaseFileCard from "./caseFileCard.jsx";
 import { useToast } from "../../toast/toastContext.jsx";
+import { formatValue } from "../../common.js";
 
 const style = {
   position: "absolute",
@@ -75,6 +78,7 @@ function CaseDetail() {
   const [caseData, setCaseData] = useState({});
   const [paymentDetails, setPaymentDetails] = useState({});
   const [addTaskModal, setAddTaskModal] = useState("");
+  const [verifiedSenders, setVerified] = useState([]);
   const [logs, setLogs] = useState([]);
   const { id } = useParams();
   const handleOpen = async () => {
@@ -89,6 +93,13 @@ function CaseDetail() {
       setCaseData(caseDetails?.data?.data);
       dispatch(setCaseId(id));
       dispatch(setCaseCreditorId(caseDetails?.data?.data?.creditor?._id));
+
+      const senderRes = await GetAllSenders(
+        caseDetails?.data?.data?.debtor?._id
+      );
+      if (senderRes?.status === 200) {
+        setVerified(senderRes?.data?.data);
+      }
     } else if (
       caseDetails?.response?.status === 401 ||
       caseDetails?.response?.status === 403
@@ -162,7 +173,10 @@ function CaseDetail() {
       address: emailData?.address || "",
       city: emailData?.city || "",
     };
-    const SenderInfoResponse = await AddSenderIdentity(params);
+    const SenderInfoResponse = await AddSenderIdentity(
+      params,
+      caseData?.debtor?._id
+    );
     if (SenderInfoResponse?.status === 200) {
       showToast(SenderInfoResponse?.data?.message, "success");
     } else if (SenderInfoResponse?.response?.status === 400) {
@@ -170,6 +184,7 @@ function CaseDetail() {
       showToast(errorMessage, "error");
     }
   };
+
   return (
     <Grid
       container
@@ -227,16 +242,26 @@ function CaseDetail() {
             container
             sx={{ justifyContent: "space-between", alignItems: "center" }}
           >
-            <Typography
-              sx={{
-                fontWeight: "600",
-                fontSize: "2rem",
-                fontFamily: "Nunito",
-                color: Colors.BLACK,
-              }}
+            <Tooltip
+              title={caseData?.debtor?.businessInformation?.companyName}
+              placement="top"
             >
-              {caseData?.caseCode}
-            </Typography>
+              <Typography
+                sx={{
+                  fontWeight: "600",
+                  fontSize: "1.5rem",
+                  fontFamily: "Nunito",
+                  color: Colors.BLACK,
+                }}
+              >
+                {caseData?.debtor?.businessInformation?.companyName?.length > 20
+                  ? `${caseData?.debtor?.businessInformation?.companyName?.slice(
+                      0,
+                      20
+                    )}...`
+                  : caseData?.debtor?.businessInformation?.companyName}
+              </Typography>
+            </Tooltip>
             <div
               style={{
                 display: "flex",
@@ -261,6 +286,8 @@ function CaseDetail() {
                 maxHeight="78vh"
                 caseDataId={id}
                 GetLogsById={GetLogsById}
+                data={caseData}
+                verifiedSenders={verifiedSenders}
               />
               <MuiModels
                 show="sendEmailCase"
@@ -270,6 +297,7 @@ function CaseDetail() {
                 maxHeight="78vh"
                 caseDataId={id}
                 GetLogsById={GetLogsById}
+                data={caseData}
               />
               {caseData?.settlementRange ? (
                 <TextButton
@@ -397,6 +425,7 @@ function CaseDetail() {
                 >
                   {value === "Debtor" ? (
                     <DebtorDetailsCards
+                      verifiedSenders={verifiedSenders}
                       caseData={caseData}
                       GetCaseDetails={GetCaseDetails}
                       caseDataId={id}
@@ -404,6 +433,7 @@ function CaseDetail() {
                     />
                   ) : value === "Creditor" ? (
                     <CreditorsDetailCards
+                      verifiedSenders={verifiedSenders}
                       caseData={caseData}
                       GetCaseDetails={GetCaseDetails}
                       caseDataId={id}
@@ -531,6 +561,27 @@ function CaseDetail() {
                 </Grid>
               </AccordionDetails>
             </Accordion>
+            {/* <a
+              href={`tel:${formatValue(
+                caseData?.debtor?.basicInformation?.phone
+              )}`}
+            >
+              {formatValue(caseData?.debtor?.basicInformation?.phone)}
+            </a>
+            <div>{formatValue(caseData?.debtor?.basicInformation?.phone)}</div>
+            <div>
+              <a
+                href={`/countries/united-states/${formatValue(
+                  caseData?.debtor?.basicInformation?.phone
+                )}`}
+              >
+                <span>
+                  {formatValue(caseData?.debtor?.basicInformation?.phone)}
+                </span>
+              </a>
+            </div>
+            <span>561-555-7781</span>
+             */}
 
             <Grid container>
               <Grid item xs={12} md={3}>
@@ -634,7 +685,12 @@ function CaseDetail() {
                     </>
                   ))
                 ) : (
-                  <TimelineData notes={true} value={"No Data"} date={null} />
+                  <TimelineData
+                    notes={true}
+                    value={"No Data"}
+                    date={null}
+                    caseData={caseData}
+                  />
                 )}
               </Grid>
             </Grid>

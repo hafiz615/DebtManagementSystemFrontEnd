@@ -20,6 +20,7 @@ export default function SettlementPayment({
   remainingAmount,
   commissionRange,
   setPaymentChanged,
+  commission,
 }) {
   const [selectedField, setSelectedField] = useState("Minimum");
 
@@ -84,12 +85,18 @@ export default function SettlementPayment({
           caseId={caseId}
           settlementRange={
             selectedField === "Minimum"
-              ? settlementRange?.min
+              ? settlementRange?.max < 0
+                ? -settlementRange?.max - settlementRange?.max * 0.2
+                : settlementRange?.max - settlementRange?.max * 0.2
               : settlementRange?.max
           }
           weeksTillPaid={
             selectedField === "Minimum"
-              ? weeksTillPaid?.min
+              ? Math.round(
+                  weeksTillPaid?.max < 0
+                    ? weeksTillPaid?.max + weeksTillPaid?.max * 0.2
+                    : weeksTillPaid?.max + weeksTillPaid?.max * 0.2
+                )
               : weeksTillPaid?.max
           }
           commissionRange={
@@ -100,6 +107,7 @@ export default function SettlementPayment({
           remainingAmount={remainingAmount}
           closePopup={handleClose}
           setPaymentChanged={setPaymentChanged}
+          commission={commission}
         />
       </Grid>
     </div>

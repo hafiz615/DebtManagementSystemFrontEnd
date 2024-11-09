@@ -47,11 +47,14 @@ import {
   GetLumpSumJustifications,
   GetFullProfitSettlement,
   GetPaymentIntervals,
+  GetAllSenders,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import {
+  formatAmountValue,
   formatDateString,
   formatPurchasedPercentage,
+  formatWeeklyBudget,
   generatePdfFromApiData,
 } from "../../common";
 import MuiModels from "../models";
@@ -102,7 +105,7 @@ const commonStyles = {
   backgroundColor: Colors.WHITE,
   height: "15vh",
   borderRadius: "10px",
-  paddingLeft: "2%",
+  paddingLeft: "1%",
   justifyContent: "center",
   flexDirection: "column",
   gap: "10px",
@@ -110,7 +113,7 @@ const commonStyles = {
 };
 
 const commonTextStyles = {
-  fontSize: FONT_SIZE_XL,
+  fontSize: FONT_SIZE_LARGE,
   fontFamily: "Nunito",
   fontWeight: "700",
 };
@@ -199,9 +202,6 @@ export default function SettlementRange() {
   const [debtor, setDebtor] = useState({});
   const [debtorInfo, setDebtorInfo] = useState({});
   const [lumpSumpData, setLumpSumpData] = useState({});
-  const [errorLumpSumMessage, setErrorLumSumtMessage] = useState("");
-  const [fullProfit, setFullProfit] = useState({});
-  const [errorfullProfitMessage, setErrorFullProfitMessage] = useState("");
   const [commissionPercentage, setCommissionPercentage] = useState("");
   const [summaryAmount, setSummaryAmount] = useState({});
   const [justification, setJustification] = useState();
@@ -217,11 +217,13 @@ export default function SettlementRange() {
   const [strategyTab, setStrategyTab] = useState(0);
   const [optionStats, setOptionStats] = useState();
   const [justificationLoading, setJustificationLoading] = useState(false);
+  const [verifiedSender, setVerifiedSender] = useState([]);
   const [colorScheme] = useState("Tableau10");
   const [justificationValue, setJustificationValue] = useState(
     "justification_gemini"
   );
   const [selectedOption, setSelectedOption] = useState("percentageReceivable");
+  const [scoresBackend, setScoresBackend] = useState(false);
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const drawerOpen = useSelector((state) => state.drawer.open);
   const { AUTHORITY_TEXT } = UserListPage;
@@ -287,9 +289,9 @@ export default function SettlementRange() {
           remainingAmount={
             allCreditorNames[tabValue] === "Summary"
               ? summaryAmount?.loanAmount.toString()
-              : selectedCreditorDetails?.contractDetails?.loan_amount
+              : selectedCreditorDetails?.remaining
           }
-          caseId={caseId}
+          caseId={allData?.creditors?.[parseInt(tabValue)]?.caseId}
           title={item}
           weeksTillPaidTitle={getWeeksRemainingMessage(item)}
           settlementRange={
@@ -315,125 +317,95 @@ export default function SettlementRange() {
             apiData?.weeks_till_paid?.[allCreditorNames[parseInt(tabValue)]] ||
             null
           }
+          commission={allData?.maxProfitCommission}
+          scoresBackend={scoresBackend}
         />
       </>
     )),
     1: strat2Recommendations?.map((item, index) => (
       <>
-        {!isEmpty(lumpSumpData) ? (
-          <SettlementCards
-            setPaymentChanged={setPaymentChanged}
-            remainingAmount={
-              allCreditorNames[tabValue] === "Summary"
-                ? summaryAmount?.loanAmount.toString()
-                : selectedCreditorDetails?.contractDetails?.loan_amount
-            }
-            isLumpSumPayment={true}
-            title={item}
-            strategy="strategy2"
-            weeksTillPaidTitle={
-              item === "lump Sum"
-                ? "Amount based on Lump Sum Recommendation"
-                : ""
-            }
-            settlementRange={
-              lumpSumpData?.lumpsum_settlement?.[
-                allCreditorNames[parseInt(tabValue)]
-              ] || null
-            }
-            warning={
-              lumpSumpData?.warning?.[allCreditorNames[parseInt(tabValue)]] ||
-              ""
-            }
-            caseId={caseId}
-          />
-        ) : (
-          <Grid
-            item
-            xs={12}
-            container
-            sx={{
-              backgroundColor: Colors.WHITE,
-              padding: "1rem",
-              borderRadius: "10px",
-            }}
-          >
-            {errorLumpSumMessage}
-          </Grid>
-        )}
+        <SettlementCards
+          setPaymentChanged={setPaymentChanged}
+          breakEven={selectedCreditorDetails?.breakEven}
+          remainingAmount={
+            allCreditorNames[tabValue] === "Summary"
+              ? summaryAmount?.loanAmount.toString()
+              : selectedCreditorDetails?.remaining
+          }
+          isLumpSumPayment={true}
+          title={item}
+          strategy="strategy2"
+          weeksTillPaidTitle={
+            item === "lump Sum" ? "Amount based on Lump Sum Recommendation" : ""
+          }
+          settlementRange={
+            lumpSumpData?.lumpsum_settlement?.[
+              allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          warning={
+            lumpSumpData?.warning?.[allCreditorNames[parseInt(tabValue)]] || ""
+          }
+          caseId={allData?.creditors?.[parseInt(tabValue)]?.caseId}
+          commission={allData?.totalCommission}
+          scoresBackend={scoresBackend}
+        />
       </>
     )),
 
     2: strat3Recommendations?.map((item, index) => (
       <>
-        {!isEmpty(fullProfit) ? (
-          <SettlementCards
-            tabValue={tabValue}
-            allCreditorNames={allCreditorNames}
-            strategy="strategy3"
-            setPaymentChanged={setPaymentChanged}
-            remainingAmount={
-              allCreditorNames[tabValue] === "Summary"
-                ? summaryAmount?.loanAmount.toString()
-                : selectedCreditorDetails?.contractDetails?.loan_amount
-            }
-            caseId={caseId}
-            isFullPayment={true}
-            title={item}
-            weeksTillPaidTitle={getWeeksRemainingMessage(item)}
-            settlementRange={
-              apiData?.settlement_range?.[
-                allCreditorNames[parseInt(tabValue)]
-              ] || null
-            }
-            commissionRange={
-              apiData?.commission_range?.[
-                allCreditorNames[parseInt(tabValue)]
-              ] || null
-            }
-            newDefaultRiskScore={apiData?.new_default_risk_score || null}
-            percentageSettlementOverWeeklyBudget={
-              apiData?.percentage_settlement_over_weekly_budget?.[
-                allCreditorNames[parseInt(tabValue)]
-              ] || null
-            }
-            percentageSettlementOverWeeklyTrueRevenue={
-              apiData?.percentage_settlement_over_weekly_true_revenue?.[
-                allCreditorNames[parseInt(tabValue)]
-              ] || null
-            }
-            weeksTillPaid={
-              apiData?.weeks_till_paid?.[
-                allCreditorNames[parseInt(tabValue)]
-              ] || null
-            }
-            percentageReceivableAmount={
-              allData?.creditors?.[parseInt(tabValue)]
-                ?.percentageReceivableAmount
-            }
-            percentageReceivable={
-              allData?.creditors?.[parseInt(tabValue)]?.percentageReceivable
-            }
-            weeklyTrueRevenueAmount={
-              allData?.creditors?.[parseInt(tabValue)]?.weeklyTrueRevenueAmount
-            }
-            selectedOption={selectedOption}
-            setSelectedOption={setSelectedOption}
-          />
-        ) : (
-          <Grid
-            item
-            xs={12}
-            container
-            sx={{
-              backgroundColor: Colors.WHITE,
-              padding: "1rem",
-              borderRadius: "10px",
-            }}
-          >
-            {errorfullProfitMessage}
-          </Grid>
-        )}
+        <SettlementCards
+          tabValue={tabValue}
+          allCreditorNames={allCreditorNames}
+          strategy="strategy3"
+          setPaymentChanged={setPaymentChanged}
+          remainingAmount={
+            allCreditorNames[tabValue] === "Summary"
+              ? summaryAmount?.loanAmount.toString()
+              : selectedCreditorDetails?.remaining
+          }
+          caseId={allData?.creditors?.[parseInt(tabValue)]?.caseId}
+          isFullPayment={true}
+          title={item}
+          weeksTillPaidTitle={getWeeksRemainingMessage(item)}
+          settlementRange={
+            apiData?.settlement_range?.[allCreditorNames[parseInt(tabValue)]] ||
+            null
+          }
+          commissionRange={
+            apiData?.commission_range?.[allCreditorNames[parseInt(tabValue)]] ||
+            null
+          }
+          newDefaultRiskScore={apiData?.new_default_risk_score || null}
+          percentageSettlementOverWeeklyBudget={
+            apiData?.percentage_settlement_over_weekly_budget?.[
+              allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          percentageSettlementOverWeeklyTrueRevenue={
+            apiData?.percentage_settlement_over_weekly_true_revenue?.[
+              allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          weeksTillPaid={
+            apiData?.weeks_till_paid?.[allCreditorNames[parseInt(tabValue)]] ||
+            null
+          }
+          percentageReceivableAmount={
+            allData?.creditors?.[parseInt(tabValue)]?.percentageReceivableAmount
+          }
+          percentageReceivable={
+            allData?.creditors?.[parseInt(tabValue)]?.percentageReceivable
+          }
+          weeklyTrueRevenueAmount={
+            allData?.creditors?.[parseInt(tabValue)]?.weeklyTrueRevenueAmount
+          }
+          selectedOption={selectedOption}
+          setSelectedOption={setSelectedOption}
+          commission={allData?.percentageReceivableCommissionAmount}
+          scoresBackend={scoresBackend}
+        />
       </>
     )),
     4: recommendations?.map((item, index) => (
@@ -444,9 +416,9 @@ export default function SettlementRange() {
           remainingAmount={
             allCreditorNames[tabValue] === "Summary"
               ? summaryAmount?.loanAmount.toString()
-              : selectedCreditorDetails?.contractDetails?.loan_amount
+              : selectedCreditorDetails?.remaining
           }
-          caseId={caseId}
+          caseId={allData?.creditors?.[parseInt(tabValue)]?.caseId}
           title={item}
           weeksTillPaidTitle={getWeeksRemainingMessage(item)}
           settlementRange={
@@ -475,6 +447,7 @@ export default function SettlementRange() {
             ] || null
           }
           optionValue={true}
+          commission={allData?.maxProfitCommission}
         />
       </>
     )),
@@ -543,12 +516,14 @@ export default function SettlementRange() {
         if (resCommission?.status === 200) {
           setLoading(false);
           if (typeof resCommission?.data?.data?.getScores === "string") {
+            setScoresBackend(true);
             setScores({ message: resCommission?.data?.data?.getScores });
             showToast(
               resCommission?.data?.data?.getScores + " Couldn't fetch scores",
               "error"
             );
           } else {
+            setScoresBackend(false);
             setScores(resCommission?.data?.data?.getScores);
           }
           setSummaryAmount(
@@ -576,8 +551,9 @@ export default function SettlementRange() {
             resCommission?.data?.data?.settlementRange?.option_2_stats
           );
           showToast(resCommission?.data?.message, "success");
-          getLumpSumAmountData();
-          getFullProfitData();
+          if (typeof resCommission?.data?.data?.getScores !== "string") {
+            getLumpSumAmountData();
+          }
         } else if (
           resCommission?.response?.status === 401 ||
           resCommission?.response?.status === 403
@@ -632,6 +608,7 @@ export default function SettlementRange() {
         if (settlementRangeData?.status === 200) {
           setLoading(false);
           if (typeof settlementRangeData?.data?.data?.getScores === "string") {
+            setScoresBackend(true);
             setScores({ message: settlementRangeData?.data?.data?.getScores });
             showToast(
               settlementRangeData?.data?.data?.getScores +
@@ -639,6 +616,7 @@ export default function SettlementRange() {
               "error"
             );
           } else {
+            setScoresBackend(false);
             setScores(settlementRangeData?.data?.data?.getScores);
           }
           setAllData(settlementRangeData?.data?.data);
@@ -667,9 +645,15 @@ export default function SettlementRange() {
             settlementRangeData?.data?.data?.settlementRange?.option_2_stats
           );
           showToast(settlementRangeData?.data?.message, "success");
-
-          getLumpSumAmountData();
-          getFullProfitData();
+          if (typeof settlementRangeData?.data?.data?.getScores !== "string") {
+            getLumpSumAmountData();
+          }
+          const senderRes = await GetAllSenders(
+            settlementRangeData?.data?.data?.debtor?._id
+          );
+          if (senderRes?.status === 200) {
+            setVerifiedSender(senderRes?.data?.data);
+          }
         } else if (
           settlementRangeData?.response?.status === 401 ||
           settlementRangeData?.response?.status === 403
@@ -708,26 +692,12 @@ export default function SettlementRange() {
         setLumpSumpData(GetLumpSumDataRes?.data?.data);
       } else {
         const errorMessage = GetLumpSumDataRes?.response?.data?.message;
-        setErrorLumSumtMessage(errorMessage);
         showToast(errorMessage, "error");
       }
     }
   };
 
-  const getFullProfitData = async () => {
-    if (caseId) {
-      const GetFullProfitDataRes = await GetFullProfit(caseId);
-      if (GetFullProfitDataRes?.status === 200) {
-        setFullProfit(GetFullProfitDataRes?.data?.data);
-      } else {
-        const errorMessage = GetFullProfitDataRes?.response?.data?.message;
-        setErrorFullProfitMessage(errorMessage);
-        showToast(errorMessage, "error");
-      }
-    }
-  };
-
-  const getAllJustifications = async (activeStrategy) => {
+  const getAllJustification = async (activeStrategy) => {
     setJustificationLoading(true);
     let response;
     switch (activeStrategy) {
@@ -754,10 +724,6 @@ export default function SettlementRange() {
     getAllRanges([], false);
     getAllSummary();
   }, []);
-
-  useEffect(() => {
-    getAllJustifications(strategyTab);
-  }, [strategyTab]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -823,31 +789,31 @@ export default function SettlementRange() {
 
   const creditorDetails = [
     {
-      label: "Funded Amount",
-      value:
-        selectedCreditorDetails?.contractDetails?.funded_amount ||
-        `${selectedCreditorDetails?.contractDetails?.loan_amount}`,
+      label: "Purchase Price",
+      value: `${selectedCreditorDetails?.contractDetails?.loan_amount}` || "--",
       formatCurrency: true,
-      tooltip: selectedCreditorDetails?.contractDetails?.funded_amount
-        ? "Funded Amount"
-        : "Funded amount was not present, so we are showing the loan amount.",
+    },
+    {
+      label: "Net Funded Amount",
+      value: selectedCreditorDetails?.contractDetails?.funded_amount || "--",
+      formatCurrency: true,
     },
 
     {
-      label: "Payable Amount",
-      value: selectedCreditorDetails?.contractDetails?.payable_amount || "0",
+      label: "Purchased Amount",
+      value: selectedCreditorDetails?.contractDetails?.payable_amount || "--",
       formatCurrency: true,
     },
     {
       label: "Current Balance",
       value:
         selectedCreditorDetails?.totalDebt -
-        selectedCreditorDetails?.remainingAmountPaid,
+          selectedCreditorDetails?.remainingAmountPaid || "--",
       formatCurrency: true,
     },
     {
       label: "Break Even",
-      value: selectedCreditorDetails?.breakEven,
+      value: selectedCreditorDetails?.breakEven || "--",
       formatCurrency: true,
     },
     {
@@ -857,40 +823,96 @@ export default function SettlementRange() {
       ),
     },
     {
-      label: "Repayment Amount",
-      value: selectedCreditorDetails?.contractDetails?.repayment_amount,
-      formatCurrency: true,
+      label: "Current Payment Amount",
+
+      value:
+        selectedCreditorDetails?.contractDetails?.repayment_amount &&
+        !isNaN(
+          parseFloat(
+            selectedCreditorDetails.contractDetails.repayment_amount?.replace(
+              /[$,]/g,
+              ""
+            )
+          )
+        )
+          ? `$${parseFloat(
+              selectedCreditorDetails?.contractDetails?.repayment_amount?.replace(
+                /[$,]/g,
+                ""
+              )
+            ).toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })} (daily)`
+          : "--",
     },
   ];
 
+  const formatCurrencyTable = (value) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    })?.format(value);
+  };
+
   const creditorNamesDetails = creditorNames?.map((creditor) => {
-    const fundedAmount = creditor?.contractDetails?.funded_amount
-      ? `$${creditor?.contractDetails?.funded_amount?.toFixed(2)}`
+    const cleanLoanAmount = creditor?.contractDetails?.loan_amount
+      ? creditor?.contractDetails?.loan_amount?.replace(/[$,]/g, "")
       : "--";
 
-    const paybackAmount = creditor?.contractDetails?.payable_amount
-      ? `$${Number(
-          creditor?.contractDetails?.payable_amount?.replace(/[$,]/g, "")
-        )?.toFixed(2)}`
-      : "--";
-    const payableAmount =
-      creditor?.remaining !== undefined &&
-      creditor?.remainingAmountPaid !== undefined
-        ? `$${(creditor?.totalDebt - creditor?.remainingAmountPaid)?.toFixed(
-            2
-          )}`
+    const purchasePrice =
+      cleanLoanAmount !== "--" && !isNaN(Number(cleanLoanAmount))
+        ? formatCurrencyTable(Number(cleanLoanAmount))
         : "--";
-    const breakEvenPoint = creditor?.breakEven
-      ? `$${parseFloat(creditor.breakEven)?.toFixed(2)}`
+
+    const cleanFundedAmount = creditor?.contractDetails?.funded_amount
+      ? creditor?.contractDetails?.funded_amount?.replace(/[$,]/g, "")
       : "--";
+
+    const fundedAmount =
+      cleanFundedAmount !== "--" && !isNaN(Number(cleanFundedAmount))
+        ? formatCurrencyTable(Number(cleanFundedAmount))
+        : "--";
+
+    const cleanPayableAmount = creditor?.contractDetails?.payable_amount
+      ? creditor?.contractDetails?.payable_amount?.replace(/[$,]/g, "")
+      : "--";
+
+    const paybackAmount =
+      cleanPayableAmount !== "--" && !isNaN(Number(cleanPayableAmount))
+        ? formatCurrencyTable(Number(cleanPayableAmount))
+        : "--";
+
+    const payableAmount =
+      creditor?.totalDebt !== undefined &&
+      creditor?.remainingAmountPaid !== undefined
+        ? isNaN(
+            Number(creditor?.totalDebt) - Number(creditor?.remainingAmountPaid)
+          )
+          ? "--"
+          : formatCurrencyTable(
+              Number(creditor?.totalDebt) -
+                Number(creditor?.remainingAmountPaid)
+            )
+        : "--";
+
+    const breakEvenPoint = creditor?.breakEven
+      ? isNaN(parseFloat(creditor?.breakEven))
+        ? "--"
+        : formatCurrencyTable(parseFloat(creditor?.breakEven))
+      : "--";
+
     const purchased_percentage = formatPurchasedPercentage(
       creditor?.contractDetails?.purchased_percentage || "--"
     );
-    const repayment_amount =
-      creditor?.contractDetails?.repayment_amount || "--";
+
+    const repayment_amount = creditor?.contractDetails?.repayment_amount
+      ? `$${creditor?.contractDetails?.repayment_amount?.replace(/[$,]/g, "")}`
+      : "--";
 
     return {
       creditorName: creditor?.accountTitleMapping[0]?.accountTitle,
+      purchasePrice,
       fundedAmount,
       paybackAmount,
       payableAmount,
@@ -902,8 +924,9 @@ export default function SettlementRange() {
 
   const headerData = [
     { key: "creditorName", heading: "Creditors", width: "11%" },
-    { key: "fundedAmount", heading: "Funded Amount", width: "11%" },
-    { key: "paybackAmount", heading: "Payable Amount ", width: "11%" },
+    { key: "purchasePrice", heading: "Purchase Price", width: "11%" },
+    { key: "fundedAmount", heading: "Net Funded Amount", width: "11%" },
+    { key: "paybackAmount", heading: "Purchased Amount ", width: "11%" },
     { key: "payableAmount", heading: "Current Balance", width: "11%" },
     { key: "breakEvenPoint", heading: "Break Even Point", width: "11%" },
     {
@@ -913,7 +936,7 @@ export default function SettlementRange() {
     },
     {
       key: "repayment_amount",
-      heading: "Repayment Amount",
+      heading: "Current Payment Amount",
       width: "11%",
     },
   ];
@@ -924,49 +947,58 @@ export default function SettlementRange() {
     );
     return total + (parseFloat(payableAmount) || 0);
   }, 0);
+  const parseCurrency = (amount) => {
+    return parseFloat(amount?.replace(/[$,]/g, "") || 0);
+  };
+  const formatSummaryDetails = (value) => {
+    if (value === null || value === undefined || isNaN(value)) return "--";
+    return `$${Number(value)?.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+  };
+
   const summaryDetails = {
     creditorName: "Summary",
-    fundedAmount:
+
+    purchasePrice: formatSummaryDetails(
       creditorNames?.reduce((total, creditor) => {
-        return total + (creditor?.contractDetails?.funded_amount || 0);
-      }, 0) > 0
-        ? `$${creditorNames
-            ?.reduce((total, creditor) => {
-              return total + (creditor?.contractDetails?.funded_amount || 0);
-            }, 0)
-            .toFixed(2)}`
-        : "--",
+        const purchasePrice = parseCurrency(
+          creditor?.contractDetails?.loan_amount || "0"
+        );
+        return total + Number(purchasePrice);
+      }, 0)
+    ),
+
+    fundedAmount: formatSummaryDetails(
+      creditorNames?.reduce((total, creditor) => {
+        const cleanedAmount = creditor?.contractDetails?.funded_amount
+          ? Number(
+              creditor?.contractDetails?.funded_amount?.replace(/[$,]/g, "")
+            )
+          : 0;
+        return total + cleanedAmount;
+      }, 0)
+    ),
 
     paybackAmount:
-      totalPayableAmount > 0 ? `$${totalPayableAmount?.toFixed(2)}` : "--",
-    payableAmount:
+      totalPayableAmount > 0 ? formatSummaryDetails(totalPayableAmount) : "--",
+
+    payableAmount: formatSummaryDetails(
       creditorNames?.reduce((total, creditor) => {
         return (
           total +
-          ((creditor?.totalDebt || 0) - (creditor?.remainingAmountPaid || 0))
+          (Number(creditor?.totalDebt || 0) -
+            Number(creditor?.remainingAmountPaid || 0))
         );
-      }, 0) > 0
-        ? `$${creditorNames
-            ?.reduce((total, creditor) => {
-              return (
-                total +
-                ((creditor?.totalDebt || 0) -
-                  (creditor?.remainingAmountPaid || 0))
-              );
-            }, 0)
-            .toFixed(2)}`
-        : "--",
+      }, 0)
+    ),
 
-    breakEvenPoint:
+    breakEvenPoint: formatSummaryDetails(
       creditorNames?.reduce((total, creditor) => {
-        return total + (creditor?.breakEven || 0);
-      }, 0) > 0
-        ? `$${creditorNames
-            ?.reduce((total, creditor) => {
-              return total + (creditor?.breakEven || 0);
-            }, 0)
-            .toFixed(2)}`
-        : "--",
+        return total + Number(creditor?.breakEven || 0);
+      }, 0)
+    ),
 
     purchased_percentage: "--",
     repayment_amount: "--",
@@ -990,6 +1022,28 @@ export default function SettlementRange() {
         label: label,
       };
     });
+
+  const formatCurrencyValue = (value) => {
+    if (value === null || value === undefined) return "--";
+
+    // Convert to string if the value is a number
+    const valueStr = typeof value === "number" ? value.toString() : value;
+
+    // Remove any unwanted characters, keep only numbers and decimal point
+    const cleanedValue = valueStr.replace(/[^0-9.]/g, "");
+
+    // Convert to a number to check its validity
+    const numericValue = parseFloat(cleanedValue);
+    if (!isNaN(numericValue)) {
+      // Use Intl.NumberFormat to format with commas and two decimal places
+      return `$${numericValue?.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`;
+    }
+
+    return "--";
+  };
 
   const categories = {
     Tableau10: [
@@ -1129,7 +1183,6 @@ export default function SettlementRange() {
                 maxHeight="85vh"
                 allData={allData}
                 lumpSumpData={lumpSumpData}
-                fullProfit={fullProfit}
                 disabled={!apiData}
               />
 
@@ -1149,9 +1202,9 @@ export default function SettlementRange() {
                 data={apiData}
                 selectedCreditor={allCreditorNames[tabValue]}
                 lumpSump={lumpSumpData}
-                fullProfit={fullProfit}
                 caseId={caseId}
                 paymentData={paymentData}
+                debtorId={verifiedSender}
               />
               <TextButton
                 disabled={!apiData}
@@ -1202,52 +1255,62 @@ export default function SettlementRange() {
             item
             xs={12}
             lg={8}
-            sx={{ justifyContent: { xs: "left", md: "space-between" } }}
+            sx={{
+              justifyContent: { xs: "left", md: "space-between" },
+            }}
           >
-            {Object?.keys(debtor)?.map((key) => (
-              <Grid item xs={12} lg={6} key={key}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: { xs: "space-between", md: "unset" },
-                  }}
-                >
-                  <div
-                    style={{
-                      fontFamily: "Nunito",
-                      fontWeight: "600",
-                      color: Colors.DARK_GRAY,
-                      width: "10rem",
-                      marginTop: "0.5rem",
+            {Object?.keys(debtor)?.map((key) => {
+              // Replace "weeklyBudget" with "monthlyBudget"
+              // const displayKey = key === "weeklyBudget" ? key : "";
+
+              return (
+                <Grid item xs={12} lg={6} key={key}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: { xs: "space-between", md: "unset" },
                     }}
                   >
-                    {key?.charAt(0)?.toUpperCase() + key?.slice(1)}
-                  </div>
-
-                  <Tooltip title={debtor[key]?.toString()} placement="top-end">
-                    <span
+                    <div
                       style={{
                         fontFamily: "Nunito",
-                        fontWeight: "300",
-                        fontSize: "0.9rem",
-                        color: Colors.DIM_LIGHT_GRAY,
+                        fontWeight: "600",
+                        color: Colors.DARK_GRAY,
+                        width: "10rem",
                         marginTop: "0.5rem",
                       }}
                     >
-                      {allData?.debtor?.weeklyBudgetUpdated &&
-                      key === "weeklyBudget"
-                        ? `$${parseFloat(debtor[key]).toFixed(2)}`
-                        : key === "weeklyBudget"
-                        ? `$${parseFloat(debtor[key]).toFixed(2)}`
-                        : `${debtor[key]?.toString().slice(0, 15)}${
-                            debtor[key]?.toString().length > 15 ? "..." : ""
-                          }` || "--"}
-                    </span>
-                  </Tooltip>
-                </Box>
-              </Grid>
-            ))}
+                      {key?.charAt(0)?.toUpperCase() + key?.slice(1)}
+                    </div>
+
+                    <Tooltip
+                      title={debtor[key]?.toString()}
+                      placement="top-end"
+                    >
+                      <span
+                        style={{
+                          fontFamily: "Nunito",
+                          fontWeight: "300",
+                          fontSize: "0.9rem",
+                          color: Colors.DIM_LIGHT_GRAY,
+                          marginTop: "0.5rem",
+                        }}
+                      >
+                        {allData?.debtor?.weeklyBudgetUpdated &&
+                        key === "weeklyBudget"
+                          ? `$${formatWeeklyBudget(debtor[key])}`
+                          : key === "weeklyBudget"
+                          ? `$${formatWeeklyBudget(debtor[key])}`
+                          : `${debtor[key]?.toString().slice(0, 15)}${
+                              debtor[key]?.toString().length > 15 ? "..." : ""
+                            }` || "--"}
+                      </span>
+                    </Tooltip>
+                  </Box>
+                </Grid>
+              );
+            })}
           </Grid>
           <Grid xs={12}>
             <Typography
@@ -1285,55 +1348,105 @@ export default function SettlementRange() {
 
           <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
             <GridItem
-              key="Weekly Profit"
-              title="Weekly Profit"
-              tooltip="Your net profit after making debt payments."
+              key="Weekly Profit Excluding Payments"
+              title="Weekly Profit Excluding Payments"
+              tooltip="Weekly profit by not making the creditor payments."
               value={
-                apiData?.weekly_profit
-                  ? `$ ${new Intl.NumberFormat().format(apiData.weekly_profit)}`
+                apiData?.true_profit
+                  ? `$${formatAmountValue(apiData?.true_profit)}`
                   : "No Data"
               }
-              rawValue={apiData?.weekly_profit}
+              rawValue={apiData?.true_profit}
             />
 
             <GridItem
-              key="Weekly True Revenue"
-              title="Weekly True Revenue"
-              tooltip="Total revenue earned by the business each week."
-              value={
-                apiData?.weekly_true_revenue
-                  ? `$ ${new Intl.NumberFormat().format(
-                      apiData?.weekly_true_revenue
-                    )}`
-                  : "No Data"
-              }
-              rawValue={apiData?.weekly_true_revenue}
-            />
-            <GridItem
               key="Profitability"
-              title="Profitability"
-              tooltip=" Measure of how much profit your business makes after expenses."
+              title="Profitability Excluding Payments"
+              tooltip="Measure of how much profit your business makes after expenses."
               value={
                 apiData?.profitability
-                  ? `${new Intl.NumberFormat().format(
+                  ? `${new Intl.NumberFormat()?.format(
                       apiData?.profitability
-                    )} %`
+                    )}%`
                   : "No Data"
               }
               rawValue={apiData?.profitability}
             />
+            <GridItem
+              key="Weekly Profit Including Payments"
+              title="Weekly Profit Including Payments"
+              tooltip="Weekly profit after making the creditor payments."
+              value={
+                apiData?.weekly_profit
+                  ? `$${formatAmountValue(apiData?.weekly_profit)}`
+                  : "No Data"
+              }
+              rawValue={apiData?.weekly_profit}
+            />
+            <GridItem
+              key="Profitability Including Payments"
+              title="Profitability Including payments"
+              tooltip="Profitability Including the creditor Payment"
+              value={
+                apiData?.profitability_without_creditor_payments
+                  ? `${new Intl.NumberFormat()?.format(
+                      apiData?.profitability_without_creditor_payments
+                    )}%`
+                  : "No Data"
+              }
+              rawValue={apiData?.profitability_without_creditor_payments}
+            />
+            <GridItem
+              key="Weekly True Revenue"
+              title="Weekly True Revenue"
+              tooltip="Total revenue earned by the business each monthly."
+              value={
+                apiData?.weekly_true_revenue
+                  ? `$${formatAmountValue(apiData?.weekly_true_revenue)}`
+                  : "No Data"
+              }
+              rawValue={apiData?.weekly_true_revenue}
+            />
+            {strategyTab === 0 && (
+              <GridItem
+                key="Weekly Receivable Commission"
+                title="Weekly Receivable Commission"
+                tooltip="Weekly payment Which we receive."
+                value={
+                  allData?.percentageReceivableCommissionAmount
+                    ? `$${formatAmountValue(
+                        allData?.percentageReceivableCommissionAmount
+                      )}`
+                    : "No Data"
+                }
+                rawValue={allData?.percentageReceivableCommissionAmount}
+              />
+            )}
+            {strategyTab === 1 && (
+              <GridItem
+                key="Total Commission"
+                title="Total Commission"
+                tooltip="Total Commission which we will collect."
+                value={
+                  allData?.totalCommission
+                    ? `$${formatAmountValue(allData?.totalCommission)}`
+                    : "No Data"
+                }
+                rawValue={allData?.totalCommission}
+              />
+            )}
 
             {strategyTab === 2 && (
               <GridItem
-                key="percentageReceivableCommission"
-                title="Receivable Commission"
-                tooltip="Receivable Commission"
+                key="Weekly Receivable Commission"
+                title="Weekly Receivable Commission"
+                tooltip="Weekly Commission which we receive."
                 value={
-                  allData?.percentageReceivableCommission !== undefined
-                    ? `${allData.percentageReceivableCommission}%`
-                    : "--"
+                  allData?.percentageReceivableCommission
+                    ? `${allData?.percentageReceivableCommission}%`
+                    : "No Data"
                 }
-                rawValue={scores?.Scores?.["Default Risk Score"]}
+                rawValue={allData?.percentageReceivableCommission}
               />
             )}
 
@@ -1359,7 +1472,7 @@ export default function SettlementRange() {
                 <Grid
                   container
                   item
-                  xs={5}
+                  xs={5.8}
                   sx={{
                     display: "flex",
                     justifyContent: "space-around",
@@ -1367,6 +1480,7 @@ export default function SettlementRange() {
                     backgroundColor: Colors.WHITE,
                     borderRadius: "10px",
                     height: "30vh",
+                    marginBottom: "1.5rem",
                   }}
                 >
                   {countData ? (
@@ -1442,11 +1556,11 @@ export default function SettlementRange() {
                                     whiteSpace: "nowrap",
                                     overflow: "hidden",
                                     textOverflow: "ellipsis",
-                                    maxWidth: "150px",
+                                    maxWidth: "180px",
                                   }}
                                 >
-                                  {`${item?.label?.substring(0, 15)}${
-                                    item?.label?.length > 10 ? "..." : ""
+                                  {`${item?.label?.substring(0, 30)}${
+                                    item?.label?.length > 30 ? "..." : ""
                                   }`}
                                 </span>
                               </Tooltip>
@@ -1469,6 +1583,16 @@ export default function SettlementRange() {
               </>
             )}
           </Grid>
+          {scores?.message && (
+            <Grid container item xs={6} sx={{ gap: "2%", mt: "1rem" }}>
+              <GridItemMessage
+                key="No Score Reason"
+                title="No Score Reason"
+                value="Mca companies not found, data calculated based on weekly budget"
+                rawValue="Mca companies not found, data calculated based on weekly budget"
+              />
+            </Grid>
+          )}
 
           <Grid
             container
@@ -1523,15 +1647,17 @@ export default function SettlementRange() {
                   }}
                   label="Negotiation manager Weekly budget"
                 />
-                <AntTab
-                  sx={{
-                    bgcolor: Colors.WHITE,
-                    width: "max-content",
-                    fontWeight: "600",
-                    height: "3.5rem",
-                  }}
-                  label="Weekly budget as per Bank statement"
-                />
+                {!scoresBackend && (
+                  <AntTab
+                    sx={{
+                      bgcolor: Colors.WHITE,
+                      width: "max-content",
+                      fontWeight: "600",
+                      height: "3.5rem",
+                    }}
+                    label="Weekly budget as per Bank statement"
+                  />
+                )}
               </AntTabs>
             </Grid>
           )}
@@ -1604,35 +1730,35 @@ export default function SettlementRange() {
                       ) {
                         return null;
                       }
-                      const formattedValue =
-                        detail?.value !== undefined && detail?.value !== null
-                          ? detail?.formatCurrency &&
-                            !String(detail?.value)?.includes("$")
-                            ? (() => {
-                                const formatted = `$${new Intl.NumberFormat(
-                                  "en-US",
-                                  {
-                                    minimumFractionDigits: 2,
-                                  }
-                                )?.format(Number(detail?.value))}`;
-                                return isNaN(Number(detail?.value))
-                                  ? "--"
-                                  : formatted;
-                              })()
-                            : String(detail?.value)
-                          : "--";
+
+                      // Use the formatCurrencyValue function to format detail.value
+                      const formattedValue = (() => {
+                        if (
+                          detail?.label === "Current Payment Amount" ||
+                          detail?.label === "Purchased Percentage"
+                        ) {
+                          return String(detail?.value) || "--";
+                        } else {
+                          return formatCurrencyValue(detail?.value);
+                        }
+                      })();
 
                       const tooltipContent = {
-                        "Funded Amount": detail?.tooltip,
-                        "Payback Amount": "Payback Amount",
-                        "Break Even": "Break Even",
+                        "Purchase Price":
+                          "This is the amount being paid for the Receivables Purchased Amount.",
+                        "Net Funded Amount":
+                          "This is the net amount being paid after deduction of applicable fees, if any.",
+                        "Purchased Amount":
+                          " This is the amount of Receivables.",
+                        "Break Even":
+                          "1.2x of Net Funded Amount Minus Amount Paid Back.",
                         "Current Balance":
                           "The remaining amount you owe to the creditor.",
                         "Weekly Budget":
                           "Your profit before making any debt payments.",
                         "Purchased Percentage":
                           "The percentage of the loan amount that has been repaid.",
-                        "Repayment Amount":
+                        "Current Payment Amount":
                           "The initial amount borrowed before any repayments.",
                       };
 
@@ -1645,6 +1771,7 @@ export default function SettlementRange() {
                           lg={2.8}
                           container
                           sx={commonStyles}
+                          key={index}
                         >
                           <Box
                             sx={{
@@ -1742,17 +1869,6 @@ export default function SettlementRange() {
             </Grid>
           )}
 
-          <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
-            {scores?.message && (
-              <GridItemMessage
-                key="No Score Reason"
-                title="No Score Reason"
-                value={scores?.message}
-                rawValue={scores?.message}
-              />
-            )}
-          </Grid>
-
           <Grid
             item
             xs={12}
@@ -1815,12 +1931,22 @@ export default function SettlementRange() {
             </AntTabs>
 
             <div style={{ marginRight: "16px" }}>
-              <MuiModels
-                show="sendEmailJustification"
-                disabled={!isAnyChecked}
-                data={selectedData}
-                caseId={caseId}
-              />
+              <div style={{ display: "flex", gap: "2%" }}>
+                <TextButton
+                  buttonText="GET JUSTIFICATION"
+                  height="2.5rem"
+                  width="12rem"
+                  backgroundColor={Colors.SKY_BLUE}
+                  onClick={() => getAllJustification(strategyTab)}
+                />
+                <MuiModels
+                  show="sendEmailJustification"
+                  disabled={!isAnyChecked}
+                  data={selectedData}
+                  caseId={caseId}
+                  debtorId={verifiedSender}
+                />
+              </div>
             </div>
           </Grid>
 
@@ -1844,6 +1970,16 @@ export default function SettlementRange() {
               >
                 <div>
                   <Checkbox
+                    sx={{
+                      "&.Mui-checked": {
+                        color: Colors.SKY_BLUE,
+                      },
+                    }}
+                    disabled={
+                      !justification?.[justificationValue]?.[
+                        allCreditorNames[tabValue]
+                      ]
+                    }
                     checked={checkboxStates["justification"]}
                     onChange={() =>
                       handleCheckboxChange(
@@ -1919,6 +2055,11 @@ export default function SettlementRange() {
                   >
                     <div>
                       <Checkbox
+                        sx={{
+                          "&.Mui-checked": {
+                            color: Colors.SKY_BLUE,
+                          },
+                        }}
                         checked={checkboxStates[`summary_${index}`]}
                         onChange={() =>
                           handleCheckboxChange(`summary_${index}`, item?.chat)
@@ -1962,6 +2103,11 @@ export default function SettlementRange() {
                   {message.type === "bound" && (
                     <div>
                       <Checkbox
+                        sx={{
+                          "&.Mui-checked": {
+                            color: Colors.SKY_BLUE,
+                          },
+                        }}
                         checked={checkboxStates[`chatHistory_${index}`]}
                         onChange={() =>
                           handleCheckboxChange(
@@ -2005,7 +2151,7 @@ export default function SettlementRange() {
             </Grid>
             {tableLoading && (
               <Grid xs={12}>
-                <LinearProgress />
+                <LinearProgress sx={{ backgroundColor: Colors.SKY_BLUE }} />
               </Grid>
             )}
 

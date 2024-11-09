@@ -5,7 +5,7 @@ import { Colors } from "../config/default";
 import TextButton from "./button";
 import { Editor } from "@tinymce/tinymce-react";
 import ScrollbarStyles from "./customScroll";
-import { SendSettlementEmail } from "../services/services";
+import { GetAllSenders, SendSettlementEmail } from "../services/services";
 import {
   FONT_SIZE_MEDIUM,
   initialHtmlContent,
@@ -68,18 +68,18 @@ export default function SendEmail({
   data,
   selectedCreditor,
   lumpSump,
-  fullProfit,
   caseId,
   paymentData,
+  debtorId,
 }) {
   const [sendTo, setSendTo] = useState("");
-  const [sendFrom, setSendFrom] = useState("");
+  const [sendFrom, setSendFrom] = useState([]);
+  const [selectedValue, setSelectedValue] = useState("");
   const [strategy, setStrategy] = useState("Strategy 1");
   const [recommendation, setRecommendation] = useState("recommendation 1");
   const [rangeMinToMax, setRangeMinToMax] = useState("min");
   const [cc, setCc] = useState([]);
   const [inputValue, setInputValue] = useState("");
-
   const [subject, setSubject] = useState("");
   const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
@@ -89,12 +89,6 @@ export default function SendEmail({
     { label: "Strategy 1", value: "Strategy 1" },
     { label: "Strategy 2", value: "Strategy 2" },
     { label: "Strategy 3", value: "Strategy 3" },
-  ];
-
-  const allRecommendation = [
-    { label: "Recommendation 1", value: "recommendation 1" },
-    { label: "Recommendation 2", value: "recommendation 2" },
-    { label: "Recommendation 3", value: "recommendation 3" },
   ];
 
   const allRanges = [
@@ -120,12 +114,16 @@ export default function SendEmail({
   const handleRemoveEmail = (index) => {
     setCc(cc?.filter((_, i) => i !== index));
   };
+  const menu = debtorId?.map((name) => ({
+    label: name,
+    value: name,
+  }));
 
   const handleSend = async () => {
     setLoading(true);
     const payload = {
       sendTo: sendTo,
-      from: sendFrom,
+      from: selectedValue,
       subject: subject,
       content: preview,
       cc: cc,
@@ -160,15 +158,15 @@ export default function SendEmail({
 
     const payment =
       strategy === "Strategy 1"
-        ? data?.settlement_range?.[selectedCreditor]?.[recommendation]?.[
+        ? data?.settlement_range?.[selectedCreditor]?.["recommendation 1"]?.[
             rangeMinToMax
           ]
         : strategy === "Strategy 2"
         ? lumpSump?.lumpsum_settlement?.[selectedCreditor]
             ?.remaining_principle_amount
-        : fullProfit?.settlement_range?.[selectedCreditor]?.[
-            "recommendation 1"
-          ]?.[rangeMinToMax];
+        : data?.settlement_range?.[selectedCreditor]?.["recommendation 1"]?.[
+            rangeMinToMax
+          ];
 
     const formatedPayment =
       typeof payment === "string"
@@ -213,12 +211,17 @@ export default function SendEmail({
           onChange={(e) => setSendTo(e.target.value)}
           style={inputStyling}
         />
-        <input
-          type="text"
+        <Dropdown
+          height="2.5rem"
+          menuItems={menu}
+          menuWidth="11.7rem"
           placeholder="Send From*"
-          value={sendFrom}
-          onChange={(e) => setSendFrom(e.target.value)}
-          style={inputStyling}
+          backgroundColor={Colors.BG_LIGHT_GRAY}
+          hoverColor={Colors.BG_LIGHT_GRAY}
+          width={"48%"}
+          selectedValue={selectedValue}
+          setSelectedValue={setSelectedValue}
+          emptyMessage="No Verfied Sender"
         />
       </div>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -240,10 +243,28 @@ export default function SendEmail({
           />
         </Tooltip>
       </div>
+      <div>
+        {cc?.length > 0 && (
+          <div style={inputContainerStyle}>
+            {cc?.map((email, index) => (
+              <div key={index} style={emailChipStyle}>
+                {email}
+                <span
+                  onClick={() => handleRemoveEmail(index)}
+                  style={removeIconStyle}
+                >
+                  ×
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
+          marginBottom: "0.5rem",
         }}
       >
         {!paymentData && (
@@ -262,13 +283,13 @@ export default function SendEmail({
         {!paymentData && strategy === "Strategy 1" ? (
           <Dropdown
             menuWidth="22rem"
-            menuItems={allRecommendation}
+            menuItems={allRanges}
             placeholder="Type"
             backgroundColor={Colors.BG_LIGHT_GRAY}
             hoverColor={Colors.BG_LIGHT_GRAY}
             width="48%"
-            selectedValue={recommendation}
-            setSelectedValue={setRecommendation}
+            selectedValue={rangeMinToMax}
+            setSelectedValue={setRangeMinToMax}
           />
         ) : !paymentData && strategy === "Strategy 3" ? (
           <Dropdown
@@ -285,35 +306,6 @@ export default function SendEmail({
           ""
         )}
       </div>
-      <div style={{ margin: "16px 0px" }}>
-        {!paymentData && strategy === "Strategy 1" && recommendation && (
-          <Dropdown
-            menuWidth="22rem"
-            menuItems={allRanges}
-            placeholder="Type"
-            backgroundColor={Colors.BG_LIGHT_GRAY}
-            hoverColor={Colors.BG_LIGHT_GRAY}
-            width="48%"
-            selectedValue={rangeMinToMax}
-            setSelectedValue={setRangeMinToMax}
-          />
-        )}
-      </div>
-      {cc?.length > 0 && (
-        <div style={inputContainerStyle}>
-          {cc?.map((email, index) => (
-            <div key={index} style={emailChipStyle}>
-              {email}
-              <span
-                onClick={() => handleRemoveEmail(index)}
-                style={removeIconStyle}
-              >
-                ×
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
 
       <Grid sx={{ maxHeight: "40vh", overflowY: "auto", ...ScrollbarStyles }}>
         <Editor

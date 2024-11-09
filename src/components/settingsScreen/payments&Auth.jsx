@@ -1,12 +1,12 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-import { Grid, Typography } from "@mui/material";
+import { CircularProgress, Grid, Typography } from "@mui/material";
 import { Colors } from "../../config/default";
 import Dropdown from "../dropdown";
 import TextButton from "../button";
@@ -46,6 +46,7 @@ export default function SettingsAccordion({
   authorizationInterval,
   setRetryInterval,
   setAuthorizationInterval,
+  loading,
 }) {
   const { showToast } = useToast();
 
@@ -53,16 +54,13 @@ export default function SettingsAccordion({
     { label: "Days", value: "days" },
     { label: "Hours", value: "hours" },
   ];
+
   const settings = useSelector(
     (state) => state?.permissions?.permissions?.settings
   );
 
-  const [retryAuthIntervalUnit, setRetryAuthIntervalUnit] = useState(
-    retryInterval?.failedAuthorization?.unit
-  );
-  const [retryPaymentIntervalUnit, setRetryPaymentIntervalUnit] = useState(
-    retryInterval?.failedPayment?.unit
-  );
+  const [retryAuthIntervalUnit, setRetryAuthIntervalUnit] = useState();
+  const [retryPaymentIntervalUnit, setRetryPaymentIntervalUnit] = useState();
 
   const saveAuthsPaymentsConfig = async () => {
     const settings = {
@@ -115,6 +113,7 @@ export default function SettingsAccordion({
       }));
     }
   };
+
   const handleAuthIntervalInputChange = (field, value) => {
     setAuthorizationInterval((prevIntervals) => ({
       ...prevIntervals,
@@ -125,7 +124,7 @@ export default function SettingsAccordion({
     }));
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     setRetryInterval((prevData) => ({
       failedAuthorization: {
         ...prevData?.failedAuthorization,
@@ -146,447 +145,497 @@ export default function SettingsAccordion({
           Payments & Authorizations
         </StyledAccordionSummary>
 
-        <StyledAccordionDetails sx={{ width: { xs: "130vw", sm: "auto" } }}>
-          <Grid container item sx={{ marginTop: "1rem", marginBottom: "1rem" }}>
-            <Typography
-              sx={{
-                fontFamily: "Nunito",
-                fontWeight: "600",
-                color: Colors.BLACK,
-                paddingLeft: "1.5rem",
-              }}
-            >
-              Retry Interval
-            </Typography>
-
-            <Grid
-              container
-              item
-              xs={12}
-              sx={{ marginTop: "1rem", display: "flex", alignItems: "center" }}
-            >
-              <Typography
-                sx={{
-                  fontFamily: "Nunito",
-                  fontWeight: "600",
-                  color: Colors.DARK_GRAY,
-                  paddingLeft: "1.5rem",
-                  width: smallScreen ? "30%" : "20%",
-                }}
-              >
-                Failed Authorizations
-              </Typography>
-              <input
-                type="number"
-                style={{
-                  backgroundColor: Colors.BG_LIGHT_GRAY,
-                  height: "2.5rem",
-                  color: Colors.DIM_LIGHT_GRAY,
-                  paddingLeft: "1rem",
-                  border: "none",
-                  outline: "none",
-                  borderRadius: "5px",
-                  width: smallScreen ? "10%" : "5%",
-                  marginLeft: "1rem",
-                  marginRight: "1rem",
-                }}
-                disabled={!settings?.editRetryInterval}
-                value={retryInterval?.failedAuthorization?.value}
-                onChange={(e) =>
-                  handleIntervalInputChange("auth_value", e.target.value)
-                }
-                onKeyDown={handleNumberInput}
-              />
-              <Dropdown
-                menuWidth="11.3rem"
-                menuItems={retry}
-                placeholder="Choose Interval"
-                backgroundColor={Colors.BG_LIGHT_GRAY}
-                hoverColor={Colors.BG_LIGHT_GRAY}
-                width={smallScreen ? "17%" : "15%"}
-                height="2.5rem"
-                selectedValue={retryInterval?.failedAuthorization?.unit}
-                disabled={!settings?.editRetryInterval}
-                setSelectedValue={setRetryAuthIntervalUnit}
-              />
-              <Typography
-                sx={{
-                  fontFamily: "Nunito",
-                  fontWeight: "600",
-                  color: Colors.DARK_GRAY,
-                  paddingLeft: smallScreen ? "10px" : "1.5rem",
-                }}
-              >
-                Max Retry
-              </Typography>
-              <input
-                type="number"
-                style={{
-                  backgroundColor: Colors.BG_LIGHT_GRAY,
-                  height: "2.5rem",
-                  color: Colors.DIM_LIGHT_GRAY,
-                  paddingLeft: "1rem",
-                  border: "none",
-                  outline: "none",
-                  borderRadius: "5px",
-                  width: smallScreen ? "10%" : "5%",
-                  marginLeft: "1rem",
-                  marginRight: "1rem",
-                }}
-                disabled={!settings?.editRetryInterval}
-                value={retryInterval?.failedAuthorization?.maxRetry}
-                onChange={(e) =>
-                  handleIntervalInputChange("auth_retries", e.target.value)
-                }
-                onKeyDown={handleNumberInput}
-              />
-            </Grid>
-            <Grid
-              container
-              item
-              xs={12}
-              sx={{ marginTop: "1rem", display: "flex", alignItems: "center" }}
-            >
-              <Typography
-                sx={{
-                  fontFamily: "Nunito",
-                  fontWeight: "600",
-                  color: Colors.DARK_GRAY,
-                  paddingLeft: "1.5rem",
-                  width: smallScreen ? "30%" : "20%",
-                }}
-              >
-                Failed Payment
-              </Typography>
-              <input
-                type="number"
-                style={{
-                  backgroundColor: Colors.BG_LIGHT_GRAY,
-                  height: "2.5rem",
-                  color: Colors.DIM_LIGHT_GRAY,
-                  paddingLeft: "1rem",
-                  border: "none",
-                  outline: "none",
-                  borderRadius: "5px",
-                  width: smallScreen ? "10%" : "5%",
-                  marginLeft: "1rem",
-                  marginRight: "1rem",
-                }}
-                disabled={!settings?.editRetryInterval}
-                value={retryInterval?.failedPayment?.value}
-                onChange={(e) =>
-                  handleIntervalInputChange("payment_value", e.target.value)
-                }
-                onKeyDown={handleNumberInput}
-              />
-              <Dropdown
-                menuWidth="11.3rem"
-                menuItems={retry}
-                placeholder="Choose Interval"
-                backgroundColor={Colors.BG_LIGHT_GRAY}
-                hoverColor={Colors.BG_LIGHT_GRAY}
-                width={smallScreen ? "17%" : "15%"}
-                height="2.5rem"
-                selectedValue={retryInterval?.failedPayment?.unit}
-                setSelectedValue={setRetryPaymentIntervalUnit}
-                disabled={!settings?.editRetryInterval}
-              />
-              <Typography
-                sx={{
-                  fontFamily: "Nunito",
-                  fontWeight: "600",
-                  color: Colors.DARK_GRAY,
-                  paddingLeft: smallScreen ? "10px" : "1.5rem",
-                }}
-              >
-                Max Retry
-              </Typography>
-              <input
-                type="number"
-                style={{
-                  backgroundColor: Colors.BG_LIGHT_GRAY,
-                  height: "2.5rem",
-                  color: Colors.DIM_LIGHT_GRAY,
-                  paddingLeft: "1rem",
-                  border: "none",
-                  outline: "none",
-                  borderRadius: "5px",
-                  width: smallScreen ? "10%" : "5%",
-                  marginLeft: "1rem",
-                  marginRight: "1rem",
-                }}
-                disabled={!settings?.editRetryInterval}
-                value={retryInterval?.failedPayment?.maxRetry}
-                onChange={(e) =>
-                  handleIntervalInputChange("payment_retries", e.target.value)
-                }
-                onKeyDown={handleNumberInput}
-              />
-            </Grid>
-          </Grid>
-          <hr></hr>
-          <Grid container item sx={{ marginTop: "1rem", marginBottom: "2rem" }}>
-            <Typography
-              sx={{
-                fontFamily: "Nunito",
-                fontWeight: "600",
-                color: Colors.BLACK,
-                paddingLeft: "1.5rem",
-              }}
-            >
-              Authorization Interval
-            </Typography>
-
-            <Grid
-              container
-              item
-              xs={12}
-              sx={{ marginTop: "1rem", display: "flex", alignItems: "center" }}
-            >
-              <Typography
-                sx={{
-                  fontFamily: "Nunito",
-                  fontWeight: "600",
-                  color: Colors.DARK_GRAY,
-                  paddingLeft: "1.5rem",
-                  width: "15%",
-                }}
-              >
-                Custom
-              </Typography>
-              <input
-                type="number"
-                style={{
-                  backgroundColor: Colors.BG_LIGHT_GRAY,
-                  height: "2.5rem",
-                  color: Colors.DIM_LIGHT_GRAY,
-                  paddingLeft: "1rem",
-                  border: "none",
-                  outline: "none",
-                  borderRadius: "5px",
-                  width: "10%",
-                  marginLeft: "1rem",
-                }}
-                disabled={!settings?.editAuthorizationInterval}
-                value={authorizationInterval?.custom?.value}
-                onChange={(e) =>
-                  handleAuthIntervalInputChange("custom", e.target.value)
-                }
-                onKeyDown={handleNumberInput}
-              />
-
-              <Typography
-                sx={{
-                  fontFamily: "Nunito",
-                  fontWeight: "600",
-                  color: Colors.DARK_GRAY,
-                  paddingLeft: "1.5rem",
-                  width: "15%",
-                }}
-              >
-                Hours
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: "Nunito",
-                  fontWeight: "600",
-                  color: Colors.DARK_GRAY,
-                  paddingLeft: "1.5rem",
-                  width: { xs: "22%", sm: "15%" },
-                }}
-              >
-                Fortnightly
-              </Typography>
-              <input
-                type="number"
-                style={{
-                  backgroundColor: Colors.BG_LIGHT_GRAY,
-                  height: "2.5rem",
-                  color: Colors.DIM_LIGHT_GRAY,
-                  paddingLeft: "1rem",
-                  border: "none",
-                  outline: "none",
-                  borderRadius: "5px",
-                  width: "10%",
-                  marginLeft: "1rem",
-                }}
-                disabled={!settings?.editAuthorizationInterval}
-                value={authorizationInterval?.fortnightly?.value}
-                onChange={(e) =>
-                  handleAuthIntervalInputChange("fortnightly", e.target.value)
-                }
-                onKeyDown={handleNumberInput}
-              />
-              <Typography
-                sx={{
-                  fontFamily: "Nunito",
-                  fontWeight: "600",
-                  color: Colors.DARK_GRAY,
-                  paddingLeft: "1.5rem",
-                }}
-              >
-                Days
-              </Typography>
-            </Grid>
-            <Grid
-              container
-              item
-              xs={12}
-              sx={{ marginTop: "1rem", display: "flex", alignItems: "center" }}
-            >
-              <Typography
-                sx={{
-                  fontFamily: "Nunito",
-                  fontWeight: "600",
-                  color: Colors.DARK_GRAY,
-                  paddingLeft: "1.5rem",
-                  width: "15%",
-                }}
-              >
-                Daily
-              </Typography>
-              <input
-                type="number"
-                style={{
-                  backgroundColor: Colors.BG_LIGHT_GRAY,
-                  height: "2.5rem",
-                  color: Colors.DIM_LIGHT_GRAY,
-                  paddingLeft: "1rem",
-                  border: "none",
-                  outline: "none",
-                  borderRadius: "5px",
-                  width: "10%",
-                  marginLeft: "1rem",
-                }}
-                disabled={!settings?.editAuthorizationInterval}
-                value={authorizationInterval?.daily?.value}
-                onChange={(e) =>
-                  handleAuthIntervalInputChange("daily", e.target.value)
-                }
-                onKeyDown={handleNumberInput}
-              />
-
-              <Typography
-                sx={{
-                  fontFamily: "Nunito",
-                  fontWeight: "600",
-                  color: Colors.DARK_GRAY,
-                  paddingLeft: "1.5rem",
-                  width: "15%",
-                }}
-              >
-                Hours
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: "Nunito",
-                  fontWeight: "600",
-                  color: Colors.DARK_GRAY,
-                  paddingLeft: "1.5rem",
-                  width: { xs: "22%", sm: "15%" },
-                }}
-              >
-                Monthly
-              </Typography>
-              <input
-                type="number"
-                style={{
-                  backgroundColor: Colors.BG_LIGHT_GRAY,
-                  height: "2.5rem",
-                  color: Colors.DIM_LIGHT_GRAY,
-                  paddingLeft: "1rem",
-                  border: "none",
-                  outline: "none",
-                  borderRadius: "5px",
-                  width: "10%",
-                  marginLeft: "1rem",
-                }}
-                disabled={!settings?.editAuthorizationInterval}
-                value={authorizationInterval?.monthly?.value}
-                onChange={(e) =>
-                  handleAuthIntervalInputChange("monthly", e.target.value)
-                }
-                onKeyDown={handleNumberInput}
-              />
-              <Typography
-                sx={{
-                  fontFamily: "Nunito",
-                  fontWeight: "600",
-                  color: Colors.DARK_GRAY,
-                  paddingLeft: "1.5rem",
-                }}
-              >
-                Days
-              </Typography>
-            </Grid>
-            <Grid
-              container
-              item
-              xs={12}
-              sx={{ marginTop: "1rem", display: "flex", alignItems: "center" }}
-            >
-              <Typography
-                sx={{
-                  fontFamily: "Nunito",
-                  fontWeight: "600",
-                  color: Colors.DARK_GRAY,
-                  paddingLeft: "1.5rem",
-                  width: "15%",
-                }}
-              >
-                Weekly
-              </Typography>
-              <input
-                type="number"
-                style={{
-                  backgroundColor: Colors.BG_LIGHT_GRAY,
-                  height: "2.5rem",
-                  color: Colors.DIM_LIGHT_GRAY,
-                  paddingLeft: "1rem",
-                  border: "none",
-                  outline: "none",
-                  borderRadius: "5px",
-                  width: "10%",
-                  marginLeft: "1rem",
-                }}
-                disabled={!settings?.editAuthorizationInterval}
-                value={authorizationInterval?.weekly?.value}
-                onChange={(e) =>
-                  handleAuthIntervalInputChange("weekly", e.target.value)
-                }
-                onKeyDown={handleNumberInput}
-              />
-
-              <Typography
-                sx={{
-                  fontFamily: "Nunito",
-                  fontWeight: "600",
-                  color: Colors.DARK_GRAY,
-                  paddingLeft: "1.5rem",
-                  width: "15%",
-                }}
-              >
-                Days
-              </Typography>
-            </Grid>
-          </Grid>
+        {loading ? (
           <Grid
             container
-            item
-            sx={{ display: "flex", justifyContent: "flex-end" }}
+            sx={{
+              justifyContent: "center",
+              alignItems: "center",
+              height: "30vh",
+            }}
           >
-            <TextButton
-              buttonText="SAVE"
-              backgroundColor={Colors.SKY_BLUE}
-              hoverColor={Colors.SKY_BLUE}
-              paddingLeft="2rem"
-              paddingRight="2rem"
-              height="2rem"
-              marginRight="1rem"
-              onClick={saveAuthsPaymentsConfig}
-            />
+            <CircularProgress sx={{ color: Colors.SKY_BLUE }} />
           </Grid>
-        </StyledAccordionDetails>
+        ) : (
+          <StyledAccordionDetails sx={{ width: "auto" }}>
+            <Grid
+              container
+              item
+              sx={{ marginTop: "1rem", marginBottom: "1rem" }}
+            >
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontWeight: "600",
+                  color: Colors.BLACK,
+                  paddingLeft: "1.5rem",
+                }}
+              >
+                Retry Interval
+              </Typography>
+
+              <Grid
+                container
+                item
+                xs={12}
+                sx={{
+                  marginTop: "1rem",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    color: Colors.DARK_GRAY,
+                    paddingLeft: "1.5rem",
+                    width: smallScreen ? "30%" : "20%",
+                  }}
+                >
+                  Failed Authorizations
+                </Typography>
+                <input
+                  type="number"
+                  min={0}
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: smallScreen ? "10%" : "5%",
+                    marginLeft: "1rem",
+                    marginRight: "1rem",
+                  }}
+                  disabled={!settings?.editRetryInterval}
+                  value={retryInterval?.failedAuthorization?.value}
+                  onChange={(e) =>
+                    handleIntervalInputChange("auth_value", e.target.value)
+                  }
+                  onKeyDown={handleNumberInput}
+                />
+                <Dropdown
+                  menuWidth="11.3rem"
+                  menuItems={retry}
+                  placeholder={retryInterval?.failedAuthorization?.unit}
+                  backgroundColor={Colors.BG_LIGHT_GRAY}
+                  hoverColor={Colors.BG_LIGHT_GRAY}
+                  width={smallScreen ? "17%" : "15%"}
+                  height="2.5rem"
+                  selectedValue={retryAuthIntervalUnit}
+                  setSelectedValue={setRetryAuthIntervalUnit}
+                  disabled={!settings?.editRetryInterval}
+                />
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    color: Colors.DARK_GRAY,
+                    paddingLeft: smallScreen ? "10px" : "1.5rem",
+                  }}
+                >
+                  Max Retry
+                </Typography>
+                <input
+                  type="number"
+                  min={0}
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: smallScreen ? "10%" : "5%",
+                    marginLeft: "1rem",
+                    marginRight: "1rem",
+                  }}
+                  disabled={!settings?.editRetryInterval}
+                  value={retryInterval?.failedAuthorization?.maxRetry}
+                  onChange={(e) =>
+                    handleIntervalInputChange("auth_retries", e.target.value)
+                  }
+                  onKeyDown={handleNumberInput}
+                />
+              </Grid>
+              <Grid
+                container
+                item
+                xs={12}
+                sx={{
+                  marginTop: "1rem",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    color: Colors.DARK_GRAY,
+                    paddingLeft: "1.5rem",
+                    width: smallScreen ? "30%" : "20%",
+                  }}
+                >
+                  Failed Payment
+                </Typography>
+                <input
+                  type="number"
+                  min={0}
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: smallScreen ? "10%" : "5%",
+                    marginLeft: "1rem",
+                    marginRight: "1rem",
+                  }}
+                  disabled={!settings?.editRetryInterval}
+                  value={retryInterval?.failedPayment?.value}
+                  onChange={(e) =>
+                    handleIntervalInputChange("payment_value", e.target.value)
+                  }
+                  onKeyDown={handleNumberInput}
+                />
+                <Dropdown
+                  menuWidth="11.3rem"
+                  menuItems={retry}
+                  placeholder={retryInterval?.failedPayment?.unit}
+                  backgroundColor={Colors.BG_LIGHT_GRAY}
+                  hoverColor={Colors.BG_LIGHT_GRAY}
+                  width={smallScreen ? "17%" : "15%"}
+                  height="2.5rem"
+                  selectedValue={retryPaymentIntervalUnit}
+                  setSelectedValue={setRetryPaymentIntervalUnit}
+                  disabled={!settings?.editRetryInterval}
+                />
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    color: Colors.DARK_GRAY,
+                    paddingLeft: smallScreen ? "10px" : "1.5rem",
+                  }}
+                >
+                  Max Retry
+                </Typography>
+                <input
+                  type="number"
+                  min={0}
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: smallScreen ? "10%" : "5%",
+                    marginLeft: "1rem",
+                    marginRight: "1rem",
+                  }}
+                  disabled={!settings?.editRetryInterval}
+                  value={retryInterval?.failedPayment?.maxRetry}
+                  onChange={(e) =>
+                    handleIntervalInputChange("payment_retries", e.target.value)
+                  }
+                  onKeyDown={handleNumberInput}
+                />
+              </Grid>
+            </Grid>
+            <hr></hr>
+            <Grid
+              container
+              item
+              sx={{ marginTop: "1rem", marginBottom: "2rem" }}
+            >
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontWeight: "600",
+                  color: Colors.BLACK,
+                  paddingLeft: "1.5rem",
+                }}
+              >
+                Authorization Interval
+              </Typography>
+
+              <Grid
+                container
+                item
+                xs={12}
+                sx={{
+                  marginTop: "1rem",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    color: Colors.DARK_GRAY,
+                    paddingLeft: "1.5rem",
+                    width: "15%",
+                  }}
+                >
+                  Custom
+                </Typography>
+                <input
+                  type="number"
+                  min={0}
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "10%",
+                    marginLeft: "1rem",
+                  }}
+                  disabled={!settings?.editAuthorizationInterval}
+                  value={authorizationInterval?.custom?.value}
+                  onChange={(e) =>
+                    handleAuthIntervalInputChange("custom", e.target.value)
+                  }
+                  onKeyDown={handleNumberInput}
+                />
+
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    color: Colors.DARK_GRAY,
+                    paddingLeft: "1.5rem",
+                    width: "15%",
+                  }}
+                >
+                  Hours
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    color: Colors.DARK_GRAY,
+                    paddingLeft: "1.5rem",
+                    width: { xs: "22%", sm: "15%" },
+                  }}
+                >
+                  Fortnightly
+                </Typography>
+                <input
+                  type="number"
+                  min={0}
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "10%",
+                    marginLeft: "1rem",
+                  }}
+                  disabled={!settings?.editAuthorizationInterval}
+                  value={authorizationInterval?.fortnightly?.value}
+                  onChange={(e) =>
+                    handleAuthIntervalInputChange("fortnightly", e.target.value)
+                  }
+                  onKeyDown={handleNumberInput}
+                />
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    color: Colors.DARK_GRAY,
+                    paddingLeft: "1.5rem",
+                  }}
+                >
+                  Days
+                </Typography>
+              </Grid>
+              <Grid
+                container
+                item
+                xs={12}
+                sx={{
+                  marginTop: "1rem",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    color: Colors.DARK_GRAY,
+                    paddingLeft: "1.5rem",
+                    width: "15%",
+                  }}
+                >
+                  Daily
+                </Typography>
+                <input
+                  type="number"
+                  min={0}
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "10%",
+                    marginLeft: "1rem",
+                  }}
+                  disabled={!settings?.editAuthorizationInterval}
+                  value={authorizationInterval?.daily?.value}
+                  onChange={(e) =>
+                    handleAuthIntervalInputChange("daily", e.target.value)
+                  }
+                  onKeyDown={handleNumberInput}
+                />
+
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    color: Colors.DARK_GRAY,
+                    paddingLeft: "1.5rem",
+                    width: "15%",
+                  }}
+                >
+                  Hours
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    color: Colors.DARK_GRAY,
+                    paddingLeft: "1.5rem",
+                    width: { xs: "22%", sm: "15%" },
+                  }}
+                >
+                  Monthly
+                </Typography>
+                <input
+                  type="number"
+                  min={0}
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "10%",
+                    marginLeft: "1rem",
+                  }}
+                  disabled={!settings?.editAuthorizationInterval}
+                  value={authorizationInterval?.monthly?.value}
+                  onChange={(e) =>
+                    handleAuthIntervalInputChange("monthly", e.target.value)
+                  }
+                  onKeyDown={handleNumberInput}
+                />
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    color: Colors.DARK_GRAY,
+                    paddingLeft: "1.5rem",
+                  }}
+                >
+                  Days
+                </Typography>
+              </Grid>
+              <Grid
+                container
+                item
+                xs={12}
+                sx={{
+                  marginTop: "1rem",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    color: Colors.DARK_GRAY,
+                    paddingLeft: "1.5rem",
+                    width: "15%",
+                  }}
+                >
+                  Weekly
+                </Typography>
+                <input
+                  type="number"
+                  min={0}
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    height: "2.5rem",
+                    color: Colors.DIM_LIGHT_GRAY,
+                    paddingLeft: "1rem",
+                    border: "none",
+                    outline: "none",
+                    borderRadius: "5px",
+                    width: "10%",
+                    marginLeft: "1rem",
+                  }}
+                  disabled={!settings?.editAuthorizationInterval}
+                  value={authorizationInterval?.weekly?.value}
+                  onChange={(e) =>
+                    handleAuthIntervalInputChange("weekly", e.target.value)
+                  }
+                  onKeyDown={handleNumberInput}
+                />
+
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    color: Colors.DARK_GRAY,
+                    paddingLeft: "1.5rem",
+                    width: "15%",
+                  }}
+                >
+                  Days
+                </Typography>
+              </Grid>
+            </Grid>
+            <Grid
+              container
+              item
+              sx={{ display: "flex", justifyContent: "flex-end" }}
+            >
+              <TextButton
+                buttonText="SAVE"
+                backgroundColor={Colors.SKY_BLUE}
+                hoverColor={Colors.SKY_BLUE}
+                paddingLeft="2rem"
+                paddingRight="2rem"
+                height="2rem"
+                marginRight="1rem"
+                onClick={saveAuthsPaymentsConfig}
+              />
+            </Grid>
+          </StyledAccordionDetails>
+        )}
       </StyledAccordion>
     </>
   );

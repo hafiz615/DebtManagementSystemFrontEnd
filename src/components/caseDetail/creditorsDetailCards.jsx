@@ -65,6 +65,7 @@ export default function CreditorsDetailCards({
   caseData,
   GetCaseDetails,
   GetLogsById,
+  verifiedSenders,
 }) {
   const [searchText, setSearchText] = useState("");
 
@@ -548,6 +549,8 @@ export default function CreditorsDetailCards({
                       iconColor={Colors.BLACK}
                       maxHeight="78vh"
                       GetLogsById={GetLogsById}
+                      data={caseData}
+                      verifiedSenders={verifiedSenders}
                     />
                     <MuiModels
                       show="sendEmailCase"
@@ -556,6 +559,7 @@ export default function CreditorsDetailCards({
                       iconColor={Colors.BLACK}
                       maxHeight="78vh"
                       GetLogsById={GetLogsById}
+                      data={caseData}
                     />
                     <MuiModels
                       show="editCreditorContacts"

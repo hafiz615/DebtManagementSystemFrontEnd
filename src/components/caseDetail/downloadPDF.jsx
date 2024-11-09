@@ -6,7 +6,7 @@ import TextButton from "../button";
 import generatePDF from "../../common";
 import { FONT_SIZE_XXL } from "../../constants/appConstants";
 
-function DownloadPDF({ allData, lumpSumpData, fullProfit, handleClose }) {
+function DownloadPDF({ allData, lumpSumpData, handleClose }) {
   const typographyOptions = [
     "Debtor Information",
     "Settlement Range",
@@ -118,9 +118,7 @@ function DownloadPDF({ allData, lumpSumpData, fullProfit, handleClose }) {
           hoverColor={Colors.SKY_BLUE}
           border={`1px solid ${Colors.SKY_BLUE}`}
           borderRadius="5px"
-          onClick={() =>
-            generatePDF(allData, lumpSumpData, fullProfit, checkboxState)
-          }
+          onClick={() => generatePDF(allData, lumpSumpData, checkboxState)}
           disabled={isDownloadDisabled}
         />
       </Grid>

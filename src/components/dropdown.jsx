@@ -26,6 +26,7 @@ export default function Dropdown({
   show,
   setId,
   showCaseStatus,
+  emptyMessage,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -99,17 +100,27 @@ export default function Dropdown({
           },
         }}
       >
-        {menuItems?.map((item, index) => (
+        {menuItems?.length === 0 ? (
           <MenuItem
-            key={index}
             sx={{
               color: Colors.LIGHT_GRAY,
             }}
-            onClick={() => handleMenuItemClick(item?.value, item?.id || "")}
           >
-            {item.label}
+            {emptyMessage || "No Item"}
           </MenuItem>
-        ))}
+        ) : (
+          menuItems?.map((item, index) => (
+            <MenuItem
+              key={index}
+              sx={{
+                color: Colors.LIGHT_GRAY,
+              }}
+              onClick={() => handleMenuItemClick(item?.value, item?.id || "")}
+            >
+              {item.label}
+            </MenuItem>
+          ))
+        )}
       </Menu>
     </>
   );

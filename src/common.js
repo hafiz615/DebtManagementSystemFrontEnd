@@ -431,7 +431,7 @@ export const formatPurchasedPercentage = (value) => {
   return match ? match[0] : "0%";
 };
 
-const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
+const generatePDF = (data, lumpSumpData, checkboxState) => {
   const {
     creditors,
     debtor,
@@ -549,14 +549,15 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
 
     const creditorDetails = creditors?.map((creditor) => {
       const payableAmount =
-        creditor?.remaining !== undefined &&
+        creditor?.totalDebt !== undefined &&
         creditor?.remainingAmountPaid !== undefined
-          ? `$${(creditor?.remaining - creditor?.remainingAmountPaid).toFixed(
+          ? `$${(creditor?.totalDebt - creditor?.remainingAmountPaid).toFixed(
               2
             )}`
           : "--";
       return [
         creditor?.creditorAccountTitle || "N/A",
+        formatCurrencyConditional(creditor?.contractDetails?.loan_amount || 0),
         formatCurrencyConditional(
           creditor?.contractDetails?.funded_amount || 0
         ),
@@ -579,12 +580,13 @@ const generatePDF = (data, lumpSumpData, fullProfit, checkboxState) => {
       head: [
         [
           "Name",
-          "Funded Amount",
-          "Payable Amount",
+          "Purchase Price",
+          "Net Funded Amount",
+          "Purchased Amount",
           "Current Balance",
           "Break Even Point",
-          "Purchased %",
-          "Repayment Amount",
+          "Purchased Percentage",
+          "Current Payment Amount",
         ],
       ],
       body: creditorDetails,
@@ -841,3 +843,21 @@ export function sanitizeBudget(budget) {
   let sanitizedBudget = budget.replace(/[$,\s]/g, "");
   return parseInt(sanitizedBudget, 10);
 }
+export const formatAmountValue = (value) => {
+  const numericValue = typeof value === "string" ? parseFloat(value) : value;
+
+  return numericValue
+    ? new Intl.NumberFormat("en-US", {
+        style: "decimal",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(numericValue)
+    : "0.00";
+};
+export const formatWeeklyBudget = (value) => {
+  if (value === null || value === undefined || isNaN(value)) return "--";
+  return Number(value).toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};

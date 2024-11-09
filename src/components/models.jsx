@@ -14,7 +14,6 @@ import { Colors } from "../config/default";
 import TextButton from "./button";
 import EditCreditorDetail from "./editCreditorDetail";
 import EditDebtorDetails from "./editDebtorDetails";
-import FroalaEditor from "./textEditor";
 import CaseModel from "./caseModel";
 import CaseCustomField from "./caseCustomField";
 import EditCaseCustomField from "./editCaseCustomField";
@@ -91,7 +90,6 @@ export default function MuiModels({
   GetRoles,
   selectedRole,
   selectedData,
-  rolesId,
   selectedRoleData,
   setSelectedRole,
   getAllCaseTasks,
@@ -133,6 +131,11 @@ export default function MuiModels({
   selectedOption,
   setSelectedOption,
   strategy,
+  commission,
+  replyCheck,
+  debtorId,
+  verifiedSenders,
+  scoresBackend,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -735,6 +738,7 @@ export default function MuiModels({
             />
           ) : show === "sendEmailCase" ? (
             <SendEmailCase
+              verifiedSenders={verifiedSenders}
               buttonText={buttonText}
               handleClose={handleClose}
               headerName={headerName}
@@ -744,6 +748,8 @@ export default function MuiModels({
               to={to}
               content={content}
               emailSubject={emailSubject}
+              replyCheck={replyCheck}
+              data={data}
             />
           ) : show === "editPipeline" ? (
             <EditPipeline
@@ -831,6 +837,7 @@ export default function MuiModels({
               fullProfit={fullProfit}
               caseId={caseId}
               paymentData={paymentData}
+              debtorId={debtorId}
             />
           ) : show === "uploadFile" ? (
             <UploadFilePopup
@@ -853,6 +860,7 @@ export default function MuiModels({
               selectedOption={selectedOption}
               setSelectedOption={setSelectedOption}
               strategy={strategy}
+              commission={commission}
             />
           ) : show === "settlmentPayment" ? (
             <SettlementPayment
@@ -864,6 +872,7 @@ export default function MuiModels({
               remainingAmount={remainingAmount}
               commissionRange={commissionRange}
               setPaymentChanged={setPaymentChanged}
+              commission={commission}
             />
           ) : show === "strategy3choices" ? (
             <Strategy3choices
@@ -875,12 +884,15 @@ export default function MuiModels({
               remainingAmount={remainingAmount}
               commissionRange={commissionRange}
               setPaymentChanged={setPaymentChanged}
+              commission={commission}
+              scoresBackend={scoresBackend}
             />
           ) : show === "sendEmailJustification" ? (
             <SendEmailJustification
               handleClose={handleClose}
               data={data}
               caseId={caseId}
+              debtorId={debtorId}
             />
           ) : show === "WeeklyBudget" ? (
             <CommissionDetails

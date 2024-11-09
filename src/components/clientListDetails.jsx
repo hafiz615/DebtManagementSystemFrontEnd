@@ -405,7 +405,7 @@ export default function ClientListDetails() {
         backgroundColor: Colors.BG_LIGHT_GRAY,
         paddingLeft: "2rem",
         paddingRight: "2rem",
-        height: PAGE_HEIGHT,
+        maxHeight: PAGE_HEIGHT,
         overflowY: "auto",
         ...ScrollbarStyles,
       }}
@@ -461,7 +461,8 @@ export default function ClientListDetails() {
                 color: Colors.BLACK,
               }}
             >
-              {dataUser?.fullName}
+              {clientData?.debtor?.companyName ||
+                clientData?.creditor?.fullName}
             </Typography>
           </Grid>
           <Grid
