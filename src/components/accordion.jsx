@@ -88,7 +88,7 @@ export default function AccordionUsage({
 
   return (
     <Accordion
-      defaultExpanded={index < 2}
+      defaultExpanded={index < 1}
       // defaultExpanded={expanded.includes(index)}
       onChange={() => handleChange(index)}
       sx={{
