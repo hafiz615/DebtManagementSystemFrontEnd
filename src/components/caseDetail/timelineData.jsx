@@ -11,6 +11,7 @@ import {
 import EmailIcon from "@mui/icons-material/Email";
 import MuiModels from "../models";
 import { Colors } from "../../config/default";
+import { isEmpty } from "lodash";
 
 export default function TimelineData({
   value,
@@ -48,6 +49,7 @@ export default function TimelineData({
     });
     return `${datePart} at ${timePart}`;
   }
+  console.log(value);
   return (
     <Timeline sx={{ padding: 0, margin: "0" }}>
       <TimelineItem>
