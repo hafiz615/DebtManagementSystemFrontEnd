@@ -17,15 +17,17 @@ import {
   Hidden,
   Modal,
   TextField,
-  Button,
   Tooltip,
+  styled,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import NoteAddIcon from "@mui/icons-material/NoteAdd";
-import IconButton from "@mui/material/IconButton";
 import { Colors } from "../../config/default";
-import { PAGE_HEIGHT, UserListPage } from "../../constants/appConstants";
+import {
+  FONT_SIZE_SMALL,
+  PAGE_HEIGHT,
+  UserListPage,
+} from "../../constants/appConstants";
 import AnalyticsAccordion from "./analyticsAccordion";
 import AboutAccordion from "./aboutAccordion";
 import TaskAccordion from "./tasksAccordion";
@@ -49,7 +51,6 @@ import TextButton from "../button.jsx";
 import { setCaseCreditorId, setCaseId } from "../../redux/action/action.js";
 import CaseFileCard from "./caseFileCard.jsx";
 import { useToast } from "../../toast/toastContext.jsx";
-import { formatValue } from "../../common.js";
 
 const style = {
   position: "absolute",
@@ -62,6 +63,41 @@ const style = {
   p: 4,
   borderRadius: "10px",
 };
+
+const AntTabs = styled(Tabs)({
+  borderBottom: "1px solid #e8e8e8",
+  "& .MuiTabs-indicator": {
+    backgroundColor: Colors.SKY_BLUE,
+  },
+});
+
+const AntTab = styled((props) => <Tab disableRipple {...props} />)(
+  ({ theme }) => ({
+    textTransform: "none",
+    minWidth: 0,
+    [theme.breakpoints.up("sm")]: {
+      minWidth: 0,
+      fontSize: "14px !important",
+    },
+    [theme.breakpoints.up("xs")]: {
+      fontSize: FONT_SIZE_SMALL,
+    },
+    fontWeight: "500",
+    color: Colors.DARK_GRAY,
+    fontFamily: ["Nunito"].join(","),
+    "&:hover": {
+      color: Colors.SKY_BLUE,
+      opacity: 1,
+    },
+    "&.Mui-selected": {
+      color: Colors.SKY_BLUE,
+      fontWeight: "500",
+    },
+    "&.Mui-focusVisible": {
+      backgroundColor: "#d1eaff",
+    },
+  })
+);
 
 function CaseDetail() {
   const navigate = useNavigate();
@@ -79,11 +115,24 @@ function CaseDetail() {
   const [paymentDetails, setPaymentDetails] = useState({});
   const [addTaskModal, setAddTaskModal] = useState("");
   const [verifiedSenders, setVerified] = useState([]);
+  const [caseHistoryTabs, setCaseHistoryTabs] = useState(0);
   const [logs, setLogs] = useState([]);
   const { id } = useParams();
   const handleOpen = async () => {
     setOpen(true);
   };
+  const tabs = ["Email", "Sms", "Case"];
+  const filteredLogs = logs?.filter((item) => {
+    if (caseHistoryTabs === 0) {
+      return item?.Action === "EMAIL";
+    } else if (caseHistoryTabs === 1) {
+      return item?.Action === "SMS";
+    } else if (caseHistoryTabs === 2) {
+      return item?.Action !== "EMAIL" && item?.Action !== "SMS";
+    }
+    return false;
+  });
+
   const handleClose = () => setOpen(false);
   const GetCaseDetails = async (rowId) => {
     setLoading(true);
@@ -594,16 +643,15 @@ function CaseDetail() {
                     justifyContent: "end",
                   }}
                 >
-                  <IconButton
-                    aria-label="delete"
-                    sx={{
-                      color: Colors.BLACK,
-                    }}
-                    onClick={() => handleOpen()}
-                  >
-                    <span style={{ fontSize: "16px" }}>Add Notes</span>
-                    <NoteAddIcon />
-                  </IconButton>
+                  <TextButton
+                    buttonText="Add Notes"
+                    height="2rem"
+                    width="8rem"
+                    onClick={handleOpen}
+                    backgroundColor={Colors.SKY_BLUE}
+                    hoverColor={Colors.SKY_BLUE}
+                  />
+
                   <Modal
                     open={open}
                     onClose={handleClose}
@@ -649,24 +697,54 @@ function CaseDetail() {
                     </Box>
                   </Modal>
                 </span>
+                <AntTabs
+                  value={caseHistoryTabs}
+                  onChange={(e, value) => setCaseHistoryTabs(value)}
+                  variant="scrollable"
+                  scrollButtons="auto"
+                  sx={{
+                    minWidth: "100%",
+                    backgroundColor: Colors.WHITE,
+                    borderTopLeftRadius: "10px",
+                    borderTopRightRadius: "10px",
+                    m: "10px 10px",
+                  }}
+                >
+                  {tabs?.map((item, index) => (
+                    <AntTab
+                      key={index}
+                      sx={{
+                        bgcolor: Colors.WHITE,
+                        width: "max-content",
+                        fontWeight: "600",
+                        height: "3.5rem",
+                      }}
+                      label={item}
+                    />
+                  ))}
+                </AntTabs>
 
-                {logs?.length > 0 ? (
-                  logs?.map((item, index) => (
-                    <>
-                      <TimelineData
-                        notes={false}
-                        value={item}
-                        date={null}
-                        key={index}
-                        caseDataId={id}
-                        GetLogsById={GetLogsById}
-                      />
-                    </>
+                {filteredLogs?.length > 0 ? (
+                  filteredLogs.map((item, index) => (
+                    <TimelineData
+                      notes={false}
+                      value={item}
+                      date={null}
+                      key={index}
+                      caseDataId={id}
+                      GetLogsById={GetLogsById}
+                    />
                   ))
                 ) : (
                   <TimelineData
                     notes={true}
-                    value={"No Data"}
+                    value={
+                      caseHistoryTabs === 0
+                        ? "No Emails"
+                        : caseHistoryTabs === 1
+                        ? "No Sms"
+                        : "No Data"
+                    }
                     date={null}
                     caseData={caseData}
                   />
