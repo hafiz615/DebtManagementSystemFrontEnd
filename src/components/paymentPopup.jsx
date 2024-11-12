@@ -25,17 +25,6 @@ const lineStyle = {
   margin: "1rem 0",
 };
 
-const inputStyling = {
-  backgroundColor: Colors.BG_LIGHT_GRAY,
-  height: "2.5rem",
-  color: Colors.DIM_LIGHT_GRAY,
-  paddingLeft: "1rem",
-  border: "none",
-  outline: "none",
-  borderRadius: "5px",
-  width: "10rem",
-};
-
 export default function PaymentPopup({
   data,
   handleClose,

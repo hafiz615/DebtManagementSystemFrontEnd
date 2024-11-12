@@ -54,6 +54,7 @@ import TextEditor from "./textEditor";
 import PaynoteForm from "./caseDetail/paynoteForm";
 import CommissionDetails from "./caseDetail/commissionDetails";
 import Strategy3choices from "./strategy3choices";
+import DebtorPlan from "./debtorPlan";
 
 export default function MuiModels({
   buttonName,
@@ -616,6 +617,17 @@ export default function MuiModels({
           hoverColor={Colors.SKY_BLUE}
           onClick={handleOpen}
         />
+      ) : show === "debtorPaymentPlan" ? (
+        <TextButton
+          buttonText="Choose Debtor Plan"
+          boxShadow="none"
+          height="2.5rem"
+          width="12rem"
+          backgroundColor={Colors.SKY_BLUE}
+          fontColor={Colors.WHITE}
+          hoverColor={Colors.SKY_BLUE}
+          onClick={handleOpen}
+        />
       ) : (
         <Button onClick={handleOpen}>{buttonName}</Button>
       )}
@@ -923,6 +935,12 @@ export default function MuiModels({
               setConnectPayment={setConnectPayment}
               show={show}
               maxHeight={maxHeight}
+            />
+          ) : show === "debtorPaymentPlan" ? (
+            <DebtorPlan
+              caseData={caseData}
+              handleClose={handleClose}
+              GetCaseDetails={GetCaseDetails}
             />
           ) : (
             ""

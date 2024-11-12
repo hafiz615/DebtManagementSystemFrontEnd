@@ -1385,3 +1385,14 @@ export const PausePayments = async (id, pause, payload) => {
     return error;
   }
 };
+export const DebtorPaymentPlan = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/addPaymentPlan/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

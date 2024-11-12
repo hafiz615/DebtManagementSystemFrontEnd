@@ -484,9 +484,17 @@ function CaseDetail() {
                       display: "flex",
                       justifyContent: "flex-end",
                       alignItems: "center",
+                      gap: "10px",
                     }}
                     onClick={(e) => e.stopPropagation()}
                   >
+                    {value === "Debtor" && (
+                      <MuiModels
+                        show="debtorPaymentPlan"
+                        caseData={caseData}
+                        GetCaseDetails={GetCaseDetails}
+                      />
+                    )}
                     <Grid
                       sx={{
                         display: "inline-flex",
