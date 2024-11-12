@@ -19,11 +19,13 @@ import {
   TextField,
   Tooltip,
   styled,
+  Switch,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Colors } from "../../config/default";
 import {
+  FONT_SIZE_LARGE,
   FONT_SIZE_SMALL,
   PAGE_HEIGHT,
   UserListPage,
@@ -43,6 +45,7 @@ import {
   GetCaseById,
   GetCasePaymentById,
   GetLogs,
+  PausePayments,
 } from "../../services/services.js";
 import { isEmpty } from "lodash";
 import MuiModels from "../models.jsx";
@@ -117,7 +120,10 @@ function CaseDetail() {
   const [verifiedSenders, setVerified] = useState([]);
   const [caseHistoryTabs, setCaseHistoryTabs] = useState(0);
   const [logs, setLogs] = useState([]);
+  const [isChecked, setIsChecked] = useState(false);
   const { id } = useParams();
+  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
+
   const handleOpen = async () => {
     setOpen(true);
   };
@@ -140,6 +146,7 @@ function CaseDetail() {
     if (caseDetails?.status === 200) {
       GetLogsById(rowId);
       setCaseData(caseDetails?.data?.data);
+      setIsChecked(caseDetails?.data?.data?.creditorPaymentsProceed);
       dispatch(setCaseId(id));
       dispatch(setCaseCreditorId(caseDetails?.data?.data?.creditor?._id));
 
@@ -160,8 +167,8 @@ function CaseDetail() {
   };
   useEffect(() => {
     GetCaseDetails(id);
+    GetCasePaymentDetails(id);
   }, [id]);
-  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -189,13 +196,10 @@ function CaseDetail() {
     }
   };
 
-  useEffect(() => {
-    GetCasePaymentDetails(id);
-  }, [id]);
-
   const handleChangeModal = (e) => {
     setAddTaskModal(e.target.value);
   };
+
   const handleClicked = async () => {
     setNotesLoading(true);
     if (addTaskModal === "") {
@@ -214,6 +218,7 @@ function CaseDetail() {
       handleClose();
     }
   };
+
   const emailData = caseData?.debtor?.basicInformation;
   const AddSenderInformation = async () => {
     const params = {
@@ -232,6 +237,11 @@ function CaseDetail() {
       const errorMessage = SenderInfoResponse?.response?.data?.message;
       showToast(errorMessage, "error");
     }
+  };
+
+  const handleToggle = async (check) => {
+    setIsChecked(check);
+    const res = await PausePayments(id, check);
   };
 
   return (
@@ -371,7 +381,7 @@ function CaseDetail() {
             </div>
           </Grid>
 
-          <Grid item sx={{ marginTop: "1.5rem" }}>
+          <Grid item sx={{ marginTop: "1rem" }}>
             <Accordion
               sx={{
                 boxShadow: "none",
@@ -392,70 +402,127 @@ function CaseDetail() {
                   borderTopRightRadius: "10px",
                 }}
               >
-                <Box
-                  sx={{ borderBottom: 1, borderColor: "divider" }}
-                  onClick={(event) => event.stopPropagation()}
+                <div
+                  style={{
+                    display: "flex",
+                    width: "100%",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
                 >
-                  <Tabs
-                    value={value}
-                    onChange={handleChange}
-                    TabIndicatorProps={{
-                      style: {
-                        backgroundColor: Colors.SKY_BLUE,
-                      },
+                  <Box
+                    sx={{
+                      borderBottom: 1,
+                      borderColor: "divider",
+                      display: "flex",
+                      alignItems: "center",
                     }}
+                    onClick={(event) => event.stopPropagation()}
                   >
-                    <Tab
-                      sx={{
-                        fontWeight: "600",
-                        textTransform: "none",
-                        fontFamily: "Nunito",
+                    <Tabs
+                      value={value}
+                      onChange={handleChange}
+                      TabIndicatorProps={{
+                        style: {
+                          backgroundColor: Colors.SKY_BLUE,
+                        },
+                      }}
+                    >
+                      <Tab
+                        sx={{
+                          fontWeight: "600",
+                          textTransform: "none",
+                          fontFamily: "Nunito",
 
-                        "&.Mui-selected": {
-                          color: value ? Colors.SKY_BLUE : "inherit",
-                        },
-                      }}
-                      label="Debtor"
-                      value="Debtor"
-                    />
-                    <Tab
+                          "&.Mui-selected": {
+                            color: value ? Colors.SKY_BLUE : "inherit",
+                          },
+                        }}
+                        label="Debtor"
+                        value="Debtor"
+                      />
+                      <Tab
+                        sx={{
+                          fontWeight: "600",
+                          textTransform: "none",
+                          fontFamily: "Nunito",
+                          "&.Mui-selected": {
+                            color: value ? Colors.SKY_BLUE : "inherit",
+                          },
+                        }}
+                        label="Creditor"
+                        value="Creditor"
+                      />
+                      <Tab
+                        sx={{
+                          fontWeight: "600",
+                          textTransform: "none",
+                          fontFamily: "Nunito",
+                          "&.Mui-selected": {
+                            color: value ? Colors.SKY_BLUE : "inherit",
+                          },
+                        }}
+                        label="Other Creditors"
+                        value="Other Creditors"
+                      />
+                      <Tab
+                        sx={{
+                          fontWeight: "600",
+                          textTransform: "none",
+                          fontFamily: "Nunito",
+                          "&.Mui-selected": {
+                            color: value ? Colors.SKY_BLUE : "inherit",
+                          },
+                        }}
+                        label="Files"
+                        value="Files"
+                      />
+                    </Tabs>
+                  </Box>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Grid
                       sx={{
-                        fontWeight: "600",
-                        textTransform: "none",
-                        fontFamily: "Nunito",
-                        "&.Mui-selected": {
-                          color: value ? Colors.SKY_BLUE : "inherit",
-                        },
+                        display: "inline-flex",
+                        alignItems: "center",
+                        borderRadius: "10px",
+                        padding: "10px",
                       }}
-                      label="Creditor"
-                      value="Creditor"
-                    />
-                    <Tab
-                      sx={{
-                        fontWeight: "600",
-                        textTransform: "none",
-                        fontFamily: "Nunito",
-                        "&.Mui-selected": {
-                          color: value ? Colors.SKY_BLUE : "inherit",
-                        },
-                      }}
-                      label="Other Creditors"
-                      value="Other Creditors"
-                    />
-                    <Tab
-                      sx={{
-                        fontWeight: "600",
-                        textTransform: "none",
-                        fontFamily: "Nunito",
-                        "&.Mui-selected": {
-                          color: value ? Colors.SKY_BLUE : "inherit",
-                        },
-                      }}
-                      label="Files"
-                      value="Files"
-                    />
-                  </Tabs>
-                </Box>
+                    >
+                      <Grid item sx={{ mr: 1 }}>
+                        <Typography
+                          sx={{
+                            fontFamily: "Nunito",
+                            fontSize: FONT_SIZE_LARGE,
+                          }}
+                        >
+                          Funds transfer
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <Switch
+                          checked={isChecked}
+                          onChange={(e) => handleToggle(e.target.checked)}
+                          sx={{
+                            "& .MuiSwitch-switchBase.Mui-checked": {
+                              color: Colors.SKY_BLUE,
+                            },
+                            "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
+                              {
+                                backgroundColor: Colors.SKY_BLUE,
+                              },
+                          }}
+                        />
+                      </Grid>
+                    </Grid>
+                  </div>
+                </div>
               </AccordionSummary>
               <AccordionDetails
                 sx={{

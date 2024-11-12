@@ -49,7 +49,7 @@ export default function TimelineData({
     });
     return `${datePart} at ${timePart}`;
   }
-  console.log(value);
+
   return (
     <Timeline sx={{ padding: 0, margin: "0" }}>
       <TimelineItem>
