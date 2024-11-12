@@ -17,6 +17,7 @@ export default function PaymentSettlement({
   remainingAmount,
   totalAmount,
   isExempt,
+  errorMessage,
 }) {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:1240px)");
   const menuItems = [
@@ -152,7 +153,8 @@ export default function PaymentSettlement({
                           fontSize: "10px",
                         }}
                       >
-                        Payment Amount must be equal to remaining amount
+                        {errorMessage ||
+                          "Payment Amount must be equal to remaining amount"}
                       </Typography>
                     )}
                 </Hidden>
@@ -279,7 +281,8 @@ export default function PaymentSettlement({
                         width: "100%",
                       }}
                     >
-                      Payment Amount must be equal to remaining amount
+                      {errorMessage ||
+                        "Payment Amount must be equal to remaining amount"}
                     </Typography>
                   )}
               </Hidden>
