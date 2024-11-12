@@ -155,7 +155,6 @@ export default function DebtorDetailsCards({
           borderRadius: "10px",
           padding: "0px 10px",
           height: "13rem",
-          marginBottom: "0.5rem",
         }}
       >
         <div
@@ -180,6 +179,7 @@ export default function DebtorDetailsCards({
               justifyContent: "end",
             }}
           >
+            <PaymentCardDetails setConnectPayment={setConnectPayment} />
             <MuiModels
               show="debtorDetail"
               button="create"
@@ -191,7 +191,6 @@ export default function DebtorDetailsCards({
               connectPayment={connectPayment}
               setConnectPayment={setConnectPayment}
             />
-            <PaymentCardDetails setConnectPayment={setConnectPayment} />
           </span>
         </div>
         <div
