@@ -220,7 +220,11 @@ export default function DebtorDetailsCards({
                       color: Colors.DARK_GRAY,
                     }}
                   >
-                    {key === "SSID" ? "SSN" : formatKeys(key)}
+                    {key === "SSID"
+                      ? "SSN"
+                      : key === "address"
+                      ? "Street Address"
+                      : formatKeys(key)}
                   </Typography>
 
                   <Tooltip title={value} placement="top-end">
@@ -302,7 +306,11 @@ export default function DebtorDetailsCards({
                       color: Colors.DARK_GRAY,
                     }}
                   >
-                    {key === "EIN" ? key : formatKeys(key)}
+                    {key === "EIN"
+                      ? key
+                      : key === "businessCategory"
+                      ? "Business Type"
+                      : formatKeys(key)}
                   </Typography>
                   <Tooltip title={value} placement="top-end">
                     <Typography

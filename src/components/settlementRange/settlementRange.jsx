@@ -259,7 +259,7 @@ export default function SettlementRange() {
     });
   };
 
-  const tabs = ["Max Profit", "Lump Sum", "Percentage Recievable"];
+  const tabs = ["Fixed Amount", "Lump Sum", "Percentage Recievable"];
   const recommendations = ["recommendation 1"];
   const strat3Recommendations = ["recommendation 1"];
   const strat2Recommendations = ["lump Sum"];
@@ -1413,13 +1413,11 @@ export default function SettlementRange() {
                 title="Weekly Receivable Commission"
                 tooltip="Weekly payment Which we receive."
                 value={
-                  allData?.percentageReceivableCommissionAmount
-                    ? `$${formatAmountValue(
-                        allData?.percentageReceivableCommissionAmount
-                      )}`
+                  allData?.maxProfitCommission
+                    ? `$${formatAmountValue(allData?.maxProfitCommission)}`
                     : "No Data"
                 }
-                rawValue={allData?.percentageReceivableCommissionAmount}
+                rawValue={allData?.maxProfitCommission}
               />
             )}
             {strategyTab === 1 && (
@@ -1645,7 +1643,7 @@ export default function SettlementRange() {
                     fontWeight: "600",
                     height: "3.5rem",
                   }}
-                  label="Negotiation manager Weekly budget"
+                  label="Clients Weekly Budget"
                 />
                 {!scoresBackend && (
                   <AntTab
@@ -1655,7 +1653,7 @@ export default function SettlementRange() {
                       fontWeight: "600",
                       height: "3.5rem",
                     }}
-                    label="Weekly budget as per Bank statement"
+                    label="Clients Profit Margin"
                   />
                 )}
               </AntTabs>

@@ -606,7 +606,9 @@ export default function MuiModels({
             )
           }
         />
-      ) : show === "settlmentPayment" || buttonName === "settlmentPayment" ? (
+      ) : show === "settlmentPayment" ||
+        buttonName === "settlmentPayment" ||
+        show === "payments" ? (
         <TextButton
           buttonText="Choose Plan"
           boxShadow="none"

@@ -550,7 +550,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               : "",
             address: debtorBusinessDetails?.businessAddress,
           },
-          profitMargin: Number(profitMargin),
+          profitMargin: Number(profitMargin) || 20,
           contacts: debtorContacts,
           paymentToken: connectPayment?.paymentToken,
           paymentType: connectPayment?.paymentType,
