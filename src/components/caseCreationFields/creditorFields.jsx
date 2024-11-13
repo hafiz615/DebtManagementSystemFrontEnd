@@ -170,8 +170,8 @@ export default function CreditorFields({
               />
               <PaymentsTextFields
                 type="text"
-                label="Business Category*"
-                placeHolderValue="Enter Category"
+                label="Debt Type*"
+                placeHolderValue="Enter Debt Type"
                 width={smallScreen ? "100%" : "97%"}
                 value={
                   thisCaseData?.creditor?.businessInformation?.businessCategory
@@ -387,7 +387,6 @@ export default function CreditorFields({
                       : thisCaseData?.creditor?.basicInformation?.phone
                     : ""
                 }
-                // value={thisCaseData?.creditor?.basicInformation?.phone}
                 onChangeFunction={(e) => {
                   const numericValue = e.target.value.replace(/\D/g, "");
                   handleCaseDataChange(
@@ -469,7 +468,7 @@ export default function CreditorFields({
               marginLeft: "1rem",
             }}
           >
-            Last Funded Date
+            Contract Date
           </Typography>
           <PaymentsTextFields
             width={smallScreen ? "100%" : "97%"}
@@ -494,7 +493,7 @@ export default function CreditorFields({
 
         <Grid item xs={12} md={7} lg={8}>
           <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
-            Historical Range
+            Months to Pay off
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={6}>
@@ -509,6 +508,7 @@ export default function CreditorFields({
                 Minimum
               </Typography>
               <AmountTextField
+                placeHolderValue="Minimum"
                 value={thisCaseData?.creditor?.historicalRange?.minimum}
                 onChange={(e) =>
                   handleCaseDataChange(
@@ -537,6 +537,7 @@ export default function CreditorFields({
                 Maximum
               </Typography>
               <AmountTextField
+                placeHolderValue="Maximum"
                 value={thisCaseData?.creditor?.historicalRange?.maximum}
                 onChange={(e) =>
                   handleCaseDataChange(
@@ -595,8 +596,8 @@ export default function CreditorFields({
 
           <PaymentsTextFields
             type="text"
-            label="Purchased Percentage"
-            placeHolderValue="Enter Purchased Percentage"
+            label="Purchased Percentage %"
+            placeHolderValue="Enter Purchased Percentage %"
             width={smallScreen ? "100%" : "97%"}
             value={thisCaseData?.contractDetails?.purchased_percentage}
             onChangeFunction={(e) =>

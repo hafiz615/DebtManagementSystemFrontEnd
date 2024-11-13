@@ -44,7 +44,7 @@ export default function PaymentProcess({ feePayment, setFeePayment, border }) {
         >
           <FormControlLabel
             value="paidViaCash"
-            label="Via Cash"
+            label="Pay in full"
             control={<SkyBlueRadio />}
             sx={{
               marginRight: ".5rem",
@@ -52,15 +52,7 @@ export default function PaymentProcess({ feePayment, setFeePayment, border }) {
           />
           <FormControlLabel
             value="toPay"
-            label="To Pay"
-            control={<SkyBlueRadio />}
-            sx={{
-              marginRight: ".5rem",
-            }}
-          />
-          <FormControlLabel
-            value="paidViaThirdParty"
-            label="Third Party"
+            label="Pay weekly"
             control={<SkyBlueRadio />}
             sx={{
               marginRight: ".5rem",

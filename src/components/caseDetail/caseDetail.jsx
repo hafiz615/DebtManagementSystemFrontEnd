@@ -34,7 +34,7 @@ import AnalyticsAccordion from "./analyticsAccordion";
 import AboutAccordion from "./aboutAccordion";
 import TaskAccordion from "./tasksAccordion";
 import CustomFieldsAccordion from "./customFieldsAccordion";
-import TransactionAccordion from "./transactionAccordion";
+import TransactionAccordion from "./transactionDetail.jsx";
 import CreditorsDetailCards from "./creditorsDetailCards.jsx";
 import DebtorDetailsCards from "./debtorDetailCards.jsx";
 import TimelineData from "./timelineData.jsx";
@@ -54,6 +54,7 @@ import TextButton from "../button.jsx";
 import { setCaseCreditorId, setCaseId } from "../../redux/action/action.js";
 import CaseFileCard from "./caseFileCard.jsx";
 import { useToast } from "../../toast/toastContext.jsx";
+import TransactionDetails from "./transactionDetail.jsx";
 
 const style = {
   position: "absolute",
@@ -477,6 +478,18 @@ function CaseDetail() {
                         label="Files"
                         value="Files"
                       />
+                      <Tab
+                        sx={{
+                          fontWeight: "600",
+                          textTransform: "none",
+                          fontFamily: "Nunito",
+                          "&.Mui-selected": {
+                            color: value ? Colors.SKY_BLUE : "inherit",
+                          },
+                        }}
+                        label="Transactions"
+                        value="Transactions"
+                      />
                     </Tabs>
                   </Box>
                   <div
@@ -484,7 +497,7 @@ function CaseDetail() {
                       display: "flex",
                       justifyContent: "flex-end",
                       alignItems: "center",
-                      gap: "10px",
+                      paddingRight: "10px",
                     }}
                     onClick={(e) => e.stopPropagation()}
                   >
@@ -495,40 +508,52 @@ function CaseDetail() {
                         GetCaseDetails={GetCaseDetails}
                       />
                     )}
-                    <Grid
-                      sx={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        borderRadius: "10px",
-                        padding: "10px",
-                      }}
-                    >
-                      <Grid item sx={{ mr: 1 }}>
-                        <Typography
-                          sx={{
-                            fontFamily: "Nunito",
-                            fontSize: FONT_SIZE_LARGE,
-                          }}
-                        >
-                          Funds transfer
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Switch
-                          checked={isChecked}
-                          onChange={(e) => handleToggle(e.target.checked)}
-                          sx={{
-                            "& .MuiSwitch-switchBase.Mui-checked": {
-                              color: Colors.SKY_BLUE,
-                            },
-                            "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
-                              {
-                                backgroundColor: Colors.SKY_BLUE,
+                    {value === "Transactions" && (
+                      <MuiModels
+                        width="70vw"
+                        show="payments"
+                        remainingAmount={caseData?.remaining.toString()}
+                        data={caseData}
+                        GetCaseDetails={GetCaseDetails}
+                        GetCasePaymentDetails={GetCasePaymentDetails}
+                      />
+                    )}
+                    {value === "Creditor" && (
+                      <Grid
+                        sx={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          borderRadius: "10px",
+                          padding: "10px",
+                        }}
+                      >
+                        <Grid item sx={{ mr: 1 }}>
+                          <Typography
+                            sx={{
+                              fontFamily: "Nunito",
+                              fontSize: FONT_SIZE_LARGE,
+                            }}
+                          >
+                            Funds transfer
+                          </Typography>
+                        </Grid>
+                        <Grid item>
+                          <Switch
+                            checked={isChecked}
+                            onChange={(e) => handleToggle(e.target.checked)}
+                            sx={{
+                              "& .MuiSwitch-switchBase.Mui-checked": {
+                                color: Colors.SKY_BLUE,
                               },
-                          }}
-                        />
+                              "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
+                                {
+                                  backgroundColor: Colors.SKY_BLUE,
+                                },
+                            }}
+                          />
+                        </Grid>
                       </Grid>
-                    </Grid>
+                    )}
                   </div>
                 </div>
               </AccordionSummary>
@@ -675,6 +700,14 @@ function CaseDetail() {
                         );
                       })}
                     </Grid>
+                  ) : value === "Transactions" ? (
+                    <TransactionDetails
+                      caseData={caseData}
+                      loading={isPaymentLoading}
+                      paymentDetails={paymentDetails}
+                      GetCaseDetails={GetCaseDetails}
+                      GetCasePaymentDetails={GetCasePaymentDetails}
+                    />
                   ) : (
                     <CaseFileCard
                       caseData={caseData}
@@ -700,13 +733,6 @@ function CaseDetail() {
                 <CustomFieldsAccordion
                   caseData={caseData}
                   GetCaseDetails={GetCaseDetails}
-                />
-                <TransactionAccordion
-                  caseData={caseData}
-                  loading={isPaymentLoading}
-                  paymentDetails={paymentDetails}
-                  GetCaseDetails={GetCaseDetails}
-                  GetCasePaymentDetails={GetCasePaymentDetails}
                 />
               </Grid>
 

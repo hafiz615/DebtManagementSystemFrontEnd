@@ -43,15 +43,6 @@ function DebtorDetails({
     setSearchText(value);
     SearchFields(value);
   };
-  const [dots, setDots] = useState("");
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setDots((prevDots) => (prevDots.length < 3 ? prevDots + "." : ""));
-    }, 500); // Change dots every 500ms
-
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <>

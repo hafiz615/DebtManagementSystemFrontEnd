@@ -47,7 +47,7 @@ function TransactionRow({ data, heading, GetCasePaymentDetails }) {
   };
 
   const typographyStyle = {
-    fontSize: "11px",
+    fontSize: "13px",
     fontFamily: "Nunito",
     fontWeight: "500",
     width: "25%",
@@ -68,8 +68,10 @@ function TransactionRow({ data, heading, GetCasePaymentDetails }) {
         <Typography
           sx={{
             color: Colors.BLACK,
-            fontWeight: "700",
+            fontWeight: "600",
+            fontSize: "13px",
             fontFamily: "Nunito",
+            m: "10px 0px",
           }}
         >
           {heading}
@@ -88,10 +90,10 @@ function TransactionRow({ data, heading, GetCasePaymentDetails }) {
             key={index}
             style={{
               display: "flex",
-              gap: "10px",
               alignItems: "center",
               height: "15%",
               width: "100%",
+              justifyContent: "space-between",
               color: heading ? Colors.BLACK : colorScheme,
             }}
           >
@@ -99,23 +101,14 @@ function TransactionRow({ data, heading, GetCasePaymentDetails }) {
             <p style={typographyStyle}>
               {formatDollarAmount(item?.amount) || "-"}
             </p>
-            <p
-              style={{
-                display: "flex",
-                fontSize: "11px",
-                fontFamily: "Nunito",
-                fontWeight: "500",
-                justifyContent: "space-between",
-                alignItems: "center",
-                width: "50%",
-              }}
-            >
+            <p style={typographyStyle}>
               {heading
                 ? item?.status || "-"
                 : item?.type === "payment"
                 ? "Capture"
                 : capitalizeFirstLetter(item?.type) || "-"}
-
+            </p>
+            <p style={typographyStyle}>
               {(item?.type === "authorization" &&
                 item?.authorized === "Failed") ||
               (item?.type === "payment" && item?.captured === "Failed") ? (
