@@ -243,6 +243,12 @@ function CaseDetail() {
   const handleToggle = async (check) => {
     setIsChecked(check);
     const res = await PausePayments(id, check);
+    if (res?.status === 200) {
+      showToast(res?.data?.message, "success");
+    } else if (res?.response?.status === 400) {
+      const errorMessage = res?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
   };
 
   return (
