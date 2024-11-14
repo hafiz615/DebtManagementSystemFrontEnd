@@ -33,6 +33,15 @@ export default function AboutAccordion({ caseDetails, GetCaseDetails }) {
       name: "Paid Debt",
       value: formatDollarAmount(caseDetails?.paidAmount) || "-",
     },
+    {
+      name: "Amount Delivered To Creditor",
+      value: formatDollarAmount(caseDetails?.amountDeliveredToCreditor) || "-",
+    },
+    {
+      name: "Amount Not Delivered To Creditor",
+      value:
+        formatDollarAmount(caseDetails?.amountNotDeliveredToCreditor) || "-",
+    },
   ];
   return (
     <Accordion

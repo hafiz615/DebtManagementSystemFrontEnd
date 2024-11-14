@@ -24,6 +24,7 @@ import {
   ChevronRight,
   People,
   Handyman,
+  Mail,
 } from "@mui/icons-material";
 
 import ListItemText from "@mui/material/ListItemText";
@@ -140,6 +141,9 @@ export default function PersistentDrawerLeft({ children }) {
         case "Pipelines":
           navigate("/pipelines");
           break;
+        case "Inbox":
+          navigate("/inbox");
+          break;
         default:
           break;
       }
@@ -149,11 +153,9 @@ export default function PersistentDrawerLeft({ children }) {
   }, [selectedItem, navigate]);
 
   const menuItems = [
-    // { text: "Clients", icon: <AccountCircle /> },
-    // { text: "Creditors", icon: <People /> },
     { text: "Pipelines", icon: <Handyman /> },
     { text: "Settings", icon: <Settings /> },
-    // { text: "Analytics", icon: <Window /> },
+    { text: "Inbox", icon: <Mail /> },
   ];
 
   if (generalPermissions?.viewHomeScreen) {
@@ -301,7 +303,7 @@ export default function PersistentDrawerLeft({ children }) {
         </Box>
 
         <List>
-          {menuItems.map(({ text, icon }, index) => (
+          {menuItems?.map(({ text, icon }, index) => (
             <ListItem key={text} disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 onClick={() => setSelectedItem(text)}

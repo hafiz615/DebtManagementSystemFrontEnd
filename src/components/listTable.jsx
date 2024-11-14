@@ -186,7 +186,6 @@ export default function ListTable({
           sx={{
             flexGrow: 1,
             overflowY: "auto",
-            // maxHeight: defaultHeight || accordionHeight,
             ...ScrollbarStyles,
           }}
         >

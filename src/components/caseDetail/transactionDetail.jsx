@@ -21,6 +21,7 @@ export default function TransactionDetails({
         borderRadius: "10px",
         padding: "0px 10px",
         height: "13rem",
+        marginBottom: "0.5rem",
       }}
     >
       <p

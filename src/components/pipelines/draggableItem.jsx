@@ -180,7 +180,7 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
         <Typography
           sx={{ fontSize: FONT_SIZE_LARGE, fontFamily: "Nunito", mb: "5px" }}
         >
-          {item?.caseOwner}
+          {item?.negotiator}
         </Typography>
       </div>
       <div>

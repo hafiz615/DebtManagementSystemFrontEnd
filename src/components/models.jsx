@@ -495,9 +495,15 @@ export default function MuiModels({
           }
           disabled={disabled}
         />
-      ) : buttonName === "sendEmailCase" ? (
+      ) : buttonName === "sendEmailCase" || buttonName === "composeEmail" ? (
         <TextButton
-          buttonText={replyButton ? "Reply" : "Send Email"}
+          buttonText={
+            replyButton
+              ? "Reply"
+              : buttonName === "composeEmail"
+              ? "Compose Email"
+              : "Send Email"
+          }
           height="2.5rem"
           width={replyButton ? "5rem" : "9rem"}
           onClick={handleOpen}
