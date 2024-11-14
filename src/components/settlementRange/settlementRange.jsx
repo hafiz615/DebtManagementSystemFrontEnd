@@ -1352,7 +1352,13 @@ export default function SettlementRange() {
               title="Weekly Profit Excluding Payments"
               tooltip="Weekly profit by not making the creditor payments."
               value={
-                apiData?.true_profit
+                optionValue === 1
+                  ? apiData?.option_2_stats?.true_profit
+                    ? `$${new Intl.NumberFormat()?.format(
+                        apiData?.option_2_stats?.true_profit
+                      )}`
+                    : "No Data"
+                  : apiData?.true_profit
                   ? `$${formatAmountValue(apiData?.true_profit)}`
                   : "No Data"
               }
@@ -1364,7 +1370,13 @@ export default function SettlementRange() {
               title="Profitability Excluding Payments"
               tooltip="Measure of how much profit your business makes after expenses."
               value={
-                apiData?.profitability
+                optionValue === 1
+                  ? apiData?.option_2_stats?.profitability
+                    ? `${new Intl.NumberFormat()?.format(
+                        apiData?.option_2_stats?.profitability
+                      )}%`
+                    : "No Data"
+                  : apiData?.profitability
                   ? `${new Intl.NumberFormat()?.format(
                       apiData?.profitability
                     )}%`
@@ -1377,7 +1389,13 @@ export default function SettlementRange() {
               title="Weekly Profit Including Payments"
               tooltip="Weekly profit after making the creditor payments."
               value={
-                apiData?.weekly_profit
+                optionValue === 1
+                  ? apiData?.option_2_stats?.weekly_profit
+                    ? `$${new Intl.NumberFormat()?.format(
+                        apiData?.option_2_stats?.weekly_profit
+                      )}`
+                    : "No Data"
+                  : apiData?.weekly_profit
                   ? `$${formatAmountValue(apiData?.weekly_profit)}`
                   : "No Data"
               }
@@ -1388,7 +1406,15 @@ export default function SettlementRange() {
               title="Profitability Including payments"
               tooltip="Profitability Including the creditor Payment"
               value={
-                apiData?.profitability_without_creditor_payments
+                optionValue === 1
+                  ? apiData?.option_2_stats
+                      ?.profitability_without_creditor_payments
+                    ? `${new Intl.NumberFormat()?.format(
+                        apiData?.option_2_stats
+                          ?.profitability_without_creditor_payments
+                      )}%`
+                    : "No Data"
+                  : apiData?.profitability_without_creditor_payments
                   ? `${new Intl.NumberFormat()?.format(
                       apiData?.profitability_without_creditor_payments
                     )}%`
@@ -1401,7 +1427,13 @@ export default function SettlementRange() {
               title="Weekly True Revenue"
               tooltip="Total revenue earned by the business each monthly."
               value={
-                apiData?.weekly_true_revenue
+                optionValue === 1
+                  ? apiData?.option_2_stats?.weekly_true_revenue
+                    ? `$${new Intl.NumberFormat()?.format(
+                        apiData?.option_2_stats?.weekly_true_revenue
+                      )}`
+                    : "No Data"
+                  : apiData?.weekly_true_revenue
                   ? `$${formatAmountValue(apiData?.weekly_true_revenue)}`
                   : "No Data"
               }
@@ -1645,17 +1677,16 @@ export default function SettlementRange() {
                   }}
                   label="Clients Weekly Budget"
                 />
-                {!scoresBackend && (
-                  <AntTab
-                    sx={{
-                      bgcolor: Colors.WHITE,
-                      width: "max-content",
-                      fontWeight: "600",
-                      height: "3.5rem",
-                    }}
-                    label="Clients Profit Margin"
-                  />
-                )}
+
+                <AntTab
+                  sx={{
+                    bgcolor: Colors.WHITE,
+                    width: "max-content",
+                    fontWeight: "600",
+                    height: "3.5rem",
+                  }}
+                  label="Clients Profit Margin"
+                />
               </AntTabs>
             </Grid>
           )}

@@ -19,6 +19,7 @@ import PipelinesPage from "./pages/pipelinePage";
 import SettlementRangePage from "./pages/settlementRangePage";
 import SettlementRange from "./components/settlementRange/settlementRange";
 import UpdateCase from "./pages/updateCase";
+import InboxPage from "./pages/inboxPage";
 // import PaymentsCardPage from "./pages/paymentPage";
 function App() {
   return (
@@ -107,6 +108,15 @@ function App() {
         element={
           <Protected>
             <DashboardPage />
+          </Protected>
+        }
+      />
+      <Route
+        exact
+        path="/inbox"
+        element={
+          <Protected>
+            <InboxPage />
           </Protected>
         }
       />

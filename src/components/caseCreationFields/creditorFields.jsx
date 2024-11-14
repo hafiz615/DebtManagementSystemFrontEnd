@@ -507,9 +507,25 @@ export default function CreditorFields({
               >
                 Minimum
               </Typography>
-              <AmountTextField
-                placeHolderValue="Minimum"
-                value={thisCaseData?.creditor?.historicalRange?.minimum}
+              <input
+                style={{
+                  border:
+                    hasError("historicalRange.minimum") && showErrors
+                      ? "2px solid red"
+                      : "none",
+                  outline: "none",
+                  backgroundColor: Colors.BG_LIGHT_GRAY,
+                  color: Colors.DIM_LIGHT_GRAY,
+                  height: "2.5rem",
+                  width: "100%",
+                  paddingLeft: "1rem",
+                  borderRadius: "5px",
+                  display: "flex",
+                  fontFamily: "Nunito",
+                  justifyContent: "center",
+                }}
+                placeholder="Minimum"
+                value={thisCaseData?.creditor?.historicalRange?.minimum || ""}
                 onChange={(e) =>
                   handleCaseDataChange(
                     caseIndex,
@@ -518,11 +534,6 @@ export default function CreditorFields({
                   )
                 }
                 onKeyDown={handleNumberInput}
-                border={
-                  hasError("historicalRange.minimum") && showErrors
-                    ? "2px solid red"
-                    : "none !important"
-                }
               />
             </Grid>
             <Grid item xs={6}>
@@ -536,9 +547,25 @@ export default function CreditorFields({
               >
                 Maximum
               </Typography>
-              <AmountTextField
-                placeHolderValue="Maximum"
-                value={thisCaseData?.creditor?.historicalRange?.maximum}
+              <input
+                style={{
+                  border:
+                    hasError("historicalRange.maximum") && showErrors
+                      ? "2px solid red"
+                      : "none",
+                  outline: "none",
+                  backgroundColor: Colors.BG_LIGHT_GRAY,
+                  color: Colors.DIM_LIGHT_GRAY,
+                  height: "2.5rem",
+                  width: "100%",
+                  paddingLeft: "1rem",
+                  borderRadius: "5px",
+                  display: "flex",
+                  fontFamily: "Nunito",
+                  justifyContent: "center",
+                }}
+                placeholder="Maximum"
+                value={thisCaseData?.creditor?.historicalRange?.maximum || ""}
                 onChange={(e) =>
                   handleCaseDataChange(
                     caseIndex,
@@ -547,11 +574,6 @@ export default function CreditorFields({
                   )
                 }
                 onKeyDown={handleNumberInput}
-                border={
-                  hasError("historicalRange.maximum") && showErrors
-                    ? "2px solid red"
-                    : "none !important"
-                }
               />
             </Grid>
           </Grid>

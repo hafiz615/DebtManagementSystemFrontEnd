@@ -352,7 +352,7 @@ export default function CreditorsDetailCards({
             color: Colors.DARK_GRAY,
           }}
         >
-          Historical Range
+          Months to Pay off
         </p>
         <div
           style={{
