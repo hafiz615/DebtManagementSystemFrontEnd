@@ -12,6 +12,7 @@ function PaymentDetails({
   totalAmount,
   isExempt,
   errorMessage,
+  planExists,
 }) {
   return (
     <Grid
@@ -37,6 +38,7 @@ function PaymentDetails({
         remainingAmount={remainingAmount}
         isExempt={isExempt}
         errorMessage={errorMessage}
+        planExists={planExists}
       />
     </Grid>
   );

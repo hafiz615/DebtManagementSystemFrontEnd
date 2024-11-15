@@ -5,9 +5,13 @@ import { Box, Grid, Typography } from "@mui/material";
 import PaymentDetails from "./caseCreation/paymentDetails";
 import TextButton from "./button";
 import { Colors } from "../config/default";
-import { DebtorPaymentPlan } from "../services/services";
+import {
+  CancelDebtorPaymentPlan,
+  DebtorPaymentPlan,
+} from "../services/services";
 import { useToast } from "../toast/toastContext";
 import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../constants/appConstants";
+import DeletePrompt from "./deletePrompt";
 
 const lineStyle = {
   width: "100%",
@@ -17,6 +21,7 @@ const lineStyle = {
 };
 
 export default function DebtorPlan({ caseData, handleClose, GetCaseDetails }) {
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [totalAmount, setTotalAmount] = useState();
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
@@ -129,6 +134,19 @@ export default function DebtorPlan({ caseData, handleClose, GetCaseDetails }) {
     prevAmountsRef.current = currentAmounts;
   }, [newDataList, remaining]);
 
+  const handleDeletePayment = async () => {
+    setDeleteLoading(true);
+    const res = await CancelDebtorPaymentPlan(caseData?.debtor?._id);
+    if (res?.status === 200) {
+      showToast(res?.data?.message, "success");
+      GetCaseDetails(caseData?._id);
+    } else {
+      const errorMessage = res?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setDeleteLoading(false);
+  };
+
   return (
     <div>
       <Typography
@@ -138,7 +156,19 @@ export default function DebtorPlan({ caseData, handleClose, GetCaseDetails }) {
           fontSize: FONT_SIZE_XL,
         }}
       >
-        Settlement Plan Automation
+        Settlement Plan Automation{" "}
+        {caseData?.debtor?.intervals?.length > 0 && (
+          <span
+            style={{
+              fontFamily: "Nunito",
+              fontWeight: "600",
+              fontSize: FONT_SIZE_XL,
+              color: Colors.SKY_BLUE,
+            }}
+          >
+            (Plan Already In Progress)
+          </span>
+        )}
       </Typography>
       <Box sx={lineStyle} />
 
@@ -169,9 +199,19 @@ export default function DebtorPlan({ caseData, handleClose, GetCaseDetails }) {
         setNewDataList={setNewDataList}
         totalAmount={totalAmount}
         errorMessage="Payment Amount must be equal to total commission"
+        planExists={caseData?.debtor?.intervals?.length}
       />
 
       <Grid container sx={{ mt: "1rem", justifyContent: "right", gap: "10px" }}>
+        {caseData?.debtor?.intervals?.length > 0 && (
+          <DeletePrompt
+            buttonName="Renegotiate"
+            heading="Delete Debtor Payment Plan"
+            text="Are you sure want to delete this debtor payment plan?"
+            handleConfirm={handleDeletePayment}
+            loading={deleteLoading}
+          />
+        )}
         <TextButton
           buttonText="Save"
           height="2rem"

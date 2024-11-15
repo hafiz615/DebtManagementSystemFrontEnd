@@ -714,6 +714,7 @@ export default function SettlementRange() {
       setJustification(response?.data?.data?.justifications);
       setJustificationLoading(false);
     }
+    setJustificationLoading(false);
   };
 
   useEffect(() => {

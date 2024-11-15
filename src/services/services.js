@@ -1396,3 +1396,23 @@ export const DebtorPaymentPlan = async (id, payload) => {
     return error;
   }
 };
+export const CancelPaymentPlan = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/payment/cancelCasePaymentPlan/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const CancelDebtorPaymentPlan = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/payment/cancelDebtorPaymentPlan/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

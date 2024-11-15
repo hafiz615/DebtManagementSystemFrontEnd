@@ -13,10 +13,15 @@ import PaymentDetails from "./caseCreation/paymentDetails";
 import PaymentProcess from "./radioPayment";
 import TextButton from "./button";
 import { Colors } from "../config/default";
-import { GetWeeklyAndTotalCommission, UpdateCase } from "../services/services";
+import {
+  CancelPaymentPlan,
+  GetWeeklyAndTotalCommission,
+  UpdateCase,
+} from "../services/services";
 import { useToast } from "../toast/toastContext";
 import { calculateNextWeek } from "../common";
 import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../constants/appConstants";
+import DeletePrompt from "./deletePrompt";
 
 const lineStyle = {
   width: "100%",
@@ -41,6 +46,7 @@ export default function PaymentPopup({
   const [feePayment, setFeePayment] = useState(data?.feePayment || "toPay");
   const [totalAmount, setTotalAmount] = useState();
   const [loading, setLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const { showToast } = useToast();
   const { id } = useParams();
   const today = new Date().toISOString().split("T")[0];
@@ -154,6 +160,21 @@ export default function PaymentPopup({
     }
   }, [newDataList, remaining]);
 
+  const handleDeletePayment = async () => {
+    setDeleteLoading(true);
+    const updateCaseId = caseId || data?._id;
+    const res = await CancelPaymentPlan(updateCaseId);
+    if (res?.status === 200) {
+      showToast(res?.data?.message, "success");
+      GetCaseDetails && GetCaseDetails(id);
+      GetCasePaymentDetails && GetCasePaymentDetails(id);
+    } else {
+      const errorMessage = res?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setDeleteLoading(false);
+  };
+
   return (
     <div>
       <Typography
@@ -163,7 +184,19 @@ export default function PaymentPopup({
           fontSize: FONT_SIZE_XL,
         }}
       >
-        Settlement Plan Automation
+        Settlement Plan Automation{" "}
+        {data?.intervals?.length > 0 && (
+          <span
+            style={{
+              fontFamily: "Nunito",
+              fontWeight: "600",
+              fontSize: FONT_SIZE_XL,
+              color: Colors.SKY_BLUE,
+            }}
+          >
+            (Plan Already In Progress)
+          </span>
+        )}
       </Typography>
       <Box sx={lineStyle} />
 
@@ -194,6 +227,7 @@ export default function PaymentPopup({
         setNewDataList={setNewDataList}
         totalAmount={totalAmount}
         isExempt={isExempt}
+        planExists={data?.intervals?.length}
       />
 
       <div style={{ display: "flex", margin: "1rem 0rem" }}>
@@ -220,6 +254,16 @@ export default function PaymentPopup({
       <PaymentProcess feePayment={feePayment} setFeePayment={setFeePayment} />
 
       <Grid container sx={{ mt: "1rem", justifyContent: "right", gap: "10px" }}>
+        {data?.intervals?.length > 0 && (
+          <DeletePrompt
+            buttonName="Renegotiate"
+            heading="Delete Payment Plan"
+            text="Are you sure want to delete this payment plan?"
+            handleConfirm={handleDeletePayment}
+            loading={deleteLoading}
+          />
+        )}
+
         <TextButton
           buttonText="Save"
           height="2rem"

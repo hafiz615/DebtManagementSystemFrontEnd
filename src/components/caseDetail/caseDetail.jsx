@@ -128,14 +128,18 @@ function CaseDetail() {
   const handleOpen = async () => {
     setOpen(true);
   };
-  const tabs = ["Email", "Sms", "Case"];
+  const tabs = ["All", "Email", "Sms", "Case Logs", "Notes"];
   const filteredLogs = logs?.filter((item) => {
     if (caseHistoryTabs === 0) {
-      return item?.Action === "EMAIL";
+      return item?.Action;
     } else if (caseHistoryTabs === 1) {
-      return item?.Action === "SMS";
+      return item?.Action === "EMAIL";
     } else if (caseHistoryTabs === 2) {
-      return item?.Action !== "EMAIL" && item?.Action !== "SMS";
+      return item?.Action === "SMS";
+    } else if (caseHistoryTabs === 3) {
+      return item?.Action?.startsWith("Case");
+    } else if (caseHistoryTabs === 4) {
+      return item?.Action === "Add Notes";
     }
     return false;
   });
@@ -832,7 +836,7 @@ function CaseDetail() {
                 </AntTabs>
 
                 {filteredLogs?.length > 0 ? (
-                  filteredLogs.map((item, index) => (
+                  filteredLogs?.map((item, index) => (
                     <TimelineData
                       notes={false}
                       value={item}
@@ -846,10 +850,12 @@ function CaseDetail() {
                   <TimelineData
                     notes={true}
                     value={
-                      caseHistoryTabs === 0
+                      caseHistoryTabs === 1
                         ? "No Emails"
-                        : caseHistoryTabs === 1
+                        : caseHistoryTabs === 2
                         ? "No Sms"
+                        : caseHistoryTabs === 4
+                        ? "No Notes"
                         : "No Data"
                     }
                     date={null}
