@@ -257,8 +257,8 @@ export default function PaymentPopup({
         {data?.intervals?.length > 0 && (
           <DeletePrompt
             buttonName="Renegotiate"
-            heading="Delete Payment Plan"
-            text="Are you sure want to delete this payment plan?"
+            heading="Cancel Payment Plan"
+            text="Are you sure want to Cancel this payment plan?"
             handleConfirm={handleDeletePayment}
             loading={deleteLoading}
           />

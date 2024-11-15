@@ -19,6 +19,7 @@ export default function TimelineData({
   caseDataId,
   GetLogsById,
   caseData,
+  iconValue,
 }) {
   const formattedDate = new Date(date);
 
@@ -54,11 +55,22 @@ export default function TimelineData({
         <TimelineOppositeContent sx={{ flex: 0, padding: 1, margin: 0 }} />
         <TimelineSeparator>
           <TimelineConnector />
-          {value?.Action === "EMAIL" ? (
+
+          {iconValue === 0 ? (
+            value?.Action === "EMAIL" ? (
+              <Email />
+            ) : value?.Action === "SMS" ? (
+              <Sms />
+            ) : value?.Action === "Add Notes" ? (
+              <NoteAlt />
+            ) : (
+              <Work />
+            )
+          ) : iconValue === 1 ? (
             <Email />
-          ) : value?.Action === "SMS" ? (
+          ) : iconValue === 2 ? (
             <Sms />
-          ) : value?.Action === "Add Notes" ? (
+          ) : iconValue === 3 ? (
             <NoteAlt />
           ) : (
             <Work />
