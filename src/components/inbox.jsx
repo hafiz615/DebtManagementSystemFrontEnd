@@ -3,7 +3,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Colors } from "../config/default";
-import { PAGE_HEIGHT, TEXT_EDITOR_KEY } from "../constants/appConstants";
+import {
+  FONT_SIZE_MEDIUM,
+  PAGE_HEIGHT,
+  TEXT_EDITOR_KEY,
+} from "../constants/appConstants";
 import ScrollbarStyles from "./customScroll";
 import {
   Grid,
@@ -23,11 +27,27 @@ import { Editor } from "@tinymce/tinymce-react";
 const users = [
   {
     name: "Mike Nelson",
+    lastMessage: "Now",
     messages: ["Hi, how are you?", "I'm good, thanks!"],
   },
-  { name: "Sofia Jackson", messages: ["Hello there!"] },
-  { name: "James Smith", messages: ["Hey, are you free tomorrow?"] },
-  { name: "Natasha Miller", messages: ["Good morning!"] },
+  { name: "Sofia Jackson", lastMessage: "1h", messages: ["Hello there!"] },
+  { name: "Mathew Jackson", lastMessage: "1h", messages: ["Hello there!"] },
+  { name: "Jeremy Clarkson", lastMessage: "1h", messages: ["Hello there!"] },
+  { name: "Aftab Qarshi", lastMessage: "1h", messages: ["Hello there!"] },
+  { name: "Marshal Mathers", lastMessage: "1h", messages: ["Hello there!"] },
+  { name: "John Snow", lastMessage: "1h", messages: ["Hello there!"] },
+  {
+    name: "James Smith",
+    lastMessage: "1h",
+    messages: ["Hey, are you free tomorrow?"],
+  },
+  {
+    name: "Natasha Miller",
+    lastMessage: "12h",
+    messages: [
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at accumsan diam, et auctor est. Ut ut tortor lectus. Phasellus at sem dapibus, hendrerit nibh at, condimentum arcu. Vestibulum ante purus, vestibulum sit amet ultricies a, efficitur in mauris. Duis arcu metus, auctor quis faucibus vel, varius quis ligula. Aliquam erat volutpat. In sagittis sollicitudin enim, eu pharetra lorem ornare vel. Nulla mollis sagittis orci. Aenean vel nulla quis justo efficitur interdum nec id nulla. Sed sed lectus laoreet, placerat purus tempus, lobortis magna. Quisque egestas tristique lorem, in cursus massa molestie sed.",
+    ],
+  },
 ];
 
 function Inbox() {
@@ -37,10 +57,18 @@ function Inbox() {
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState("");
-  const dispatch = useDispatch();
 
   const handleKeyPress = (e) => {
     setSearchText(e.target.value);
+  };
+
+  const boxStyling = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "10px",
+    borderRadius: "8px",
+    cursor: "pointer",
   };
 
   return (
@@ -145,31 +173,44 @@ function Inbox() {
           >
             <Grid item xs={3}>
               <Card
-                variant="outlined"
-                style={{ padding: "10px", borderRadius: "8px", height: "100%" }}
+                sx={{
+                  padding: "10px",
+                  borderRadius: "8px",
+                  height: "75vh",
+                  overflowY: "auto",
+                  ...ScrollbarStyles,
+                }}
               >
                 {users.map((user, index) => (
                   <Box
                     key={index}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    padding="10px"
-                    borderRadius="8px"
                     onClick={() => setSelectedUser(user)}
                     sx={{
+                      ...boxStyling,
                       backgroundColor:
-                        selectedUser.name === user.name
-                          ? "#E3DFF5"
+                        selectedUser?.name === user?.name
+                          ? Colors.lIGHT_PURPLE
                           : "transparent",
-                      cursor: "pointer",
                     }}
                   >
                     <Typography
-                      variant="subtitle1"
-                      sx={{ fontFamily: "Nunito" }}
+                      sx={{ fontFamily: "Nunito", fontWeight: "600" }}
                     >
                       {user.name}
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontFamily: "Nunito",
+                        fontWeight: "600",
+                        width: "3rem",
+                        textAlign: "center",
+                        backgroundColor: Colors.lIGHT_PURPLE,
+                        borderRadius: "10px",
+                        fontSize: FONT_SIZE_MEDIUM,
+                        color: Colors.SKY_BLUE,
+                      }}
+                    >
+                      {user.lastMessage}
                     </Typography>
                   </Box>
                 ))}
@@ -178,13 +219,14 @@ function Inbox() {
 
             <Grid item xs={9}>
               <Card
-                variant="outlined"
                 style={{
-                  padding: "10px",
-                  borderRadius: "8px",
-                  height: "100%",
                   display: "flex",
                   flexDirection: "column",
+                  padding: "10px",
+                  borderRadius: "8px",
+                  height: "75vh",
+                  overflowY: "auto",
+                  ...ScrollbarStyles,
                 }}
               >
                 <Box
@@ -194,7 +236,10 @@ function Inbox() {
                   padding="10px"
                   style={{ backgroundColor: "#E3DFF5", borderRadius: "8px" }}
                 >
-                  <Typography variant="h6" sx={{ fontFamily: "Nunito" }}>
+                  <Typography
+                    variant="h6"
+                    sx={{ fontFamily: "Nunito", fontWeight: "700" }}
+                  >
                     {selectedUser.name}
                   </Typography>
                 </Box>
@@ -202,8 +247,7 @@ function Inbox() {
                 <Box
                   flex={1}
                   overflow="auto"
-                  padding="10px"
-                  style={{ marginTop: "10px" }}
+                  style={{ marginTop: "10px", padding: "10px" }}
                 >
                   {selectedUser.messages.map((message, index) => (
                     <Box
@@ -220,10 +264,7 @@ function Inbox() {
                           padding: "10px",
                         }}
                       >
-                        <Typography
-                          variant="body2"
-                          sx={{ fontFamily: "Nunito" }}
-                        >
+                        <Typography sx={{ fontFamily: "Nunito" }}>
                           {message}
                         </Typography>
                       </CardContent>
@@ -249,8 +290,8 @@ function Inbox() {
                     value={preview}
                     onEditorChange={(content) => setPreview(content)}
                   />
-                  <IconButton color="primary">
-                    <SendIcon />
+                  <IconButton sx={{ backgroundColor: Colors.SKY_BLUE }}>
+                    <SendIcon sx={{ color: Colors.WHITE }} />
                   </IconButton>
                 </Box>
               </Card>

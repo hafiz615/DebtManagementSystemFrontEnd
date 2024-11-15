@@ -530,7 +530,7 @@ export default function DebtorFields({
 
             <PaymentsTextFields
               type="number"
-              label="Profit Margin %*"
+              label="Profit Margin %"
               placeHolderValue="Profit Margin"
               width="98%"
               marginLeft=".4rem"

@@ -11,6 +11,15 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import Hidden from "@mui/material/Hidden";
 import { FONT_SIZE_LARGE } from "../../constants/appConstants";
 
+const formatDateForInput = (date) => {
+  if (!date) return "";
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 export default function PaymentSettlement({
   newDataList,
   setNewDataList,
@@ -18,6 +27,7 @@ export default function PaymentSettlement({
   totalAmount,
   isExempt,
   errorMessage,
+  planExists,
 }) {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:1240px)");
   const menuItems = [
@@ -62,7 +72,7 @@ export default function PaymentSettlement({
     const lastItem = newDataList[newDataList.length - 1];
     const newItem = {
       amount: "",
-      timePeriod: "Custom", // Use previous item's timePeriod if available
+      timePeriod: "Custom",
       startDate: calculateStartDate(
         lastItem,
         lastItem?.timePeriod || "Custom",
@@ -199,8 +209,8 @@ export default function PaymentSettlement({
               </Typography>
               <input
                 type="date"
-                placeholder="4/1/2024"
-                value={item?.startDate}
+                placeholder="DD/MM/YYYY"
+                value={formatDateForInput(item?.startDate)}
                 onChange={(e) =>
                   handleInputChange(index, "startDate", e.target.value)
                 }
@@ -255,11 +265,13 @@ export default function PaymentSettlement({
                   />
                 </>
               )}
+              {!planExists && (
+                <AddCircleIcon
+                  sx={{ color: Colors.SKY_BLUE }}
+                  onClick={handleAddNewData}
+                />
+              )}
 
-              <AddCircleIcon
-                sx={{ color: Colors.SKY_BLUE }}
-                onClick={handleAddNewData}
-              />
               {newDataList?.length > 1 && (
                 <>
                   <RemoveCircleIcon

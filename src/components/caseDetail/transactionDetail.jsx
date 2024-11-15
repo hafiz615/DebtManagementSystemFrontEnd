@@ -71,9 +71,6 @@ export default function TransactionDetails({
         </Grid>
       ) : (
         <Grid
-          container
-          item
-          xs={12}
           sx={{
             height: "10rem",
             overflowY: "auto",
@@ -92,16 +89,17 @@ export default function TransactionDetails({
             },
           }}
         >
-          <TransactionRow
-            data={paymentDetails?.transactions?.previous}
-            GetCasePaymentDetails={GetCasePaymentDetails}
-          />
-
-          <TransactionRow
-            data={paymentDetails?.transactions?.upcomingPayments}
-            heading="Upcoming"
-            GetCasePaymentDetails={GetCasePaymentDetails}
-          />
+          <Grid container item xs={12}>
+            <TransactionRow
+              data={paymentDetails?.transactions?.previous}
+              GetCasePaymentDetails={GetCasePaymentDetails}
+            />
+            <TransactionRow
+              data={paymentDetails?.transactions?.upcomingPayments}
+              heading="Upcoming"
+              GetCasePaymentDetails={GetCasePaymentDetails}
+            />
+          </Grid>
         </Grid>
       )}
     </Grid>
