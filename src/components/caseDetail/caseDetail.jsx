@@ -128,7 +128,7 @@ function CaseDetail() {
   const handleOpen = async () => {
     setOpen(true);
   };
-  const tabs = ["All", "Email", "Sms", "Case Logs", "Notes"];
+  const tabs = ["All", "Email", "Sms", "Notes", "Case Logs"];
   const filteredLogs = logs?.filter((item) => {
     if (caseHistoryTabs === 0) {
       return item?.Action;
@@ -137,9 +137,9 @@ function CaseDetail() {
     } else if (caseHistoryTabs === 2) {
       return item?.Action === "SMS";
     } else if (caseHistoryTabs === 3) {
-      return item?.Action?.startsWith("Case");
-    } else if (caseHistoryTabs === 4) {
       return item?.Action === "Add Notes";
+    } else if (caseHistoryTabs === 4) {
+      return item?.Action?.startsWith("Case");
     }
     return false;
   });
@@ -844,6 +844,7 @@ function CaseDetail() {
                       key={index}
                       caseDataId={id}
                       GetLogsById={GetLogsById}
+                      iconValue={caseHistoryTabs}
                     />
                   ))
                 ) : (
@@ -860,6 +861,7 @@ function CaseDetail() {
                     }
                     date={null}
                     caseData={caseData}
+                    iconValue={caseHistoryTabs}
                   />
                 )}
               </Grid>

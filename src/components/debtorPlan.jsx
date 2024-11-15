@@ -206,8 +206,8 @@ export default function DebtorPlan({ caseData, handleClose, GetCaseDetails }) {
         {caseData?.debtor?.intervals?.length > 0 && (
           <DeletePrompt
             buttonName="Renegotiate"
-            heading="Delete Debtor Payment Plan"
-            text="Are you sure want to delete this debtor payment plan?"
+            heading="Cancel Debtor Payment Plan"
+            text="Are you sure want to Cancel this debtor payment plan?"
             handleConfirm={handleDeletePayment}
             loading={deleteLoading}
           />
