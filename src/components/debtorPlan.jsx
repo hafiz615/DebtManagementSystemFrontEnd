@@ -156,7 +156,7 @@ export default function DebtorPlan({ caseData, handleClose, GetCaseDetails }) {
           fontSize: FONT_SIZE_XL,
         }}
       >
-        Settlement Plan Automation{" "}
+        Fee Payment Plan{" "}
         {caseData?.debtor?.intervals?.length > 0 && (
           <span
             style={{
