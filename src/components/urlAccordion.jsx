@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { isEqual } from "lodash";
-
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import { styled } from "@mui/material/styles";
@@ -17,9 +15,7 @@ import {
   FONT_SIZE_SMALL,
   FONT_SIZE_XL,
 } from "../constants/appConstants";
-import ListTableDynamic from "./listTableDynamic";
 import { GetAllLinks } from "../services/services";
-import { getTruncatedText } from "../common";
 
 const headers = ["Url's", "Actions"];
 // const headerData = [{ key: "link", heading: "Url's", width: "80%" }];
@@ -38,6 +34,7 @@ export default function UrlAccordion({
   setPaginationRows,
 }) {
   const [rows, setRows] = useState([]);
+
   const [links, setLinks] = useState([]);
   const navigate = useNavigate();
 
@@ -56,7 +53,7 @@ export default function UrlAccordion({
   useEffect(() => {
     const generatedData = links?.map((item, index) => ({
       id: item?._id,
-      link: getTruncatedText(item?.link, 120),
+      link: item?.link,
       caseId: item?.link,
     }));
 
@@ -146,6 +143,7 @@ export default function UrlAccordion({
       </AccordionSummary>
 
       <AccordionDetails>
+        <div>{rows?.link}</div>
         <ListTable
           onPaymentRowClick={handleRowClick}
           currentPage={currentPage}

@@ -11,6 +11,8 @@ function PaymentDetails({
   setNewDataList,
   totalAmount,
   isExempt,
+  errorMessage,
+  planExists,
 }) {
   return (
     <Grid
@@ -35,6 +37,8 @@ function PaymentDetails({
         totalAmount={totalAmount}
         remainingAmount={remainingAmount}
         isExempt={isExempt}
+        errorMessage={errorMessage}
+        planExists={planExists}
       />
     </Grid>
   );

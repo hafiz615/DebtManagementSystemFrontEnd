@@ -1374,3 +1374,45 @@ export const VerfiyEmailIdentity = async (payload) => {
     return error;
   }
 };
+export const PausePayments = async (id, pause, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/creditor/pausePayments/${id}?pause=${pause}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const DebtorPaymentPlan = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/addPaymentPlan/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const CancelPaymentPlan = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/payment/cancelCasePaymentPlan/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const CancelDebtorPaymentPlan = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/payment/cancelDebtorPaymentPlan/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

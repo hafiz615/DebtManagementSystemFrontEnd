@@ -221,16 +221,6 @@ export default function Prompt({
             }}
           />
         ) : showPayment ? (
-          // <Box
-          //   sx={{
-          //     border: "1px solid red",
-          //     display: "flex",
-          //     alignItems: "center",
-          //     justifyContent: "center",
-          //     marginTop: ".2rem",
-          //     marginLeft: ".5rem",
-          //   }}
-          // >
           <Replay
             sx={{
               color: Colors.DARK_GRAY,
@@ -238,7 +228,6 @@ export default function Prompt({
             }}
           />
         ) : (
-          // </Box>
           <DeleteForeverOutlinedIcon
             sx={{
               color: disabled ? Colors.DIM_LIGHT_GRAY : Colors.ORANGE_COLOR,

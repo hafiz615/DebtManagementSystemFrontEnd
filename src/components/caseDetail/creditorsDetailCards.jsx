@@ -65,6 +65,7 @@ export default function CreditorsDetailCards({
   caseData,
   GetCaseDetails,
   GetLogsById,
+  verifiedSenders,
 }) {
   const [searchText, setSearchText] = useState("");
 
@@ -258,7 +259,7 @@ export default function CreditorsDetailCards({
             value: caseData?.creditor?.businessInformation?.companyName || "--",
           },
           {
-            label: "Category",
+            label: "Debt Type",
             value:
               caseData?.creditor?.businessInformation?.businessCategory || "--",
           },
@@ -326,17 +327,17 @@ export default function CreditorsDetailCards({
         </p>
         <p
           style={{
-            fontSize: "11px",
+            fontSize: "13px",
             fontFamily: "Nunito",
             fontWeight: "700",
             color: Colors.DARK_GRAY,
           }}
         >
-          Last Funded Date
+          Contract Date
         </p>
         <p
           style={{
-            fontSize: "11px",
+            fontSize: "13px",
             color: Colors.DIM_LIGHT_GRAY,
             fontWeight: "500",
           }}
@@ -345,13 +346,13 @@ export default function CreditorsDetailCards({
         </p>
         <p
           style={{
-            fontSize: "11px",
+            fontSize: "13px",
             fontFamily: "Nunito",
             fontWeight: "700",
             color: Colors.DARK_GRAY,
           }}
         >
-          Historical Range
+          Months to Pay off
         </p>
         <div
           style={{
@@ -361,7 +362,7 @@ export default function CreditorsDetailCards({
         >
           <Typography
             style={{
-              fontSize: "11px",
+              fontSize: "13px",
               fontFamily: "Nunito",
               fontWeight: "500",
               color: Colors.DIM_LIGHT_GRAY,
@@ -377,8 +378,7 @@ export default function CreditorsDetailCards({
               color: Colors.DIM_LIGHT_GRAY,
             }}
           >
-            {formatDollarAmount(caseData?.creditor?.historicalRange?.minimum) ||
-              "-"}
+            {caseData?.creditor?.historicalRange?.minimum || "-"}
           </Typography>
         </div>
         <div
@@ -389,7 +389,7 @@ export default function CreditorsDetailCards({
         >
           <Typography
             style={{
-              fontSize: "11px",
+              fontSize: "13px",
               fontFamily: "Nunito",
               fontWeight: "500",
               color: Colors.DIM_LIGHT_GRAY,
@@ -399,14 +399,13 @@ export default function CreditorsDetailCards({
           </Typography>
           <Typography
             style={{
-              fontSize: "11px",
+              fontSize: "13px",
               fontFamily: "Nunito",
               fontWeight: "500",
               color: Colors.DIM_LIGHT_GRAY,
             }}
           >
-            {formatDollarAmount(caseData?.creditor?.historicalRange?.maximum) ||
-              "-"}
+            {caseData?.creditor?.historicalRange?.maximum || "-"}
           </Typography>
         </div>
       </Grid>
@@ -549,6 +548,7 @@ export default function CreditorsDetailCards({
                       maxHeight="78vh"
                       GetLogsById={GetLogsById}
                       data={caseData}
+                      verifiedSenders={verifiedSenders}
                     />
                     <MuiModels
                       show="sendEmailCase"

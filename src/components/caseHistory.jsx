@@ -153,7 +153,7 @@ function CaseHistory({
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
           loading={tableLoading}
-          defaultHeight="55vh"
+          defaultHeight="30vh"
           paginationRows={paginationRows}
           setPaginationRows={setPaginationRows}
         />

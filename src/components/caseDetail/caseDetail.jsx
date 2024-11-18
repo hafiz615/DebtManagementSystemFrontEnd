@@ -17,29 +17,35 @@ import {
   Hidden,
   Modal,
   TextField,
-  Button,
   Tooltip,
+  styled,
+  Switch,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import NoteAddIcon from "@mui/icons-material/NoteAdd";
-import IconButton from "@mui/material/IconButton";
 import { Colors } from "../../config/default";
-import { PAGE_HEIGHT, UserListPage } from "../../constants/appConstants";
+import {
+  FONT_SIZE_LARGE,
+  FONT_SIZE_SMALL,
+  PAGE_HEIGHT,
+  UserListPage,
+} from "../../constants/appConstants";
 import AnalyticsAccordion from "./analyticsAccordion";
 import AboutAccordion from "./aboutAccordion";
 import TaskAccordion from "./tasksAccordion";
 import CustomFieldsAccordion from "./customFieldsAccordion";
-import TransactionAccordion from "./transactionAccordion";
+import TransactionAccordion from "./transactionDetail.jsx";
 import CreditorsDetailCards from "./creditorsDetailCards.jsx";
 import DebtorDetailsCards from "./debtorDetailCards.jsx";
 import TimelineData from "./timelineData.jsx";
 import {
   AddNotesCase,
   AddSenderIdentity,
+  GetAllSenders,
   GetCaseById,
   GetCasePaymentById,
   GetLogs,
+  PausePayments,
 } from "../../services/services.js";
 import { isEmpty } from "lodash";
 import MuiModels from "../models.jsx";
@@ -48,6 +54,7 @@ import TextButton from "../button.jsx";
 import { setCaseCreditorId, setCaseId } from "../../redux/action/action.js";
 import CaseFileCard from "./caseFileCard.jsx";
 import { useToast } from "../../toast/toastContext.jsx";
+import TransactionDetails from "./transactionDetail.jsx";
 
 const style = {
   position: "absolute",
@@ -60,6 +67,41 @@ const style = {
   p: 4,
   borderRadius: "10px",
 };
+
+const AntTabs = styled(Tabs)({
+  borderBottom: "1px solid #e8e8e8",
+  "& .MuiTabs-indicator": {
+    backgroundColor: Colors.SKY_BLUE,
+  },
+});
+
+const AntTab = styled((props) => <Tab disableRipple {...props} />)(
+  ({ theme }) => ({
+    textTransform: "none",
+    minWidth: 0,
+    [theme.breakpoints.up("sm")]: {
+      minWidth: 0,
+      fontSize: "14px !important",
+    },
+    [theme.breakpoints.up("xs")]: {
+      fontSize: FONT_SIZE_SMALL,
+    },
+    fontWeight: "500",
+    color: Colors.DARK_GRAY,
+    fontFamily: ["Nunito"].join(","),
+    "&:hover": {
+      color: Colors.SKY_BLUE,
+      opacity: 1,
+    },
+    "&.Mui-selected": {
+      color: Colors.SKY_BLUE,
+      fontWeight: "500",
+    },
+    "&.Mui-focusVisible": {
+      backgroundColor: "#d1eaff",
+    },
+  })
+);
 
 function CaseDetail() {
   const navigate = useNavigate();
@@ -76,11 +118,32 @@ function CaseDetail() {
   const [caseData, setCaseData] = useState({});
   const [paymentDetails, setPaymentDetails] = useState({});
   const [addTaskModal, setAddTaskModal] = useState("");
+  const [verifiedSenders, setVerified] = useState([]);
+  const [caseHistoryTabs, setCaseHistoryTabs] = useState(0);
   const [logs, setLogs] = useState([]);
+  const [isChecked, setIsChecked] = useState(false);
   const { id } = useParams();
+  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
+
   const handleOpen = async () => {
     setOpen(true);
   };
+  const tabs = ["All", "Email", "Sms", "Notes", "Case Logs"];
+  const filteredLogs = logs?.filter((item) => {
+    if (caseHistoryTabs === 0) {
+      return item?.Action;
+    } else if (caseHistoryTabs === 1) {
+      return item?.Action === "EMAIL";
+    } else if (caseHistoryTabs === 2) {
+      return item?.Action === "SMS";
+    } else if (caseHistoryTabs === 3) {
+      return item?.Action === "Add Notes";
+    } else if (caseHistoryTabs === 4) {
+      return item?.Action?.startsWith("Case");
+    }
+    return false;
+  });
+
   const handleClose = () => setOpen(false);
   const GetCaseDetails = async (rowId) => {
     setLoading(true);
@@ -88,8 +151,16 @@ function CaseDetail() {
     if (caseDetails?.status === 200) {
       GetLogsById(rowId);
       setCaseData(caseDetails?.data?.data);
+      setIsChecked(caseDetails?.data?.data?.creditorPaymentsProceed);
       dispatch(setCaseId(id));
       dispatch(setCaseCreditorId(caseDetails?.data?.data?.creditor?._id));
+
+      const senderRes = await GetAllSenders(
+        caseDetails?.data?.data?.debtor?._id
+      );
+      if (senderRes?.status === 200) {
+        setVerified(senderRes?.data?.data);
+      }
     } else if (
       caseDetails?.response?.status === 401 ||
       caseDetails?.response?.status === 403
@@ -101,8 +172,8 @@ function CaseDetail() {
   };
   useEffect(() => {
     GetCaseDetails(id);
+    GetCasePaymentDetails(id);
   }, [id]);
-  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -130,13 +201,10 @@ function CaseDetail() {
     }
   };
 
-  useEffect(() => {
-    GetCasePaymentDetails(id);
-  }, [id]);
-
   const handleChangeModal = (e) => {
     setAddTaskModal(e.target.value);
   };
+
   const handleClicked = async () => {
     setNotesLoading(true);
     if (addTaskModal === "") {
@@ -155,6 +223,7 @@ function CaseDetail() {
       handleClose();
     }
   };
+
   const emailData = caseData?.debtor?.basicInformation;
   const AddSenderInformation = async () => {
     const params = {
@@ -174,6 +243,18 @@ function CaseDetail() {
       showToast(errorMessage, "error");
     }
   };
+
+  const handleToggle = async (check) => {
+    setIsChecked(check);
+    const res = await PausePayments(id, check);
+    if (res?.status === 200) {
+      showToast(res?.data?.message, "success");
+    } else if (res?.response?.status === 400) {
+      const errorMessage = res?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+  };
+
   return (
     <Grid
       container
@@ -276,6 +357,7 @@ function CaseDetail() {
                 caseDataId={id}
                 GetLogsById={GetLogsById}
                 data={caseData}
+                verifiedSenders={verifiedSenders}
               />
               <MuiModels
                 show="sendEmailCase"
@@ -310,7 +392,7 @@ function CaseDetail() {
             </div>
           </Grid>
 
-          <Grid item sx={{ marginTop: "1.5rem" }}>
+          <Grid item sx={{ marginTop: "1rem" }}>
             <Accordion
               sx={{
                 boxShadow: "none",
@@ -331,70 +413,159 @@ function CaseDetail() {
                   borderTopRightRadius: "10px",
                 }}
               >
-                <Box
-                  sx={{ borderBottom: 1, borderColor: "divider" }}
-                  onClick={(event) => event.stopPropagation()}
+                <div
+                  style={{
+                    display: "flex",
+                    width: "100%",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
                 >
-                  <Tabs
-                    value={value}
-                    onChange={handleChange}
-                    TabIndicatorProps={{
-                      style: {
-                        backgroundColor: Colors.SKY_BLUE,
-                      },
+                  <Box
+                    sx={{
+                      borderBottom: 1,
+                      borderColor: "divider",
+                      display: "flex",
+                      alignItems: "center",
                     }}
+                    onClick={(event) => event.stopPropagation()}
                   >
-                    <Tab
-                      sx={{
-                        fontWeight: "600",
-                        textTransform: "none",
-                        fontFamily: "Nunito",
+                    <Tabs
+                      value={value}
+                      onChange={handleChange}
+                      TabIndicatorProps={{
+                        style: {
+                          backgroundColor: Colors.SKY_BLUE,
+                        },
+                      }}
+                    >
+                      <Tab
+                        sx={{
+                          fontWeight: "600",
+                          textTransform: "none",
+                          fontFamily: "Nunito",
 
-                        "&.Mui-selected": {
-                          color: value ? Colors.SKY_BLUE : "inherit",
-                        },
-                      }}
-                      label="Debtor"
-                      value="Debtor"
-                    />
-                    <Tab
-                      sx={{
-                        fontWeight: "600",
-                        textTransform: "none",
-                        fontFamily: "Nunito",
-                        "&.Mui-selected": {
-                          color: value ? Colors.SKY_BLUE : "inherit",
-                        },
-                      }}
-                      label="Creditor"
-                      value="Creditor"
-                    />
-                    <Tab
-                      sx={{
-                        fontWeight: "600",
-                        textTransform: "none",
-                        fontFamily: "Nunito",
-                        "&.Mui-selected": {
-                          color: value ? Colors.SKY_BLUE : "inherit",
-                        },
-                      }}
-                      label="Other Creditors"
-                      value="Other Creditors"
-                    />
-                    <Tab
-                      sx={{
-                        fontWeight: "600",
-                        textTransform: "none",
-                        fontFamily: "Nunito",
-                        "&.Mui-selected": {
-                          color: value ? Colors.SKY_BLUE : "inherit",
-                        },
-                      }}
-                      label="Files"
-                      value="Files"
-                    />
-                  </Tabs>
-                </Box>
+                          "&.Mui-selected": {
+                            color: value ? Colors.SKY_BLUE : "inherit",
+                          },
+                        }}
+                        label="Debtor"
+                        value="Debtor"
+                      />
+                      <Tab
+                        sx={{
+                          fontWeight: "600",
+                          textTransform: "none",
+                          fontFamily: "Nunito",
+                          "&.Mui-selected": {
+                            color: value ? Colors.SKY_BLUE : "inherit",
+                          },
+                        }}
+                        label="Creditor"
+                        value="Creditor"
+                      />
+                      <Tab
+                        sx={{
+                          fontWeight: "600",
+                          textTransform: "none",
+                          fontFamily: "Nunito",
+                          "&.Mui-selected": {
+                            color: value ? Colors.SKY_BLUE : "inherit",
+                          },
+                        }}
+                        label="Other Creditors"
+                        value="Other Creditors"
+                      />
+                      <Tab
+                        sx={{
+                          fontWeight: "600",
+                          textTransform: "none",
+                          fontFamily: "Nunito",
+                          "&.Mui-selected": {
+                            color: value ? Colors.SKY_BLUE : "inherit",
+                          },
+                        }}
+                        label="Files"
+                        value="Files"
+                      />
+                      <Tab
+                        sx={{
+                          fontWeight: "600",
+                          textTransform: "none",
+                          fontFamily: "Nunito",
+                          "&.Mui-selected": {
+                            color: value ? Colors.SKY_BLUE : "inherit",
+                          },
+                        }}
+                        label="Transactions"
+                        value="Transactions"
+                      />
+                    </Tabs>
+                  </Box>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                      paddingRight: "10px",
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {value === "Debtor" && (
+                      <MuiModels
+                        show="debtorPaymentPlan"
+                        caseData={caseData}
+                        GetCaseDetails={GetCaseDetails}
+                      />
+                    )}
+                    {value === "Transactions" && (
+                      <MuiModels
+                        width="70vw"
+                        show="payments"
+                        remainingAmount={caseData?.remaining.toString()}
+                        data={caseData}
+                        GetCaseDetails={GetCaseDetails}
+                        GetCasePaymentDetails={GetCasePaymentDetails}
+                      />
+                    )}
+                    {value === "Creditor" && (
+                      <Grid
+                        sx={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          borderRadius: "10px",
+                          padding: "10px",
+                        }}
+                      >
+                        <Grid item sx={{ mr: 1 }}>
+                          <Typography
+                            sx={{
+                              fontFamily: "Nunito",
+                              fontSize: FONT_SIZE_LARGE,
+                            }}
+                          >
+                            Funds transfer
+                          </Typography>
+                        </Grid>
+                        <Grid item>
+                          <Switch
+                            checked={isChecked}
+                            onChange={(e) => handleToggle(e.target.checked)}
+                            sx={{
+                              "& .MuiSwitch-switchBase.Mui-checked": {
+                                color: Colors.SKY_BLUE,
+                              },
+                              "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
+                                {
+                                  backgroundColor: Colors.SKY_BLUE,
+                                },
+                            }}
+                          />
+                        </Grid>
+                      </Grid>
+                    )}
+                  </div>
+                </div>
               </AccordionSummary>
               <AccordionDetails
                 sx={{
@@ -413,6 +584,7 @@ function CaseDetail() {
                 >
                   {value === "Debtor" ? (
                     <DebtorDetailsCards
+                      verifiedSenders={verifiedSenders}
                       caseData={caseData}
                       GetCaseDetails={GetCaseDetails}
                       caseDataId={id}
@@ -420,6 +592,7 @@ function CaseDetail() {
                     />
                   ) : value === "Creditor" ? (
                     <CreditorsDetailCards
+                      verifiedSenders={verifiedSenders}
                       caseData={caseData}
                       GetCaseDetails={GetCaseDetails}
                       caseDataId={id}
@@ -537,6 +710,14 @@ function CaseDetail() {
                         );
                       })}
                     </Grid>
+                  ) : value === "Transactions" ? (
+                    <TransactionDetails
+                      caseData={caseData}
+                      loading={isPaymentLoading}
+                      paymentDetails={paymentDetails}
+                      GetCaseDetails={GetCaseDetails}
+                      GetCasePaymentDetails={GetCasePaymentDetails}
+                    />
                   ) : (
                     <CaseFileCard
                       caseData={caseData}
@@ -563,13 +744,6 @@ function CaseDetail() {
                   caseData={caseData}
                   GetCaseDetails={GetCaseDetails}
                 />
-                <TransactionAccordion
-                  caseData={caseData}
-                  loading={isPaymentLoading}
-                  paymentDetails={paymentDetails}
-                  GetCaseDetails={GetCaseDetails}
-                  GetCasePaymentDetails={GetCasePaymentDetails}
-                />
               </Grid>
 
               <Grid item xs={12} md={9}>
@@ -580,16 +754,15 @@ function CaseDetail() {
                     justifyContent: "end",
                   }}
                 >
-                  <IconButton
-                    aria-label="delete"
-                    sx={{
-                      color: Colors.BLACK,
-                    }}
-                    onClick={() => handleOpen()}
-                  >
-                    <span style={{ fontSize: "16px" }}>Add Notes</span>
-                    <NoteAddIcon />
-                  </IconButton>
+                  <TextButton
+                    buttonText="Add Notes"
+                    height="2rem"
+                    width="8rem"
+                    onClick={handleOpen}
+                    backgroundColor={Colors.SKY_BLUE}
+                    hoverColor={Colors.SKY_BLUE}
+                  />
+
                   <Modal
                     open={open}
                     onClose={handleClose}
@@ -635,26 +808,60 @@ function CaseDetail() {
                     </Box>
                   </Modal>
                 </span>
+                <AntTabs
+                  value={caseHistoryTabs}
+                  onChange={(e, value) => setCaseHistoryTabs(value)}
+                  variant="scrollable"
+                  scrollButtons="auto"
+                  sx={{
+                    minWidth: "100%",
+                    backgroundColor: Colors.WHITE,
+                    borderTopLeftRadius: "10px",
+                    borderTopRightRadius: "10px",
+                    m: "10px 10px",
+                  }}
+                >
+                  {tabs?.map((item, index) => (
+                    <AntTab
+                      key={index}
+                      sx={{
+                        bgcolor: Colors.WHITE,
+                        width: "max-content",
+                        fontWeight: "600",
+                        height: "3.5rem",
+                      }}
+                      label={item}
+                    />
+                  ))}
+                </AntTabs>
 
-                {logs?.length > 0 ? (
-                  logs?.map((item, index) => (
-                    <>
-                      <TimelineData
-                        notes={false}
-                        value={item}
-                        date={null}
-                        key={index}
-                        caseDataId={id}
-                        GetLogsById={GetLogsById}
-                      />
-                    </>
+                {filteredLogs?.length > 0 ? (
+                  filteredLogs?.map((item, index) => (
+                    <TimelineData
+                      notes={false}
+                      value={item}
+                      date={null}
+                      key={index}
+                      caseDataId={id}
+                      GetLogsById={GetLogsById}
+                      iconValue={caseHistoryTabs}
+                    />
                   ))
                 ) : (
                   <TimelineData
                     notes={true}
-                    value={"No Data"}
+                    value={
+                      caseHistoryTabs === 1
+                        ? "No Emails"
+                        : caseHistoryTabs === 2
+                        ? "No Sms"
+                        : caseHistoryTabs === 4
+                        ? "No Notes"
+                        : "No Data"
+                    }
                     date={null}
                     caseData={caseData}
+                    iconValue={caseHistoryTabs}
                   />
                 )}
               </Grid>

@@ -581,7 +581,7 @@ export default function ClientList() {
           totalPages={totalPages}
           loading={loading}
           setPaginationRows={setPaginationRows}
-          defaultHeight="55vh"
+          defaultHeight="51vh"
           paginationRows={paginationRows}
         />
       </Grid>

@@ -31,6 +31,8 @@ export default function SettlementCards({
   setSelectedOption,
   allCreditorNames,
   commission,
+  breakEven,
+  scoresBackend,
 }) {
   const commonStyles = {
     backgroundColor: Colors.WHITE,
@@ -97,20 +99,14 @@ export default function SettlementCards({
     "(min-width:899px) and (max-width:1400px)"
   );
 
-  function capitalizeFirstWord(text) {
-    if (!text) return text;
-    const words = text.split(" ");
-    words[0] = words[0].charAt(0).toUpperCase() + words[0].slice(1);
-    return words.join(" ");
-  }
-
   const noData =
     !settlementRange &&
     !commissionRange &&
     !newDefaultRiskScore &&
     !percentageSettlementOverWeeklyBudget &&
     !percentageSettlementOverWeeklyTrueRevenue &&
-    !weeksTillPaid;
+    !weeksTillPaid &&
+    !breakEven;
 
   const excludedLabelsStrategy1 = [
     "Weekly Budget %",
@@ -125,6 +121,27 @@ export default function SettlementCards({
     "Weekly Budget %",
     "Weeks Till Paid",
   ];
+
+  if (scoresBackend) {
+    excludedLabelsStrategy3.push(
+      ...["New Default Risk", "Weekly True Revenue %"]
+    );
+  }
+
+  const formatCurrencyValue = (value) => {
+    if (value === null || value === undefined) return "--";
+    const valueStr = typeof value === "number" ? value.toString() : value;
+    const cleanedValue = valueStr.replace(/[^0-9.]/g, "");
+    const numericValue = parseFloat(cleanedValue);
+    if (!isNaN(numericValue)) {
+      return `$${numericValue?.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`;
+    }
+
+    return "--";
+  };
 
   return (
     <>
@@ -163,7 +180,7 @@ export default function SettlementCards({
                   ? selectedOption === "percentageReceivable"
                     ? percentageReceivableAmount
                     : weeklyTrueRevenueAmount
-                  : settlementRange?.remaining_principle_amount
+                  : breakEven
               }
               remainingAmount={remainingAmount}
               setPaymentChanged={setPaymentChanged}
@@ -186,6 +203,7 @@ export default function SettlementCards({
               setPaymentChanged={setPaymentChanged}
               caseId={caseId}
               commission={commission}
+              scoresBackend={scoresBackend}
             />
           )}
         </div>
@@ -195,100 +213,61 @@ export default function SettlementCards({
             No Data
           </Typography>
         ) : (
-          allRanges?.map((item, index) => {
-            if (
-              strategy === "strategy1" &&
-              excludedLabelsStrategy1?.includes(rangeNames[index].label)
-            ) {
-              return null;
-            }
+          <>
+            {!isLumpSumPayment &&
+              allRanges?.map((item, index) => {
+                if (
+                  strategy === "strategy1" &&
+                  excludedLabelsStrategy1?.includes(rangeNames[index].label)
+                ) {
+                  return null;
+                }
 
-            if (
-              strategy === "strategy3" &&
-              excludedLabelsStrategy3?.includes(rangeNames[index].label)
-            ) {
-              return null;
-            }
+                if (
+                  strategy === "strategy3" &&
+                  excludedLabelsStrategy3?.includes(rangeNames[index].label)
+                ) {
+                  return null;
+                }
 
-            const shouldShowContent = !isLumpSumPayment;
-            return (
-              <Grid
-                container
-                sx={{
-                  width: "100%",
-                  padding: shouldShowContent && "10px 8px",
-                }}
-                key={index}
-              >
-                {shouldShowContent ? (
-                  <Grid item xs={6.5} sx={{ paddingLeft: "6%" }}>
-                    <Typography
-                      sx={{
-                        ...commonTextStyles,
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      {rangeNames[index]?.label}
-
-                      {rangeNames[index]?.tooltip && (
-                        <Tooltip
-                          title={rangeNames[index]?.tooltip}
-                          placement="top-end"
+                const shouldShowContent = !isLumpSumPayment;
+                return (
+                  <Grid
+                    container
+                    sx={{
+                      width: "100%",
+                      padding: shouldShowContent && "10px 8px",
+                    }}
+                    key={index}
+                  >
+                    {shouldShowContent ? (
+                      <Grid item xs={6.5} sx={{ paddingLeft: "6%" }}>
+                        <Typography
+                          sx={{
+                            ...commonTextStyles,
+                            display: "flex",
+                            alignItems: "center",
+                          }}
                         >
-                          <InfoIcon
-                            sx={{ fontSize: "17px", color: Colors.SKY_BLUE }}
-                          />
-                        </Tooltip>
-                      )}
-                    </Typography>
-                  </Grid>
-                ) : null}
+                          {rangeNames[index]?.label}
 
-                {isLumpSumPayment ? (
-                  <>
-                    {item !== null && (
-                      <Grid
-                        item
-                        xs={12}
-                        sx={{
-                          paddingLeft: "6%",
-                          paddingRight: "6%",
-                        }}
-                      >
-                        <div style={{ width: "100%", display: "flex" }}>
-                          <div
-                            style={{
-                              width: "75%",
-                              fontFamily: "Nunito",
-                              color: Colors.SKY_BLUE,
-                            }}
-                          >
-                            Repaid Debt
-                          </div>
-                          <div style={textStyles}>
-                            ${item?.repaid_debt || "--"}
-                          </div>
-                        </div>
-                        <div style={{ width: "100%", display: "flex" }}>
-                          <div
-                            style={{
-                              width: "75%",
-                              fontFamily: "Nunito",
-                              color: Colors.ORANGE_COLOR,
-                            }}
-                          >
-                            Remaining Amount
-                          </div>
-                          <div style={textStyles}>
-                            ${item?.remaining_principle_amount || "--"}
-                          </div>
-                        </div>
+                          {rangeNames[index]?.tooltip && (
+                            <Tooltip
+                              title={rangeNames[index]?.tooltip}
+                              placement="top-end"
+                            >
+                              <InfoIcon
+                                sx={{
+                                  fontSize: "17px",
+                                  color: Colors.SKY_BLUE,
+                                }}
+                              />
+                            </Tooltip>
+                          )}
+                        </Typography>
                       </Grid>
-                    )}
-                  </>
-                ) : (
-                  <>
+                    ) : null}
+
                     <Grid item xs={5}>
                       {!(
                         strategy === "strategy3" &&
@@ -399,11 +378,77 @@ export default function SettlementCards({
                         </div>
                       </div>
                     </Grid>
+                  </Grid>
+                );
+              })}
+            {isLumpSumPayment && (
+              <Grid
+                sx={{
+                  paddingLeft: "6%",
+                  paddingRight: "6%",
+                }}
+              >
+                {!scoresBackend && (
+                  <>
+                    <div style={{ width: "100%", display: "flex" }}>
+                      <div
+                        style={{
+                          width: "75%",
+                          fontFamily: "Nunito",
+                          color: Colors.SKY_BLUE,
+                        }}
+                      >
+                        Repaid Debt
+                      </div>
+                      <div style={textStyles}>
+                        {formatCurrencyValue(settlementRange?.repaid_debt) ||
+                          "--"}
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        marginTop: "10px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "75%",
+                          fontFamily: "Nunito",
+                          color: Colors.ORANGE_COLOR,
+                        }}
+                      >
+                        Remaining Funded Amount
+                      </div>
+                      <div style={textStyles}>
+                        {formatCurrencyValue(
+                          settlementRange?.remaining_principle_amount
+                        ) || "--"}
+                      </div>
+                    </div>
                   </>
                 )}
+
+                <div
+                  style={{ width: "100%", display: "flex", marginTop: "10px" }}
+                >
+                  <div
+                    style={{
+                      width: "75%",
+                      fontFamily: "Nunito",
+                      color: Colors.BLACK,
+                    }}
+                  >
+                    Break Even
+                  </div>
+                  <div style={textStyles}>
+                    {formatCurrencyValue(breakEven) || "--"}
+                  </div>
+                </div>
               </Grid>
-            );
-          })
+            )}
+          </>
         )}
         {strategy === "strategy3" &&
           allCreditorNames[tabValue] !== "Summary" && (

@@ -8,9 +8,9 @@ import {
   TimelineContent,
   TimelineOppositeContent,
 } from "@mui/lab";
-import EmailIcon from "@mui/icons-material/Email";
 import MuiModels from "../models";
 import { Colors } from "../../config/default";
+import { Email, NoteAlt, Sms, Work } from "@mui/icons-material";
 
 export default function TimelineData({
   value,
@@ -19,10 +19,10 @@ export default function TimelineData({
   caseDataId,
   GetLogsById,
   caseData,
+  iconValue,
 }) {
   const formattedDate = new Date(date);
 
-  // Convert the Date object to EST time zone
   const estTime = new Intl.DateTimeFormat("en-US", {
     timeZone: "America/New_York",
     year: "numeric",
@@ -48,13 +48,34 @@ export default function TimelineData({
     });
     return `${datePart} at ${timePart}`;
   }
+
   return (
     <Timeline sx={{ padding: 0, margin: "0" }}>
       <TimelineItem>
         <TimelineOppositeContent sx={{ flex: 0, padding: 1, margin: 0 }} />
         <TimelineSeparator>
           <TimelineConnector />
-          <EmailIcon />
+
+          {iconValue === 0 ? (
+            value?.Action === "EMAIL" ? (
+              <Email />
+            ) : value?.Action === "SMS" ? (
+              <Sms />
+            ) : value?.Action === "Add Notes" ? (
+              <NoteAlt />
+            ) : (
+              <Work />
+            )
+          ) : iconValue === 1 ? (
+            <Email />
+          ) : iconValue === 2 ? (
+            <Sms />
+          ) : iconValue === 3 ? (
+            <NoteAlt />
+          ) : (
+            <Work />
+          )}
+
           <TimelineConnector />
         </TimelineSeparator>
         <TimelineContent sx={{ flex: 1 }}>

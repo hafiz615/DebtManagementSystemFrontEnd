@@ -4,6 +4,7 @@ import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
@@ -99,6 +100,10 @@ export default function ListTable({
   getLinks,
   handleModalClose,
 }) {
+  const mediumScreen = useMediaQuery(
+    "(min-width:300px) and (max-width:1150px)"
+  );
+  const smallScreen = useMediaQuery("(min-width:300px) and (max-width:620px)");
   const navigate = useNavigate();
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
@@ -167,6 +172,7 @@ export default function ListTable({
         backgroundColor: Colors.WHITE,
         borderRadius: "10px",
         width: { xs: "65vw", sm: "100%" },
+        height: defaultHeight || accordionHeight,
       }}
     >
       <div
@@ -180,7 +186,6 @@ export default function ListTable({
           sx={{
             flexGrow: 1,
             overflowY: "auto",
-            maxHeight: defaultHeight || accordionHeight,
             ...ScrollbarStyles,
           }}
         >
@@ -307,11 +312,25 @@ export default function ListTable({
                           }}
                           key={i}
                         >
-                          {typeof value === "object" && value !== null
-                            ? JSON.stringify(value) // Handle object rendering if needed
-                            : value}
+                          {/* Truncate link if key is 'link', otherwise render value normally */}
+                          {key === "link" && typeof value === "string" ? (
+                            value?.length > 20 ? (
+                              <span title={value}>{`${value?.slice(
+                                0,
+                                mediumScreen ? 50 : 120
+                              )}...`}</span>
+                            ) : (
+                              value
+                            )
+                          ) : typeof value === "object" && value !== null ? (
+                            JSON.stringify(value)
+                          ) : (
+                            value
+                          )}
                         </StyledTableCell>
                       ))}
+
+                    {/* Display requiredLinkIcons if available */}
                     {requiredLinkIcons && (
                       <StyledTableCell
                         sx={{
@@ -331,6 +350,8 @@ export default function ListTable({
                         />
                       </StyledTableCell>
                     )}
+
+                    {/* Display other icons like requiredIcons */}
                     {requiredIcons && (
                       <StyledTableCell
                         sx={{
@@ -363,6 +384,8 @@ export default function ListTable({
                         />
                       </StyledTableCell>
                     )}
+
+                    {/* Display requiredCustomFieldIcons */}
                     {requiredCustomFieldIcons && (
                       <StyledTableCell
                         sx={{
@@ -390,6 +413,8 @@ export default function ListTable({
                         />
                       </StyledTableCell>
                     )}
+
+                    {/* Handle special case for failedAuthorizations or failedPayments */}
                     {(arrayName === "failedAuthorizations" ||
                       arrayName === "failedPayments") && (
                       <StyledTableCell
@@ -410,6 +435,8 @@ export default function ListTable({
                         )}
                       </StyledTableCell>
                     )}
+
+                    {/* Handle special case for successCaptures */}
                     {arrayName === "successCaptures" && (
                       <StyledTableCell
                         align="left"
@@ -454,7 +481,7 @@ export default function ListTable({
                 fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
               }}
             >
-              Rows Per Page:
+              {!smallScreen && "Rows Per Page"}
             </Typography>
             <Dropdown
               menuWidth="3rem"
@@ -503,6 +530,7 @@ export default function ListTable({
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
+            labelRowsPerPage={smallScreen ? "" : "Rows per page:"}
             style={{
               alignSelf: "flex-end",
               minHeight: "3rem",

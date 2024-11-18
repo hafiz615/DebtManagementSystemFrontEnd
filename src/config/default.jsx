@@ -13,4 +13,5 @@ export const Colors = {
   VIOLET: "#E6E6FA",
   PALE_GRAY: "#EFEFEF",
   GRADIENT: "linear-gradient(90deg, #1E3A8A, #9333EA)",
+  lIGHT_PURPLE: "#E3DFF5",
 };

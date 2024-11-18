@@ -21,6 +21,7 @@ export default function Strategy3choices({
   commissionRange,
   setPaymentChanged,
   commission,
+  scoresBackend,
 }) {
   const [selectedField, setSelectedField] = useState(
     "percentageReceivableAmount"
@@ -65,22 +66,24 @@ export default function Strategy3choices({
               settlementRange ? `$${settlementRange}` : "--"
             }`}
           />
-          <FormControlLabel
-            value="weeklyTrueRevenueAmount"
-            control={
-              <Radio
-                sx={{
-                  color: Colors.SKY_BLUE,
-                  "&.Mui-checked": {
+          {!scoresBackend && (
+            <FormControlLabel
+              value="weeklyTrueRevenueAmount"
+              control={
+                <Radio
+                  sx={{
                     color: Colors.SKY_BLUE,
-                  },
-                }}
-              />
-            }
-            label={`Weekly True Revenue Amount: ${
-              weeksTillPaid ? `$${weeksTillPaid}` : "--"
-            }`}
-          />
+                    "&.Mui-checked": {
+                      color: Colors.SKY_BLUE,
+                    },
+                  }}
+                />
+              }
+              label={`Weekly True Revenue Amount: ${
+                weeksTillPaid ? `$${weeksTillPaid}` : "--"
+              }`}
+            />
+          )}
         </RadioGroup>
       </FormControl>
       <Grid container xs={12} sx={{ mt: "1rem", justifyContent: "right" }}>

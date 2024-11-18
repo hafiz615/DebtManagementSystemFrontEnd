@@ -31,9 +31,6 @@ export default function DebtorFields({
   contactError,
   emailContactError,
   setEmailContactError,
-  connectPayment,
-  setConnectPayment,
-  walletId,
   show,
   showFieldError,
   misMatches,
@@ -324,106 +321,6 @@ export default function DebtorFields({
             }
           />
         </Grid>
-        <Grid
-          container
-          item
-          xs={12}
-          sx={{
-            justifyContent: "center",
-            marginBottom: "0.5rem",
-          }}
-        >
-          <Grid
-            container
-            item
-            xs={12}
-            md={4}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <Typography
-              sx={{
-                fontWeight: "500",
-                fontFamily: "Nunito",
-                marginLeft: "1rem",
-                color: Colors.DARK_GRAY,
-              }}
-            >
-              Status*
-            </Typography>
-
-            <Dropdown
-              height="2.5rem"
-              menuItems={menu}
-              menuWidth="11.7rem"
-              placeholder="Choose Status"
-              backgroundColor={Colors.BG_LIGHT_GRAY}
-              hoverColor={Colors.BG_LIGHT_GRAY}
-              width={smallScreen ? "100%" : "98%"}
-              selectedValue={selectedValue}
-              setSelectedValue={setSelectedValue}
-              showCaseStatus={selectedValue === "" && true}
-            />
-          </Grid>
-          <Grid
-            container
-            item
-            xs={12}
-            md={4}
-            sx={{ display: "flex", flexDirection: "column" }}
-          >
-            <Typography
-              sx={{
-                fontWeight: "500",
-                fontFamily: "Nunito",
-                marginLeft: "1rem",
-                color: Colors.DARK_GRAY,
-              }}
-            >
-              Weekly Budget
-            </Typography>
-
-            <AmountTextField
-              width="98%"
-              marginLeft=".2rem"
-              value={debtorOwnDetails?.BasicWeeklyBudget}
-              onChange={(e) => {
-                basicInfoInputChange("BasicWeeklyBudget", e.target.value);
-              }}
-              onKeyDown={handleNumberInput}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            md={4}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              marginTop: ".5rem",
-            }}
-          >
-            <Checkboxes
-              checked={checked}
-              handleCheckChange={handleCheckChange}
-              fontSize="28"
-            />
-            <Typography
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                fontWeight: "500",
-                fontFamily: "Nunito",
-                color: Colors.DARK_GRAY,
-              }}
-            >
-              Same for business
-            </Typography>
-          </Grid>
-        </Grid>
 
         <Grid
           container
@@ -529,9 +426,10 @@ export default function DebtorFields({
           />
           <PaymentsTextFields
             type="text"
-            label="Address*"
-            placeHolderValue="Add Your Address"
+            label="Street Address*"
+            placeHolderValue="Add Your Street Address"
             width="100%"
+            marginLeft="1px"
             value={debtorOwnDetails?.BasicAddress}
             border={
               debtorOwnDetails?.BasicAddress === "" ||
@@ -545,15 +443,101 @@ export default function DebtorFields({
               basicInfoInputChange("BasicAddress", e.target.value)
             }
           />
-          <PaymentsTextFields
-            type="number"
-            label="Profit Margin %*"
-            placeHolderValue="Profit Margin"
-            width="100%"
-            value={profitMargin}
-            border={profitMargin === "" ? "2px solid red" : "none"}
-            onChangeFunction={(e) => setProfitMargin(e.target.value)}
-          />
+          <div style={{ marginTop: "1rem" }}>
+            <Checkboxes
+              checked={checked}
+              handleCheckChange={handleCheckChange}
+              fontSize="28"
+            />
+          </div>
+
+          <Typography
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              fontWeight: "500",
+              fontFamily: "Nunito",
+              color: Colors.DARK_GRAY,
+            }}
+          >
+            Same for business
+          </Typography>
+
+          <Grid container xs={12}>
+            <Grid
+              container
+              item
+              xs={12}
+              md={4}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontWeight: "500",
+                  fontFamily: "Nunito",
+                  marginLeft: "1rem",
+                  color: Colors.DARK_GRAY,
+                }}
+              >
+                Status*
+              </Typography>
+
+              <Dropdown
+                height="2.5rem"
+                menuItems={menu}
+                menuWidth="11.7rem"
+                placeholder="Choose Status"
+                backgroundColor={Colors.BG_LIGHT_GRAY}
+                hoverColor={Colors.BG_LIGHT_GRAY}
+                width={smallScreen ? "100%" : "98%"}
+                selectedValue={selectedValue}
+                setSelectedValue={setSelectedValue}
+                showCaseStatus={selectedValue === "" && true}
+              />
+            </Grid>
+            <Grid
+              container
+              item
+              xs={12}
+              md={4}
+              sx={{ display: "flex", flexDirection: "column" }}
+            >
+              <Typography
+                sx={{
+                  fontWeight: "500",
+                  fontFamily: "Nunito",
+                  marginLeft: "1rem",
+                  color: Colors.DARK_GRAY,
+                }}
+              >
+                Weekly Budget
+              </Typography>
+
+              <AmountTextField
+                width="98%"
+                marginLeft=".2rem"
+                value={debtorOwnDetails?.BasicWeeklyBudget}
+                onChange={(e) => {
+                  basicInfoInputChange("BasicWeeklyBudget", e.target.value);
+                }}
+                onKeyDown={handleNumberInput}
+              />
+            </Grid>
+
+            <PaymentsTextFields
+              type="number"
+              label="Profit Margin %"
+              placeHolderValue="Profit Margin"
+              width="98%"
+              marginLeft=".4rem"
+              value={profitMargin}
+              onChangeFunction={(e) => setProfitMargin(e.target.value)}
+            />
+          </Grid>
         </Grid>
       </Grid>
       <Grid
@@ -624,8 +608,8 @@ export default function DebtorFields({
           />
           <PaymentsTextFields
             type="text"
-            label="Business Category*"
-            placeHolderValue="Enter Category"
+            label="Business Type*"
+            placeHolderValue="Enter Business Type"
             width="100%"
             value={debtorBusinessDetails?.businessCategory}
             border={
@@ -777,8 +761,8 @@ export default function DebtorFields({
 
           <PaymentsTextFields
             type="text"
-            label="Address*"
-            placeHolderValue="Add Your Address"
+            label="Street Address*"
+            placeHolderValue="Add Your Street Address"
             width="100%"
             border={
               debtorBusinessDetails?.businessAddress === "" ||

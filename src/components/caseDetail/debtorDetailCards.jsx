@@ -60,6 +60,7 @@ export default function DebtorDetailsCards({
   GetCaseDetails,
   caseDataId,
   GetLogsById,
+  verifiedSenders,
 }) {
   const [searchText, setSearchText] = useState("");
   const [startIndex, setStartIndex] = useState(0);
@@ -154,7 +155,6 @@ export default function DebtorDetailsCards({
           borderRadius: "10px",
           padding: "0px 10px",
           height: "13rem",
-          marginBottom: "0.5rem",
         }}
       >
         <div
@@ -179,6 +179,7 @@ export default function DebtorDetailsCards({
               justifyContent: "end",
             }}
           >
+            <PaymentCardDetails setConnectPayment={setConnectPayment} />
             <MuiModels
               show="debtorDetail"
               button="create"
@@ -190,7 +191,6 @@ export default function DebtorDetailsCards({
               connectPayment={connectPayment}
               setConnectPayment={setConnectPayment}
             />
-            <PaymentCardDetails setConnectPayment={setConnectPayment} />
           </span>
         </div>
         <div
@@ -220,7 +220,11 @@ export default function DebtorDetailsCards({
                       color: Colors.DARK_GRAY,
                     }}
                   >
-                    {key === "SSID" ? "SSN" : formatKeys(key)}
+                    {key === "SSID"
+                      ? "SSN"
+                      : key === "address"
+                      ? "Street Address"
+                      : formatKeys(key)}
                   </Typography>
 
                   <Tooltip title={value} placement="top-end">
@@ -302,7 +306,11 @@ export default function DebtorDetailsCards({
                       color: Colors.DARK_GRAY,
                     }}
                   >
-                    {key === "EIN" ? key : formatKeys(key)}
+                    {key === "EIN"
+                      ? key
+                      : key === "businessCategory"
+                      ? "Business Type"
+                      : formatKeys(key)}
                   </Typography>
                   <Tooltip title={value} placement="top-end">
                     <Typography
@@ -456,6 +464,7 @@ export default function DebtorDetailsCards({
                 <Grid item xs={4} sx={gridActionStyle}>
                   <span style={cellStyle}>
                     <MuiModels
+                      verifiedSenders={verifiedSenders}
                       show="sendEmailCase"
                       buttonName="sendEmail"
                       iconColor={Colors.BLACK}

@@ -47,6 +47,7 @@ import {
   GetLumpSumJustifications,
   GetFullProfitSettlement,
   GetPaymentIntervals,
+  GetAllSenders,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import {
@@ -201,7 +202,6 @@ export default function SettlementRange() {
   const [debtor, setDebtor] = useState({});
   const [debtorInfo, setDebtorInfo] = useState({});
   const [lumpSumpData, setLumpSumpData] = useState({});
-  const [errorLumpSumMessage, setErrorLumSumtMessage] = useState("");
   const [commissionPercentage, setCommissionPercentage] = useState("");
   const [summaryAmount, setSummaryAmount] = useState({});
   const [justification, setJustification] = useState();
@@ -217,11 +217,13 @@ export default function SettlementRange() {
   const [strategyTab, setStrategyTab] = useState(0);
   const [optionStats, setOptionStats] = useState();
   const [justificationLoading, setJustificationLoading] = useState(false);
+  const [verifiedSender, setVerifiedSender] = useState([]);
   const [colorScheme] = useState("Tableau10");
   const [justificationValue, setJustificationValue] = useState(
     "justification_gemini"
   );
   const [selectedOption, setSelectedOption] = useState("percentageReceivable");
+  const [scoresBackend, setScoresBackend] = useState(false);
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const drawerOpen = useSelector((state) => state.drawer.open);
   const { AUTHORITY_TEXT } = UserListPage;
@@ -257,7 +259,7 @@ export default function SettlementRange() {
     });
   };
 
-  const tabs = ["Max Profit", "Lump Sum", "Percentage Recievable"];
+  const tabs = ["Fixed Amount", "Lump Sum", "Percentage Recievable"];
   const recommendations = ["recommendation 1"];
   const strat3Recommendations = ["recommendation 1"];
   const strat2Recommendations = ["lump Sum"];
@@ -316,53 +318,38 @@ export default function SettlementRange() {
             null
           }
           commission={allData?.maxProfitCommission}
+          scoresBackend={scoresBackend}
         />
       </>
     )),
     1: strat2Recommendations?.map((item, index) => (
       <>
-        {!isEmpty(lumpSumpData) ? (
-          <SettlementCards
-            setPaymentChanged={setPaymentChanged}
-            remainingAmount={
-              allCreditorNames[tabValue] === "Summary"
-                ? summaryAmount?.loanAmount.toString()
-                : selectedCreditorDetails?.remaining
-            }
-            isLumpSumPayment={true}
-            title={item}
-            strategy="strategy2"
-            weeksTillPaidTitle={
-              item === "lump Sum"
-                ? "Amount based on Lump Sum Recommendation"
-                : ""
-            }
-            settlementRange={
-              lumpSumpData?.lumpsum_settlement?.[
-                allCreditorNames[parseInt(tabValue)]
-              ] || null
-            }
-            warning={
-              lumpSumpData?.warning?.[allCreditorNames[parseInt(tabValue)]] ||
-              ""
-            }
-            caseId={allData?.creditors?.[parseInt(tabValue)]?.caseId}
-            commission={allData?.totalCommission}
-          />
-        ) : (
-          <Grid
-            item
-            xs={12}
-            container
-            sx={{
-              backgroundColor: Colors.WHITE,
-              padding: "1rem",
-              borderRadius: "10px",
-            }}
-          >
-            {errorLumpSumMessage}
-          </Grid>
-        )}
+        <SettlementCards
+          setPaymentChanged={setPaymentChanged}
+          breakEven={selectedCreditorDetails?.breakEven}
+          remainingAmount={
+            allCreditorNames[tabValue] === "Summary"
+              ? summaryAmount?.loanAmount.toString()
+              : selectedCreditorDetails?.remaining
+          }
+          isLumpSumPayment={true}
+          title={item}
+          strategy="strategy2"
+          weeksTillPaidTitle={
+            item === "lump Sum" ? "Amount based on Lump Sum Recommendation" : ""
+          }
+          settlementRange={
+            lumpSumpData?.lumpsum_settlement?.[
+              allCreditorNames[parseInt(tabValue)]
+            ] || null
+          }
+          warning={
+            lumpSumpData?.warning?.[allCreditorNames[parseInt(tabValue)]] || ""
+          }
+          caseId={allData?.creditors?.[parseInt(tabValue)]?.caseId}
+          commission={allData?.totalCommission}
+          scoresBackend={scoresBackend}
+        />
       </>
     )),
 
@@ -417,6 +404,7 @@ export default function SettlementRange() {
           selectedOption={selectedOption}
           setSelectedOption={setSelectedOption}
           commission={allData?.percentageReceivableCommissionAmount}
+          scoresBackend={scoresBackend}
         />
       </>
     )),
@@ -528,12 +516,14 @@ export default function SettlementRange() {
         if (resCommission?.status === 200) {
           setLoading(false);
           if (typeof resCommission?.data?.data?.getScores === "string") {
+            setScoresBackend(true);
             setScores({ message: resCommission?.data?.data?.getScores });
             showToast(
               resCommission?.data?.data?.getScores + " Couldn't fetch scores",
               "error"
             );
           } else {
+            setScoresBackend(false);
             setScores(resCommission?.data?.data?.getScores);
           }
           setSummaryAmount(
@@ -618,6 +608,7 @@ export default function SettlementRange() {
         if (settlementRangeData?.status === 200) {
           setLoading(false);
           if (typeof settlementRangeData?.data?.data?.getScores === "string") {
+            setScoresBackend(true);
             setScores({ message: settlementRangeData?.data?.data?.getScores });
             showToast(
               settlementRangeData?.data?.data?.getScores +
@@ -625,6 +616,7 @@ export default function SettlementRange() {
               "error"
             );
           } else {
+            setScoresBackend(false);
             setScores(settlementRangeData?.data?.data?.getScores);
           }
           setAllData(settlementRangeData?.data?.data);
@@ -655,6 +647,12 @@ export default function SettlementRange() {
           showToast(settlementRangeData?.data?.message, "success");
           if (typeof settlementRangeData?.data?.data?.getScores !== "string") {
             getLumpSumAmountData();
+          }
+          const senderRes = await GetAllSenders(
+            settlementRangeData?.data?.data?.debtor?._id
+          );
+          if (senderRes?.status === 200) {
+            setVerifiedSender(senderRes?.data?.data);
           }
         } else if (
           settlementRangeData?.response?.status === 401 ||
@@ -694,7 +692,6 @@ export default function SettlementRange() {
         setLumpSumpData(GetLumpSumDataRes?.data?.data);
       } else {
         const errorMessage = GetLumpSumDataRes?.response?.data?.message;
-        setErrorLumSumtMessage(errorMessage);
         showToast(errorMessage, "error");
       }
     }
@@ -717,6 +714,7 @@ export default function SettlementRange() {
       setJustification(response?.data?.data?.justifications);
       setJustificationLoading(false);
     }
+    setJustificationLoading(false);
   };
 
   useEffect(() => {
@@ -727,10 +725,6 @@ export default function SettlementRange() {
     getAllRanges([], false);
     getAllSummary();
   }, []);
-
-  // useEffect(() => {
-  //   getAllJustifications(strategyTab);
-  // }, [strategyTab]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -807,7 +801,7 @@ export default function SettlementRange() {
     },
 
     {
-      label: "Purchased Amount",
+      label: "Total Receivable",
       value: selectedCreditorDetails?.contractDetails?.payable_amount || "--",
       formatCurrency: true,
     },
@@ -933,7 +927,7 @@ export default function SettlementRange() {
     { key: "creditorName", heading: "Creditors", width: "11%" },
     { key: "purchasePrice", heading: "Purchase Price", width: "11%" },
     { key: "fundedAmount", heading: "Net Funded Amount", width: "11%" },
-    { key: "paybackAmount", heading: "Purchased Amount ", width: "11%" },
+    { key: "paybackAmount", heading: "Total Receivable", width: "11%" },
     { key: "payableAmount", heading: "Current Balance", width: "11%" },
     { key: "breakEvenPoint", heading: "Break Even Point", width: "11%" },
     {
@@ -1211,7 +1205,7 @@ export default function SettlementRange() {
                 lumpSump={lumpSumpData}
                 caseId={caseId}
                 paymentData={paymentData}
-                debtorId={allData?.debtor?._id}
+                debtorId={verifiedSender}
               />
               <TextButton
                 disabled={!apiData}
@@ -1359,7 +1353,13 @@ export default function SettlementRange() {
               title="Weekly Profit Excluding Payments"
               tooltip="Weekly profit by not making the creditor payments."
               value={
-                apiData?.true_profit
+                optionValue === 1
+                  ? apiData?.option_2_stats?.true_profit
+                    ? `$${new Intl.NumberFormat()?.format(
+                        apiData?.option_2_stats?.true_profit
+                      )}`
+                    : "No Data"
+                  : apiData?.true_profit
                   ? `$${formatAmountValue(apiData?.true_profit)}`
                   : "No Data"
               }
@@ -1371,7 +1371,13 @@ export default function SettlementRange() {
               title="Profitability Excluding Payments"
               tooltip="Measure of how much profit your business makes after expenses."
               value={
-                apiData?.profitability
+                optionValue === 1
+                  ? apiData?.option_2_stats?.profitability
+                    ? `${new Intl.NumberFormat()?.format(
+                        apiData?.option_2_stats?.profitability
+                      )}%`
+                    : "No Data"
+                  : apiData?.profitability
                   ? `${new Intl.NumberFormat()?.format(
                       apiData?.profitability
                     )}%`
@@ -1384,7 +1390,13 @@ export default function SettlementRange() {
               title="Weekly Profit Including Payments"
               tooltip="Weekly profit after making the creditor payments."
               value={
-                apiData?.weekly_profit
+                optionValue === 1
+                  ? apiData?.option_2_stats?.weekly_profit
+                    ? `$${new Intl.NumberFormat()?.format(
+                        apiData?.option_2_stats?.weekly_profit
+                      )}`
+                    : "No Data"
+                  : apiData?.weekly_profit
                   ? `$${formatAmountValue(apiData?.weekly_profit)}`
                   : "No Data"
               }
@@ -1395,7 +1407,15 @@ export default function SettlementRange() {
               title="Profitability Including payments"
               tooltip="Profitability Including the creditor Payment"
               value={
-                apiData?.profitability_without_creditor_payments
+                optionValue === 1
+                  ? apiData?.option_2_stats
+                      ?.profitability_without_creditor_payments
+                    ? `${new Intl.NumberFormat()?.format(
+                        apiData?.option_2_stats
+                          ?.profitability_without_creditor_payments
+                      )}%`
+                    : "No Data"
+                  : apiData?.profitability_without_creditor_payments
                   ? `${new Intl.NumberFormat()?.format(
                       apiData?.profitability_without_creditor_payments
                     )}%`
@@ -1408,7 +1428,13 @@ export default function SettlementRange() {
               title="Weekly True Revenue"
               tooltip="Total revenue earned by the business each monthly."
               value={
-                apiData?.weekly_true_revenue
+                optionValue === 1
+                  ? apiData?.option_2_stats?.weekly_true_revenue
+                    ? `$${new Intl.NumberFormat()?.format(
+                        apiData?.option_2_stats?.weekly_true_revenue
+                      )}`
+                    : "No Data"
+                  : apiData?.weekly_true_revenue
                   ? `$${formatAmountValue(apiData?.weekly_true_revenue)}`
                   : "No Data"
               }
@@ -1420,13 +1446,11 @@ export default function SettlementRange() {
                 title="Weekly Receivable Commission"
                 tooltip="Weekly payment Which we receive."
                 value={
-                  allData?.percentageReceivableCommissionAmount
-                    ? `$${formatAmountValue(
-                        allData?.percentageReceivableCommissionAmount
-                      )}`
+                  allData?.maxProfitCommission
+                    ? `$${formatAmountValue(allData?.maxProfitCommission)}`
                     : "No Data"
                 }
-                rawValue={allData?.percentageReceivableCommissionAmount}
+                rawValue={allData?.maxProfitCommission}
               />
             )}
             {strategyTab === 1 && (
@@ -1590,6 +1614,16 @@ export default function SettlementRange() {
               </>
             )}
           </Grid>
+          {scores?.message && (
+            <Grid container item xs={6} sx={{ gap: "2%", mt: "1rem" }}>
+              <GridItemMessage
+                key="No Score Reason"
+                title="No Score Reason"
+                value="Mca companies not found, data calculated based on weekly budget"
+                rawValue="Mca companies not found, data calculated based on weekly budget"
+              />
+            </Grid>
+          )}
 
           <Grid
             container
@@ -1642,8 +1676,9 @@ export default function SettlementRange() {
                     fontWeight: "600",
                     height: "3.5rem",
                   }}
-                  label="Negotiation manager Weekly budget"
+                  label="Clients Weekly Budget"
                 />
+
                 <AntTab
                   sx={{
                     bgcolor: Colors.WHITE,
@@ -1651,7 +1686,7 @@ export default function SettlementRange() {
                     fontWeight: "600",
                     height: "3.5rem",
                   }}
-                  label="Weekly budget as per Bank statement"
+                  label="Clients Profit Margin"
                 />
               </AntTabs>
             </Grid>
@@ -1743,7 +1778,7 @@ export default function SettlementRange() {
                           "This is the amount being paid for the Receivables Purchased Amount.",
                         "Net Funded Amount":
                           "This is the net amount being paid after deduction of applicable fees, if any.",
-                        "Purchased Amount":
+                        "Total Receivable":
                           " This is the amount of Receivables.",
                         "Break Even":
                           "1.2x of Net Funded Amount Minus Amount Paid Back.",
@@ -1864,16 +1899,6 @@ export default function SettlementRange() {
             </Grid>
           )}
 
-          <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
-            {scores?.message && (
-              <GridItemMessage
-                key="No Score Reason"
-                title="No Score Reason"
-                value={scores?.message}
-                rawValue={scores?.message}
-              />
-            )}
-          </Grid>
           <Grid
             item
             xs={12}
@@ -1949,7 +1974,7 @@ export default function SettlementRange() {
                   disabled={!isAnyChecked}
                   data={selectedData}
                   caseId={caseId}
-                  debtorId={allData?.debtor?._id}
+                  debtorId={verifiedSender}
                 />
               </div>
             </div>

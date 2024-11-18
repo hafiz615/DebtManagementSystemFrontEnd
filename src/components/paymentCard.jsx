@@ -35,7 +35,7 @@ function PaymentCardDetails({ setConnectPayment }) {
   return (
     <Grid item sx={{ zIndex: "1" }}>
       <ToggleButtonGroup
-        style={{ height: "2.5rem", fontFamily: "Nunito" }}
+        style={{ height: "2rem", fontFamily: "Nunito" }}
         color="primary"
         value={type}
         exclusive
@@ -47,6 +47,7 @@ function PaymentCardDetails({ setConnectPayment }) {
             fontFamily: "Nunito",
             backgroundColor: Colors.VIOLET,
             color: Colors.SKY_BLUE,
+            fontSize: "10px",
           }}
           value="cc"
           onClick={() => window.CollectJS.startPaymentRequest()}
@@ -57,6 +58,7 @@ function PaymentCardDetails({ setConnectPayment }) {
           style={{
             fontFamily: "Nunito",
             color: Colors.SKY_BLUE,
+            fontSize: "10px",
           }}
           value="ck"
           onClick={() => window.CollectJS.startPaymentRequest()}

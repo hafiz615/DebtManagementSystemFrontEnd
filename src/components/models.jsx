@@ -54,6 +54,7 @@ import TextEditor from "./textEditor";
 import PaynoteForm from "./caseDetail/paynoteForm";
 import CommissionDetails from "./caseDetail/commissionDetails";
 import Strategy3choices from "./strategy3choices";
+import DebtorPlan from "./debtorPlan";
 
 export default function MuiModels({
   buttonName,
@@ -134,6 +135,8 @@ export default function MuiModels({
   commission,
   replyCheck,
   debtorId,
+  verifiedSenders,
+  scoresBackend,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -492,9 +495,15 @@ export default function MuiModels({
           }
           disabled={disabled}
         />
-      ) : buttonName === "sendEmailCase" ? (
+      ) : buttonName === "sendEmailCase" || buttonName === "composeEmail" ? (
         <TextButton
-          buttonText={replyButton ? "Reply" : "Send Email"}
+          buttonText={
+            replyButton
+              ? "Reply"
+              : buttonName === "composeEmail"
+              ? "Compose Email"
+              : "Send Email"
+          }
           height="2.5rem"
           width={replyButton ? "5rem" : "9rem"}
           onClick={handleOpen}
@@ -603,12 +612,25 @@ export default function MuiModels({
             )
           }
         />
-      ) : show === "settlmentPayment" || buttonName === "settlmentPayment" ? (
+      ) : show === "settlmentPayment" ||
+        buttonName === "settlmentPayment" ||
+        show === "payments" ? (
         <TextButton
           buttonText="Choose Plan"
           boxShadow="none"
           height="2.5rem"
           width="9rem"
+          backgroundColor={Colors.SKY_BLUE}
+          fontColor={Colors.WHITE}
+          hoverColor={Colors.SKY_BLUE}
+          onClick={handleOpen}
+        />
+      ) : show === "debtorPaymentPlan" ? (
+        <TextButton
+          buttonText="Choose Debtor Plan"
+          boxShadow="none"
+          height="2.5rem"
+          width="12rem"
           backgroundColor={Colors.SKY_BLUE}
           fontColor={Colors.WHITE}
           hoverColor={Colors.SKY_BLUE}
@@ -736,6 +758,7 @@ export default function MuiModels({
             />
           ) : show === "sendEmailCase" ? (
             <SendEmailCase
+              verifiedSenders={verifiedSenders}
               buttonText={buttonText}
               handleClose={handleClose}
               headerName={headerName}
@@ -882,6 +905,7 @@ export default function MuiModels({
               commissionRange={commissionRange}
               setPaymentChanged={setPaymentChanged}
               commission={commission}
+              scoresBackend={scoresBackend}
             />
           ) : show === "sendEmailJustification" ? (
             <SendEmailJustification
@@ -919,6 +943,12 @@ export default function MuiModels({
               setConnectPayment={setConnectPayment}
               show={show}
               maxHeight={maxHeight}
+            />
+          ) : show === "debtorPaymentPlan" ? (
+            <DebtorPlan
+              caseData={caseData}
+              handleClose={handleClose}
+              GetCaseDetails={GetCaseDetails}
             />
           ) : (
             ""
