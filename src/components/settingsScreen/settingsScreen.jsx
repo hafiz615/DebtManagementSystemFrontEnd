@@ -18,6 +18,7 @@ import NotificationConfiguration from "../notificationConfigure";
 import JustificationModal from "./justificationModal";
 import AddUrlsAccordion from "./addUrlsAccordion";
 import EmailIdentityAccordion from "./emailIdentityAccordion";
+import TransactionAccordion from "./transactionAccordion";
 
 export default function SettingsScreen() {
   const navigate = useNavigate();
@@ -40,6 +41,7 @@ export default function SettingsScreen() {
   const [customFields, setCustomFields] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectJustification, setSelectJustification] = useState({});
+  const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
 
   const getSettings = async () => {
     setLoading(true);
@@ -127,6 +129,8 @@ export default function SettingsScreen() {
           setAuthorizationInterval={setAuthorizationInterval}
           loading={loading}
         />
+        {role === "Super User" && <TransactionAccordion />}
+
         {settings?.viewNotificationTemplates && (
           <NotificationTemplatesTabs
             notificationTemplates={notificationTemplates}

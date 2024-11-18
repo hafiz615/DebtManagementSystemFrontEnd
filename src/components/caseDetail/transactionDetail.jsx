@@ -5,12 +5,13 @@ import TransactionRow from "../transactionRow";
 
 import { Colors } from "../../config/default";
 import { isEmpty } from "lodash";
-import { FONT_SIZE_MEDIUM } from "../../constants/appConstants";
 
 export default function TransactionDetails({
   paymentDetails,
   loading,
   GetCasePaymentDetails,
+  getCommissionPayments,
+  hideTransferPayment,
 }) {
   return (
     <Grid
@@ -93,11 +94,15 @@ export default function TransactionDetails({
             <TransactionRow
               data={paymentDetails?.transactions?.previous}
               GetCasePaymentDetails={GetCasePaymentDetails}
+              getCommissionPayments={getCommissionPayments}
+              hideTransferPayment={hideTransferPayment}
             />
             <TransactionRow
               data={paymentDetails?.transactions?.upcomingPayments}
               heading="Upcoming"
               GetCasePaymentDetails={GetCasePaymentDetails}
+              getCommissionPayments={getCommissionPayments}
+              hideTransferPayment={hideTransferPayment}
             />
           </Grid>
         </Grid>

@@ -712,10 +712,8 @@ function CaseDetail() {
                     </Grid>
                   ) : value === "Transactions" ? (
                     <TransactionDetails
-                      caseData={caseData}
                       loading={isPaymentLoading}
                       paymentDetails={paymentDetails}
-                      GetCaseDetails={GetCaseDetails}
                       GetCasePaymentDetails={GetCasePaymentDetails}
                     />
                   ) : (
