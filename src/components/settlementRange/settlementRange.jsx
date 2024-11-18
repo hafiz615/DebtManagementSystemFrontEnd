@@ -801,7 +801,7 @@ export default function SettlementRange() {
     },
 
     {
-      label: "Purchased Amount",
+      label: "Total Receivable",
       value: selectedCreditorDetails?.contractDetails?.payable_amount || "--",
       formatCurrency: true,
     },
@@ -927,7 +927,7 @@ export default function SettlementRange() {
     { key: "creditorName", heading: "Creditors", width: "11%" },
     { key: "purchasePrice", heading: "Purchase Price", width: "11%" },
     { key: "fundedAmount", heading: "Net Funded Amount", width: "11%" },
-    { key: "paybackAmount", heading: "Purchased Amount ", width: "11%" },
+    { key: "paybackAmount", heading: "Total Receivable", width: "11%" },
     { key: "payableAmount", heading: "Current Balance", width: "11%" },
     { key: "breakEvenPoint", heading: "Break Even Point", width: "11%" },
     {
@@ -1778,7 +1778,7 @@ export default function SettlementRange() {
                           "This is the amount being paid for the Receivables Purchased Amount.",
                         "Net Funded Amount":
                           "This is the net amount being paid after deduction of applicable fees, if any.",
-                        "Purchased Amount":
+                        "Total Receivable":
                           " This is the amount of Receivables.",
                         "Break Even":
                           "1.2x of Net Funded Amount Minus Amount Paid Back.",

@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Colors } from "../config/default";
 import {
+  FONT_SIZE_LARGE,
   FONT_SIZE_MEDIUM,
+  FONT_SIZE_XL,
   PAGE_HEIGHT,
   TEXT_EDITOR_KEY,
 } from "../constants/appConstants";
@@ -15,14 +16,16 @@ import {
   CardContent,
   Typography,
   Box,
-  TextField,
   IconButton,
   CircularProgress,
+  Menu,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import MuiModels from "./models";
 import SearchBar from "./searchBar";
 import { Editor } from "@tinymce/tinymce-react";
+import { FilterListOutlined } from "@mui/icons-material";
+import TextButton from "./button";
 
 const users = [
   {
@@ -50,6 +53,19 @@ const users = [
   },
 ];
 
+const inputStyling = {
+  width: "100%",
+  padding: "7px 5px",
+  borderRadius: "5px",
+  backgroundColor: Colors.BG_LIGHT_GRAY,
+  border: "none",
+  outline: "none",
+  fontSize: FONT_SIZE_LARGE,
+  fontFamily: "Nunito",
+  color: Colors.DIM_LIGHT_GRAY,
+  marginBottom: "10px",
+};
+
 function Inbox() {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
@@ -57,9 +73,22 @@ function Inbox() {
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState("");
+  const [creditorCompany, setCreditorCompany] = useState("");
+  const [debtorCompany, setDebtorCompany] = useState("");
+  const [caseCode, setCaseCode] = useState("");
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
 
   const handleKeyPress = (e) => {
     setSearchText(e.target.value);
+  };
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   const boxStyling = {
@@ -134,6 +163,88 @@ function Inbox() {
             handleKeyPress={handleKeyPress}
             placeholder="Search..."
           />
+          <IconButton onClick={handleClick}>
+            <FilterListOutlined
+              sx={{
+                color: Colors.DARK_GRAY,
+                fontSize: { xs: "20px", sm: "30px" },
+              }}
+            />
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            transformOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+            sx={{
+              "& .MuiPaper-root": {
+                borderRadius: "12px",
+              },
+            }}
+          >
+            <Grid sx={{ padding: ".5rem .75rem", width: "16rem" }}>
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontSize: FONT_SIZE_XL,
+                  fontWeight: "600",
+                }}
+              >
+                Filter
+              </Typography>
+
+              <input
+                style={inputStyling}
+                placeholder="Search By Debtor Company"
+                type="email"
+                value={debtorCompany}
+                onChange={(e) => setDebtorCompany(e.target.value)}
+              />
+              <input
+                style={inputStyling}
+                placeholder="Search By Creditor Company"
+                type="email"
+                value={creditorCompany}
+                onChange={(e) => setCreditorCompany(e.target.value)}
+              />
+              <input
+                style={inputStyling}
+                placeholder="Search By Case Code"
+                type="email"
+                value={caseCode}
+                onChange={(e) => setCaseCode(e.target.value)}
+              />
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <TextButton
+                  buttonText="Clear"
+                  height="2rem"
+                  width="45%"
+                  marginRight="10%"
+                  fontColor={Colors.BLACK}
+                  // onClick={handleClear}
+                  // disabled={disabled}
+                  backgroundColor={Colors.BG_LIGHT_GRAY}
+                  hoverColor={Colors.BG_LIGHT_GRAY}
+                />
+                <TextButton
+                  buttonText="Filter"
+                  height="2rem"
+                  width="45%"
+                  fontColor={Colors.BLACK}
+                  // onClick={handleSave}
+                  // disabled={applyDisabled}
+                  backgroundColor={Colors.BG_LIGHT_GRAY}
+                  hoverColor={Colors.BG_LIGHT_GRAY}
+                />
+              </div>
+            </Grid>
+          </Menu>
           <MuiModels
             show="sendEmailCase"
             buttonName="composeEmail"
@@ -219,7 +330,7 @@ function Inbox() {
 
             <Grid item xs={9}>
               <Card
-                style={{
+                sx={{
                   display: "flex",
                   flexDirection: "column",
                   padding: "10px",
