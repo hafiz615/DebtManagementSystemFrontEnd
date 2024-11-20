@@ -60,6 +60,7 @@ export default function SendEmailCase({
   replyCheck,
   data,
   verifiedSenders,
+  compose,
 }) {
   const [loading, setLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -236,8 +237,8 @@ export default function SendEmailCase({
       ...(headerName ? {} : { from: replyCheck ? sendFrom : selectedValue }),
     };
     const resEmail = await SendEmailSmsCase(
-      caseDataId,
-      headerName ? "sms" : "email",
+      caseDataId || "1231123",
+      headerName ? "sms" : compose ? "compose" : "email",
       payload
     );
     if (resEmail?.status === 200) {
@@ -247,7 +248,7 @@ export default function SendEmailCase({
       setSubject("");
       setPreview("");
       handleClose();
-      GetLogsById(caseDataId);
+      GetLogsById && GetLogsById(caseDataId);
     } else {
       const errorMessage = resEmail?.response?.data?.message;
       showToast(errorMessage, "error");

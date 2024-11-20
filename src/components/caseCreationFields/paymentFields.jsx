@@ -54,6 +54,7 @@ export default function PaymentFields({
       (error) => error?.index === caseIndex && error?.field === field
     );
   };
+
   return (
     <>
       <Grid
@@ -82,7 +83,7 @@ export default function PaymentFields({
             Total Receivable
           </Typography>
           <AmountTextField
-            value={parseInt(thisCaseData?.totalDebt)}
+            value={parseInt(thisCaseData?.totalDebt?.toFixed(2))}
             onChange={(e) =>
               handleCaseDataChange(
                 caseIndex,
@@ -112,7 +113,7 @@ export default function PaymentFields({
             Paid
           </Typography>
           <AmountTextField
-            value={parseInt(thisCaseData.paidAmount)}
+            value={parseFloat(thisCaseData?.paidAmount?.toFixed(2))}
             onChange={(e) =>
               handleCaseDataChange(
                 caseIndex,
@@ -143,8 +144,10 @@ export default function PaymentFields({
           <AmountTextField
             marginRight={smallScreen ? "0rem" : "2rem"}
             value={
-              parseInt(thisCaseData.totalDebt - thisCaseData.paidAmount) ||
-              parseInt(thisCaseData.remaining)
+              parseFloat(
+                thisCaseData?.totalDebt?.toFixed(2) -
+                  thisCaseData?.paidAmount?.toFixed(2)
+              ) || parseFloat(thisCaseData?.remaining?.toFixed(2))
             }
             onChange={(e) =>
               handleCaseDataChange(

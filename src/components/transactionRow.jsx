@@ -10,7 +10,13 @@ import { RetryAuth, RetryCapture, SendPayment } from "../services/services";
 import { useSelector } from "react-redux";
 import { Paid } from "@mui/icons-material";
 
-function TransactionRow({ data, heading, GetCasePaymentDetails }) {
+function TransactionRow({
+  data,
+  heading,
+  GetCasePaymentDetails,
+  getCommissionPayments,
+  hideTransferPayment,
+}) {
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
   );
@@ -37,7 +43,8 @@ function TransactionRow({ data, heading, GetCasePaymentDetails }) {
     }
     if (response?.status === 200) {
       showToast(response?.data?.message, "success");
-      GetCasePaymentDetails(id);
+      GetCasePaymentDetails && GetCasePaymentDetails(id);
+      getCommissionPayments && getCommissionPayments();
     } else {
       showToast(
         response?.response?.data?.message || response?.response?.data?.message,
@@ -123,7 +130,9 @@ function TransactionRow({ data, heading, GetCasePaymentDetails }) {
                     />
                   )}
                 </Box>
-              ) : item?.type === "payment" && item?.captured === "Success" ? (
+              ) : item?.type === "payment" &&
+                item?.captured === "Success" &&
+                !hideTransferPayment ? (
                 <Box sx={{ cursor: "pointer" }}>
                   <IconButton
                     onClick={(e) => {

@@ -1416,3 +1416,26 @@ export const CancelDebtorPaymentPlan = async (id) => {
     return error;
   }
 };
+
+export const GetAllTransactions = async () => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/payment/getCommissionPayments`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetAllInbox = async (page, limit, search, filter, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL +
+        `/v1/inbox/getAllMessages?page=${page}&limit=${limit}&search=${search}&filter=${filter}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

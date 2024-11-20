@@ -40,35 +40,6 @@ export default function CreditorFields({
   const [nameTitleMapping, setNameTitleMapping] = useState(
     swapKeysAndValues(debtorCaseData?.creditorNames?.mapped_data || {})
   );
-  const handleAddNewContact = () => {
-    const newContact = {
-      name: "",
-      title: "",
-      phone: "",
-      email: "",
-      state: "",
-      city: "",
-      zipCode: "",
-      relationWithDebtor: "",
-    };
-
-    // Create a new array of contacts with the new contact added
-    const updatedFinalCaseData = finalCaseData?.map((creditor, index) => {
-      if (index === caseIndex) {
-        return {
-          ...creditor,
-          creditor: {
-            ...creditor.creditor,
-            contacts: [...creditor?.creditor?.contacts, newContact],
-          },
-        };
-      }
-      return creditor;
-    });
-
-    // Update the state with the new array
-    setFinalCaseData(updatedFinalCaseData);
-  };
 
   useEffect(() => {
     const validationCodeString = digits;
@@ -78,30 +49,6 @@ export default function CreditorFields({
       parseInt(validationCodeString)
     );
   }, [digits]);
-
-  const handleRemoveContact = (contactIndex) => {
-    // Create a new array of finalCaseData with the updated contacts
-    const updatedFinalCaseData = finalCaseData?.map((creditor, index) => {
-      if (index === caseIndex) {
-        // Create a new array of contacts excluding the one to remove
-        const updatedContacts = creditor?.creditor?.contacts?.filter(
-          (_, cIndex) => cIndex !== contactIndex
-        );
-
-        return {
-          ...creditor,
-          creditor: {
-            ...creditor.creditor,
-            contacts: updatedContacts,
-          },
-        };
-      }
-      return creditor;
-    });
-
-    // Update the state with the new array
-    setFinalCaseData(updatedFinalCaseData);
-  };
 
   const handleSliderChange = (event, newValue) => {
     setDigits([newValue]);
@@ -116,6 +63,7 @@ export default function CreditorFields({
       (error) => error?.index === caseIndex && error?.field === field
     );
   };
+
   return (
     <>
       <Grid
