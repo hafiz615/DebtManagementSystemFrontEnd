@@ -21,6 +21,7 @@ const lineStyle = {
 };
 
 export default function DebtorPlan({ caseData, handleClose, GetCaseDetails }) {
+  const [isExempt, setIsExempt] = useState(caseData?.debtor?.isExempt || false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [totalAmount, setTotalAmount] = useState();
   const [loading, setLoading] = useState(false);
@@ -61,6 +62,7 @@ export default function DebtorPlan({ caseData, handleClose, GetCaseDetails }) {
             ? 1
             : data?.frequency,
       })),
+      isExempt: isExempt,
     };
 
     const resCaseUpdate = await DebtorPaymentPlan(
@@ -93,45 +95,49 @@ export default function DebtorPlan({ caseData, handleClose, GetCaseDetails }) {
   }, [caseData]);
 
   useEffect(() => {
-    const currentFrequencies = newDataList?.map((item) => item.frequency);
-    const prevFrequencies = prevFrequenciesRef.current;
-    const hasLengthChanged =
-      currentFrequencies?.length !== prevFrequencies?.length;
-    const hasFrequencyChanged = currentFrequencies?.some(
-      (freq, index) => freq !== prevFrequencies?.[index]
-    );
-    const totalFrequency = currentFrequencies.reduce(
-      (acc, freq) => acc + freq,
-      0
-    );
-    if (hasFrequencyChanged || hasLengthChanged) {
-      const newAmount = totalFrequency ? remaining / totalFrequency : 0;
-      const updatedDataList = newDataList.map((item) => ({
-        ...item,
-        amount: item.frequency ? newAmount : item.amount,
-      }));
-      setNewDataList(updatedDataList);
+    if (!isExempt) {
+      const currentFrequencies = newDataList?.map((item) => item.frequency);
+      const prevFrequencies = prevFrequenciesRef.current;
+      const hasLengthChanged =
+        currentFrequencies?.length !== prevFrequencies?.length;
+      const hasFrequencyChanged = currentFrequencies?.some(
+        (freq, index) => freq !== prevFrequencies?.[index]
+      );
+      const totalFrequency = currentFrequencies.reduce(
+        (acc, freq) => acc + freq,
+        0
+      );
+      if (hasFrequencyChanged || hasLengthChanged) {
+        const newAmount = totalFrequency ? remaining / totalFrequency : 0;
+        const updatedDataList = newDataList.map((item) => ({
+          ...item,
+          amount: item.frequency ? newAmount : item.amount,
+        }));
+        setNewDataList(updatedDataList);
+      }
+      prevFrequenciesRef.current = currentFrequencies;
     }
-    prevFrequenciesRef.current = currentFrequencies;
   }, [newDataList, remaining]);
 
   useEffect(() => {
-    const currentAmounts = newDataList?.map((item) => item.amount);
-    const prevAmounts = prevAmountsRef.current;
-    const hasLengthChanged = currentAmounts?.length !== prevAmounts?.length;
-    const hasAmountChanged = currentAmounts?.some(
-      (amount, index) => amount !== prevAmounts?.[index]
-    );
-    const totalAmount = currentAmounts.reduce((acc, amo) => acc + amo, 0);
-    if (hasAmountChanged || hasLengthChanged) {
-      const newFrequency = totalAmount ? remaining / totalAmount : 0;
-      const updatedDataList = newDataList.map((item) => ({
-        ...item,
-        frequency: item.amount ? Math.round(newFrequency) : item.frequency,
-      }));
-      setNewDataList(updatedDataList);
+    if (!isExempt) {
+      const currentAmounts = newDataList?.map((item) => item.amount);
+      const prevAmounts = prevAmountsRef.current;
+      const hasLengthChanged = currentAmounts?.length !== prevAmounts?.length;
+      const hasAmountChanged = currentAmounts?.some(
+        (amount, index) => amount !== prevAmounts?.[index]
+      );
+      const totalAmount = currentAmounts.reduce((acc, amo) => acc + amo, 0);
+      if (hasAmountChanged || hasLengthChanged) {
+        const newFrequency = totalAmount ? remaining / totalAmount : 0;
+        const updatedDataList = newDataList.map((item) => ({
+          ...item,
+          frequency: item.amount ? Math.round(newFrequency) : item.frequency,
+        }));
+        setNewDataList(updatedDataList);
+      }
+      prevAmountsRef.current = currentAmounts;
     }
-    prevAmountsRef.current = currentAmounts;
   }, [newDataList, remaining]);
 
   const handleDeletePayment = async () => {
@@ -200,7 +206,28 @@ export default function DebtorPlan({ caseData, handleClose, GetCaseDetails }) {
         totalAmount={totalAmount}
         errorMessage="Payment Amount must be equal to total commission"
         planExists={caseData?.debtor?.intervals?.length}
+        isExempt={isExempt}
       />
+      <div style={{ display: "flex", margin: "1rem 0rem" }}>
+        <input
+          type="checkbox"
+          checked={isExempt}
+          onChange={() => setIsExempt(!isExempt)}
+          style={{
+            appearance: "radio",
+            accentColor: Colors.SKY_BLUE,
+          }}
+        />
+        <Typography
+          sx={{
+            fontSize: FONT_SIZE_LARGE,
+            fontFamily: "Nunito",
+            fontWeight: "700",
+          }}
+        >
+          Exempt
+        </Typography>
+      </div>
 
       <Grid container sx={{ mt: "1rem", justifyContent: "right", gap: "10px" }}>
         {caseData?.debtor?.intervals?.length > 0 && (

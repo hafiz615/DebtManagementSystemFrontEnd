@@ -100,7 +100,6 @@ export default function EditCreditorDetail({
                   : creditors?.basicInformation?.phone
                 : ""
             ),
-            // phone: phoneNumberFormat(creditors?.basicInformation?.phone) || "",
           },
           businessInformation: {
             companyName: creditors?.businessInformation?.companyName || "",
@@ -117,13 +116,13 @@ export default function EditCreditorDetail({
           },
         },
         status: caseData?.status || "",
-        totalDebt: parseInt(caseData?.totalDebt) || 0,
+        totalDebt: caseData?.totalDebt || 0,
         lastPaymentDate: caseData?.lastPaymentDate
           ? new Date(caseData?.lastPaymentDate).toISOString().split("T")[0]
           : "",
         contractDetails: caseData?.contractDetails,
-        paidAmount: parseInt(caseData?.paidAmount) || 0,
-        remaining: parseInt(caseData?.remaining) || 0,
+        paidAmount: caseData?.paidAmount || 0,
+        remaining: parseInt(caseData?.remaining?.toFixed(2)) || 0,
         feePayment: caseData?.feePayment,
       },
     ];
