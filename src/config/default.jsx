@@ -1,8 +1,8 @@
 export const Colors = {
-  BG_LIGHT_GRAY: "#F5F5F5", //Background + Card number background
+  BG_LIGHT_GRAY: "#F5F5F5",
   DARK_GRAY: "#6D6D6D",
-  LIGHT_GRAY: "#6C7172", //TEXT BODY COLOR
-  DIM_LIGHT_GRAY: "#A0A0A0", //ICON color
+  LIGHT_GRAY: "#6C7172",
+  DIM_LIGHT_GRAY: "#A0A0A0",
   SKY_BLUE: "#7353F0",
   NAVY_BLUE: "#19335A",
   WHITE: "#FFFFFF",
@@ -13,5 +13,5 @@ export const Colors = {
   VIOLET: "#E6E6FA",
   PALE_GRAY: "#EFEFEF",
   GRADIENT: "linear-gradient(90deg, #1E3A8A, #9333EA)",
-  lIGHT_PURPLE: "#E3DFF5",
+  lIGHT_PURPLE: "#F4F1FF",
 };

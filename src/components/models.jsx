@@ -137,6 +137,7 @@ export default function MuiModels({
   debtorId,
   verifiedSenders,
   scoresBackend,
+  compose,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -762,6 +763,7 @@ export default function MuiModels({
               buttonText={buttonText}
               handleClose={handleClose}
               headerName={headerName}
+              compose={compose}
               caseDataId={caseDataId}
               GetLogsById={GetLogsById}
               from={from}
