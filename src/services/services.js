@@ -1416,7 +1416,6 @@ export const CancelDebtorPaymentPlan = async (id) => {
     return error;
   }
 };
-
 export const GetAllTransactions = async () => {
   try {
     return await axios.get(
@@ -1435,6 +1434,35 @@ export const GetAllInbox = async (page, limit, search, filter, payload) => {
       payload,
       setHeaders()
     );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetAllNotifications = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/notification/getAllNotifications`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const MarkAsReadNotifications = async (id, payload) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/notification/markAsRead/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetNotificationsCount = async () => {
+  try {
+    return await axios.get(BASE_URL + `/v1/notification/count`, setHeaders());
   } catch (error) {
     return error;
   }
