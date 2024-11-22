@@ -339,9 +339,7 @@ function Inbox() {
             compose={true}
             iconColor={Colors.BLACK}
             maxHeight="78vh"
-            caseDataId={""}
-            GetLogsById={""}
-            data={""}
+            GetLogsById={getAllInboxData}
             verifiedSenders={verifiedSenders}
           />
         </div>
@@ -413,7 +411,7 @@ function Inbox() {
                           color: Colors.SKY_BLUE,
                         },
                       }}
-                      label="Sent"
+                      label="Outbox"
                     />
                   </Tabs>
                   <Divider sx={{ mb: "10px" }} />
@@ -508,116 +506,134 @@ function Inbox() {
                       ...ScrollbarStyles,
                     }}
                   >
-                    {selectedUserData
-                      ?.filter((item) =>
-                        activeTab === 0
-                          ? item?.type === "received"
-                          : item?.type === "sent"
-                      )
-                      ?.map((item, index) => (
-                        <Box
-                          key={index}
-                          display="flex"
-                          flexDirection="column"
-                          marginBottom="10px"
-                        >
-                          <CardContent
-                            style={{
-                              backgroundColor:
-                                item?.type === "sent"
-                                  ? Colors.lIGHT_PURPLE
-                                  : Colors.BG_LIGHT_GRAY,
-                              borderRadius: "8px",
-                              marginTop: "5px",
-                              padding: "10px",
-                            }}
+                    {selectedUserData?.filter((item) =>
+                      activeTab === 0
+                        ? item?.type === "received"
+                        : item?.type === "sent"
+                    )?.length === 0 ? (
+                      <Typography
+                        sx={{
+                          textAlign: "center",
+                          marginTop: "20px",
+                          color: Colors.GRAY,
+                          fontFamily: "Nunito",
+                        }}
+                      >
+                        No messages found.
+                      </Typography>
+                    ) : (
+                      selectedUserData
+                        ?.filter((item) =>
+                          activeTab === 0
+                            ? item?.type === "received"
+                            : item?.type === "sent"
+                        )
+                        ?.map((item, index) => (
+                          <Box
+                            key={index}
+                            display="flex"
+                            flexDirection="column"
+                            marginBottom="10px"
                           >
-                            <div
+                            <CardContent
                               style={{
-                                display: "flex",
-                                justifyContent: "space-between",
+                                backgroundColor:
+                                  item?.type === "sent"
+                                    ? Colors.lIGHT_PURPLE
+                                    : Colors.BG_LIGHT_GRAY,
+                                borderRadius: "8px",
+                                marginTop: "5px",
+                                padding: "10px",
                               }}
                             >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div style={{ display: "flex", gap: "10px" }}>
+                                  <Typography sx={boldTextStyling}>
+                                    To:
+                                  </Typography>
+                                  <Typography sx={fontStyling}>
+                                    {item?.to || "-"}
+                                  </Typography>
+                                </div>
+                                <div style={{ display: "flex", gap: "10px" }}>
+                                  <Typography sx={fontStyling}>
+                                    {formatDateString(item?.createdAt)}
+                                  </Typography>
+                                  {item?.type === "received" && (
+                                    <MuiModels
+                                      show="sendEmailCase"
+                                      replyButton={true}
+                                      from={item?.from}
+                                      to={item?.to}
+                                      content={item?.textAsHtml}
+                                      emailSubject={item?.subject}
+                                      buttonName="sendEmailCase"
+                                      iconColor={Colors.BLACK}
+                                      maxHeight="78vh"
+                                      replyCheck={true}
+                                      caseDataId={item?.caseId}
+                                    />
+                                  )}
+                                </div>
+                              </div>
                               <div style={{ display: "flex", gap: "10px" }}>
                                 <Typography sx={boldTextStyling}>
-                                  To:
+                                  Subject:
                                 </Typography>
                                 <Typography sx={fontStyling}>
-                                  {item?.to || "-"}
+                                  {item?.subject || "-"}
                                 </Typography>
                               </div>
                               <div style={{ display: "flex", gap: "10px" }}>
-                                <Typography sx={fontStyling}>
-                                  {formatDateString(item?.createdAt)}
+                                <Typography sx={boldTextStyling}>
+                                  Case Code:
                                 </Typography>
-                                {item?.type === "received" && (
-                                  <MuiModels
-                                    show="sendEmailCase"
-                                    replyButton={true}
-                                    from={item?.from}
-                                    to={item?.to}
-                                    emailSubject={item?.subject}
-                                    buttonName="sendEmailCase"
-                                    iconColor={Colors.BLACK}
-                                    maxHeight="78vh"
-                                    replyCheck={true}
-                                    compose={true}
-                                  />
-                                )}
+                                <Typography sx={fontStyling}>
+                                  {item?.caseCode}
+                                </Typography>
                               </div>
-                            </div>
-                            <div style={{ display: "flex", gap: "10px" }}>
+                              <div style={{ display: "flex", gap: "10px" }}>
+                                <Typography sx={boldTextStyling}>
+                                  Creditor Company Name:
+                                </Typography>
+                                <Typography sx={fontStyling}>
+                                  {item?.creditorCompanyName || "-"}
+                                </Typography>
+                              </div>
+                              <div style={{ display: "flex", gap: "10px" }}>
+                                <Typography sx={boldTextStyling}>
+                                  Debtor Company Name:
+                                </Typography>
+                                <Typography sx={fontStyling}>
+                                  {item?.debtorCompanyName || "-"}
+                                </Typography>
+                              </div>
+                              <div style={{ display: "flex", gap: "10px" }}>
+                                <Typography sx={boldTextStyling}>
+                                  Negotiator Name:
+                                </Typography>
+                                <Typography sx={fontStyling}>
+                                  {item?.negotiatorName || "-"}
+                                </Typography>
+                              </div>
                               <Typography sx={boldTextStyling}>
-                                Subject:
+                                Content:
                               </Typography>
-                              <Typography sx={fontStyling}>
-                                {item?.subject || "-"}
-                              </Typography>
-                            </div>
-                            <div style={{ display: "flex", gap: "10px" }}>
-                              <Typography sx={boldTextStyling}>
-                                Case Code:
-                              </Typography>
-                              <Typography sx={fontStyling}>
-                                {item?.caseCode}
-                              </Typography>
-                            </div>
-                            <div style={{ display: "flex", gap: "10px" }}>
-                              <Typography sx={boldTextStyling}>
-                                Creditor Company Name:
-                              </Typography>
-                              <Typography sx={fontStyling}>
-                                {item?.creditorCompanyName || "-"}
-                              </Typography>
-                            </div>
-                            <div style={{ display: "flex", gap: "10px" }}>
-                              <Typography sx={boldTextStyling}>
-                                Debtor Company Name:
-                              </Typography>
-                              <Typography sx={fontStyling}>
-                                {item?.debtorCompanyName || "-"}
-                              </Typography>
-                            </div>
-                            <div style={{ display: "flex", gap: "10px" }}>
-                              <Typography sx={boldTextStyling}>
-                                Negotiator Name:
-                              </Typography>
-                              <Typography sx={fontStyling}>
-                                {item?.negotiatorName || "-"}
-                              </Typography>
-                            </div>
-                            <Typography sx={boldTextStyling}>
-                              Content:
-                            </Typography>
-                            <Typography
-                              sx={fontStyling}
-                              dangerouslySetInnerHTML={{
-                                __html: item?.textAsHtml,
-                              }}
-                            />
-                          </CardContent>
-                        </Box>
-                      ))}
+                              <Typography
+                                sx={fontStyling}
+                                dangerouslySetInnerHTML={{
+                                  __html: item?.textAsHtml,
+                                }}
+                              />
+                            </CardContent>
+                          </Box>
+                        ))
+                    )}
                   </Box>
                 </>
               ) : (
