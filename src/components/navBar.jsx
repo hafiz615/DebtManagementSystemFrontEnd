@@ -5,15 +5,17 @@ import { Box, Tooltip } from "@mui/material";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import { Colors } from "../config/default";
-import { Logout } from "../services/services";
+import { GetNotificationsCount, Logout } from "../services/services";
 
 import AppLogo from "../../src/assets/FC White.png";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useSelector } from "react-redux";
+import NotificationsBell from "./notificationBell";
 
 export default function NavBar({ onClick }) {
   const navigate = useNavigate();
   const drawerOpen = useSelector((state) => state.drawer.open);
+  const [notificationsLength, setNotificationLength] = React.useState(0);
 
   const deleteAllCookies = () => {
     const cookies = document.cookie.split(";");
@@ -50,6 +52,17 @@ export default function NavBar({ onClick }) {
     navigate(`/home`);
   };
 
+  const getNotificationsCount = async () => {
+    const response = await GetNotificationsCount();
+    if (response?.status === 200) {
+      setNotificationLength(response?.data?.data);
+    }
+  };
+
+  React.useEffect(() => {
+    getNotificationsCount();
+  }, []);
+
   return (
     <Box>
       <AppBar
@@ -84,6 +97,11 @@ export default function NavBar({ onClick }) {
                 />
               </div>
             )}
+
+            <NotificationsBell
+              notificationsLength={notificationsLength}
+              setNotificationLength={setNotificationLength}
+            />
 
             <Tooltip title="logout" placement="top-end">
               <IconButton
