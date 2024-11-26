@@ -223,7 +223,6 @@ export default function CreditorsDetailCards({
             justifyContent: "center",
           }}
         >
-          {/* <PaynoteButton caseData={caseData} /> */}
           <MuiModels
             show="paynoteForm"
             button="paynoteForm"
@@ -318,38 +317,10 @@ export default function CreditorsDetailCards({
       >
         <p
           style={{
-            fontWeight: "600",
-            fontSize: "13px",
-            fontFamily: "Nunito",
-          }}
-        >
-          Funded
-        </p>
-        <p
-          style={{
             fontSize: "13px",
             fontFamily: "Nunito",
             fontWeight: "700",
-            color: Colors.DARK_GRAY,
-          }}
-        >
-          Contract Date
-        </p>
-        <p
-          style={{
-            fontSize: "13px",
-            color: Colors.DIM_LIGHT_GRAY,
-            fontWeight: "500",
-          }}
-        >
-          {formatDate(caseData?.creditor?.lastFundedDate) || "-"}
-        </p>
-        <p
-          style={{
-            fontSize: "13px",
-            fontFamily: "Nunito",
-            fontWeight: "700",
-            color: Colors.DARK_GRAY,
+            color: Colors.BLACK,
           }}
         >
           Months to Pay off

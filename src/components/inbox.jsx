@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import { Colors } from "../config/default";
 import {
   FONT_SIZE_LARGE,
   FONT_SIZE_MEDIUM,
   FONT_SIZE_XL,
-  FONT_SIZE_XXL,
   PAGE_HEIGHT,
-  TEXT_EDITOR_KEY,
 } from "../constants/appConstants";
 import ScrollbarStyles from "./customScroll";
 import {
@@ -20,11 +17,12 @@ import {
   IconButton,
   CircularProgress,
   Menu,
+  Tabs,
+  Tab,
+  Divider,
 } from "@mui/material";
-import SendIcon from "@mui/icons-material/Send";
 import MuiModels from "./models";
 import SearchBar from "./searchBar";
-import { Editor } from "@tinymce/tinymce-react";
 import { FilterListOutlined } from "@mui/icons-material";
 import TextButton from "./button";
 import { GetAllInbox, GetAllSenders } from "../services/services";
@@ -78,8 +76,20 @@ const boxStyling = {
   cursor: "pointer",
 };
 
+const boldTextStyling = {
+  fontFamily: "Nunito",
+  fontSize: FONT_SIZE_MEDIUM,
+  m: "6px 0px",
+  fontWeight: 600,
+};
+
+const fontStyling = {
+  fontFamily: "Nunito",
+  fontSize: FONT_SIZE_MEDIUM,
+  m: "6px 0px",
+};
+
 function Inbox() {
-  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const [inboxData, setInboxData] = useState();
   const [selectedUser, setSelectedUser] = useState();
@@ -94,6 +104,11 @@ function Inbox() {
   const [filterActive, setFilterActive] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [verifiedSenders, setVerified] = useState([]);
+  const [activeTab, setActiveTab] = useState(0);
+
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
 
   const open = Boolean(anchorEl);
 
@@ -184,7 +199,7 @@ function Inbox() {
         xs={12}
         sx={{
           display: "flex",
-          justifyContent: smallScreen ? "flex-start" : "flex-end",
+          justifyContent: "flex-end",
           marginTop: "1.5rem",
         }}
       >
@@ -324,9 +339,7 @@ function Inbox() {
             compose={true}
             iconColor={Colors.BLACK}
             maxHeight="78vh"
-            caseDataId={""}
-            GetLogsById={""}
-            data={""}
+            GetLogsById={getAllInboxData}
             verifiedSenders={verifiedSenders}
           />
         </div>
@@ -367,36 +380,72 @@ function Inbox() {
                   <CircularProgress size={40} sx={{ color: Colors.SKY_BLUE }} />
                 </Grid>
               ) : (
-                inboxData &&
-                Object.keys(inboxData)?.map((key) => {
-                  const value = inboxData[key];
-                  return (
-                    <Box
-                      key={key}
-                      onClick={() => {
-                        setSelectedUser(key);
-                        setSelectedUserData(value);
-                      }}
+                <>
+                  <Tabs
+                    value={activeTab}
+                    onChange={handleTabChange}
+                    centered
+                    textColor="primary"
+                    TabIndicatorProps={{
+                      style: {
+                        backgroundColor: Colors.SKY_BLUE,
+                      },
+                    }}
+                    sx={{ mb: "10px", width: "100%" }}
+                  >
+                    <Tab
                       sx={{
-                        ...boxStyling,
-                        backgroundColor:
-                          selectedUser === key
-                            ? Colors.lIGHT_PURPLE
-                            : "transparent",
+                        textTransform: "none",
+                        color: Colors.SKY_BLUE,
+                        "&.Mui-selected": {
+                          color: Colors.SKY_BLUE,
+                        },
                       }}
-                    >
-                      <Typography
-                        sx={{
-                          fontFamily: "Nunito",
-                          fontWeight: 600,
-                          fontSize: FONT_SIZE_LARGE,
-                        }}
-                      >
-                        {key}
-                      </Typography>
-                    </Box>
-                  );
-                })
+                      label="Inbox"
+                    />
+                    <Tab
+                      sx={{
+                        textTransform: "none",
+                        color: Colors.SKY_BLUE,
+                        "&.Mui-selected": {
+                          color: Colors.SKY_BLUE,
+                        },
+                      }}
+                      label="Outbox"
+                    />
+                  </Tabs>
+                  <Divider sx={{ mb: "10px" }} />
+                  {inboxData &&
+                    Object.keys(inboxData)?.map((key) => {
+                      const value = inboxData[key];
+                      return (
+                        <Box
+                          key={key}
+                          onClick={() => {
+                            setSelectedUser(key);
+                            setSelectedUserData(value);
+                          }}
+                          sx={{
+                            ...boxStyling,
+                            backgroundColor:
+                              selectedUser === key
+                                ? Colors.lIGHT_PURPLE
+                                : "transparent",
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              fontFamily: "Nunito",
+                              fontWeight: 600,
+                              fontSize: FONT_SIZE_LARGE,
+                            }}
+                          >
+                            {key}
+                          </Typography>
+                        </Box>
+                      );
+                    })}
+                </>
               )}
             </Card>
           </Grid>
@@ -430,7 +479,6 @@ function Inbox() {
                 <>
                   <Box
                     display="flex"
-                    justifyContent="space-between"
                     alignItems="center"
                     padding="10px"
                     style={{
@@ -458,200 +506,134 @@ function Inbox() {
                       ...ScrollbarStyles,
                     }}
                   >
-                    {selectedUserData?.map((item, index) => (
-                      <Box
-                        key={index}
-                        display="flex"
-                        flexDirection="column"
-                        marginBottom="10px"
+                    {selectedUserData?.filter((item) =>
+                      activeTab === 0
+                        ? item?.type === "received"
+                        : item?.type === "sent"
+                    )?.length === 0 ? (
+                      <Typography
+                        sx={{
+                          textAlign: "center",
+                          marginTop: "20px",
+                          color: Colors.GRAY,
+                          fontFamily: "Nunito",
+                        }}
                       >
-                        <CardContent
-                          style={{
-                            backgroundColor:
-                              item?.type === "sent"
-                                ? Colors.lIGHT_PURPLE
-                                : Colors.BG_LIGHT_GRAY,
-                            borderRadius: "8px",
-                            marginTop: "5px",
-                            padding: "10px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                            }}
+                        No messages found.
+                      </Typography>
+                    ) : (
+                      selectedUserData
+                        ?.filter((item) =>
+                          activeTab === 0
+                            ? item?.type === "received"
+                            : item?.type === "sent"
+                        )
+                        ?.map((item, index) => (
+                          <Box
+                            key={index}
+                            display="flex"
+                            flexDirection="column"
+                            marginBottom="10px"
                           >
-                            <div style={{ display: "flex", gap: "10px" }}>
-                              <Typography
-                                sx={{
-                                  fontFamily: "Nunito",
-                                  fontSize: FONT_SIZE_MEDIUM,
-                                  m: "6px 0px",
-                                  fontWeight: 600,
+                            <CardContent
+                              style={{
+                                backgroundColor:
+                                  item?.type === "sent"
+                                    ? Colors.lIGHT_PURPLE
+                                    : Colors.BG_LIGHT_GRAY,
+                                borderRadius: "8px",
+                                marginTop: "5px",
+                                padding: "10px",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
                                 }}
                               >
-                                To:
+                                <div style={{ display: "flex", gap: "10px" }}>
+                                  <Typography sx={boldTextStyling}>
+                                    To:
+                                  </Typography>
+                                  <Typography sx={fontStyling}>
+                                    {item?.to || "-"}
+                                  </Typography>
+                                </div>
+                                <div style={{ display: "flex", gap: "10px" }}>
+                                  <Typography sx={fontStyling}>
+                                    {formatDateString(item?.createdAt)}
+                                  </Typography>
+                                  {item?.type === "received" && (
+                                    <MuiModels
+                                      show="sendEmailCase"
+                                      replyButton={true}
+                                      from={item?.from}
+                                      to={item?.to}
+                                      content={item?.textAsHtml}
+                                      emailSubject={item?.subject}
+                                      buttonName="sendEmailCase"
+                                      iconColor={Colors.BLACK}
+                                      maxHeight="78vh"
+                                      replyCheck={true}
+                                      caseDataId={item?.caseId}
+                                    />
+                                  )}
+                                </div>
+                              </div>
+                              <div style={{ display: "flex", gap: "10px" }}>
+                                <Typography sx={boldTextStyling}>
+                                  Subject:
+                                </Typography>
+                                <Typography sx={fontStyling}>
+                                  {item?.subject || "-"}
+                                </Typography>
+                              </div>
+                              <div style={{ display: "flex", gap: "10px" }}>
+                                <Typography sx={boldTextStyling}>
+                                  Case Code:
+                                </Typography>
+                                <Typography sx={fontStyling}>
+                                  {item?.caseCode}
+                                </Typography>
+                              </div>
+                              <div style={{ display: "flex", gap: "10px" }}>
+                                <Typography sx={boldTextStyling}>
+                                  Creditor Company Name:
+                                </Typography>
+                                <Typography sx={fontStyling}>
+                                  {item?.creditorCompanyName || "-"}
+                                </Typography>
+                              </div>
+                              <div style={{ display: "flex", gap: "10px" }}>
+                                <Typography sx={boldTextStyling}>
+                                  Debtor Company Name:
+                                </Typography>
+                                <Typography sx={fontStyling}>
+                                  {item?.debtorCompanyName || "-"}
+                                </Typography>
+                              </div>
+                              <div style={{ display: "flex", gap: "10px" }}>
+                                <Typography sx={boldTextStyling}>
+                                  Negotiator Name:
+                                </Typography>
+                                <Typography sx={fontStyling}>
+                                  {item?.negotiatorName || "-"}
+                                </Typography>
+                              </div>
+                              <Typography sx={boldTextStyling}>
+                                Content:
                               </Typography>
                               <Typography
-                                sx={{
-                                  fontFamily: "Nunito",
-                                  fontSize: FONT_SIZE_MEDIUM,
-                                  m: "6px 0px",
+                                sx={fontStyling}
+                                dangerouslySetInnerHTML={{
+                                  __html: item?.textAsHtml,
                                 }}
-                              >
-                                {item?.to || "-"}
-                              </Typography>
-                            </div>
-                            <Typography
-                              sx={{
-                                fontFamily: "Nunito",
-                                fontSize: FONT_SIZE_MEDIUM,
-                              }}
-                            >
-                              {formatDateString(item?.createdAt)}
-                            </Typography>
-                          </div>
-                          <div style={{ display: "flex", gap: "10px" }}>
-                            <Typography
-                              sx={{
-                                fontFamily: "Nunito",
-                                fontSize: FONT_SIZE_MEDIUM,
-                                m: "6px 0px",
-                                fontWeight: 600,
-                              }}
-                            >
-                              Subject:
-                            </Typography>
-                            <Typography
-                              sx={{
-                                fontFamily: "Nunito",
-                                fontSize: FONT_SIZE_MEDIUM,
-                                m: "6px 0px",
-                              }}
-                            >
-                              {item?.subject || "-"}
-                            </Typography>
-                          </div>
-                          <div style={{ display: "flex", gap: "10px" }}>
-                            <Typography
-                              sx={{
-                                fontFamily: "Nunito",
-                                fontSize: FONT_SIZE_MEDIUM,
-                                m: "6px 0px",
-                                fontWeight: 600,
-                              }}
-                            >
-                              Case Code:
-                            </Typography>
-                            <Typography
-                              sx={{
-                                fontFamily: "Nunito",
-                                fontSize: FONT_SIZE_MEDIUM,
-                                m: "6px 0px",
-                              }}
-                            >
-                              {item?.caseCode}
-                            </Typography>
-                          </div>
-                          <div style={{ display: "flex", gap: "10px" }}>
-                            <Typography
-                              sx={{
-                                fontFamily: "Nunito",
-                                fontSize: FONT_SIZE_MEDIUM,
-                                m: "6px 0px",
-                                fontWeight: 600,
-                              }}
-                            >
-                              Creditor Company Name:
-                            </Typography>
-                            <Typography
-                              sx={{
-                                fontFamily: "Nunito",
-                                fontSize: FONT_SIZE_MEDIUM,
-                                m: "6px 0px",
-                              }}
-                            >
-                              {item?.creditorCompanyName || "-"}
-                            </Typography>
-                          </div>
-                          <div style={{ display: "flex", gap: "10px" }}>
-                            <Typography
-                              sx={{
-                                fontFamily: "Nunito",
-                                fontSize: FONT_SIZE_MEDIUM,
-                                m: "6px 0px",
-                                fontWeight: 600,
-                              }}
-                            >
-                              Debtor Company Name:
-                            </Typography>
-                            <Typography
-                              sx={{
-                                fontFamily: "Nunito",
-                                fontSize: FONT_SIZE_MEDIUM,
-                                m: "6px 0px",
-                              }}
-                            >
-                              {item?.debtorCompanyName || "-"}
-                            </Typography>
-                          </div>
-                          <div style={{ display: "flex", gap: "10px" }}>
-                            <Typography
-                              sx={{
-                                fontFamily: "Nunito",
-                                fontSize: FONT_SIZE_MEDIUM,
-                                m: "6px 0px",
-                                fontWeight: 600,
-                              }}
-                            >
-                              Negotiator Name:
-                            </Typography>
-                            <Typography
-                              sx={{
-                                fontFamily: "Nunito",
-                                fontSize: FONT_SIZE_MEDIUM,
-                                m: "6px 0px",
-                              }}
-                            >
-                              {item?.negotiatorName || "-"}
-                            </Typography>
-                          </div>
-                          <Typography
-                            sx={{
-                              fontFamily: "Nunito",
-                              fontSize: FONT_SIZE_MEDIUM,
-                            }}
-                            dangerouslySetInnerHTML={{
-                              __html: item?.textAsHtml,
-                            }}
-                          />
-                        </CardContent>
-                      </Box>
-                    ))}
-                  </Box>
-
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    padding="10px"
-                    style={{ borderTop: "1px solid #ddd" }}
-                  >
-                    <Editor
-                      apiKey={TEXT_EDITOR_KEY}
-                      init={{
-                        menubar: "false",
-                        toolbar:
-                          "formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat",
-                        height: 200,
-                        width: "100%",
-                      }}
-                      value={preview}
-                      onEditorChange={(content) => setPreview(content)}
-                    />
-                    <IconButton sx={{ backgroundColor: Colors.SKY_BLUE }}>
-                      <SendIcon sx={{ color: Colors.WHITE }} />
-                    </IconButton>
+                              />
+                            </CardContent>
+                          </Box>
+                        ))
+                    )}
                   </Box>
                 </>
               ) : (
@@ -665,9 +647,7 @@ function Inbox() {
                     justifyContent: "center",
                   }}
                 >
-                  <Typography
-                    sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_MEDIUM }}
-                  >
+                  <Typography sx={fontStyling}>
                     Looks like you have'nt started a conversation yet
                   </Typography>
                 </Grid>

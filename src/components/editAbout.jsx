@@ -177,13 +177,13 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  Case Owner
+                  CSM
                 </Typography>
                 <Dropdown
                   disabled={isEmpty(userArray)}
                   menuWidth="20.5rem"
                   menuItems={userArray}
-                  placeholder="Case Owner"
+                  placeholder="CSM"
                   backgroundColor={Colors.BG_LIGHT_GRAY}
                   hoverColor={Colors.BG_LIGHT_GRAY}
                   width="100%"

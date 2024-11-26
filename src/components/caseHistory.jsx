@@ -42,7 +42,7 @@ function CaseHistory({
     "Case Owner",
     userRole === "client" ? "Creditor" : "Debtor",
     "Last Payment Date",
-    "Outstanding Debt",
+    "Current Balance",
     "Total Debt",
     "Upcoming Debt",
     "Upcoming Date",

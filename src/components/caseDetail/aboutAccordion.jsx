@@ -17,28 +17,29 @@ export default function AboutAccordion({ caseDetails, GetCaseDetails }) {
   const aboutData = [
     { name: "Case Code", value: caseDetails?.caseCode || "-" },
     { name: "Status", value: caseDetails?.status || "-" },
+    { name: "Manager", value: caseDetails?.manager || "-" },
     { name: "CSM", value: caseDetails?.caseOwner || "-" },
 
     { name: "Negotiator", value: caseDetails?.negotiator || "-" },
-    { name: "Manager", value: caseDetails?.manager || "-" },
     {
       name: "Total Debt",
       value: formatDollarAmount(caseDetails?.totalDebt) || "-",
     },
     {
-      name: "Remaining Debt",
-      value: formatDollarAmount(caseDetails?.remaining) || "-",
-    },
-    {
-      name: "Paid Debt",
+      name: "Total Paid",
       value: formatDollarAmount(caseDetails?.paidAmount) || "-",
     },
     {
-      name: "Amount Delivered To Creditor",
+      name: "Current Balance",
+      value: formatDollarAmount(caseDetails?.remaining) || "-",
+    },
+
+    {
+      name: "Amount paid by SRT",
       value: formatDollarAmount(caseDetails?.amountDeliveredToCreditor) || "-",
     },
     {
-      name: "Amount Not Delivered To Creditor",
+      name: "Fee's Collected Amount",
       value:
         formatDollarAmount(caseDetails?.amountNotDeliveredToCreditor) || "-",
     },

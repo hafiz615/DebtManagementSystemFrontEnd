@@ -368,6 +368,7 @@ export default function ClientListDetails() {
   const { AUTHORITY_TEXT } = UserListPage;
   const dataUser = clientData?.debtor || clientData?.creditor;
   const infoItems = [
+    { label: "Name", value: truncateText(dataUser?.fullName, 25) || "--" },
     { label: "Email", value: truncateText(dataUser?.email, 25) || "--" },
     {
       label: "Total Debt",
@@ -376,23 +377,20 @@ export default function ClientListDetails() {
   ];
 
   if (userRole === "client") {
-    infoItems.push(
-      { label: "SSN", value: dataUser?.SSN || "--" },
-      { label: "Address", value: dataUser?.address || "--" }
-    );
+    infoItems.push({ label: "Address", value: dataUser?.address || "--" });
   }
   const financialInfo = [
     {
-      label: "Outstanding Balance",
-      value: formatDollarAmount(dataUser?.outstandingDebt) || "--",
+      label: "Phone Number",
+      value: dataUser?.phone ? `+1${dataUser?.phone}` : "--",
     },
   ];
 
   if (userRole === "client") {
-    financialInfo.push(
-      { label: "Organization Name", value: dataUser?.companyName || "--" },
-      { label: "Account Status", value: dataUser?.status || "--" }
-    );
+    financialInfo.push({
+      label: "Account Status",
+      value: dataUser?.status || "--",
+    });
   }
   useEffect(() => {
     setCurrentPage(1);
@@ -883,7 +881,7 @@ export default function ClientListDetails() {
                   margin: "5px 0px",
                 }}
               >
-                Outstanding Debt
+                Current Balance
               </p>
               <input
                 min={0}

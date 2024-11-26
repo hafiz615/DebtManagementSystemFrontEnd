@@ -155,7 +155,7 @@ export default function PersistentDrawerLeft({ children }) {
   const menuItems = [
     { text: "Pipelines", icon: <Handyman /> },
     { text: "Settings", icon: <Settings /> },
-    // { text: "Inbox", icon: <Mail /> },
+    { text: "Inbox", icon: <Mail /> },
   ];
 
   if (generalPermissions?.viewHomeScreen) {
