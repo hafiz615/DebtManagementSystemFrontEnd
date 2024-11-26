@@ -183,6 +183,7 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
           {item?.negotiator}
         </Typography>
       </div>
+
       <div>
         <Typography
           sx={{ fontSize: FONT_SIZE_LARGE, fontFamily: "Nunito", mb: "5px" }}
@@ -199,6 +200,13 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
       </div>
       <div>
         <Typography
+          sx={{ fontSize: FONT_SIZE_LARGE, fontFamily: "Nunito", mb: "5px" }}
+        >
+          {creditorBasicInfoItem?.fullName}
+        </Typography>
+      </div>
+      {/* <div>
+        <Typography
           sx={{
             fontSize: FONT_SIZE_LARGE,
             fontFamily: "Nunito",
@@ -207,7 +215,7 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
         >
           {item?.confidence}
         </Typography>
-      </div>
+      </div> */}
     </div>
   );
 };
