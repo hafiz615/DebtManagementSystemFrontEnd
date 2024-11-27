@@ -55,6 +55,7 @@ import PaynoteForm from "./caseDetail/paynoteForm";
 import CommissionDetails from "./caseDetail/commissionDetails";
 import Strategy3choices from "./strategy3choices";
 import DebtorPlan from "./debtorPlan";
+import TransactionHistory from "./transactionHistory";
 
 export default function MuiModels({
   buttonName,
@@ -442,6 +443,15 @@ export default function MuiModels({
           buttonText="Get Settlement Range"
           height="2.5rem"
           width="12rem"
+          onClick={handleOpen}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
+      ) : show === "TransactionHistory" ? (
+        <TextButton
+          buttonText="Transaction History"
+          height="2.5rem"
+          width="100%"
           onClick={handleOpen}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
@@ -952,6 +962,8 @@ export default function MuiModels({
               handleClose={handleClose}
               GetCaseDetails={GetCaseDetails}
             />
+          ) : show === "TransactionHistory" ? (
+            <TransactionHistory handleClose={handleClose} data={data} />
           ) : (
             ""
           )}

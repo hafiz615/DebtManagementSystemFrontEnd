@@ -48,6 +48,7 @@ import {
   GetFullProfitSettlement,
   GetPaymentIntervals,
   GetAllSenders,
+  GetStatementSummary,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import {
@@ -65,6 +66,8 @@ import { isEmpty } from "lodash";
 import { getWeeksRemainingMessage } from "../../common";
 import DataSummaryTable from "../dataSummaryTable";
 import SettlementBounds from "./settlementBounds";
+import Dropdown from "../dropdown";
+import StatementSummaryAccordion from "../statementSummaryAccordion";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -218,6 +221,7 @@ export default function SettlementRange() {
   const [optionStats, setOptionStats] = useState();
   const [justificationLoading, setJustificationLoading] = useState(false);
   const [verifiedSender, setVerifiedSender] = useState([]);
+  const [statementSummaries, setStatementSummaries] = useState();
   const [colorScheme] = useState("Tableau10");
   const [justificationValue, setJustificationValue] = useState(
     "justification_gemini"
@@ -653,6 +657,12 @@ export default function SettlementRange() {
           );
           if (senderRes?.status === 200) {
             setVerifiedSender(senderRes?.data?.data);
+          }
+          const resStatementSummary = await GetStatementSummary(
+            settlementRangeData?.data?.data?.debtor?._id
+          );
+          if (resStatementSummary?.status === 200) {
+            setStatementSummaries(resStatementSummary?.data?.data);
           }
         } else if (
           settlementRangeData?.response?.status === 401 ||
@@ -1313,38 +1323,52 @@ export default function SettlementRange() {
               );
             })}
           </Grid>
-          <Grid xs={12}>
-            <Typography
-              sx={{
-                fontWeight: "600",
-                fontFamily: "Nunito",
-                marginTop: "1rem",
-              }}
-            >
-              Update Commission Percentage
-            </Typography>
-            <input
-              min={1}
-              max={50}
-              style={inputStyles}
-              type="number"
-              placeholder="Commission Percentage"
-              value={commissionPercentage}
-              onChange={(e) => setCommissionPercentage(e.target.value)}
-            />
-            <TextButton
-              buttonText="Update"
-              height="2rem"
-              width="8rem"
-              onClick={handleCommissionUpdate}
-              backgroundColor={Colors.SKY_BLUE}
-              hoverColor={Colors.SKY_BLUE}
-              disabled={
-                !commissionPercentage ||
-                commissionPercentage > 50 ||
-                commissionPercentage < 1
-              }
-            />
+          <Grid container xs={12} sx={{ alignItems: "center" }}>
+            <Grid item xs={12}>
+              <Typography
+                sx={{
+                  fontWeight: "600",
+                  fontFamily: "Nunito",
+                  marginTop: "1rem",
+                }}
+              >
+                Update Commission Percentage
+              </Typography>
+              <input
+                min={1}
+                max={50}
+                style={inputStyles}
+                type="number"
+                placeholder="Commission Percentage"
+                value={commissionPercentage}
+                onChange={(e) => setCommissionPercentage(e.target.value)}
+              />
+              <TextButton
+                buttonText="Update"
+                height="2rem"
+                width="8rem"
+                onClick={handleCommissionUpdate}
+                backgroundColor={Colors.SKY_BLUE}
+                hoverColor={Colors.SKY_BLUE}
+                disabled={
+                  !commissionPercentage ||
+                  commissionPercentage > 50 ||
+                  commissionPercentage < 1
+                }
+              />
+            </Grid>
+            {/* <Grid item xs={6}>
+              <Typography
+                sx={{
+                  fontWeight: "600",
+                  fontFamily: "Nunito",
+                  marginTop: "1rem",
+                }}
+              >
+                Statement Summary
+              </Typography>
+              <StatementSummaryAccordion data={statementSummaries} />
+            </Grid> */}
           </Grid>
 
           <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
@@ -1501,115 +1525,144 @@ export default function SettlementRange() {
                 />
 
                 <Grid
-                  container
                   item
-                  xs={5.8}
+                  xs={6}
                   sx={{
-                    display: "flex",
-                    justifyContent: "space-around",
-                    alignItems: "center",
                     backgroundColor: Colors.WHITE,
                     borderRadius: "10px",
-                    height: "30vh",
-                    marginBottom: "1.5rem",
                   }}
                 >
-                  {countData ? (
-                    <>
-                      <div
-                        style={{
-                          width: "40%",
-                          height: "100%",
-                        }}
-                      >
-                        <PieChart
-                          series={[
-                            {
-                              data: countData,
-                              cx: 100,
-                              cy: 100,
-                              highlightScope: {
-                                faded: "global",
-                                highlighted: "item",
-                              },
-                            },
-                          ]}
-                          colors={categories[colorScheme]}
-                          slotProps={{
-                            legend: { hidden: true },
+                  <Typography
+                    sx={{
+                      fontWeight: "700",
+                      fontFamily: "Nunito",
+                      ml: "5%",
+                      mt: "1rem",
+                    }}
+                  >
+                    Top Payee
+                  </Typography>
+                  <Grid
+                    container
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-around",
+                      alignItems: "center",
+                      height: "35vh",
+                      marginBottom: "1.5rem",
+                    }}
+                  >
+                    {countData ? (
+                      <>
+                        <div
+                          style={{
+                            width: "50%",
+                            height: "100%",
                           }}
-                          width={250}
-                        />
-                      </div>
+                        >
+                          <PieChart
+                            series={[
+                              {
+                                data: countData,
+                                cx: 100,
+                                cy: 130,
+                                highlightScope: {
+                                  faded: "global",
+                                  highlighted: "item",
+                                },
+                              },
+                            ]}
+                            colors={categories[colorScheme]}
+                            slotProps={{
+                              legend: { hidden: true },
+                            }}
+                            width={280}
+                          />
+                        </div>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            padding: "1em",
+                            height: "80%",
+                            width: "40%",
+                            overflowY: "scroll !important",
+                            borderRadius: "15px",
+                            backgroundColor: Colors.BG_LIGHT_GRAY,
+                          }}
+                        >
+                          <Grid
+                            sx={{
+                              position: "relative",
+                              overflowY: "auto",
+                              ...ScrollbarStyles,
+                              height: "100%",
+                            }}
+                          >
+                            {countData?.map((item, index) => (
+                              <div
+                                key={index}
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    width: "16px",
+                                    height: "16px",
+                                    backgroundColor:
+                                      categories[colorScheme][item?.id],
+                                    marginRight: "5px",
+                                  }}
+                                />
+                                <Tooltip
+                                  title={item?.label}
+                                  placement="top"
+                                  arrow
+                                >
+                                  <span
+                                    style={{
+                                      fontSize: FONT_SIZE_MEDIUM,
+                                      whiteSpace: "nowrap",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      maxWidth: "180px",
+                                    }}
+                                  >
+                                    {item?.label}
+                                  </span>
+                                </Tooltip>
+                              </div>
+                            ))}
+                            <div
+                              style={{
+                                position: "absolute",
+                                bottom: 0,
+                                width: "100%",
+                              }}
+                            >
+                              <MuiModels
+                                width="70vw"
+                                height="70vh"
+                                show="TransactionHistory"
+                                data={scores?.Scores?.transaction_history}
+                              />
+                            </div>
+                          </Grid>
+                        </div>
+                      </>
+                    ) : (
                       <div
                         style={{
                           display: "flex",
-                          flexDirection: "column",
-                          padding: "1em",
-                          height: "80%",
-                          width: "40%",
-                          overflowY: "scroll !important",
-                          borderRadius: "15px",
-                          backgroundColor: Colors.BG_LIGHT_GRAY,
+                          alignItems: "center",
                         }}
                       >
-                        <Grid
-                          sx={{
-                            overflowY: "auto",
-                            ...ScrollbarStyles,
-                          }}
-                        >
-                          {countData?.map((item, index) => (
-                            <div
-                              key={index}
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                              }}
-                            >
-                              <div
-                                style={{
-                                  width: "16px",
-                                  height: "16px",
-                                  backgroundColor:
-                                    categories[colorScheme][item?.id],
-                                  marginRight: "5px",
-                                }}
-                              />
-                              <Tooltip
-                                title={item?.label}
-                                placement="top"
-                                arrow
-                              >
-                                <span
-                                  style={{
-                                    fontSize: FONT_SIZE_MEDIUM,
-                                    whiteSpace: "nowrap",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    maxWidth: "180px",
-                                  }}
-                                >
-                                  {`${item?.label?.substring(0, 30)}${
-                                    item?.label?.length > 30 ? "..." : ""
-                                  }`}
-                                </span>
-                              </Tooltip>
-                            </div>
-                          ))}
-                        </Grid>
+                        No Data
                       </div>
-                    </>
-                  ) : (
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      No Data
-                    </div>
-                  )}
+                    )}
+                  </Grid>
                 </Grid>
               </>
             )}

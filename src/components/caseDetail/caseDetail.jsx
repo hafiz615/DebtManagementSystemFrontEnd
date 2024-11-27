@@ -397,6 +397,38 @@ function CaseDetail() {
               )}
             </div>
           </Grid>
+          <AntTabs
+            value={activeTab}
+            onChange={handleTabChange}
+            variant="scrollable"
+            scrollButtons="auto"
+            sx={{
+              minWidth: "100%",
+              backgroundColor: Colors.WHITE,
+              borderTopLeftRadius: "10px",
+              borderTopRightRadius: "10px",
+              mt: "1rem",
+            }}
+          >
+            <AntTab
+              sx={{
+                bgcolor: Colors.WHITE,
+                width: "max-content",
+                fontWeight: "600",
+                height: "3.5rem",
+              }}
+              label="Case Detail"
+            />
+            <AntTab
+              sx={{
+                bgcolor: Colors.WHITE,
+                width: "max-content",
+                fontWeight: "600",
+                height: "3.5rem",
+              }}
+              label="Settlement Range"
+            />
+          </AntTabs>
 
           <Grid item sx={{ marginTop: "1rem" }}>
             <Accordion
