@@ -67,12 +67,13 @@ export default function StatementSummaryAccordion({ data, loading }) {
       <TableHead>
         <TableRow>
           {[
+            "Statement Month",
+            "Starting Balance",
+            "True Credits",
             "Ending Balance",
             "MCA Number",
             "MCA Withhold Percent",
-            "Starting Balance",
-            "Statement Month",
-            "True Credits",
+            "WithDrawal Total",
           ]?.map((header, index) => (
             <TableCell key={index} sx={styles.tableHeaderCell}>
               {header}
@@ -84,12 +85,13 @@ export default function StatementSummaryAccordion({ data, loading }) {
         {value?.map((item, rowIndex) => (
           <TableRow key={rowIndex}>
             {[
+              item?.statement_month,
+              formatAsDollar(item?.startingBalance),
+              formatAsDollar(item?.trueCredits),
               formatAsDollar(item?.endingBalance),
               item?.mcaNumber,
               item?.mcaWithholdPercent ? `${item?.mcaWithholdPercent}` : "--",
-              formatAsDollar(item?.startingBalance),
-              item?.statement_month,
-              formatAsDollar(item?.trueCredits),
+              formatAsDollar(item?.withdrawalTotal),
             ]?.map((cellData, cellIndex) => (
               <TableCell key={cellIndex} sx={styles.tableCell}>
                 {cellData}

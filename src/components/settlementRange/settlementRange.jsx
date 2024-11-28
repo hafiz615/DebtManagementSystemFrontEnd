@@ -19,10 +19,10 @@ import {
   Card,
   LinearProgress,
   Checkbox,
+  Modal,
 } from "@mui/material";
 import { PieChart } from "@mui/x-charts";
 
-import RefreshIcon from "@mui/icons-material/Refresh";
 import {
   FONT_SIZE_LARGE,
   FONT_SIZE_MEDIUM,
@@ -33,14 +33,13 @@ import {
 } from "../../constants/appConstants";
 import { Colors } from "../../config/default";
 import ScrollbarStyles from "../customScroll";
-import { Download, Info, PeopleAlt, Send } from "@mui/icons-material";
+import { Download, PeopleAlt, Send } from "@mui/icons-material";
 import TextButton from "../button";
 import SettlementCards from "./settlementCards";
 import {
   GetSettlementRangeWithScores,
   GetSummary,
   GetLumpSumAmount,
-  GetFullProfit,
   UpdateCommission,
   GetCaseSummariesById,
   GetSettlementJustifications,
@@ -66,8 +65,9 @@ import { isEmpty } from "lodash";
 import { getWeeksRemainingMessage } from "../../common";
 import DataSummaryTable from "../dataSummaryTable";
 import SettlementBounds from "./settlementBounds";
-import Dropdown from "../dropdown";
 import StatementSummaryAccordion from "../statementSummaryAccordion";
+import DebtorUploadedFiles from "../debtorUploadedFiles";
+import TransactionHistory from "../transactionHistory";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -222,6 +222,8 @@ export default function SettlementRange() {
   const [justificationLoading, setJustificationLoading] = useState(false);
   const [verifiedSender, setVerifiedSender] = useState([]);
   const [statementSummaries, setStatementSummaries] = useState();
+  const [setShow, setSetShow] = useState(false);
+  const [transactionKey, setTransactionKey] = useState();
   const [statementSummariesLoading, setStatementSummariesLoading] =
     useState(false);
   const [colorScheme] = useState("Tableau10");
@@ -1040,17 +1042,10 @@ export default function SettlementRange() {
 
   const formatCurrencyValue = (value) => {
     if (value === null || value === undefined) return "--";
-
-    // Convert to string if the value is a number
     const valueStr = typeof value === "number" ? value.toString() : value;
-
-    // Remove any unwanted characters, keep only numbers and decimal point
     const cleanedValue = valueStr.replace(/[^0-9.]/g, "");
-
-    // Convert to a number to check its validity
     const numericValue = parseFloat(cleanedValue);
     if (!isNaN(numericValue)) {
-      // Use Intl.NumberFormat to format with commas and two decimal places
       return `$${numericValue?.toLocaleString(undefined, {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
@@ -1103,6 +1098,26 @@ export default function SettlementRange() {
     ],
   };
 
+  const debtorData = [
+    { item: "Full Name", value: debtor?.fullName || "--" },
+    { item: "Status", value: debtor?.status || "--" },
+    { item: "phone", value: debtor?.phone ? `+1${debtor?.phone}` : "--" },
+    {
+      item: "Weekly Budget",
+      value: debtor?.weeklyBudget
+        ? `$${formatWeeklyBudget(debtor?.weeklyBudget)}`
+        : "--",
+    },
+  ];
+
+  const handleItemClick = (event, item) => {
+    const newTransactionKey = item?.seriesId?.[item?.dataIndex]?.label;
+    setTransactionKey(newTransactionKey);
+    if (transactionKey) {
+      setSetShow(true);
+    }
+  };
+
   return (
     <Grid
       container
@@ -1114,6 +1129,30 @@ export default function SettlementRange() {
         ...ScrollbarStyles,
       }}
     >
+      <Modal open={setShow} onClose={() => setSetShow(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "70vw",
+            maxHeight: "70vh",
+            minHeight: "70vh",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            borderRadius: "10px",
+            p: 4,
+          }}
+        >
+          {transactionKey && (
+            <TransactionHistory
+              transactionKey={transactionKey}
+              data={scores?.Scores?.transaction_history}
+            />
+          )}
+        </Box>
+      </Modal>
       <Grid
         item
         xs={12}
@@ -1176,7 +1215,6 @@ export default function SettlementRange() {
             xs={12}
             sx={{
               marginTop: "1.5rem",
-              justifyContent: "space-between",
               alignItems: "center",
             }}
           >
@@ -1190,142 +1228,131 @@ export default function SettlementRange() {
             >
               {`${debtorCompanyName} - Settlement Range`}
             </Typography>
-
-            <div style={{ display: "flex", gap: "10px" }}>
-              <MuiModels
-                show="downloadPDF"
-                buttonName="downloadPDF"
-                maxHeight="85vh"
-                allData={allData}
-                lumpSumpData={lumpSumpData}
-                disabled={!apiData}
-              />
-
-              <MuiModels
-                show="sendEmail"
-                creditorInfo={
-                  allCreditorNames[tabValue] === "Summary"
-                    ? "Summary"
-                    : selectedCreditorDetails?.name
-                }
-                debtorInfo={debtorInfo}
-                payableAmount={
-                  allCreditorNames[tabValue] === "Summary"
-                    ? summaryAmount?.payableAmount
-                    : selectedCreditorDetails?.contractDetails?.payable_amount
-                }
-                data={apiData}
-                selectedCreditor={allCreditorNames[tabValue]}
-                lumpSump={lumpSumpData}
-                caseId={caseId}
-                paymentData={paymentData}
-                debtorId={verifiedSender}
-              />
-              <TextButton
-                disabled={!apiData}
-                buttonText={"Download"}
-                boxShadow="none"
-                height={"2.5rem"}
-                width={extraSmallScreen ? "2rem" : "8rem"}
-                backgroundColor={Colors.BG_LIGHT_GRAY}
-                fontColor={Colors.BLACK}
-                hoverColor={Colors.BG_LIGHT_GRAY}
-                border={`1px solid ${Colors.SKY_BLUE}`}
-                borderRadius="5px"
-                startIcon={
-                  extraSmallScreen ? null : (
-                    <Download
-                      sx={{
-                        color: apiData ? Colors.BLACK : Colors.DIM_LIGHT_GRAY,
-                      }}
-                    />
-                  )
-                }
-                onClick={handleGeneratePdf}
-              />
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <PeopleAlt
-                  sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }}
-                />
-
-                <CheckboxAutocomplete
-                  options={creditorNameWithId}
-                  multiSelect={creditorSelect}
-                  setMultiselect={setCreditorSelect}
-                  placeholder="Creditors"
-                  width="10rem"
-                  update={true}
-                  handleUpdate={handleUpdate}
-                />
-              </div>
-            </div>
           </Grid>
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              gap: "10px",
+              justifyContent: "flex-end",
+              marginTop: "1rem",
+            }}
+          >
+            <MuiModels
+              show="downloadPDF"
+              buttonName="downloadPDF"
+              maxHeight="85vh"
+              allData={allData}
+              lumpSumpData={lumpSumpData}
+              disabled={!apiData}
+            />
+
+            <MuiModels
+              show="sendEmail"
+              creditorInfo={
+                allCreditorNames[tabValue] === "Summary"
+                  ? "Summary"
+                  : selectedCreditorDetails?.name
+              }
+              debtorInfo={debtorInfo}
+              payableAmount={
+                allCreditorNames[tabValue] === "Summary"
+                  ? summaryAmount?.payableAmount
+                  : selectedCreditorDetails?.contractDetails?.payable_amount
+              }
+              data={apiData}
+              selectedCreditor={allCreditorNames[tabValue]}
+              lumpSump={lumpSumpData}
+              caseId={caseId}
+              paymentData={paymentData}
+              debtorId={verifiedSender}
+            />
+            <TextButton
+              disabled={!apiData}
+              buttonText={"Download"}
+              boxShadow="none"
+              height={"2.5rem"}
+              width={extraSmallScreen ? "2rem" : "8rem"}
+              backgroundColor={Colors.BG_LIGHT_GRAY}
+              fontColor={Colors.BLACK}
+              hoverColor={Colors.BG_LIGHT_GRAY}
+              border={`1px solid ${Colors.SKY_BLUE}`}
+              borderRadius="5px"
+              startIcon={
+                extraSmallScreen ? null : (
+                  <Download
+                    sx={{
+                      color: apiData ? Colors.BLACK : Colors.DIM_LIGHT_GRAY,
+                    }}
+                  />
+                )
+              }
+              onClick={handleGeneratePdf}
+            />
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <PeopleAlt
+                sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }}
+              />
+
+              <CheckboxAutocomplete
+                options={creditorNameWithId}
+                multiSelect={creditorSelect}
+                setMultiselect={setCreditorSelect}
+                placeholder="Creditors"
+                width="10rem"
+                update={true}
+                handleUpdate={handleUpdate}
+              />
+            </div>
+          </div>
           <Grid
             container
             item
             xs={12}
-            lg={8}
             sx={{
-              justifyContent: { xs: "left", md: "space-between" },
+              justifyContent: "space-between",
+              mt: "1rem",
             }}
           >
-            {Object?.keys(debtor)?.map((key) => {
-              // Replace "weeklyBudget" with "monthlyBudget"
-              // const displayKey = key === "weeklyBudget" ? key : "";
-
-              return (
-                <Grid item xs={12} lg={6} key={key}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: { xs: "space-between", md: "unset" },
-                    }}
-                  >
+            <Grid item xs={4}>
+              {debtorData?.map((data, index) => {
+                return (
+                  <Grid item xs={12} lg={6} key={index}>
                     <div
                       style={{
                         fontFamily: "Nunito",
                         fontWeight: "600",
                         color: Colors.DARK_GRAY,
-                        width: "10rem",
+                        fontSize: FONT_SIZE_LARGE,
                         marginTop: "0.5rem",
                       }}
                     >
-                      {key?.charAt(0)?.toUpperCase() + key?.slice(1)}
+                      {data?.item}
                     </div>
-
-                    <Tooltip
-                      title={debtor[key]?.toString()}
-                      placement="top-end"
-                    >
+                    <Tooltip title={data?.value} placement="top-end">
                       <span
                         style={{
                           fontFamily: "Nunito",
-                          fontWeight: "300",
-                          fontSize: "0.9rem",
+                          fontSize: FONT_SIZE_LARGE,
                           color: Colors.DIM_LIGHT_GRAY,
                           marginTop: "0.5rem",
                         }}
                       >
-                        {allData?.debtor?.weeklyBudgetUpdated &&
-                        key === "weeklyBudget"
-                          ? `$${formatWeeklyBudget(debtor[key])}`
-                          : key === "weeklyBudget"
-                          ? `$${formatWeeklyBudget(debtor[key])}`
-                          : `${debtor[key]?.toString().slice(0, 15)}${
-                              debtor[key]?.toString().length > 15 ? "..." : ""
-                            }` || "--"}
+                        {data?.value}
                       </span>
                     </Tooltip>
-                  </Box>
-                </Grid>
-              );
-            })}
+                  </Grid>
+                );
+              })}
+            </Grid>
+            <Grid item xs={8}>
+              <DebtorUploadedFiles data={allData} />
+            </Grid>
           </Grid>
           <Grid container xs={12} sx={{ alignItems: "center" }}>
             <Grid item xs={12}>
@@ -1361,7 +1388,7 @@ export default function SettlementRange() {
                 }
               />
             </Grid>
-            <Grid item xs={6} sx={{ mt: "1rem" }}>
+            <Grid item xs={12} sx={{ mt: "1rem" }}>
               <StatementSummaryAccordion
                 data={statementSummaries}
                 loading={statementSummariesLoading}
@@ -1524,7 +1551,7 @@ export default function SettlementRange() {
 
                 <Grid
                   item
-                  xs={6}
+                  xs={12}
                   sx={{
                     backgroundColor: Colors.WHITE,
                     borderRadius: "10px",
@@ -1547,6 +1574,7 @@ export default function SettlementRange() {
                       justifyContent: "space-around",
                       alignItems: "center",
                       height: "35vh",
+                      padding: "0px 15%",
                       marginBottom: "1.5rem",
                     }}
                   >
@@ -1561,20 +1589,22 @@ export default function SettlementRange() {
                           <PieChart
                             series={[
                               {
+                                id: countData,
                                 data: countData,
-                                cx: 100,
-                                cy: 130,
+                                cx: 130,
+                                cy: 120,
                                 highlightScope: {
                                   faded: "global",
                                   highlighted: "item",
                                 },
                               },
                             ]}
+                            onItemClick={handleItemClick}
                             colors={categories[colorScheme]}
                             slotProps={{
                               legend: { hidden: true },
                             }}
-                            width={280}
+                            width={315}
                           />
                         </div>
                         <div
@@ -1582,7 +1612,7 @@ export default function SettlementRange() {
                             display: "flex",
                             flexDirection: "column",
                             padding: "1em",
-                            height: "80%",
+                            height: "90%",
                             width: "40%",
                             overflowY: "scroll !important",
                             borderRadius: "15px",
@@ -1622,10 +1652,6 @@ export default function SettlementRange() {
                                   <span
                                     style={{
                                       fontSize: FONT_SIZE_MEDIUM,
-                                      whiteSpace: "nowrap",
-                                      overflow: "hidden",
-                                      textOverflow: "ellipsis",
-                                      maxWidth: "180px",
                                     }}
                                   >
                                     {item?.label}
@@ -1639,14 +1665,7 @@ export default function SettlementRange() {
                                 bottom: 0,
                                 width: "100%",
                               }}
-                            >
-                              <MuiModels
-                                width="70vw"
-                                height="70vh"
-                                show="TransactionHistory"
-                                data={scores?.Scores?.transaction_history}
-                              />
-                            </div>
+                            ></div>
                           </Grid>
                         </div>
                       </>
