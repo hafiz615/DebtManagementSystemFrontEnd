@@ -16,7 +16,7 @@ export default function TransactionHistoryTable({ data }) {
     <TableContainer
       component={Paper}
       sx={{
-        maxHeight: "85%",
+        maxHeight: "50vh",
         boxShadow: "none",
         border: "1px solid #ddd",
         borderRadius: "8px",
