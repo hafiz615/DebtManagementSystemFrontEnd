@@ -222,6 +222,8 @@ export default function SettlementRange() {
   const [justificationLoading, setJustificationLoading] = useState(false);
   const [verifiedSender, setVerifiedSender] = useState([]);
   const [statementSummaries, setStatementSummaries] = useState();
+  const [statementSummariesLoading, setStatementSummariesLoading] =
+    useState(false);
   const [colorScheme] = useState("Tableau10");
   const [justificationValue, setJustificationValue] = useState(
     "justification_gemini"
@@ -610,6 +612,7 @@ export default function SettlementRange() {
           status
         );
         if (settlementRangeData?.status === 200) {
+          setStatementSummariesLoading(true);
           setLoading(false);
           if (typeof settlementRangeData?.data?.data?.getScores === "string") {
             setScoresBackend(true);
@@ -663,6 +666,7 @@ export default function SettlementRange() {
           );
           if (resStatementSummary?.status === 200) {
             setStatementSummaries(resStatementSummary?.data?.data);
+            setStatementSummariesLoading(false);
           }
         } else if (
           settlementRangeData?.response?.status === 401 ||
@@ -1357,18 +1361,12 @@ export default function SettlementRange() {
                 }
               />
             </Grid>
-            {/* <Grid item xs={6}>
-              <Typography
-                sx={{
-                  fontWeight: "600",
-                  fontFamily: "Nunito",
-                  marginTop: "1rem",
-                }}
-              >
-                Statement Summary
-              </Typography>
-              <StatementSummaryAccordion data={statementSummaries} />
-            </Grid> */}
+            <Grid item xs={6} sx={{ mt: "1rem" }}>
+              <StatementSummaryAccordion
+                data={statementSummaries}
+                loading={statementSummariesLoading}
+              />
+            </Grid>
           </Grid>
 
           <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>

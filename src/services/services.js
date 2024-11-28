@@ -1470,7 +1470,7 @@ export const GetNotificationsCount = async () => {
 export const GetStatementSummary = async (id) => {
   try {
     return await axios.get(
-      BASE_URL + `/v1/notification/count${id}`,
+      BASE_URL + `/v1/debtor/getStatementsSummary/${id}`,
       setHeaders()
     );
   } catch (error) {

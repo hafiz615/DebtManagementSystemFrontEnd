@@ -4,37 +4,135 @@ import {
   AccordionSummary,
   AccordionDetails,
   Typography,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Grid,
+  CircularProgress,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Colors } from "../config/default";
+import ScrollbarStyles from "./customScroll";
 
-export default function StatementSummaryAccordion({ data }) {
+const styles = {
+  accordionSummary: {
+    backgroundColor: Colors.SKY_BLUE,
+    borderRadius: "10px",
+    color: Colors.WHITE,
+  },
+  gridContainer: {
+    backgroundColor: Colors.WHITE,
+    width: "100%",
+    height: "40vh",
+    overflowY: "auto",
+    ...ScrollbarStyles,
+  },
+  loaderContainer: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Colors.WHITE,
+    width: "100%",
+    height: "40vh",
+  },
+  sectionTitle: {
+    fontWeight: "bold",
+    fontFamily: "Nunito",
+    marginBottom: "10px",
+  },
+  table: {
+    width: "100%",
+    border: "1px solid lightgray",
+  },
+  tableHeaderCell: {
+    fontWeight: "bold",
+    fontFamily: "Nunito",
+  },
+  tableCell: {
+    fontFamily: "Nunito",
+  },
+  noDataText: {
+    fontFamily: "Nunito",
+    textAlign: "center",
+  },
+};
+
+const formatAsDollar = (value) => (value ? `$${value}` : "--");
+
+export default function StatementSummaryAccordion({ data, loading }) {
+  const renderTable = (value) => (
+    <Table sx={styles.table} size="small">
+      <TableHead>
+        <TableRow>
+          {[
+            "Ending Balance",
+            "MCA Number",
+            "MCA Withhold Percent",
+            "Starting Balance",
+            "Statement Month",
+            "True Credits",
+          ]?.map((header, index) => (
+            <TableCell key={index} sx={styles.tableHeaderCell}>
+              {header}
+            </TableCell>
+          ))}
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {value?.map((item, rowIndex) => (
+          <TableRow key={rowIndex}>
+            {[
+              formatAsDollar(item?.endingBalance),
+              item?.mcaNumber,
+              item?.mcaWithholdPercent ? `${item?.mcaWithholdPercent}` : "--",
+              formatAsDollar(item?.startingBalance),
+              item?.statement_month,
+              formatAsDollar(item?.trueCredits),
+            ]?.map((cellData, cellIndex) => (
+              <TableCell key={cellIndex} sx={styles.tableCell}>
+                {cellData}
+              </TableCell>
+            ))}
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+
   return (
-    <div>
-      <Accordion>
-        <AccordionSummary
-          sx={{ backgroundColor: Colors.SKY_BLUE, borderRadius: "10px" }}
-          expandIcon={<ExpandMoreIcon sx={{ color: Colors.WHITE }} />}
-        ></AccordionSummary>
-        <AccordionDetails>
-          <div style={{ backgroundColor: Colors.WHITE, width: "100%" }}>
+    <Accordion>
+      <AccordionSummary
+        sx={styles.accordionSummary}
+        expandIcon={<ExpandMoreIcon sx={{ color: Colors.WHITE }} />}
+      >
+        Statement Summary
+      </AccordionSummary>
+      <AccordionDetails>
+        {loading ? (
+          <Grid sx={styles.loaderContainer}>
+            <CircularProgress sx={{ color: Colors.SKY_BLUE }} />
+          </Grid>
+        ) : (
+          <Grid sx={styles.gridContainer}>
             {data ? (
               Object.entries(data)?.map(([key, value], index) => (
-                <div key={index} style={{ marginBottom: "10px" }}>
-                  <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                    {key}:
+                <div key={index} style={{ marginBottom: "20px" }}>
+                  <Typography sx={styles.sectionTitle}>
+                    Account No: {key}
                   </Typography>
-                  <Typography variant="body2">{String(value)}</Typography>
+                  {renderTable(value)}
                 </div>
               ))
             ) : (
-              <Typography sx={{ fontFamily: "Nunito", textAlign: "center" }}>
+              <Typography sx={styles.noDataText}>
                 No Statement Summary Data
               </Typography>
             )}
-          </div>
-        </AccordionDetails>
-      </Accordion>
-    </div>
+          </Grid>
+        )}
+      </AccordionDetails>
+    </Accordion>
   );
 }
