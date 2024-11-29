@@ -491,16 +491,16 @@ export default function MuiModels({
           boxShadow="none"
           height={"2.5rem"}
           width={extraSmallScreen ? "2rem" : "10rem"}
-          backgroundColor={Colors.BG_LIGHT_GRAY}
-          fontColor={Colors.BLACK}
-          hoverColor={Colors.BG_LIGHT_GRAY}
+          backgroundColor={Colors.SKY_BLUE}
+          fontColor={Colors.WHITE}
+          hoverColor={Colors.SKY_BLUE}
           border={`1px solid ${Colors.SKY_BLUE}`}
           onClick={handleOpen}
           borderRadius="5px"
           startIcon={
             <Download
               sx={{
-                color: Colors.BLACK,
+                color: Colors.WHITE,
               }}
             />
           }
@@ -601,13 +601,9 @@ export default function MuiModels({
           boxShadow="none"
           height={"2.5rem"}
           width={extraSmallScreen ? "2rem" : "9rem"}
-          backgroundColor={
-            show === "sendEmail" ? Colors.BG_LIGHT_GRAY : Colors.SKY_BLUE
-          }
-          fontColor={show === "sendEmail" ? Colors.BLACK : Colors.WHITE}
-          hoverColor={
-            show === "sendEmail" ? Colors.BG_LIGHT_GRAY : Colors.SKY_BLUE
-          }
+          backgroundColor={Colors.SKY_BLUE}
+          fontColor={Colors.WHITE}
+          hoverColor={Colors.SKY_BLUE}
           onClick={handleOpen}
           disabled={disabled}
           startIcon={
@@ -616,7 +612,7 @@ export default function MuiModels({
             ) : (
               <Email
                 sx={{
-                  color: Colors.DARK_GRAY,
+                  color: Colors.WHITE,
                   fontSize: FONT_SIZE_XL,
                 }}
               />

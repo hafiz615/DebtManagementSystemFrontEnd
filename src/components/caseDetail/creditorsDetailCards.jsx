@@ -522,6 +522,7 @@ export default function CreditorsDetailCards({
                       iconColor={Colors.BLACK}
                       maxHeight="78vh"
                       GetLogsById={GetLogsById}
+                      caseDataId={caseData?._id}
                       data={caseData}
                       verifiedSenders={verifiedSenders}
                     />
@@ -531,6 +532,7 @@ export default function CreditorsDetailCards({
                       headerName={true}
                       iconColor={Colors.BLACK}
                       maxHeight="78vh"
+                      caseDataId={caseData?._id}
                       GetLogsById={GetLogsById}
                       data={caseData}
                     />
