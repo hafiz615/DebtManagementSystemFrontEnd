@@ -7,7 +7,6 @@ import InfoIcon from "@mui/icons-material/Info";
 import {
   Grid,
   Typography,
-  Button,
   styled,
   Tabs,
   Tab,
@@ -28,8 +27,6 @@ import {
   FONT_SIZE_MEDIUM,
   FONT_SIZE_SMALL,
   FONT_SIZE_XL,
-  PAGE_HEIGHT,
-  UserListPage,
 } from "../../constants/appConstants";
 import { Colors } from "../../config/default";
 import ScrollbarStyles from "../customScroll";
@@ -37,17 +34,13 @@ import { Download, PeopleAlt, Send } from "@mui/icons-material";
 import TextButton from "../button";
 import SettlementCards from "./settlementCards";
 import {
-  GetSettlementRangeWithScores,
   GetSummary,
-  GetLumpSumAmount,
   UpdateCommission,
   GetCaseSummariesById,
   GetSettlementJustifications,
   GetLumpSumJustifications,
   GetFullProfitSettlement,
   GetPaymentIntervals,
-  GetAllSenders,
-  GetStatementSummary,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import {
@@ -59,8 +52,6 @@ import {
 } from "../../common";
 import MuiModels from "../models";
 import CheckboxAutocomplete from "../checkboxAutocomplete";
-import { useParams } from "react-router-dom";
-import { ErrorOutline } from "@mui/icons-material";
 import { isEmpty } from "lodash";
 import { getWeeksRemainingMessage } from "../../common";
 import DataSummaryTable from "../dataSummaryTable";
@@ -184,57 +175,55 @@ const GridItemMessage = ({ title, value, rawValue }) => (
   </Grid>
 );
 
-export default function SettlementRange() {
-  const navigate = useNavigate();
-  const { caseId } = useParams();
-  const { showToast } = useToast();
+export default function SettlementRange({
+  id,
+  getAllRanges,
+  settlementloading,
+  setSettlementLoading,
+  creditorNames,
+  allCreditorNames,
+  apiData,
+  scores,
+  debtor,
+  debtorInfo,
+  commissionPercentage,
+  setCommissionPercentage,
+  summaryAmount,
+  allData,
+  verifiedSender,
+  statementSummaries,
+  statementSummariesLoading,
+  lumpSumpData,
+  scoresBackend,
+  optionStats,
+}) {
+  const caseId = id;
   const [value, setValue] = useState(0);
   const [tabValue, setTabValue] = useState(0);
-
   const [optionValue, setOptuonValue] = useState(0);
-  const [errorMessage, setErrorMessage] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
-  const [apiData, setApiData] = useState(null);
-  const [creditorNames, setCreditorNames] = useState([]);
-  const [allCreditorNames, setAllCreditorsNames] = useState([]);
   const [creditorSelect, setCreditorSelect] = useState([]);
-  const [scores, setScores] = useState(null);
-  const [debtor, setDebtor] = useState({});
-  const [debtorInfo, setDebtorInfo] = useState({});
-  const [lumpSumpData, setLumpSumpData] = useState({});
-  const [commissionPercentage, setCommissionPercentage] = useState("");
-  const [summaryAmount, setSummaryAmount] = useState({});
   const [justification, setJustification] = useState();
   const [summary, setSummary] = useState([]);
   const [checkboxStates, setCheckboxStates] = useState({});
   const [selectedData, setSelectedData] = useState([]);
   const [paymentData, setPaymentData] = useState();
   const [paymentChanged, setPaymentChanged] = useState(false);
-  const [allData, setAllData] = useState();
-
-  const debtorCompanyName = allData?.debtor?.businessInformation?.companyName;
-  const popUpDebtorData = allData?.debtor;
   const [strategyTab, setStrategyTab] = useState(0);
-  const [optionStats, setOptionStats] = useState();
   const [justificationLoading, setJustificationLoading] = useState(false);
-  const [verifiedSender, setVerifiedSender] = useState([]);
-  const [statementSummaries, setStatementSummaries] = useState();
   const [setShow, setSetShow] = useState(false);
   const [transactionKey, setTransactionKey] = useState();
-  const [statementSummariesLoading, setStatementSummariesLoading] =
-    useState(false);
   const [colorScheme] = useState("Tableau10");
   const [justificationValue, setJustificationValue] = useState(
     "justification_gemini"
   );
   const [selectedOption, setSelectedOption] = useState("percentageReceivable");
-  const [scoresBackend, setScoresBackend] = useState(false);
-  const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
+
+  const creditorNamesTabs = allCreditorNames;
+  const popUpDebtorData = allData?.debtor;
   const drawerOpen = useSelector((state) => state.drawer.open);
-  const { AUTHORITY_TEXT } = UserListPage;
   const extraSmallScreen = useMediaQuery(
     "(min-width:300px) and (max-width:900px)"
   );
@@ -282,7 +271,8 @@ export default function SettlementRange() {
   const handleOptionTabChange = (event, newValue) => {
     setOptuonValue(newValue);
   };
-  const currentCreditor = allCreditorNames[tabValue];
+
+  const currentCreditor = creditorNamesTabs[tabValue];
 
   const selectedCreditorDetails = creditorNames?.find(
     (item) => item?.creditorAccountTitle === currentCreditor
@@ -295,7 +285,7 @@ export default function SettlementRange() {
           strategy="strategy1"
           setPaymentChanged={setPaymentChanged}
           remainingAmount={
-            allCreditorNames[tabValue] === "Summary"
+            creditorNamesTabs[tabValue] === "Summary"
               ? summaryAmount?.loanAmount.toString()
               : selectedCreditorDetails?.remaining
           }
@@ -303,26 +293,28 @@ export default function SettlementRange() {
           title={item}
           weeksTillPaidTitle={getWeeksRemainingMessage(item)}
           settlementRange={
-            apiData?.settlement_range?.[allCreditorNames[parseInt(tabValue)]] ||
-            null
+            apiData?.settlement_range?.[
+              creditorNamesTabs[parseInt(tabValue)]
+            ] || null
           }
           commissionRange={
-            apiData?.commission_range?.[allCreditorNames[parseInt(tabValue)]] ||
-            null
+            apiData?.commission_range?.[
+              creditorNamesTabs[parseInt(tabValue)]
+            ] || null
           }
           newDefaultRiskScore={apiData?.new_default_risk_score || null}
           percentageSettlementOverWeeklyBudget={
             apiData?.percentage_settlement_over_weekly_budget?.[
-              allCreditorNames[parseInt(tabValue)]
+              creditorNamesTabs[parseInt(tabValue)]
             ] || null
           }
           percentageSettlementOverWeeklyTrueRevenue={
             apiData?.percentage_settlement_over_weekly_true_revenue?.[
-              allCreditorNames[parseInt(tabValue)]
+              creditorNamesTabs[parseInt(tabValue)]
             ] || null
           }
           weeksTillPaid={
-            apiData?.weeks_till_paid?.[allCreditorNames[parseInt(tabValue)]] ||
+            apiData?.weeks_till_paid?.[creditorNamesTabs[parseInt(tabValue)]] ||
             null
           }
           commission={allData?.maxProfitCommission}
@@ -336,7 +328,7 @@ export default function SettlementRange() {
           setPaymentChanged={setPaymentChanged}
           breakEven={selectedCreditorDetails?.breakEven}
           remainingAmount={
-            allCreditorNames[tabValue] === "Summary"
+            creditorNamesTabs[tabValue] === "Summary"
               ? summaryAmount?.loanAmount.toString()
               : selectedCreditorDetails?.remaining
           }
@@ -348,11 +340,11 @@ export default function SettlementRange() {
           }
           settlementRange={
             lumpSumpData?.lumpsum_settlement?.[
-              allCreditorNames[parseInt(tabValue)]
+              creditorNamesTabs[parseInt(tabValue)]
             ] || null
           }
           warning={
-            lumpSumpData?.warning?.[allCreditorNames[parseInt(tabValue)]] || ""
+            lumpSumpData?.warning?.[creditorNamesTabs[parseInt(tabValue)]] || ""
           }
           caseId={allData?.creditors?.[parseInt(tabValue)]?.caseId}
           commission={allData?.totalCommission}
@@ -365,11 +357,11 @@ export default function SettlementRange() {
       <>
         <SettlementCards
           tabValue={tabValue}
-          allCreditorNames={allCreditorNames}
+          creditorNamesTabs={creditorNamesTabs}
           strategy="strategy3"
           setPaymentChanged={setPaymentChanged}
           remainingAmount={
-            allCreditorNames[tabValue] === "Summary"
+            creditorNamesTabs[tabValue] === "Summary"
               ? summaryAmount?.loanAmount.toString()
               : selectedCreditorDetails?.remaining
           }
@@ -378,26 +370,28 @@ export default function SettlementRange() {
           title={item}
           weeksTillPaidTitle={getWeeksRemainingMessage(item)}
           settlementRange={
-            apiData?.settlement_range?.[allCreditorNames[parseInt(tabValue)]] ||
-            null
+            apiData?.settlement_range?.[
+              creditorNamesTabs[parseInt(tabValue)]
+            ] || null
           }
           commissionRange={
-            apiData?.commission_range?.[allCreditorNames[parseInt(tabValue)]] ||
-            null
+            apiData?.commission_range?.[
+              creditorNamesTabs[parseInt(tabValue)]
+            ] || null
           }
           newDefaultRiskScore={apiData?.new_default_risk_score || null}
           percentageSettlementOverWeeklyBudget={
             apiData?.percentage_settlement_over_weekly_budget?.[
-              allCreditorNames[parseInt(tabValue)]
+              creditorNamesTabs[parseInt(tabValue)]
             ] || null
           }
           percentageSettlementOverWeeklyTrueRevenue={
             apiData?.percentage_settlement_over_weekly_true_revenue?.[
-              allCreditorNames[parseInt(tabValue)]
+              creditorNamesTabs[parseInt(tabValue)]
             ] || null
           }
           weeksTillPaid={
-            apiData?.weeks_till_paid?.[allCreditorNames[parseInt(tabValue)]] ||
+            apiData?.weeks_till_paid?.[creditorNamesTabs[parseInt(tabValue)]] ||
             null
           }
           percentageReceivableAmount={
@@ -422,7 +416,7 @@ export default function SettlementRange() {
           strategy="strategy1"
           setPaymentChanged={setPaymentChanged}
           remainingAmount={
-            allCreditorNames[tabValue] === "Summary"
+            creditorNamesTabs[tabValue] === "Summary"
               ? summaryAmount?.loanAmount.toString()
               : selectedCreditorDetails?.remaining
           }
@@ -431,27 +425,27 @@ export default function SettlementRange() {
           weeksTillPaidTitle={getWeeksRemainingMessage(item)}
           settlementRange={
             optionStats?.settlement_range?.[
-              allCreditorNames[parseInt(tabValue)]
+              creditorNamesTabs[parseInt(tabValue)]
             ] || null
           }
           commissionRange={
             optionStats?.commission_range?.[
-              allCreditorNames[parseInt(tabValue)]
+              creditorNamesTabs[parseInt(tabValue)]
             ] || null
           }
           percentageSettlementOverWeeklyBudget={
             optionStats?.percentage_settlement_over_weekly_budget?.[
-              allCreditorNames[parseInt(tabValue)]
+              creditorNamesTabs[parseInt(tabValue)]
             ] || null
           }
           percentageSettlementOverWeeklyTrueRevenue={
             optionStats?.percentage_settlement_over_weekly_true_revenue?.[
-              allCreditorNames[parseInt(tabValue)]
+              creditorNamesTabs[parseInt(tabValue)]
             ] || null
           }
           weeksTillPaid={
             optionStats?.weeks_till_paid?.[
-              allCreditorNames[parseInt(tabValue)]
+              creditorNamesTabs[parseInt(tabValue)]
             ] || null
           }
           optionValue={true}
@@ -511,7 +505,7 @@ export default function SettlementRange() {
 
   const handleCommissionUpdate = async () => {
     try {
-      setLoading(true);
+      setSettlementLoading(true);
       const selectedCreditorIds = creditorSelect?.map(
         (creditor) => creditor.creditorId
       );
@@ -522,60 +516,10 @@ export default function SettlementRange() {
         };
         const resCommission = await UpdateCommission(payload, caseId, false);
         if (resCommission?.status === 200) {
-          setLoading(false);
-          if (typeof resCommission?.data?.data?.getScores === "string") {
-            setScoresBackend(true);
-            setScores({ message: resCommission?.data?.data?.getScores });
-            showToast(
-              resCommission?.data?.data?.getScores + " Couldn't fetch scores",
-              "error"
-            );
-          } else {
-            setScoresBackend(false);
-            setScores(resCommission?.data?.data?.getScores);
-          }
-          setSummaryAmount(
-            resCommission?.data?.data?.creditorsContractDetailsSum
-          );
-          setAllData(resCommission?.data?.data);
-
-          setDebtor(resCommission?.data?.data?.debtor?.basicInformation);
-          setDebtorInfo(resCommission?.data?.data?.debtor?.businessInformation);
-          setApiData(resCommission?.data?.data?.settlementRange);
-          setCommissionPercentage(
-            resCommission?.data?.data?.debtor?.commissionPercentage
-          );
-
-          const allCreditors = resCommission?.data?.data?.creditors;
-          setCreditorNames(allCreditors);
-          const creditorAccountTitles = allCreditors?.map(
-            (item) => item.creditorAccountTitle
-          );
-          if (!isEmpty(creditorAccountTitles)) {
-            creditorAccountTitles.push("Summary");
-          }
-          setAllCreditorsNames(creditorAccountTitles);
-          setOptionStats(
-            resCommission?.data?.data?.settlementRange?.option_2_stats
-          );
-          showToast(resCommission?.data?.message, "success");
-          if (typeof resCommission?.data?.data?.getScores !== "string") {
-            getLumpSumAmountData();
-          }
-        } else if (
-          resCommission?.response?.status === 401 ||
-          resCommission?.response?.status === 403
-        ) {
-          localStorage.clear();
-          navigate("/");
+          getAllRanges([], false);
         }
       }
-    } catch (err) {
-      setErrorMessage(err);
-      showToast(err, "error");
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) {}
   };
 
   const handleUpdate = async (status) => {
@@ -590,7 +534,7 @@ export default function SettlementRange() {
 
   const handleGeneratePdf = () => {
     const credDetail =
-      allCreditorNames[tabValue] === "Summary"
+      creditorNamesTabs[tabValue] === "Summary"
         ? "Summary"
         : selectedCreditorDetails?.name;
 
@@ -604,88 +548,6 @@ export default function SettlementRange() {
     );
   };
 
-  const getAllRanges = async (creditors, status) => {
-    setLoading(true);
-    try {
-      if (caseId) {
-        const settlementRangeData = await GetSettlementRangeWithScores(
-          creditors,
-          caseId,
-          status
-        );
-        if (settlementRangeData?.status === 200) {
-          setStatementSummariesLoading(true);
-          setLoading(false);
-          if (typeof settlementRangeData?.data?.data?.getScores === "string") {
-            setScoresBackend(true);
-            setScores({ message: settlementRangeData?.data?.data?.getScores });
-            showToast(
-              settlementRangeData?.data?.data?.getScores +
-                " Couldn't fetch scores",
-              "error"
-            );
-          } else {
-            setScoresBackend(false);
-            setScores(settlementRangeData?.data?.data?.getScores);
-          }
-          setAllData(settlementRangeData?.data?.data);
-          setDebtor(settlementRangeData?.data?.data?.debtor?.basicInformation);
-          setDebtorInfo(
-            settlementRangeData?.data?.data?.debtor?.businessInformation
-          );
-          setApiData(settlementRangeData?.data?.data?.settlementRange);
-          setCommissionPercentage(
-            settlementRangeData?.data?.data?.debtor?.commissionPercentage
-          );
-          setSummaryAmount(
-            settlementRangeData?.data?.data?.creditorsContractDetailsSum
-          );
-
-          const allCreditors = settlementRangeData?.data?.data?.creditors;
-          setCreditorNames(allCreditors);
-          const creditorAccountTitles = allCreditors?.map(
-            (item) => item.creditorAccountTitle
-          );
-          if (!isEmpty(creditorAccountTitles)) {
-            creditorAccountTitles.push("Summary");
-          }
-          setAllCreditorsNames(creditorAccountTitles);
-          setOptionStats(
-            settlementRangeData?.data?.data?.settlementRange?.option_2_stats
-          );
-          showToast(settlementRangeData?.data?.message, "success");
-          if (typeof settlementRangeData?.data?.data?.getScores !== "string") {
-            getLumpSumAmountData();
-          }
-          const senderRes = await GetAllSenders(
-            settlementRangeData?.data?.data?.debtor?._id
-          );
-          if (senderRes?.status === 200) {
-            setVerifiedSender(senderRes?.data?.data);
-          }
-          const resStatementSummary = await GetStatementSummary(
-            settlementRangeData?.data?.data?.debtor?._id
-          );
-          if (resStatementSummary?.status === 200) {
-            setStatementSummaries(resStatementSummary?.data?.data);
-            setStatementSummariesLoading(false);
-          }
-        } else if (
-          settlementRangeData?.response?.status === 401 ||
-          settlementRangeData?.response?.status === 403
-        ) {
-          localStorage.clear();
-          navigate("/");
-        }
-      }
-    } catch (err) {
-      setErrorMessage(err);
-      showToast(err, "error");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const getAllSummary = async () => {
     const res = await GetCaseSummariesById(caseId);
     if (res?.status === 200) {
@@ -697,19 +559,6 @@ export default function SettlementRange() {
     const res = await GetPaymentIntervals(caseId);
     if (res?.status === 200) {
       setPaymentData(res?.data?.data);
-    }
-  };
-
-  const getLumpSumAmountData = async () => {
-    if (caseId) {
-      const GetLumpSumDataRes = await GetLumpSumAmount(caseId);
-
-      if (GetLumpSumDataRes?.status === 200) {
-        setLumpSumpData(GetLumpSumDataRes?.data?.data);
-      } else {
-        const errorMessage = GetLumpSumDataRes?.response?.data?.message;
-        showToast(errorMessage, "error");
-      }
     }
   };
 
@@ -738,7 +587,6 @@ export default function SettlementRange() {
   }, [paymentChanged]);
 
   useEffect(() => {
-    getAllRanges([], false);
     getAllSummary();
   }, []);
 
@@ -772,37 +620,6 @@ export default function SettlementRange() {
       creditorAccountTitle,
       creditorId,
     }));
-
-  if (errorMessage) {
-    return (
-      <Grid
-        container
-        justifyContent="center"
-        alignItems="center"
-        height="100vh"
-        bgcolor={Colors.BG_LIGHT_GRAY} // Adjust to your color scheme
-      >
-        <Grid item textAlign="center">
-          <ErrorOutline sx={{ fontSize: 80, color: Colors.RED }} />{" "}
-          <Typography variant="h4" color={Colors.DARK_GRAY} gutterBottom>
-            Oops! Something went wrong.
-          </Typography>
-          <Typography variant="body1" color={Colors.DARK_GRAY} gutterBottom>
-            {errorMessage || "An unexpected error occurred."}
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              navigate(`/home`);
-            }}
-          >
-            Go to Home Page
-          </Button>
-        </Grid>
-      </Grid>
-    );
-  }
 
   const creditorDetails = [
     {
@@ -1021,10 +838,15 @@ export default function SettlementRange() {
     repayment_amount: "--",
   };
 
-  const updatedCreditorNamesDetails = [...creditorNamesDetails, summaryDetails];
-  const filteredData = updatedCreditorNamesDetails?.filter(
-    (item) => item.creditorName !== "Summary"
-  );
+  const updatedCreditorNamesDetails = creditorNamesDetails && [
+    ...creditorNamesDetails,
+    summaryDetails,
+  ];
+  const filteredData =
+    updatedCreditorNamesDetails &&
+    updatedCreditorNamesDetails?.filter(
+      (item) => item.creditorName !== "Summary"
+    );
 
   const isAnyChecked = Object.values(checkboxStates).some((checked) => checked);
 
@@ -1123,10 +945,6 @@ export default function SettlementRange() {
       container
       sx={{
         backgroundColor: Colors.BG_LIGHT_GRAY,
-        padding: "0rem 2rem",
-        height: PAGE_HEIGHT,
-        overflowY: "auto",
-        ...ScrollbarStyles,
       }}
     >
       <Modal open={setShow} onClose={() => setSetShow(false)}>
@@ -1179,28 +997,12 @@ export default function SettlementRange() {
             </Typography>
           </Box>
         </Grid>
-        <Grid
-          item
-          xs={12}
-          lg={6}
-          sx={{ display: "flex", justifyContent: "flex-end" }}
-        >
-          <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              color: Colors.DARK_GRAY,
-            }}
-          >
-            {AUTHORITY_TEXT} <span>{role}</span>
-          </Typography>
-        </Grid>
       </Grid>
-      {loading ? (
+      {settlementloading ? (
         <Grid
           container
           sx={{
-            height: "inherit",
+            height: "90vh",
             justifyContent: "center",
             alignItems: "center",
           }}
@@ -1209,26 +1011,6 @@ export default function SettlementRange() {
         </Grid>
       ) : (
         <>
-          <Grid
-            container
-            item
-            xs={12}
-            sx={{
-              marginTop: "1.5rem",
-              alignItems: "center",
-            }}
-          >
-            <Typography
-              sx={{
-                fontWeight: "600",
-                fontSize: "1.5rem",
-                fontFamily: "Nunito",
-                color: Colors.BLACK,
-              }}
-            >
-              {`${debtorCompanyName} - Settlement Range`}
-            </Typography>
-          </Grid>
           <div
             style={{
               width: "100%",
@@ -1250,18 +1032,18 @@ export default function SettlementRange() {
             <MuiModels
               show="sendEmail"
               creditorInfo={
-                allCreditorNames[tabValue] === "Summary"
+                creditorNamesTabs[tabValue] === "Summary"
                   ? "Summary"
                   : selectedCreditorDetails?.name
               }
               debtorInfo={debtorInfo}
               payableAmount={
-                allCreditorNames[tabValue] === "Summary"
+                creditorNamesTabs[tabValue] === "Summary"
                   ? summaryAmount?.payableAmount
                   : selectedCreditorDetails?.contractDetails?.payable_amount
               }
               data={apiData}
-              selectedCreditor={allCreditorNames[tabValue]}
+              selectedCreditor={creditorNamesTabs[tabValue]}
               lumpSump={lumpSumpData}
               caseId={caseId}
               paymentData={paymentData}
@@ -1273,16 +1055,16 @@ export default function SettlementRange() {
               boxShadow="none"
               height={"2.5rem"}
               width={extraSmallScreen ? "2rem" : "8rem"}
-              backgroundColor={Colors.BG_LIGHT_GRAY}
-              fontColor={Colors.BLACK}
-              hoverColor={Colors.BG_LIGHT_GRAY}
+              backgroundColor={Colors.SKY_BLUE}
+              fontColor={Colors.WHITE}
+              hoverColor={Colors.SKY_BLUE}
               border={`1px solid ${Colors.SKY_BLUE}`}
               borderRadius="5px"
               startIcon={
                 extraSmallScreen ? null : (
                   <Download
                     sx={{
-                      color: apiData ? Colors.BLACK : Colors.DIM_LIGHT_GRAY,
+                      color: apiData ? Colors.WHITE : Colors.DIM_LIGHT_GRAY,
                     }}
                   />
                 )
@@ -1300,7 +1082,7 @@ export default function SettlementRange() {
               />
 
               <CheckboxAutocomplete
-                options={creditorNameWithId}
+                options={creditorNameWithId && creditorNameWithId}
                 multiSelect={creditorSelect}
                 setMultiselect={setCreditorSelect}
                 placeholder="Creditors"
@@ -1815,7 +1597,7 @@ export default function SettlementRange() {
                 marginTop: "1rem",
               }}
             >
-              {allCreditorNames[tabValue] === "Summary"
+              {creditorNamesTabs[tabValue] === "Summary"
                 ? "Summary Contract Information"
                 : "Creditors Contract Information"}
             </Typography>
@@ -1909,7 +1691,7 @@ export default function SettlementRange() {
                 </>
               )}
 
-            {allCreditorNames[tabValue] === "Summary" && (
+            {creditorNamesTabs[tabValue] === "Summary" && (
               <>
                 <Grid item xs={12} sx={{ mt: "1rem" }}>
                   <DataSummaryTable
@@ -1922,7 +1704,7 @@ export default function SettlementRange() {
               </>
             )}
 
-            {apiData?.warnings?.[allCreditorNames[tabValue]] && (
+            {apiData?.warnings?.[creditorNamesTabs[tabValue]] && (
               <Grid
                 sx={{
                   mt: "10px",
@@ -1935,7 +1717,7 @@ export default function SettlementRange() {
               >
                 <Typography sx={commonTextStyles}>Warning!</Typography>
                 <Typography sx={{ ...commonTextStyles, fontWeight: "500" }}>
-                  {apiData?.warnings?.[allCreditorNames[tabValue]]}
+                  {apiData?.warnings?.[creditorNamesTabs[tabValue]]}
                 </Typography>
               </Grid>
             )}
@@ -2077,7 +1859,7 @@ export default function SettlementRange() {
                     }}
                     disabled={
                       !justification?.[justificationValue]?.[
-                        allCreditorNames[tabValue]
+                        creditorNamesTabs[tabValue]
                       ]
                     }
                     checked={checkboxStates["justification"]}
@@ -2085,7 +1867,7 @@ export default function SettlementRange() {
                       handleCheckboxChange(
                         "justification",
                         justification?.[justificationValue]?.[
-                          allCreditorNames[tabValue]
+                          creditorNamesTabs[tabValue]
                         ]
                       )
                     }
@@ -2109,7 +1891,7 @@ export default function SettlementRange() {
                     <Typography variant="body1">
                       <ReactMarkdown>
                         {justification?.[justificationValue]?.[
-                          allCreditorNames[tabValue]
+                          creditorNamesTabs[tabValue]
                         ] || "No Justifications"}
                       </ReactMarkdown>
                     </Typography>
