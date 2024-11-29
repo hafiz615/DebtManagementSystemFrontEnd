@@ -19,6 +19,7 @@ import {
   LinearProgress,
   Checkbox,
   Modal,
+  Divider,
 } from "@mui/material";
 import { PieChart } from "@mui/x-charts";
 
@@ -59,6 +60,7 @@ import SettlementBounds from "./settlementBounds";
 import StatementSummaryAccordion from "../statementSummaryAccordion";
 import DebtorUploadedFiles from "../debtorUploadedFiles";
 import TransactionHistory from "../transactionHistory";
+import CashFlowPercentage from "./cashFlowPercentage";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -196,6 +198,8 @@ export default function SettlementRange({
   lumpSumpData,
   scoresBackend,
   optionStats,
+  cashFlow,
+  cashFlowLoading,
 }) {
   const caseId = id;
   const [value, setValue] = useState(0);
@@ -1136,46 +1140,45 @@ export default function SettlementRange({
               <DebtorUploadedFiles data={allData} />
             </Grid>
           </Grid>
-          <Grid container xs={12} sx={{ alignItems: "center" }}>
-            <Grid item xs={12}>
-              <Typography
-                sx={{
-                  fontWeight: "600",
-                  fontFamily: "Nunito",
-                  marginTop: "1rem",
-                }}
-              >
-                Update Commission Percentage
-              </Typography>
-              <input
-                min={1}
-                max={50}
-                style={inputStyles}
-                type="number"
-                placeholder="Commission Percentage"
-                value={commissionPercentage}
-                onChange={(e) => setCommissionPercentage(e.target.value)}
-              />
-              <TextButton
-                buttonText="Update"
-                height="2rem"
-                width="8rem"
-                onClick={handleCommissionUpdate}
-                backgroundColor={Colors.SKY_BLUE}
-                hoverColor={Colors.SKY_BLUE}
-                disabled={
-                  !commissionPercentage ||
-                  commissionPercentage > 50 ||
-                  commissionPercentage < 1
-                }
-              />
-            </Grid>
-            <Grid item xs={12} sx={{ mt: "1rem" }}>
-              <StatementSummaryAccordion
-                data={statementSummaries}
-                loading={statementSummariesLoading}
-              />
-            </Grid>
+
+          <Grid xs={12}>
+            <Typography
+              sx={{
+                fontWeight: "600",
+                fontFamily: "Nunito",
+                marginTop: "1rem",
+              }}
+            >
+              Update Commission Percentage
+            </Typography>
+            <input
+              min={1}
+              max={50}
+              style={inputStyles}
+              type="number"
+              placeholder="Commission Percentage"
+              value={commissionPercentage}
+              onChange={(e) => setCommissionPercentage(e.target.value)}
+            />
+            <TextButton
+              buttonText="Update"
+              height="2rem"
+              width="8rem"
+              onClick={handleCommissionUpdate}
+              backgroundColor={Colors.SKY_BLUE}
+              hoverColor={Colors.SKY_BLUE}
+              disabled={
+                !commissionPercentage ||
+                commissionPercentage > 50 ||
+                commissionPercentage < 1
+              }
+            />
+          </Grid>
+          <Grid xs={12} sx={{ mt: "1rem" }}>
+            <StatementSummaryAccordion
+              data={statementSummaries}
+              loading={statementSummariesLoading}
+            />
           </Grid>
 
           <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
@@ -1331,12 +1334,20 @@ export default function SettlementRange({
                   rawValue={scores?.Scores?.["Default Risk Score"]}
                 />
 
+                <Grid xs={12}>
+                  <CashFlowPercentage
+                    cashFlowLoading={cashFlowLoading}
+                    cashFlow={cashFlow}
+                  />
+                </Grid>
+
                 <Grid
                   item
                   xs={12}
                   sx={{
                     backgroundColor: Colors.WHITE,
                     borderRadius: "10px",
+                    mt: "1rem",
                   }}
                 >
                   <Typography
@@ -1349,6 +1360,7 @@ export default function SettlementRange({
                   >
                     Top Payee
                   </Typography>
+                  <Divider sx={{ m: "10px 0px" }} />
                   <Grid
                     container
                     sx={{
@@ -1466,6 +1478,7 @@ export default function SettlementRange({
               </>
             )}
           </Grid>
+
           {scores?.message && (
             <Grid container item xs={6} sx={{ gap: "2%", mt: "1rem" }}>
               <GridItemMessage

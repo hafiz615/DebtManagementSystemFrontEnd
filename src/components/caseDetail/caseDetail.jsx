@@ -19,6 +19,7 @@ import {
   GetAllSenders,
   GetCaseById,
   GetCasePaymentById,
+  GetDailyCashFlow,
   GetLogs,
   GetLumpSumAmount,
   GetSettlementRangeWithScores,
@@ -117,6 +118,8 @@ function CaseDetail() {
   const [lumpSumpData, setLumpSumpData] = useState({});
   const [scoresBackend, setScoresBackend] = useState(false);
   const [optionStats, setOptionStats] = useState();
+  const [cashFlow, setCashFlow] = useState();
+  const [cashFlowLoading, setCashFlowLoading] = useState(false);
   const [statementSummariesLoading, setStatementSummariesLoading] =
     useState(false);
 
@@ -266,6 +269,7 @@ function CaseDetail() {
         );
         if (settlementRangeData?.status === 200) {
           setStatementSummariesLoading(true);
+          setCashFlowLoading(true);
           setSettlementLoading(false);
           if (typeof settlementRangeData?.data?.data?.getScores === "string") {
             setScoresBackend(true);
@@ -315,6 +319,13 @@ function CaseDetail() {
           if (resStatementSummary?.status === 200) {
             setStatementSummaries(resStatementSummary?.data?.data);
             setStatementSummariesLoading(false);
+          }
+          const resCashFlow = await GetDailyCashFlow(
+            settlementRangeData?.data?.data?.debtor?._id
+          );
+          if (resCashFlow?.status === 200) {
+            setCashFlow(resCashFlow?.data?.data);
+            setCashFlowLoading(false);
           }
         } else if (
           settlementRangeData?.response?.status === 401 ||
@@ -533,6 +544,8 @@ function CaseDetail() {
             setScoresBackend={setScoresBackend}
             optionStats={optionStats}
             setOptionStats={setOptionStats}
+            cashFlow={cashFlow}
+            cashFlowLoading={cashFlowLoading}
           />
         )}
         {activeTab === 1 && (
