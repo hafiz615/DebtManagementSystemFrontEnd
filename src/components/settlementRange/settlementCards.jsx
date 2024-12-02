@@ -29,7 +29,7 @@ export default function SettlementCards({
   weeklyTrueRevenueAmount,
   selectedOption,
   setSelectedOption,
-  allCreditorNames,
+  creditorNamesTabs,
   commission,
   breakEven,
   scoresBackend,
@@ -451,7 +451,7 @@ export default function SettlementCards({
           </>
         )}
         {strategy === "strategy3" &&
-          allCreditorNames[tabValue] !== "Summary" && (
+          creditorNamesTabs[tabValue] !== "Summary" && (
             <Grid
               container
               sx={{
