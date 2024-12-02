@@ -16,11 +16,8 @@ import DashboardPage from "./pages/dashboardPage";
 import SettingsPage from "./pages/settingsPage";
 import CreditorListPage from "./pages/creditorListPage";
 import PipelinesPage from "./pages/pipelinePage";
-import SettlementRangePage from "./pages/settlementRangePage";
-import SettlementRange from "./components/settlementRange/settlementRange";
 import UpdateCase from "./pages/updateCase";
 import InboxPage from "./pages/inboxPage";
-// import PaymentsCardPage from "./pages/paymentPage";
 function App() {
   return (
     <Routes>
@@ -83,7 +80,6 @@ function App() {
         }
       />
 
-      {/* Client List Routes */}
       <Route
         exact
         path="/client-listing"
@@ -121,7 +117,6 @@ function App() {
         }
       />
 
-      {/* Settings Screen  */}
       <Route
         exact
         path="/settings"
@@ -162,27 +157,7 @@ function App() {
         }
       />
 
-      <Route
-        exact
-        path="/settlementRange/:caseId"
-        element={
-          <Protected>
-            <SettlementRangePage />
-          </Protected>
-        }
-      />
-
-      {/* update and verify user password  */}
       <Route exact path="/set-password" element={<VerifyProfilePage />} />
-      {/* <Route
-        exact
-        path="/paymentGateway"
-        element={
-          <Protected>
-            <PaymentsCardPage />
-          </Protected>
-        }
-      /> */}
     </Routes>
   );
 }

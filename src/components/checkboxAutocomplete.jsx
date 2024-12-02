@@ -36,7 +36,8 @@ export default function CheckboxAutocomplete({
   const autocompleteRef = useRef(null);
 
   const isComplexData =
-    options.length > 0 &&
+    options &&
+    options?.length > 0 &&
     typeof options[0] === "object" &&
     "creditorId" in options[0];
 
@@ -72,7 +73,7 @@ export default function CheckboxAutocomplete({
           {update && (
             <li>
               <TextButton
-                disabled={multiSelect?.length === 0}
+                disabled={multiSelect && multiSelect?.length === 0}
                 buttonText="Update"
                 height="2rem"
                 width="100%"

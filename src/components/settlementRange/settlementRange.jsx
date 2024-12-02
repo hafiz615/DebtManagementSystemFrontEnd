@@ -7,7 +7,6 @@ import InfoIcon from "@mui/icons-material/Info";
 import {
   Grid,
   Typography,
-  Button,
   styled,
   Tabs,
   Tab,
@@ -19,35 +18,30 @@ import {
   Card,
   LinearProgress,
   Checkbox,
+  Modal,
+  Divider,
 } from "@mui/material";
 import { PieChart } from "@mui/x-charts";
 
-import RefreshIcon from "@mui/icons-material/Refresh";
 import {
   FONT_SIZE_LARGE,
   FONT_SIZE_MEDIUM,
   FONT_SIZE_SMALL,
   FONT_SIZE_XL,
-  PAGE_HEIGHT,
-  UserListPage,
 } from "../../constants/appConstants";
 import { Colors } from "../../config/default";
 import ScrollbarStyles from "../customScroll";
-import { Download, Info, PeopleAlt, Send } from "@mui/icons-material";
+import { Download, PeopleAlt, Send } from "@mui/icons-material";
 import TextButton from "../button";
 import SettlementCards from "./settlementCards";
 import {
-  GetSettlementRangeWithScores,
   GetSummary,
-  GetLumpSumAmount,
-  GetFullProfit,
   UpdateCommission,
   GetCaseSummariesById,
   GetSettlementJustifications,
   GetLumpSumJustifications,
   GetFullProfitSettlement,
   GetPaymentIntervals,
-  GetAllSenders,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import {
@@ -59,12 +53,14 @@ import {
 } from "../../common";
 import MuiModels from "../models";
 import CheckboxAutocomplete from "../checkboxAutocomplete";
-import { useParams } from "react-router-dom";
-import { ErrorOutline } from "@mui/icons-material";
 import { isEmpty } from "lodash";
 import { getWeeksRemainingMessage } from "../../common";
 import DataSummaryTable from "../dataSummaryTable";
 import SettlementBounds from "./settlementBounds";
+import StatementSummaryAccordion from "../statementSummaryAccordion";
+import DebtorUploadedFiles from "../debtorUploadedFiles";
+import TransactionHistory from "../transactionHistory";
+import CashFlowPercentage from "./cashFlowPercentage";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -181,52 +177,57 @@ const GridItemMessage = ({ title, value, rawValue }) => (
   </Grid>
 );
 
-export default function SettlementRange() {
-  const navigate = useNavigate();
-  const { caseId } = useParams();
-  const { showToast } = useToast();
+export default function SettlementRange({
+  id,
+  getAllRanges,
+  settlementloading,
+  setSettlementLoading,
+  creditorNames,
+  allCreditorNames,
+  apiData,
+  scores,
+  debtor,
+  debtorInfo,
+  commissionPercentage,
+  setCommissionPercentage,
+  summaryAmount,
+  allData,
+  verifiedSender,
+  statementSummaries,
+  statementSummariesLoading,
+  lumpSumpData,
+  scoresBackend,
+  optionStats,
+  cashFlow,
+  cashFlowLoading,
+}) {
+  const caseId = id;
   const [value, setValue] = useState(0);
   const [tabValue, setTabValue] = useState(0);
-
   const [optionValue, setOptuonValue] = useState(0);
-  const [errorMessage, setErrorMessage] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
-  const [apiData, setApiData] = useState(null);
-  const [creditorNames, setCreditorNames] = useState([]);
-  const [allCreditorNames, setAllCreditorsNames] = useState([]);
   const [creditorSelect, setCreditorSelect] = useState([]);
-  const [scores, setScores] = useState(null);
-  const [debtor, setDebtor] = useState({});
-  const [debtorInfo, setDebtorInfo] = useState({});
-  const [lumpSumpData, setLumpSumpData] = useState({});
-  const [commissionPercentage, setCommissionPercentage] = useState("");
-  const [summaryAmount, setSummaryAmount] = useState({});
   const [justification, setJustification] = useState();
   const [summary, setSummary] = useState([]);
   const [checkboxStates, setCheckboxStates] = useState({});
   const [selectedData, setSelectedData] = useState([]);
   const [paymentData, setPaymentData] = useState();
   const [paymentChanged, setPaymentChanged] = useState(false);
-  const [allData, setAllData] = useState();
-
-  const debtorCompanyName = allData?.debtor?.businessInformation?.companyName;
-  const popUpDebtorData = allData?.debtor;
   const [strategyTab, setStrategyTab] = useState(0);
-  const [optionStats, setOptionStats] = useState();
   const [justificationLoading, setJustificationLoading] = useState(false);
-  const [verifiedSender, setVerifiedSender] = useState([]);
+  const [setShow, setSetShow] = useState(false);
+  const [transactionKey, setTransactionKey] = useState();
   const [colorScheme] = useState("Tableau10");
   const [justificationValue, setJustificationValue] = useState(
     "justification_gemini"
   );
   const [selectedOption, setSelectedOption] = useState("percentageReceivable");
-  const [scoresBackend, setScoresBackend] = useState(false);
-  const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
+
+  const creditorNamesTabs = allCreditorNames;
+  const popUpDebtorData = allData?.debtor;
   const drawerOpen = useSelector((state) => state.drawer.open);
-  const { AUTHORITY_TEXT } = UserListPage;
   const extraSmallScreen = useMediaQuery(
     "(min-width:300px) and (max-width:900px)"
   );
@@ -274,7 +275,8 @@ export default function SettlementRange() {
   const handleOptionTabChange = (event, newValue) => {
     setOptuonValue(newValue);
   };
-  const currentCreditor = allCreditorNames[tabValue];
+
+  const currentCreditor = creditorNamesTabs[tabValue];
 
   const selectedCreditorDetails = creditorNames?.find(
     (item) => item?.creditorAccountTitle === currentCreditor
@@ -287,7 +289,7 @@ export default function SettlementRange() {
           strategy="strategy1"
           setPaymentChanged={setPaymentChanged}
           remainingAmount={
-            allCreditorNames[tabValue] === "Summary"
+            creditorNamesTabs[tabValue] === "Summary"
               ? summaryAmount?.loanAmount.toString()
               : selectedCreditorDetails?.remaining
           }
@@ -295,26 +297,28 @@ export default function SettlementRange() {
           title={item}
           weeksTillPaidTitle={getWeeksRemainingMessage(item)}
           settlementRange={
-            apiData?.settlement_range?.[allCreditorNames[parseInt(tabValue)]] ||
-            null
+            apiData?.settlement_range?.[
+              creditorNamesTabs[parseInt(tabValue)]
+            ] || null
           }
           commissionRange={
-            apiData?.commission_range?.[allCreditorNames[parseInt(tabValue)]] ||
-            null
+            apiData?.commission_range?.[
+              creditorNamesTabs[parseInt(tabValue)]
+            ] || null
           }
           newDefaultRiskScore={apiData?.new_default_risk_score || null}
           percentageSettlementOverWeeklyBudget={
             apiData?.percentage_settlement_over_weekly_budget?.[
-              allCreditorNames[parseInt(tabValue)]
+              creditorNamesTabs[parseInt(tabValue)]
             ] || null
           }
           percentageSettlementOverWeeklyTrueRevenue={
             apiData?.percentage_settlement_over_weekly_true_revenue?.[
-              allCreditorNames[parseInt(tabValue)]
+              creditorNamesTabs[parseInt(tabValue)]
             ] || null
           }
           weeksTillPaid={
-            apiData?.weeks_till_paid?.[allCreditorNames[parseInt(tabValue)]] ||
+            apiData?.weeks_till_paid?.[creditorNamesTabs[parseInt(tabValue)]] ||
             null
           }
           commission={allData?.maxProfitCommission}
@@ -328,7 +332,7 @@ export default function SettlementRange() {
           setPaymentChanged={setPaymentChanged}
           breakEven={selectedCreditorDetails?.breakEven}
           remainingAmount={
-            allCreditorNames[tabValue] === "Summary"
+            creditorNamesTabs[tabValue] === "Summary"
               ? summaryAmount?.loanAmount.toString()
               : selectedCreditorDetails?.remaining
           }
@@ -340,11 +344,11 @@ export default function SettlementRange() {
           }
           settlementRange={
             lumpSumpData?.lumpsum_settlement?.[
-              allCreditorNames[parseInt(tabValue)]
+              creditorNamesTabs[parseInt(tabValue)]
             ] || null
           }
           warning={
-            lumpSumpData?.warning?.[allCreditorNames[parseInt(tabValue)]] || ""
+            lumpSumpData?.warning?.[creditorNamesTabs[parseInt(tabValue)]] || ""
           }
           caseId={allData?.creditors?.[parseInt(tabValue)]?.caseId}
           commission={allData?.totalCommission}
@@ -357,11 +361,11 @@ export default function SettlementRange() {
       <>
         <SettlementCards
           tabValue={tabValue}
-          allCreditorNames={allCreditorNames}
+          creditorNamesTabs={creditorNamesTabs}
           strategy="strategy3"
           setPaymentChanged={setPaymentChanged}
           remainingAmount={
-            allCreditorNames[tabValue] === "Summary"
+            creditorNamesTabs[tabValue] === "Summary"
               ? summaryAmount?.loanAmount.toString()
               : selectedCreditorDetails?.remaining
           }
@@ -370,26 +374,28 @@ export default function SettlementRange() {
           title={item}
           weeksTillPaidTitle={getWeeksRemainingMessage(item)}
           settlementRange={
-            apiData?.settlement_range?.[allCreditorNames[parseInt(tabValue)]] ||
-            null
+            apiData?.settlement_range?.[
+              creditorNamesTabs[parseInt(tabValue)]
+            ] || null
           }
           commissionRange={
-            apiData?.commission_range?.[allCreditorNames[parseInt(tabValue)]] ||
-            null
+            apiData?.commission_range?.[
+              creditorNamesTabs[parseInt(tabValue)]
+            ] || null
           }
           newDefaultRiskScore={apiData?.new_default_risk_score || null}
           percentageSettlementOverWeeklyBudget={
             apiData?.percentage_settlement_over_weekly_budget?.[
-              allCreditorNames[parseInt(tabValue)]
+              creditorNamesTabs[parseInt(tabValue)]
             ] || null
           }
           percentageSettlementOverWeeklyTrueRevenue={
             apiData?.percentage_settlement_over_weekly_true_revenue?.[
-              allCreditorNames[parseInt(tabValue)]
+              creditorNamesTabs[parseInt(tabValue)]
             ] || null
           }
           weeksTillPaid={
-            apiData?.weeks_till_paid?.[allCreditorNames[parseInt(tabValue)]] ||
+            apiData?.weeks_till_paid?.[creditorNamesTabs[parseInt(tabValue)]] ||
             null
           }
           percentageReceivableAmount={
@@ -414,7 +420,7 @@ export default function SettlementRange() {
           strategy="strategy1"
           setPaymentChanged={setPaymentChanged}
           remainingAmount={
-            allCreditorNames[tabValue] === "Summary"
+            creditorNamesTabs[tabValue] === "Summary"
               ? summaryAmount?.loanAmount.toString()
               : selectedCreditorDetails?.remaining
           }
@@ -423,27 +429,27 @@ export default function SettlementRange() {
           weeksTillPaidTitle={getWeeksRemainingMessage(item)}
           settlementRange={
             optionStats?.settlement_range?.[
-              allCreditorNames[parseInt(tabValue)]
+              creditorNamesTabs[parseInt(tabValue)]
             ] || null
           }
           commissionRange={
             optionStats?.commission_range?.[
-              allCreditorNames[parseInt(tabValue)]
+              creditorNamesTabs[parseInt(tabValue)]
             ] || null
           }
           percentageSettlementOverWeeklyBudget={
             optionStats?.percentage_settlement_over_weekly_budget?.[
-              allCreditorNames[parseInt(tabValue)]
+              creditorNamesTabs[parseInt(tabValue)]
             ] || null
           }
           percentageSettlementOverWeeklyTrueRevenue={
             optionStats?.percentage_settlement_over_weekly_true_revenue?.[
-              allCreditorNames[parseInt(tabValue)]
+              creditorNamesTabs[parseInt(tabValue)]
             ] || null
           }
           weeksTillPaid={
             optionStats?.weeks_till_paid?.[
-              allCreditorNames[parseInt(tabValue)]
+              creditorNamesTabs[parseInt(tabValue)]
             ] || null
           }
           optionValue={true}
@@ -503,7 +509,7 @@ export default function SettlementRange() {
 
   const handleCommissionUpdate = async () => {
     try {
-      setLoading(true);
+      setSettlementLoading(true);
       const selectedCreditorIds = creditorSelect?.map(
         (creditor) => creditor.creditorId
       );
@@ -514,60 +520,10 @@ export default function SettlementRange() {
         };
         const resCommission = await UpdateCommission(payload, caseId, false);
         if (resCommission?.status === 200) {
-          setLoading(false);
-          if (typeof resCommission?.data?.data?.getScores === "string") {
-            setScoresBackend(true);
-            setScores({ message: resCommission?.data?.data?.getScores });
-            showToast(
-              resCommission?.data?.data?.getScores + " Couldn't fetch scores",
-              "error"
-            );
-          } else {
-            setScoresBackend(false);
-            setScores(resCommission?.data?.data?.getScores);
-          }
-          setSummaryAmount(
-            resCommission?.data?.data?.creditorsContractDetailsSum
-          );
-          setAllData(resCommission?.data?.data);
-
-          setDebtor(resCommission?.data?.data?.debtor?.basicInformation);
-          setDebtorInfo(resCommission?.data?.data?.debtor?.businessInformation);
-          setApiData(resCommission?.data?.data?.settlementRange);
-          setCommissionPercentage(
-            resCommission?.data?.data?.debtor?.commissionPercentage
-          );
-
-          const allCreditors = resCommission?.data?.data?.creditors;
-          setCreditorNames(allCreditors);
-          const creditorAccountTitles = allCreditors?.map(
-            (item) => item.creditorAccountTitle
-          );
-          if (!isEmpty(creditorAccountTitles)) {
-            creditorAccountTitles.push("Summary");
-          }
-          setAllCreditorsNames(creditorAccountTitles);
-          setOptionStats(
-            resCommission?.data?.data?.settlementRange?.option_2_stats
-          );
-          showToast(resCommission?.data?.message, "success");
-          if (typeof resCommission?.data?.data?.getScores !== "string") {
-            getLumpSumAmountData();
-          }
-        } else if (
-          resCommission?.response?.status === 401 ||
-          resCommission?.response?.status === 403
-        ) {
-          localStorage.clear();
-          navigate("/");
+          getAllRanges([], false);
         }
       }
-    } catch (err) {
-      setErrorMessage(err);
-      showToast(err, "error");
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) {}
   };
 
   const handleUpdate = async (status) => {
@@ -582,7 +538,7 @@ export default function SettlementRange() {
 
   const handleGeneratePdf = () => {
     const credDetail =
-      allCreditorNames[tabValue] === "Summary"
+      creditorNamesTabs[tabValue] === "Summary"
         ? "Summary"
         : selectedCreditorDetails?.name;
 
@@ -596,80 +552,6 @@ export default function SettlementRange() {
     );
   };
 
-  const getAllRanges = async (creditors, status) => {
-    setLoading(true);
-    try {
-      if (caseId) {
-        const settlementRangeData = await GetSettlementRangeWithScores(
-          creditors,
-          caseId,
-          status
-        );
-        if (settlementRangeData?.status === 200) {
-          setLoading(false);
-          if (typeof settlementRangeData?.data?.data?.getScores === "string") {
-            setScoresBackend(true);
-            setScores({ message: settlementRangeData?.data?.data?.getScores });
-            showToast(
-              settlementRangeData?.data?.data?.getScores +
-                " Couldn't fetch scores",
-              "error"
-            );
-          } else {
-            setScoresBackend(false);
-            setScores(settlementRangeData?.data?.data?.getScores);
-          }
-          setAllData(settlementRangeData?.data?.data);
-          setDebtor(settlementRangeData?.data?.data?.debtor?.basicInformation);
-          setDebtorInfo(
-            settlementRangeData?.data?.data?.debtor?.businessInformation
-          );
-          setApiData(settlementRangeData?.data?.data?.settlementRange);
-          setCommissionPercentage(
-            settlementRangeData?.data?.data?.debtor?.commissionPercentage
-          );
-          setSummaryAmount(
-            settlementRangeData?.data?.data?.creditorsContractDetailsSum
-          );
-
-          const allCreditors = settlementRangeData?.data?.data?.creditors;
-          setCreditorNames(allCreditors);
-          const creditorAccountTitles = allCreditors?.map(
-            (item) => item.creditorAccountTitle
-          );
-          if (!isEmpty(creditorAccountTitles)) {
-            creditorAccountTitles.push("Summary");
-          }
-          setAllCreditorsNames(creditorAccountTitles);
-          setOptionStats(
-            settlementRangeData?.data?.data?.settlementRange?.option_2_stats
-          );
-          showToast(settlementRangeData?.data?.message, "success");
-          if (typeof settlementRangeData?.data?.data?.getScores !== "string") {
-            getLumpSumAmountData();
-          }
-          const senderRes = await GetAllSenders(
-            settlementRangeData?.data?.data?.debtor?._id
-          );
-          if (senderRes?.status === 200) {
-            setVerifiedSender(senderRes?.data?.data);
-          }
-        } else if (
-          settlementRangeData?.response?.status === 401 ||
-          settlementRangeData?.response?.status === 403
-        ) {
-          localStorage.clear();
-          navigate("/");
-        }
-      }
-    } catch (err) {
-      setErrorMessage(err);
-      showToast(err, "error");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const getAllSummary = async () => {
     const res = await GetCaseSummariesById(caseId);
     if (res?.status === 200) {
@@ -681,19 +563,6 @@ export default function SettlementRange() {
     const res = await GetPaymentIntervals(caseId);
     if (res?.status === 200) {
       setPaymentData(res?.data?.data);
-    }
-  };
-
-  const getLumpSumAmountData = async () => {
-    if (caseId) {
-      const GetLumpSumDataRes = await GetLumpSumAmount(caseId);
-
-      if (GetLumpSumDataRes?.status === 200) {
-        setLumpSumpData(GetLumpSumDataRes?.data?.data);
-      } else {
-        const errorMessage = GetLumpSumDataRes?.response?.data?.message;
-        showToast(errorMessage, "error");
-      }
     }
   };
 
@@ -722,7 +591,6 @@ export default function SettlementRange() {
   }, [paymentChanged]);
 
   useEffect(() => {
-    getAllRanges([], false);
     getAllSummary();
   }, []);
 
@@ -756,37 +624,6 @@ export default function SettlementRange() {
       creditorAccountTitle,
       creditorId,
     }));
-
-  if (errorMessage) {
-    return (
-      <Grid
-        container
-        justifyContent="center"
-        alignItems="center"
-        height="100vh"
-        bgcolor={Colors.BG_LIGHT_GRAY} // Adjust to your color scheme
-      >
-        <Grid item textAlign="center">
-          <ErrorOutline sx={{ fontSize: 80, color: Colors.RED }} />{" "}
-          <Typography variant="h4" color={Colors.DARK_GRAY} gutterBottom>
-            Oops! Something went wrong.
-          </Typography>
-          <Typography variant="body1" color={Colors.DARK_GRAY} gutterBottom>
-            {errorMessage || "An unexpected error occurred."}
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              navigate(`/home`);
-            }}
-          >
-            Go to Home Page
-          </Button>
-        </Grid>
-      </Grid>
-    );
-  }
 
   const creditorDetails = [
     {
@@ -1005,10 +842,15 @@ export default function SettlementRange() {
     repayment_amount: "--",
   };
 
-  const updatedCreditorNamesDetails = [...creditorNamesDetails, summaryDetails];
-  const filteredData = updatedCreditorNamesDetails?.filter(
-    (item) => item.creditorName !== "Summary"
-  );
+  const updatedCreditorNamesDetails = creditorNamesDetails && [
+    ...creditorNamesDetails,
+    summaryDetails,
+  ];
+  const filteredData =
+    updatedCreditorNamesDetails &&
+    updatedCreditorNamesDetails?.filter(
+      (item) => item.creditorName !== "Summary"
+    );
 
   const isAnyChecked = Object.values(checkboxStates).some((checked) => checked);
 
@@ -1026,17 +868,10 @@ export default function SettlementRange() {
 
   const formatCurrencyValue = (value) => {
     if (value === null || value === undefined) return "--";
-
-    // Convert to string if the value is a number
     const valueStr = typeof value === "number" ? value.toString() : value;
-
-    // Remove any unwanted characters, keep only numbers and decimal point
     const cleanedValue = valueStr.replace(/[^0-9.]/g, "");
-
-    // Convert to a number to check its validity
     const numericValue = parseFloat(cleanedValue);
     if (!isNaN(numericValue)) {
-      // Use Intl.NumberFormat to format with commas and two decimal places
       return `$${numericValue?.toLocaleString(undefined, {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
@@ -1089,17 +924,57 @@ export default function SettlementRange() {
     ],
   };
 
+  const debtorData = [
+    { item: "Full Name", value: debtor?.fullName || "--" },
+    { item: "Status", value: debtor?.status || "--" },
+    { item: "phone", value: debtor?.phone ? `+1${debtor?.phone}` : "--" },
+    {
+      item: "Weekly Budget",
+      value: debtor?.weeklyBudget
+        ? `$${formatWeeklyBudget(debtor?.weeklyBudget)}`
+        : "--",
+    },
+  ];
+
+  const handleItemClick = (event, item) => {
+    const newTransactionKey = item?.seriesId?.[item?.dataIndex]?.label;
+    setTransactionKey(newTransactionKey);
+    if (transactionKey) {
+      setSetShow(true);
+    }
+  };
+
   return (
     <Grid
       container
       sx={{
         backgroundColor: Colors.BG_LIGHT_GRAY,
-        padding: "0rem 2rem",
-        height: PAGE_HEIGHT,
-        overflowY: "auto",
-        ...ScrollbarStyles,
       }}
     >
+      <Modal open={setShow} onClose={() => setSetShow(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "70vw",
+            maxHeight: "70vh",
+            minHeight: "70vh",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            borderRadius: "10px",
+            p: 4,
+          }}
+        >
+          {transactionKey && (
+            <TransactionHistory
+              transactionKey={transactionKey}
+              data={scores?.Scores?.transaction_history}
+            />
+          )}
+        </Box>
+      </Modal>
       <Grid
         item
         xs={12}
@@ -1126,28 +1001,12 @@ export default function SettlementRange() {
             </Typography>
           </Box>
         </Grid>
-        <Grid
-          item
-          xs={12}
-          lg={6}
-          sx={{ display: "flex", justifyContent: "flex-end" }}
-        >
-          <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              color: Colors.DARK_GRAY,
-            }}
-          >
-            {AUTHORITY_TEXT} <span>{role}</span>
-          </Typography>
-        </Grid>
       </Grid>
-      {loading ? (
+      {settlementloading ? (
         <Grid
           container
           sx={{
-            height: "inherit",
+            height: "90vh",
             justifyContent: "center",
             alignItems: "center",
           }}
@@ -1156,163 +1015,132 @@ export default function SettlementRange() {
         </Grid>
       ) : (
         <>
-          <Grid
-            container
-            item
-            xs={12}
-            sx={{
-              marginTop: "1.5rem",
-              justifyContent: "space-between",
-              alignItems: "center",
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              gap: "10px",
+              justifyContent: "flex-end",
+              marginTop: "1rem",
             }}
           >
-            <Typography
-              sx={{
-                fontWeight: "600",
-                fontSize: "1.5rem",
-                fontFamily: "Nunito",
-                color: Colors.BLACK,
+            <MuiModels
+              show="downloadPDF"
+              buttonName="downloadPDF"
+              maxHeight="85vh"
+              allData={allData}
+              lumpSumpData={lumpSumpData}
+              disabled={!apiData}
+            />
+
+            <MuiModels
+              show="sendEmail"
+              creditorInfo={
+                creditorNamesTabs[tabValue] === "Summary"
+                  ? "Summary"
+                  : selectedCreditorDetails?.name
+              }
+              debtorInfo={debtorInfo}
+              payableAmount={
+                creditorNamesTabs[tabValue] === "Summary"
+                  ? summaryAmount?.payableAmount
+                  : selectedCreditorDetails?.contractDetails?.payable_amount
+              }
+              data={apiData}
+              selectedCreditor={creditorNamesTabs[tabValue]}
+              lumpSump={lumpSumpData}
+              caseId={caseId}
+              paymentData={paymentData}
+              debtorId={verifiedSender}
+            />
+            <TextButton
+              disabled={!apiData}
+              buttonText={"Download"}
+              boxShadow="none"
+              height={"2.5rem"}
+              width={extraSmallScreen ? "2rem" : "8rem"}
+              backgroundColor={Colors.SKY_BLUE}
+              fontColor={Colors.WHITE}
+              hoverColor={Colors.SKY_BLUE}
+              border={`1px solid ${Colors.SKY_BLUE}`}
+              borderRadius="5px"
+              startIcon={
+                extraSmallScreen ? null : (
+                  <Download
+                    sx={{
+                      color: apiData ? Colors.WHITE : Colors.DIM_LIGHT_GRAY,
+                    }}
+                  />
+                )
+              }
+              onClick={handleGeneratePdf}
+            />
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
               }}
             >
-              {`${debtorCompanyName} - Settlement Range`}
-            </Typography>
-
-            <div style={{ display: "flex", gap: "10px" }}>
-              <MuiModels
-                show="downloadPDF"
-                buttonName="downloadPDF"
-                maxHeight="85vh"
-                allData={allData}
-                lumpSumpData={lumpSumpData}
-                disabled={!apiData}
+              <PeopleAlt
+                sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }}
               />
 
-              <MuiModels
-                show="sendEmail"
-                creditorInfo={
-                  allCreditorNames[tabValue] === "Summary"
-                    ? "Summary"
-                    : selectedCreditorDetails?.name
-                }
-                debtorInfo={debtorInfo}
-                payableAmount={
-                  allCreditorNames[tabValue] === "Summary"
-                    ? summaryAmount?.payableAmount
-                    : selectedCreditorDetails?.contractDetails?.payable_amount
-                }
-                data={apiData}
-                selectedCreditor={allCreditorNames[tabValue]}
-                lumpSump={lumpSumpData}
-                caseId={caseId}
-                paymentData={paymentData}
-                debtorId={verifiedSender}
+              <CheckboxAutocomplete
+                options={creditorNameWithId && creditorNameWithId}
+                multiSelect={creditorSelect}
+                setMultiselect={setCreditorSelect}
+                placeholder="Creditors"
+                width="10rem"
+                update={true}
+                handleUpdate={handleUpdate}
               />
-              <TextButton
-                disabled={!apiData}
-                buttonText={"Download"}
-                boxShadow="none"
-                height={"2.5rem"}
-                width={extraSmallScreen ? "2rem" : "8rem"}
-                backgroundColor={Colors.BG_LIGHT_GRAY}
-                fontColor={Colors.BLACK}
-                hoverColor={Colors.BG_LIGHT_GRAY}
-                border={`1px solid ${Colors.SKY_BLUE}`}
-                borderRadius="5px"
-                startIcon={
-                  extraSmallScreen ? null : (
-                    <Download
-                      sx={{
-                        color: apiData ? Colors.BLACK : Colors.DIM_LIGHT_GRAY,
-                      }}
-                    />
-                  )
-                }
-                onClick={handleGeneratePdf}
-              />
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <PeopleAlt
-                  sx={{ color: Colors.DARK_GRAY, fontSize: FONT_SIZE_XL }}
-                />
-
-                <CheckboxAutocomplete
-                  options={creditorNameWithId}
-                  multiSelect={creditorSelect}
-                  setMultiselect={setCreditorSelect}
-                  placeholder="Creditors"
-                  width="10rem"
-                  update={true}
-                  handleUpdate={handleUpdate}
-                />
-              </div>
             </div>
-          </Grid>
+          </div>
           <Grid
             container
             item
             xs={12}
-            lg={8}
             sx={{
-              justifyContent: { xs: "left", md: "space-between" },
+              justifyContent: "space-between",
+              mt: "1rem",
             }}
           >
-            {Object?.keys(debtor)?.map((key) => {
-              // Replace "weeklyBudget" with "monthlyBudget"
-              // const displayKey = key === "weeklyBudget" ? key : "";
-
-              return (
-                <Grid item xs={12} lg={6} key={key}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: { xs: "space-between", md: "unset" },
-                    }}
-                  >
+            <Grid item xs={4}>
+              {debtorData?.map((data, index) => {
+                return (
+                  <Grid item xs={12} lg={6} key={index}>
                     <div
                       style={{
                         fontFamily: "Nunito",
                         fontWeight: "600",
                         color: Colors.DARK_GRAY,
-                        width: "10rem",
+                        fontSize: FONT_SIZE_LARGE,
                         marginTop: "0.5rem",
                       }}
                     >
-                      {key?.charAt(0)?.toUpperCase() + key?.slice(1)}
+                      {data?.item}
                     </div>
-
-                    <Tooltip
-                      title={debtor[key]?.toString()}
-                      placement="top-end"
-                    >
+                    <Tooltip title={data?.value} placement="top-end">
                       <span
                         style={{
                           fontFamily: "Nunito",
-                          fontWeight: "300",
-                          fontSize: "0.9rem",
+                          fontSize: FONT_SIZE_LARGE,
                           color: Colors.DIM_LIGHT_GRAY,
                           marginTop: "0.5rem",
                         }}
                       >
-                        {allData?.debtor?.weeklyBudgetUpdated &&
-                        key === "weeklyBudget"
-                          ? `$${formatWeeklyBudget(debtor[key])}`
-                          : key === "weeklyBudget"
-                          ? `$${formatWeeklyBudget(debtor[key])}`
-                          : `${debtor[key]?.toString().slice(0, 15)}${
-                              debtor[key]?.toString().length > 15 ? "..." : ""
-                            }` || "--"}
+                        {data?.value}
                       </span>
                     </Tooltip>
-                  </Box>
-                </Grid>
-              );
-            })}
+                  </Grid>
+                );
+              })}
+            </Grid>
+            <Grid item xs={8}>
+              <DebtorUploadedFiles data={allData} />
+            </Grid>
           </Grid>
+
           <Grid xs={12}>
             <Typography
               sx={{
@@ -1344,6 +1172,12 @@ export default function SettlementRange() {
                 commissionPercentage > 50 ||
                 commissionPercentage < 1
               }
+            />
+          </Grid>
+          <Grid xs={12} sx={{ mt: "1rem" }}>
+            <StatementSummaryAccordion
+              data={statementSummaries}
+              loading={statementSummariesLoading}
             />
           </Grid>
 
@@ -1500,120 +1334,151 @@ export default function SettlementRange() {
                   rawValue={scores?.Scores?.["Default Risk Score"]}
                 />
 
+                <Grid xs={12}>
+                  <CashFlowPercentage
+                    cashFlowLoading={cashFlowLoading}
+                    cashFlow={cashFlow}
+                  />
+                </Grid>
+
                 <Grid
-                  container
                   item
-                  xs={5.8}
+                  xs={12}
                   sx={{
-                    display: "flex",
-                    justifyContent: "space-around",
-                    alignItems: "center",
                     backgroundColor: Colors.WHITE,
                     borderRadius: "10px",
-                    height: "30vh",
-                    marginBottom: "1.5rem",
+                    mt: "1rem",
                   }}
                 >
-                  {countData ? (
-                    <>
-                      <div
-                        style={{
-                          width: "40%",
-                          height: "100%",
-                        }}
-                      >
-                        <PieChart
-                          series={[
-                            {
-                              data: countData,
-                              cx: 100,
-                              cy: 100,
-                              highlightScope: {
-                                faded: "global",
-                                highlighted: "item",
-                              },
-                            },
-                          ]}
-                          colors={categories[colorScheme]}
-                          slotProps={{
-                            legend: { hidden: true },
+                  <Typography
+                    sx={{
+                      fontWeight: "700",
+                      fontFamily: "Nunito",
+                      ml: "5%",
+                      mt: "1rem",
+                    }}
+                  >
+                    Top Payee
+                  </Typography>
+                  <Divider sx={{ m: "10px 0px" }} />
+                  <Grid
+                    container
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-around",
+                      alignItems: "center",
+                      height: "35vh",
+                      padding: "0px 15%",
+                      marginBottom: "1.5rem",
+                    }}
+                  >
+                    {countData ? (
+                      <>
+                        <div
+                          style={{
+                            width: "50%",
+                            height: "100%",
                           }}
-                          width={250}
-                        />
-                      </div>
+                        >
+                          <PieChart
+                            series={[
+                              {
+                                id: countData,
+                                data: countData,
+                                cx: 130,
+                                cy: 120,
+                                highlightScope: {
+                                  faded: "global",
+                                  highlighted: "item",
+                                },
+                              },
+                            ]}
+                            onItemClick={handleItemClick}
+                            colors={categories[colorScheme]}
+                            slotProps={{
+                              legend: { hidden: true },
+                            }}
+                            width={315}
+                          />
+                        </div>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            padding: "1em",
+                            height: "90%",
+                            width: "40%",
+                            overflowY: "scroll !important",
+                            borderRadius: "15px",
+                            backgroundColor: Colors.BG_LIGHT_GRAY,
+                          }}
+                        >
+                          <Grid
+                            sx={{
+                              position: "relative",
+                              overflowY: "auto",
+                              ...ScrollbarStyles,
+                              height: "100%",
+                            }}
+                          >
+                            {countData?.map((item, index) => (
+                              <div
+                                key={index}
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    width: "16px",
+                                    height: "16px",
+                                    backgroundColor:
+                                      categories[colorScheme][item?.id],
+                                    marginRight: "5px",
+                                  }}
+                                />
+                                <Tooltip
+                                  title={item?.label}
+                                  placement="top"
+                                  arrow
+                                >
+                                  <span
+                                    style={{
+                                      fontSize: FONT_SIZE_MEDIUM,
+                                    }}
+                                  >
+                                    {item?.label}
+                                  </span>
+                                </Tooltip>
+                              </div>
+                            ))}
+                            <div
+                              style={{
+                                position: "absolute",
+                                bottom: 0,
+                                width: "100%",
+                              }}
+                            ></div>
+                          </Grid>
+                        </div>
+                      </>
+                    ) : (
                       <div
                         style={{
                           display: "flex",
-                          flexDirection: "column",
-                          padding: "1em",
-                          height: "80%",
-                          width: "40%",
-                          overflowY: "scroll !important",
-                          borderRadius: "15px",
-                          backgroundColor: Colors.BG_LIGHT_GRAY,
+                          alignItems: "center",
                         }}
                       >
-                        <Grid
-                          sx={{
-                            overflowY: "auto",
-                            ...ScrollbarStyles,
-                          }}
-                        >
-                          {countData?.map((item, index) => (
-                            <div
-                              key={index}
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                              }}
-                            >
-                              <div
-                                style={{
-                                  width: "16px",
-                                  height: "16px",
-                                  backgroundColor:
-                                    categories[colorScheme][item?.id],
-                                  marginRight: "5px",
-                                }}
-                              />
-                              <Tooltip
-                                title={item?.label}
-                                placement="top"
-                                arrow
-                              >
-                                <span
-                                  style={{
-                                    fontSize: FONT_SIZE_MEDIUM,
-                                    whiteSpace: "nowrap",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    maxWidth: "180px",
-                                  }}
-                                >
-                                  {`${item?.label?.substring(0, 30)}${
-                                    item?.label?.length > 30 ? "..." : ""
-                                  }`}
-                                </span>
-                              </Tooltip>
-                            </div>
-                          ))}
-                        </Grid>
+                        No Data
                       </div>
-                    </>
-                  ) : (
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      No Data
-                    </div>
-                  )}
+                    )}
+                  </Grid>
                 </Grid>
               </>
             )}
           </Grid>
+
           {scores?.message && (
             <Grid container item xs={6} sx={{ gap: "2%", mt: "1rem" }}>
               <GridItemMessage
@@ -1745,7 +1610,7 @@ export default function SettlementRange() {
                 marginTop: "1rem",
               }}
             >
-              {allCreditorNames[tabValue] === "Summary"
+              {creditorNamesTabs[tabValue] === "Summary"
                 ? "Summary Contract Information"
                 : "Creditors Contract Information"}
             </Typography>
@@ -1839,7 +1704,7 @@ export default function SettlementRange() {
                 </>
               )}
 
-            {allCreditorNames[tabValue] === "Summary" && (
+            {creditorNamesTabs[tabValue] === "Summary" && (
               <>
                 <Grid item xs={12} sx={{ mt: "1rem" }}>
                   <DataSummaryTable
@@ -1852,7 +1717,7 @@ export default function SettlementRange() {
               </>
             )}
 
-            {apiData?.warnings?.[allCreditorNames[tabValue]] && (
+            {apiData?.warnings?.[creditorNamesTabs[tabValue]] && (
               <Grid
                 sx={{
                   mt: "10px",
@@ -1865,7 +1730,7 @@ export default function SettlementRange() {
               >
                 <Typography sx={commonTextStyles}>Warning!</Typography>
                 <Typography sx={{ ...commonTextStyles, fontWeight: "500" }}>
-                  {apiData?.warnings?.[allCreditorNames[tabValue]]}
+                  {apiData?.warnings?.[creditorNamesTabs[tabValue]]}
                 </Typography>
               </Grid>
             )}
@@ -2007,7 +1872,7 @@ export default function SettlementRange() {
                     }}
                     disabled={
                       !justification?.[justificationValue]?.[
-                        allCreditorNames[tabValue]
+                        creditorNamesTabs[tabValue]
                       ]
                     }
                     checked={checkboxStates["justification"]}
@@ -2015,7 +1880,7 @@ export default function SettlementRange() {
                       handleCheckboxChange(
                         "justification",
                         justification?.[justificationValue]?.[
-                          allCreditorNames[tabValue]
+                          creditorNamesTabs[tabValue]
                         ]
                       )
                     }
@@ -2039,7 +1904,7 @@ export default function SettlementRange() {
                     <Typography variant="body1">
                       <ReactMarkdown>
                         {justification?.[justificationValue]?.[
-                          allCreditorNames[tabValue]
+                          creditorNamesTabs[tabValue]
                         ] || "No Justifications"}
                       </ReactMarkdown>
                     </Typography>

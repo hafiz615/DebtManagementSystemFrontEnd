@@ -1467,3 +1467,23 @@ export const GetNotificationsCount = async () => {
     return error;
   }
 };
+export const GetStatementSummary = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/debtor/getStatementsSummary/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetDailyCashFlow = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/debtor/getDailyCashFlows/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

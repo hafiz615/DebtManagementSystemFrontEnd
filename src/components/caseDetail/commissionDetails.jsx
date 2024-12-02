@@ -109,7 +109,7 @@ function CommissionDetails({
       if (settlementRangeData?.status === 200) {
         showToast(settlementRangeData?.data?.message, "success");
         const settlementId = popUpDebtorData ? caseId : data?._id;
-        navigate(`/settlementRange/${settlementId}`);
+        navigate(`/all-cases/${settlementId}`);
         getAllRanges && getAllRanges([], false);
         handleClose();
       } else {

@@ -14,16 +14,33 @@ import MuiModels from "../models";
 import { formatDollarAmount } from "../../common";
 
 export default function AboutAccordion({ caseDetails, GetCaseDetails }) {
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+
+    return `${month}/${day}/${year}`;
+  };
+
   const aboutData = [
-    { name: "Case Code", value: caseDetails?.caseCode || "-" },
-    { name: "Status", value: caseDetails?.status || "-" },
+    // { name: "Case Code", value: caseDetails?.caseCode || "-" },
+    // { name: "Status", value: caseDetails?.status || "-" },
     { name: "Manager", value: caseDetails?.manager || "-" },
     { name: "CSM", value: caseDetails?.caseOwner || "-" },
 
     { name: "Negotiator", value: caseDetails?.negotiator || "-" },
     {
-      name: "Total Debt",
-      value: formatDollarAmount(caseDetails?.totalDebt) || "-",
+      name: "Contract Date",
+      value: formatDate(caseDetails?.creditor?.lastFundedDate) || "-",
+    },
+    {
+      name: "Loan Amount",
+      value: caseDetails?.contractDetails?.loan_amount || "-",
+    },
+    {
+      name: "Funded Amount",
+      value: caseDetails?.contractDetails?.funded_amount || "-",
     },
     {
       name: "Total Paid",
@@ -31,9 +48,11 @@ export default function AboutAccordion({ caseDetails, GetCaseDetails }) {
     },
     {
       name: "Current Balance",
-      value: formatDollarAmount(caseDetails?.remaining) || "-",
+      value:
+        formatDollarAmount(
+          caseDetails?.totalDebt - caseDetails?.remainingAmountPaid
+        ) || "-",
     },
-
     {
       name: "Amount paid by SRT",
       value: formatDollarAmount(caseDetails?.amountDeliveredToCreditor) || "-",

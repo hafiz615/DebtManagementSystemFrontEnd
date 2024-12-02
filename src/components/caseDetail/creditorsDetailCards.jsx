@@ -83,14 +83,7 @@ export default function CreditorsDetailCards({
   };
 
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1; // Months are zero-indexed
-    const year = date.getFullYear();
 
-    return `${month}/${day}/${year}`;
-  };
   const griRelationdStyle = {
     display: "flex",
     alignItems: "center",
@@ -323,8 +316,19 @@ export default function CreditorsDetailCards({
             color: Colors.BLACK,
           }}
         >
+          Historical Data
+        </p>
+        <p
+          style={{
+            fontSize: "13px",
+            fontFamily: "Nunito",
+            fontWeight: "700",
+            color: Colors.DARK_GRAY,
+          }}
+        >
           Months to Pay off
         </p>
+
         <div
           style={{
             display: "flex",
@@ -518,6 +522,7 @@ export default function CreditorsDetailCards({
                       iconColor={Colors.BLACK}
                       maxHeight="78vh"
                       GetLogsById={GetLogsById}
+                      caseDataId={caseData?._id}
                       data={caseData}
                       verifiedSenders={verifiedSenders}
                     />
@@ -527,6 +532,7 @@ export default function CreditorsDetailCards({
                       headerName={true}
                       iconColor={Colors.BLACK}
                       maxHeight="78vh"
+                      caseDataId={caseData?._id}
                       GetLogsById={GetLogsById}
                       data={caseData}
                     />
