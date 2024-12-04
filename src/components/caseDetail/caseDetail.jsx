@@ -427,7 +427,7 @@ function CaseDetail() {
             }}
           >
             <TextButton
-              buttonText="Add Debtor Identity"
+              buttonText="Sync Client Email"
               height="2.5rem"
               width="14rem"
               onClick={AddSenderInformation}

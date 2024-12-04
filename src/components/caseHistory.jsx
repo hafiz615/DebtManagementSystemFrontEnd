@@ -39,8 +39,9 @@ function CaseHistory({
     );
   };
   const headers = [
-    "Case Owner",
+    "Negotiator",
     userRole === "client" ? "Creditor" : "Debtor",
+    "Pipeline Status",
     "Last Payment Date",
     "Current Balance",
     "Total Debt",
@@ -57,6 +58,7 @@ function CaseHistory({
           id: item?._id,
           caseOwner: item?.caseOwner || "-",
           Creditor: item?.creditorName || item?.debtorName || "-",
+          Pipeline: item?.pipeLineStatus || "-",
           lastDate: formatDate(item?.lastPaymentDate) || "-",
           OutstandingDebt: formatDollarAmount(item?.outstandingDebt) || "-",
           totalDebt: formatDollarAmount(item?.totalDebt) || "-",
