@@ -1,4 +1,4 @@
-import { Button, Grid } from "@mui/material";
+import { Button, Divider, Grid } from "@mui/material";
 import React, { useState } from "react";
 import ScrollbarStyles from "./customScroll";
 import { Colors } from "../config/default";
@@ -8,11 +8,11 @@ export default function DebtorUploadedFiles({ data }) {
   const [url, setUrl] = useState("");
   const [isViewerOpen, setIsViewerOpen] = useState(false);
 
-  const mcaFiles = data?.debtor?.documents?.filter((item) =>
-    item?.originalFileName?.toLowerCase().includes("mca")
+  const documents = data?.debtor?.documents || [];
+  const mcaFiles = documents?.filter((doc) =>
+    doc?.originalFileName?.toLowerCase().includes("mca")
   );
-
-  const bankStatements = data?.debtor?.documents?.filter(
+  const bankStatements = documents?.filter(
     (item) => !item?.originalFileName?.toLowerCase().includes("mca")
   );
 
@@ -25,55 +25,61 @@ export default function DebtorUploadedFiles({ data }) {
     setUrl("");
     setIsViewerOpen(false);
   };
-  console.log(data?.debtor?.documents);
 
-  const renderFiles = (files) =>
-    files?.length > 0 ? (
-      files?.map((item, index) => (
-        <Grid
-          container
-          key={index}
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            backgroundColor: index % 2 === 0 ? Colors.WHITE : Colors.VIOLET,
-            paddingRight: ".2rem",
-            paddingLeft: ".2rem",
-            height: "2rem",
-            alignItems: "center",
-          }}
-        >
-          <span
+  const renderFiles = (files, label) => {
+    if (files?.length > 0) {
+      return (
+        <React.Fragment>
+          <p
             style={{
-              color: Colors.DIM_LIGHT_GRAY,
-              fontWeight: "700",
+              fontWeight: "600",
+              fontSize: "13px",
               fontFamily: "Nunito",
-              fontSize: "11px",
+              margin: "0.5rem 0",
+              color: Colors.DARK_GRAY,
             }}
           >
-            {item?.originalFileName}
-          </span>
-          <Grid item sx={{ display: "flex" }}>
-            <RemoveRedEye
-              sx={{ color: Colors.SKY_BLUE, cursor: "pointer" }}
-              onClick={() => handleFileView(item?.originalFileName)}
-            />
-          </Grid>
-        </Grid>
-      ))
-    ) : (
-      <Grid item xs={12} sx={{ textAlign: "center", marginTop: "2rem" }}>
-        <p
-          style={{
-            color: Colors.DIM_LIGHT_GRAY,
-            fontFamily: "Nunito",
-            fontSize: "13px",
-          }}
-        >
-          No files available.
-        </p>
-      </Grid>
-    );
+            {label}
+          </p>
+          {files.map((item, index) => (
+            <Grid
+              item
+              xs={12}
+              container
+              key={index}
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                backgroundColor: index % 2 === 0 ? Colors.WHITE : Colors.VIOLET,
+                paddingRight: ".2rem",
+                paddingLeft: ".2rem",
+                height: "2rem",
+                alignItems: "center",
+              }}
+            >
+              <span
+                style={{
+                  color: Colors.DIM_LIGHT_GRAY,
+                  fontWeight: "700",
+                  fontFamily: "Nunito",
+                  fontSize: "11px",
+                }}
+              >
+                {item?.originalFileName}
+              </span>
+              <Grid item sx={{ display: "flex" }}>
+                <RemoveRedEye
+                  sx={{ color: Colors.SKY_BLUE, cursor: "pointer" }}
+                  onClick={() => handleFileView(item?.url)}
+                />
+              </Grid>
+            </Grid>
+          ))}
+        </React.Fragment>
+      );
+    }
+    return null;
+  };
 
   return (
     <Grid
@@ -90,12 +96,13 @@ export default function DebtorUploadedFiles({ data }) {
       <p
         style={{
           fontWeight: "600",
-          fontSize: "13px",
+          fontSize: "14px",
           fontFamily: "Nunito",
         }}
       >
         Files
       </p>
+      <Divider />
       <Grid
         container
         sx={{
@@ -104,30 +111,8 @@ export default function DebtorUploadedFiles({ data }) {
           height: "10rem",
         }}
       >
-        <p
-          style={{
-            fontWeight: "600",
-            fontSize: "12px",
-            fontFamily: "Nunito",
-            marginBottom: "0.5rem",
-          }}
-        >
-          MCA Files
-        </p>
-        {renderFiles(mcaFiles)}
-
-        <p
-          style={{
-            fontWeight: "600",
-            fontSize: "12px",
-            fontFamily: "Nunito",
-            marginTop: "1rem",
-            marginBottom: "0.5rem",
-          }}
-        >
-          Bank Statements
-        </p>
-        {renderFiles(bankStatements)}
+        {renderFiles(mcaFiles, "MCA Files")}
+        {renderFiles(bankStatements, "Bank Statements")}
 
         {isViewerOpen && (
           <div

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import InfoIcon from "@mui/icons-material/Info";
 
 import {
@@ -31,7 +30,7 @@ import {
 } from "../../constants/appConstants";
 import { Colors } from "../../config/default";
 import ScrollbarStyles from "../customScroll";
-import { Download, PeopleAlt, Send } from "@mui/icons-material";
+import { PeopleAlt, Send } from "@mui/icons-material";
 import TextButton from "../button";
 import SettlementCards from "./settlementCards";
 import {
@@ -43,17 +42,15 @@ import {
   GetFullProfitSettlement,
   GetPaymentIntervals,
 } from "../../services/services";
-import { useToast } from "../../toast/toastContext";
+
 import {
   formatAmountValue,
   formatDateString,
   formatPurchasedPercentage,
   formatWeeklyBudget,
-  generatePdfFromApiData,
 } from "../../common";
 import MuiModels from "../models";
 import CheckboxAutocomplete from "../checkboxAutocomplete";
-import { isEmpty } from "lodash";
 import { getWeeksRemainingMessage } from "../../common";
 import DataSummaryTable from "../dataSummaryTable";
 import SettlementBounds from "./settlementBounds";
@@ -187,7 +184,6 @@ export default function SettlementRange({
   apiData,
   scores,
   debtor,
-  debtorInfo,
   commissionPercentage,
   setCommissionPercentage,
   summaryAmount,
@@ -200,11 +196,14 @@ export default function SettlementRange({
   optionStats,
   cashFlow,
   cashFlowLoading,
+  tabValue,
+  setTabValue,
+  setPaymentData,
+  selectedCreditorDetails,
   caseData,
 }) {
   const caseId = id;
   const [value, setValue] = useState(0);
-  const [tabValue, setTabValue] = useState(0);
   const [optionValue, setOptuonValue] = useState(0);
   const [inputValue, setInputValue] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
@@ -214,7 +213,6 @@ export default function SettlementRange({
   const [summary, setSummary] = useState([]);
   const [checkboxStates, setCheckboxStates] = useState({});
   const [selectedData, setSelectedData] = useState([]);
-  const [paymentData, setPaymentData] = useState();
   const [paymentChanged, setPaymentChanged] = useState(false);
   const [strategyTab, setStrategyTab] = useState(0);
   const [justificationLoading, setJustificationLoading] = useState(false);
@@ -276,12 +274,6 @@ export default function SettlementRange({
   const handleOptionTabChange = (event, newValue) => {
     setOptuonValue(newValue);
   };
-
-  const currentCreditor = creditorNamesTabs[tabValue];
-
-  const selectedCreditorDetails = creditorNames?.find(
-    (item) => item?.creditorAccountTitle === currentCreditor
-  );
 
   const cardData = {
     0: recommendations?.map((item, index) => (
@@ -535,22 +527,6 @@ export default function SettlementRange({
       creditorNames: selectedCreditorIds,
     };
     getAllRanges(params, status);
-  };
-
-  const handleGeneratePdf = () => {
-    const credDetail =
-      creditorNamesTabs[tabValue] === "Summary"
-        ? "Summary"
-        : selectedCreditorDetails?.name;
-
-    const summaryPayable = summaryAmount?.payableAmount;
-
-    generatePdfFromApiData(
-      selectedCreditorDetails,
-      credDetail,
-      debtorInfo,
-      summaryPayable
-    );
   };
 
   const getAllSummary = async () => {
@@ -976,33 +952,7 @@ export default function SettlementRange({
           )}
         </Box>
       </Modal>
-      <Grid
-        item
-        xs={12}
-        sx={{
-          display: "flex",
-          marginTop: "1.5rem",
-        }}
-      >
-        <Grid item xs={12} lg={6}>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <MuiModels
-              buttonIcon="settlementRangeReload"
-              show="WeeklyBudget"
-              iconColor={Colors.BLACK}
-              maxHeight="78vh"
-              caseId={caseId}
-              popUpDebtorData={popUpDebtorData}
-              getAllRanges={getAllRanges}
-            />
-            <Typography
-              sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
-            >
-              Reload Settlement Range
-            </Typography>
-          </Box>
-        </Grid>
-      </Grid>
+
       {settlementloading ? (
         <Grid
           container
@@ -1021,61 +971,29 @@ export default function SettlementRange({
               width: "100%",
               display: "flex",
               gap: "10px",
-              justifyContent: "flex-end",
+              justifyContent: "space-between",
               marginTop: "1rem",
             }}
           >
-            <MuiModels
-              show="downloadPDF"
-              buttonName="downloadPDF"
-              maxHeight="85vh"
-              allData={allData}
-              lumpSumpData={lumpSumpData}
-              disabled={!apiData}
-            />
+            <Grid item>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <MuiModels
+                  buttonIcon="settlementRangeReload"
+                  show="WeeklyBudget"
+                  iconColor={Colors.BLACK}
+                  maxHeight="78vh"
+                  caseId={caseId}
+                  popUpDebtorData={popUpDebtorData}
+                  getAllRanges={getAllRanges}
+                />
+                <Typography
+                  sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
+                >
+                  Reload Settlement Range
+                </Typography>
+              </Box>
+            </Grid>
 
-            <MuiModels
-              show="sendEmail"
-              creditorInfo={
-                creditorNamesTabs[tabValue] === "Summary"
-                  ? "Summary"
-                  : selectedCreditorDetails?.name
-              }
-              debtorInfo={debtorInfo}
-              payableAmount={
-                creditorNamesTabs[tabValue] === "Summary"
-                  ? summaryAmount?.payableAmount
-                  : selectedCreditorDetails?.contractDetails?.payable_amount
-              }
-              data={apiData}
-              selectedCreditor={creditorNamesTabs[tabValue]}
-              lumpSump={lumpSumpData}
-              caseId={caseId}
-              paymentData={paymentData}
-              debtorId={verifiedSender}
-            />
-            <TextButton
-              disabled={!apiData}
-              buttonText={"Download"}
-              boxShadow="none"
-              height={"2.5rem"}
-              width={extraSmallScreen ? "2rem" : "8rem"}
-              backgroundColor={Colors.SKY_BLUE}
-              fontColor={Colors.WHITE}
-              hoverColor={Colors.SKY_BLUE}
-              border={`1px solid ${Colors.SKY_BLUE}`}
-              borderRadius="5px"
-              startIcon={
-                extraSmallScreen ? null : (
-                  <Download
-                    sx={{
-                      color: apiData ? Colors.WHITE : Colors.DIM_LIGHT_GRAY,
-                    }}
-                  />
-                )
-              }
-              onClick={handleGeneratePdf}
-            />
             <div
               style={{
                 display: "flex",
@@ -1106,39 +1024,65 @@ export default function SettlementRange({
               mt: "1rem",
             }}
           >
-            <Grid item xs={4}>
-              {debtorData?.map((data, index) => {
-                return (
-                  <Grid item xs={12} lg={6} key={index}>
-                    <div
-                      style={{
-                        fontFamily: "Nunito",
-                        fontWeight: "600",
-                        color: Colors.DARK_GRAY,
-                        fontSize: FONT_SIZE_LARGE,
-                        marginTop: "0.5rem",
-                      }}
-                    >
-                      {data?.item}
-                    </div>
-                    <Tooltip title={data?.value} placement="top-end">
-                      <span
+            <Grid
+              item
+              xs={4.5}
+              sx={{
+                backgroundColor: Colors.WHITE,
+                padding: "10px",
+                borderRadius: "10px",
+              }}
+            >
+              <p
+                style={{
+                  fontWeight: "600",
+                  fontSize: "14px",
+                  fontFamily: "Nunito",
+                }}
+              >
+                Personal Details
+              </p>
+              <Divider />
+              <Grid
+                container
+                sx={{
+                  height: "70%",
+                  alignItems: "center",
+                }}
+              >
+                {debtorData?.map((data, index) => {
+                  return (
+                    <Grid item xs={5} key={index}>
+                      <div
                         style={{
                           fontFamily: "Nunito",
+                          fontWeight: "600",
+                          color: Colors.DARK_GRAY,
                           fontSize: FONT_SIZE_LARGE,
-                          color: Colors.DIM_LIGHT_GRAY,
                           marginTop: "0.5rem",
                         }}
                       >
-                        {data?.value}
-                      </span>
-                    </Tooltip>
-                  </Grid>
-                );
-              })}
+                        {data?.item}
+                      </div>
+                      <Tooltip title={data?.value} placement="top-end">
+                        <span
+                          style={{
+                            fontFamily: "Nunito",
+                            fontSize: FONT_SIZE_LARGE,
+                            color: Colors.DIM_LIGHT_GRAY,
+                            marginTop: "0.5rem",
+                          }}
+                        >
+                          {data?.value}
+                        </span>
+                      </Tooltip>
+                    </Grid>
+                  );
+                })}
+              </Grid>
             </Grid>
-            <Grid item xs={8}>
-              <DebtorUploadedFiles data={allData} />
+            <Grid item xs={7}>
+              <DebtorUploadedFiles data={caseData} />
             </Grid>
           </Grid>
 

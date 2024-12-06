@@ -497,13 +497,6 @@ export default function MuiModels({
           border={`1px solid ${Colors.SKY_BLUE}`}
           onClick={handleOpen}
           borderRadius="5px"
-          startIcon={
-            <Download
-              sx={{
-                color: Colors.WHITE,
-              }}
-            />
-          }
           disabled={disabled}
         />
       ) : buttonName === "sendEmailCase" || buttonName === "composeEmail" ? (
@@ -597,27 +590,15 @@ export default function MuiModels({
         </Button>
       ) : show === "sendEmail" || show === "sendEmailJustification" ? (
         <TextButton
-          buttonText={"Send Email"}
+          buttonText={show === "sendEmail" ? "Send Agreement" : "Send Email"}
           boxShadow="none"
           height={"2.5rem"}
-          width={extraSmallScreen ? "2rem" : "9rem"}
+          width={show === "sendEmail" ? "10rem" : "9rem"}
           backgroundColor={Colors.SKY_BLUE}
           fontColor={Colors.WHITE}
           hoverColor={Colors.SKY_BLUE}
           onClick={handleOpen}
           disabled={disabled}
-          startIcon={
-            extraSmallScreen || show === "sendEmailJustification" ? (
-              ""
-            ) : (
-              <Email
-                sx={{
-                  color: Colors.WHITE,
-                  fontSize: FONT_SIZE_XL,
-                }}
-              />
-            )
-          }
         />
       ) : show === "settlmentPayment" ||
         buttonName === "settlmentPayment" ||
@@ -866,6 +847,7 @@ export default function MuiModels({
               caseId={caseId}
               paymentData={paymentData}
               debtorId={debtorId}
+              to={to}
             />
           ) : show === "uploadFile" ? (
             <UploadFilePopup
