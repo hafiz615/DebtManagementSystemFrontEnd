@@ -1,4 +1,4 @@
-import { Button, Grid } from "@mui/material";
+import { Button, Divider, Grid } from "@mui/material";
 import React, { useState } from "react";
 import ScrollbarStyles from "./customScroll";
 import { Colors } from "../config/default";
@@ -32,12 +32,13 @@ export default function DebtorUploadedFiles({ data }) {
       <p
         style={{
           fontWeight: "600",
-          fontSize: "13px",
+          fontSize: "14px",
           fontFamily: "Nunito",
         }}
       >
         Files
       </p>
+      <Divider />
       <Grid
         container
         sx={{
