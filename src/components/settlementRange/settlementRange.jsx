@@ -200,6 +200,7 @@ export default function SettlementRange({
   optionStats,
   cashFlow,
   cashFlowLoading,
+  caseData,
 }) {
   const caseId = id;
   const [value, setValue] = useState(0);

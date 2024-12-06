@@ -10,6 +10,8 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
 
+  console.log(caseData?.debtor?.documents);
+
   const handleFileView = (url) => {
     setUrl(url);
     setIsViewerOpen(true);
