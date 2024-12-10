@@ -64,7 +64,6 @@ export default function BulkImportAccordions({
 
   return (
     <Accordion
-      defaultExpanded={rowArray?.length > 0}
       sx={{
         borderRadius: "1rem !important",
         backgroundColor: Colors.WHITE,
