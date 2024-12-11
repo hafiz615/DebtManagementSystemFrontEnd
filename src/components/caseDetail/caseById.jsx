@@ -556,6 +556,7 @@ export default function CaseById({
               {filteredLogs?.length > 0 ? (
                 filteredLogs?.map((item, index) => (
                   <TimelineData
+                    id={id}
                     notes={false}
                     value={item}
                     date={null}
@@ -567,6 +568,7 @@ export default function CaseById({
                 ))
               ) : (
                 <TimelineData
+                  id={id}
                   notes={true}
                   value={
                     caseHistoryTabs === 1

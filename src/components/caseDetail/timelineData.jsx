@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Card, Typography } from "@mui/material";
+import { Box, Card, IconButton, Typography } from "@mui/material";
 import {
   Timeline,
   TimelineItem,
@@ -10,9 +10,11 @@ import {
 } from "@mui/lab";
 import MuiModels from "../models";
 import { Colors } from "../../config/default";
-import { Email, NoteAlt, Sms, Work } from "@mui/icons-material";
+import { CallOutlined, Email, NoteAlt, Sms, Work } from "@mui/icons-material";
+import ConversationHistory from "../callHistory";
 
 export default function TimelineData({
+  id,
   value,
   date,
   notes,
@@ -72,6 +74,10 @@ export default function TimelineData({
             <Sms />
           ) : iconValue === 3 ? (
             <NoteAlt />
+          ) : iconValue === 5 ? (
+            <IconButton sx={{ backgroundColor: "lightgreen" }}>
+              <CallOutlined />
+            </IconButton>
           ) : (
             <Work />
           )}
@@ -103,6 +109,8 @@ export default function TimelineData({
                 {value}
               </Typography>
             </Card>
+          ) : iconValue === 5 ? (
+            <ConversationHistory id={id} />
           ) : (
             <Card
               sx={{
