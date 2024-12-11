@@ -908,7 +908,7 @@ export default function SettlementRange({
     { item: "Customer Status", value: debtor?.status || "--" },
     { item: "phone", value: debtor?.phone ? `+1${debtor?.phone}` : "--" },
     {
-      item: "Monthly Budget",
+      item: "Weekly Budget",
       value: debtor?.weeklyBudget
         ? `$${formatWeeklyBudget(debtor?.weeklyBudget)}`
         : "--",
