@@ -570,6 +570,7 @@ function CaseDetail() {
           label="Case Detail"
         />
       </AntTabs>
+
       <Grid xs={12}>
         {activeTab === 0 && (
           <SettlementRange
