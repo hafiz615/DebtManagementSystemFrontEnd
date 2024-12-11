@@ -25,7 +25,11 @@ import MuiModels from "./models";
 import SearchBar from "./searchBar";
 import { FilterListOutlined } from "@mui/icons-material";
 import TextButton from "./button";
-import { GetAllInbox, GetAllSenders } from "../services/services";
+import {
+  GetAllCasesTasks,
+  GetAllInbox,
+  GetAllSenders,
+} from "../services/services";
 import { formatDateString } from "../common";
 
 const users = [
@@ -154,6 +158,13 @@ function Inbox() {
     }
   };
 
+  const getAllTasks = async () => {
+    const res = await GetAllCasesTasks();
+    if (res?.status === 200) {
+      console.log(res?.data?.data);
+    }
+  };
+
   useEffect(() => {
     if (
       searchText &&
@@ -171,6 +182,7 @@ function Inbox() {
 
   useEffect(() => {
     getVerifiedIdentites();
+    getAllTasks();
   }, []);
 
   const disabled = caseCode || debtorCompany || creditorCompany || negotiator;
@@ -413,9 +425,20 @@ function Inbox() {
                       }}
                       label="Outbox"
                     />
+                    <Tab
+                      sx={{
+                        textTransform: "none",
+                        color: Colors.SKY_BLUE,
+                        "&.Mui-selected": {
+                          color: Colors.SKY_BLUE,
+                        },
+                      }}
+                      label="Tasks"
+                    />
                   </Tabs>
                   <Divider sx={{ mb: "10px" }} />
-                  {inboxData &&
+                  {activeTab !== 2 &&
+                    inboxData &&
                     Object.keys(inboxData)?.map((key) => {
                       const value = inboxData[key];
                       return (
