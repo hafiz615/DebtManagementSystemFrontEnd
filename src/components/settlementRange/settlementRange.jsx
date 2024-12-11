@@ -1222,6 +1222,7 @@ export default function SettlementRange({
               }
               rawValue={apiData?.weekly_true_revenue}
             />
+
             {strategyTab === 0 && (
               <GridItem
                 key="Monthly Receivable Commission"
@@ -1262,6 +1263,20 @@ export default function SettlementRange({
                 rawValue={allData?.percentageReceivableCommission}
               />
             )}
+            <GridItem
+              key="Default Risk Score"
+              title="Default Risk Score"
+              tooltip="The likelihood of missing a payment or defaulting on your loan."
+              value={`${scores?.Scores?.["Default Risk Score"]}%` ?? "No Data"}
+              rawValue={scores?.Scores?.["Default Risk Score"]}
+            />
+            <GridItem
+              key="Default Risk Score"
+              title="Default Risk Score"
+              tooltip="The likelihood of missing a payment or defaulting on your loan."
+              value={`${scores?.Scores?.["Default Risk Score"]}%` ?? "No Data"}
+              rawValue={scores?.Scores?.["Default Risk Score"]}
+            />
 
             {scores?.Scores && (
               <>
