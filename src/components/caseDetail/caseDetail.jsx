@@ -400,6 +400,7 @@ function CaseDetail() {
     >
       <Grid
         xs={12}
+        item
         container
         sx={{ marginTop: "1.5rem", justifyContent: "space-between" }}
       >
@@ -610,6 +611,7 @@ function CaseDetail() {
             setTabValue={setTabValue}
             setPaymentData={setPaymentData}
             selectedCreditorDetails={selectedCreditorDetails}
+            caseData={caseData}
           />
         )}
         {activeTab === 1 && (
