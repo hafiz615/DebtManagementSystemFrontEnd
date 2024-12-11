@@ -31,12 +31,8 @@ const PaynoteButton = ({ caseData }) => {
         buttonLabelColor: "#FFFFFF",
         buttonLabel: "Pay",
       },
-      onSuccess: function () {
-        console.log("Payment successful!");
-      },
-      onError: function () {
-        console.log("Error during payment");
-      },
+      onSuccess: function () {},
+      onError: function () {},
     };
   }, [caseData]);
 
