@@ -481,7 +481,7 @@ const generatePDF = (data, lumpSumpData, checkboxState) => {
           debtor?.basicInformation?.zipCode || "N/A"
         }`,
       ],
-      ["Weekly Budget", `$${debtor?.basicInformation?.weeklyBudget || 0}`],
+      ["Monthly Budget", `$${debtor?.basicInformation?.weeklyBudget || 0}`],
       ["Commission Percentage", `${debtor?.commissionPercentage || 0}%`],
     ];
 
@@ -501,9 +501,9 @@ const generatePDF = (data, lumpSumpData, checkboxState) => {
     currentY += 10;
 
     const settlementRangeSummary = [
-      ["Weekly Profit", formatCurrency(settlementRange?.weekly_profit) || 0],
+      ["Monthly Profit", formatCurrency(settlementRange?.weekly_profit) || 0],
       [
-        "Weekly True Revenue",
+        "Monthly True Revenue",
         formatCurrency(settlementRange?.weekly_true_revenue) || 0,
       ],
       ["Profitability", formatPercentage(settlementRange?.profitability) || 0],
@@ -737,8 +737,8 @@ const generatePDF = (data, lumpSumpData, checkboxState) => {
       head: [
         [
           "Creditors",
-          "Weekly Budget %",
-          "Weekly True Revenue",
+          "Monthly Budget %",
+          "Monthly True Revenue",
           "New Default Risk",
         ],
       ],
@@ -776,8 +776,8 @@ const generatePDF = (data, lumpSumpData, checkboxState) => {
       head: [
         [
           "Creditors",
-          "Weekly Budget %",
-          "Weekly True Revenue",
+          "Monthly Budget %",
+          "Monthly True Revenue",
           "New Default Risk",
         ],
       ],
