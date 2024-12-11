@@ -184,7 +184,6 @@ export default function SettlementRange({
   apiData,
   scores,
   debtor,
-  debtorInfo,
   commissionPercentage,
   setCommissionPercentage,
   summaryAmount,
@@ -201,6 +200,7 @@ export default function SettlementRange({
   setTabValue,
   setPaymentData,
   selectedCreditorDetails,
+  caseData,
 }) {
   const caseId = id;
   const [value, setValue] = useState(0);
@@ -1082,7 +1082,7 @@ export default function SettlementRange({
               </Grid>
             </Grid>
             <Grid item xs={7}>
-              <DebtorUploadedFiles data={allData} />
+              <DebtorUploadedFiles data={caseData} />
             </Grid>
           </Grid>
 
