@@ -133,7 +133,7 @@ function PaymentCardPopup({ amountValue, paymentId, caseId, handleClose }) {
 
       <Grid item sx={{ display: "flex", justifyContent: "flex-end" }}>
         <Button
-          buttonText="Pay"
+          buttonText="Add Payment"
           onClick={handleSubmit}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}

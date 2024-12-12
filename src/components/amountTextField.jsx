@@ -133,6 +133,7 @@ export default function AmountTextField({
           borderRadius: "5px",
           display: "flex",
           fontFamily: "Nunito",
+          outline: "none",
           justifyContent: "center",
           border: border || "none !important",
 
@@ -154,6 +155,7 @@ export default function AmountTextField({
             borderBottom: "none",
           },
         }}
+        disabled={disabled}
         placeholder={value ? "" : type === "percentage" ? "%" : "$"}
         onChange={onChange}
         value={type === "percentage" ? parsePercentage(value) : value || ""}
@@ -167,7 +169,6 @@ export default function AmountTextField({
               : NumericFormatCustom,
         }}
         variant="standard"
-        disabled={disabled}
       />
       {error && (
         <Box

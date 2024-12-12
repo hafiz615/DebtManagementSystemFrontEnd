@@ -1266,7 +1266,7 @@ export default function SettlementRange({
             )}
             <GridItem
               key="Average monthly profit and profit % excluding payments"
-              title="Avg Monthly profit excluding payments"
+              title="Avg. Monthly profit excluding payments"
               tooltip="Average monthly profit and profit % excluding payments"
               value={
                 allData?.averageMonthlyProfitExcludingPayments
@@ -1279,7 +1279,7 @@ export default function SettlementRange({
             />
             <GridItem
               key="Average monthly profit and profit % including payments"
-              title="Avg monthly profit including payments"
+              title="Avg. monthly profit including payments"
               tooltip="Average monthly profit and profit % including payments"
               value={
                 allData?.averageMonthlyProfitExcludingPayments
