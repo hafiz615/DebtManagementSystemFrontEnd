@@ -1494,3 +1494,14 @@ export const GetAllCasesTasks = async (id) => {
     return error;
   }
 };
+export const AddManualPayment = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/addManualPayment`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
