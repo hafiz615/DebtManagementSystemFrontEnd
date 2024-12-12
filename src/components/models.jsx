@@ -631,7 +631,7 @@ export default function MuiModels({
         />
       ) : show === "debtorPaymentPlan" ? (
         <TextButton
-          buttonText="Choose Debtor Plan"
+          buttonText="Choose Client Plan"
           boxShadow="none"
           height="2.5rem"
           width="12rem"

@@ -40,7 +40,7 @@ function CaseHistory({
   };
   const headers = [
     "Negotiator",
-    userRole === "client" ? "Creditor" : "Debtor",
+    userRole === "client" ? "Creditor" : "Client",
     "Pipeline Status",
     "Last Payment Date",
     "Current Balance",

@@ -23,7 +23,7 @@ import TextButton from "./button";
 const headers = [
   "Company Name",
   "Number of Cases",
-  "Number of Debtors",
+  "Number of Clients",
   "Total Debt",
 ];
 
@@ -486,7 +486,7 @@ export default function CreditorList() {
                 margin: "5px 0px",
               }}
             >
-              Total Debtors
+              Total Clients
             </p>
             <input
               min={0}

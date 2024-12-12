@@ -171,7 +171,7 @@ export default function CaseById({
                           color: value ? Colors.SKY_BLUE : "inherit",
                         },
                       }}
-                      label="Debtor"
+                      label="Client"
                       value="Debtor"
                     />
                     <Tab
