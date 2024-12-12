@@ -1,4 +1,4 @@
-import { ExpandMore } from "@mui/icons-material";
+import { Delete, ExpandMore } from "@mui/icons-material";
 import {
   Accordion,
   AccordionDetails,
@@ -7,6 +7,7 @@ import {
   CircularProgress,
   Grid,
   Hidden,
+  IconButton,
   Modal,
   styled,
   Switch,
@@ -14,6 +15,7 @@ import {
   Tabs,
   TextField,
   Typography,
+  Tooltip,
 } from "@mui/material";
 import React from "react";
 import { Colors } from "../../config/default";
@@ -376,7 +378,7 @@ export default function CaseById({
                           }}
                           onClick={() => navigate(`/all-cases/${item?._id}`)}
                         >
-                          <Grid item xs={12} md={8} lg={5}>
+                          <Grid item xs={11} md={8} lg={5}>
                             <span
                               style={{
                                 color: Colors.DIM_LIGHT_GRAY,
@@ -399,7 +401,7 @@ export default function CaseById({
                               {item?.creditor?.businessInformation?.companyName}
                             </span>
                           </Grid>
-                          <Hidden smDown>
+                          <Hidden mdDown>
                             <Grid item xs={3} sm={4} lg={6}>
                               <span
                                 style={{
@@ -423,6 +425,27 @@ export default function CaseById({
                               </span>
                             </Grid>
                           </Hidden>
+                          <Grid
+                            item
+                            xs={1}
+                            sm={1}
+                            lg={1}
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Tooltip title="Delete Creditor">
+                              <IconButton onClick={(e) => e.stopPropagation()}>
+                                <Delete
+                                  sx={{
+                                    color: Colors.ORANGE_COLOR,
+                                    fontSize: "1.2rem",
+                                  }}
+                                />
+                              </IconButton>
+                            </Tooltip>
+                          </Grid>
                         </Grid>
                       );
                     })}
