@@ -56,6 +56,7 @@ import CommissionDetails from "./caseDetail/commissionDetails";
 import Strategy3choices from "./strategy3choices";
 import DebtorPlan from "./debtorPlan";
 import TransactionHistory from "./transactionHistory";
+import PaymentCardPopup from "./paymentCardPopup";
 
 export default function MuiModels({
   buttonName,
@@ -139,6 +140,7 @@ export default function MuiModels({
   verifiedSenders,
   scoresBackend,
   compose,
+  paymentId,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -482,6 +484,15 @@ export default function MuiModels({
           width="6rem"
           onClick={handleOpen}
           disabled={disabled}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
+      ) : button === "addPayments" ? (
+        <TextButton
+          buttonText="PAY"
+          height="2rem"
+          width="4rem"
+          onClick={handleOpen}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
         />
@@ -921,6 +932,8 @@ export default function MuiModels({
             />
           ) : show === "paynoteForm" ? (
             <PaynoteForm handleClose={handleClose} caseData={caseData} />
+          ) : show === "AddPayments" ? (
+            <PaymentCardPopup handleClose={handleClose} paymentId={paymentId} />
           ) : show === "extractFiles" ? (
             <ExtractFieldPopup
               selectedFiles={selectedFiles}
