@@ -127,7 +127,7 @@ export default function PipelineListTable({
                       >
                         {header}
                         <Tooltip
-                          title="Sort By Debtor Business"
+                          title="Sort By Client Business"
                           placement="top-start"
                         >
                           <div>

@@ -8,7 +8,7 @@ import { FONT_SIZE_XXL } from "../../constants/appConstants";
 
 function DownloadPDF({ allData, lumpSumpData, handleClose }) {
   const typographyOptions = [
-    "Debtor Information",
+    "Client Information",
     "Settlement Range",
     "Scores",
     "Creditors Contract Information",
@@ -19,7 +19,7 @@ function DownloadPDF({ allData, lumpSumpData, handleClose }) {
   ];
 
   const [checkboxState, setCheckboxState] = useState({
-    "Debtor Information": true,
+    "Client Information": true,
     "Settlement Range": true,
     Scores: true,
     "Creditors Contract Information": true,
@@ -32,7 +32,7 @@ function DownloadPDF({ allData, lumpSumpData, handleClose }) {
   useEffect(() => {
     setCheckboxState((prevState) => ({
       ...prevState,
-      "Debtor Information": true,
+      "Client Information": true,
       "Settlement Range": true,
       Scores: true,
     }));

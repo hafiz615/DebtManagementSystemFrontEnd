@@ -247,7 +247,7 @@ export default function DebtorFields({
             sx={{ fontFamily: "Nunito", fontWeight: "600" }}
             gutterBottom
           >
-            Debtor Details
+            Client Details
           </Typography>
           {/* {walletId === "" && ( */}
         </Grid>
@@ -947,7 +947,7 @@ export default function DebtorFields({
                           color: Colors.DARK_GRAY,
                         }}
                       >
-                        Relation with Debtor (Optional)
+                        Relation with Client(Optional)
                       </Typography>
                       <input
                         type="text"

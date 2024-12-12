@@ -8,6 +8,14 @@ export default function DebtorUploadedFiles({ data }) {
   const [url, setUrl] = useState("");
   const [isViewerOpen, setIsViewerOpen] = useState(false);
 
+  const documents = data?.debtor?.documents || [];
+  const mcaFiles = documents?.filter((doc) =>
+    doc?.originalFileName?.toLowerCase().includes("mca")
+  );
+  const bankStatements = documents?.filter(
+    (item) => !item?.originalFileName?.toLowerCase().includes("mca")
+  );
+
   const handleFileView = (url) => {
     setUrl(url);
     setIsViewerOpen(true);
@@ -17,6 +25,62 @@ export default function DebtorUploadedFiles({ data }) {
     setUrl("");
     setIsViewerOpen(false);
   };
+
+  const renderFiles = (files, label) => {
+    if (files?.length > 0) {
+      return (
+        <React.Fragment>
+          <p
+            style={{
+              fontWeight: "600",
+              fontSize: "13px",
+              fontFamily: "Nunito",
+              margin: "0.5rem 0",
+              color: Colors.DARK_GRAY,
+            }}
+          >
+            {label}
+          </p>
+          {files.map((item, index) => (
+            <Grid
+              item
+              xs={12}
+              container
+              key={index}
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                backgroundColor: index % 2 === 0 ? Colors.WHITE : Colors.VIOLET,
+                paddingRight: ".2rem",
+                paddingLeft: ".2rem",
+                height: "2rem",
+                alignItems: "center",
+              }}
+            >
+              <span
+                style={{
+                  color: Colors.DIM_LIGHT_GRAY,
+                  fontWeight: "700",
+                  fontFamily: "Nunito",
+                  fontSize: "11px",
+                }}
+              >
+                {item?.originalFileName}
+              </span>
+              <Grid item sx={{ display: "flex" }}>
+                <RemoveRedEye
+                  sx={{ color: Colors.SKY_BLUE, cursor: "pointer" }}
+                  onClick={() => handleFileView(item?.url)}
+                />
+              </Grid>
+            </Grid>
+          ))}
+        </React.Fragment>
+      );
+    }
+    return null;
+  };
+
   return (
     <Grid
       item
@@ -47,52 +111,9 @@ export default function DebtorUploadedFiles({ data }) {
           height: "10rem",
         }}
       >
-        {data?.debtor?.documents?.length > 0 ? (
-          data?.debtor?.documents?.map((item, index) => (
-            <Grid
-              container
-              key={index}
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                backgroundColor: index % 2 === 0 ? Colors.WHITE : Colors.VIOLET,
-                paddingRight: ".2rem",
-                paddingLeft: ".2rem",
-                height: "2rem",
-                alignItems: "center",
-              }}
-            >
-              <span
-                style={{
-                  color: Colors.DIM_LIGHT_GRAY,
-                  fontWeight: "700",
-                  fontFamily: "Nunito",
-                  fontSize: "11px",
-                }}
-              >
-                {item?.originalFileName}
-              </span>
-              <Grid item sx={{ display: "flex" }}>
-                <RemoveRedEye
-                  sx={{ color: Colors.SKY_BLUE, cursor: "pointer" }}
-                  onClick={() => handleFileView(item?.url)}
-                />
-              </Grid>
-            </Grid>
-          ))
-        ) : (
-          <Grid item xs={12} sx={{ textAlign: "center", marginTop: "2rem" }}>
-            <p
-              style={{
-                color: Colors.DIM_LIGHT_GRAY,
-                fontFamily: "Nunito",
-                fontSize: "13px",
-              }}
-            >
-              No files available.
-            </p>
-          </Grid>
-        )}
+        {renderFiles(mcaFiles, "MCA Files")}
+        {renderFiles(bankStatements, "Bank Statements")}
+
         {isViewerOpen && (
           <div
             style={{

@@ -19,7 +19,7 @@ import {
 } from "../constants/appConstants";
 import { formatDateString } from "../common";
 
-const headers = ["Debtor", "Status", "Attempts", "Time"];
+const headers = ["Client", "Status", "Attempts", "Time"];
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   padding: theme.spacing(0),
 }));
@@ -64,7 +64,6 @@ export default function BulkImportAccordions({
 
   return (
     <Accordion
-      defaultExpanded={rowArray?.length > 0}
       sx={{
         borderRadius: "1rem !important",
         backgroundColor: Colors.WHITE,

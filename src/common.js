@@ -176,31 +176,6 @@ export function checkContacts(contacts) {
   );
 }
 
-// export const inputTypesArray = [
-//   { label: "button", value: "button" },
-//   { label: "checkbox", value: "checkbox" },
-//   { label: "color", value: "color" },
-//   { label: "date", value: "date" },
-//   { label: "datetime-local", value: "datetime-local" },
-//   { label: "email", value: "email" },
-//   { label: "file", value: "file" },
-//   { label: "hidden", value: "hidden" },
-//   { label: "image", value: "image" },
-//   { label: "month", value: "month" },
-//   { label: "number", value: "number" },
-//   { label: "password", value: "password" },
-//   { label: "radio", value: "radio" },
-//   { label: "range", value: "range" },
-//   { label: "reset", value: "reset" },
-//   { label: "search", value: "search" },
-//   { label: "submit", value: "submit" },
-//   { label: "tel", value: "tel" },
-//   { label: "text", value: "text" },
-//   { label: "time", value: "time" },
-//   { label: "url", value: "url" },
-//   { label: "week", value: "week" },
-// ];
-
 export const inputTypesArray = [
   { label: "date", value: "date" },
   { label: "number", value: "number" },
@@ -246,19 +221,19 @@ export const generatePdfFromApiData = (
 This Debt Settlement Agreement (the "Agreement") is entered into as of ${formattedDate}.
 The parties to this Agreement are as follows:
 
-Debtor Company: ${debtorInfo?.companyName}
+Client Company: ${debtorInfo?.companyName}
 Company Address: ${debtorInfo?.address}
 
 Creditor Company: ${credDetail}
 Company Address:
 
-The Creditor and Debtor(s) agree to negotiate and settle the debt under the following terms and conditions.
-The Creditor and Debtor(s) agree that the current outstanding debt is ${formatedValue}.
+The Creditor and Client(s) agree to negotiate and settle the debt under the following terms and conditions.
+The Creditor and Client(s) agree that the current outstanding debt is ${formatedValue}.
 All parties agree that the Creditor will accept a payment of ___________________ towards 
 settlement of the debt in full. 
 The Creditor agrees to compromise the debt under the condition 
 that they will receive the payment by _____________________.
-This Agreement for debt settlement shall be binding upon the Creditor, Debtor(s), and their 
+This Agreement for debt settlement shall be binding upon the Creditor, Client(s), and their 
 successors and assignees.
 The parties have agreed to settle finally and forever any and all claims between them of any 
 nature whatsoever from any and all liability or damages of any kind, known or unknown, in 
@@ -464,9 +439,9 @@ const generatePDF = (data, lumpSumpData, checkboxState) => {
   currentY += 10;
 
   // Debtor Information
-  if (checkboxState["Debtor Information"]) {
+  if (checkboxState["Client Information"]) {
     doc.setFontSize(14);
-    doc.text("Debtor Information", 14, currentY);
+    doc.text("Client Information", 14, currentY);
     currentY += 10;
 
     const debtorInfo = [
@@ -481,7 +456,7 @@ const generatePDF = (data, lumpSumpData, checkboxState) => {
           debtor?.basicInformation?.zipCode || "N/A"
         }`,
       ],
-      ["Weekly Budget", `$${debtor?.basicInformation?.weeklyBudget || 0}`],
+      ["Monthly Budget", `$${debtor?.basicInformation?.weeklyBudget || 0}`],
       ["Commission Percentage", `${debtor?.commissionPercentage || 0}%`],
     ];
 
@@ -501,9 +476,9 @@ const generatePDF = (data, lumpSumpData, checkboxState) => {
     currentY += 10;
 
     const settlementRangeSummary = [
-      ["Weekly Profit", formatCurrency(settlementRange?.weekly_profit) || 0],
+      ["Monthly Profit", formatCurrency(settlementRange?.weekly_profit) || 0],
       [
-        "Weekly True Revenue",
+        "Monthly True Revenue",
         formatCurrency(settlementRange?.weekly_true_revenue) || 0,
       ],
       ["Profitability", formatPercentage(settlementRange?.profitability) || 0],
@@ -737,8 +712,8 @@ const generatePDF = (data, lumpSumpData, checkboxState) => {
       head: [
         [
           "Creditors",
-          "Weekly Budget %",
-          "Weekly True Revenue",
+          "Monthly Budget %",
+          "Monthly True Revenue",
           "New Default Risk",
         ],
       ],
@@ -776,8 +751,8 @@ const generatePDF = (data, lumpSumpData, checkboxState) => {
       head: [
         [
           "Creditors",
-          "Weekly Budget %",
-          "Weekly True Revenue",
+          "Monthly Budget %",
+          "Monthly True Revenue",
           "New Default Risk",
         ],
       ],

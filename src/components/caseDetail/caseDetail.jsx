@@ -400,6 +400,7 @@ function CaseDetail() {
     >
       <Grid
         xs={12}
+        item
         container
         sx={{ marginTop: "1.5rem", justifyContent: "space-between" }}
       >
@@ -570,76 +571,79 @@ function CaseDetail() {
         />
       </AntTabs>
 
-      {activeTab === 0 && (
-        <SettlementRange
-          id={id}
-          getAllRanges={getAllRanges}
-          settlementloading={settlementloading}
-          setSettlementLoading={setSettlementLoading}
-          creditorNames={creditorNames}
-          setCreditorNames={setCreditorNames}
-          allCreditorNames={allCreditorNames}
-          setAllCreditorsNames={setAllCreditorsNames}
-          apiData={apiData}
-          setApiData={setApiData}
-          scores={scores}
-          setScores={setScores}
-          debtor={debtor}
-          setDebtor={setDebtor}
-          debtorInfo={debtorInfo}
-          setDebtorInfo={setDebtorInfo}
-          commissionPercentage={commissionPercentage}
-          setCommissionPercentage={setCommissionPercentage}
-          summaryAmount={summaryAmount}
-          setSummaryAmount={setSummaryAmount}
-          allData={allData}
-          setAllData={setAllData}
-          verifiedSender={verifiedSender}
-          statementSummaries={statementSummaries}
-          statementSummariesLoading={statementSummariesLoading}
-          getLumpSumAmountData={getLumpSumAmountData}
-          lumpSumpData={lumpSumpData}
-          scoresBackend={scoresBackend}
-          setScoresBackend={setScoresBackend}
-          optionStats={optionStats}
-          setOptionStats={setOptionStats}
-          cashFlow={cashFlow}
-          cashFlowLoading={cashFlowLoading}
-          tabValue={tabValue}
-          setTabValue={setTabValue}
-          setPaymentData={setPaymentData}
-          selectedCreditorDetails={selectedCreditorDetails}
-        />
-      )}
-      {activeTab === 1 && (
-        <CaseById
-          id={id}
-          loading={loading}
-          caseData={caseData}
-          GetCaseDetails={GetCaseDetails}
-          handleOpen={handleOpen}
-          style={style}
-          handleClicked={handleClicked}
-          notesLoading={notesLoading}
-          caseHistoryTabs={caseHistoryTabs}
-          setCaseHistoryTabs={setCaseHistoryTabs}
-          tabs={tabs}
-          filteredLogs={filteredLogs}
-          value={value}
-          handleChange={handleChange}
-          verifiedSenders={verifiedSenders}
-          GetLogsById={GetLogsById}
-          isPaymentLoading={isPaymentLoading}
-          paymentDetails={paymentDetails}
-          handleClose={handleClose}
-          addTaskModal={addTaskModal}
-          handleChangeModal={handleChangeModal}
-          open={open}
-          isChecked={isChecked}
-          handleToggle={handleToggle}
-          GetCasePaymentDetails={GetCasePaymentDetails}
-        />
-      )}
+      <Grid xs={12}>
+        {activeTab === 0 && (
+          <SettlementRange
+            id={id}
+            getAllRanges={getAllRanges}
+            settlementloading={settlementloading}
+            setSettlementLoading={setSettlementLoading}
+            creditorNames={creditorNames}
+            setCreditorNames={setCreditorNames}
+            allCreditorNames={allCreditorNames}
+            setAllCreditorsNames={setAllCreditorsNames}
+            apiData={apiData}
+            setApiData={setApiData}
+            scores={scores}
+            setScores={setScores}
+            debtor={debtor}
+            setDebtor={setDebtor}
+            debtorInfo={debtorInfo}
+            setDebtorInfo={setDebtorInfo}
+            commissionPercentage={commissionPercentage}
+            setCommissionPercentage={setCommissionPercentage}
+            summaryAmount={summaryAmount}
+            setSummaryAmount={setSummaryAmount}
+            allData={allData}
+            setAllData={setAllData}
+            verifiedSender={verifiedSender}
+            statementSummaries={statementSummaries}
+            statementSummariesLoading={statementSummariesLoading}
+            getLumpSumAmountData={getLumpSumAmountData}
+            lumpSumpData={lumpSumpData}
+            scoresBackend={scoresBackend}
+            setScoresBackend={setScoresBackend}
+            optionStats={optionStats}
+            setOptionStats={setOptionStats}
+            cashFlow={cashFlow}
+            cashFlowLoading={cashFlowLoading}
+            tabValue={tabValue}
+            setTabValue={setTabValue}
+            setPaymentData={setPaymentData}
+            selectedCreditorDetails={selectedCreditorDetails}
+            caseData={caseData}
+          />
+        )}
+        {activeTab === 1 && (
+          <CaseById
+            id={id}
+            loading={loading}
+            caseData={caseData}
+            GetCaseDetails={GetCaseDetails}
+            handleOpen={handleOpen}
+            style={style}
+            handleClicked={handleClicked}
+            notesLoading={notesLoading}
+            caseHistoryTabs={caseHistoryTabs}
+            setCaseHistoryTabs={setCaseHistoryTabs}
+            tabs={tabs}
+            filteredLogs={filteredLogs}
+            value={value}
+            handleChange={handleChange}
+            verifiedSenders={verifiedSenders}
+            GetLogsById={GetLogsById}
+            isPaymentLoading={isPaymentLoading}
+            paymentDetails={paymentDetails}
+            handleClose={handleClose}
+            addTaskModal={addTaskModal}
+            handleChangeModal={handleChangeModal}
+            open={open}
+            isChecked={isChecked}
+            handleToggle={handleToggle}
+            GetCasePaymentDetails={GetCasePaymentDetails}
+          />
+        )}
+      </Grid>
     </Grid>
   );
 }

@@ -58,7 +58,7 @@ function StrategyOne({
         <FormControlLabel
           value="strategy1Weekly"
           control={<Radio sx={radioStyle} />}
-          label={`Budget debtor signed up for: ${
+          label={`Budget client signed up for: ${
             isWeeklyBudgetAvailable
               ? `$${
                   data?.debtor?.basicInformation?.weeklyBudget ||

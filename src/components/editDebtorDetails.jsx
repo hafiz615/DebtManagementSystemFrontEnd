@@ -183,7 +183,7 @@ export default function EditDebtorDetail({
 
       if (hasMismatch) {
         setNoteMessage(
-          "Note: Highlighted Information does not match with existing Debtor Information"
+          "Note: Highlighted Information does not match with existing Client Information"
         );
       } else {
         setNoteMessage("");
@@ -279,7 +279,7 @@ export default function EditDebtorDetail({
         <Typography
           sx={{ fontWeight: "600", fontFamily: "Nunito", paddingLeft: "1rem" }}
         >
-          Edit Debtor Details
+          Edit Client Details
         </Typography>
         <Close onClick={handleClose} sx={{ marginRight: "1rem" }} />
       </Box>
@@ -343,7 +343,7 @@ export default function EditDebtorDetail({
                 }}
               >
                 <Typography variant="h6" sx={{ fontWeight: "600" }}>
-                  Previous Debtor Own Details:
+                  Previous Client Own Details:
                 </Typography>
                 <Typography>
                   Full Name: {data?.debtor?.basicInformation?.fullName || "--"}
@@ -382,7 +382,7 @@ export default function EditDebtorDetail({
                 }}
               >
                 <Typography variant="h6" sx={{ fontWeight: "600" }}>
-                  Previous Debtor Business Details:
+                  Previous Client Business Details:
                 </Typography>
                 <Typography>
                   Company Name:{" "}

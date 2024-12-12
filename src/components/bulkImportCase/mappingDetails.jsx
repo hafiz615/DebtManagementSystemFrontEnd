@@ -129,7 +129,7 @@ export default function MappingDetails({
       >
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <Typography sx={{ fontWeight: "600", fontFamily: "Nunito" }}>
-            Debtor Details
+            Client Details
           </Typography>
         </div>
         <Grid container sx={{ gap: "1em", mt: "1em" }}>

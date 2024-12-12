@@ -269,7 +269,7 @@ export default function DebtorContacts({
               }}
             >
               {show === "Debtor" || show === "EditDebtor"
-                ? "Relation with Debtor"
+                ? "Relation with Client"
                 : "Relation with Creditor"}
             </Typography>
             <input

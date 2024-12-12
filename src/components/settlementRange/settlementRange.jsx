@@ -58,6 +58,7 @@ import StatementSummaryAccordion from "../statementSummaryAccordion";
 import DebtorUploadedFiles from "../debtorUploadedFiles";
 import TransactionHistory from "../transactionHistory";
 import CashFlowPercentage from "./cashFlowPercentage";
+import { display } from "@mui/system";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -184,7 +185,6 @@ export default function SettlementRange({
   apiData,
   scores,
   debtor,
-  debtorInfo,
   commissionPercentage,
   setCommissionPercentage,
   summaryAmount,
@@ -201,6 +201,7 @@ export default function SettlementRange({
   setTabValue,
   setPaymentData,
   selectedCreditorDetails,
+  caseData,
 }) {
   const caseId = id;
   const [value, setValue] = useState(0);
@@ -223,6 +224,7 @@ export default function SettlementRange({
     "justification_gemini"
   );
   const [selectedOption, setSelectedOption] = useState("percentageReceivable");
+  const [checked, setChecked] = useState(false);
 
   const creditorNamesTabs = allCreditorNames;
   const popUpDebtorData = allData?.debtor;
@@ -1082,7 +1084,7 @@ export default function SettlementRange({
               </Grid>
             </Grid>
             <Grid item xs={7}>
-              <DebtorUploadedFiles data={allData} />
+              <DebtorUploadedFiles data={caseData} />
             </Grid>
           </Grid>
 
@@ -1119,6 +1121,7 @@ export default function SettlementRange({
               }
             />
           </Grid>
+
           <Grid xs={12} sx={{ mt: "1rem" }}>
             <StatementSummaryAccordion
               data={statementSummaries}
@@ -1128,9 +1131,9 @@ export default function SettlementRange({
 
           <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
             <GridItem
-              key="Weekly Profit Excluding Payments"
-              title="Weekly Profit Excluding Payments"
-              tooltip="Weekly profit by not making the creditor payments."
+              key="Monthly Profit Excluding Payments"
+              title="Monthly Profit Excluding Payments"
+              tooltip="Monthly profit by not making the creditor payments."
               value={
                 optionValue === 1
                   ? apiData?.option_2_stats?.true_profit
@@ -1165,9 +1168,9 @@ export default function SettlementRange({
               rawValue={apiData?.profitability}
             />
             <GridItem
-              key="Weekly Profit Including Payments"
-              title="Weekly Profit Including Payments"
-              tooltip="Weekly profit after making the creditor payments."
+              key="Monthly Profit Including Payments"
+              title="Monthly Profit Including Payments"
+              tooltip="Monthly profit after making the creditor payments."
               value={
                 optionValue === 1
                   ? apiData?.option_2_stats?.weekly_profit
@@ -1203,8 +1206,8 @@ export default function SettlementRange({
               rawValue={apiData?.profitability_without_creditor_payments}
             />
             <GridItem
-              key="Weekly True Revenue"
-              title="Weekly True Revenue"
+              key="Monthly True Revenue"
+              title="Monthly True Revenue"
               tooltip="Total revenue earned by the business each monthly."
               value={
                 optionValue === 1
@@ -1219,11 +1222,12 @@ export default function SettlementRange({
               }
               rawValue={apiData?.weekly_true_revenue}
             />
+
             {strategyTab === 0 && (
               <GridItem
-                key="Weekly Receivable Commission"
-                title="Weekly Receivable Commission"
-                tooltip="Weekly payment Which we receive."
+                key="Monthly Receivable Commission"
+                title="Monthly Receivable Commission"
+                tooltip="Monthly payment Which we receive."
                 value={
                   allData?.maxProfitCommission
                     ? `$${formatAmountValue(allData?.maxProfitCommission)}`
@@ -1248,9 +1252,9 @@ export default function SettlementRange({
 
             {strategyTab === 2 && (
               <GridItem
-                key="Weekly Receivable Commission"
-                title="Weekly Receivable Commission"
-                tooltip="Weekly Commission which we receive."
+                key="Monthly Receivable Commission"
+                title="Monthly Receivable Commission"
+                tooltip="Monthly Commission which we receive."
                 value={
                   allData?.percentageReceivableCommission
                     ? `${allData?.percentageReceivableCommission}%`
@@ -1259,6 +1263,58 @@ export default function SettlementRange({
                 rawValue={allData?.percentageReceivableCommission}
               />
             )}
+            <GridItem
+              key="Average monthly profit and profit % excluding payments"
+              title="Avg. Monthly profit excluding payments"
+              tooltip="Average monthly profit and profit % excluding payments"
+              value={
+                allData?.averageMonthlyProfitExcludingPayments
+                  ? `$${formatAmountValue(
+                      allData?.averageMonthlyProfitExcludingPayments
+                    )}`
+                  : "No Data"
+              }
+              rawValue={allData?.averageMonthlyProfitExcludingPayments}
+            />
+            <GridItem
+              key="Average monthly profit and profit % including payments"
+              title="Avg. monthly profit including payments"
+              tooltip="Average monthly profit and profit % including payments"
+              value={
+                allData?.averageMonthlyProfitExcludingPayments
+                  ? `$${formatAmountValue(
+                      allData?.averageMonthlyProfitIncludingPayments
+                    )}`
+                  : "No Data"
+              }
+              rawValue={allData?.averageMonthlyProfitIncludingPayments}
+            />
+            <GridItem
+              key="Current monthly profit and profit % excluding payments"
+              title="Current profit excluding payments"
+              tooltip="Current monthly profit and profit % excluding payments"
+              value={
+                allData?.currentMonthlyProfitExcludingPayments
+                  ? `$${formatAmountValue(
+                      allData?.currentMonthlyProfitExcludingPayments
+                    )}`
+                  : "No Data"
+              }
+              rawValue={allData?.currentMonthlyProfitExcludingPayments}
+            />
+            <GridItem
+              key="Current monthly profit and profit % including payments"
+              title="Current profit including payments"
+              tooltip="Current monthly profit and profit % including payments"
+              value={
+                allData?.currentMonthlyProfitIncludingPayments
+                  ? `$${formatAmountValue(
+                      allData?.currentMonthlyProfitIncludingPayments
+                    )}`
+                  : "No Data"
+              }
+              rawValue={allData?.currentMonthlyProfitIncludingPayments}
+            />
 
             {scores?.Scores && (
               <>
@@ -1486,7 +1542,7 @@ export default function SettlementRange({
                     fontWeight: "600",
                     height: "3.5rem",
                   }}
-                  label="Clients Weekly Budget"
+                  label="Clients Monthly Budget"
                 />
 
                 <AntTab
@@ -1594,7 +1650,7 @@ export default function SettlementRange({
                           "1.2x of Net Funded Amount Minus Amount Paid Back.",
                         "Current Balance":
                           "The remaining amount you owe to the creditor.",
-                        "Weekly Budget":
+                        "Monthly Budget":
                           "Your profit before making any debt payments.",
                         "Purchased Percentage":
                           "The percentage of the loan amount that has been repaid.",

@@ -19,6 +19,7 @@ import JustificationModal from "./justificationModal";
 import AddUrlsAccordion from "./addUrlsAccordion";
 import EmailIdentityAccordion from "./emailIdentityAccordion";
 import TransactionAccordion from "./transactionAccordion";
+import BulkMainAccordion from "./bulkMainAccordion";
 
 export default function SettingsScreen() {
   const navigate = useNavigate();
@@ -122,6 +123,7 @@ export default function SettingsScreen() {
           width: { xs: "65vw", sm: "auto" },
         }}
       >
+        <BulkMainAccordion />
         <SettingsAccordion
           retryInterval={retryInterval}
           authorizationInterval={authorizationInterval}

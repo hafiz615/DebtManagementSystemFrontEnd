@@ -1505,3 +1505,21 @@ export const DialCall = async (payload, id) => {
     return error;
   }
 };
+export const GetAllCasesTasks = async (id) => {
+  try {
+    return await axios.get(BASE_URL + `/v1/task/getAllTasks`, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+export const AddManualPayment = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/addManualPayment`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

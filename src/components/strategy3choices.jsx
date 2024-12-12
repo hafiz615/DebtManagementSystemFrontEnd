@@ -79,7 +79,7 @@ export default function Strategy3choices({
                   }}
                 />
               }
-              label={`Weekly True Revenue Amount: ${
+              label={`Monthly True Revenue Amount: ${
                 weeksTillPaid ? `$${weeksTillPaid}` : "--"
               }`}
             />

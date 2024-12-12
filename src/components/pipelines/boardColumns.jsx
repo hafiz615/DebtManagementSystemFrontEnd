@@ -170,7 +170,7 @@ const BoardColumns = ({
             {sortedCases?.length} Opportunities
           </Typography>
         </div>
-        <Tooltip title="Sort By Debtor Business" placement="top-start">
+        <Tooltip title="Sort By Client Business" placement="top-start">
           <div>
             <Dropdown
               width="1rem"
