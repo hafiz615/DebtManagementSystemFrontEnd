@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button, Grid, Box, Typography, TextField } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Button, Grid, Box, Typography } from "@mui/material";
 import CallIcon from "@mui/icons-material/Call";
 import CallEndIcon from "@mui/icons-material/CallEnd";
 import { Colors } from "../config/default";
@@ -10,6 +10,8 @@ import { DialCall } from "../services/services";
 const DialPad = ({ caseId, data, handleClose }) => {
   const [phoneNumber, setPhoneNumber] = useState(data || "");
   const [isCalling, setIsCalling] = useState(false);
+  const [callDuration, setCallDuration] = useState(0);
+  const [timer, setTimer] = useState(null);
 
   const handleNumberClick = (num) => {
     setPhoneNumber((prev) => prev + num);
@@ -18,6 +20,11 @@ const DialPad = ({ caseId, data, handleClose }) => {
   const handleCall = async () => {
     if (phoneNumber) {
       setIsCalling(true);
+      setCallDuration(0);
+      const interval = setInterval(() => {
+        setCallDuration((prev) => prev + 1);
+      }, 1000);
+      setTimer(interval);
       //   const payload = {
       //     toNumber: phoneNumber,
       //   };
@@ -31,6 +38,22 @@ const DialPad = ({ caseId, data, handleClose }) => {
     setIsCalling(false);
     handleClose();
     setPhoneNumber("");
+    clearInterval(timer);
+    setCallDuration(0);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timer) {
+        clearInterval(timer);
+      }
+    };
+  }, [timer]);
+
+  const formatDuration = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
   };
 
   return (
@@ -41,8 +64,17 @@ const DialPad = ({ caseId, data, handleClose }) => {
           gutterBottom
           textAlign="center"
         >
-          {isCalling ? "Calling..." : "Dial or Enter a Phone Number"}
+          {isCalling ? `Calling...` : "Dial or Enter a Phone Number"}
         </Typography>
+        {isCalling && (
+          <Typography
+            sx={{ fontSize: "16px", fontFamily: "Nunito", mb: "10px" }}
+            gutterBottom
+            textAlign="center"
+          >
+            {`(${formatDuration(callDuration)})`}
+          </Typography>
+        )}
 
         <Box sx={{ mb: 2 }}>
           <ReactPhoneInput
