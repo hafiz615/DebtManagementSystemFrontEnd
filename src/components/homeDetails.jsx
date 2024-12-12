@@ -57,18 +57,34 @@ function HomeDetails() {
   const accordionData = [
     {
       key: "failedAuthorizations",
-      heading: "Failed Authorizations",
+      heading: "Client Failed Authorizations",
       number: "5",
     },
-    { key: "failedCaptures", heading: "Failed Captures", number: "5" },
+    {
+      key: "failedCaptures",
+      heading: "Client Failed Captures",
+      number: "5",
+    },
     {
       key: "successAuthorizations",
-      heading: "Successful Authorizations",
+      heading: "Client Successful Authorizations",
       number: "4",
     },
-    { key: "successPayments", heading: "Successful Payments", number: "4" },
-    { key: "successCaptures", heading: "Successful Captures", number: "4" },
-    { key: "upcomingPayments", heading: "Upcoming Payments", number: "4" },
+    {
+      key: "successPayments",
+      heading: "Creditor Successful Payments",
+      number: "4",
+    },
+    {
+      key: "successCaptures",
+      heading: "Client Successful Captures",
+      number: "4",
+    },
+    {
+      key: "upcomingPayments",
+      heading: "Client Upcoming Payments",
+      number: "4",
+    },
   ];
 
   const bulkAccordionData = [
@@ -270,16 +286,16 @@ function HomeDetails() {
         rowArray={homeData[data?.key]}
         getHomeData={getHomeData}
         showFailureReason={
-          data?.heading !== "Upcoming Payments" &&
-          data?.heading !== "Successful Captures" &&
-          data?.heading !== "Successful Authorizations" &&
-          data?.heading !== "Successful Payments"
+          data?.heading !== "Client Upcoming Payments" &&
+          data?.heading !== "Client Successful Captures" &&
+          data?.heading !== "Client Successful Authorizations" &&
+          data?.heading !== "Creditor Successful Payments"
         }
         showDueDate={
-          data?.heading !== "Successful Captures" &&
-          data?.heading !== "Successful Authorizations" &&
-          data?.heading !== "Failed Captures" &&
-          data?.heading !== "Failed Authorizations"
+          data?.heading !== "Client Successful Captures" &&
+          data?.heading !== "Client Successful Authorizations" &&
+          data?.heading !== "Client Failed Captures" &&
+          data?.heading !== "Client Failed Authorizations"
         }
       />
     </Grid>
@@ -287,15 +303,15 @@ function HomeDetails() {
 
   const groupOne = accordionData?.filter(
     (data) =>
-      data.heading === "Failed Authorizations" ||
-      data.heading === "Successful Authorizations" ||
-      data.heading === "Successful Captures"
+      data.heading === "Client Failed Authorizations" ||
+      data.heading === "Client Successful Authorizations" ||
+      data.heading === "Client Successful Captures"
   );
   const groupTwo = accordionData?.filter(
     (data) =>
-      data.heading === "Failed Captures" ||
-      data.heading === "Successful Payments" ||
-      data.heading === "Upcoming Payments"
+      data.heading === "Client Failed Captures" ||
+      data.heading === "Creditor Successful Payments" ||
+      data.heading === "Client Upcoming Payments"
   );
   return (
     <Grid
