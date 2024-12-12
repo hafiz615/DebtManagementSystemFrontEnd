@@ -247,7 +247,7 @@ export default function ListTable({
                     Send Payment
                   </StyledTableCell>
                 )}
-                {arrayName === "upcomingPayments" && (
+                {/* {arrayName === "upcomingPayments" && (
                   <StyledTableCell
                     align="left"
                     sx={{
@@ -258,7 +258,7 @@ export default function ListTable({
                   >
                     Add Payment
                   </StyledTableCell>
-                )}
+                )} */}
               </TableRow>
             </TableHead>
             {loading ? (
@@ -362,7 +362,7 @@ export default function ListTable({
                         />
                       </StyledTableCell>
                     )}
-                    {arrayName === "upcomingPayments" && (
+                    {/* {arrayName === "upcomingPayments" && (
                       <StyledTableCell
                         sx={{
                           display: "flex",
@@ -378,7 +378,7 @@ export default function ListTable({
                           caseId={row?.caseId}
                         />
                       </StyledTableCell>
-                    )}
+                    )} */}
                     {/* Display other icons like requiredIcons */}
                     {requiredIcons && (
                       <StyledTableCell

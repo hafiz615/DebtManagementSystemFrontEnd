@@ -114,6 +114,7 @@ export default function AmountTextField({
   label,
   type,
   border,
+  disabled,
 }) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
 
@@ -166,6 +167,7 @@ export default function AmountTextField({
               : NumericFormatCustom,
         }}
         variant="standard"
+        disabled={disabled}
       />
       {error && (
         <Box

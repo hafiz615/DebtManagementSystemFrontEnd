@@ -9,6 +9,7 @@ import Prompt from "./prompt";
 import { RetryAuth, RetryCapture, SendPayment } from "../services/services";
 import { useSelector } from "react-redux";
 import { Paid } from "@mui/icons-material";
+import MuiModels from "./models";
 
 function TransactionRow({
   data,
@@ -91,7 +92,6 @@ function TransactionRow({
             : item?.type === "payment" && item?.captured === "Failed"
             ? Colors.ORANGE_COLOR
             : Colors.SKY_BLUE;
-
         return (
           <div
             key={index}
@@ -115,6 +115,17 @@ function TransactionRow({
                 ? "Capture"
                 : capitalizeFirstLetter(item?.type) || "-"}
             </p>
+            {heading === "Upcoming" && (
+              <MuiModels
+                show="AddPayments"
+                // button="addPayments"
+                width="55vw"
+                amount={item?.amount}
+                paymentId={item?.id}
+                caseId={id}
+              />
+            )}
+
             <p style={typographyStyle}>
               {(item?.type === "authorization" &&
                 item?.authorized === "Failed") ||

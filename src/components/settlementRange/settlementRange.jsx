@@ -203,6 +203,7 @@ export default function SettlementRange({
   selectedCreditorDetails,
   caseData,
 }) {
+  console.log(allData, "allData");
   const caseId = id;
   const [value, setValue] = useState(0);
   const [optionValue, setOptuonValue] = useState(0);
@@ -1263,20 +1264,58 @@ export default function SettlementRange({
                 rawValue={allData?.percentageReceivableCommission}
               />
             )}
-            {/* <GridItem
-              key="Dummy"
-              title="Dummy Card"
-              tooltip="Dummy Card"
-              value={"Dummy Card" ?? "No Data"}
-              rawValue={"Dummy Card"}
+            <GridItem
+              key="Average monthly profit and profit % excluding payments"
+              title="Avg Monthly profit excluding payments"
+              tooltip="Average monthly profit and profit % excluding payments"
+              value={
+                allData?.averageMonthlyProfitExcludingPayments
+                  ? `$${formatAmountValue(
+                      allData?.averageMonthlyProfitExcludingPayments
+                    )}`
+                  : "No Data"
+              }
+              rawValue={allData?.averageMonthlyProfitExcludingPayments}
             />
             <GridItem
-              key="Dummy"
-              title="Dummy Card"
-              tooltip="Dummy Card"
-              value={"Dummy Card" ?? "No Data"}
-              rawValue={"Dummy Card"}
-            /> */}
+              key="Average monthly profit and profit % including payments"
+              title="Avg monthly profit including payments"
+              tooltip="Average monthly profit and profit % including payments"
+              value={
+                allData?.averageMonthlyProfitExcludingPayments
+                  ? `$${formatAmountValue(
+                      allData?.averageMonthlyProfitIncludingPayments
+                    )}`
+                  : "No Data"
+              }
+              rawValue={allData?.averageMonthlyProfitIncludingPayments}
+            />
+            <GridItem
+              key="Current monthly profit and profit % excluding payments"
+              title="Current profit excluding payments"
+              tooltip="Current monthly profit and profit % excluding payments"
+              value={
+                allData?.currentMonthlyProfitExcludingPayments
+                  ? `$${formatAmountValue(
+                      allData?.currentMonthlyProfitExcludingPayments
+                    )}`
+                  : "No Data"
+              }
+              rawValue={allData?.currentMonthlyProfitExcludingPayments}
+            />
+            <GridItem
+              key="Current monthly profit and profit % including payments"
+              title="Current profit including payments"
+              tooltip="Current monthly profit and profit % including payments"
+              value={
+                allData?.currentMonthlyProfitIncludingPayments
+                  ? `$${formatAmountValue(
+                      allData?.currentMonthlyProfitIncludingPayments
+                    )}`
+                  : "No Data"
+              }
+              rawValue={allData?.currentMonthlyProfitIncludingPayments}
+            />
 
             {scores?.Scores && (
               <>

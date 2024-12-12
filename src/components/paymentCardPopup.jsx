@@ -5,8 +5,9 @@ import { Colors } from "../config/default";
 import Dropdown from "./dropdown";
 import { useToast } from "../toast/toastContext";
 import { AddManualPayment } from "../services/services";
+import AmountTextField from "./amountTextField";
 
-function PaymentCardPopup({ paymentId, caseId, handleClose }) {
+function PaymentCardPopup({ amountValue, paymentId, caseId, handleClose }) {
   const { showToast } = useToast();
 
   const menuItems = [
@@ -15,8 +16,8 @@ function PaymentCardPopup({ paymentId, caseId, handleClose }) {
     { label: "Cash", value: "Cash" },
   ];
   const [selectedValue, setSelectedValue] = useState("");
-  const [amount, setAmount] = useState("");
-  const [date, setDate] = useState("");
+  const [amount, setAmount] = useState(amountValue);
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [referenceId, SetReferenceId] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -31,6 +32,7 @@ function PaymentCardPopup({ paymentId, caseId, handleClose }) {
       transactionId: paymentId,
       amount: amount,
       transactionDate: date,
+      referenceId: referenceId,
       transactionType: selectedValue,
     };
     const AddManualPaymentRes = await AddManualPayment(params);
@@ -63,23 +65,11 @@ function PaymentCardPopup({ paymentId, caseId, handleClose }) {
           gap: "1rem",
         }}
       >
-        <input
-          type="text"
+        <AmountTextField
+          width="100%"
           value={amount}
-          onChange={handleAmountChange}
-          placeholder="Enter amount"
-          style={{
-            backgroundColor: Colors.BG_LIGHT_GRAY,
-            height: "2.5rem",
-            color: Colors.DIM_LIGHT_GRAY,
-            paddingLeft: "1rem",
-            outline: "none",
-            border: "1px solid transparent",
-            borderRadius: "5px",
-            marginBottom: "1rem",
-            width: "100%",
-            fontFamily: "Nunito",
-          }}
+          onChange={(e) => handleAmountChange(e)}
+          disabled={true}
         />
         <input
           type="text"
