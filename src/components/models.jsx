@@ -933,7 +933,11 @@ export default function MuiModels({
           ) : show === "paynoteForm" ? (
             <PaynoteForm handleClose={handleClose} caseData={caseData} />
           ) : show === "AddPayments" ? (
-            <PaymentCardPopup handleClose={handleClose} paymentId={paymentId} />
+            <PaymentCardPopup
+              handleClose={handleClose}
+              paymentId={paymentId}
+              caseId={caseId}
+            />
           ) : show === "extractFiles" ? (
             <ExtractFieldPopup
               selectedFiles={selectedFiles}

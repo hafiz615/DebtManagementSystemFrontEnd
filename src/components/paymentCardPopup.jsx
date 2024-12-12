@@ -3,29 +3,45 @@ import { Grid, Typography, TextField, MenuItem } from "@mui/material";
 import Button from "./button";
 import { Colors } from "../config/default";
 import Dropdown from "./dropdown";
+import { useToast } from "../toast/toastContext";
+import { AddManualPayment } from "../services/services";
 
-function PaymentCardPopup({ paymentId }) {
+function PaymentCardPopup({ paymentId, caseId, handleClose }) {
+  const { showToast } = useToast();
+
   const menuItems = [
     { label: "Wire", value: "Wire" },
     { label: "Check", value: "Check" },
     { label: "Cash", value: "Cash" },
   ];
-  const [selectedValue, setSelectedValue] = useState([]);
+  const [selectedValue, setSelectedValue] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
-  const [paymentType, setPaymentType] = useState("Wire"); // Default to 'Wire'
+  const [referenceId, SetReferenceId] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleAmountChange = (e) => setAmount(parseFloat(e.target.value) || "");
   const handleDateChange = (e) => setDate(e.target.value);
-  const handlePaymentTypeChange = (e) => setPaymentType(e.target.value);
+  const handleReferenceId = (e) => SetReferenceId(e.target.value) || "";
 
-  const handleSubmit = () => {
-    console.log({
-      paymentId,
-      amount,
-      date,
-      paymentType,
-    });
+  const handleSubmit = async () => {
+    setLoading(true);
+    const params = {
+      caseId: caseId,
+      transactionId: paymentId,
+      amount: amount,
+      transactionDate: date,
+      transactionType: selectedValue,
+    };
+    const AddManualPaymentRes = await AddManualPayment(params);
+    if (AddManualPaymentRes?.status === 200) {
+      showToast(AddManualPaymentRes?.data?.message, "success");
+      handleClose();
+    } else if (AddManualPaymentRes?.response?.status === 400) {
+      const errorMessage = AddManualPaymentRes?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setLoading(false);
   };
 
   return (
@@ -39,37 +55,82 @@ function PaymentCardPopup({ paymentId }) {
         <Typography variant="h6">Payment Details</Typography>
       </Grid>
 
-      <Grid item>
-        <TextField
-          fullWidth
-          label="Amount"
-          type="number"
+      <Grid
+        item
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          gap: "1rem",
+        }}
+      >
+        <input
+          type="text"
           value={amount}
           onChange={handleAmountChange}
-          InputProps={{
-            inputProps: {
-              step: "0.01",
-            },
-          }}
           placeholder="Enter amount"
-          error={!amount && Boolean(amount)}
+          style={{
+            backgroundColor: Colors.BG_LIGHT_GRAY,
+            height: "2.5rem",
+            color: Colors.DIM_LIGHT_GRAY,
+            paddingLeft: "1rem",
+            outline: "none",
+            border: "1px solid transparent",
+            borderRadius: "5px",
+            marginBottom: "1rem",
+            width: "100%",
+            fontFamily: "Nunito",
+          }}
+        />
+        <input
+          type="text"
+          value={referenceId}
+          onChange={handleReferenceId}
+          placeholder="Enter Reference Id"
+          style={{
+            backgroundColor: Colors.BG_LIGHT_GRAY,
+            height: "2.5rem",
+            color: Colors.DIM_LIGHT_GRAY,
+            paddingLeft: "1rem",
+            outline: "none",
+            border: "1px solid transparent",
+            borderRadius: "5px",
+            marginBottom: "1rem",
+            width: "100%",
+            fontFamily: "Nunito",
+          }}
         />
       </Grid>
 
-      <Grid item>
-        <TextField
-          fullWidth
-          label="Date"
+      <Grid
+        item
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          gap: "1rem",
+        }}
+      >
+        <input
           type="date"
           value={date}
           onChange={handleDateChange}
-          InputLabelProps={{ shrink: true }}
+          placeholder="Enter Date"
+          style={{
+            backgroundColor: Colors.BG_LIGHT_GRAY,
+            height: "2.5rem",
+            color: Colors.DIM_LIGHT_GRAY,
+            paddingLeft: "1rem",
+            outline: "none",
+            border: "1px solid transparent",
+            borderRadius: "5px",
+            marginBottom: "1rem",
+            width: "100%",
+            fontFamily: "Nunito",
+          }}
         />
-      </Grid>
 
-      <Grid item>
         <Dropdown
           menuWidth="22rem"
+          height="2.5rem"
           menuItems={menuItems}
           placeholder="Select Payment Type"
           backgroundColor={Colors.BG_LIGHT_GRAY}
@@ -86,6 +147,7 @@ function PaymentCardPopup({ paymentId }) {
           onClick={handleSubmit}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
+          loading={loading}
         />
       </Grid>
     </Grid>

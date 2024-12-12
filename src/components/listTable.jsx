@@ -375,6 +375,7 @@ export default function ListTable({
                           button="addPayments"
                           width="55vw"
                           paymentId={row?.id}
+                          caseId={row?.caseId}
                         />
                       </StyledTableCell>
                     )}
