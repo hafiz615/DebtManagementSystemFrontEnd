@@ -1499,3 +1499,10 @@ export const UpdateContractDetails = async (payload, id) => {
     return error;
   }
 };
+export const GetAllCasesTasks = async (id) => {
+  try {
+    return await axios.get(BASE_URL + `/v1/task/getAllTasks`, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
