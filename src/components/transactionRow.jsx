@@ -118,7 +118,6 @@ function TransactionRow({
             {heading === "Upcoming" && (
               <MuiModels
                 show="AddPayments"
-                // button="addPayments"
                 width="55vw"
                 amount={item?.amount}
                 paymentId={item?.id}

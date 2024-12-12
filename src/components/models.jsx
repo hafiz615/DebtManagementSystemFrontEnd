@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Box, Button, Modal, IconButton } from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
 
 import AddIcon from "@mui/icons-material/Add";
 import CreateIcon from "@mui/icons-material/Create";
@@ -429,15 +430,17 @@ export default function MuiModels({
           />
         </IconButton>
       ) : show === "AddPayments" ? (
-        <IconButton
-          onClick={() => {
-            handleOpen();
-          }}
-        >
-          <LocalAtm
-            sx={{ fontSize: "16px", color: Colors.BLACK, cursor: "pointer" }}
-          />
-        </IconButton>
+        <Tooltip title="Add Manual Payments" placement="top" arrow>
+          <IconButton
+            onClick={() => {
+              handleOpen();
+            }}
+          >
+            <LocalAtm
+              sx={{ fontSize: "16px", color: Colors.BLACK, cursor: "pointer" }}
+            />
+          </IconButton>
+        </Tooltip>
       ) : button === "delete" ? (
         <IconButton
           onClick={() => {
