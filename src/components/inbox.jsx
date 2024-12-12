@@ -270,7 +270,7 @@ function Inbox() {
               />
               <input
                 style={inputStyling}
-                placeholder="Search By Debtor Company"
+                placeholder="Search By Client Company"
                 type="email"
                 value={debtorCompany}
                 onChange={(e) => setDebtorCompany(e.target.value)}
@@ -606,7 +606,7 @@ function Inbox() {
                                 </div>
                                 <div style={{ display: "flex", gap: "10px" }}>
                                   <Typography sx={boldTextStyling}>
-                                    Debtor Company Name:
+                                    Client Company Name:
                                   </Typography>
                                   <Typography sx={fontStyling}>
                                     {item?.debtorCompanyName || "-"}
