@@ -1487,6 +1487,18 @@ export const GetDailyCashFlow = async (id) => {
     return error;
   }
 };
+
+export const UpdateContractDetails = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/case/updateContractDetails/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
 export const GetCalls = async (id) => {
   try {
     return await axios.get(BASE_URL + `/v1/case/getCalls/${id}`, setHeaders());

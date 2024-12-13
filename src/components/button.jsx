@@ -22,6 +22,7 @@ function TextButton({
   width,
   loginFont,
   boxShadow,
+  marginLeft,
 }) {
   return (
     <Button
@@ -38,6 +39,7 @@ function TextButton({
           marginBottom,
         },
         marginRight: { marginRight },
+        marginLeft: { marginLeft },
         paddingLeft: { paddingLeft },
         paddingRight: { paddingRight },
         fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },

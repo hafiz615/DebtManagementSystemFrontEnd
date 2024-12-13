@@ -61,6 +61,7 @@ import DebtorPlan from "./debtorPlan";
 import TransactionHistory from "./transactionHistory";
 import PaymentCardPopup from "./paymentCardPopup";
 import DialPad from "./dialPad";
+import EditContractInformation from "./settlementRange/editContractInformation";
 
 export default function MuiModels({
   buttonName,
@@ -146,6 +147,9 @@ export default function MuiModels({
   compose,
   paymentId,
   amount,
+  creditorDetails,
+  selectedCreditorDetails,
+  selectedCreditorDetailsKey,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -343,6 +347,20 @@ export default function MuiModels({
           />
         </IconButton>
       ) : show === "editStatus" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <EditIcon
+            sx={{
+              fontSize: "1.2rem",
+              color: Colors.DARK_GRAY,
+              cursor: "pointer",
+            }}
+          />
+        </IconButton>
+      ) : show === "editSettlementContractCard" ? (
         <IconButton
           onClick={() => {
             handleOpen();
@@ -980,6 +998,15 @@ export default function MuiModels({
               caseData={caseData}
               handleClose={handleClose}
               GetCaseDetails={GetCaseDetails}
+            />
+          ) : show === "editSettlementContractCard" ? (
+            <EditContractInformation
+              handleClose={handleClose}
+              creditorDetails={creditorDetails}
+              caseId={caseId}
+              selectedCreditorDetails={selectedCreditorDetails}
+              selectedCreditorDetailsKey={selectedCreditorDetailsKey}
+              getAllRanges={getAllRanges}
             />
           ) : show === "TransactionHistory" ? (
             <TransactionHistory handleClose={handleClose} data={data} />

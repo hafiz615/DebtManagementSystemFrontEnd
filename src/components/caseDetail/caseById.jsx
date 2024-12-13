@@ -32,6 +32,8 @@ import TimelineData from "./timelineData";
 import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../../constants/appConstants";
 import ScrollbarStyles from "../customScroll";
 import { isEmpty } from "lodash";
+import FinancialAccordion from "./Financial";
+import SettlementAccordion from "./settlementRanges";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -450,6 +452,9 @@ export default function CaseById({
                 loading={isPaymentLoading}
                 paymentDetails={paymentDetails}
               />
+
+              {/* <FinancialAccordion />
+              <SettlementAccordion /> */}
               <AboutAccordion
                 caseDetails={caseData}
                 GetCaseDetails={GetCaseDetails}
