@@ -1,4 +1,5 @@
-import { Delete, ExpandMore } from "@mui/icons-material";
+import { useState, useEffect } from "react";
+import { ExpandMore } from "@mui/icons-material";
 import {
   Accordion,
   AccordionDetails,
@@ -7,7 +8,6 @@ import {
   CircularProgress,
   Grid,
   Hidden,
-  IconButton,
   Modal,
   styled,
   Switch,
@@ -36,6 +36,9 @@ import ScrollbarStyles from "../customScroll";
 import { isEmpty } from "lodash";
 import FinancialAccordion from "./Financial";
 import SettlementAccordion from "./settlementRanges";
+import DeletePrompt from "../deletePrompt";
+import { GetCalls } from "../../services/services";
+import { useToast } from "../../toast/toastContext";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -100,6 +103,18 @@ export default function CaseById({
   GetCasePaymentDetails,
 }) {
   const navigate = useNavigate();
+  const [deleting, setDeleting] = useState(false);
+  const [callLogs, setCallLogs] = useState([]);
+  const fetchCalls = async () => {
+    const res = await GetCalls(id);
+    if (res?.status === 200) {
+      setCallLogs(res?.data?.data);
+    }
+  };
+  useEffect(() => {
+    fetchCalls();
+  }, []);
+
   return (
     <Grid item sx={{ marginTop: "1rem" }}>
       {loading || isEmpty(caseData) ? (
@@ -437,16 +452,16 @@ export default function CaseById({
                               alignItems: "center",
                             }}
                           >
-                            <Tooltip title="Delete Creditor">
-                              <IconButton onClick={(e) => e.stopPropagation()}>
-                                <Delete
-                                  sx={{
-                                    color: Colors.ORANGE_COLOR,
-                                    fontSize: "1.2rem",
-                                  }}
-                                />
-                              </IconButton>
-                            </Tooltip>
+                            <DeletePrompt
+                              buttonName="Delete"
+                              heading="Delete Creditor"
+                              text={`Are you sure you want to delete ${item?.creditor?.businessInformation?.companyName}?`}
+                              creditorId={item?._id}
+                              loading={deleting}
+                              GetCaseDetails={GetCaseDetails}
+                              setLoading={setDeleting}
+                              id={id}
+                            />
                           </Grid>
                         </Grid>
                       );
@@ -582,6 +597,7 @@ export default function CaseById({
               </AntTabs>
               {caseHistoryTabs === 5 ? (
                 <TimelineData
+                  callLogs={callLogs}
                   id={id}
                   date={null}
                   caseDataId={id}
@@ -591,6 +607,7 @@ export default function CaseById({
               ) : filteredLogs?.length > 0 ? (
                 filteredLogs?.map((item, index) => (
                   <TimelineData
+                    callLogs={callLogs}
                     id={id}
                     notes={false}
                     value={item}
@@ -603,6 +620,7 @@ export default function CaseById({
                 ))
               ) : (
                 <TimelineData
+                  callLogs={callLogs}
                   id={id}
                   notes={true}
                   value={

@@ -18,7 +18,7 @@ import SendEmailCase from "./sendEmailCase";
 import ReplyCard from "./replyCard";
 
 export default function TimelineData({
-  id,
+  callLogs,
   value,
   date,
   notes,
@@ -26,7 +26,6 @@ export default function TimelineData({
   GetLogsById,
   iconValue,
 }) {
-  const [callLogs, setCallLogs] = useState([]);
   const [showReplyCard, setShowReplyCard] = useState(false);
   const formattedDate = new Date(date);
 
@@ -55,13 +54,6 @@ export default function TimelineData({
     });
     return `${datePart} at ${timePart}`;
   }
-
-  const fetchCalls = async () => {
-    const res = await GetCalls(id);
-    if (res?.status === 200) {
-      setCallLogs(res?.data?.data);
-    }
-  };
 
   //remove this dummyCallLogs when done with integeration
   const dummyCallLogs = [
@@ -105,10 +97,6 @@ export default function TimelineData({
       ],
     },
   ];
-
-  useEffect(() => {
-    fetchCalls();
-  }, []);
 
   return (
     <Timeline sx={{ padding: 0, margin: "0" }}>
