@@ -453,8 +453,8 @@ export default function CaseById({
                 paymentDetails={paymentDetails}
               />
 
-              <FinancialAccordion />
-              <SettlementAccordion />
+              {/* <FinancialAccordion />
+              <SettlementAccordion /> */}
               <AboutAccordion
                 caseDetails={caseData}
                 GetCaseDetails={GetCaseDetails}
