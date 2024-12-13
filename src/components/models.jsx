@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Box, Button, Modal, IconButton } from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
 
 import AddIcon from "@mui/icons-material/Add";
 import CreateIcon from "@mui/icons-material/Create";
@@ -32,6 +33,8 @@ import {
   Sms,
   Download,
   Refresh,
+  LocalAtm,
+  Phone,
 } from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
@@ -56,6 +59,8 @@ import CommissionDetails from "./caseDetail/commissionDetails";
 import Strategy3choices from "./strategy3choices";
 import DebtorPlan from "./debtorPlan";
 import TransactionHistory from "./transactionHistory";
+import PaymentCardPopup from "./paymentCardPopup";
+import DialPad from "./dialPad";
 
 export default function MuiModels({
   buttonName,
@@ -139,6 +144,8 @@ export default function MuiModels({
   verifiedSenders,
   scoresBackend,
   compose,
+  paymentId,
+  amount,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -190,6 +197,21 @@ export default function MuiModels({
           buttonText={buttonText}
           backgroundColor={Colors.SKY_BLUE}
         />
+      ) : show === "dialPad" ? (
+        <IconButton
+          sx={{ display: "flex", alignItems: "center" }}
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <Phone
+            sx={{
+              color: Colors.SKY_BLUE,
+              cursor: "pointer",
+              fontSize: "16px",
+            }}
+          />
+        </IconButton>
       ) : show === "editField" ? (
         <IconButton
           sx={{ display: "flex", alignItems: "center" }}
@@ -424,6 +446,18 @@ export default function MuiModels({
             sx={{ fontSize: "16px", color: Colors.WHITE, cursor: "pointer" }}
           />
         </IconButton>
+      ) : show === "AddPayments" ? (
+        <Tooltip title="Add Manual Payments" placement="top" arrow>
+          <IconButton
+            onClick={() => {
+              handleOpen();
+            }}
+          >
+            <LocalAtm
+              sx={{ fontSize: "16px", color: Colors.BLACK, cursor: "pointer" }}
+            />
+          </IconButton>
+        </Tooltip>
       ) : button === "delete" ? (
         <IconButton
           onClick={() => {
@@ -921,6 +955,13 @@ export default function MuiModels({
             />
           ) : show === "paynoteForm" ? (
             <PaynoteForm handleClose={handleClose} caseData={caseData} />
+          ) : show === "AddPayments" ? (
+            <PaymentCardPopup
+              amountValue={amount}
+              handleClose={handleClose}
+              paymentId={paymentId}
+              caseId={caseId}
+            />
           ) : show === "extractFiles" ? (
             <ExtractFieldPopup
               selectedFiles={selectedFiles}
@@ -942,6 +983,8 @@ export default function MuiModels({
             />
           ) : show === "TransactionHistory" ? (
             <TransactionHistory handleClose={handleClose} data={data} />
+          ) : show === "dialPad" ? (
+            <DialPad caseId={caseId} data={data} handleClose={handleClose} />
           ) : (
             ""
           )}

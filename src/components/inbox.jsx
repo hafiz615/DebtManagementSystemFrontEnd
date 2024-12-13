@@ -134,7 +134,8 @@ function Inbox() {
   const getAllTasks = async () => {
     const res = await GetAllCasesTasks();
     if (res?.status === 200) {
-      setAllTasks(res?.data?.data);
+      const data = res?.data?.data;
+      setAllTasks(data);
     }
   };
 
@@ -157,6 +158,20 @@ function Inbox() {
     getVerifiedIdentites();
     getAllTasks();
   }, []);
+
+  useEffect(() => {
+    if (activeTab === 2) {
+      const firstKey = alltasks && Object.keys(alltasks)?.[0];
+      const value = alltasks && alltasks[firstKey];
+      setSelectedUser(firstKey);
+      setSelectedUserData(value);
+    } else {
+      const firstKey = inboxData && Object.keys(inboxData)?.[0];
+      const value = inboxData && inboxData[firstKey];
+      setSelectedUser(firstKey);
+      setSelectedUserData(value);
+    }
+  }, [activeTab]);
 
   const disabled = caseCode || debtorCompany || creditorCompany || negotiator;
 
@@ -410,37 +425,67 @@ function Inbox() {
                     />
                   </Tabs>
                   <Divider sx={{ mb: "10px" }} />
-                  {activeTab !== 2 &&
-                    inboxData &&
-                    Object.keys(inboxData)?.map((key) => {
-                      const value = inboxData[key];
-                      return (
-                        <Box
-                          key={key}
-                          onClick={() => {
-                            setSelectedUser(key);
-                            setSelectedUserData(value);
-                          }}
-                          sx={{
-                            ...boxStyling,
-                            backgroundColor:
-                              selectedUser === key
-                                ? Colors.lIGHT_PURPLE
-                                : "transparent",
-                          }}
-                        >
-                          <Typography
+                  {activeTab === 2
+                    ? alltasks &&
+                      Object.keys(alltasks)?.map((key) => {
+                        const value = alltasks[key];
+                        return (
+                          <Box
+                            key={key}
+                            onClick={() => {
+                              setSelectedUser(key);
+                              setSelectedUserData(value);
+                            }}
                             sx={{
-                              fontFamily: "Nunito",
-                              fontWeight: 600,
-                              fontSize: FONT_SIZE_LARGE,
+                              ...boxStyling,
+                              backgroundColor:
+                                selectedUser === key
+                                  ? Colors.lIGHT_PURPLE
+                                  : "transparent",
                             }}
                           >
-                            {key}
-                          </Typography>
-                        </Box>
-                      );
-                    })}
+                            <Typography
+                              sx={{
+                                fontFamily: "Nunito",
+                                fontWeight: 600,
+                                fontSize: FONT_SIZE_LARGE,
+                              }}
+                            >
+                              {key}
+                            </Typography>
+                          </Box>
+                        );
+                      })
+                    : inboxData &&
+                      Object.keys(inboxData)?.map((key) => {
+                        const value = inboxData[key];
+                        return (
+                          <Box
+                            key={key}
+                            onClick={() => {
+                              setSelectedUser(key);
+                              setSelectedUserData(value);
+                            }}
+                            sx={{
+                              ...boxStyling,
+                              backgroundColor:
+                                selectedUser === key
+                                  ? Colors.lIGHT_PURPLE
+                                  : "transparent",
+                            }}
+                          >
+                            <Typography
+                              sx={{
+                                fontFamily: "Nunito",
+                                fontWeight: 600,
+                                fontSize: FONT_SIZE_LARGE,
+                              }}
+                            >
+                              {key}
+                            </Typography>
+                          </Box>
+                        );
+                      })}
                 </>
               )}
             </Card>
@@ -651,8 +696,8 @@ function Inbox() {
                     </Typography>
                   </Grid>
                 )
-              ) : alltasks?.length > 0 ? (
-                alltasks?.map((tasks) => (
+              ) : alltasks ? (
+                alltasks[selectedUser]?.map((tasks) => (
                   <CardContent
                     style={{
                       backgroundColor: Colors.BG_LIGHT_GRAY,
@@ -683,12 +728,6 @@ function Inbox() {
                       <Typography sx={boldTextStyling}>Status:</Typography>
                       <Typography sx={fontStyling}>
                         {tasks?.status || "-"}
-                      </Typography>
-                    </div>
-                    <div style={{ display: "flex", gap: "10px" }}>
-                      <Typography sx={boldTextStyling}>Assignee:</Typography>
-                      <Typography sx={fontStyling}>
-                        {tasks?.assignee || "-"}
                       </Typography>
                     </div>
                     <div style={{ display: "flex", gap: "10px" }}>

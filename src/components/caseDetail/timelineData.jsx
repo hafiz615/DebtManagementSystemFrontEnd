@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Box, Card, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Card, IconButton, Typography } from "@mui/material";
 import Button from "../button";
 import {
   Timeline,
@@ -11,11 +11,14 @@ import {
 } from "@mui/lab";
 import MuiModels from "../models";
 import { Colors } from "../../config/default";
-import { Email, NoteAlt, Sms, Work } from "@mui/icons-material";
+import { CallOutlined, Email, NoteAlt, Sms, Work } from "@mui/icons-material";
+import ConversationHistory from "../callHistory";
+import { GetCalls } from "../../services/services";
 import SendEmailCase from "./sendEmailCase";
 import ReplyCard from "./replyCard";
 
 export default function TimelineData({
+  id,
   value,
   date,
   notes,
@@ -23,6 +26,7 @@ export default function TimelineData({
   GetLogsById,
   iconValue,
 }) {
+  const [callLogs, setCallLogs] = useState([]);
   const [showReplyCard, setShowReplyCard] = useState(false);
   const formattedDate = new Date(date);
 
@@ -52,6 +56,60 @@ export default function TimelineData({
     return `${datePart} at ${timePart}`;
   }
 
+  const fetchCalls = async () => {
+    const res = await GetCalls(id);
+    if (res?.status === 200) {
+      setCallLogs(res?.data?.data);
+    }
+  };
+
+  //remove this dummyCallLogs when done with integeration
+  const dummyCallLogs = [
+    {
+      callerName: "Jim Klug",
+      company: "Vice Versa Home Serv",
+      duration: "8m 46s",
+      timestamp: "3d ago",
+      summary: `
+        Jim Klug and Dawnyell Rangel discuss the legal actions taken against Jim's company and the potential consequences of filing for bankruptcy.
+        They discuss the money that has been seized and the conditions under which Jim would be willing to release it.
+        Dawnyell suggests being more aggressive with the recovery group, and Jim agrees, as long as they can reach a satisfactory agreement.
+        They discuss the process of signing a release for the seized money and the potential next steps.
+        Jim expresses his willingness to file for bankruptcy if the recovery group is not willing to work with him.
+      `,
+      speakers: [
+        { name: "Jim Klug", percentage: "78%" },
+        { name: "Dawnyell Rangel", percentage: "22%" },
+      ],
+      transcriptions: [
+        {
+          name: "Jim",
+          time: "02:01",
+          chat: "Hello, Dawnyell. Thank you for taking the time to discuss this matter.",
+        },
+        {
+          name: "Dawnyell Rangel",
+          time: "03:31",
+          chat: "We need to discuss the legal actions and their implications.",
+        },
+        {
+          name: "Jim",
+          time: "06:29",
+          chat: "I understand the challenges, but we need a mutually beneficial solution.",
+        },
+        {
+          name: "Dawnyell Rangel",
+          time: "07:15",
+          chat: "Agreed. Let's finalize the conditions for releasing the funds.",
+        },
+      ],
+    },
+  ];
+
+  useEffect(() => {
+    fetchCalls();
+  }, []);
+
   return (
     <Timeline sx={{ padding: 0, margin: "0" }}>
       <TimelineItem>
@@ -75,6 +133,10 @@ export default function TimelineData({
             <Sms />
           ) : iconValue === 3 ? (
             <NoteAlt />
+          ) : iconValue === 5 ? (
+            <IconButton sx={{ backgroundColor: "lightgreen" }}>
+              <CallOutlined />
+            </IconButton>
           ) : (
             <Work />
           )}
@@ -106,6 +168,11 @@ export default function TimelineData({
                 {value}
               </Typography>
             </Card>
+          ) : iconValue === 5 ? (
+            //replace dummyCallLogs with callLogs when data starts coming from api
+            dummyCallLogs?.map((callDetails) => (
+              <ConversationHistory callDetails={callDetails} />
+            ))
           ) : (
             <Card
               sx={{
