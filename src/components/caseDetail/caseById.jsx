@@ -34,6 +34,8 @@ import TimelineData from "./timelineData";
 import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../../constants/appConstants";
 import ScrollbarStyles from "../customScroll";
 import { isEmpty } from "lodash";
+import FinancialAccordion from "./Financial";
+import SettlementAccordion from "./settlementRanges";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -171,7 +173,7 @@ export default function CaseById({
                           color: value ? Colors.SKY_BLUE : "inherit",
                         },
                       }}
-                      label="Debtor"
+                      label="Client"
                       value="Debtor"
                     />
                     <Tab
@@ -473,6 +475,9 @@ export default function CaseById({
                 loading={isPaymentLoading}
                 paymentDetails={paymentDetails}
               />
+
+              {/* <FinancialAccordion />
+              <SettlementAccordion /> */}
               <AboutAccordion
                 caseDetails={caseData}
                 GetCaseDetails={GetCaseDetails}
@@ -575,10 +580,18 @@ export default function CaseById({
                   />
                 ))}
               </AntTabs>
-
-              {filteredLogs?.length > 0 ? (
+              {caseHistoryTabs === 5 ? (
+                <TimelineData
+                  id={id}
+                  date={null}
+                  caseDataId={id}
+                  GetLogsById={GetLogsById}
+                  iconValue={caseHistoryTabs}
+                />
+              ) : filteredLogs?.length > 0 ? (
                 filteredLogs?.map((item, index) => (
                   <TimelineData
+                    id={id}
                     notes={false}
                     value={item}
                     date={null}
@@ -590,6 +603,7 @@ export default function CaseById({
                 ))
               ) : (
                 <TimelineData
+                  id={id}
                   notes={true}
                   value={
                     caseHistoryTabs === 1

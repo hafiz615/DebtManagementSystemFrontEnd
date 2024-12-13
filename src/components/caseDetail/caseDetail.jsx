@@ -126,11 +126,11 @@ function CaseDetail() {
   const [paymentData, setPaymentData] = useState();
   const [statementSummariesLoading, setStatementSummariesLoading] =
     useState(false);
-
   const { id } = useParams();
-  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const emailData = caseData?.debtor?.basicInformation;
-  const tabs = ["All", "Email", "Sms", "Notes", "Case Logs"];
+
+  const tabs = ["All", "Email", "Sms", "Notes", "Case Logs", "Call Logs"];
+
   const filteredLogs = logs?.filter((item) => {
     if (caseHistoryTabs === 0) {
       return item?.Action;

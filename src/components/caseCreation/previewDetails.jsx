@@ -29,7 +29,7 @@ export default function PreviewDetails({
     >
       <Grid item xs={12} sx={{ marginBottom: "0.5rem" }}>
         <BasicCard
-          cardHeading="Debtor Details"
+          cardHeading="Client Details"
           previewDebtorDetails={true}
           debtorOwnDetails={debtorOwnDetails}
           creditorBasicsInfo={creditorBasicsInfo}

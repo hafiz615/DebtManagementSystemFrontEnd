@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useSelector } from "react-redux";
 import InfoIcon from "@mui/icons-material/Info";
+import MuiModels from "../models";
 
 import {
   Grid,
@@ -49,7 +50,6 @@ import {
   formatPurchasedPercentage,
   formatWeeklyBudget,
 } from "../../common";
-import MuiModels from "../models";
 import CheckboxAutocomplete from "../checkboxAutocomplete";
 import { getWeeksRemainingMessage } from "../../common";
 import DataSummaryTable from "../dataSummaryTable";
@@ -603,41 +603,33 @@ export default function SettlementRange({
       creditorAccountTitle,
       creditorId,
     }));
-
   const creditorDetails = [
     {
       label: "Purchase Price",
       value: `${selectedCreditorDetails?.contractDetails?.loan_amount}` || "--",
-      formatCurrency: true,
+      key: "loan_amount",
+      // formatCurrency: true,
     },
     {
       label: "Net Funded Amount",
       value: selectedCreditorDetails?.contractDetails?.funded_amount || "--",
       formatCurrency: true,
+      key: "funded_amount",
     },
 
     {
       label: "Total Receivable",
       value: selectedCreditorDetails?.contractDetails?.payable_amount || "--",
       formatCurrency: true,
+      key: "payable_amount",
     },
-    {
-      label: "Current Balance",
-      value:
-        selectedCreditorDetails?.totalDebt -
-          selectedCreditorDetails?.remainingAmountPaid || "--",
-      formatCurrency: true,
-    },
-    {
-      label: "Break Even",
-      value: selectedCreditorDetails?.breakEven || "--",
-      formatCurrency: true,
-    },
+
     {
       label: "Purchased Percentage",
       value: formatPurchasedPercentage(
         selectedCreditorDetails?.contractDetails?.purchased_percentage
       ),
+      key: "purchased_percentage",
     },
     {
       label: "Current Payment Amount",
@@ -662,6 +654,19 @@ export default function SettlementRange({
               maximumFractionDigits: 2,
             })} (daily)`
           : "--",
+      key: "repayment_amount",
+    },
+    {
+      label: "Break Even",
+      value: selectedCreditorDetails?.breakEven || "--",
+      formatCurrency: true,
+    },
+    {
+      label: "Current Balance",
+      value:
+        selectedCreditorDetails?.totalDebt -
+          selectedCreditorDetails?.remainingAmountPaid || "--",
+      formatCurrency: true,
     },
   ];
 
@@ -1263,20 +1268,58 @@ export default function SettlementRange({
                 rawValue={allData?.percentageReceivableCommission}
               />
             )}
-            {/* <GridItem
-              key="Dummy"
-              title="Dummy Card"
-              tooltip="Dummy Card"
-              value={"Dummy Card" ?? "No Data"}
-              rawValue={"Dummy Card"}
+            <GridItem
+              key="Average monthly profit and profit % excluding payments"
+              title="Avg. Monthly profit excluding payments"
+              tooltip="Average monthly profit and profit % excluding payments"
+              value={
+                allData?.averageMonthlyProfitExcludingPayments
+                  ? `$${formatAmountValue(
+                      allData?.averageMonthlyProfitExcludingPayments
+                    )}`
+                  : "No Data"
+              }
+              rawValue={allData?.averageMonthlyProfitExcludingPayments}
             />
             <GridItem
-              key="Dummy"
-              title="Dummy Card"
-              tooltip="Dummy Card"
-              value={"Dummy Card" ?? "No Data"}
-              rawValue={"Dummy Card"}
-            /> */}
+              key="Average monthly profit and profit % including payments"
+              title="Avg. monthly profit including payments"
+              tooltip="Average monthly profit and profit % including payments"
+              value={
+                allData?.averageMonthlyProfitExcludingPayments
+                  ? `$${formatAmountValue(
+                      allData?.averageMonthlyProfitIncludingPayments
+                    )}`
+                  : "No Data"
+              }
+              rawValue={allData?.averageMonthlyProfitIncludingPayments}
+            />
+            <GridItem
+              key="Current monthly profit and profit % excluding payments"
+              title="Current profit excluding payments"
+              tooltip="Current monthly profit and profit % excluding payments"
+              value={
+                allData?.currentMonthlyProfitExcludingPayments
+                  ? `$${formatAmountValue(
+                      allData?.currentMonthlyProfitExcludingPayments
+                    )}`
+                  : "No Data"
+              }
+              rawValue={allData?.currentMonthlyProfitExcludingPayments}
+            />
+            <GridItem
+              key="Current monthly profit and profit % including payments"
+              title="Current profit including payments"
+              tooltip="Current monthly profit and profit % including payments"
+              value={
+                allData?.currentMonthlyProfitIncludingPayments
+                  ? `$${formatAmountValue(
+                      allData?.currentMonthlyProfitIncludingPayments
+                    )}`
+                  : "No Data"
+              }
+              rawValue={allData?.currentMonthlyProfitIncludingPayments}
+            />
 
             {scores?.Scores && (
               <>
@@ -1589,7 +1632,6 @@ export default function SettlementRange({
                         return null;
                       }
 
-                      // Use the formatCurrencyValue function to format detail.value
                       const formattedValue = (() => {
                         if (
                           detail?.label === "Current Payment Amount" ||
@@ -1635,23 +1677,46 @@ export default function SettlementRange({
                             sx={{
                               display: "flex",
                               alignItems: "center",
+                              justifyContent: "space-between",
+                              marginRight: "0.5rem",
                             }}
                           >
-                            <Typography sx={commonTextStyles}>
-                              {detail?.label}
-                            </Typography>
-                            <Tooltip
-                              title={tooltipContent[detail?.label] || ""}
-                              placement="top"
+                            <div
+                              style={{ display: "flex", alignItems: "center" }}
                             >
-                              <InfoIcon
-                                sx={{
-                                  fontSize: "17px",
-                                  color: Colors.SKY_BLUE,
-                                }}
-                              />
-                            </Tooltip>
+                              <Typography sx={commonTextStyles}>
+                                {detail?.label}
+                              </Typography>
+
+                              <Tooltip
+                                title={tooltipContent[detail?.label] || ""}
+                                placement="top"
+                              >
+                                <InfoIcon
+                                  sx={{
+                                    fontSize: "17px",
+                                    color: Colors.SKY_BLUE,
+                                  }}
+                                />
+                              </Tooltip>
+                            </div>
+                            <div>
+                              {detail?.label !== "Current Balance" &&
+                                detail?.label !== "Break Even" && (
+                                  <div>
+                                    <MuiModels
+                                      width="70vw"
+                                      show="editSettlementContractCard"
+                                      creditorDetails={formattedValue || ""}
+                                      selectedCreditorDetailsKey={detail?.key}
+                                      caseId={selectedCreditorDetails?.caseId}
+                                      getAllRanges={getAllRanges}
+                                    />
+                                  </div>
+                                )}
+                            </div>
                           </Box>
+
                           <Typography
                             sx={{
                               ...commonTextStyles,
