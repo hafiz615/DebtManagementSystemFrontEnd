@@ -1535,3 +1535,13 @@ export const AddManualPayment = async (payload) => {
     return error;
   }
 };
+export const deleteCreditor = async (id) => {
+  try {
+    return await axios.delete(
+      BASE_URL + `/v1/case/deleteCreditor/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
