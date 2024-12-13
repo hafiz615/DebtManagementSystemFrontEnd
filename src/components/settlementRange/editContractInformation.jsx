@@ -6,33 +6,38 @@ import Button from "../button";
 import { UpdateContractDetails } from "../../services/services";
 import { useToast } from "../../toast/toastContext.jsx";
 
-function EditContractInformation({ handleClose, creditorDetails, caseId }) {
-  console.log(creditorDetails, "creditorDetails");
+function EditContractInformation({
+  handleClose,
+  creditorDetails,
+  caseId,
+  selectedCreditorDetailsKey,
+  getAllRanges,
+}) {
   const { showToast } = useToast();
   const [value, setValue] = useState(creditorDetails || "");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (event) => {
     setValue(event.target.value);
   };
 
   const handleUpdate = async () => {
+    setLoading(true);
     const params = {
-      label: creditorDetails?.label || "",
+      label: selectedCreditorDetailsKey || "",
       value: value ?? "",
     };
     const UpdateContract = await UpdateContractDetails(params, caseId);
     if (UpdateContract?.status === 200) {
       showToast(UpdateContract?.data?.message, "success");
+      handleClose();
+      getAllRanges && getAllRanges([], false);
     } else if (UpdateContract?.response?.status === 400) {
       const errorMessage = UpdateContract?.response?.data?.message;
       showToast(errorMessage, "error");
     }
 
-    if (creditorDetails) {
-      creditorDetails = value;
-      console.log("Updated Creditor Details:", creditorDetails);
-    }
-    handleClose();
+    setLoading(false);
   };
 
   return (
@@ -46,7 +51,7 @@ function EditContractInformation({ handleClose, creditorDetails, caseId }) {
         }}
       >
         <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
-          Edit {creditorDetails?.label}
+          Edit Field
         </Typography>
 
         <Close onClick={handleClose} />
@@ -62,7 +67,7 @@ function EditContractInformation({ handleClose, creditorDetails, caseId }) {
             type="text"
             value={value}
             onChange={handleChange}
-            placeholder={`Edit ${creditorDetails?.label ?? ""}`}
+            placeholder="Edit"
             style={{
               backgroundColor: Colors.BG_LIGHT_GRAY,
               height: "2.5rem",
@@ -85,7 +90,7 @@ function EditContractInformation({ handleClose, creditorDetails, caseId }) {
             height="2.5rem"
             marginLeft="1rem"
             onClick={handleUpdate}
-            //   loading={loading}
+            loading={loading}
           />
         </Grid>
       </Grid>

@@ -1490,8 +1490,26 @@ export const GetDailyCashFlow = async (id) => {
 
 export const UpdateContractDetails = async (payload, id) => {
   try {
-    return await axios.put(
+    return await axios.post(
       BASE_URL + `/v1/case/updateContractDetails/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetCalls = async (id) => {
+  try {
+    return await axios.get(BASE_URL + `/v1/case/getCalls/${id}`, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+export const DialCall = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/case/createCall/${id}`,
       payload,
       setHeaders()
     );
@@ -1502,6 +1520,17 @@ export const UpdateContractDetails = async (payload, id) => {
 export const GetAllCasesTasks = async (id) => {
   try {
     return await axios.get(BASE_URL + `/v1/task/getAllTasks`, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+export const AddManualPayment = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/addManualPayment`,
+      payload,
+      setHeaders()
+    );
   } catch (error) {
     return error;
   }

@@ -557,10 +557,18 @@ export default function CaseById({
                   />
                 ))}
               </AntTabs>
-
-              {filteredLogs?.length > 0 ? (
+              {caseHistoryTabs === 5 ? (
+                <TimelineData
+                  id={id}
+                  date={null}
+                  caseDataId={id}
+                  GetLogsById={GetLogsById}
+                  iconValue={caseHistoryTabs}
+                />
+              ) : filteredLogs?.length > 0 ? (
                 filteredLogs?.map((item, index) => (
                   <TimelineData
+                    id={id}
                     notes={false}
                     value={item}
                     date={null}
@@ -572,6 +580,7 @@ export default function CaseById({
                 ))
               ) : (
                 <TimelineData
+                  id={id}
                   notes={true}
                   value={
                     caseHistoryTabs === 1
