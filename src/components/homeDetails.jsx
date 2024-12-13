@@ -40,18 +40,8 @@ function HomeDetails() {
 
   const accordionData = [
     {
-      key: "failedAuthorizations",
-      heading: "Client Failed Authorizations",
-      number: "5",
-    },
-    {
-      key: "failedCaptures",
-      heading: "Client Failed Captures",
-      number: "5",
-    },
-    {
-      key: "successAuthorizations",
-      heading: "Client Successful Authorizations",
+      key: "upcomingPayments",
+      heading: "Client Upcoming Payments",
       number: "4",
     },
     {
@@ -60,14 +50,26 @@ function HomeDetails() {
       number: "4",
     },
     {
+      key: "successAuthorizations",
+      heading: "Client Successful Authorizations",
+      number: "4",
+    },
+
+    {
       key: "successCaptures",
       heading: "Client Successful Captures",
       number: "4",
     },
     {
-      key: "upcomingPayments",
-      heading: "Creditor Upcoming Payments",
-      number: "4",
+      key: "failedAuthorizations",
+      heading: "Client Failed Authorizations",
+      number: "5",
+    },
+
+    {
+      key: "failedCaptures",
+      heading: "Client Failed Captures",
+      number: "5",
     },
   ];
 
@@ -196,7 +198,7 @@ function HomeDetails() {
         rowArray={homeData[data?.key]}
         getHomeData={getHomeData}
         showFailureReason={
-          data?.heading !== "Creditor Upcoming Payments" &&
+          data?.heading !== "Client Upcoming Payments" &&
           data?.heading !== "Client Successful Captures" &&
           data?.heading !== "Client Successful Authorizations" &&
           data?.heading !== "Creditor Successful Payments"
@@ -213,16 +215,16 @@ function HomeDetails() {
 
   const groupOne = accordionData?.filter(
     (data) =>
-      data.heading === "Client Failed Authorizations" ||
+      data.heading === "Client Upcoming Payments" ||
       data.heading === "Client Successful Authorizations" ||
-      data.heading === "Client Successful Captures"
+      data.heading === "Client Failed Authorizations"
   );
 
   const groupTwo = accordionData?.filter(
     (data) =>
-      data.heading === "Client Failed Captures" ||
       data.heading === "Creditor Successful Payments" ||
-      data.heading === "Creditor Upcoming Payments"
+      data.heading === "Client Successful Captures" ||
+      data.heading === "Client Failed Captures"
   );
   return (
     <Grid

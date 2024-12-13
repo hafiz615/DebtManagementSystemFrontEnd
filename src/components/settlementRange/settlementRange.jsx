@@ -203,7 +203,6 @@ export default function SettlementRange({
   selectedCreditorDetails,
   caseData,
 }) {
-  console.log(allData, "allData");
   const caseId = id;
   const [value, setValue] = useState(0);
   const [optionValue, setOptuonValue] = useState(0);
