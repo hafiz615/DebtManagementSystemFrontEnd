@@ -336,6 +336,10 @@ export default function MuiModels({
             sx={{ fontSize: "16px", color: Colors.BLACK, cursor: "pointer" }}
           />
         </IconButton>
+      ) : show === "deleteFile" ?  (
+        <IconButton onClick={() => handleOpen()} color="error">
+          <Delete />
+        </IconButton>
       ) : show === "CaseCustomField" || buttonName === "payments" ? (
         <IconButton
           onClick={() => {

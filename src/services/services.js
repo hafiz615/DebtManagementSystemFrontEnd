@@ -1541,7 +1541,18 @@ export const deleteCreditor = async (id) => {
       BASE_URL + `/v1/case/deleteCreditor/${id}`,
       setHeaders()
     );
+
   } catch (error) {
     return error;
   }
-};
+}
+export const handleDeleteFile = async (itemKey, caseDataId) => {
+  try {
+    return await axios.delete(`${BASE_URL}/v1/case/deleteFile/${caseDataId}`, {
+      ...setHeaders(),
+      data: { key: itemKey },
+    });
+  } catch (error) {
+    return error;
+  }
+}

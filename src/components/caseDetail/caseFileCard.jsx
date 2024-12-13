@@ -1,18 +1,40 @@
-import React, { useState } from "react";
-import { Grid, Box, Button, Checkbox } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Grid, Box, Button, Checkbox} from "@mui/material";
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import { RemoveRedEye } from "@mui/icons-material";
 import ScrollbarStyles from "../customScroll";
+import { handleDeleteFile } from "../../services/services";
+import { useToast } from "../../toast/toastContext";
+import Prompt from "../prompt";
 
 function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
   const [url, setUrl] = useState("");
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const { showToast } = useToast();
+  const [documents, setDocuments] = useState(caseData?.debtor?.documents);
+  const [fileToDelete, setFileToDelete] = useState(null);
+
 
   const handleFileView = (url) => {
     setUrl(url);
     setIsViewerOpen(true);
+  };
+
+  useEffect(() => {}, [documents.length]);
+  const deleteHandler = async () => {
+    const response = await handleDeleteFile(fileToDelete?.key, caseDataId);
+
+    if (response.status === 200) {
+      const filterDoc = documents.filter(
+        (doc) => doc?.key !== fileToDelete?.key
+      );
+      setDocuments(filterDoc);
+      showToast(response?.data?.message, "success");
+    } else {
+      showToast("An error occurred while deleting the file", "error");
+    }
   };
 
   const handleCloseViewer = () => {
@@ -33,7 +55,6 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
     });
   };
 
-  const documents = caseData?.debtor?.documents || [];
   const mcaFiles = documents?.filter((doc) =>
     doc?.originalFileName?.toLowerCase().includes("mca")
   );
@@ -82,7 +103,7 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
               >
                 {item?.originalFileName}
               </span>
-              <Grid item sx={{ display: "flex" }}>
+              <Grid item sx={{ display: "flex", alignItems: "center" }}>
                 <Checkbox
                   sx={{
                     "&.Mui-checked": {
@@ -99,6 +120,21 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
                 <RemoveRedEye
                   sx={{ color: Colors.SKY_BLUE, cursor: "pointer" }}
                   onClick={() => handleFileView(item?.url)}
+                />
+                {/* <IconButton
+                  onClick={() => handleClickOpen(item)} 
+                  color="error"
+                >
+                  <Delete />
+                  
+                </IconButton> */}
+                <Prompt
+                  text="Are you sure you want to delete this file"
+                  heading="Delete File"
+                  deleting="delete File"
+                  deleteHandler={() => deleteHandler()}
+                  item={item}
+                  setFileToDelete={setFileToDelete}
                 />
               </Grid>
             </Grid>
