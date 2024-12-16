@@ -1,15 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { isEmpty } from "lodash";
 import { useParams } from "react-router-dom";
 import { Colors } from "../config/default";
-import { Typography, Box, IconButton } from "@mui/material";
+import { Typography, Box, IconButton, Checkbox } from "@mui/material";
 import { formatDollarAmount } from "../common";
 import { useToast } from "../toast/toastContext";
 import Prompt from "./prompt";
 import { RetryAuth, RetryCapture, SendPayment } from "../services/services";
 import { useSelector } from "react-redux";
 import { Paid } from "@mui/icons-material";
-import MuiModels from "./models";
 
 function TransactionRow({
   data,
@@ -23,10 +22,11 @@ function TransactionRow({
   );
   const { id } = useParams();
   const { showToast } = useToast();
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = date.getDate();
-    const month = date.getMonth() + 1; // Months are zero-indexed
+    const month = date.getMonth() + 1;
     const year = date.getFullYear();
 
     return `${month}/${day}/${year}`;
@@ -35,6 +35,7 @@ function TransactionRow({
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
+
   const handleRetry = async (item) => {
     let response;
     if (item?.type === "authorization" && item?.authorized === "Failed") {
@@ -54,12 +55,6 @@ function TransactionRow({
     }
   };
 
-  const typographyStyle = {
-    fontSize: "13px",
-    fontFamily: "Nunito",
-    fontWeight: "500",
-    width: "25%",
-  };
   const sendPaymentCreditor = async (id) => {
     const sendPaymentRes = await SendPayment(id);
     if (sendPaymentRes?.status === 200) {
@@ -68,6 +63,13 @@ function TransactionRow({
       const errorMessage = sendPaymentRes?.response?.data?.message;
       showToast(errorMessage, "error");
     }
+  };
+
+  const typographyStyle = {
+    fontSize: "13px",
+    fontFamily: "Nunito",
+    fontWeight: "500",
+    width: "25%",
   };
 
   return (
@@ -92,6 +94,7 @@ function TransactionRow({
             : item?.type === "payment" && item?.captured === "Failed"
             ? Colors.ORANGE_COLOR
             : Colors.SKY_BLUE;
+
         return (
           <div
             key={index}
@@ -115,15 +118,6 @@ function TransactionRow({
                 ? "Capture"
                 : capitalizeFirstLetter(item?.type) || "-"}
             </p>
-            {heading === "Upcoming" && (
-              <MuiModels
-                show="AddPayments"
-                width="55vw"
-                amount={item?.amount}
-                paymentId={item?.id}
-                caseId={id}
-              />
-            )}
 
             <p style={typographyStyle}>
               {(item?.type === "authorization" &&
