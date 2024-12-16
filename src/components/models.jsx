@@ -336,7 +336,7 @@ export default function MuiModels({
             sx={{ fontSize: "16px", color: Colors.BLACK, cursor: "pointer" }}
           />
         </IconButton>
-      ) : show === "deleteFile" ?  (
+      ) : show === "deleteFile" ? (
         <IconButton onClick={() => handleOpen()} color="error">
           <Delete />
         </IconButton>
@@ -469,17 +469,15 @@ export default function MuiModels({
           />
         </IconButton>
       ) : show === "AddPayments" ? (
-        <Tooltip title="Add Manual Payments" placement="top" arrow>
-          <IconButton
-            onClick={() => {
-              handleOpen();
-            }}
-          >
-            <LocalAtm
-              sx={{ fontSize: "16px", color: Colors.BLACK, cursor: "pointer" }}
-            />
-          </IconButton>
-        </Tooltip>
+        <TextButton
+          buttonText="Add Manual Payments"
+          height="2.5rem"
+          width="12rem"
+          onClick={handleOpen}
+          disabled={disabled}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
       ) : button === "delete" ? (
         <IconButton
           onClick={() => {
@@ -979,10 +977,10 @@ export default function MuiModels({
             <PaynoteForm handleClose={handleClose} caseData={caseData} />
           ) : show === "AddPayments" ? (
             <PaymentCardPopup
-              amountValue={amount}
               handleClose={handleClose}
-              paymentId={paymentId}
               caseId={caseId}
+              debtorId={debtorId}
+              GetCaseDetails={GetCaseDetails}
             />
           ) : show === "extractFiles" ? (
             <ExtractFieldPopup

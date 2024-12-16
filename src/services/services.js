@@ -1541,11 +1541,10 @@ export const deleteCreditor = async (id) => {
       BASE_URL + `/v1/case/deleteCreditor/${id}`,
       setHeaders()
     );
-
   } catch (error) {
     return error;
   }
-}
+};
 export const handleDeleteFile = async (itemKey, caseDataId) => {
   try {
     return await axios.delete(`${BASE_URL}/v1/case/deleteFile/${caseDataId}`, {
@@ -1555,4 +1554,14 @@ export const handleDeleteFile = async (itemKey, caseDataId) => {
   } catch (error) {
     return error;
   }
-}
+};
+export const GetAllUpcomingPayments = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/payment/getAllUpcomingPayments/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

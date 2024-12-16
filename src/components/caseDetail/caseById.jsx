@@ -105,6 +105,7 @@ export default function CaseById({
   const navigate = useNavigate();
   const [deleting, setDeleting] = useState(false);
   const [callLogs, setCallLogs] = useState([]);
+
   const fetchCalls = async () => {
     const res = await GetCalls(id);
     if (res?.status === 200) {
@@ -258,14 +259,23 @@ export default function CaseById({
                     />
                   )}
                   {value === "Transactions" && (
-                    <MuiModels
-                      width="70vw"
-                      show="payments"
-                      remainingAmount={caseData?.remaining.toString()}
-                      data={caseData}
-                      GetCaseDetails={GetCaseDetails}
-                      GetCasePaymentDetails={GetCasePaymentDetails}
-                    />
+                    <div style={{ display: "flex", gap: "1rem" }}>
+                      <MuiModels
+                        show="AddPayments"
+                        width="55vw"
+                        caseId={id}
+                        debtorId={caseData?.debtor?._id}
+                        GetCaseDetails={GetCaseDetails}
+                      />
+                      <MuiModels
+                        width="70vw"
+                        show="payments"
+                        remainingAmount={caseData?.remaining.toString()}
+                        data={caseData}
+                        GetCaseDetails={GetCaseDetails}
+                        GetCasePaymentDetails={GetCasePaymentDetails}
+                      />
+                    </div>
                   )}
                   {value === "Creditor" && (
                     <Grid
