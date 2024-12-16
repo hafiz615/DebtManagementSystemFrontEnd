@@ -338,19 +338,43 @@ export default function DebtorDetailsCards({
                       ? "Business Type"
                       : formatKeys(key)}
                   </Typography>
-                  <Tooltip title={value} placement="top-end">
-                    <Typography
-                      sx={{
-                        fontSize: smallScreen ? "11px" : "13px",
-                        color: Colors.DIM_LIGHT_GRAY,
-                        fontFamily: "Nunito",
-                        fontWeight: "500",
-                        textAlign: "right",
-                      }}
-                    >
-                      {getTruncatedText(formatValue(value), 15)}
-                    </Typography>
-                  </Tooltip>
+                  {key === "phone" ? (
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <MuiModels
+                        show="dialPad"
+                        caseId={caseDataId}
+                        data={value ? `+1${value}` : ""}
+                        width={300}
+                      />
+                      <Tooltip title={value} placement="top-end">
+                        <Typography
+                          sx={{
+                            fontSize: smallScreen ? "11px" : "13px",
+                            color: Colors.DIM_LIGHT_GRAY,
+                            fontFamily: "Nunito",
+                            fontWeight: "500",
+                            textAlign: "right",
+                          }}
+                        >
+                          {getTruncatedText(formatValue(value), 15)}
+                        </Typography>
+                      </Tooltip>
+                    </div>
+                  ) : (
+                    <Tooltip title={value} placement="top-end">
+                      <Typography
+                        sx={{
+                          fontSize: smallScreen ? "11px" : "13px",
+                          color: Colors.DIM_LIGHT_GRAY,
+                          fontFamily: "Nunito",
+                          fontWeight: "500",
+                          textAlign: "right",
+                        }}
+                      >
+                        {getTruncatedText(formatValue(value), 15)}
+                      </Typography>
+                    </Tooltip>
+                  )}
                 </div>
               );
             }
