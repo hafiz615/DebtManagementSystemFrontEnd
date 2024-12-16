@@ -193,19 +193,43 @@ export default function CreditorsDetailCards({
               >
                 {item?.label}
               </Typography>
-              <Tooltip title={item?.value || ""} placement="top-end">
-                <Typography
-                  sx={{
-                    fontSize: smallScreen ? "11px" : "13px",
-                    color: Colors.DIM_LIGHT_GRAY,
-                    fontFamily: "Nunito",
-                    fontWeight: "500",
-                    textAlign: "right",
-                  }}
-                >
-                  {getTruncatedText(formatValue(item?.value), 15) || "--"}
-                </Typography>
-              </Tooltip>
+              {item?.label === "Phone #" ? (
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <MuiModels
+                    show="dialPad"
+                    caseId={caseData?._id}
+                    data={item?.value ? `+1${item?.value}` : ""}
+                    width={300}
+                  />
+                  <Tooltip title={item?.value || ""} placement="top-end">
+                    <Typography
+                      sx={{
+                        fontSize: smallScreen ? "11px" : "13px",
+                        color: Colors.DIM_LIGHT_GRAY,
+                        fontFamily: "Nunito",
+                        fontWeight: "500",
+                        textAlign: "right",
+                      }}
+                    >
+                      {getTruncatedText(formatValue(item?.value), 15) || "--"}
+                    </Typography>
+                  </Tooltip>
+                </div>
+              ) : (
+                <Tooltip title={item?.value || ""} placement="top-end">
+                  <Typography
+                    sx={{
+                      fontSize: smallScreen ? "11px" : "13px",
+                      color: Colors.DIM_LIGHT_GRAY,
+                      fontFamily: "Nunito",
+                      fontWeight: "500",
+                      textAlign: "right",
+                    }}
+                  >
+                    {getTruncatedText(formatValue(item?.value), 15) || "--"}
+                  </Typography>
+                </Tooltip>
+              )}
             </div>
           ))}
         </>

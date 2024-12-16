@@ -1565,3 +1565,10 @@ export const GetAllUpcomingPayments = async (id) => {
     return error;
   }
 };
+export const GetCallToken = async () => {
+  try {
+    return await axios.get(BASE_URL + `/v1/case/token`, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
