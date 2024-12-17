@@ -186,7 +186,7 @@ export default function DebtorDetailsCards({
               justifyContent: "end",
             }}
           >
-            <Dropdown
+            {/* <Dropdown
               menuWidth="5rem"
               menuItems={paymentGateways}
               placeholder="Type"
@@ -195,7 +195,7 @@ export default function DebtorDetailsCards({
               width="5rem"
               selectedValue={selectedValue}
               setSelectedValue={setSelectedValue}
-            />
+            /> */}
             <PaymentCardDetails setConnectPayment={setConnectPayment} />
             <MuiModels
               show="debtorDetail"
