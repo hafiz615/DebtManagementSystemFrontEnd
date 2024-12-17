@@ -335,7 +335,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
                     {payments?.status}
                   </Typography>
                   <Typography sx={paymentStyling}>
-                    {payments?.creditorName}
+                    {payments?.creditorName || "-"}
                   </Typography>
                 </div>
               ))
