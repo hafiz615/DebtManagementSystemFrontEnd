@@ -151,15 +151,31 @@ export default function CreditorsDetailCards({
             >
               {creditorPeronsalDetails}
             </p>
-            <MuiModels
-              show="creditorDetail"
-              button="create"
-              iconColor={Colors.BLACK}
-              width="80vw"
-              height="75vh"
-              caseData={caseData}
-              GetCaseDetails={GetCaseDetails}
-            />
+            <div
+              style={{
+                display: "flex",
+                alignContent: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <MuiModels
+                show="showCreditorSync"
+                iconColor={Colors.BLACK}
+                caseData={caseData}
+                GetCaseDetails={GetCaseDetails}
+                height="20vh"
+              />
+
+              <MuiModels
+                show="creditorDetail"
+                button="create"
+                iconColor={Colors.BLACK}
+                width="80vw"
+                height="75vh"
+                caseData={caseData}
+                GetCaseDetails={GetCaseDetails}
+              />
+            </div>
           </div>
           {[
             {
