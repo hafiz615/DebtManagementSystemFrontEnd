@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { Grid } from "@mui/material";
+import { Grid, Tooltip } from "@mui/material";
 import { Colors } from "../../config/default";
 import Dropdown from "./../dropdown";
 import AmountTextField from "../amountTextField";
@@ -130,41 +130,47 @@ export default function PaymentFields({
           />
         </Grid>
         <Grid item xs={12} md={4} lg={3}>
-          <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              color: Colors.DARK_GRAY,
-              marginLeft: "1rem",
-            }}
+          <Tooltip
+            title="Current balance will be calculated based on total receivable - paid amount"
+            placement="top"
           >
-            Current Balance
-          </Typography>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "500",
+                color: Colors.DARK_GRAY,
+                marginLeft: "1rem",
+              }}
+            >
+              Current Balance
+            </Typography>
 
-          <AmountTextField
-            marginRight={smallScreen ? "0rem" : "2rem"}
-            value={
-              parseFloat(
-                thisCaseData?.totalDebt?.toFixed(2) -
-                  thisCaseData?.paidAmount?.toFixed(2)
-              ) || parseFloat(thisCaseData?.remaining?.toFixed(2))
-            }
-            onChange={(e) =>
-              handleCaseDataChange(
-                caseIndex,
-                "remaining",
-                parseFloat(e.target.value)
-              )
-            }
-            onKeyDown={handleNumberInput}
-            border={
-              thisCaseData?.remaining === 0
-                ? "2px solid red"
-                : "auto" && hasError("remaining") && showErrors
-                ? "2px solid red"
-                : "none !important"
-            }
-          />
+            <AmountTextField
+              readonly={true}
+              marginRight={smallScreen ? "0rem" : "2rem"}
+              value={
+                thisCaseData?.paidAmount
+                  ? thisCaseData?.totalDebt?.toFixed(2) -
+                    thisCaseData?.paidAmount?.toFixed(2)
+                  : thisCaseData?.totalDebt?.toFixed(2)
+              }
+              onChange={(e) =>
+                handleCaseDataChange(
+                  caseIndex,
+                  "remaining",
+                  parseFloat(e.target.value)
+                )
+              }
+              onKeyDown={handleNumberInput}
+              border={
+                thisCaseData?.remaining === 0
+                  ? "2px solid red"
+                  : "auto" && hasError("remaining") && showErrors
+                  ? "2px solid red"
+                  : "none !important"
+              }
+            />
+          </Tooltip>
         </Grid>
         <Grid item xs={12} md={4} lg={3}>
           <Typography
