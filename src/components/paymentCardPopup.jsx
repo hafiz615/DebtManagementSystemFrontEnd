@@ -16,6 +16,7 @@ import AmountTextField from "./amountTextField";
 import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../constants/appConstants";
 import { formatDollarAmount } from "../common";
 import ScrollbarStyles from "./customScroll";
+import { Close } from "@mui/icons-material";
 
 const paymentStyling = {
   fontFamily: "Nunito",
@@ -127,13 +128,21 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
 
   return (
     <Grid item xs={12}>
-      <Grid item>
+      <Grid
+        item
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          cursor: "pointer",
+        }}
+      >
         <Typography
           variant="h6"
           sx={{ fontFamily: "Nunito", mb: "1rem", fontWeight: "600" }}
         >
           Payment Details
         </Typography>
+        <Close onClick={handleClose} />
       </Grid>
       <Grid
         xs={12}
@@ -306,6 +315,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
             >
               Upcoming Payments
             </Typography>
+
             {upcomingPayments?.length > 0 ? (
               upcomingPayments?.map((payments, index) => (
                 <div
