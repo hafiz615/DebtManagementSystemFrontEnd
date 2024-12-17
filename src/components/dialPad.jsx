@@ -8,7 +8,7 @@ import "react-phone-input-2/lib/style.css";
 import { GetCallToken } from "../services/services";
 import { Device } from "@twilio/voice-sdk";
 
-const DialPad = ({ data, handleClose }) => {
+const DialPad = ({ data, caseId, handleClose }) => {
   const [phoneNumber, setPhoneNumber] = useState(data || "");
   const [isCalling, setIsCalling] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
@@ -74,7 +74,7 @@ const DialPad = ({ data, handleClose }) => {
       return;
     }
 
-    const params = { To: phoneNumber, record: true };
+    const params = { To: phoneNumber, record: true, id: caseId };
     log(`Attempting to call ${params.To}...`);
     setIsCalling(true);
 
@@ -92,6 +92,7 @@ const DialPad = ({ data, handleClose }) => {
       log("Call disconnected.");
       // await fetchRecording();
       endCall();
+      handleClose();
     });
 
     newCall.on("cancel", () => {
