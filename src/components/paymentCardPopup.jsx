@@ -332,7 +332,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
                     {formatDollarAmount(payments?.amount) || "-"}
                   </Typography>
                   <Typography sx={paymentStyling}>
-                    {payments?.status}
+                    {payments?.status || "-"}
                   </Typography>
                   <Typography sx={paymentStyling}>
                     {payments?.creditorName || "-"}
