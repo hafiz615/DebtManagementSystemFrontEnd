@@ -402,10 +402,10 @@ export const truncateText = (text, length) => {
   return text;
 };
 export const formatPurchasedPercentage = (value) => {
-  const match = value?.toString().match(/[\d.]+%/);
-  return match ? match[0] : "0%";
+  if (!value) return "0%";
+  const numericValue = parseFloat(value); // Extracts the number
+  return isNaN(numericValue) ? "0%" : `${numericValue}%`;
 };
-
 const generatePDF = (data, lumpSumpData, checkboxState) => {
   const {
     creditors,
@@ -456,7 +456,7 @@ const generatePDF = (data, lumpSumpData, checkboxState) => {
           debtor?.basicInformation?.zipCode || "N/A"
         }`,
       ],
-      ["Monthly Budget", `$${debtor?.basicInformation?.weeklyBudget || 0}`],
+      ["Weekly Budget", `$${debtor?.basicInformation?.weeklyBudget || 0}`],
       ["Commission Percentage", `${debtor?.commissionPercentage || 0}%`],
     ];
 
@@ -476,9 +476,9 @@ const generatePDF = (data, lumpSumpData, checkboxState) => {
     currentY += 10;
 
     const settlementRangeSummary = [
-      ["Monthly Profit", formatCurrency(settlementRange?.weekly_profit) || 0],
+      ["Weekly Profit", formatCurrency(settlementRange?.weekly_profit) || 0],
       [
-        "Monthly True Revenue",
+        "Weekly True Revenue",
         formatCurrency(settlementRange?.weekly_true_revenue) || 0,
       ],
       ["Profitability", formatPercentage(settlementRange?.profitability) || 0],
@@ -712,8 +712,8 @@ const generatePDF = (data, lumpSumpData, checkboxState) => {
       head: [
         [
           "Creditors",
-          "Monthly Budget %",
-          "Monthly True Revenue",
+          "Weekly Budget %",
+          "Weekly True Revenue",
           "New Default Risk",
         ],
       ],
@@ -751,8 +751,8 @@ const generatePDF = (data, lumpSumpData, checkboxState) => {
       head: [
         [
           "Creditors",
-          "Monthly Budget %",
-          "Monthly True Revenue",
+          "Weekly Budget %",
+          "Weekly True Revenue",
           "New Default Risk",
         ],
       ],

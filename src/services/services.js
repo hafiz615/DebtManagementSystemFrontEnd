@@ -1572,3 +1572,24 @@ export const GetCallToken = async () => {
     return error;
   }
 };
+export const GetCreditorSyncEmail = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/creditor/getCreditorSyncEmail/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const SyncPaynoteCreditor = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/creditor/syncPaynoteCreditor/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

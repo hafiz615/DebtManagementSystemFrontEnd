@@ -72,7 +72,7 @@ export default function SettlementCards({
   ];
 
   const rangeNames = [
-    { label: "Settlement Range", tooltip: "Suggested monthly payment amount" },
+    { label: "Settlement Range", tooltip: "Suggested Weekly payment amount" },
     {
       label: "Commission Range",
       tooltip: "Amount that will be saved as commission",
@@ -82,15 +82,15 @@ export default function SettlementCards({
       tooltip: "Clients risk score with this payment plan",
     },
     {
-      label: "Monthly Budget %",
-      tooltip: "Settlement shown as percentage of monthly budget",
+      label: "Weekly Budget %",
+      tooltip: "Settlement shown as percentage of Weekly budget",
     },
     {
-      label: "Monthly True Revenue %",
-      tooltip: "Settlement shown as percentage of monthly true revenue",
+      label: "Weekly True Revenue %",
+      tooltip: "Settlement shown as percentage of Weekly true revenue",
     },
     {
-      label: "Months Till Paid",
+      label: "Weeks Till Paid",
       tooltip: "Number of months to complete payment",
     },
   ];
@@ -109,8 +109,8 @@ export default function SettlementCards({
     !breakEven;
 
   const excludedLabelsStrategy1 = [
-    "Monthly Budget %",
-    "Monthly True Revenue %",
+    "Weekly Budget %",
+    "Weekly True Revenue %",
     "Commission Range",
     "New Default Risk",
   ];
@@ -118,13 +118,13 @@ export default function SettlementCards({
   const excludedLabelsStrategy3 = [
     "Settlement Range",
     "Commission Range",
-    "Monthly Budget %",
-    "Months Till Paid",
+    "Weekly Budget %",
+    "Weeks Till Paid",
   ];
 
   if (scoresBackend) {
     excludedLabelsStrategy3.push(
-      ...["New Default Risk", "Monthly True Revenue %"]
+      ...["New Default Risk", "Weekly True Revenue %"]
     );
   }
 
@@ -272,7 +272,7 @@ export default function SettlementCards({
                       {!(
                         strategy === "strategy3" &&
                         (rangeNames[index]?.label === "New Default Risk" ||
-                          rangeNames[index]?.label === "Monthly True Revenue %")
+                          rangeNames[index]?.label === "Weekly True Revenue %")
                       ) && (
                         <div
                           style={{
@@ -301,8 +301,8 @@ export default function SettlementCards({
                                       item?.["recommendation 1"]?.["max"] * 0.2
                                   ).toFixed(2)}`
                                 : ""
-                              : rangeNames[index]?.label === "Months Till Paid"
-                              ? rangeNames[index]?.label === "Months Till Paid"
+                              : rangeNames[index]?.label === "Weeks Till Paid"
+                              ? rangeNames[index]?.label === "Weeks Till Paid"
                                 ? item?.[weeksTillPaidTitle]?.["max"] < 0
                                   ? Math.round(
                                       item?.[weeksTillPaidTitle]?.["max"] +
@@ -344,7 +344,7 @@ export default function SettlementCards({
                           strategy === "strategy3" &&
                           (rangeNames[index]?.label === "New Default Risk" ||
                             rangeNames[index]?.label ===
-                              "Monthly True Revenue %")
+                              "Weekly True Revenue %")
                         ) && (
                           <div
                             style={{
@@ -359,7 +359,7 @@ export default function SettlementCards({
                           </div>
                         )}
                         <div style={textStyles}>
-                          {rangeNames[index]?.label === "Months Till Paid"
+                          {rangeNames[index]?.label === "Weeks Till Paid"
                             ? item?.[weeksTillPaidTitle]?.["max"] ||
                               item?.[weeksTillPaidTitle][1]
                             : rangeNames[index]?.label === "New Default Risk"

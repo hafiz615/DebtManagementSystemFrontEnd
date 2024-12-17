@@ -58,7 +58,6 @@ import StatementSummaryAccordion from "../statementSummaryAccordion";
 import DebtorUploadedFiles from "../debtorUploadedFiles";
 import TransactionHistory from "../transactionHistory";
 import CashFlowPercentage from "./cashFlowPercentage";
-import { display } from "@mui/system";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -154,7 +153,10 @@ const GridItem = ({ title, value, rawValue, tooltip }) => (
     <Typography
       sx={{
         ...commonTextStyles,
-        color: isNegative(rawValue) ? Colors.ORANGE_COLOR : Colors.SKY_BLUE,
+        color:
+          isNegative(rawValue) || isNegative(rawValue?.value) // Check both conditions
+            ? Colors.ORANGE_COLOR // Set orange for negative values
+            : Colors.SKY_BLUE, // Default to SKY_BLUE
       }}
     >
       {value}
@@ -1273,49 +1275,71 @@ export default function SettlementRange({
               title="Avg. Monthly profit excluding payments"
               tooltip="Average monthly profit and profit % excluding payments"
               value={
-                allData?.averageMonthlyProfitExcludingPayments
+                allData?.averageMonthlyProfitExcludingPayments?.value !==
+                  undefined &&
+                allData?.averageMonthlyProfitExcludingPayments?.percentage !==
+                  undefined
                   ? `$${formatAmountValue(
-                      allData?.averageMonthlyProfitExcludingPayments
-                    )}`
+                      allData?.averageMonthlyProfitExcludingPayments.value
+                    )}  (${allData?.averageMonthlyProfitExcludingPayments.percentage.toFixed(
+                      2
+                    )}%)`
                   : "No Data"
               }
               rawValue={allData?.averageMonthlyProfitExcludingPayments}
             />
             <GridItem
               key="Average monthly profit and profit % including payments"
-              title="Avg. monthly profit including payments"
+              title="Avg. Monthly profit including payments"
               tooltip="Average monthly profit and profit % including payments"
               value={
-                allData?.averageMonthlyProfitExcludingPayments
+                allData?.averageMonthlyProfitIncludingPayments?.value !==
+                  undefined &&
+                allData?.averageMonthlyProfitIncludingPayments?.percentage !==
+                  undefined
                   ? `$${formatAmountValue(
-                      allData?.averageMonthlyProfitIncludingPayments
-                    )}`
+                      allData?.averageMonthlyProfitIncludingPayments.value
+                    )}  (${allData?.averageMonthlyProfitIncludingPayments.percentage.toFixed(
+                      2
+                    )}%)`
                   : "No Data"
               }
               rawValue={allData?.averageMonthlyProfitIncludingPayments}
             />
+
             <GridItem
               key="Current monthly profit and profit % excluding payments"
               title="Current profit excluding payments"
               tooltip="Current monthly profit and profit % excluding payments"
               value={
-                allData?.currentMonthlyProfitExcludingPayments
+                allData?.currentMonthlyProfitExcludingPayments?.value !==
+                  undefined &&
+                allData?.currentMonthlyProfitExcludingPayments?.percentage !==
+                  undefined
                   ? `$${formatAmountValue(
-                      allData?.currentMonthlyProfitExcludingPayments
-                    )}`
+                      allData?.currentMonthlyProfitExcludingPayments.value
+                    )}  (${allData?.currentMonthlyProfitExcludingPayments.percentage.toFixed(
+                      2
+                    )}%)`
                   : "No Data"
               }
               rawValue={allData?.currentMonthlyProfitExcludingPayments}
             />
+
             <GridItem
               key="Current monthly profit and profit % including payments"
               title="Current profit including payments"
               tooltip="Current monthly profit and profit % including payments"
               value={
-                allData?.currentMonthlyProfitIncludingPayments
+                allData?.currentMonthlyProfitIncludingPayments?.value !==
+                  undefined &&
+                allData?.currentMonthlyProfitIncludingPayments?.percentage !==
+                  undefined
                   ? `$${formatAmountValue(
-                      allData?.currentMonthlyProfitIncludingPayments
-                    )}`
+                      allData?.currentMonthlyProfitIncludingPayments.value
+                    )}  (${allData?.currentMonthlyProfitIncludingPayments.percentage.toFixed(
+                      2
+                    )}%)`
                   : "No Data"
               }
               rawValue={allData?.currentMonthlyProfitIncludingPayments}
@@ -1547,7 +1571,7 @@ export default function SettlementRange({
                     fontWeight: "600",
                     height: "3.5rem",
                   }}
-                  label="Clients Monthly Budget"
+                  label="Clients Weekly Budget"
                 />
 
                 <AntTab
@@ -1660,6 +1684,7 @@ export default function SettlementRange({
                           "The percentage of the loan amount that has been repaid.",
                         "Current Payment Amount":
                           "The initial amount borrowed before any repayments.",
+                        "Payment Frequency": "Payment Frequency.",
                       };
 
                       return (
@@ -1702,10 +1727,10 @@ export default function SettlementRange({
                             </div>
                             <div>
                               {detail?.label !== "Current Balance" &&
-                                detail?.label !== "Break Even" && (
+                                detail?.label !== "Break Even" &&
+                                detail?.label !== "Payment Frequency" && (
                                   <div>
                                     <MuiModels
-                                      width="70vw"
                                       show="editSettlementContractCard"
                                       creditorDetails={formattedValue || ""}
                                       selectedCreditorDetailsKey={detail?.key}

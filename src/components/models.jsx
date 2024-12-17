@@ -35,6 +35,7 @@ import {
   Refresh,
   LocalAtm,
   Phone,
+  Sync,
 } from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
@@ -62,6 +63,7 @@ import TransactionHistory from "./transactionHistory";
 import PaymentCardPopup from "./paymentCardPopup";
 import DialPad from "./dialPad";
 import EditContractInformation from "./settlementRange/editContractInformation";
+import CreditorSync from "./caseDetail/creditorSync";
 
 export default function MuiModels({
   buttonName,
@@ -316,6 +318,18 @@ export default function MuiModels({
             sx={{ color: Colors.DARK_GRAY, fontSize: iconSize || "16px" }}
           />
         </IconButton>
+      ) : show === "showCreditorSync" ? (
+        <Tooltip title="Sync Paynote Creditor" placement="top-end">
+          <IconButton
+            onClick={() => {
+              handleOpen();
+            }}
+          >
+            <Sync
+              sx={{ color: Colors.DARK_GRAY, fontSize: iconSize || "16px" }}
+            />
+          </IconButton>
+        </Tooltip>
       ) : show === "editAbout" ? (
         <IconButton
           onClick={() => {
@@ -1014,6 +1028,12 @@ export default function MuiModels({
             <TransactionHistory handleClose={handleClose} data={data} />
           ) : show === "dialPad" ? (
             <DialPad caseId={caseId} data={data} handleClose={handleClose} />
+          ) : show === "showCreditorSync" ? (
+            <CreditorSync
+              handleClose={handleClose}
+              caseData={caseData}
+              GetCaseDetails={GetCaseDetails}
+            />
           ) : (
             ""
           )}
