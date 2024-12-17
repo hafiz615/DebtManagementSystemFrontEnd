@@ -317,38 +317,41 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
             </Typography>
 
             {upcomingPayments?.length > 0 ? (
-              upcomingPayments?.map((payments, index) => (
-                <div
-                  style={{
-                    display: "flex",
-                    width: "100%",
-                    alignItems: "center",
-                  }}
-                >
-                  <Checkbox
-                    checked={checkboxStates[index] || false}
-                    onChange={() => handleCheckboxChange(index, payments)}
-                    sx={{
-                      color: Colors.SKY_BLUE,
-                      "&.Mui-checked": {
-                        color: Colors.SKY_BLUE,
-                      },
+              upcomingPayments
+                ?.sort((a, b) => new Date(a?.dueDate) - new Date(b?.dueDate))
+                ?.map((payments, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      display: "flex",
+                      width: "100%",
+                      alignItems: "center",
                     }}
-                  />
-                  <Typography sx={paymentStyling}>
-                    {formatDate(payments?.dueDate) || "-"}
-                  </Typography>
-                  <Typography sx={paymentStyling}>
-                    {formatDollarAmount(payments?.amount) || "-"}
-                  </Typography>
-                  <Typography sx={paymentStyling}>
-                    {payments?.status || "-"}
-                  </Typography>
-                  <Typography sx={paymentStyling}>
-                    {payments?.creditorName || "-"}
-                  </Typography>
-                </div>
-              ))
+                  >
+                    <Checkbox
+                      checked={checkboxStates[index] || false}
+                      onChange={() => handleCheckboxChange(index, payments)}
+                      sx={{
+                        color: Colors.SKY_BLUE,
+                        "&.Mui-checked": {
+                          color: Colors.SKY_BLUE,
+                        },
+                      }}
+                    />
+                    <Typography sx={paymentStyling}>
+                      {formatDate(payments?.dueDate) || "-"}
+                    </Typography>
+                    <Typography sx={paymentStyling}>
+                      {formatDollarAmount(payments?.amount) || "-"}
+                    </Typography>
+                    <Typography sx={paymentStyling}>
+                      {payments?.status || "-"}
+                    </Typography>
+                    <Typography sx={paymentStyling}>
+                      {payments?.creditorName || "-"}
+                    </Typography>
+                  </div>
+                ))
             ) : (
               <Typography sx={{ width: "100%", textAlign: "center" }}>
                 No Upcoming Payments

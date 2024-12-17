@@ -118,7 +118,7 @@ function TransactionRow({
                 ? "Capture"
                 : capitalizeFirstLetter(item?.type) || "-"}
             </p>
-
+            <p>{item?.creditorName || "-"}</p>
             <p style={typographyStyle}>
               {(item?.type === "authorization" &&
                 item?.authorized === "Failed") ||
