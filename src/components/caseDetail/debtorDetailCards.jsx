@@ -23,6 +23,7 @@ import {
 } from "../../constants/appConstants";
 import PaymentCardDetails from "../paymentCard";
 import { AddDebtorAccount } from "../../services/services";
+import Dropdown from "../dropdown";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -63,6 +64,7 @@ export default function DebtorDetailsCards({
   verifiedSenders,
 }) {
   const [searchText, setSearchText] = useState("");
+  const [selectedValue, setSelectedValue] = useState("");
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 2;
   const handleNext = () => {
@@ -82,6 +84,11 @@ export default function DebtorDetailsCards({
       ?.replace(/^./, (str) => str?.toUpperCase());
     return formattedKeys;
   };
+
+  const paymentGateways = [
+    { label: "Seamless Chex", value: "Seamless Chex" },
+    { label: "Easy Pay", value: "Easy Pay" },
+  ];
 
   const desiredKeys = [
     "companyName",
@@ -179,6 +186,16 @@ export default function DebtorDetailsCards({
               justifyContent: "end",
             }}
           >
+            {/* <Dropdown
+              menuWidth="5rem"
+              menuItems={paymentGateways}
+              placeholder="Type"
+              backgroundColor={Colors.BG_LIGHT_GRAY}
+              hoverColor={Colors.BG_LIGHT_GRAY}
+              width="5rem"
+              selectedValue={selectedValue}
+              setSelectedValue={setSelectedValue}
+            /> */}
             <PaymentCardDetails setConnectPayment={setConnectPayment} />
             <MuiModels
               show="debtorDetail"

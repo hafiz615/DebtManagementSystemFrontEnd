@@ -344,29 +344,178 @@ function Inbox() {
           />
         </div>
       </Grid>
+      <Grid
+        container
+        item
+        xs={12}
+        sx={{
+          borderRadius: "10px",
+          height: "80vh",
+        }}
+        spacing={2}
+      >
+        <Grid item xs={3}>
+          <Card
+            sx={{
+              padding: "10px",
+              borderRadius: "8px",
+              height: "75vh",
+              overflowY: "auto",
+              ...ScrollbarStyles,
+            }}
+          >
+            {loading ? (
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "100%",
+                }}
+              >
+                <CircularProgress size={40} sx={{ color: Colors.SKY_BLUE }} />
+              </Grid>
+            ) : (
+              <>
+                <Tabs
+                  value={activeTab}
+                  onChange={handleTabChange}
+                  centered
+                  textColor="primary"
+                  TabIndicatorProps={{
+                    style: {
+                      backgroundColor: Colors.SKY_BLUE,
+                    },
+                  }}
+                  sx={{ mb: "10px", width: "100%" }}
+                >
+                  <Tab
+                    sx={{
+                      textTransform: "none",
+                      color: Colors.SKY_BLUE,
+                      "&.Mui-selected": {
+                        color: Colors.SKY_BLUE,
+                      },
+                    }}
+                    label="Inbox"
+                  />
+                  <Tab
+                    sx={{
+                      textTransform: "none",
+                      color: Colors.SKY_BLUE,
+                      "&.Mui-selected": {
+                        color: Colors.SKY_BLUE,
+                      },
+                    }}
+                    label="Outbox"
+                  />
+                  <Tab
+                    sx={{
+                      textTransform: "none",
+                      color: Colors.SKY_BLUE,
+                      "&.Mui-selected": {
+                        color: Colors.SKY_BLUE,
+                      },
+                    }}
+                    label="Tasks"
+                  />
+                </Tabs>
+                <Divider sx={{ mb: "10px" }} />
+                {activeTab === 2
+                  ? alltasks &&
+                    Object.keys(alltasks)?.map((key) => {
+                      const value = alltasks[key];
+                      return (
+                        <Box
+                          key={key}
+                          onClick={() => {
+                            setSelectedUser(key);
+                            setSelectedUserData(value);
+                          }}
+                          sx={{
+                            ...boxStyling,
+                            backgroundColor:
+                              selectedUser === key
+                                ? Colors.lIGHT_PURPLE
+                                : "transparent",
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              fontFamily: "Nunito",
+                              fontWeight: 600,
+                              fontSize: FONT_SIZE_LARGE,
+                            }}
+                          >
+                            {key}
+                          </Typography>
+                        </Box>
+                      );
+                    })
+                  : inboxData &&
+                    Object.keys(inboxData)?.map((key) => {
+                      const value = inboxData[key];
+                      return (
+                        <Box
+                          key={key}
+                          onClick={() => {
+                            setSelectedUser(key);
+                            setSelectedUserData(value);
+                          }}
+                          sx={{
+                            ...boxStyling,
+                            backgroundColor:
+                              selectedUser === key
+                                ? Colors.lIGHT_PURPLE
+                                : "transparent",
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              fontFamily: "Nunito",
+                              fontWeight: 600,
+                              fontSize: FONT_SIZE_LARGE,
+                            }}
+                          >
+                            {key}
+                            <Typography
+                              sx={{
+                                fontFamily: "Nunito",
+                                fontSize: FONT_SIZE_MEDIUM,
+                              }}
+                            >
+                              {inboxData?.[key]?.[0]?.subject?.length > 50
+                                ? `${inboxData?.[key]?.[0]?.subject?.slice(
+                                    0,
+                                    50
+                                  )}...`
+                                : inboxData?.[key]?.[0]?.subject}
+                            </Typography>
+                          </Typography>
+                        </Box>
+                      );
+                    })}
+              </>
+            )}
+          </Card>
+        </Grid>
 
-      <>
-        <Grid
-          container
-          item
-          xs={12}
-          sx={{
-            borderRadius: "10px",
-            height: "80vh",
-          }}
-          spacing={2}
-        >
-          <Grid item xs={3}>
-            <Card
-              sx={{
-                padding: "10px",
-                borderRadius: "8px",
-                height: "75vh",
-                overflowY: "auto",
-                ...ScrollbarStyles,
-              }}
-            >
-              {loading ? (
+        <Grid item xs={9}>
+          <Card
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              padding: "10px",
+              borderRadius: "8px",
+              height: "75vh",
+              overflowY: "auto",
+              ...ScrollbarStyles,
+            }}
+          >
+            {activeTab !== 2 ? (
+              loading ? (
                 <Grid
                   item
                   xs={12}
@@ -377,385 +526,243 @@ function Inbox() {
                     height: "100%",
                   }}
                 >
-                  <CircularProgress size={40} sx={{ color: Colors.SKY_BLUE }} />
+                  <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
                 </Grid>
-              ) : (
+              ) : inboxData ? (
                 <>
-                  <Tabs
-                    value={activeTab}
-                    onChange={handleTabChange}
-                    centered
-                    textColor="primary"
-                    TabIndicatorProps={{
-                      style: {
-                        backgroundColor: Colors.SKY_BLUE,
-                      },
-                    }}
-                    sx={{ mb: "10px", width: "100%" }}
-                  >
-                    <Tab
-                      sx={{
-                        textTransform: "none",
-                        color: Colors.SKY_BLUE,
-                        "&.Mui-selected": {
-                          color: Colors.SKY_BLUE,
-                        },
-                      }}
-                      label="Inbox"
-                    />
-                    <Tab
-                      sx={{
-                        textTransform: "none",
-                        color: Colors.SKY_BLUE,
-                        "&.Mui-selected": {
-                          color: Colors.SKY_BLUE,
-                        },
-                      }}
-                      label="Outbox"
-                    />
-                    <Tab
-                      sx={{
-                        textTransform: "none",
-                        color: Colors.SKY_BLUE,
-                        "&.Mui-selected": {
-                          color: Colors.SKY_BLUE,
-                        },
-                      }}
-                      label="Tasks"
-                    />
-                  </Tabs>
-                  <Divider sx={{ mb: "10px" }} />
-                  {activeTab === 2
-                    ? alltasks &&
-                      Object.keys(alltasks)?.map((key) => {
-                        const value = alltasks[key];
-                        return (
-                          <Box
-                            key={key}
-                            onClick={() => {
-                              setSelectedUser(key);
-                              setSelectedUserData(value);
-                            }}
-                            sx={{
-                              ...boxStyling,
-                              backgroundColor:
-                                selectedUser === key
-                                  ? Colors.lIGHT_PURPLE
-                                  : "transparent",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                fontFamily: "Nunito",
-                                fontWeight: 600,
-                                fontSize: FONT_SIZE_LARGE,
-                              }}
-                            >
-                              {key}
-                            </Typography>
-                          </Box>
-                        );
-                      })
-                    : inboxData &&
-                      Object.keys(inboxData)?.map((key) => {
-                        const value = inboxData[key];
-                        return (
-                          <Box
-                            key={key}
-                            onClick={() => {
-                              setSelectedUser(key);
-                              setSelectedUserData(value);
-                            }}
-                            sx={{
-                              ...boxStyling,
-                              backgroundColor:
-                                selectedUser === key
-                                  ? Colors.lIGHT_PURPLE
-                                  : "transparent",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                fontFamily: "Nunito",
-                                fontWeight: 600,
-                                fontSize: FONT_SIZE_LARGE,
-                              }}
-                            >
-                              {key}
-                            </Typography>
-                          </Box>
-                        );
-                      })}
-                </>
-              )}
-            </Card>
-          </Grid>
-
-          <Grid item xs={9}>
-            <Card
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                padding: "10px",
-                borderRadius: "8px",
-                height: "75vh",
-                overflowY: "auto",
-                ...ScrollbarStyles,
-              }}
-            >
-              {activeTab !== 2 ? (
-                loading ? (
-                  <Grid
-                    item
-                    xs={12}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      height: "100%",
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    padding="10px"
+                    style={{
+                      backgroundColor: Colors.lIGHT_PURPLE,
+                      borderRadius: "8px",
                     }}
                   >
-                    <CircularProgress
-                      size={70}
-                      sx={{ color: Colors.SKY_BLUE }}
-                    />
-                  </Grid>
-                ) : inboxData ? (
-                  <>
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      padding="10px"
-                      style={{
-                        backgroundColor: Colors.lIGHT_PURPLE,
-                        borderRadius: "8px",
+                    <Typography
+                      sx={{
+                        fontFamily: "Nunito",
+                        fontWeight: "700",
+                        fontSize: FONT_SIZE_LARGE,
                       }}
                     >
+                      {selectedUser}
+                    </Typography>
+                  </Box>
+                  <Box
+                    flex={1}
+                    sx={{
+                      marginTop: "10px",
+                      padding: "10px",
+                      overflowY: "auto",
+                      ...ScrollbarStyles,
+                    }}
+                  >
+                    {selectedUserData?.filter((item) =>
+                      activeTab === 0
+                        ? item?.type === "received"
+                        : item?.type === "sent"
+                    )?.length === 0 ? (
                       <Typography
                         sx={{
+                          textAlign: "center",
+                          marginTop: "20px",
+                          color: Colors.GRAY,
                           fontFamily: "Nunito",
-                          fontWeight: "700",
-                          fontSize: FONT_SIZE_LARGE,
                         }}
                       >
-                        {selectedUser}
+                        No messages found.
                       </Typography>
-                    </Box>
-                    <Box
-                      flex={1}
-                      sx={{
-                        marginTop: "10px",
-                        padding: "10px",
-                        overflowY: "auto",
-                        ...ScrollbarStyles,
-                      }}
-                    >
-                      {selectedUserData?.filter((item) =>
-                        activeTab === 0
-                          ? item?.type === "received"
-                          : item?.type === "sent"
-                      )?.length === 0 ? (
-                        <Typography
-                          sx={{
-                            textAlign: "center",
-                            marginTop: "20px",
-                            color: Colors.GRAY,
-                            fontFamily: "Nunito",
-                          }}
-                        >
-                          No messages found.
-                        </Typography>
-                      ) : (
-                        selectedUserData
-                          ?.filter((item) =>
-                            activeTab === 0
-                              ? item?.type === "received"
-                              : item?.type === "sent"
-                          )
-                          ?.map((item, index) => (
-                            <Box
-                              key={index}
-                              display="flex"
-                              flexDirection="column"
-                              marginBottom="10px"
+                    ) : (
+                      selectedUserData
+                        ?.filter((item) =>
+                          activeTab === 0
+                            ? item?.type === "received"
+                            : item?.type === "sent"
+                        )
+                        ?.map((item, index) => (
+                          <Box
+                            key={index}
+                            display="flex"
+                            flexDirection="column"
+                            marginBottom="10px"
+                          >
+                            <CardContent
+                              style={{
+                                backgroundColor:
+                                  item?.type === "sent"
+                                    ? Colors.lIGHT_PURPLE
+                                    : Colors.BG_LIGHT_GRAY,
+                                borderRadius: "8px",
+                                marginTop: "5px",
+                                padding: "10px",
+                              }}
                             >
-                              <CardContent
+                              <div
                                 style={{
-                                  backgroundColor:
-                                    item?.type === "sent"
-                                      ? Colors.lIGHT_PURPLE
-                                      : Colors.BG_LIGHT_GRAY,
-                                  borderRadius: "8px",
-                                  marginTop: "5px",
-                                  padding: "10px",
+                                  display: "flex",
+                                  justifyContent: "space-between",
                                 }}
                               >
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                  }}
-                                >
-                                  <div style={{ display: "flex", gap: "10px" }}>
-                                    <Typography sx={boldTextStyling}>
-                                      To:
-                                    </Typography>
-                                    <Typography sx={fontStyling}>
-                                      {item?.to || "-"}
-                                    </Typography>
-                                  </div>
-                                  <div style={{ display: "flex", gap: "10px" }}>
-                                    <Typography sx={fontStyling}>
-                                      {formatDateString(item?.createdAt)}
-                                    </Typography>
-                                    {item?.type === "received" && (
-                                      <MuiModels
-                                        show="sendEmailCase"
-                                        replyButton={true}
-                                        from={item?.from}
-                                        to={item?.to}
-                                        content={item?.textAsHtml}
-                                        emailSubject={item?.subject}
-                                        buttonName="sendEmailCase"
-                                        iconColor={Colors.BLACK}
-                                        maxHeight="78vh"
-                                        replyCheck={true}
-                                        caseDataId={item?.caseId}
-                                      />
-                                    )}
-                                  </div>
-                                </div>
                                 <div style={{ display: "flex", gap: "10px" }}>
                                   <Typography sx={boldTextStyling}>
-                                    Subject:
+                                    To:
                                   </Typography>
                                   <Typography sx={fontStyling}>
-                                    {item?.subject || "-"}
+                                    {item?.to || "-"}
                                   </Typography>
                                 </div>
                                 <div style={{ display: "flex", gap: "10px" }}>
-                                  <Typography sx={boldTextStyling}>
-                                    Case Code:
-                                  </Typography>
                                   <Typography sx={fontStyling}>
-                                    {item?.caseCode}
+                                    {formatDateString(item?.createdAt)}
                                   </Typography>
+                                  {item?.type === "received" && (
+                                    <MuiModels
+                                      show="sendEmailCase"
+                                      replyButton={true}
+                                      from={item?.from}
+                                      to={item?.to}
+                                      content={item?.textAsHtml}
+                                      emailSubject={item?.subject}
+                                      buttonName="sendEmailCase"
+                                      iconColor={Colors.BLACK}
+                                      maxHeight="78vh"
+                                      replyCheck={true}
+                                      caseDataId={item?.caseId}
+                                    />
+                                  )}
                                 </div>
-                                <div style={{ display: "flex", gap: "10px" }}>
-                                  <Typography sx={boldTextStyling}>
-                                    Creditor Company Name:
-                                  </Typography>
-                                  <Typography sx={fontStyling}>
-                                    {item?.creditorCompanyName || "-"}
-                                  </Typography>
-                                </div>
-                                <div style={{ display: "flex", gap: "10px" }}>
-                                  <Typography sx={boldTextStyling}>
-                                    Client Company Name:
-                                  </Typography>
-                                  <Typography sx={fontStyling}>
-                                    {item?.debtorCompanyName || "-"}
-                                  </Typography>
-                                </div>
-                                <div style={{ display: "flex", gap: "10px" }}>
-                                  <Typography sx={boldTextStyling}>
-                                    Negotiator Name:
-                                  </Typography>
-                                  <Typography sx={fontStyling}>
-                                    {item?.negotiatorName || "-"}
-                                  </Typography>
-                                </div>
+                              </div>
+                              <div style={{ display: "flex", gap: "10px" }}>
                                 <Typography sx={boldTextStyling}>
-                                  Content:
+                                  Subject:
                                 </Typography>
-                                <Typography
-                                  sx={fontStyling}
-                                  dangerouslySetInnerHTML={{
-                                    __html: item?.textAsHtml,
-                                  }}
-                                />
-                              </CardContent>
-                            </Box>
-                          ))
-                      )}
-                    </Box>
-                  </>
-                ) : (
-                  <Grid
-                    item
-                    xs={12}
-                    container
-                    sx={{
-                      height: "100%",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Typography sx={fontStyling}>
-                      Looks like you have'nt started a conversation yet
-                    </Typography>
-                  </Grid>
-                )
-              ) : alltasks ? (
-                alltasks[selectedUser]?.map((tasks) => (
-                  <CardContent
-                    style={{
-                      backgroundColor: Colors.BG_LIGHT_GRAY,
-                      borderRadius: "8px",
-                      marginTop: "5px",
-                      padding: "10px",
-                    }}
-                  >
-                    <div style={{ display: "flex", gap: "10px" }}>
-                      <Typography sx={boldTextStyling}>Title:</Typography>
-                      <Typography sx={fontStyling}>
-                        {tasks?.title || "-"}
-                      </Typography>
-                    </div>
-                    <div style={{ display: "flex", gap: "10px" }}>
-                      <Typography sx={boldTextStyling}>Assignee:</Typography>
-                      <Typography sx={fontStyling}>
-                        {tasks?.assignee || "-"}
-                      </Typography>
-                    </div>
-                    <div style={{ display: "flex", gap: "10px" }}>
-                      <Typography sx={boldTextStyling}>Due Date:</Typography>
-                      <Typography sx={fontStyling}>
-                        {formatDateString(tasks?.dueDate) || "-"}
-                      </Typography>
-                    </div>
-                    <div style={{ display: "flex", gap: "10px" }}>
-                      <Typography sx={boldTextStyling}>Status:</Typography>
-                      <Typography sx={fontStyling}>
-                        {tasks?.status || "-"}
-                      </Typography>
-                    </div>
-                    <div style={{ display: "flex", gap: "10px" }}>
-                      <Typography sx={boldTextStyling}>Notes:</Typography>
-                      <Typography sx={fontStyling}>
-                        {tasks?.notes || "-"}
-                      </Typography>
-                    </div>
-                  </CardContent>
-                ))
+                                <Typography sx={fontStyling}>
+                                  {item?.subject || "-"}
+                                </Typography>
+                              </div>
+                              <div style={{ display: "flex", gap: "10px" }}>
+                                <Typography sx={boldTextStyling}>
+                                  Case Code:
+                                </Typography>
+                                <Typography sx={fontStyling}>
+                                  {item?.caseCode}
+                                </Typography>
+                              </div>
+                              <div style={{ display: "flex", gap: "10px" }}>
+                                <Typography sx={boldTextStyling}>
+                                  Creditor Company Name:
+                                </Typography>
+                                <Typography sx={fontStyling}>
+                                  {item?.creditorCompanyName || "-"}
+                                </Typography>
+                              </div>
+                              <div style={{ display: "flex", gap: "10px" }}>
+                                <Typography sx={boldTextStyling}>
+                                  Client Company Name:
+                                </Typography>
+                                <Typography sx={fontStyling}>
+                                  {item?.debtorCompanyName || "-"}
+                                </Typography>
+                              </div>
+                              <div style={{ display: "flex", gap: "10px" }}>
+                                <Typography sx={boldTextStyling}>
+                                  Negotiator Name:
+                                </Typography>
+                                <Typography sx={fontStyling}>
+                                  {item?.negotiatorName || "-"}
+                                </Typography>
+                              </div>
+                              <Typography sx={boldTextStyling}>
+                                Content:
+                              </Typography>
+                              <Typography
+                                sx={fontStyling}
+                                dangerouslySetInnerHTML={{
+                                  __html: item?.textAsHtml,
+                                }}
+                              />
+                            </CardContent>
+                          </Box>
+                        ))
+                    )}
+                  </Box>
+                </>
               ) : (
                 <Grid
-                  container
+                  item
                   xs={12}
+                  container
                   sx={{
-                    justifyContent: "center",
-                    alignItems: "center",
                     height: "100%",
-                    fontSize: FONT_SIZE_MEDIUM,
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
                 >
-                  No Tasks Yet
+                  <Typography sx={fontStyling}>
+                    Looks like you have'nt started a conversation yet
+                  </Typography>
                 </Grid>
-              )}
-            </Card>
-          </Grid>
+              )
+            ) : alltasks ? (
+              alltasks[selectedUser]?.map((tasks) => (
+                <CardContent
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    borderRadius: "8px",
+                    marginTop: "5px",
+                    padding: "10px",
+                  }}
+                >
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <Typography sx={boldTextStyling}>Title:</Typography>
+                    <Typography sx={fontStyling}>
+                      {tasks?.title || "-"}
+                    </Typography>
+                  </div>
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <Typography sx={boldTextStyling}>Assignee:</Typography>
+                    <Typography sx={fontStyling}>
+                      {tasks?.assignee || "-"}
+                    </Typography>
+                  </div>
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <Typography sx={boldTextStyling}>Due Date:</Typography>
+                    <Typography sx={fontStyling}>
+                      {formatDateString(tasks?.dueDate) || "-"}
+                    </Typography>
+                  </div>
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <Typography sx={boldTextStyling}>Status:</Typography>
+                    <Typography sx={fontStyling}>
+                      {tasks?.status || "-"}
+                    </Typography>
+                  </div>
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <Typography sx={boldTextStyling}>Notes:</Typography>
+                    <Typography sx={fontStyling}>
+                      {tasks?.notes || "-"}
+                    </Typography>
+                  </div>
+                </CardContent>
+              ))
+            ) : (
+              <Grid
+                container
+                xs={12}
+                sx={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                  fontSize: FONT_SIZE_MEDIUM,
+                }}
+              >
+                No Tasks Yet
+              </Grid>
+            )}
+          </Card>
         </Grid>
-      </>
+      </Grid>
     </Grid>
   );
 }
