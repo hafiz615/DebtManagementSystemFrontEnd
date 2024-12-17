@@ -4,7 +4,7 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { Colors } from "../config/default";
 
-function PaymentCardDetails({ setConnectPayment }) {
+function PaymentCardDetails({ paymentGateway, setConnectPayment }) {
   const [type, setType] = useState("cc");
 
   const handleChange = (event, newAlignment) => {
@@ -27,6 +27,7 @@ function PaymentCardDetails({ setConnectPayment }) {
         setConnectPayment({
           paymentToken: token?.token,
           paymentType: type,
+          platform: "easypay",
         });
       },
     });
