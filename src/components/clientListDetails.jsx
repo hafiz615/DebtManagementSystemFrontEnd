@@ -604,7 +604,7 @@ export default function ClientListDetails() {
                   },
                   {
                     title: "Weeks Remaining",
-                    value: clientData?.paymentCounts?.weeksRemaining || "00",
+                    value: clientData?.maxWeekRemaining || "00",
                     color: Colors.SKY_BLUE,
                   },
                 ]?.map((item, index) => (
