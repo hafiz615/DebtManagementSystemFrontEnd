@@ -55,49 +55,6 @@ export default function TimelineData({
     return `${datePart} at ${timePart}`;
   }
 
-  //remove this dummyCallLogs when done with integeration
-  const dummyCallLogs = [
-    {
-      callerName: "Jim Klug",
-      company: "Vice Versa Home Serv",
-      duration: "8m 46s",
-      timestamp: "3d ago",
-      summary: `
-        Jim Klug and Dawnyell Rangel discuss the legal actions taken against Jim's company and the potential consequences of filing for bankruptcy.
-        They discuss the money that has been seized and the conditions under which Jim would be willing to release it.
-        Dawnyell suggests being more aggressive with the recovery group, and Jim agrees, as long as they can reach a satisfactory agreement.
-        They discuss the process of signing a release for the seized money and the potential next steps.
-        Jim expresses his willingness to file for bankruptcy if the recovery group is not willing to work with him.
-      `,
-      speakers: [
-        { name: "Jim Klug", percentage: "78%" },
-        { name: "Dawnyell Rangel", percentage: "22%" },
-      ],
-      transcriptions: [
-        {
-          name: "Jim",
-          time: "02:01",
-          chat: "Hello, Dawnyell. Thank you for taking the time to discuss this matter.",
-        },
-        {
-          name: "Dawnyell Rangel",
-          time: "03:31",
-          chat: "We need to discuss the legal actions and their implications.",
-        },
-        {
-          name: "Jim",
-          time: "06:29",
-          chat: "I understand the challenges, but we need a mutually beneficial solution.",
-        },
-        {
-          name: "Dawnyell Rangel",
-          time: "07:15",
-          chat: "Agreed. Let's finalize the conditions for releasing the funds.",
-        },
-      ],
-    },
-  ];
-
   return (
     <Timeline sx={{ padding: 0, margin: "0" }}>
       <TimelineItem>
@@ -157,8 +114,7 @@ export default function TimelineData({
               </Typography>
             </Card>
           ) : iconValue === 5 ? (
-            //replace dummyCallLogs with callLogs when data starts coming from api
-            dummyCallLogs?.map((callDetails) => (
+            callLogs?.map((callDetails) => (
               <ConversationHistory callDetails={callDetails} />
             ))
           ) : (

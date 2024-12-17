@@ -152,6 +152,7 @@ export default function MuiModels({
   creditorDetails,
   selectedCreditorDetails,
   selectedCreditorDetailsKey,
+  fetchCalls,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -1027,7 +1028,12 @@ export default function MuiModels({
           ) : show === "TransactionHistory" ? (
             <TransactionHistory handleClose={handleClose} data={data} />
           ) : show === "dialPad" ? (
-            <DialPad caseId={caseId} data={data} handleClose={handleClose} />
+            <DialPad
+              caseId={caseId}
+              data={data}
+              handleClose={handleClose}
+              fetchCalls={fetchCalls}
+            />
           ) : show === "showCreditorSync" ? (
             <CreditorSync
               handleClose={handleClose}

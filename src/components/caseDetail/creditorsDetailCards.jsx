@@ -66,6 +66,7 @@ export default function CreditorsDetailCards({
   GetCaseDetails,
   GetLogsById,
   verifiedSenders,
+  fetchCalls,
 }) {
   const [searchText, setSearchText] = useState("");
 
@@ -212,6 +213,7 @@ export default function CreditorsDetailCards({
               {item?.label === "Phone #" ? (
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <MuiModels
+                    fetchCalls={fetchCalls}
                     show="dialPad"
                     caseId={caseData?._id}
                     data={item?.value ? `+1${item?.value}` : ""}

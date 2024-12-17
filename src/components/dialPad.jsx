@@ -8,7 +8,7 @@ import "react-phone-input-2/lib/style.css";
 import { GetCallToken } from "../services/services";
 import { Device } from "@twilio/voice-sdk";
 
-const DialPad = ({ data, caseId, handleClose }) => {
+const DialPad = ({ data, caseId, handleClose, fetchCalls }) => {
   const [phoneNumber, setPhoneNumber] = useState(data || "");
   const [isCalling, setIsCalling] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
@@ -120,6 +120,7 @@ const DialPad = ({ data, caseId, handleClose }) => {
       setStartTimer(false);
       handleClose();
     }
+    fetchCalls && fetchCalls();
   };
 
   // const fetchRecording = async () => {

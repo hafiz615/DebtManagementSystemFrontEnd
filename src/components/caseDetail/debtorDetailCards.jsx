@@ -62,6 +62,7 @@ export default function DebtorDetailsCards({
   caseDataId,
   GetLogsById,
   verifiedSenders,
+  fetchCalls,
 }) {
   const [searchText, setSearchText] = useState("");
   const [selectedValue, setSelectedValue] = useState("Seamless Chex");
@@ -251,6 +252,7 @@ export default function DebtorDetailsCards({
                   {key === "phone" ? (
                     <div style={{ display: "flex", alignItems: "center" }}>
                       <MuiModels
+                        fetchCalls={fetchCalls}
                         show="dialPad"
                         caseId={caseDataId}
                         data={value ? `+1${value}` : ""}
@@ -363,6 +365,7 @@ export default function DebtorDetailsCards({
                   {key === "phone" ? (
                     <div style={{ display: "flex", alignItems: "center" }}>
                       <MuiModels
+                        fetchCalls={fetchCalls}
                         show="dialPad"
                         caseId={caseDataId}
                         data={value ? `+1${value}` : ""}

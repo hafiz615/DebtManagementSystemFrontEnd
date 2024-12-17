@@ -333,6 +333,7 @@ export default function CaseById({
               >
                 {value === "Debtor" ? (
                   <DebtorDetailsCards
+                    fetchCalls={fetchCalls}
                     verifiedSenders={verifiedSenders}
                     caseData={caseData}
                     GetCaseDetails={GetCaseDetails}
@@ -341,6 +342,7 @@ export default function CaseById({
                   />
                 ) : value === "Creditor" ? (
                   <CreditorsDetailCards
+                    fetchCalls={fetchCalls}
                     verifiedSenders={verifiedSenders}
                     caseData={caseData}
                     GetCaseDetails={GetCaseDetails}
