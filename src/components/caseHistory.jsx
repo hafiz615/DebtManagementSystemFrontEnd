@@ -48,6 +48,7 @@ function CaseHistory({
     "Upcoming Debt",
     "Upcoming Date",
     "Last Payment Amount",
+    "Weeks Remaining",
   ];
   useEffect(() => {
     // Simulate fetching data from an API
@@ -65,6 +66,7 @@ function CaseHistory({
           UpcomingDebt: formatDollarAmount(item?.upcomingPayment) || "-",
           upcomingDate: formatDate(item?.upcomingPaymentDate) || "-",
           lastPaymentAmount: formatDollarAmount(item?.lastPayment) || "-",
+          weeksRemaining: item?.weekRemaining || "-",
         }));
       setRows(generatedData);
     };
