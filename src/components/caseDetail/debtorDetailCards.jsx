@@ -64,7 +64,7 @@ export default function DebtorDetailsCards({
   verifiedSenders,
 }) {
   const [searchText, setSearchText] = useState("");
-  const [selectedValue, setSelectedValue] = useState("");
+  const [selectedValue, setSelectedValue] = useState("Seamless Chex");
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 2;
   const handleNext = () => {
@@ -124,6 +124,7 @@ export default function DebtorDetailsCards({
   const [connectPayment, setConnectPayment] = useState({
     paymentToken: "",
     paymentType: "",
+    platform: "easypay",
   });
   const debtorId = caseData?.debtor?._id;
   const { showToast } = useToast();
@@ -187,16 +188,20 @@ export default function DebtorDetailsCards({
             }}
           >
             {/* <Dropdown
-              menuWidth="5rem"
+              menuWidth="10rem"
               menuItems={paymentGateways}
               placeholder="Type"
               backgroundColor={Colors.BG_LIGHT_GRAY}
               hoverColor={Colors.BG_LIGHT_GRAY}
-              width="5rem"
+              width="10rem"
               selectedValue={selectedValue}
               setSelectedValue={setSelectedValue}
+              fontSize="12px"
             /> */}
-            <PaymentCardDetails setConnectPayment={setConnectPayment} />
+            <PaymentCardDetails
+              paymentGateway={selectedValue}
+              setConnectPayment={setConnectPayment}
+            />
             <MuiModels
               show="debtorDetail"
               button="create"

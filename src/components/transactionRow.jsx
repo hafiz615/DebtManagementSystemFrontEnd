@@ -134,7 +134,7 @@ function TransactionRow({
                     />
                   )}
                 </Box>
-              ) : item?.type === "payment" &&
+              ) : item?.type === "capture" &&
                 item?.captured === "Success" &&
                 !hideTransferPayment ? (
                 <Box sx={{ cursor: "pointer" }}>
