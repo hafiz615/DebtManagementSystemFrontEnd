@@ -74,7 +74,7 @@ const DialPad = ({ data, caseId, handleClose }) => {
       return;
     }
 
-    const params = { To: phoneNumber, record: true, id: caseId };
+    const params = { To: phoneNumber, record: true, CaseId: caseId };
     log(`Attempting to call ${params.To}...`);
     setIsCalling(true);
 
