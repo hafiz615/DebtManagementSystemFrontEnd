@@ -1567,7 +1567,7 @@ export const GetAllUpcomingPayments = async (id) => {
 };
 export const GetCallToken = async () => {
   try {
-    return await axios.get(BASE_URL + `/v1/case/token`, setHeaders());
+    return await axios.get(BASE_URL + `/v1/case/twilio/token`, setHeaders());
   } catch (error) {
     return error;
   }
