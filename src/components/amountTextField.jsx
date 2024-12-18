@@ -114,6 +114,8 @@ export default function AmountTextField({
   label,
   type,
   border,
+  disabled,
+  readonly,
 }) {
   const smallScreen = useMediaQuery("(min-width:300px) and (max-width:760px)");
 
@@ -132,6 +134,7 @@ export default function AmountTextField({
           borderRadius: "5px",
           display: "flex",
           fontFamily: "Nunito",
+          outline: "none",
           justifyContent: "center",
           border: border || "none !important",
 
@@ -153,6 +156,7 @@ export default function AmountTextField({
             borderBottom: "none",
           },
         }}
+        disabled={disabled}
         placeholder={value ? "" : type === "percentage" ? "%" : "$"}
         onChange={onChange}
         value={type === "percentage" ? parsePercentage(value) : value || ""}
@@ -160,6 +164,7 @@ export default function AmountTextField({
         name="numberformat"
         id="formatted-numberformat-input"
         InputProps={{
+          readOnly: readonly || false,
           inputComponent:
             type === "percentage"
               ? PercentageFormatCustom

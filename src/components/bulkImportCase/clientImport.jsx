@@ -134,7 +134,7 @@ export default function ClientImport({ setApiData, allDropdownStates }) {
           >
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <Typography sx={{ fontWeight: "600", fontFamily: "Nunito" }}>
-                Debtor {actualIndex + 1} Details
+                Client {actualIndex + 1} Details
               </Typography>
             </div>
             <Grid container sx={{ gap: "1em", mt: "1em" }}>

@@ -72,7 +72,7 @@ export default function SettlementCards({
   ];
 
   const rangeNames = [
-    { label: "Settlement Range", tooltip: "Suggested weekly payment amount" },
+    { label: "Settlement Range", tooltip: "Suggested Weekly payment amount" },
     {
       label: "Commission Range",
       tooltip: "Amount that will be saved as commission",
@@ -83,15 +83,15 @@ export default function SettlementCards({
     },
     {
       label: "Weekly Budget %",
-      tooltip: "Settlement shown as percentage of weekly budget",
+      tooltip: "Settlement shown as percentage of Weekly budget",
     },
     {
       label: "Weekly True Revenue %",
-      tooltip: "Settlement shown as percentage of weekly true revenue",
+      tooltip: "Settlement shown as percentage of Weekly true revenue",
     },
     {
       label: "Weeks Till Paid",
-      tooltip: "Number of weeks to complete payment",
+      tooltip: "Number of months to complete payment",
     },
   ];
 

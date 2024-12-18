@@ -1,4 +1,4 @@
-import { Button, Grid } from "@mui/material";
+import { Button, Divider, Grid } from "@mui/material";
 import React, { useState } from "react";
 import ScrollbarStyles from "./customScroll";
 import { Colors } from "../config/default";
@@ -7,6 +7,14 @@ import { RemoveRedEye } from "@mui/icons-material";
 export default function DebtorUploadedFiles({ data }) {
   const [url, setUrl] = useState("");
   const [isViewerOpen, setIsViewerOpen] = useState(false);
+
+  const documents = data?.debtor?.documents || [];
+  const mcaFiles = documents?.filter((doc) =>
+    doc?.originalFileName?.toLowerCase().includes("mca")
+  );
+  const bankStatements = documents?.filter(
+    (item) => !item?.originalFileName?.toLowerCase().includes("mca")
+  );
 
   const handleFileView = (url) => {
     setUrl(url);
@@ -17,38 +25,26 @@ export default function DebtorUploadedFiles({ data }) {
     setUrl("");
     setIsViewerOpen(false);
   };
-  return (
-    <Grid
-      item
-      xs={12}
-      sx={{
-        backgroundColor: Colors.WHITE,
-        borderRadius: "10px",
-        padding: "10px",
-        height: "100%",
-        marginBottom: "0.5rem",
-      }}
-    >
-      <p
-        style={{
-          fontWeight: "600",
-          fontSize: "13px",
-          fontFamily: "Nunito",
-        }}
-      >
-        Files
-      </p>
-      <Grid
-        container
-        sx={{
-          overflowY: "auto",
-          ...ScrollbarStyles,
-          height: "10rem",
-        }}
-      >
-        {data?.debtor?.documents?.length > 0 ? (
-          data?.debtor?.documents?.map((item, index) => (
+
+  const renderFiles = (files, label) => {
+    if (files?.length > 0) {
+      return (
+        <React.Fragment>
+          <p
+            style={{
+              fontWeight: "600",
+              fontSize: "13px",
+              fontFamily: "Nunito",
+              margin: "0.5rem 0",
+              color: Colors.DARK_GRAY,
+            }}
+          >
+            {label}
+          </p>
+          {files.map((item, index) => (
             <Grid
+              item
+              xs={12}
               container
               key={index}
               sx={{
@@ -78,20 +74,46 @@ export default function DebtorUploadedFiles({ data }) {
                 />
               </Grid>
             </Grid>
-          ))
-        ) : (
-          <Grid item xs={12} sx={{ textAlign: "center", marginTop: "2rem" }}>
-            <p
-              style={{
-                color: Colors.DIM_LIGHT_GRAY,
-                fontFamily: "Nunito",
-                fontSize: "13px",
-              }}
-            >
-              No files available.
-            </p>
-          </Grid>
-        )}
+          ))}
+        </React.Fragment>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <Grid
+      item
+      xs={12}
+      sx={{
+        backgroundColor: Colors.WHITE,
+        borderRadius: "10px",
+        padding: "10px",
+        height: "100%",
+        marginBottom: "0.5rem",
+      }}
+    >
+      <p
+        style={{
+          fontWeight: "600",
+          fontSize: "14px",
+          fontFamily: "Nunito",
+        }}
+      >
+        Files
+      </p>
+      <Divider />
+      <Grid
+        container
+        sx={{
+          overflowY: "auto",
+          ...ScrollbarStyles,
+          height: "10rem",
+        }}
+      >
+        {renderFiles(mcaFiles, "MCA Files")}
+        {renderFiles(bankStatements, "Bank Statements")}
+
         {isViewerOpen && (
           <div
             style={{

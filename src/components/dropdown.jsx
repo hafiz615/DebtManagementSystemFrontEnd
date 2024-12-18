@@ -27,6 +27,7 @@ export default function Dropdown({
   setId,
   showCaseStatus,
   emptyMessage,
+  fontSize,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -73,6 +74,7 @@ export default function Dropdown({
           fontFamily: "Nunito",
           borderRadius: "5px",
           textTransform: "none",
+          fontSize: fontSize || "14px",
           ":hover": {
             background: hoverColor || Colors.WHITE,
           },

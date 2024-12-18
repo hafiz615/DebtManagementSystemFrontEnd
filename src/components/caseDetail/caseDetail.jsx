@@ -34,6 +34,8 @@ import { setCaseCreditorId, setCaseId } from "../../redux/action/action.js";
 import { useToast } from "../../toast/toastContext.jsx";
 import CaseById from "./caseById.jsx";
 import SettlementRange from "../settlementRange/settlementRange.jsx";
+import { Download } from "@mui/icons-material";
+import { generatePdfFromApiData } from "../../common.js";
 
 const style = {
   position: "absolute",
@@ -120,13 +122,15 @@ function CaseDetail() {
   const [optionStats, setOptionStats] = useState();
   const [cashFlow, setCashFlow] = useState();
   const [cashFlowLoading, setCashFlowLoading] = useState(false);
+  const [tabValue, setTabValue] = useState(0);
+  const [paymentData, setPaymentData] = useState();
   const [statementSummariesLoading, setStatementSummariesLoading] =
     useState(false);
-
   const { id } = useParams();
-  const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const emailData = caseData?.debtor?.basicInformation;
-  const tabs = ["All", "Email", "Sms", "Notes", "Case Logs"];
+
+  const tabs = ["All", "Email", "Sms", "Notes", "Case Logs", "Call Logs"];
+
   const filteredLogs = logs?.filter((item) => {
     if (caseHistoryTabs === 0) {
       return item?.Action;
@@ -360,6 +364,28 @@ function CaseDetail() {
     GetCasePaymentDetails(id);
   }, [id]);
 
+  const currentCreditor = allCreditorNames[tabValue];
+
+  const selectedCreditorDetails = creditorNames?.find(
+    (item) => item?.creditorAccountTitle === currentCreditor
+  );
+
+  const handleGeneratePdf = () => {
+    const credDetail =
+      allCreditorNames[tabValue] === "Summary"
+        ? "Summary"
+        : selectedCreditorDetails?.name;
+
+    const summaryPayable = summaryAmount?.payableAmount;
+
+    generatePdfFromApiData(
+      selectedCreditorDetails,
+      credDetail,
+      debtorInfo,
+      summaryPayable
+    );
+  };
+
   return (
     <Grid
       container
@@ -373,14 +399,26 @@ function CaseDetail() {
       }}
     >
       <Grid
-        item
         xs={12}
-        sx={{
-          display: "flex",
-          justifyContent: smallScreen ? "flex-start" : "flex-end",
-          marginTop: "1.5rem",
-        }}
+        item
+        container
+        sx={{ marginTop: "1.5rem", justifyContent: "space-between" }}
       >
+        <Tooltip
+          title={caseData?.debtor?.businessInformation?.companyName}
+          placement="top"
+        >
+          <Typography
+            sx={{
+              fontWeight: "600",
+              fontSize: "1.5rem",
+              fontFamily: "Nunito",
+              color: Colors.BLACK,
+            }}
+          >
+            {caseData?.debtor?.businessInformation?.companyName}
+          </Typography>
+        </Tooltip>
         <Typography
           sx={{
             fontFamily: "Nunito",
@@ -391,72 +429,94 @@ function CaseDetail() {
           {AUTHORITY_TEXT} <span>{role}</span>
         </Typography>
       </Grid>
-
-      <Grid
-        item
-        xs={12}
-        sx={{
-          marginTop: "1.5rem",
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          gap: "1.2%",
+          marginTop: "1rem",
         }}
       >
-        <Grid
-          container
-          sx={{ justifyContent: "space-between", alignItems: "center" }}
-        >
-          <Tooltip
-            title={caseData?.debtor?.businessInformation?.companyName}
-            placement="top"
-          >
-            <Typography
-              sx={{
-                fontWeight: "600",
-                fontSize: "1.5rem",
-                fontFamily: "Nunito",
-                color: Colors.BLACK,
-              }}
-            >
-              {caseData?.debtor?.businessInformation?.companyName}
-            </Typography>
-          </Tooltip>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "1.2%",
-            }}
-          >
+        {activeTab === 0 && (
+          <>
+            <MuiModels
+              show="downloadPDF"
+              buttonName="downloadPDF"
+              maxHeight="85vh"
+              allData={allData}
+              lumpSumpData={lumpSumpData}
+              disabled={!apiData}
+            />
+            <MuiModels
+              show="sendEmail"
+              to={caseData?.creditor?.basicInformation?.email}
+              creditorInfo={
+                allCreditorNames[tabValue] === "Summary"
+                  ? "Summary"
+                  : selectedCreditorDetails?.name
+              }
+              debtorInfo={debtorInfo}
+              payableAmount={
+                allCreditorNames[tabValue] === "Summary"
+                  ? summaryAmount?.payableAmount
+                  : selectedCreditorDetails?.contractDetails?.payable_amount
+              }
+              data={apiData}
+              selectedCreditor={allCreditorNames[tabValue]}
+              lumpSump={lumpSumpData}
+              caseId={id}
+              paymentData={paymentData}
+              debtorId={verifiedSender}
+            />
             <TextButton
-              buttonText="Add Debtor Identity"
-              height="2.5rem"
-              width="14rem"
-              onClick={AddSenderInformation}
+              disabled={!apiData}
+              buttonText={"Download Agreement"}
+              boxShadow="none"
+              height={"2.5rem"}
+              width={"12rem"}
               backgroundColor={Colors.SKY_BLUE}
+              fontColor={Colors.WHITE}
               hoverColor={Colors.SKY_BLUE}
+              border={`1px solid ${Colors.SKY_BLUE}`}
+              borderRadius="5px"
+              onClick={handleGeneratePdf}
             />
+          </>
+        )}
 
-            <MuiModels
-              show="sendEmailCase"
-              buttonName="sendEmailCase"
-              iconColor={Colors.BLACK}
-              from={caseData?.creditor?.basicInformation?.email}
-              maxHeight="78vh"
-              caseDataId={id}
-              GetLogsById={GetLogsById}
-              data={caseData}
-              verifiedSenders={verifiedSenders}
-            />
-            <MuiModels
-              show="sendEmailCase"
-              buttonName="sendSmsCase"
-              headerName={true}
-              iconColor={Colors.BLACK}
-              maxHeight="78vh"
-              caseDataId={id}
-              GetLogsById={GetLogsById}
-              data={caseData}
-            />
-            {/* {caseData?.settlementRange ? (
+        <TextButton
+          buttonText="Sync Client Email"
+          height="2.5rem"
+          width="12rem"
+          onClick={AddSenderInformation}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
+
+        <MuiModels
+          show="sendEmailCase"
+          buttonName="sendEmailCase"
+          iconColor={Colors.BLACK}
+          from={caseData?.creditor?.basicInformation?.email}
+          maxHeight="78vh"
+          caseDataId={id}
+          GetLogsById={GetLogsById}
+          data={caseData}
+          verifiedSenders={verifiedSenders}
+        />
+        <MuiModels
+          show="sendEmailCase"
+          buttonName="sendSmsCase"
+          headerName={true}
+          iconColor={Colors.BLACK}
+          maxHeight="78vh"
+          caseDataId={id}
+          GetLogsById={GetLogsById}
+          data={caseData}
+        />
+        {/* {caseData?.settlementRange ? (
               <TextButton
                 buttonText="Get Settlement Range"
                 height="2.5rem"
@@ -476,41 +536,42 @@ function CaseDetail() {
                 caseData={caseData}
               />
             )} */}
-          </div>
-        </Grid>
-        <AntTabs
-          value={activeTab}
-          onChange={handleTabChange}
-          variant="scrollable"
-          scrollButtons="auto"
-          sx={{
-            minWidth: "100%",
-            backgroundColor: Colors.WHITE,
-            borderTopLeftRadius: "10px",
-            borderTopRightRadius: "10px",
-            mt: "1rem",
-          }}
-        >
-          <AntTab
-            sx={{
-              bgcolor: Colors.WHITE,
-              width: "max-content",
-              fontWeight: "600",
-              height: "3.5rem",
-            }}
-            label="Settlement Range"
-          />
-          <AntTab
-            sx={{
-              bgcolor: Colors.WHITE,
-              width: "max-content",
-              fontWeight: "600",
-              height: "3.5rem",
-            }}
-            label="Case Detail"
-          />
-        </AntTabs>
+      </div>
 
+      <AntTabs
+        value={activeTab}
+        onChange={handleTabChange}
+        variant="scrollable"
+        scrollButtons="auto"
+        sx={{
+          minWidth: "100%",
+          backgroundColor: Colors.WHITE,
+          borderTopLeftRadius: "10px",
+          borderTopRightRadius: "10px",
+          mt: "1rem",
+        }}
+      >
+        <AntTab
+          sx={{
+            bgcolor: Colors.WHITE,
+            width: "max-content",
+            fontWeight: "600",
+            height: "3.5rem",
+          }}
+          label="Settlement Range"
+        />
+        <AntTab
+          sx={{
+            bgcolor: Colors.WHITE,
+            width: "max-content",
+            fontWeight: "600",
+            height: "3.5rem",
+          }}
+          label="Case Detail"
+        />
+      </AntTabs>
+
+      <Grid xs={12}>
         {activeTab === 0 && (
           <SettlementRange
             id={id}
@@ -546,6 +607,11 @@ function CaseDetail() {
             setOptionStats={setOptionStats}
             cashFlow={cashFlow}
             cashFlowLoading={cashFlowLoading}
+            tabValue={tabValue}
+            setTabValue={setTabValue}
+            setPaymentData={setPaymentData}
+            selectedCreditorDetails={selectedCreditorDetails}
+            caseData={caseData}
           />
         )}
         {activeTab === 1 && (

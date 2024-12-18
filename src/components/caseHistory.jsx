@@ -39,14 +39,16 @@ function CaseHistory({
     );
   };
   const headers = [
-    "Case Owner",
-    userRole === "client" ? "Creditor" : "Debtor",
+    "Negotiator",
+    userRole === "client" ? "Creditor" : "Client",
+    "Pipeline Status",
     "Last Payment Date",
     "Current Balance",
     "Total Debt",
     "Upcoming Debt",
     "Upcoming Date",
     "Last Payment Amount",
+    "Weeks Remaining",
   ];
   useEffect(() => {
     // Simulate fetching data from an API
@@ -57,12 +59,14 @@ function CaseHistory({
           id: item?._id,
           caseOwner: item?.caseOwner || "-",
           Creditor: item?.creditorName || item?.debtorName || "-",
+          Pipeline: item?.pipeLineStatus || "-",
           lastDate: formatDate(item?.lastPaymentDate) || "-",
           OutstandingDebt: formatDollarAmount(item?.outstandingDebt) || "-",
           totalDebt: formatDollarAmount(item?.totalDebt) || "-",
           UpcomingDebt: formatDollarAmount(item?.upcomingPayment) || "-",
           upcomingDate: formatDate(item?.upcomingPaymentDate) || "-",
           lastPaymentAmount: formatDollarAmount(item?.lastPayment) || "-",
+          weeksRemaining: item?.weekRemaining || "-",
         }));
       setRows(generatedData);
     };

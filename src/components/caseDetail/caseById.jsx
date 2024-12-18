@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { ExpandMore } from "@mui/icons-material";
 import {
   Accordion,
@@ -14,6 +15,7 @@ import {
   Tabs,
   TextField,
   Typography,
+  Tooltip,
 } from "@mui/material";
 import React from "react";
 import { Colors } from "../../config/default";
@@ -32,6 +34,11 @@ import TimelineData from "./timelineData";
 import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../../constants/appConstants";
 import ScrollbarStyles from "../customScroll";
 import { isEmpty } from "lodash";
+import FinancialAccordion from "./Financial";
+import SettlementAccordion from "./settlementRanges";
+import DeletePrompt from "../deletePrompt";
+import { GetCalls } from "../../services/services";
+import { useToast } from "../../toast/toastContext";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -96,6 +103,19 @@ export default function CaseById({
   GetCasePaymentDetails,
 }) {
   const navigate = useNavigate();
+  const [deleting, setDeleting] = useState(false);
+  const [callLogs, setCallLogs] = useState([]);
+
+  const fetchCalls = async () => {
+    const res = await GetCalls(id);
+    if (res?.status === 200) {
+      setCallLogs(res?.data?.data);
+    }
+  };
+  useEffect(() => {
+    fetchCalls();
+  }, []);
+
   return (
     <Grid item sx={{ marginTop: "1rem" }}>
       {loading || isEmpty(caseData) ? (
@@ -169,7 +189,7 @@ export default function CaseById({
                           color: value ? Colors.SKY_BLUE : "inherit",
                         },
                       }}
-                      label="Debtor"
+                      label="Client"
                       value="Debtor"
                     />
                     <Tab
@@ -239,14 +259,23 @@ export default function CaseById({
                     />
                   )}
                   {value === "Transactions" && (
-                    <MuiModels
-                      width="70vw"
-                      show="payments"
-                      remainingAmount={caseData?.remaining.toString()}
-                      data={caseData}
-                      GetCaseDetails={GetCaseDetails}
-                      GetCasePaymentDetails={GetCasePaymentDetails}
-                    />
+                    <div style={{ display: "flex", gap: "1rem" }}>
+                      <MuiModels
+                        show="AddPayments"
+                        width="55vw"
+                        caseId={id}
+                        debtorId={caseData?.debtor?._id}
+                        GetCaseDetails={GetCaseDetails}
+                      />
+                      <MuiModels
+                        width="70vw"
+                        show="payments"
+                        remainingAmount={caseData?.remaining.toString()}
+                        data={caseData}
+                        GetCaseDetails={GetCaseDetails}
+                        GetCasePaymentDetails={GetCasePaymentDetails}
+                      />
+                    </div>
                   )}
                   {value === "Creditor" && (
                     <Grid
@@ -304,6 +333,7 @@ export default function CaseById({
               >
                 {value === "Debtor" ? (
                   <DebtorDetailsCards
+                    fetchCalls={fetchCalls}
                     verifiedSenders={verifiedSenders}
                     caseData={caseData}
                     GetCaseDetails={GetCaseDetails}
@@ -312,6 +342,7 @@ export default function CaseById({
                   />
                 ) : value === "Creditor" ? (
                   <CreditorsDetailCards
+                    fetchCalls={fetchCalls}
                     verifiedSenders={verifiedSenders}
                     caseData={caseData}
                     GetCaseDetails={GetCaseDetails}
@@ -376,7 +407,7 @@ export default function CaseById({
                           }}
                           onClick={() => navigate(`/all-cases/${item?._id}`)}
                         >
-                          <Grid item xs={12} md={8} lg={5}>
+                          <Grid item xs={11} md={8} lg={5}>
                             <span
                               style={{
                                 color: Colors.DIM_LIGHT_GRAY,
@@ -399,7 +430,7 @@ export default function CaseById({
                               {item?.creditor?.businessInformation?.companyName}
                             </span>
                           </Grid>
-                          <Hidden smDown>
+                          <Hidden mdDown>
                             <Grid item xs={3} sm={4} lg={6}>
                               <span
                                 style={{
@@ -423,6 +454,27 @@ export default function CaseById({
                               </span>
                             </Grid>
                           </Hidden>
+                          <Grid
+                            item
+                            xs={1}
+                            sm={1}
+                            lg={1}
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <DeletePrompt
+                              buttonName="Delete"
+                              heading="Delete Creditor"
+                              text={`Are you sure you want to delete ${item?.creditor?.businessInformation?.companyName}?`}
+                              creditorId={item?._id}
+                              loading={deleting}
+                              GetCaseDetails={GetCaseDetails}
+                              setLoading={setDeleting}
+                              id={id}
+                            />
+                          </Grid>
                         </Grid>
                       );
                     })}
@@ -450,6 +502,9 @@ export default function CaseById({
                 loading={isPaymentLoading}
                 paymentDetails={paymentDetails}
               />
+
+              {/* <FinancialAccordion />
+              <SettlementAccordion /> */}
               <AboutAccordion
                 caseDetails={caseData}
                 GetCaseDetails={GetCaseDetails}
@@ -552,10 +607,20 @@ export default function CaseById({
                   />
                 ))}
               </AntTabs>
-
-              {filteredLogs?.length > 0 ? (
+              {caseHistoryTabs === 5 ? (
+                <TimelineData
+                  callLogs={callLogs}
+                  id={id}
+                  date={null}
+                  caseDataId={id}
+                  GetLogsById={GetLogsById}
+                  iconValue={caseHistoryTabs}
+                />
+              ) : filteredLogs?.length > 0 ? (
                 filteredLogs?.map((item, index) => (
                   <TimelineData
+                    callLogs={callLogs}
+                    id={id}
                     notes={false}
                     value={item}
                     date={null}
@@ -567,6 +632,8 @@ export default function CaseById({
                 ))
               ) : (
                 <TimelineData
+                  callLogs={callLogs}
+                  id={id}
                   notes={true}
                   value={
                     caseHistoryTabs === 1

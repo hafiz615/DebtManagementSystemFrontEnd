@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Grid, Box, Typography, Tooltip } from "@mui/material";
+import { Grid, Box, Typography, Tooltip, IconButton } from "@mui/material";
 import { useToast } from "../toast/toastContext";
 import { Colors } from "../config/default";
 import TextButton from "./button";
@@ -12,6 +12,7 @@ import {
   TEXT_EDITOR_KEY,
 } from "../constants/appConstants";
 import Dropdown from "./dropdown";
+import { Download } from "@mui/icons-material";
 
 const lineStyle = {
   width: "100%",
@@ -53,7 +54,7 @@ const inputStyling = {
   backgroundColor: Colors.BG_LIGHT_GRAY,
   marginBottom: "1rem",
   height: "2.5rem",
-  color: "#333",
+  color: Colors.DIM_LIGHT_GRAY,
   paddingLeft: "1rem",
   border: "none",
   outline: "none",
@@ -71,8 +72,9 @@ export default function SendEmail({
   caseId,
   paymentData,
   debtorId,
+  to,
 }) {
-  const [sendTo, setSendTo] = useState("");
+  const [sendTo, setSendTo] = useState(to || "");
   const [sendFrom, setSendFrom] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
   const [strategy, setStrategy] = useState("Strategy 1");
@@ -201,8 +203,8 @@ export default function SendEmail({
         >
           Send Email
         </Typography>
-        <Box sx={lineStyle} />
       </Grid>
+      <Box sx={lineStyle} />
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <input
           type="text"

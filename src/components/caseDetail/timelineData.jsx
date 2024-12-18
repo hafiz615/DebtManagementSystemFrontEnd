@@ -1,5 +1,6 @@
-import React from "react";
-import { Box, Card, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Card, IconButton, Typography } from "@mui/material";
+import Button from "../button";
 import {
   Timeline,
   TimelineItem,
@@ -10,17 +11,23 @@ import {
 } from "@mui/lab";
 import MuiModels from "../models";
 import { Colors } from "../../config/default";
-import { Email, NoteAlt, Sms, Work } from "@mui/icons-material";
+import { CallOutlined, Email, NoteAlt, Sms, Work } from "@mui/icons-material";
+import ConversationHistory from "../callHistory";
+import { GetCalls } from "../../services/services";
+import SendEmailCase from "./sendEmailCase";
+import ReplyCard from "./replyCard";
+import { FONT_SIZE_LARGE } from "../../constants/appConstants";
 
 export default function TimelineData({
+  callLogs,
   value,
   date,
   notes,
   caseDataId,
   GetLogsById,
-  caseData,
   iconValue,
 }) {
+  const [showReplyCard, setShowReplyCard] = useState(false);
   const formattedDate = new Date(date);
 
   const estTime = new Intl.DateTimeFormat("en-US", {
@@ -72,6 +79,10 @@ export default function TimelineData({
             <Sms />
           ) : iconValue === 3 ? (
             <NoteAlt />
+          ) : iconValue === 5 ? (
+            <IconButton sx={{ backgroundColor: "lightgreen" }}>
+              <CallOutlined />
+            </IconButton>
           ) : (
             <Work />
           )}
@@ -103,6 +114,29 @@ export default function TimelineData({
                 {value}
               </Typography>
             </Card>
+          ) : iconValue === 5 ? (
+            callLogs?.length > 0 ? (
+              callLogs?.map((callDetails) => (
+                <ConversationHistory callDetails={callDetails} />
+              ))
+            ) : (
+              <div
+                style={{
+                  backgroundColor: Colors.WHITE,
+                  padding: "1rem 10px",
+                  borderRadius: "10px",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: FONT_SIZE_LARGE,
+                    fontFamily: "Nunito",
+                  }}
+                >
+                  No Calls
+                </Typography>
+              </div>
+            )
           ) : (
             <Card
               sx={{
@@ -112,113 +146,127 @@ export default function TimelineData({
                 borderRadius: "10px",
               }}
             >
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography
-                  sx={{
-                    fontSize: "13px",
-                    fontFamily: "Nunito",
-                    mb: "10px",
-                    fontWeight: "700",
-                  }}
-                >
-                  {value?.Action} {formatDate(value?.Time)}
-                </Typography>
-                {value?.Action === "EMAIL" && !Array.isArray(value?.To) && (
-                  <MuiModels
-                    show="sendEmailCase"
-                    replyButton={true}
-                    from={value?.From}
-                    to={value?.To}
-                    content={value?.Content}
-                    emailSubject={value?.Subject}
-                    buttonName="sendEmailCase"
-                    iconColor={Colors.BLACK}
-                    maxHeight="78vh"
-                    caseDataId={caseDataId}
-                    GetLogsById={GetLogsById}
-                    replyCheck={true}
-                    data={caseData}
-                  />
-                )}
-              </div>
-              {Object.entries(value)
-                .filter(([key]) => key !== "Action" && key !== "Time")
-                ?.map(([key, value]) => (
-                  <Box key={key}>
-                    {key === "Content" ? (
+              {showReplyCard ? (
+                <ReplyCard
+                  from={value?.From}
+                  to={value?.To}
+                  content={value?.Content}
+                  emailSubject={value?.Subject}
+                  caseDataId={caseDataId}
+                  GetLogsById={GetLogsById}
+                  setShowReplyCard={setShowReplyCard}
+                />
+              ) : (
+                <>
+                  <div
+                    style={{ display: "flex", justifyContent: "space-between" }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: "13px",
+                        fontFamily: "Nunito",
+                        mb: "10px",
+                        fontWeight: "700",
+                      }}
+                    >
+                      {value?.Action} {formatDate(value?.Time)}
+                    </Typography>
+
+                    {value?.Action === "EMAIL" && !Array.isArray(value?.To) && (
                       <>
-                        <Typography
-                          sx={{
-                            fontSize: "13px",
-                            fontFamily: "Nunito",
-                            mb: "10px",
-                            fontWeight: "700",
-                          }}
-                        >
-                          {key}:
-                        </Typography>
-                        <div
-                          dangerouslySetInnerHTML={{ __html: value }}
-                          style={{
-                            fontSize: "13px",
-                            fontFamily: "Nunito",
-                            marginBottom: "10px",
-                            width: "100%",
-                            borderRadius: "10px",
-                          }}
-                        />
+                        {!showReplyCard && (
+                          <Button
+                            buttonText="Reply"
+                            onClick={() => {
+                              setShowReplyCard(true);
+                            }}
+                            backgroundColor={Colors.SKY_BLUE}
+                            hoverColor={Colors.SKY_BLUE}
+                          />
+                        )}
                       </>
-                    ) : key === "To" ? (
-                      <>
-                        <Typography
-                          sx={{
-                            fontSize: "13px",
-                            fontFamily: "Nunito",
-                            mb: "10px",
-                          }}
-                        >
-                          <strong>{key}:</strong>{" "}
-                          {Array.isArray(value) ? value.join(", ") : value}
-                        </Typography>
-                      </>
-                    ) : key === "Notes" ? (
-                      <>
-                        <Typography
-                          sx={{
-                            fontSize: "13px",
-                            fontFamily: "Nunito",
-                            mb: "10px",
-                            fontWeight: "700",
-                          }}
-                        >
-                          {key}:
-                        </Typography>
-                        <Typography
-                          sx={{
-                            fontSize: "13px",
-                            fontFamily: "Nunito",
-                            mb: "10px",
-                          }}
-                        >
-                          {value}
-                        </Typography>
-                      </>
-                    ) : (
-                      <Typography
-                        sx={{
-                          fontSize: "13px",
-                          fontFamily: "Nunito",
-                          mb: "10px",
-                        }}
-                      >
-                        <strong>{key}:</strong>{" "}
-                        {key === "Due Date" || key === "Time"
-                          ? formatDate(value)
-                          : value}
-                      </Typography>
                     )}
-                  </Box>
-                ))}
+                  </div>
+                  {Object.entries(value)
+                    .filter(([key]) => key !== "Action" && key !== "Time")
+                    ?.map(([key, value]) => (
+                      <Box key={key}>
+                        {key === "Content" ? (
+                          <>
+                            <Typography
+                              sx={{
+                                fontSize: "13px",
+                                fontFamily: "Nunito",
+                                mb: "10px",
+                                fontWeight: "700",
+                              }}
+                            >
+                              {key}:
+                            </Typography>
+                            <div
+                              dangerouslySetInnerHTML={{ __html: value }}
+                              style={{
+                                fontSize: "13px",
+                                fontFamily: "Nunito",
+                                marginBottom: "10px",
+                                width: "100%",
+                                borderRadius: "10px",
+                              }}
+                            />
+                          </>
+                        ) : key === "To" ? (
+                          <>
+                            <Typography
+                              sx={{
+                                fontSize: "13px",
+                                fontFamily: "Nunito",
+                                mb: "10px",
+                              }}
+                            >
+                              <strong>{key}:</strong>{" "}
+                              {Array.isArray(value) ? value.join(", ") : value}
+                            </Typography>
+                          </>
+                        ) : key === "Notes" ? (
+                          <>
+                            <Typography
+                              sx={{
+                                fontSize: "13px",
+                                fontFamily: "Nunito",
+                                mb: "10px",
+                                fontWeight: "700",
+                              }}
+                            >
+                              {key}:
+                            </Typography>
+                            <Typography
+                              sx={{
+                                fontSize: "13px",
+                                fontFamily: "Nunito",
+                                mb: "10px",
+                              }}
+                            >
+                              {value}
+                            </Typography>
+                          </>
+                        ) : (
+                          <Typography
+                            sx={{
+                              fontSize: "13px",
+                              fontFamily: "Nunito",
+                              mb: "10px",
+                            }}
+                          >
+                            <strong>{key}:</strong>{" "}
+                            {key === "Due Date" || key === "Time"
+                              ? formatDate(value)
+                              : value}
+                          </Typography>
+                        )}
+                      </Box>
+                    ))}
+                </>
+              )}
             </Card>
           )}
         </TimelineContent>

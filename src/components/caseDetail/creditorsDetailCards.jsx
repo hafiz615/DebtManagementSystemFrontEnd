@@ -66,6 +66,7 @@ export default function CreditorsDetailCards({
   GetCaseDetails,
   GetLogsById,
   verifiedSenders,
+  fetchCalls,
 }) {
   const [searchText, setSearchText] = useState("");
 
@@ -151,15 +152,31 @@ export default function CreditorsDetailCards({
             >
               {creditorPeronsalDetails}
             </p>
-            <MuiModels
-              show="creditorDetail"
-              button="create"
-              iconColor={Colors.BLACK}
-              width="80vw"
-              height="75vh"
-              caseData={caseData}
-              GetCaseDetails={GetCaseDetails}
-            />
+            <div
+              style={{
+                display: "flex",
+                alignContent: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <MuiModels
+                show="showCreditorSync"
+                iconColor={Colors.BLACK}
+                caseData={caseData}
+                GetCaseDetails={GetCaseDetails}
+                height="22vh"
+              />
+
+              <MuiModels
+                show="creditorDetail"
+                button="create"
+                iconColor={Colors.BLACK}
+                width="80vw"
+                height="75vh"
+                caseData={caseData}
+                GetCaseDetails={GetCaseDetails}
+              />
+            </div>
           </div>
           {[
             {
@@ -193,19 +210,44 @@ export default function CreditorsDetailCards({
               >
                 {item?.label}
               </Typography>
-              <Tooltip title={item?.value || ""} placement="top-end">
-                <Typography
-                  sx={{
-                    fontSize: smallScreen ? "11px" : "13px",
-                    color: Colors.DIM_LIGHT_GRAY,
-                    fontFamily: "Nunito",
-                    fontWeight: "500",
-                    textAlign: "right",
-                  }}
-                >
-                  {getTruncatedText(formatValue(item?.value), 15) || "--"}
-                </Typography>
-              </Tooltip>
+              {item?.label === "Phone #" ? (
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <MuiModels
+                    fetchCalls={fetchCalls}
+                    show="dialPad"
+                    caseId={caseData?._id}
+                    data={item?.value ? `+1${item?.value}` : ""}
+                    width={300}
+                  />
+                  <Tooltip title={item?.value || ""} placement="top-end">
+                    <Typography
+                      sx={{
+                        fontSize: smallScreen ? "11px" : "13px",
+                        color: Colors.DIM_LIGHT_GRAY,
+                        fontFamily: "Nunito",
+                        fontWeight: "500",
+                        textAlign: "right",
+                      }}
+                    >
+                      {getTruncatedText(formatValue(item?.value), 15) || "--"}
+                    </Typography>
+                  </Tooltip>
+                </div>
+              ) : (
+                <Tooltip title={item?.value || ""} placement="top-end">
+                  <Typography
+                    sx={{
+                      fontSize: smallScreen ? "11px" : "13px",
+                      color: Colors.DIM_LIGHT_GRAY,
+                      fontFamily: "Nunito",
+                      fontWeight: "500",
+                      textAlign: "right",
+                    }}
+                  >
+                    {getTruncatedText(formatValue(item?.value), 15) || "--"}
+                  </Typography>
+                </Tooltip>
+              )}
             </div>
           ))}
         </>

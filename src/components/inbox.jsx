@@ -25,34 +25,12 @@ import MuiModels from "./models";
 import SearchBar from "./searchBar";
 import { FilterListOutlined } from "@mui/icons-material";
 import TextButton from "./button";
-import { GetAllInbox, GetAllSenders } from "../services/services";
+import {
+  GetAllCasesTasks,
+  GetAllInbox,
+  GetAllSenders,
+} from "../services/services";
 import { formatDateString } from "../common";
-
-const users = [
-  {
-    name: "Mike Nelson",
-    lastMessage: "Now",
-    messages: ["Hi, how are you?", "I'm good, thanks!"],
-  },
-  { name: "Sofia Jackson", lastMessage: "1h", messages: ["Hello there!"] },
-  { name: "Mathew Jackson", lastMessage: "1h", messages: ["Hello there!"] },
-  { name: "Jeremy Clarkson", lastMessage: "1h", messages: ["Hello there!"] },
-  { name: "Aftab Qarshi", lastMessage: "1h", messages: ["Hello there!"] },
-  { name: "Marshal Mathers", lastMessage: "1h", messages: ["Hello there!"] },
-  { name: "John Snow", lastMessage: "1h", messages: ["Hello there!"] },
-  {
-    name: "James Smith",
-    lastMessage: "1h",
-    messages: ["Hey, are you free tomorrow?"],
-  },
-  {
-    name: "Natasha Miller",
-    lastMessage: "12h",
-    messages: [
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at accumsan diam, et auctor est. Ut ut tortor lectus. Phasellus at sem dapibus, hendrerit nibh at, condimentum arcu. Vestibulum ante purus, vestibulum sit amet ultricies a, efficitur in mauris. Duis arcu metus, auctor quis faucibus vel, varius quis ligula. Aliquam erat volutpat. In sagittis sollicitudin enim, eu pharetra lorem ornare vel. Nulla mollis sagittis orci. Aenean vel nulla quis justo efficitur interdum nec id nulla. Sed sed lectus laoreet, placerat purus tempus, lobortis magna. Quisque egestas tristique lorem, in cursus massa molestie sed.",
-    ],
-  },
-];
 
 const inputStyling = {
   width: "100%",
@@ -96,7 +74,6 @@ function Inbox() {
   const [selectedUserData, setSelectedUserData] = useState();
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);
-  const [preview, setPreview] = useState("");
   const [creditorCompany, setCreditorCompany] = useState("");
   const [debtorCompany, setDebtorCompany] = useState("");
   const [caseCode, setCaseCode] = useState("");
@@ -105,12 +82,12 @@ function Inbox() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [verifiedSenders, setVerified] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
+  const [alltasks, setAllTasks] = useState([]);
+  const open = Boolean(anchorEl);
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
   };
-
-  const open = Boolean(anchorEl);
 
   const handleKeyPress = (e) => {
     setSearchText(e.target.value);
@@ -154,6 +131,14 @@ function Inbox() {
     }
   };
 
+  const getAllTasks = async () => {
+    const res = await GetAllCasesTasks();
+    if (res?.status === 200) {
+      const data = res?.data?.data;
+      setAllTasks(data);
+    }
+  };
+
   useEffect(() => {
     if (
       searchText &&
@@ -171,7 +156,22 @@ function Inbox() {
 
   useEffect(() => {
     getVerifiedIdentites();
+    getAllTasks();
   }, []);
+
+  useEffect(() => {
+    if (activeTab === 2) {
+      const firstKey = alltasks && Object.keys(alltasks)?.[0];
+      const value = alltasks && alltasks[firstKey];
+      setSelectedUser(firstKey);
+      setSelectedUserData(value);
+    } else {
+      const firstKey = inboxData && Object.keys(inboxData)?.[0];
+      const value = inboxData && inboxData[firstKey];
+      setSelectedUser(firstKey);
+      setSelectedUserData(value);
+    }
+  }, [activeTab]);
 
   const disabled = caseCode || debtorCompany || creditorCompany || negotiator;
 
@@ -285,7 +285,7 @@ function Inbox() {
               />
               <input
                 style={inputStyling}
-                placeholder="Search By Debtor Company"
+                placeholder="Search By Client Company"
                 type="email"
                 value={debtorCompany}
                 onChange={(e) => setDebtorCompany(e.target.value)}
@@ -344,80 +344,89 @@ function Inbox() {
           />
         </div>
       </Grid>
-
-      <>
-        <Grid
-          container
-          item
-          xs={12}
-          sx={{
-            borderRadius: "10px",
-            height: "80vh",
-          }}
-          spacing={2}
-        >
-          <Grid item xs={3}>
-            <Card
-              sx={{
-                padding: "10px",
-                borderRadius: "8px",
-                height: "75vh",
-                overflowY: "auto",
-                ...ScrollbarStyles,
-              }}
-            >
-              {loading ? (
-                <Grid
-                  item
-                  xs={12}
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: "100%",
+      <Grid
+        container
+        item
+        xs={12}
+        sx={{
+          borderRadius: "10px",
+          height: "80vh",
+        }}
+        spacing={2}
+      >
+        <Grid item xs={3}>
+          <Card
+            sx={{
+              padding: "10px",
+              borderRadius: "8px",
+              height: "75vh",
+              overflowY: "auto",
+              ...ScrollbarStyles,
+            }}
+          >
+            {loading ? (
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "100%",
+                }}
+              >
+                <CircularProgress size={40} sx={{ color: Colors.SKY_BLUE }} />
+              </Grid>
+            ) : (
+              <>
+                <Tabs
+                  value={activeTab}
+                  onChange={handleTabChange}
+                  centered
+                  textColor="primary"
+                  TabIndicatorProps={{
+                    style: {
+                      backgroundColor: Colors.SKY_BLUE,
+                    },
                   }}
+                  sx={{ mb: "10px", width: "100%" }}
                 >
-                  <CircularProgress size={40} sx={{ color: Colors.SKY_BLUE }} />
-                </Grid>
-              ) : (
-                <>
-                  <Tabs
-                    value={activeTab}
-                    onChange={handleTabChange}
-                    centered
-                    textColor="primary"
-                    TabIndicatorProps={{
-                      style: {
-                        backgroundColor: Colors.SKY_BLUE,
+                  <Tab
+                    sx={{
+                      textTransform: "none",
+                      color: Colors.SKY_BLUE,
+                      "&.Mui-selected": {
+                        color: Colors.SKY_BLUE,
                       },
                     }}
-                    sx={{ mb: "10px", width: "100%" }}
-                  >
-                    <Tab
-                      sx={{
-                        textTransform: "none",
+                    label="Inbox"
+                  />
+                  <Tab
+                    sx={{
+                      textTransform: "none",
+                      color: Colors.SKY_BLUE,
+                      "&.Mui-selected": {
                         color: Colors.SKY_BLUE,
-                        "&.Mui-selected": {
-                          color: Colors.SKY_BLUE,
-                        },
-                      }}
-                      label="Inbox"
-                    />
-                    <Tab
-                      sx={{
-                        textTransform: "none",
+                      },
+                    }}
+                    label="Outbox"
+                  />
+                  <Tab
+                    sx={{
+                      textTransform: "none",
+                      color: Colors.SKY_BLUE,
+                      "&.Mui-selected": {
                         color: Colors.SKY_BLUE,
-                        "&.Mui-selected": {
-                          color: Colors.SKY_BLUE,
-                        },
-                      }}
-                      label="Outbox"
-                    />
-                  </Tabs>
-                  <Divider sx={{ mb: "10px" }} />
-                  {inboxData &&
-                    Object.keys(inboxData)?.map((key) => {
-                      const value = inboxData[key];
+                      },
+                    }}
+                    label="Tasks"
+                  />
+                </Tabs>
+                <Divider sx={{ mb: "10px" }} />
+                {activeTab === 2
+                  ? alltasks &&
+                    Object.keys(alltasks)?.map((key) => {
+                      const value = alltasks[key];
                       return (
                         <Box
                           key={key}
@@ -444,25 +453,69 @@ function Inbox() {
                           </Typography>
                         </Box>
                       );
+                    })
+                  : inboxData &&
+                    Object.keys(inboxData)?.map((key) => {
+                      const value = inboxData[key];
+                      return (
+                        <Box
+                          key={key}
+                          onClick={() => {
+                            setSelectedUser(key);
+                            setSelectedUserData(value);
+                          }}
+                          sx={{
+                            ...boxStyling,
+                            backgroundColor:
+                              selectedUser === key
+                                ? Colors.lIGHT_PURPLE
+                                : "transparent",
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              fontFamily: "Nunito",
+                              fontWeight: 600,
+                              fontSize: FONT_SIZE_LARGE,
+                            }}
+                          >
+                            {key}
+                            <Typography
+                              sx={{
+                                fontFamily: "Nunito",
+                                fontSize: FONT_SIZE_MEDIUM,
+                              }}
+                            >
+                              {inboxData?.[key]?.[0]?.subject?.length > 50
+                                ? `${inboxData?.[key]?.[0]?.subject?.slice(
+                                    0,
+                                    50
+                                  )}...`
+                                : inboxData?.[key]?.[0]?.subject}
+                            </Typography>
+                          </Typography>
+                        </Box>
+                      );
                     })}
-                </>
-              )}
-            </Card>
-          </Grid>
+              </>
+            )}
+          </Card>
+        </Grid>
 
-          <Grid item xs={9}>
-            <Card
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                padding: "10px",
-                borderRadius: "8px",
-                height: "75vh",
-                overflowY: "auto",
-                ...ScrollbarStyles,
-              }}
-            >
-              {loading ? (
+        <Grid item xs={9}>
+          <Card
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              padding: "10px",
+              borderRadius: "8px",
+              height: "75vh",
+              overflowY: "auto",
+              ...ScrollbarStyles,
+            }}
+          >
+            {activeTab !== 2 ? (
+              loading ? (
                 <Grid
                   item
                   xs={12}
@@ -496,7 +549,6 @@ function Inbox() {
                       {selectedUser}
                     </Typography>
                   </Box>
-
                   <Box
                     flex={1}
                     sx={{
@@ -607,7 +659,7 @@ function Inbox() {
                               </div>
                               <div style={{ display: "flex", gap: "10px" }}>
                                 <Typography sx={boldTextStyling}>
-                                  Debtor Company Name:
+                                  Client Company Name:
                                 </Typography>
                                 <Typography sx={fontStyling}>
                                   {item?.debtorCompanyName || "-"}
@@ -651,11 +703,66 @@ function Inbox() {
                     Looks like you have'nt started a conversation yet
                   </Typography>
                 </Grid>
-              )}
-            </Card>
-          </Grid>
+              )
+            ) : alltasks ? (
+              alltasks[selectedUser]?.map((tasks) => (
+                <CardContent
+                  style={{
+                    backgroundColor: Colors.BG_LIGHT_GRAY,
+                    borderRadius: "8px",
+                    marginTop: "5px",
+                    padding: "10px",
+                  }}
+                >
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <Typography sx={boldTextStyling}>Title:</Typography>
+                    <Typography sx={fontStyling}>
+                      {tasks?.title || "-"}
+                    </Typography>
+                  </div>
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <Typography sx={boldTextStyling}>Assignee:</Typography>
+                    <Typography sx={fontStyling}>
+                      {tasks?.assignee || "-"}
+                    </Typography>
+                  </div>
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <Typography sx={boldTextStyling}>Due Date:</Typography>
+                    <Typography sx={fontStyling}>
+                      {formatDateString(tasks?.dueDate) || "-"}
+                    </Typography>
+                  </div>
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <Typography sx={boldTextStyling}>Status:</Typography>
+                    <Typography sx={fontStyling}>
+                      {tasks?.status || "-"}
+                    </Typography>
+                  </div>
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <Typography sx={boldTextStyling}>Notes:</Typography>
+                    <Typography sx={fontStyling}>
+                      {tasks?.notes || "-"}
+                    </Typography>
+                  </div>
+                </CardContent>
+              ))
+            ) : (
+              <Grid
+                container
+                xs={12}
+                sx={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                  fontSize: FONT_SIZE_MEDIUM,
+                }}
+              >
+                No Tasks Yet
+              </Grid>
+            )}
+          </Card>
         </Grid>
-      </>
+      </Grid>
     </Grid>
   );
 }

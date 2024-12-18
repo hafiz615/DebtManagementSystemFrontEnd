@@ -59,6 +59,8 @@ export default function Prompt({
   data,
   getAllCaseTasks,
   getLinks,
+  deleteHandler,
+  setFileToDelete,
 }) {
   const { showToast } = useToast();
   const [open, setOpen] = React.useState(false);
@@ -171,12 +173,18 @@ export default function Prompt({
 
   const handleClickOpen = (event) => {
     event.stopPropagation();
+    if (deleting === "delete File") {
+      setFileToDelete(item);
+    }
     setOpen(true);
   };
 
   const handleClose = (event) => {
     event.stopPropagation();
     setOpen(false);
+    if (deleting === "delete File") {
+      setFileToDelete(null);
+    }
   };
 
   const handleConfirm = async (event) => {
@@ -199,6 +207,8 @@ export default function Prompt({
       await deleteUserById();
     } else if (deleting === "Url's") {
       await deleteLink();
+    } else if (deleting === "delete File") {
+      await deleteHandler();
     } else if (deleteRole) {
       await deleteRole();
     } else {

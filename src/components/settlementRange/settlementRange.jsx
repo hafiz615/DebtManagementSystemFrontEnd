@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import InfoIcon from "@mui/icons-material/Info";
+import MuiModels from "../models";
 
 import {
   Grid,
@@ -31,7 +31,7 @@ import {
 } from "../../constants/appConstants";
 import { Colors } from "../../config/default";
 import ScrollbarStyles from "../customScroll";
-import { Download, PeopleAlt, Send } from "@mui/icons-material";
+import { PeopleAlt, Send } from "@mui/icons-material";
 import TextButton from "../button";
 import SettlementCards from "./settlementCards";
 import {
@@ -43,17 +43,14 @@ import {
   GetFullProfitSettlement,
   GetPaymentIntervals,
 } from "../../services/services";
-import { useToast } from "../../toast/toastContext";
+
 import {
   formatAmountValue,
   formatDateString,
   formatPurchasedPercentage,
   formatWeeklyBudget,
-  generatePdfFromApiData,
 } from "../../common";
-import MuiModels from "../models";
 import CheckboxAutocomplete from "../checkboxAutocomplete";
-import { isEmpty } from "lodash";
 import { getWeeksRemainingMessage } from "../../common";
 import DataSummaryTable from "../dataSummaryTable";
 import SettlementBounds from "./settlementBounds";
@@ -156,7 +153,10 @@ const GridItem = ({ title, value, rawValue, tooltip }) => (
     <Typography
       sx={{
         ...commonTextStyles,
-        color: isNegative(rawValue) ? Colors.ORANGE_COLOR : Colors.SKY_BLUE,
+        color:
+          isNegative(rawValue) || isNegative(rawValue?.value) // Check both conditions
+            ? Colors.ORANGE_COLOR // Set orange for negative values
+            : Colors.SKY_BLUE, // Default to SKY_BLUE
       }}
     >
       {value}
@@ -187,7 +187,6 @@ export default function SettlementRange({
   apiData,
   scores,
   debtor,
-  debtorInfo,
   commissionPercentage,
   setCommissionPercentage,
   summaryAmount,
@@ -200,10 +199,14 @@ export default function SettlementRange({
   optionStats,
   cashFlow,
   cashFlowLoading,
+  tabValue,
+  setTabValue,
+  setPaymentData,
+  selectedCreditorDetails,
+  caseData,
 }) {
   const caseId = id;
   const [value, setValue] = useState(0);
-  const [tabValue, setTabValue] = useState(0);
   const [optionValue, setOptuonValue] = useState(0);
   const [inputValue, setInputValue] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
@@ -213,7 +216,6 @@ export default function SettlementRange({
   const [summary, setSummary] = useState([]);
   const [checkboxStates, setCheckboxStates] = useState({});
   const [selectedData, setSelectedData] = useState([]);
-  const [paymentData, setPaymentData] = useState();
   const [paymentChanged, setPaymentChanged] = useState(false);
   const [strategyTab, setStrategyTab] = useState(0);
   const [justificationLoading, setJustificationLoading] = useState(false);
@@ -224,6 +226,7 @@ export default function SettlementRange({
     "justification_gemini"
   );
   const [selectedOption, setSelectedOption] = useState("percentageReceivable");
+  const [checked, setChecked] = useState(false);
 
   const creditorNamesTabs = allCreditorNames;
   const popUpDebtorData = allData?.debtor;
@@ -275,12 +278,6 @@ export default function SettlementRange({
   const handleOptionTabChange = (event, newValue) => {
     setOptuonValue(newValue);
   };
-
-  const currentCreditor = creditorNamesTabs[tabValue];
-
-  const selectedCreditorDetails = creditorNames?.find(
-    (item) => item?.creditorAccountTitle === currentCreditor
-  );
 
   const cardData = {
     0: recommendations?.map((item, index) => (
@@ -536,22 +533,6 @@ export default function SettlementRange({
     getAllRanges(params, status);
   };
 
-  const handleGeneratePdf = () => {
-    const credDetail =
-      creditorNamesTabs[tabValue] === "Summary"
-        ? "Summary"
-        : selectedCreditorDetails?.name;
-
-    const summaryPayable = summaryAmount?.payableAmount;
-
-    generatePdfFromApiData(
-      selectedCreditorDetails,
-      credDetail,
-      debtorInfo,
-      summaryPayable
-    );
-  };
-
   const getAllSummary = async () => {
     const res = await GetCaseSummariesById(caseId);
     if (res?.status === 200) {
@@ -624,41 +605,33 @@ export default function SettlementRange({
       creditorAccountTitle,
       creditorId,
     }));
-
   const creditorDetails = [
     {
       label: "Purchase Price",
       value: `${selectedCreditorDetails?.contractDetails?.loan_amount}` || "--",
-      formatCurrency: true,
+      key: "loan_amount",
+      // formatCurrency: true,
     },
     {
       label: "Net Funded Amount",
       value: selectedCreditorDetails?.contractDetails?.funded_amount || "--",
       formatCurrency: true,
+      key: "funded_amount",
     },
 
     {
       label: "Total Receivable",
       value: selectedCreditorDetails?.contractDetails?.payable_amount || "--",
       formatCurrency: true,
+      key: "payable_amount",
     },
-    {
-      label: "Current Balance",
-      value:
-        selectedCreditorDetails?.totalDebt -
-          selectedCreditorDetails?.remainingAmountPaid || "--",
-      formatCurrency: true,
-    },
-    {
-      label: "Break Even",
-      value: selectedCreditorDetails?.breakEven || "--",
-      formatCurrency: true,
-    },
+
     {
       label: "Purchased Percentage",
       value: formatPurchasedPercentage(
         selectedCreditorDetails?.contractDetails?.purchased_percentage
       ),
+      key: "purchased_percentage",
     },
     {
       label: "Current Payment Amount",
@@ -683,6 +656,19 @@ export default function SettlementRange({
               maximumFractionDigits: 2,
             })} (daily)`
           : "--",
+      key: "repayment_amount",
+    },
+    {
+      label: "Break Even",
+      value: selectedCreditorDetails?.breakEven || "--",
+      formatCurrency: true,
+    },
+    {
+      label: "Current Balance",
+      value:
+        selectedCreditorDetails?.totalDebt -
+          selectedCreditorDetails?.remainingAmountPaid || "--",
+      formatCurrency: true,
     },
   ];
 
@@ -926,7 +912,7 @@ export default function SettlementRange({
 
   const debtorData = [
     { item: "Full Name", value: debtor?.fullName || "--" },
-    { item: "Status", value: debtor?.status || "--" },
+    { item: "Customer Status", value: debtor?.status || "--" },
     { item: "phone", value: debtor?.phone ? `+1${debtor?.phone}` : "--" },
     {
       item: "Weekly Budget",
@@ -975,33 +961,7 @@ export default function SettlementRange({
           )}
         </Box>
       </Modal>
-      <Grid
-        item
-        xs={12}
-        sx={{
-          display: "flex",
-          marginTop: "1.5rem",
-        }}
-      >
-        <Grid item xs={12} lg={6}>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <MuiModels
-              buttonIcon="settlementRangeReload"
-              show="WeeklyBudget"
-              iconColor={Colors.BLACK}
-              maxHeight="78vh"
-              caseId={caseId}
-              popUpDebtorData={popUpDebtorData}
-              getAllRanges={getAllRanges}
-            />
-            <Typography
-              sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
-            >
-              Reload Settlement Range
-            </Typography>
-          </Box>
-        </Grid>
-      </Grid>
+
       {settlementloading ? (
         <Grid
           container
@@ -1020,61 +980,29 @@ export default function SettlementRange({
               width: "100%",
               display: "flex",
               gap: "10px",
-              justifyContent: "flex-end",
+              justifyContent: "space-between",
               marginTop: "1rem",
             }}
           >
-            <MuiModels
-              show="downloadPDF"
-              buttonName="downloadPDF"
-              maxHeight="85vh"
-              allData={allData}
-              lumpSumpData={lumpSumpData}
-              disabled={!apiData}
-            />
+            <Grid item>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <MuiModels
+                  buttonIcon="settlementRangeReload"
+                  show="WeeklyBudget"
+                  iconColor={Colors.BLACK}
+                  maxHeight="78vh"
+                  caseId={caseId}
+                  popUpDebtorData={popUpDebtorData}
+                  getAllRanges={getAllRanges}
+                />
+                <Typography
+                  sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
+                >
+                  Reload Settlement Range
+                </Typography>
+              </Box>
+            </Grid>
 
-            <MuiModels
-              show="sendEmail"
-              creditorInfo={
-                creditorNamesTabs[tabValue] === "Summary"
-                  ? "Summary"
-                  : selectedCreditorDetails?.name
-              }
-              debtorInfo={debtorInfo}
-              payableAmount={
-                creditorNamesTabs[tabValue] === "Summary"
-                  ? summaryAmount?.payableAmount
-                  : selectedCreditorDetails?.contractDetails?.payable_amount
-              }
-              data={apiData}
-              selectedCreditor={creditorNamesTabs[tabValue]}
-              lumpSump={lumpSumpData}
-              caseId={caseId}
-              paymentData={paymentData}
-              debtorId={verifiedSender}
-            />
-            <TextButton
-              disabled={!apiData}
-              buttonText={"Download"}
-              boxShadow="none"
-              height={"2.5rem"}
-              width={extraSmallScreen ? "2rem" : "8rem"}
-              backgroundColor={Colors.SKY_BLUE}
-              fontColor={Colors.WHITE}
-              hoverColor={Colors.SKY_BLUE}
-              border={`1px solid ${Colors.SKY_BLUE}`}
-              borderRadius="5px"
-              startIcon={
-                extraSmallScreen ? null : (
-                  <Download
-                    sx={{
-                      color: apiData ? Colors.WHITE : Colors.DIM_LIGHT_GRAY,
-                    }}
-                  />
-                )
-              }
-              onClick={handleGeneratePdf}
-            />
             <div
               style={{
                 display: "flex",
@@ -1105,39 +1033,65 @@ export default function SettlementRange({
               mt: "1rem",
             }}
           >
-            <Grid item xs={4}>
-              {debtorData?.map((data, index) => {
-                return (
-                  <Grid item xs={12} lg={6} key={index}>
-                    <div
-                      style={{
-                        fontFamily: "Nunito",
-                        fontWeight: "600",
-                        color: Colors.DARK_GRAY,
-                        fontSize: FONT_SIZE_LARGE,
-                        marginTop: "0.5rem",
-                      }}
-                    >
-                      {data?.item}
-                    </div>
-                    <Tooltip title={data?.value} placement="top-end">
-                      <span
+            <Grid
+              item
+              xs={4.5}
+              sx={{
+                backgroundColor: Colors.WHITE,
+                padding: "10px",
+                borderRadius: "10px",
+              }}
+            >
+              <p
+                style={{
+                  fontWeight: "600",
+                  fontSize: "14px",
+                  fontFamily: "Nunito",
+                }}
+              >
+                Personal Details
+              </p>
+              <Divider />
+              <Grid
+                container
+                sx={{
+                  height: "70%",
+                  alignItems: "center",
+                }}
+              >
+                {debtorData?.map((data, index) => {
+                  return (
+                    <Grid item xs={5} key={index}>
+                      <div
                         style={{
                           fontFamily: "Nunito",
+                          fontWeight: "600",
+                          color: Colors.DARK_GRAY,
                           fontSize: FONT_SIZE_LARGE,
-                          color: Colors.DIM_LIGHT_GRAY,
                           marginTop: "0.5rem",
                         }}
                       >
-                        {data?.value}
-                      </span>
-                    </Tooltip>
-                  </Grid>
-                );
-              })}
+                        {data?.item}
+                      </div>
+                      <Tooltip title={data?.value} placement="top-end">
+                        <span
+                          style={{
+                            fontFamily: "Nunito",
+                            fontSize: FONT_SIZE_LARGE,
+                            color: Colors.DIM_LIGHT_GRAY,
+                            marginTop: "0.5rem",
+                          }}
+                        >
+                          {data?.value}
+                        </span>
+                      </Tooltip>
+                    </Grid>
+                  );
+                })}
+              </Grid>
             </Grid>
-            <Grid item xs={8}>
-              <DebtorUploadedFiles data={allData} />
+            <Grid item xs={7}>
+              <DebtorUploadedFiles data={caseData} />
             </Grid>
           </Grid>
 
@@ -1174,6 +1128,7 @@ export default function SettlementRange({
               }
             />
           </Grid>
+
           <Grid xs={12} sx={{ mt: "1rem" }}>
             <StatementSummaryAccordion
               data={statementSummaries}
@@ -1182,10 +1137,10 @@ export default function SettlementRange({
           </Grid>
 
           <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
-            <GridItem
-              key="Weekly Profit Excluding Payments"
-              title="Weekly Profit Excluding Payments"
-              tooltip="Weekly profit by not making the creditor payments."
+            {/* <GridItem
+              key="Monthly Profit Excluding Payments"
+              title="Monthly Profit Excluding Payments"
+              tooltip="Monthly profit by not making the creditor payments."
               value={
                 optionValue === 1
                   ? apiData?.option_2_stats?.true_profit
@@ -1198,9 +1153,9 @@ export default function SettlementRange({
                   : "No Data"
               }
               rawValue={apiData?.true_profit}
-            />
+            /> */}
 
-            <GridItem
+            {/* <GridItem
               key="Profitability"
               title="Profitability Excluding Payments"
               tooltip="Measure of how much profit your business makes after expenses."
@@ -1218,11 +1173,11 @@ export default function SettlementRange({
                   : "No Data"
               }
               rawValue={apiData?.profitability}
-            />
-            <GridItem
-              key="Weekly Profit Including Payments"
-              title="Weekly Profit Including Payments"
-              tooltip="Weekly profit after making the creditor payments."
+            /> */}
+            {/* <GridItem
+              key="Monthly Profit Including Payments"
+              title="Monthly Profit Including Payments"
+              tooltip="Monthly profit after making the creditor payments."
               value={
                 optionValue === 1
                   ? apiData?.option_2_stats?.weekly_profit
@@ -1235,8 +1190,8 @@ export default function SettlementRange({
                   : "No Data"
               }
               rawValue={apiData?.weekly_profit}
-            />
-            <GridItem
+            /> */}
+            {/* <GridItem
               key="Profitability Including Payments"
               title="Profitability Including payments"
               tooltip="Profitability Including the creditor Payment"
@@ -1256,10 +1211,10 @@ export default function SettlementRange({
                   : "No Data"
               }
               rawValue={apiData?.profitability_without_creditor_payments}
-            />
-            <GridItem
-              key="Weekly True Revenue"
-              title="Weekly True Revenue"
+            /> */}
+            {/* <GridItem
+              key="Monthly True Revenue"
+              title="Monthly True Revenue"
               tooltip="Total revenue earned by the business each monthly."
               value={
                 optionValue === 1
@@ -1273,12 +1228,13 @@ export default function SettlementRange({
                   : "No Data"
               }
               rawValue={apiData?.weekly_true_revenue}
-            />
-            {strategyTab === 0 && (
+            /> */}
+
+            {/* {strategyTab === 0 && (
               <GridItem
-                key="Weekly Receivable Commission"
-                title="Weekly Receivable Commission"
-                tooltip="Weekly payment Which we receive."
+                key="Monthly Receivable Commission"
+                title="Monthly Receivable Commission"
+                tooltip="Monthly payment Which we receive."
                 value={
                   allData?.maxProfitCommission
                     ? `$${formatAmountValue(allData?.maxProfitCommission)}`
@@ -1286,7 +1242,7 @@ export default function SettlementRange({
                 }
                 rawValue={allData?.maxProfitCommission}
               />
-            )}
+            )} */}
             {strategyTab === 1 && (
               <GridItem
                 key="Total Commission"
@@ -1303,9 +1259,9 @@ export default function SettlementRange({
 
             {strategyTab === 2 && (
               <GridItem
-                key="Weekly Receivable Commission"
-                title="Weekly Receivable Commission"
-                tooltip="Weekly Commission which we receive."
+                key="Monthly Receivable Commission"
+                title="Monthly Receivable Commission"
+                tooltip="Monthly Commission which we receive."
                 value={
                   allData?.percentageReceivableCommission
                     ? `${allData?.percentageReceivableCommission}%`
@@ -1314,6 +1270,84 @@ export default function SettlementRange({
                 rawValue={allData?.percentageReceivableCommission}
               />
             )}
+            <GridItem
+              key="Average monthly profit and profit % excluding payments"
+              title="Avg. Monthly profit excluding payments"
+              tooltip="Average monthly profit and profit % excluding payments"
+              value={
+                allData?.averageMonthlyProfitExcludingPayments &&
+                typeof allData?.averageMonthlyProfitExcludingPayments?.value ===
+                  "number" &&
+                typeof allData?.averageMonthlyProfitExcludingPayments
+                  ?.percentage === "number"
+                  ? `$${formatAmountValue(
+                      allData.averageMonthlyProfitExcludingPayments?.value
+                    )} (${allData?.averageMonthlyProfitExcludingPayments?.percentage?.toFixed(
+                      2
+                    )}%)`
+                  : "No Data"
+              }
+              rawValue={allData?.averageMonthlyProfitExcludingPayments}
+            />
+            <GridItem
+              key="Average monthly profit and profit % including payments"
+              title="Avg. Monthly profit including payments"
+              tooltip="Average monthly profit and profit % including payments"
+              value={
+                allData?.averageMonthlyProfitIncludingPayments &&
+                typeof allData?.averageMonthlyProfitIncludingPayments?.value ===
+                  "number" &&
+                typeof allData?.averageMonthlyProfitIncludingPayments
+                  .percentage === "number"
+                  ? `$${formatAmountValue(
+                      allData?.averageMonthlyProfitIncludingPayments?.value
+                    )} (${allData?.averageMonthlyProfitIncludingPayments?.percentage?.toFixed(
+                      2
+                    )}%)`
+                  : "No Data"
+              }
+              rawValue={allData?.averageMonthlyProfitIncludingPayments}
+            />
+
+            <GridItem
+              key="Current monthly profit and profit % excluding payments"
+              title="Current profit excluding payments"
+              tooltip="Current monthly profit and profit % excluding payments"
+              value={
+                allData?.currentMonthlyProfitExcludingPayments &&
+                typeof allData?.currentMonthlyProfitExcludingPayments?.value ===
+                  "number" &&
+                typeof allData?.currentMonthlyProfitExcludingPayments
+                  ?.percentage === "number"
+                  ? `$${formatAmountValue(
+                      allData?.currentMonthlyProfitExcludingPayments?.value
+                    )} (${allData?.currentMonthlyProfitExcludingPayments?.percentage?.toFixed(
+                      2
+                    )}%)`
+                  : "No Data"
+              }
+              rawValue={allData?.currentMonthlyProfitExcludingPayments}
+            />
+
+            <GridItem
+              key="Current monthly profit and profit % including payments"
+              title="Current profit including payments"
+              tooltip="Current monthly profit and profit % including payments"
+              value={
+                allData?.currentMonthlyProfitIncludingPayments &&
+                typeof allData?.currentMonthlyProfitIncludingPayments?.value ===
+                  "number" &&
+                typeof allData?.currentMonthlyProfitIncludingPayments
+                  ?.percentage === "number"
+                  ? `$${formatAmountValue(
+                      allData?.currentMonthlyProfitIncludingPayments?.value
+                    )} (${allData.currentMonthlyProfitIncludingPayments.percentage?.toFixed(
+                      2
+                    )}%)`
+                  : "No Data"
+              }
+              rawValue={allData?.currentMonthlyProfitIncludingPayments}
+            />
 
             {scores?.Scores && (
               <>
@@ -1626,7 +1660,6 @@ export default function SettlementRange({
                         return null;
                       }
 
-                      // Use the formatCurrencyValue function to format detail.value
                       const formattedValue = (() => {
                         if (
                           detail?.label === "Current Payment Amount" ||
@@ -1649,12 +1682,13 @@ export default function SettlementRange({
                           "1.2x of Net Funded Amount Minus Amount Paid Back.",
                         "Current Balance":
                           "The remaining amount you owe to the creditor.",
-                        "Weekly Budget":
+                        "Monthly Budget":
                           "Your profit before making any debt payments.",
                         "Purchased Percentage":
                           "The percentage of the loan amount that has been repaid.",
                         "Current Payment Amount":
                           "The initial amount borrowed before any repayments.",
+                        "Payment Frequency": "Payment Frequency.",
                       };
 
                       return (
@@ -1672,23 +1706,46 @@ export default function SettlementRange({
                             sx={{
                               display: "flex",
                               alignItems: "center",
+                              justifyContent: "space-between",
+                              marginRight: "0.5rem",
                             }}
                           >
-                            <Typography sx={commonTextStyles}>
-                              {detail?.label}
-                            </Typography>
-                            <Tooltip
-                              title={tooltipContent[detail?.label] || ""}
-                              placement="top"
+                            <div
+                              style={{ display: "flex", alignItems: "center" }}
                             >
-                              <InfoIcon
-                                sx={{
-                                  fontSize: "17px",
-                                  color: Colors.SKY_BLUE,
-                                }}
-                              />
-                            </Tooltip>
+                              <Typography sx={commonTextStyles}>
+                                {detail?.label}
+                              </Typography>
+
+                              <Tooltip
+                                title={tooltipContent[detail?.label] || ""}
+                                placement="top"
+                              >
+                                <InfoIcon
+                                  sx={{
+                                    fontSize: "17px",
+                                    color: Colors.SKY_BLUE,
+                                  }}
+                                />
+                              </Tooltip>
+                            </div>
+                            <div>
+                              {detail?.label !== "Current Balance" &&
+                                detail?.label !== "Break Even" &&
+                                detail?.label !== "Payment Frequency" && (
+                                  <div>
+                                    <MuiModels
+                                      show="editSettlementContractCard"
+                                      creditorDetails={formattedValue || ""}
+                                      selectedCreditorDetailsKey={detail?.key}
+                                      caseId={selectedCreditorDetails?.caseId}
+                                      getAllRanges={getAllRanges}
+                                    />
+                                  </div>
+                                )}
+                            </div>
                           </Box>
+
                           <Typography
                             sx={{
                               ...commonTextStyles,

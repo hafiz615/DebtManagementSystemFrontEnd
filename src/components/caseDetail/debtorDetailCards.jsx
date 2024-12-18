@@ -23,6 +23,7 @@ import {
 } from "../../constants/appConstants";
 import PaymentCardDetails from "../paymentCard";
 import { AddDebtorAccount } from "../../services/services";
+import Dropdown from "../dropdown";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -61,8 +62,10 @@ export default function DebtorDetailsCards({
   caseDataId,
   GetLogsById,
   verifiedSenders,
+  fetchCalls,
 }) {
   const [searchText, setSearchText] = useState("");
+  const [selectedValue, setSelectedValue] = useState("Seamless Chex");
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 2;
   const handleNext = () => {
@@ -82,6 +85,11 @@ export default function DebtorDetailsCards({
       ?.replace(/^./, (str) => str?.toUpperCase());
     return formattedKeys;
   };
+
+  const paymentGateways = [
+    { label: "Seamless Chex", value: "Seamless Chex" },
+    { label: "Easy Pay", value: "Easy Pay" },
+  ];
 
   const desiredKeys = [
     "companyName",
@@ -117,6 +125,7 @@ export default function DebtorDetailsCards({
   const [connectPayment, setConnectPayment] = useState({
     paymentToken: "",
     paymentType: "",
+    platform: "easypay",
   });
   const debtorId = caseData?.debtor?._id;
   const { showToast } = useToast();
@@ -179,7 +188,21 @@ export default function DebtorDetailsCards({
               justifyContent: "end",
             }}
           >
-            <PaymentCardDetails setConnectPayment={setConnectPayment} />
+            {/* <Dropdown
+              menuWidth="10rem"
+              menuItems={paymentGateways}
+              placeholder="Type"
+              backgroundColor={Colors.BG_LIGHT_GRAY}
+              hoverColor={Colors.BG_LIGHT_GRAY}
+              width="10rem"
+              selectedValue={selectedValue}
+              setSelectedValue={setSelectedValue}
+              fontSize="12px"
+            /> */}
+            <PaymentCardDetails
+              paymentGateway={selectedValue}
+              setConnectPayment={setConnectPayment}
+            />
             <MuiModels
               show="debtorDetail"
               button="create"
@@ -226,23 +249,50 @@ export default function DebtorDetailsCards({
                       ? "Street Address"
                       : formatKeys(key)}
                   </Typography>
-
-                  <Tooltip title={value} placement="top-end">
-                    <Typography
-                      sx={{
-                        fontSize: smallScreen ? "11px" : "13px",
-                        color: Colors.DIM_LIGHT_GRAY,
-                        fontFamily: "Nunito",
-                        fontWeight: "500",
-                        textAlign: "right",
-                        flexWrap: "wrap",
-                        maxWidth: "80%",
-                        wordBreak: "break-word",
-                      }}
-                    >
-                      {getTruncatedText(formatValue(value), 15) || "--"}
-                    </Typography>
-                  </Tooltip>
+                  {key === "phone" ? (
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <MuiModels
+                        fetchCalls={fetchCalls}
+                        show="dialPad"
+                        caseId={caseDataId}
+                        data={value ? `+1${value}` : ""}
+                        width={300}
+                      />
+                      <Tooltip title={value} placement="top-end">
+                        <Typography
+                          sx={{
+                            fontSize: smallScreen ? "11px" : "13px",
+                            color: Colors.DIM_LIGHT_GRAY,
+                            fontFamily: "Nunito",
+                            fontWeight: "500",
+                            textAlign: "right",
+                            flexWrap: "wrap",
+                            maxWidth: "80%",
+                            wordBreak: "break-word",
+                          }}
+                        >
+                          {getTruncatedText(formatValue(value), 15) || "--"}
+                        </Typography>
+                      </Tooltip>
+                    </div>
+                  ) : (
+                    <Tooltip title={value} placement="top-end">
+                      <Typography
+                        sx={{
+                          fontSize: smallScreen ? "11px" : "13px",
+                          color: Colors.DIM_LIGHT_GRAY,
+                          fontFamily: "Nunito",
+                          fontWeight: "500",
+                          textAlign: "right",
+                          flexWrap: "wrap",
+                          maxWidth: "80%",
+                          wordBreak: "break-word",
+                        }}
+                      >
+                        {getTruncatedText(formatValue(value), 15) || "--"}
+                      </Typography>
+                    </Tooltip>
+                  )}
                 </div>
               )
           )}
@@ -312,19 +362,44 @@ export default function DebtorDetailsCards({
                       ? "Business Type"
                       : formatKeys(key)}
                   </Typography>
-                  <Tooltip title={value} placement="top-end">
-                    <Typography
-                      sx={{
-                        fontSize: smallScreen ? "11px" : "13px",
-                        color: Colors.DIM_LIGHT_GRAY,
-                        fontFamily: "Nunito",
-                        fontWeight: "500",
-                        textAlign: "right",
-                      }}
-                    >
-                      {getTruncatedText(formatValue(value), 15)}
-                    </Typography>
-                  </Tooltip>
+                  {key === "phone" ? (
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <MuiModels
+                        fetchCalls={fetchCalls}
+                        show="dialPad"
+                        caseId={caseDataId}
+                        data={value ? `+1${value}` : ""}
+                        width={300}
+                      />
+                      <Tooltip title={value} placement="top-end">
+                        <Typography
+                          sx={{
+                            fontSize: smallScreen ? "11px" : "13px",
+                            color: Colors.DIM_LIGHT_GRAY,
+                            fontFamily: "Nunito",
+                            fontWeight: "500",
+                            textAlign: "right",
+                          }}
+                        >
+                          {getTruncatedText(formatValue(value), 15)}
+                        </Typography>
+                      </Tooltip>
+                    </div>
+                  ) : (
+                    <Tooltip title={value} placement="top-end">
+                      <Typography
+                        sx={{
+                          fontSize: smallScreen ? "11px" : "13px",
+                          color: Colors.DIM_LIGHT_GRAY,
+                          fontFamily: "Nunito",
+                          fontWeight: "500",
+                          textAlign: "right",
+                        }}
+                      >
+                        {getTruncatedText(formatValue(value), 15)}
+                      </Typography>
+                    </Tooltip>
+                  )}
                 </div>
               );
             }

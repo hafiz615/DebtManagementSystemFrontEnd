@@ -602,6 +602,11 @@ export default function ClientListDetails() {
                     value: clientData?.paymentCounts?.successfulCaptures,
                     color: Colors.SKY_BLUE,
                   },
+                  {
+                    title: "Weeks Remaining",
+                    value: clientData?.maxWeekRemaining || "00",
+                    color: Colors.SKY_BLUE,
+                  },
                 ]?.map((item, index) => (
                   <Grid
                     key={index}

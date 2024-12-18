@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Box, Button, Modal, IconButton } from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
 
 import AddIcon from "@mui/icons-material/Add";
 import CreateIcon from "@mui/icons-material/Create";
@@ -32,6 +33,9 @@ import {
   Sms,
   Download,
   Refresh,
+  LocalAtm,
+  Phone,
+  Sync,
 } from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
@@ -56,6 +60,10 @@ import CommissionDetails from "./caseDetail/commissionDetails";
 import Strategy3choices from "./strategy3choices";
 import DebtorPlan from "./debtorPlan";
 import TransactionHistory from "./transactionHistory";
+import PaymentCardPopup from "./paymentCardPopup";
+import DialPad from "./dialPad";
+import EditContractInformation from "./settlementRange/editContractInformation";
+import CreditorSync from "./caseDetail/creditorSync";
 
 export default function MuiModels({
   buttonName,
@@ -139,6 +147,12 @@ export default function MuiModels({
   verifiedSenders,
   scoresBackend,
   compose,
+  paymentId,
+  amount,
+  creditorDetails,
+  selectedCreditorDetails,
+  selectedCreditorDetailsKey,
+  fetchCalls,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -190,6 +204,21 @@ export default function MuiModels({
           buttonText={buttonText}
           backgroundColor={Colors.SKY_BLUE}
         />
+      ) : show === "dialPad" ? (
+        <IconButton
+          sx={{ display: "flex", alignItems: "center" }}
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <Phone
+            sx={{
+              color: Colors.SKY_BLUE,
+              cursor: "pointer",
+              fontSize: "16px",
+            }}
+          />
+        </IconButton>
       ) : show === "editField" ? (
         <IconButton
           sx={{ display: "flex", alignItems: "center" }}
@@ -290,6 +319,18 @@ export default function MuiModels({
             sx={{ color: Colors.DARK_GRAY, fontSize: iconSize || "16px" }}
           />
         </IconButton>
+      ) : show === "showCreditorSync" ? (
+        <Tooltip title="Sync Paynote Creditor" placement="top-end">
+          <IconButton
+            onClick={() => {
+              handleOpen();
+            }}
+          >
+            <Sync
+              sx={{ color: Colors.DARK_GRAY, fontSize: iconSize || "16px" }}
+            />
+          </IconButton>
+        </Tooltip>
       ) : show === "editAbout" ? (
         <IconButton
           onClick={() => {
@@ -310,6 +351,10 @@ export default function MuiModels({
             sx={{ fontSize: "16px", color: Colors.BLACK, cursor: "pointer" }}
           />
         </IconButton>
+      ) : show === "deleteFile" ? (
+        <IconButton onClick={() => handleOpen()} color="error">
+          <Delete />
+        </IconButton>
       ) : show === "CaseCustomField" || buttonName === "payments" ? (
         <IconButton
           onClick={() => {
@@ -321,6 +366,20 @@ export default function MuiModels({
           />
         </IconButton>
       ) : show === "editStatus" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <EditIcon
+            sx={{
+              fontSize: "1.2rem",
+              color: Colors.DARK_GRAY,
+              cursor: "pointer",
+            }}
+          />
+        </IconButton>
+      ) : show === "editSettlementContractCard" ? (
         <IconButton
           onClick={() => {
             handleOpen();
@@ -424,6 +483,16 @@ export default function MuiModels({
             sx={{ fontSize: "16px", color: Colors.WHITE, cursor: "pointer" }}
           />
         </IconButton>
+      ) : show === "AddPayments" ? (
+        <TextButton
+          buttonText="Add Manual Payments"
+          height="2.5rem"
+          width="12rem"
+          onClick={handleOpen}
+          disabled={disabled}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
       ) : button === "delete" ? (
         <IconButton
           onClick={() => {
@@ -497,13 +566,6 @@ export default function MuiModels({
           border={`1px solid ${Colors.SKY_BLUE}`}
           onClick={handleOpen}
           borderRadius="5px"
-          startIcon={
-            <Download
-              sx={{
-                color: Colors.WHITE,
-              }}
-            />
-          }
           disabled={disabled}
         />
       ) : buttonName === "sendEmailCase" || buttonName === "composeEmail" ? (
@@ -597,27 +659,15 @@ export default function MuiModels({
         </Button>
       ) : show === "sendEmail" || show === "sendEmailJustification" ? (
         <TextButton
-          buttonText={"Send Email"}
+          buttonText={show === "sendEmail" ? "Send Agreement" : "Send Email"}
           boxShadow="none"
           height={"2.5rem"}
-          width={extraSmallScreen ? "2rem" : "9rem"}
+          width={show === "sendEmail" ? "10rem" : "9rem"}
           backgroundColor={Colors.SKY_BLUE}
           fontColor={Colors.WHITE}
           hoverColor={Colors.SKY_BLUE}
           onClick={handleOpen}
           disabled={disabled}
-          startIcon={
-            extraSmallScreen || show === "sendEmailJustification" ? (
-              ""
-            ) : (
-              <Email
-                sx={{
-                  color: Colors.WHITE,
-                  fontSize: FONT_SIZE_XL,
-                }}
-              />
-            )
-          }
         />
       ) : show === "settlmentPayment" ||
         buttonName === "settlmentPayment" ||
@@ -634,7 +684,7 @@ export default function MuiModels({
         />
       ) : show === "debtorPaymentPlan" ? (
         <TextButton
-          buttonText="Choose Debtor Plan"
+          buttonText="Choose Client Plan"
           boxShadow="none"
           height="2.5rem"
           width="12rem"
@@ -866,6 +916,7 @@ export default function MuiModels({
               caseId={caseId}
               paymentData={paymentData}
               debtorId={debtorId}
+              to={to}
             />
           ) : show === "uploadFile" ? (
             <UploadFilePopup
@@ -939,6 +990,13 @@ export default function MuiModels({
             />
           ) : show === "paynoteForm" ? (
             <PaynoteForm handleClose={handleClose} caseData={caseData} />
+          ) : show === "AddPayments" ? (
+            <PaymentCardPopup
+              handleClose={handleClose}
+              caseId={caseId}
+              debtorId={debtorId}
+              GetCaseDetails={GetCaseDetails}
+            />
           ) : show === "extractFiles" ? (
             <ExtractFieldPopup
               selectedFiles={selectedFiles}
@@ -958,8 +1016,30 @@ export default function MuiModels({
               handleClose={handleClose}
               GetCaseDetails={GetCaseDetails}
             />
+          ) : show === "editSettlementContractCard" ? (
+            <EditContractInformation
+              handleClose={handleClose}
+              creditorDetails={creditorDetails}
+              caseId={caseId}
+              selectedCreditorDetails={selectedCreditorDetails}
+              selectedCreditorDetailsKey={selectedCreditorDetailsKey}
+              getAllRanges={getAllRanges}
+            />
           ) : show === "TransactionHistory" ? (
             <TransactionHistory handleClose={handleClose} data={data} />
+          ) : show === "dialPad" ? (
+            <DialPad
+              caseId={caseId}
+              data={data}
+              handleClose={handleClose}
+              fetchCalls={fetchCalls}
+            />
+          ) : show === "showCreditorSync" ? (
+            <CreditorSync
+              handleClose={handleClose}
+              caseData={caseData}
+              GetCaseDetails={GetCaseDetails}
+            />
           ) : (
             ""
           )}

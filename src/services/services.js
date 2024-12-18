@@ -1487,3 +1487,120 @@ export const GetDailyCashFlow = async (id) => {
     return error;
   }
 };
+
+export const UpdateContractDetails = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/case/updateContractDetails/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetCalls = async (id) => {
+  try {
+    return await axios.get(BASE_URL + `/v1/case/getCalls/${id}`, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+export const DialCall = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/case/createCall/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetAllCasesTasks = async (id) => {
+  try {
+    return await axios.get(BASE_URL + `/v1/task/getAllTasks`, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+export const AddManualPayment = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/addManualPayment`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const deleteCreditor = async (id) => {
+  try {
+    return await axios.delete(
+      BASE_URL + `/v1/case/deleteCreditor/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const handleDeleteFile = async (itemKey, caseDataId) => {
+  try {
+    return await axios.delete(`${BASE_URL}/v1/case/deleteFile/${caseDataId}`, {
+      ...setHeaders(),
+      data: { key: itemKey },
+    });
+  } catch (error) {
+    return error;
+  }
+};
+export const GetAllUpcomingPayments = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/payment/getAllUpcomingPayments/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetCallToken = async () => {
+  try {
+    return await axios.get(BASE_URL + `/v1/case/twilio/token`, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+export const GetCreditorSyncEmail = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/creditor/getCreditorSyncEmail/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const SyncPaynoteCreditor = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/creditor/syncPaynoteCreditor/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const CreatePaymentPlan = async (payload, id) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/case/updateCasePlan/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
