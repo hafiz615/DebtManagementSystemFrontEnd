@@ -16,6 +16,7 @@ import ConversationHistory from "../callHistory";
 import { GetCalls } from "../../services/services";
 import SendEmailCase from "./sendEmailCase";
 import ReplyCard from "./replyCard";
+import { FONT_SIZE_LARGE } from "../../constants/appConstants";
 
 export default function TimelineData({
   callLogs,
@@ -114,9 +115,28 @@ export default function TimelineData({
               </Typography>
             </Card>
           ) : iconValue === 5 ? (
-            callLogs?.map((callDetails) => (
-              <ConversationHistory callDetails={callDetails} />
-            ))
+            callLogs?.length > 0 ? (
+              callLogs?.map((callDetails) => (
+                <ConversationHistory callDetails={callDetails} />
+              ))
+            ) : (
+              <div
+                style={{
+                  backgroundColor: Colors.WHITE,
+                  padding: "1rem 10px",
+                  borderRadius: "10px",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: FONT_SIZE_LARGE,
+                    fontFamily: "Nunito",
+                  }}
+                >
+                  No Calls
+                </Typography>
+              </div>
+            )
           ) : (
             <Card
               sx={{
