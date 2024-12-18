@@ -1593,3 +1593,14 @@ export const SyncPaynoteCreditor = async (payload, id) => {
     return error;
   }
 };
+export const CreatePaymentPlan = async (payload, id) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/case/updateCasePlan/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

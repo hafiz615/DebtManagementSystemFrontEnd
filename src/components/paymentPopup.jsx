@@ -1,10 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  FormControl,
-} from "@mui/material";
 import { useParams } from "react-router-dom";
 
 import { Box, Grid, Typography } from "@mui/material";
@@ -13,11 +7,7 @@ import PaymentDetails from "./caseCreation/paymentDetails";
 import PaymentProcess from "./radioPayment";
 import TextButton from "./button";
 import { Colors } from "../config/default";
-import {
-  CancelPaymentPlan,
-  GetWeeklyAndTotalCommission,
-  UpdateCase,
-} from "../services/services";
+import { CancelPaymentPlan, CreatePaymentPlan } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import { calculateNextWeek } from "../common";
 import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../constants/appConstants";
@@ -87,7 +77,7 @@ export default function PaymentPopup({
       commission: commission,
     };
     const updateCaseId = caseId || data?._id;
-    const resCaseUpdate = await UpdateCase(params, updateCaseId);
+    const resCaseUpdate = await CreatePaymentPlan(params, updateCaseId);
     if (resCaseUpdate?.status === 200) {
       setPaymentChanged && setPaymentChanged(true);
       showToast(resCaseUpdate?.data?.message, "success");
