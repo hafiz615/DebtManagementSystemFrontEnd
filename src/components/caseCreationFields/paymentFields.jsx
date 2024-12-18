@@ -102,17 +102,21 @@ export default function PaymentFields({
           />
         </Grid>
         <Grid item xs={12} md={4} lg={3}>
-          <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              color: Colors.DARK_GRAY,
-              marginLeft: "1rem",
-            }}
+          <Tooltip
+            title="Current balance will be calculated based on total receivable - cuurent amount"
+            placement="top"
           >
-            Paid
-          </Typography>
-          <AmountTextField
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "500",
+                color: Colors.DARK_GRAY,
+                marginLeft: "1rem",
+              }}
+            >
+              Paid
+            </Typography>
+            {/* <AmountTextField
             value={parseFloat(thisCaseData?.paidAmount?.toFixed(2))}
             onChange={(e) =>
               handleCaseDataChange(
@@ -127,7 +131,26 @@ export default function PaymentFields({
                 ? "2px solid red"
                 : "none !important"
             }
-          />
+          /> */}
+
+            <AmountTextField
+              value={parseFloat(thisCaseData?.paidAmount?.toFixed(2))}
+              onChange={(e) => {
+                const newPaidAmount = parseFloat(e.target.value) || 0;
+                const newCurrentBalance =
+                  parseFloat(thisCaseData?.totalDebt?.toFixed(2)) -
+                  newPaidAmount;
+                handleCaseDataChange(caseIndex, "paidAmount", newPaidAmount);
+                handleCaseDataChange(caseIndex, "remaining", newCurrentBalance);
+              }}
+              onKeyDown={handleNumberInput}
+              border={
+                hasError("paidAmount") && showErrors
+                  ? "2px solid red"
+                  : "none !important"
+              }
+            />
+          </Tooltip>
         </Grid>
         <Grid item xs={12} md={4} lg={3}>
           <Tooltip
@@ -145,8 +168,8 @@ export default function PaymentFields({
               Current Balance
             </Typography>
 
-            <AmountTextField
-              readonly={true}
+            {/* <AmountTextField
+              // readonly={true}
               marginRight={smallScreen ? "0rem" : "2rem"}
               value={
                 thisCaseData?.paidAmount
@@ -161,6 +184,30 @@ export default function PaymentFields({
                   parseFloat(e.target.value)
                 )
               }
+              onKeyDown={handleNumberInput}
+              border={
+                thisCaseData?.remaining === 0
+                  ? "2px solid red"
+                  : "auto" && hasError("remaining") && showErrors
+                  ? "2px solid red"
+                  : "none !important"
+              }
+            /> */}
+            <AmountTextField
+              marginRight={smallScreen ? "0rem" : "2rem"}
+              value={
+                thisCaseData?.remaining?.toFixed(2) ||
+                parseFloat(thisCaseData?.totalDebt?.toFixed(2)) -
+                  (thisCaseData?.paidAmount?.toFixed(2) || 0)
+              }
+              onChange={(e) => {
+                const newCurrentBalance = parseFloat(e.target.value) || 0;
+                const newPaidAmount =
+                  parseFloat(thisCaseData?.totalDebt?.toFixed(2)) -
+                  newCurrentBalance;
+                handleCaseDataChange(caseIndex, "remaining", newCurrentBalance);
+                handleCaseDataChange(caseIndex, "paidAmount", newPaidAmount);
+              }}
               onKeyDown={handleNumberInput}
               border={
                 thisCaseData?.remaining === 0

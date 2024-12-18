@@ -164,7 +164,7 @@ export default function CreditorsDetailCards({
                 iconColor={Colors.BLACK}
                 caseData={caseData}
                 GetCaseDetails={GetCaseDetails}
-                height="20vh"
+                height="22vh"
               />
 
               <MuiModels

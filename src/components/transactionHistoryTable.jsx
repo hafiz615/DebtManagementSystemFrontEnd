@@ -12,6 +12,12 @@ import {
 
 export default function TransactionHistoryTable({ data }) {
   const headers = ["Date", "Description", "Amount", "Memo", "Number"];
+  const totalAmount =
+    data?.reduce((acc, row) => {
+      const amount = parseFloat(row?.amount);
+      return acc + (isNaN(amount) ? 0 : amount);
+    }, 0) || 0;
+
   return (
     <TableContainer
       component={Paper}
@@ -51,7 +57,7 @@ export default function TransactionHistoryTable({ data }) {
                   {row?.description || "--"}
                 </TableCell>
                 <TableCell align="center" sx={{ fontFamily: "Nunito" }}>
-                  {row?.amount || "--"}
+                  {row?.amount ? `$${parseFloat(row.amount).toFixed(2)}` : "--"}
                 </TableCell>
                 <TableCell align="center" sx={{ fontFamily: "Nunito" }}>
                   {row?.memo || "--"}
@@ -72,6 +78,38 @@ export default function TransactionHistoryTable({ data }) {
                   No data available
                 </Typography>
               </TableCell>
+            </TableRow>
+          )}
+
+          {/* Total Amount Row */}
+          {data?.length > 0 && (
+            <TableRow
+              sx={{
+                position: "sticky",
+                bottom: 0,
+                backgroundColor: "#f5f5f5",
+                zIndex: 1,
+              }}
+            >
+              <TableCell
+                colSpan={2}
+                align="center"
+                sx={{ fontFamily: "Nunito", fontWeight: "600" }}
+              >
+                Total Amount
+              </TableCell>
+              <TableCell
+                align="center"
+                sx={{ fontFamily: "Nunito", fontWeight: "600" }}
+              >
+                {totalAmount !== undefined && totalAmount !== null
+                  ? new Intl.NumberFormat("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }).format(totalAmount)
+                  : "--"}
+              </TableCell>
+              <TableCell colSpan={2} />
             </TableRow>
           )}
         </TableBody>

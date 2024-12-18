@@ -1137,7 +1137,7 @@ export default function SettlementRange({
           </Grid>
 
           <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
-            <GridItem
+            {/* <GridItem
               key="Monthly Profit Excluding Payments"
               title="Monthly Profit Excluding Payments"
               tooltip="Monthly profit by not making the creditor payments."
@@ -1153,9 +1153,9 @@ export default function SettlementRange({
                   : "No Data"
               }
               rawValue={apiData?.true_profit}
-            />
+            /> */}
 
-            <GridItem
+            {/* <GridItem
               key="Profitability"
               title="Profitability Excluding Payments"
               tooltip="Measure of how much profit your business makes after expenses."
@@ -1173,8 +1173,8 @@ export default function SettlementRange({
                   : "No Data"
               }
               rawValue={apiData?.profitability}
-            />
-            <GridItem
+            /> */}
+            {/* <GridItem
               key="Monthly Profit Including Payments"
               title="Monthly Profit Including Payments"
               tooltip="Monthly profit after making the creditor payments."
@@ -1190,8 +1190,8 @@ export default function SettlementRange({
                   : "No Data"
               }
               rawValue={apiData?.weekly_profit}
-            />
-            <GridItem
+            /> */}
+            {/* <GridItem
               key="Profitability Including Payments"
               title="Profitability Including payments"
               tooltip="Profitability Including the creditor Payment"
@@ -1211,8 +1211,8 @@ export default function SettlementRange({
                   : "No Data"
               }
               rawValue={apiData?.profitability_without_creditor_payments}
-            />
-            <GridItem
+            /> */}
+            {/* <GridItem
               key="Monthly True Revenue"
               title="Monthly True Revenue"
               tooltip="Total revenue earned by the business each monthly."
@@ -1228,9 +1228,9 @@ export default function SettlementRange({
                   : "No Data"
               }
               rawValue={apiData?.weekly_true_revenue}
-            />
+            /> */}
 
-            {strategyTab === 0 && (
+            {/* {strategyTab === 0 && (
               <GridItem
                 key="Monthly Receivable Commission"
                 title="Monthly Receivable Commission"
@@ -1242,7 +1242,7 @@ export default function SettlementRange({
                 }
                 rawValue={allData?.maxProfitCommission}
               />
-            )}
+            )} */}
             {strategyTab === 1 && (
               <GridItem
                 key="Total Commission"
