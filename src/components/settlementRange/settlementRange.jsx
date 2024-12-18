@@ -1285,7 +1285,7 @@ export default function SettlementRange({
                     )} (${allData?.averageMonthlyProfitExcludingPayments?.percentage?.toFixed(
                       2
                     )}%)`
-                  : "--"
+                  : "No Data"
               }
               rawValue={allData?.averageMonthlyProfitExcludingPayments}
             />
@@ -1304,7 +1304,7 @@ export default function SettlementRange({
                     )} (${allData?.averageMonthlyProfitIncludingPayments?.percentage?.toFixed(
                       2
                     )}%)`
-                  : "--"
+                  : "No Data"
               }
               rawValue={allData?.averageMonthlyProfitIncludingPayments}
             />
@@ -1324,7 +1324,7 @@ export default function SettlementRange({
                     )} (${allData?.currentMonthlyProfitExcludingPayments?.percentage?.toFixed(
                       2
                     )}%)`
-                  : "--"
+                  : "No Data"
               }
               rawValue={allData?.currentMonthlyProfitExcludingPayments}
             />
@@ -1344,7 +1344,7 @@ export default function SettlementRange({
                     )} (${allData.currentMonthlyProfitIncludingPayments.percentage?.toFixed(
                       2
                     )}%)`
-                  : "--"
+                  : "No Data"
               }
               rawValue={allData?.currentMonthlyProfitIncludingPayments}
             />
