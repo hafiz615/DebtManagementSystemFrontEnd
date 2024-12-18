@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Box, Button, Checkbox} from "@mui/material";
+import { Grid, Box, Button, Checkbox } from "@mui/material";
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import { RemoveRedEye } from "@mui/icons-material";
@@ -16,7 +16,6 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
   const [documents, setDocuments] = useState(caseData?.debtor?.documents);
   const [fileToDelete, setFileToDelete] = useState(null);
 
-
   const handleFileView = (url) => {
     setUrl(url);
     setIsViewerOpen(true);
@@ -31,6 +30,7 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
         (doc) => doc?.key !== fileToDelete?.key
       );
       setDocuments(filterDoc);
+      GetCaseDetails(caseDataId);
       showToast(response?.data?.message, "success");
     } else {
       showToast("An error occurred while deleting the file", "error");
