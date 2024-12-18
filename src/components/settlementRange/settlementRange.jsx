@@ -1275,16 +1275,17 @@ export default function SettlementRange({
               title="Avg. Monthly profit excluding payments"
               tooltip="Average monthly profit and profit % excluding payments"
               value={
-                allData?.averageMonthlyProfitExcludingPayments?.value !==
-                  undefined &&
-                allData?.averageMonthlyProfitExcludingPayments?.percentage !==
-                  undefined
+                allData?.averageMonthlyProfitExcludingPayments &&
+                typeof allData?.averageMonthlyProfitExcludingPayments?.value ===
+                  "number" &&
+                typeof allData?.averageMonthlyProfitExcludingPayments
+                  ?.percentage === "number"
                   ? `$${formatAmountValue(
-                      allData?.averageMonthlyProfitExcludingPayments.value
-                    )}  (${allData?.averageMonthlyProfitExcludingPayments.percentage.toFixed(
+                      allData.averageMonthlyProfitExcludingPayments?.value
+                    )} (${allData?.averageMonthlyProfitExcludingPayments?.percentage?.toFixed(
                       2
                     )}%)`
-                  : "No Data"
+                  : "--"
               }
               rawValue={allData?.averageMonthlyProfitExcludingPayments}
             />
@@ -1293,16 +1294,17 @@ export default function SettlementRange({
               title="Avg. Monthly profit including payments"
               tooltip="Average monthly profit and profit % including payments"
               value={
-                allData?.averageMonthlyProfitIncludingPayments?.value !==
-                  undefined &&
-                allData?.averageMonthlyProfitIncludingPayments?.percentage !==
-                  undefined
+                allData?.averageMonthlyProfitIncludingPayments &&
+                typeof allData?.averageMonthlyProfitIncludingPayments?.value ===
+                  "number" &&
+                typeof allData?.averageMonthlyProfitIncludingPayments
+                  .percentage === "number"
                   ? `$${formatAmountValue(
-                      allData?.averageMonthlyProfitIncludingPayments.value
-                    )}  (${allData?.averageMonthlyProfitIncludingPayments.percentage.toFixed(
+                      allData?.averageMonthlyProfitIncludingPayments?.value
+                    )} (${allData?.averageMonthlyProfitIncludingPayments?.percentage?.toFixed(
                       2
                     )}%)`
-                  : "No Data"
+                  : "--"
               }
               rawValue={allData?.averageMonthlyProfitIncludingPayments}
             />
@@ -1312,16 +1314,17 @@ export default function SettlementRange({
               title="Current profit excluding payments"
               tooltip="Current monthly profit and profit % excluding payments"
               value={
-                allData?.currentMonthlyProfitExcludingPayments?.value !==
-                  undefined &&
-                allData?.currentMonthlyProfitExcludingPayments?.percentage !==
-                  undefined
+                allData?.currentMonthlyProfitExcludingPayments &&
+                typeof allData?.currentMonthlyProfitExcludingPayments?.value ===
+                  "number" &&
+                typeof allData?.currentMonthlyProfitExcludingPayments
+                  ?.percentage === "number"
                   ? `$${formatAmountValue(
-                      allData?.currentMonthlyProfitExcludingPayments.value
-                    )}  (${allData?.currentMonthlyProfitExcludingPayments.percentage.toFixed(
+                      allData?.currentMonthlyProfitExcludingPayments?.value
+                    )} (${allData?.currentMonthlyProfitExcludingPayments?.percentage?.toFixed(
                       2
                     )}%)`
-                  : "No Data"
+                  : "--"
               }
               rawValue={allData?.currentMonthlyProfitExcludingPayments}
             />
@@ -1331,16 +1334,17 @@ export default function SettlementRange({
               title="Current profit including payments"
               tooltip="Current monthly profit and profit % including payments"
               value={
-                allData?.currentMonthlyProfitIncludingPayments?.value !==
-                  undefined &&
-                allData?.currentMonthlyProfitIncludingPayments?.percentage !==
-                  undefined
+                allData?.currentMonthlyProfitIncludingPayments &&
+                typeof allData?.currentMonthlyProfitIncludingPayments?.value ===
+                  "number" &&
+                typeof allData?.currentMonthlyProfitIncludingPayments
+                  ?.percentage === "number"
                   ? `$${formatAmountValue(
-                      allData?.currentMonthlyProfitIncludingPayments.value
-                    )}  (${allData?.currentMonthlyProfitIncludingPayments.percentage.toFixed(
+                      allData?.currentMonthlyProfitIncludingPayments?.value
+                    )} (${allData.currentMonthlyProfitIncludingPayments.percentage?.toFixed(
                       2
                     )}%)`
-                  : "No Data"
+                  : "--"
               }
               rawValue={allData?.currentMonthlyProfitIncludingPayments}
             />

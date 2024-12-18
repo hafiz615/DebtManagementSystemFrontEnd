@@ -57,7 +57,9 @@ export default function TransactionHistoryTable({ data }) {
                   {row?.description || "--"}
                 </TableCell>
                 <TableCell align="center" sx={{ fontFamily: "Nunito" }}>
-                  {row?.amount ? `$${parseFloat(row.amount).toFixed(2)}` : "--"}
+                  {row?.amount
+                    ? `$${parseFloat(row.amount)?.toFixed(2)}`
+                    : "--"}
                 </TableCell>
                 <TableCell align="center" sx={{ fontFamily: "Nunito" }}>
                   {row?.memo || "--"}
@@ -106,7 +108,7 @@ export default function TransactionHistoryTable({ data }) {
                   ? new Intl.NumberFormat("en-US", {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
-                    }).format(totalAmount)
+                    })?.format(totalAmount)
                   : "--"}
               </TableCell>
               <TableCell colSpan={2} />
