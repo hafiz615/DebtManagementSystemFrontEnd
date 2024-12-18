@@ -69,7 +69,8 @@ function TransactionRow({
     fontSize: "13px",
     fontFamily: "Nunito",
     fontWeight: "500",
-    width: "25%",
+    width: "20%",
+    margin: "5px 0px",
   };
 
   return (
@@ -101,9 +102,9 @@ function TransactionRow({
             style={{
               display: "flex",
               alignItems: "center",
-              height: "15%",
+              // height: "15%",
               width: "100%",
-              justifyContent: "space-between",
+              // justifyContent: "space-between",
               color: heading ? Colors.BLACK : colorScheme,
             }}
           >
@@ -118,7 +119,7 @@ function TransactionRow({
                 ? "Capture"
                 : capitalizeFirstLetter(item?.type) || "-"}
             </p>
-            <p>{item?.creditorName || "-"}</p>
+            <p style={typographyStyle}>{item?.creditorName || "-"}</p>
             <p style={typographyStyle}>
               {(item?.type === "authorization" &&
                 item?.authorized === "Failed") ||
