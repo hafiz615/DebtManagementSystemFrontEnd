@@ -77,7 +77,7 @@ function CreditorSync({ handleClose, caseData, GetCaseDetails }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            height: "20vh",
+            height: "22vh",
           }}
         >
           <CircularProgress size={20} sx={{ color: Colors.SKY_BLUE }} />
