@@ -1604,3 +1604,15 @@ export const CreatePaymentPlan = async (payload, id) => {
     return error;
   }
 };
+
+export const UpdateWeeklyBudgetSettlement = async (payload, id) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/debtor/updateWeeklyBudget/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

@@ -64,6 +64,7 @@ import PaymentCardPopup from "./paymentCardPopup";
 import DialPad from "./dialPad";
 import EditContractInformation from "./settlementRange/editContractInformation";
 import CreditorSync from "./caseDetail/creditorSync";
+import UpdateWeeklyBudget from "./settlementRange/updateWeeklyBudget";
 
 export default function MuiModels({
   buttonName,
@@ -470,6 +471,16 @@ export default function MuiModels({
               color: Colors.DIM_LIGHT_GRAY,
               cursor: "pointer",
             }}
+          />
+        </IconButton>
+      ) : show === "updateWeeklyBudget" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <EditIcon
+            sx={{ fontSize: "16px", color: Colors.BLACK, cursor: "pointer" }}
           />
         </IconButton>
       ) : show === "EditCaseCustomField" ? (
@@ -1039,6 +1050,13 @@ export default function MuiModels({
               handleClose={handleClose}
               caseData={caseData}
               GetCaseDetails={GetCaseDetails}
+            />
+          ) : show === "updateWeeklyBudget" ? (
+            <UpdateWeeklyBudget
+              handleClose={handleClose}
+              data={data}
+              popUpDebtorData={popUpDebtorData}
+              getAllRanges={getAllRanges}
             />
           ) : (
             ""
