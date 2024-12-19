@@ -85,19 +85,24 @@ export default function SettlementPayment({
           caseId={caseId}
           settlementRange={
             selectedField === "Minimum"
-              ? settlementRange?.max < 0
-                ? -settlementRange?.max - settlementRange?.max * 0.2
-                : settlementRange?.max - settlementRange?.max * 0.2
-              : settlementRange?.max
+              ? settlementRange?.min || "--"
+              : settlementRange?.max || "--"
           }
+          //     ? settlementRange?.max < 0
+          //       ? -settlementRange?.max - settlementRange?.max * 0.2
+          //       : settlementRange?.max - settlementRange?.max * 0.2
+          //     : settlementRange?.max
+          // }
           weeksTillPaid={
             selectedField === "Minimum"
-              ? Math.round(
-                  weeksTillPaid?.max < 0
-                    ? weeksTillPaid?.max + weeksTillPaid?.max * 0.2
-                    : weeksTillPaid?.max + weeksTillPaid?.max * 0.2
-                )
-              : weeksTillPaid?.max
+              ? weeksTillPaid?.min || "--"
+              : weeksTillPaid?.max || "--"
+            // ? Math.round(
+            //     weeksTillPaid?.max < 0
+            //       ? weeksTillPaid?.max + weeksTillPaid?.max * 0.2
+            //       : weeksTillPaid?.max + weeksTillPaid?.max * 0.2
+            //   )
+            // : weeksTillPaid?.max
           }
           commissionRange={
             selectedField === "Minimum"
