@@ -1069,9 +1069,19 @@ export default function SettlementRange({
                           color: Colors.DARK_GRAY,
                           fontSize: FONT_SIZE_LARGE,
                           marginTop: "0.5rem",
+                          display: "flex",
+                          alignItems: "center",
                         }}
                       >
                         {data?.item}
+                        {data?.item === "Weekly Budget" && (
+                          <MuiModels
+                            show="updateWeeklyBudget"
+                            data={data}
+                            popUpDebtorData={popUpDebtorData}
+                            getAllRanges={getAllRanges}
+                          />
+                        )}
                       </div>
                       <Tooltip title={data?.value} placement="top-end">
                         <span
