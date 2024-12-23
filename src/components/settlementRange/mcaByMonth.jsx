@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import ScrollbarStyles from "../customScroll";
 import { Colors } from "../../config/default";
+import { Divider } from "@mui/material";
 
 const McaByMonthTable = ({ mcaByMonth }) => {
   const cellStyleHeader = {
@@ -70,7 +71,10 @@ const McaByMonthTable = ({ mcaByMonth }) => {
             <Typography
               sx={{
                 fontFamily: "Nunito",
-                backgroundColor: "#CCCCCC",
+                backgroundColor: Colors.BG_LIGHT_GRAY,
+                "&:hover": {
+                  backgroundColor: Colors.VIOLET,
+                },
                 height: "8vh",
                 display: "flex",
                 alignItems: "center",
@@ -80,10 +84,19 @@ const McaByMonthTable = ({ mcaByMonth }) => {
             >
               Month: {month} ({work_days || "--"} work days)
             </Typography>
+            <Divider
+              sx={{
+                backgroundColor: Colors.BG_LIGHT_GRAY,
+                height: "1px",
+              }}
+            />
             <Typography
               sx={{
                 fontFamily: "Nunito",
-                backgroundColor: "#EEEEEE",
+                backgroundColor: Colors.BG_LIGHT_GRAY,
+                "&:hover": {
+                  backgroundColor: Colors.VIOLET,
+                },
                 height: "8vh",
                 display: "flex",
                 alignItems: "center",
@@ -92,6 +105,12 @@ const McaByMonthTable = ({ mcaByMonth }) => {
             >
               Account: {account || "--"}
             </Typography>
+            <Divider
+              sx={{
+                backgroundColor: Colors.BG_LIGHT_GRAY,
+                height: "1px",
+              }}
+            />
             <TableContainer>
               <Table>
                 <TableHead>
@@ -108,7 +127,16 @@ const McaByMonthTable = ({ mcaByMonth }) => {
                 </TableHead>
                 <TableBody>
                   {records?.map((record, index) => (
-                    <TableRow key={index}>
+                    <TableRow
+                      key={index}
+                      sx={{
+                        backgroundColor: Colors.VIOLET,
+                        "&:hover": {
+                          backgroundColor: "#f0f0f0",
+                        },
+                        borderBottom: `1px solid ${Colors.BLACK}`,
+                      }}
+                    >
                       <TableCell sx={cellStyleBody}>
                         {record?.lender || "--"}
                       </TableCell>

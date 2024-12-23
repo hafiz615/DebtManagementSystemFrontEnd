@@ -58,7 +58,7 @@ import StatementSummaryAccordion from "../statementSummaryAccordion";
 import DebtorUploadedFiles from "../debtorUploadedFiles";
 import TransactionHistory from "../transactionHistory";
 import CashFlowPercentage from "./cashFlowPercentage";
-import McaByMonthable from "./mcaByMonth";
+import MCAByMonthAccordion from "../settlementRange/mcaByMonthAccordion";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -1150,6 +1150,11 @@ export default function SettlementRange({
               loading={statementSummariesLoading}
             />
           </Grid>
+          <>
+            <Grid item xs={12} sx={{ mt: "1rem" }}>
+              <MCAByMonthAccordion mcaByMonth={mcaByMonth} />
+            </Grid>
+          </>
 
           <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
             {/* <GridItem
@@ -1650,15 +1655,6 @@ export default function SettlementRange({
                 }}
                 label="Summary"
               />
-              <AntTab
-                sx={{
-                  bgcolor: Colors.WHITE,
-                  width: "max-content",
-                  fontWeight: "600",
-                  height: "3.5rem",
-                }}
-                label="MCA By Month"
-              />
             </AntTabs>
           </Grid>
           <Grid container>
@@ -1671,8 +1667,6 @@ export default function SettlementRange({
             >
               {creditorNamesTabs[tabValue] === "Summary"
                 ? "Summary Contract Information"
-                : creditorNamesTabs[tabValue] === "MCA By Month"
-                ? "MCA By Month"
                 : "Creditors Contract Information"}
             </Typography>
             {selectedCreditorDetails &&
@@ -1796,14 +1790,6 @@ export default function SettlementRange({
                     show={true}
                     summaryDetails={summaryDetails}
                   />
-                </Grid>
-              </>
-            )}
-
-            {creditorNamesTabs[tabValue] === "MCA By Month" && (
-              <>
-                <Grid item xs={12} sx={{ mt: "1rem" }}>
-                  <McaByMonthable mcaByMonth={mcaByMonth} />
                 </Grid>
               </>
             )}
