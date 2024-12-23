@@ -115,6 +115,7 @@ export default function ReplyCard({
   caseDataId,
   GetLogsById,
   setShowReplyCard,
+  caseData,
 }) {
   const [loading, setLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -127,6 +128,22 @@ export default function ReplyCard({
   const [subMenuAnchorEl, setSubMenuAnchorEl] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [customVariables, setCustomVariables] = useState({});
+  //templates
+  const [selectedEmailTemplates, setSelectedEmailTemplates] = useState("");
+  const [bulkEmailTemplates, setBulkEmailTemplates] = useState(
+    caseData?.emailTemplates || []
+  );
+  const menuBulkTemplates = bulkEmailTemplates?.map((item) => ({
+    label: item?.name,
+    value: item?.name,
+  }));
+  useEffect(() => {
+    const selectedTemplate = bulkEmailTemplates?.find((template) => {
+      if (template?.name === selectedEmailTemplates) {
+        setPreview((prevContent) => prevContent + template?.content);
+      }
+    });
+  }, [selectedEmailTemplates]);
   const { showToast } = useToast();
 
   const handleKeyDown = (e) => {
@@ -202,6 +219,8 @@ export default function ReplyCard({
       setSendTo("");
       setSubject("");
       setPreview("");
+      setSelectedEmailTemplates("");
+      bulkEmailTemplates([]);
 
       GetLogsById && GetLogsById(caseDataId);
     } else {
@@ -402,6 +421,32 @@ export default function ReplyCard({
                 ))}
               </div>
             )}
+          </>
+        </Grid>
+        <Grid item xs={6}>
+          <>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "600",
+                color: Colors.DARK_GRAY,
+                fontSize: FONT_SIZE_LARGE,
+              }}
+            >
+              Email Templates
+            </Typography>
+            <Dropdown
+              height="2.5rem"
+              menuItems={menuBulkTemplates}
+              menuWidth="11.7rem"
+              placeholder={"Select Email Templates"}
+              backgroundColor={Colors.BG_LIGHT_GRAY}
+              hoverColor={Colors.BG_LIGHT_GRAY}
+              width="98%"
+              selectedValue={selectedEmailTemplates}
+              setSelectedValue={setSelectedEmailTemplates}
+              emptyMessage="Empty Email Templates"
+            />
           </>
         </Grid>
       </Grid>

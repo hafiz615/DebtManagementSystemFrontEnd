@@ -125,7 +125,7 @@ export default function DebtorDetailsCards({
   const [connectPayment, setConnectPayment] = useState({
     paymentToken: "",
     paymentType: "",
-    platform: "easypay",
+    platform: "Easypay direct",
   });
   const debtorId = caseData?.debtor?._id;
   const { showToast } = useToast();
