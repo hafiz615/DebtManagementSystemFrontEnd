@@ -400,6 +400,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       BasicWeeklyBudget: debtorData?.basicInformation?.weeklyBudget || 0,
     });
     setWalletId(debtorData?.customerVaultId || "");
+    setUrl(debtorData?.documents || []);
     setStatus(debtorData?.basicInformation?.status);
     setDebtorBusinessDetails({
       businessCompanyName: debtorData?.businessInformation?.companyName || "",
