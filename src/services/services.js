@@ -1616,3 +1616,13 @@ export const UpdateWeeklyBudgetSettlement = async (payload, id) => {
     return error;
   }
 };
+export const GetMcaByMonth = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/creditor/mcaByMonth/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

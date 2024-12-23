@@ -58,6 +58,7 @@ import StatementSummaryAccordion from "../statementSummaryAccordion";
 import DebtorUploadedFiles from "../debtorUploadedFiles";
 import TransactionHistory from "../transactionHistory";
 import CashFlowPercentage from "./cashFlowPercentage";
+import McaByMonthable from "./mcaByMonth";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -204,6 +205,8 @@ export default function SettlementRange({
   setPaymentData,
   selectedCreditorDetails,
   caseData,
+  mcaByMonth,
+  setMcaByMonth,
 }) {
   const caseId = id;
   const [value, setValue] = useState(0);
@@ -651,7 +654,7 @@ export default function SettlementRange({
                 /[$,]/g,
                 ""
               )
-            ).toLocaleString("en-US", {
+            )?.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })} (daily)`
@@ -838,7 +841,9 @@ export default function SettlementRange({
       (item) => item.creditorName !== "Summary"
     );
 
-  const isAnyChecked = Object.values(checkboxStates).some((checked) => checked);
+  const isAnyChecked = Object.values(checkboxStates)?.some(
+    (checked) => checked
+  );
 
   const countData =
     scores &&
@@ -854,8 +859,8 @@ export default function SettlementRange({
 
   const formatCurrencyValue = (value) => {
     if (value === null || value === undefined) return "--";
-    const valueStr = typeof value === "number" ? value.toString() : value;
-    const cleanedValue = valueStr.replace(/[^0-9.]/g, "");
+    const valueStr = typeof value === "number" ? value?.toString() : value;
+    const cleanedValue = valueStr?.replace(/[^0-9.]/g, "");
     const numericValue = parseFloat(cleanedValue);
     if (!isNaN(numericValue)) {
       return `$${numericValue?.toLocaleString(undefined, {
@@ -1635,6 +1640,7 @@ export default function SettlementRange({
                     label={item?.creditorAccountTitle}
                   />
                 ))}
+
               <AntTab
                 sx={{
                   bgcolor: Colors.WHITE,
@@ -1643,6 +1649,15 @@ export default function SettlementRange({
                   height: "3.5rem",
                 }}
                 label="Summary"
+              />
+              <AntTab
+                sx={{
+                  bgcolor: Colors.WHITE,
+                  width: "max-content",
+                  fontWeight: "600",
+                  height: "3.5rem",
+                }}
+                label="MCA By Month"
               />
             </AntTabs>
           </Grid>
@@ -1656,6 +1671,8 @@ export default function SettlementRange({
             >
               {creditorNamesTabs[tabValue] === "Summary"
                 ? "Summary Contract Information"
+                : creditorNamesTabs[tabValue] === "MCA By Month"
+                ? "MCA By Month"
                 : "Creditors Contract Information"}
             </Typography>
             {selectedCreditorDetails &&
@@ -1770,7 +1787,6 @@ export default function SettlementRange({
                   </Grid>
                 </>
               )}
-
             {creditorNamesTabs[tabValue] === "Summary" && (
               <>
                 <Grid item xs={12} sx={{ mt: "1rem" }}>
@@ -1780,6 +1796,14 @@ export default function SettlementRange({
                     show={true}
                     summaryDetails={summaryDetails}
                   />
+                </Grid>
+              </>
+            )}
+
+            {creditorNamesTabs[tabValue] === "MCA By Month" && (
+              <>
+                <Grid item xs={12} sx={{ mt: "1rem" }}>
+                  <McaByMonthable mcaByMonth={mcaByMonth} />
                 </Grid>
               </>
             )}
