@@ -65,6 +65,18 @@ export default function SendEmailCase({
   const [loading, setLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [sendTo, setSendTo] = useState(from || "");
+  const [bulkEmail, setBulkEmail] = useState(data?.allEmails || []);
+  const [selectedEmail, setSelectedEmail] = useState("");
+
+  const [bulkEmailTemplates, setBulkEmailTemplates] = useState(
+    data?.emailTemplates || []
+  );
+  const [selectedEmailTemplates, setSelectedEmailTemplates] = useState("");
+
+  const [bulkSmsTemplates, setBulkSmsTemplates] = useState(
+    data?.smsTemplates || []
+  );
+  const [selectedSmsTemplates, setSelectedSmsTemplates] = useState("");
   const [sendFrom, setSendFrom] = useState(replyCheck ? to || "" : []);
   const [selectedValue, setSelectedValue] = useState(to || "");
   const [subject, setSubject] = useState(emailSubject || "");
@@ -152,6 +164,81 @@ export default function SendEmailCase({
     return !field.trim();
   };
 
+  const disable =
+    !sendTo?.trim() ||
+    (!headerName && !selectedValue) ||
+    (!headerName && !subject?.trim()) ||
+    !preview?.trim() ||
+    (headerName && errors);
+  const menu = replyCheck
+    ? []
+    : verifiedSenders?.map((name) => ({
+        label: name,
+        value: name,
+      }));
+  const menuSendto = bulkEmail?.map((name) => ({
+    label: name,
+    value: name,
+  }));
+
+  const menuBulkTemplates = bulkEmailTemplates?.map((item) => ({
+    label: item?.name,
+    value: item?.name,
+  }));
+  const menuBulkSmsTemplates = bulkSmsTemplates?.map((item) => ({
+    label: item?.name,
+    value: item?.name,
+  }));
+
+  useEffect(() => {
+    const selectedTemplate = bulkEmailTemplates?.find((template) => {
+      if (template?.name === selectedEmailTemplates) {
+        setPreview((prevContent) => prevContent + template?.content);
+      }
+    });
+  }, [selectedEmailTemplates]);
+  useEffect(() => {
+    const selectedTemplate = bulkSmsTemplates?.find((template) => {
+      if (template?.name === selectedSmsTemplates) {
+        setPreview((prevContent) => prevContent + template?.content);
+      }
+    });
+  }, [selectedSmsTemplates]);
+
+  const handleSend = async () => {
+    setLoading(true);
+    const payload = {
+      sendTo: headerName ? sendTo : bulkEmail,
+      content: preview,
+      ...(headerName ? {} : { subject: subject }),
+      ...(headerName ? {} : { cc: cc }),
+      ...(headerName ? {} : { from: replyCheck ? sendFrom : selectedValue }),
+    };
+    const resEmail = await SendEmailSmsCase(
+      caseDataId || "1231123",
+      headerName ? "sms" : compose ? "compose" : "email",
+      payload
+    );
+    if (resEmail?.status === 200) {
+      showToast(resEmail?.data?.message, "success");
+      setCc([]);
+      setBulkEmail([]);
+      setBulkEmailTemplates([]);
+      setBulkSmsTemplates([]);
+      setSelectedSmsTemplates("");
+      selectedEmailTemplates("");
+      setSelectedEmail("");
+      setSendTo("");
+      setSubject("");
+      setPreview("");
+      handleClose();
+      GetLogsById && GetLogsById(caseDataId);
+    } else {
+      const errorMessage = resEmail?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setLoading(false);
+  };
   const buttonStyling = {
     textTransform: "none",
     color: Colors.BLACK,
@@ -213,47 +300,6 @@ export default function SendEmailCase({
     padding: "1em",
     fontFamily: "Nunito",
     borderRadius: "5px",
-  };
-  const disable =
-    !sendTo?.trim() ||
-    (!headerName && !selectedValue) ||
-    (!headerName && !subject?.trim()) ||
-    !preview?.trim() ||
-    (headerName && errors);
-  const menu = replyCheck
-    ? []
-    : verifiedSenders?.map((name) => ({
-        label: name,
-        value: name,
-      }));
-
-  const handleSend = async () => {
-    setLoading(true);
-    const payload = {
-      sendTo: sendTo,
-      content: preview,
-      ...(headerName ? {} : { subject: subject }),
-      ...(headerName ? {} : { cc: cc }),
-      ...(headerName ? {} : { from: replyCheck ? sendFrom : selectedValue }),
-    };
-    const resEmail = await SendEmailSmsCase(
-      caseDataId || "1231123",
-      headerName ? "sms" : compose ? "compose" : "email",
-      payload
-    );
-    if (resEmail?.status === 200) {
-      showToast(resEmail?.data?.message, "success");
-      setCc([]);
-      setSendTo("");
-      setSubject("");
-      setPreview("");
-      handleClose();
-      GetLogsById && GetLogsById(caseDataId);
-    } else {
-      const errorMessage = resEmail?.response?.data?.message;
-      showToast(errorMessage, "error");
-    }
-    setLoading(false);
   };
   return (
     <>
@@ -343,12 +389,26 @@ export default function SendEmailCase({
               )}
             </>
           ) : (
-            <StyledInput
-              type="text"
-              placeholder="Send To*"
-              value={sendTo}
-              onChange={(e) => setSendTo(e.target.value)}
-            />
+            <>
+              {/* <StyledInput
+                type="text"
+                placeholder="Send To*"
+                value={sendTo}
+                onChange={(e) => setSendTo(e.target.value)}
+              /> */}
+              <Dropdown
+                height="2.5rem"
+                menuItems={menuSendto}
+                menuWidth="11.7rem"
+                placeholder="Send to"
+                backgroundColor={Colors.BG_LIGHT_GRAY}
+                hoverColor={Colors.BG_LIGHT_GRAY}
+                width="98%"
+                selectedValue={selectedEmail}
+                setSelectedValue={setSelectedEmail}
+                emptyMessage=" Email Not Found"
+              />
+            </>
           )}
         </Grid>
 
@@ -498,47 +558,85 @@ export default function SendEmailCase({
           </div>
         </Grid>
         {headerName ? null : (
-          <Grid item xs={6}>
-            <>
-              <Typography
-                sx={{
-                  fontFamily: "Nunito",
-                  fontWeight: "600",
-                  color: Colors.DARK_GRAY,
-                  fontSize: FONT_SIZE_LARGE,
-                }}
-              >
-                CC
-              </Typography>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <Tooltip title="Press Enter To Save An Email" placement="top">
-                  <StyledInput
-                    type="text"
-                    placeholder="Enter CC"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                  />
-                </Tooltip>
-              </div>
-              {cc?.length > 0 && (
-                <div style={inputContainerStyle}>
-                  {cc?.map((email, index) => (
-                    <div key={index} style={emailChipStyle}>
-                      {email}
-                      <span
-                        onClick={() => handleRemoveEmail(index)}
-                        style={removeIconStyle}
-                      >
-                        ×
-                      </span>
-                    </div>
-                  ))}
+          <>
+            <Grid item xs={6}>
+              <>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontWeight: "600",
+                    color: Colors.DARK_GRAY,
+                    fontSize: FONT_SIZE_LARGE,
+                  }}
+                >
+                  CC
+                </Typography>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <Tooltip title="Press Enter To Save An Email" placement="top">
+                    <StyledInput
+                      type="text"
+                      placeholder="Enter CC"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                    />
+                  </Tooltip>
                 </div>
-              )}
-            </>
-          </Grid>
+                {cc?.length > 0 && (
+                  <div style={inputContainerStyle}>
+                    {cc?.map((email, index) => (
+                      <div key={index} style={emailChipStyle}>
+                        {email}
+                        <span
+                          onClick={() => handleRemoveEmail(index)}
+                          style={removeIconStyle}
+                        >
+                          ×
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            </Grid>
+          </>
         )}
+        <Grid item xs={6}>
+          <>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "600",
+                color: Colors.DARK_GRAY,
+                fontSize: FONT_SIZE_LARGE,
+              }}
+            >
+              {headerName ? "Sms Templates" : "Email Templates"}
+            </Typography>
+            <Dropdown
+              height="2.5rem"
+              menuItems={headerName ? menuBulkSmsTemplates : menuBulkTemplates}
+              menuWidth="11.7rem"
+              placeholder={
+                headerName ? "Select SMS Templates" : "Select Email Templates"
+              }
+              backgroundColor={Colors.BG_LIGHT_GRAY}
+              hoverColor={Colors.BG_LIGHT_GRAY}
+              width="98%"
+              selectedValue={
+                headerName ? selectedSmsTemplates : selectedEmailTemplates
+              }
+              setSelectedValue={
+                headerName ? setSelectedSmsTemplates : setSelectedEmailTemplates
+              }
+              emptyMessage={
+                headerName ? "Empty Sms Templates" : "Empty Email Templates"
+              }
+            />
+          </>
+        </Grid>
       </Grid>
 
       <div style={{ marginTop: "1rem" }}>

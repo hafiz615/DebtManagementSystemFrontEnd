@@ -26,6 +26,7 @@ export default function TimelineData({
   caseDataId,
   GetLogsById,
   iconValue,
+  caseData,
 }) {
   const [showReplyCard, setShowReplyCard] = useState(false);
   const formattedDate = new Date(date);
@@ -155,6 +156,7 @@ export default function TimelineData({
                   caseDataId={caseDataId}
                   GetLogsById={GetLogsById}
                   setShowReplyCard={setShowReplyCard}
+                  caseData={caseData}
                 />
               ) : (
                 <>

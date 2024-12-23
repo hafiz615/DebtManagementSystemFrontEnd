@@ -628,6 +628,7 @@ export default function CaseById({
                     caseDataId={id}
                     GetLogsById={GetLogsById}
                     iconValue={caseHistoryTabs}
+                    caseData={caseData}
                   />
                 ))
               ) : (

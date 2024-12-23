@@ -27,7 +27,7 @@ function PaymentCardDetails({ paymentGateway, setConnectPayment }) {
         setConnectPayment({
           paymentToken: token?.token,
           paymentType: type,
-          platform: "easypay",
+          platform: "Easypay direct",
         });
       },
     });
