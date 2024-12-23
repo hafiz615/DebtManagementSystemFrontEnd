@@ -297,7 +297,7 @@ export default function SettlementCards({
                                 ? `$${(
                                     item?.["recommendation 1"]?.["min"] ||
                                     item?.["recommendation 1"][0]
-                                  ).toFixed(2)}`
+                                  )?.toFixed(2)}`
                                 : "-"
                               : rangeNames[index]?.label === "Weeks Till Paid"
                               ? rangeNames[index]?.label === "Weeks Till Paid"

@@ -16,8 +16,9 @@ function UpdateWeeklyBudget({
 }) {
   const prevWeeklyBudget = data?.value;
   const { showToast } = useToast();
-  const [updateWeeklyBudget, setUpdateWeeklyBudget] =
-    useState(prevWeeklyBudget);
+  const [updateWeeklyBudget, setUpdateWeeklyBudget] = useState(
+    prevWeeklyBudget || 0
+  );
   const [loading, setloading] = useState(false);
   const handleWeeklyBudgetChange = (e) => {
     const { value } = e.target;
@@ -26,7 +27,7 @@ function UpdateWeeklyBudget({
 
   const SubmitUpdateWeeklyBudget = async () => {
     setloading(true);
-    const params = { weeklyBudget: Number(updateWeeklyBudget) }; // Send number explicitly
+    const params = { weeklyBudget: Number(updateWeeklyBudget) || 0 }; // Send number explicitly
     const UpdateWeeklyBudgetRes = await UpdateWeeklyBudgetSettlement(
       params,
       popUpDebtorData?._id
