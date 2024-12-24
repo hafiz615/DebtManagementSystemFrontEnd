@@ -20,7 +20,13 @@ import {
   FONT_SIZE_XL,
 } from "../constants/appConstants";
 
-const headers = ["Name", "Due Date", "Amount", "SSN", "Failure Reason"];
+const headers = [
+  "Name",
+  "Due Date",
+  "Amount",
+  "Payment Type",
+  "Failure Reason",
+];
 
 export default function AccordionUsage({
   tableHeading,
@@ -49,12 +55,14 @@ export default function AccordionUsage({
       name: item?.fullName || "-",
       dueDate: new Date(item?.dueDate).toLocaleDateString() || "-",
       amount: formatDollarAmount(item?.amount),
-      ssid: item?.SSID || "-",
+      // ssid: item?.SSID || "-",
+      transactionType: item?.transactionType || "-",
       failureReason:
         arrayName === "failedAuthorizations"
-          ? item?.failedReasonAuthorization
+          ? item?.failedReasonAuthorization || "-"
           : item?.failedReasonCaptured || "-",
     }));
+
     if (!isEqual(generatedData, rowArray)) {
       setRows(generatedData);
     }

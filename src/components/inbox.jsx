@@ -84,6 +84,13 @@ function Inbox() {
   const [activeTab, setActiveTab] = useState(0);
   const [alltasks, setAllTasks] = useState([]);
   const open = Boolean(anchorEl);
+  const [expandedMessages, setExpandedMessages] = useState({});
+  const handleToggleContent = (index) => {
+    setExpandedMessages((prevState) => ({
+      ...prevState,
+      [index]: !prevState[index], // Toggle the expanded state of the message at this index
+    }));
+  };
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -433,6 +440,7 @@ function Inbox() {
                           onClick={() => {
                             setSelectedUser(key);
                             setSelectedUserData(value);
+                            setExpandedMessages({});
                           }}
                           sx={{
                             ...boxStyling,
@@ -463,6 +471,7 @@ function Inbox() {
                           onClick={() => {
                             setSelectedUser(key);
                             setSelectedUserData(value);
+                            setExpandedMessages({});
                           }}
                           sx={{
                             ...boxStyling,
@@ -673,15 +682,47 @@ function Inbox() {
                                   {item?.negotiatorName || "-"}
                                 </Typography>
                               </div>
-                              <Typography sx={boldTextStyling}>
-                                Content:
-                              </Typography>
-                              <Typography
-                                sx={fontStyling}
-                                dangerouslySetInnerHTML={{
-                                  __html: item?.textAsHtml,
-                                }}
-                              />
+                              <div>
+                                {/* Show content conditionally */}
+                                {expandedMessages[index] && (
+                                  <>
+                                    <Typography sx={boldTextStyling}>
+                                      Content:
+                                    </Typography>
+                                    <Typography
+                                      sx={fontStyling}
+                                      dangerouslySetInnerHTML={{
+                                        __html: item?.textAsHtml,
+                                      }}
+                                    />
+                                  </>
+                                )}
+
+                                {/* Show More / Show Less button */}
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    marginTop: "10px",
+                                    marginBottom: "10px",
+                                  }}
+                                >
+                                  <Typography
+                                    onClick={() => handleToggleContent(index)} // Pass index to toggle specific message
+                                    sx={{
+                                      fontSize: "14px",
+                                      fontWeight: "600",
+                                      color: Colors.SKY_BLUE,
+                                      cursor: "pointer",
+                                      fontFamily: "Nunito",
+                                    }}
+                                  >
+                                    {expandedMessages[index]
+                                      ? "Show Less"
+                                      : "Show More"}
+                                  </Typography>
+                                </Box>
+                              </div>
                             </CardContent>
                           </Box>
                         ))
