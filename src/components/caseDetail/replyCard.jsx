@@ -116,6 +116,7 @@ export default function ReplyCard({
   GetLogsById,
   setShowReplyCard,
   caseData,
+  setHideShowMore,
 }) {
   const [loading, setLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -474,7 +475,10 @@ export default function ReplyCard({
           height="2rem"
           marginRight="1rem"
           width="6rem"
-          onClick={() => setShowReplyCard(false)}
+          onClick={() => {
+            setHideShowMore(true);
+            setShowReplyCard(false);
+          }}
           backgroundColor={Colors.ORANGE_COLOR}
           hoverColor={Colors.ORANGE_COLOR}
         />

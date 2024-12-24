@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Box, Card, IconButton, Typography } from "@mui/material";
+import React, { useState } from "react";
 import Button from "../button";
+import { Box, Card, IconButton, Typography } from "@mui/material";
 import {
   Timeline,
   TimelineItem,
@@ -9,12 +9,9 @@ import {
   TimelineContent,
   TimelineOppositeContent,
 } from "@mui/lab";
-import MuiModels from "../models";
-import { Colors } from "../../config/default";
 import { CallOutlined, Email, NoteAlt, Sms, Work } from "@mui/icons-material";
+import { Colors } from "../../config/default";
 import ConversationHistory from "../callHistory";
-import { GetCalls } from "../../services/services";
-import SendEmailCase from "./sendEmailCase";
 import ReplyCard from "./replyCard";
 import { FONT_SIZE_LARGE } from "../../constants/appConstants";
 
@@ -29,8 +26,10 @@ export default function TimelineData({
   caseData,
 }) {
   const [showReplyCard, setShowReplyCard] = useState(false);
-  const formattedDate = new Date(date);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [hideShowMore, setHideShowMore] = useState(true);
 
+  const formattedDate = new Date(date);
   const estTime = new Intl.DateTimeFormat("en-US", {
     timeZone: "America/New_York",
     year: "numeric",
@@ -57,37 +56,32 @@ export default function TimelineData({
     return `${datePart} at ${timePart}`;
   }
 
+  const renderIcon = () => {
+    if (iconValue === 0) {
+      if (value?.Action === "EMAIL") return <Email />;
+      if (value?.Action === "SMS") return <Sms />;
+      if (value?.Action === "Add Notes") return <NoteAlt />;
+      return <Work />;
+    }
+    if (iconValue === 1) return <Email />;
+    if (iconValue === 2) return <Sms />;
+    if (iconValue === 3) return <NoteAlt />;
+    if (iconValue === 5)
+      return (
+        <IconButton sx={{ backgroundColor: "lightgreen" }}>
+          <CallOutlined />
+        </IconButton>
+      );
+    return <Work />;
+  };
+
   return (
     <Timeline sx={{ padding: 0, margin: "0" }}>
       <TimelineItem>
         <TimelineOppositeContent sx={{ flex: 0, padding: 1, margin: 0 }} />
         <TimelineSeparator>
           <TimelineConnector />
-
-          {iconValue === 0 ? (
-            value?.Action === "EMAIL" ? (
-              <Email />
-            ) : value?.Action === "SMS" ? (
-              <Sms />
-            ) : value?.Action === "Add Notes" ? (
-              <NoteAlt />
-            ) : (
-              <Work />
-            )
-          ) : iconValue === 1 ? (
-            <Email />
-          ) : iconValue === 2 ? (
-            <Sms />
-          ) : iconValue === 3 ? (
-            <NoteAlt />
-          ) : iconValue === 5 ? (
-            <IconButton sx={{ backgroundColor: "lightgreen" }}>
-              <CallOutlined />
-            </IconButton>
-          ) : (
-            <Work />
-          )}
-
+          {renderIcon()}
           <TimelineConnector />
         </TimelineSeparator>
         <TimelineContent sx={{ flex: 1 }}>
@@ -157,6 +151,7 @@ export default function TimelineData({
                   GetLogsById={GetLogsById}
                   setShowReplyCard={setShowReplyCard}
                   caseData={caseData}
+                  setHideShowMore={setHideShowMore}
                 />
               ) : (
                 <>
@@ -181,6 +176,7 @@ export default function TimelineData({
                             buttonText="Reply"
                             onClick={() => {
                               setShowReplyCard(true);
+                              setHideShowMore(false);
                             }}
                             backgroundColor={Colors.SKY_BLUE}
                             hoverColor={Colors.SKY_BLUE}
@@ -189,35 +185,189 @@ export default function TimelineData({
                       </>
                     )}
                   </div>
-                  {Object.entries(value)
-                    .filter(([key]) => key !== "Action" && key !== "Time")
-                    ?.map(([key, value]) => (
-                      <Box key={key}>
-                        {key === "Content" ? (
-                          <>
-                            <Typography
-                              sx={{
-                                fontSize: "13px",
-                                fontFamily: "Nunito",
-                                mb: "10px",
-                                fontWeight: "700",
-                              }}
-                            >
-                              {key}:
-                            </Typography>
-                            <div
-                              dangerouslySetInnerHTML={{ __html: value }}
-                              style={{
-                                fontSize: "13px",
-                                fontFamily: "Nunito",
-                                marginBottom: "10px",
-                                width: "100%",
-                                borderRadius: "10px",
-                              }}
-                            />
-                          </>
-                        ) : key === "To" ? (
-                          <>
+
+                  {value?.Action === "EMAIL" ? (
+                    isExpanded ? (
+                      Object.entries(value)
+                        ?.filter(([key]) => key !== "Action" && key !== "Time")
+                        ?.map(([key, value]) => (
+                          <Box key={key}>
+                            {key === "Content" ? (
+                              <>
+                                <Typography
+                                  sx={{
+                                    fontSize: "13px",
+                                    fontFamily: "Nunito",
+                                    mb: "10px",
+                                    fontWeight: "700",
+                                  }}
+                                >
+                                  {key}:
+                                </Typography>
+                                <div
+                                  dangerouslySetInnerHTML={{ __html: value }}
+                                  style={{
+                                    fontSize: "13px",
+                                    fontFamily: "Nunito",
+                                    marginBottom: "10px",
+                                    width: "100%",
+                                    borderRadius: "10px",
+                                  }}
+                                />
+                              </>
+                            ) : key === "To" ? (
+                              <>
+                                <Typography
+                                  sx={{
+                                    fontSize: "13px",
+                                    fontFamily: "Nunito",
+                                    mb: "10px",
+                                  }}
+                                >
+                                  <strong>{key}:</strong>{" "}
+                                  {Array.isArray(value)
+                                    ? value.join(", ")
+                                    : value}
+                                </Typography>
+                              </>
+                            ) : key === "Notes" ? (
+                              <>
+                                <Typography
+                                  sx={{
+                                    fontSize: "13px",
+                                    fontFamily: "Nunito",
+                                    mb: "10px",
+                                    fontWeight: "700",
+                                  }}
+                                >
+                                  {key}:
+                                </Typography>
+                                <Typography
+                                  sx={{
+                                    fontSize: "13px",
+                                    fontFamily: "Nunito",
+                                    mb: "10px",
+                                  }}
+                                >
+                                  {value}
+                                </Typography>
+                              </>
+                            ) : (
+                              <Typography
+                                sx={{
+                                  fontSize: "13px",
+                                  fontFamily: "Nunito",
+                                  mb: "10px",
+                                }}
+                              >
+                                <strong>{key}:</strong>{" "}
+                                {key === "Due Date" || key === "Time"
+                                  ? formatDate(value)
+                                  : value}
+                              </Typography>
+                            )}
+                          </Box>
+                        ))
+                    ) : (
+                      <>
+                        <Typography
+                          sx={{
+                            fontSize: "13px",
+                            fontFamily: "Nunito",
+                            mb: "10px",
+                          }}
+                        >
+                          <strong>From:</strong> {value?.From}
+                        </Typography>
+                        <Typography
+                          sx={{
+                            fontSize: "13px",
+                            fontFamily: "Nunito",
+                            mb: "10px",
+                          }}
+                        >
+                          <strong>To:</strong>{" "}
+                          {Array.isArray(value?.To)
+                            ? value?.To.join(", ")
+                            : value?.To}
+                        </Typography>
+                        <Typography
+                          sx={{
+                            fontSize: "13px",
+                            fontFamily: "Nunito",
+                            mb: "10px",
+                          }}
+                        >
+                          <strong>Subject:</strong> {value?.Subject}
+                        </Typography>
+                      </>
+                    )
+                  ) : (
+                    Object.entries(value)
+                      ?.filter(([key]) => key !== "Action" && key !== "Time")
+                      ?.map(([key, value]) => (
+                        <Box key={key}>
+                          {key === "Content" ? (
+                            <>
+                              <Typography
+                                sx={{
+                                  fontSize: "13px",
+                                  fontFamily: "Nunito",
+                                  mb: "10px",
+                                  fontWeight: "700",
+                                }}
+                              >
+                                {key}:
+                              </Typography>
+                              <div
+                                dangerouslySetInnerHTML={{ __html: value }}
+                                style={{
+                                  fontSize: "13px",
+                                  fontFamily: "Nunito",
+                                  marginBottom: "10px",
+                                  width: "100%",
+                                  borderRadius: "10px",
+                                }}
+                              />
+                            </>
+                          ) : key === "To" ? (
+                            <>
+                              <Typography
+                                sx={{
+                                  fontSize: "13px",
+                                  fontFamily: "Nunito",
+                                  mb: "10px",
+                                }}
+                              >
+                                <strong>{key}:</strong>{" "}
+                                {Array.isArray(value)
+                                  ? value.join(", ")
+                                  : value}
+                              </Typography>
+                            </>
+                          ) : key === "Notes" ? (
+                            <>
+                              <Typography
+                                sx={{
+                                  fontSize: "13px",
+                                  fontFamily: "Nunito",
+                                  mb: "10px",
+                                  fontWeight: "700",
+                                }}
+                              >
+                                {key}:
+                              </Typography>
+                              <Typography
+                                sx={{
+                                  fontSize: "13px",
+                                  fontFamily: "Nunito",
+                                  mb: "10px",
+                                }}
+                              >
+                                {value}
+                              </Typography>
+                            </>
+                          ) : (
                             <Typography
                               sx={{
                                 fontSize: "13px",
@@ -226,48 +376,41 @@ export default function TimelineData({
                               }}
                             >
                               <strong>{key}:</strong>{" "}
-                              {Array.isArray(value) ? value.join(", ") : value}
+                              {key === "Due Date" || key === "Time"
+                                ? formatDate(value)
+                                : value}
                             </Typography>
-                          </>
-                        ) : key === "Notes" ? (
-                          <>
-                            <Typography
-                              sx={{
-                                fontSize: "13px",
-                                fontFamily: "Nunito",
-                                mb: "10px",
-                                fontWeight: "700",
-                              }}
-                            >
-                              {key}:
-                            </Typography>
-                            <Typography
-                              sx={{
-                                fontSize: "13px",
-                                fontFamily: "Nunito",
-                                mb: "10px",
-                              }}
-                            >
-                              {value}
-                            </Typography>
-                          </>
-                        ) : (
-                          <Typography
-                            sx={{
-                              fontSize: "13px",
-                              fontFamily: "Nunito",
-                              mb: "10px",
-                            }}
-                          >
-                            <strong>{key}:</strong>{" "}
-                            {key === "Due Date" || key === "Time"
-                              ? formatDate(value)
-                              : value}
-                          </Typography>
-                        )}
-                      </Box>
-                    ))}
+                          )}
+                        </Box>
+                      ))
+                  )}
                 </>
+              )}
+              {/* Show More / Show Less Typography for EMAIL actions */}
+              {hideShowMore && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: "10px",
+                    marginBottom: "10px",
+                  }}
+                >
+                  {value?.Action === "EMAIL" && (
+                    <Typography
+                      onClick={() => setIsExpanded(!isExpanded)}
+                      sx={{
+                        fontSize: "14px",
+                        fontWeight: "600",
+                        color: Colors.SKY_BLUE,
+                        cursor: "pointer",
+                        fontFamily: "Nunito",
+                      }}
+                    >
+                      {isExpanded ? "Show Less" : "Show More"}
+                    </Typography>
+                  )}
+                </Box>
               )}
             </Card>
           )}
