@@ -38,6 +38,8 @@ function DebtorDetails({
   hideComponents,
   setProfitMargin,
   profitMargin,
+  businessType,
+  setBusinessType,
 }) {
   const handleSearchChange = (value) => {
     setSearchText(value);
@@ -117,6 +119,8 @@ function DebtorDetails({
             setProfitMargin={setProfitMargin}
             profitMargin={profitMargin}
             walletId={walletId}
+            businessType={businessType}
+            setBusinessType={setBusinessType}
           />
         </Grid>
       )}

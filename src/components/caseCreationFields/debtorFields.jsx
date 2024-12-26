@@ -34,10 +34,11 @@ export default function DebtorFields({
   show,
   showFieldError,
   misMatches,
-  setProfitMargin,
-  profitMargin,
+  businessType,
+  setBusinessType,
 }) {
   const [menuItems, setMenuItems] = useState([]);
+
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
 
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
@@ -52,6 +53,14 @@ export default function DebtorFields({
     label: name,
     value: name,
   }));
+  const industryTypes = [
+    { label: "Construction", value: "Construction" },
+    { label: "Healthcare", value: "Healthcare" },
+    { label: "Restaurant", value: "Restaurant" },
+    { label: "Media", value: "Media" },
+    { label: "Transportation", value: "Transportation" },
+    { label: "Other", value: "Other" },
+  ];
 
   useEffect(() => {
     GetStatuses();
@@ -176,10 +185,6 @@ export default function DebtorFields({
       title: "",
       phone: "",
       email: "",
-      state: "",
-      city: "",
-      zipCode: "",
-      relationWithDebtor: "",
     };
     setDebtorContactDetails([...debtorContactDetails, newContact]);
   };
@@ -334,20 +339,21 @@ export default function DebtorFields({
         >
           <PaymentsTextFields
             type="text"
-            label="State*"
-            placeHolderValue="Enter State Name"
+            label="Street Address*"
+            placeHolderValue="Add Your Street Address"
             width="100%"
-            value={debtorOwnDetails?.BasicState}
-            onChangeFunction={(e) =>
-              basicInfoInputChange("BasicState", e.target.value)
-            }
+            marginLeft="1px"
+            value={debtorOwnDetails?.BasicAddress}
             border={
-              debtorOwnDetails?.BasicState === "" ||
-              debtorOwnDetails?.BasicState === undefined
+              debtorOwnDetails?.BasicAddress === "" ||
+              debtorOwnDetails?.BasicAddress === undefined
                 ? "2px solid red"
-                : "auto" && misMatches?.BasicState && showFieldError
+                : "auto" && misMatches?.BasicAddress && showFieldError
                 ? "2px solid red"
                 : "1px solid transparent"
+            }
+            onChangeFunction={(e) =>
+              basicInfoInputChange("BasicAddress", e.target.value)
             }
           />
           <PaymentsTextFields
@@ -369,6 +375,35 @@ export default function DebtorFields({
           />
           <PaymentsTextFields
             type="text"
+            label="State*"
+            placeHolderValue="Enter State Name"
+            width="100%"
+            value={debtorOwnDetails?.BasicState}
+            onChangeFunction={(e) =>
+              basicInfoInputChange("BasicState", e.target.value)
+            }
+            border={
+              debtorOwnDetails?.BasicState === "" ||
+              debtorOwnDetails?.BasicState === undefined
+                ? "2px solid red"
+                : "auto" && misMatches?.BasicState && showFieldError
+                ? "2px solid red"
+                : "1px solid transparent"
+            }
+          />
+        </Grid>
+        <Grid
+          container
+          item
+          xs={12}
+          sx={{
+            display: "flex",
+            marginTop: "0.5rem",
+            gap: "1.2%",
+          }}
+        >
+          <PaymentsTextFields
+            type="text"
             label="Zip Code*"
             placeHolderValue="Enter Zip Code"
             width="100%"
@@ -386,17 +421,6 @@ export default function DebtorFields({
             }
             onKeyDown={handleNumberInput}
           />
-        </Grid>
-        <Grid
-          container
-          item
-          xs={12}
-          sx={{
-            display: "flex",
-            marginTop: "0.5rem",
-            gap: "1.2%",
-          }}
-        >
           <PaymentsTextFields
             type="text"
             label="Phone #*"
@@ -424,25 +448,7 @@ export default function DebtorFields({
             error={errors?.basicPhone}
             onKeyDown={handleNumberInput}
           />
-          <PaymentsTextFields
-            type="text"
-            label="Street Address*"
-            placeHolderValue="Add Your Street Address"
-            width="100%"
-            marginLeft="1px"
-            value={debtorOwnDetails?.BasicAddress}
-            border={
-              debtorOwnDetails?.BasicAddress === "" ||
-              debtorOwnDetails?.BasicAddress === undefined
-                ? "2px solid red"
-                : "auto" && misMatches?.BasicAddress && showFieldError
-                ? "2px solid red"
-                : "1px solid transparent"
-            }
-            onChangeFunction={(e) =>
-              basicInfoInputChange("BasicAddress", e.target.value)
-            }
-          />
+
           <div style={{ marginTop: "1rem" }}>
             <Checkboxes
               checked={checked}
@@ -527,16 +533,6 @@ export default function DebtorFields({
                 onKeyDown={handleNumberInput}
               />
             </Grid>
-
-            <PaymentsTextFields
-              type="number"
-              label="Profit Margin %"
-              placeHolderValue="Profit Margin"
-              width="98%"
-              marginLeft=".4rem"
-              value={profitMargin}
-              onChangeFunction={(e) => setProfitMargin(e.target.value)}
-            />
           </Grid>
         </Grid>
       </Grid>
@@ -606,55 +602,34 @@ export default function DebtorFields({
             }
             error={errors?.einNumber}
           />
-          <PaymentsTextFields
-            type="text"
-            label="Business Type*"
-            placeHolderValue="Enter Business Type"
-            width="100%"
-            value={debtorBusinessDetails?.businessCategory}
-            border={
-              debtorBusinessDetails?.businessCategory === "" ||
-              debtorBusinessDetails?.businessCategory === undefined
-                ? "2px solid red"
-                : "auto" && misMatches?.businessCategory && showFieldError
-                ? "2px solid red"
-                : "1px solid transparent"
-            }
-            onChangeFunction={(e) =>
-              businessInfoInputChange("businessCategory", e.target.value)
-            }
-          />
+
+          <Grid item xs={12} md={3.9}>
+            <Typography
+              sx={{
+                fontWeight: "500",
+                fontFamily: "Nunito",
+                marginLeft: "1rem",
+                color: Colors.DARK_GRAY,
+              }}
+            >
+              Industry Types
+            </Typography>
+
+            <Dropdown
+              height="2.5rem"
+              menuItems={industryTypes}
+              menuWidth="11.7rem"
+              placeholder="Choose Type"
+              backgroundColor={Colors.BG_LIGHT_GRAY}
+              hoverColor={Colors.BG_LIGHT_GRAY}
+              width={smallScreen ? "100%" : "98%"}
+              selectedValue={businessType}
+              setSelectedValue={setBusinessType}
+              showCaseStatus={businessType === "" && true}
+            />
+          </Grid>
         </Grid>
-        <Grid item xs={12}>
-          <Typography
-            sx={{
-              fontWeight: "500",
-              fontFamily: "Nunito",
-              marginLeft: "1rem",
-              color: Colors.DARK_GRAY,
-            }}
-          >
-            Description (Optional)
-          </Typography>
-          <input
-            type="text"
-            placeholder="Add Description"
-            value={debtorBusinessDetails?.businessDescription}
-            onChange={(e) =>
-              businessInfoInputChange("businessDescription", e.target.value)
-            }
-            style={{
-              backgroundColor: Colors.BG_LIGHT_GRAY,
-              height: "2.5rem",
-              color: Colors.DIM_LIGHT_GRAY,
-              paddingLeft: "1rem",
-              border: "none",
-              outline: "none",
-              borderRadius: "5px",
-              width: "100%",
-            }}
-          />
-        </Grid>
+
         <Grid
           container
           item
@@ -667,20 +642,20 @@ export default function DebtorFields({
         >
           <PaymentsTextFields
             type="text"
-            label="State*"
-            placeHolderValue="Enter State Name"
+            label="Street Address*"
+            placeHolderValue="Add Your Street Address"
             width="100%"
             border={
-              debtorBusinessDetails?.businessState === "" ||
-              debtorBusinessDetails?.businessState === undefined
+              debtorBusinessDetails?.businessAddress === "" ||
+              debtorBusinessDetails?.businessAddress === undefined
                 ? "2px solid red"
-                : "auto" && misMatches?.businessState && showFieldError
+                : "auto" && misMatches?.businessAddress && showFieldError
                 ? "2px solid red"
                 : "1px solid transparent"
             }
-            value={debtorBusinessDetails?.businessState}
+            value={debtorBusinessDetails?.businessAddress}
             onChangeFunction={(e) =>
-              businessInfoInputChange("businessState", e.target.value)
+              businessInfoInputChange("businessAddress", e.target.value)
             }
           />
           <PaymentsTextFields
@@ -702,6 +677,35 @@ export default function DebtorFields({
             }
           />
           <PaymentsTextFields
+            type="text"
+            label="State*"
+            placeHolderValue="Enter State Name"
+            width="100%"
+            border={
+              debtorBusinessDetails?.businessState === "" ||
+              debtorBusinessDetails?.businessState === undefined
+                ? "2px solid red"
+                : "auto" && misMatches?.businessState && showFieldError
+                ? "2px solid red"
+                : "1px solid transparent"
+            }
+            value={debtorBusinessDetails?.businessState}
+            onChangeFunction={(e) =>
+              businessInfoInputChange("businessState", e.target.value)
+            }
+          />
+        </Grid>
+        <Grid
+          container
+          item
+          xs={12}
+          sx={{
+            display: "flex",
+            marginTop: "0.5rem",
+            gap: "1.2%",
+          }}
+        >
+          <PaymentsTextFields
             type="number"
             label="Zip Code*"
             placeHolderValue="Enter Zip Code"
@@ -720,18 +724,7 @@ export default function DebtorFields({
             }
             onKeyDown={handleNumberInput}
           />
-        </Grid>
-        <Grid
-          container
-          item
-          xs={12}
-          sx={{
-            display: "flex",
-            marginTop: "0.5rem",
-            gap: "1.2%",
-          }}
-        >
-          <PaymentsTextFields
+          {/* <PaymentsTextFields
             type="text"
             label="Phone #*"
             placeHolderValue="Enter Phone Number"
@@ -757,26 +750,7 @@ export default function DebtorFields({
             }}
             error={errors?.businessPhone}
             onKeyDown={handleNumberInput}
-          />
-
-          <PaymentsTextFields
-            type="text"
-            label="Street Address*"
-            placeHolderValue="Add Your Street Address"
-            width="100%"
-            border={
-              debtorBusinessDetails?.businessAddress === "" ||
-              debtorBusinessDetails?.businessAddress === undefined
-                ? "2px solid red"
-                : "auto" && misMatches?.businessAddress && showFieldError
-                ? "2px solid red"
-                : "1px solid transparent"
-            }
-            value={debtorBusinessDetails?.businessAddress}
-            onChangeFunction={(e) =>
-              businessInfoInputChange("businessAddress", e.target.value)
-            }
-          />
+          /> */}
         </Grid>
       </Grid>
 
@@ -804,7 +778,7 @@ export default function DebtorFields({
               sx={{ fontFamily: "Nunito", fontWeight: "600" }}
               gutterBottom
             >
-              Contact Details
+              Additional Details
             </Typography>
             <Add
               onClick={handleAddNewContact}
@@ -846,7 +820,7 @@ export default function DebtorFields({
                     </Box>
                   )}
                   <Grid key={index} container item xs={12}>
-                    <Grid container item xs={12} md={8}>
+                    <Grid container item xs={12} md={12}>
                       <PaymentsTextFields
                         type="text"
                         label="Name"
@@ -901,7 +875,7 @@ export default function DebtorFields({
                         }
                         error={emailContactError?.[`email${index}`]}
                       />
-                      <PaymentsTextFields
+                      {/* <PaymentsTextFields
                         type="text"
                         label="State (Optional)"
                         placeHolderValue="Enter State"
@@ -910,8 +884,8 @@ export default function DebtorFields({
                         onChangeFunction={(e) =>
                           handleInputChange(index, "state", e.target.value)
                         }
-                      />
-                      <PaymentsTextFields
+                      /> */}
+                      {/* <PaymentsTextFields
                         label="City (Optional)"
                         placeHolderValue="Enter City"
                         width={smallScreen ? "100%" : "97%"}
@@ -919,8 +893,8 @@ export default function DebtorFields({
                         onChangeFunction={(e) =>
                           handleInputChange(index, "city", e.target.value)
                         }
-                      />
-                      <PaymentsTextFields
+                      /> */}
+                      {/* <PaymentsTextFields
                         type="number"
                         label="Zip Code (Optional)"
                         placeHolderValue="Enter Zip Code"
@@ -930,9 +904,9 @@ export default function DebtorFields({
                           handleInputChange(index, "zipCode", e.target.value)
                         }
                         onKeyDown={handleNumberInput}
-                      />
+                      /> */}
                     </Grid>
-                    <Grid
+                    {/* <Grid
                       container
                       item
                       xs={12}
@@ -971,7 +945,7 @@ export default function DebtorFields({
                           width: smallScreen ? "100%" : "97%",
                         }}
                       />
-                    </Grid>
+                    </Grid> */}
                   </Grid>
                   <hr></hr>
                 </>
