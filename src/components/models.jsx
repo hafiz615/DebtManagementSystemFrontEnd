@@ -65,6 +65,7 @@ import DialPad from "./dialPad";
 import EditContractInformation from "./settlementRange/editContractInformation";
 import CreditorSync from "./caseDetail/creditorSync";
 import UpdateWeeklyBudget from "./settlementRange/updateWeeklyBudget";
+import BouncePayments from "./caseDetail/bouncePayments";
 
 export default function MuiModels({
   buttonName,
@@ -497,6 +498,16 @@ export default function MuiModels({
       ) : show === "AddPayments" ? (
         <TextButton
           buttonText="Add Manual Payments"
+          height="2.5rem"
+          width="12rem"
+          onClick={handleOpen}
+          disabled={disabled}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
+      ) : show === "bouncePayments" ? (
+        <TextButton
+          buttonText="Bounce Payments"
           height="2.5rem"
           width="12rem"
           onClick={handleOpen}
@@ -1008,6 +1019,8 @@ export default function MuiModels({
               debtorId={debtorId}
               GetCaseDetails={GetCaseDetails}
             />
+          ) : show === "bouncePayments" ? (
+            <BouncePayments handleClose={handleClose} debtorId={debtorId} />
           ) : show === "extractFiles" ? (
             <ExtractFieldPopup
               selectedFiles={selectedFiles}
