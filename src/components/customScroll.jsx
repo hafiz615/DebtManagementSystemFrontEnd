@@ -2,7 +2,7 @@ import { Colors } from "../config/default";
 
 const ScrollbarStyles = {
   "&::-webkit-scrollbar": {
-    width: "10px",
+    width: "7px",
   },
   "&::-webkit-scrollbar-thumb": {
     backgroundColor: "#E5E5E5",

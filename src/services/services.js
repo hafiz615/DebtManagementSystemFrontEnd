@@ -1626,3 +1626,24 @@ export const GetMcaByMonth = async (id) => {
     return error;
   }
 };
+export const GetManualPayments = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/debtor/getManualPayments/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateManualPayments = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/revertManualPayments/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

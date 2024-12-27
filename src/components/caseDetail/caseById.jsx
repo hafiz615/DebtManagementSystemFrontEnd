@@ -268,6 +268,13 @@ export default function CaseById({
                         GetCaseDetails={GetCaseDetails}
                       />
                       <MuiModels
+                        show="bouncePayments"
+                        width="55vw"
+                        caseId={id}
+                        debtorId={caseData?.debtor?._id}
+                        GetCaseDetails={GetCaseDetails}
+                      />
+                      <MuiModels
                         width="70vw"
                         show="payments"
                         remainingAmount={caseData?.remaining.toString()}
