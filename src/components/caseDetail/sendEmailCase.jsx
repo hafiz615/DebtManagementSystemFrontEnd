@@ -208,7 +208,7 @@ export default function SendEmailCase({
   const handleSend = async () => {
     setLoading(true);
     const payload = {
-      sendTo: headerName ? sendTo : bulkEmail,
+      sendTo: headerName ? sendTo : selectedEmail,
       content: preview,
       ...(headerName ? {} : { subject: subject }),
       ...(headerName ? {} : { cc: cc }),
@@ -226,7 +226,7 @@ export default function SendEmailCase({
       setBulkEmailTemplates([]);
       setBulkSmsTemplates([]);
       setSelectedSmsTemplates("");
-      selectedEmailTemplates("");
+      setSelectedEmailTemplates("");
       setSelectedEmail("");
       setSendTo("");
       setSubject("");
