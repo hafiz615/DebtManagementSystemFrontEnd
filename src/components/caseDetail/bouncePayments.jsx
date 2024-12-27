@@ -159,6 +159,7 @@ function BouncePayments({ handleClose, debtorId }) {
                       hoverColor={Colors.SKY_BLUE}
                       loading={loadingParentId === parentId}
                       loginFont="600"
+                      width="5rem"
                     />
                   </div>
                 </Grid>
