@@ -840,6 +840,7 @@ export default function MuiModels({
               verifiedSenders={verifiedSenders}
               buttonText={buttonText}
               handleClose={handleClose}
+              buttonName={buttonName}
               headerName={headerName}
               compose={compose}
               caseDataId={caseDataId}

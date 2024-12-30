@@ -61,6 +61,8 @@ export default function SendEmailCase({
   data,
   verifiedSenders,
   compose,
+  buttonName,
+  composeEmail,
 }) {
   const [loading, setLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -388,6 +390,13 @@ export default function SendEmailCase({
                 ></Box>
               )}
             </>
+          ) : compose || replyCheck ? (
+            <StyledInput
+              type="text"
+              placeholder="Send To*"
+              value={sendTo}
+              onChange={(e) => setSendTo(e.target.value)}
+            />
           ) : (
             <>
               {/* <StyledInput
