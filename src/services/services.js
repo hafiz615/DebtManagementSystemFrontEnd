@@ -1501,7 +1501,7 @@ export const UpdateContractDetails = async (payload, id) => {
 };
 export const GetCalls = async (id) => {
   try {
-    return await axios.get(BASE_URL + `/v1/case/getCalls/${id}`, setHeaders());
+    return await axios.get(BASE_URL + `/v1/call/getCalls/${id}`, setHeaders());
   } catch (error) {
     return error;
   }
@@ -1567,7 +1567,7 @@ export const GetAllUpcomingPayments = async (id) => {
 };
 export const GetCallToken = async () => {
   try {
-    return await axios.get(BASE_URL + `/v1/case/twilio/token`, setHeaders());
+    return await axios.get(BASE_URL + `/v1/call/twilio/token`, setHeaders());
   } catch (error) {
     return error;
   }
