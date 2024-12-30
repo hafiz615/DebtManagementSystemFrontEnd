@@ -32,7 +32,6 @@ export default function IncomingCall({
   const acceptIncomingCall = () => {
     if (incomingCall) {
       incomingCall.accept();
-      setIncomingCall(null);
       setCallDuration(0);
       const interval = setInterval(() => {
         setCallDuration((prev) => prev + 1);

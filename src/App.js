@@ -46,14 +46,14 @@ function App() {
     twilioDevice.on("incoming", (incomingCall) => {
       setIncomingCall(incomingCall);
       setIsModalOpen(true);
-    });
-    incomingCall.on("disconnect", () => {
-      setIncomingCall(null);
-      setIsModalOpen(false);
-    });
-    incomingCall.on("cancel", () => {
-      setIncomingCall(null);
-      setIsModalOpen(false);
+      incomingCall.on("disconnect", () => {
+        setIncomingCall(null);
+        setIsModalOpen(false);
+      });
+      incomingCall.on("cancel", () => {
+        setIncomingCall(null);
+        setIsModalOpen(false);
+      });
     });
     twilioDevice.register();
   };
