@@ -613,13 +613,28 @@ function Inbox() {
                                   justifyContent: "space-between",
                                 }}
                               >
-                                <div style={{ display: "flex", gap: "10px" }}>
-                                  <Typography sx={boldTextStyling}>
-                                    To:
-                                  </Typography>
-                                  <Typography sx={fontStyling}>
-                                    {item?.to || "-"}
-                                  </Typography>
+                                <div>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      gap: "10px",
+                                    }}
+                                  >
+                                    <Typography sx={boldTextStyling}>
+                                      To:
+                                    </Typography>
+                                    <Typography sx={fontStyling}>
+                                      {item?.to || "-"}
+                                    </Typography>
+                                  </div>
+                                  <div style={{ display: "flex", gap: "10px" }}>
+                                    <Typography sx={boldTextStyling}>
+                                      From:
+                                    </Typography>
+                                    <Typography sx={fontStyling}>
+                                      {item?.from || "-"}
+                                    </Typography>
+                                  </div>
                                 </div>
                                 <div style={{ display: "flex", gap: "10px" }}>
                                   <Typography sx={fontStyling}>

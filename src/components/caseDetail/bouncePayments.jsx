@@ -43,7 +43,9 @@ function BouncePayments({ handleClose, debtorId }) {
 
   const toggleExpand = (index) => {
     setExpandedIndices((prev) =>
-      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
+      prev?.includes(index)
+        ? prev?.filter((i) => i !== index)
+        : [...prev, index]
     );
   };
 
@@ -127,12 +129,12 @@ function BouncePayments({ handleClose, debtorId }) {
           </Grid>
           <Grid
             sx={{
-              height: "35vh",
+              //   height: "35vh",
               overflowY: "auto",
               ...ScrollbarStyles,
             }}
           >
-            {Object.keys(manualPayments)?.map((parentId, index) => (
+            {Object?.keys(manualPayments)?.map((parentId, index) => (
               <div key={parentId}>
                 <Grid
                   container
@@ -164,7 +166,7 @@ function BouncePayments({ handleClose, debtorId }) {
                   </div>
                 </Grid>
                 <Grid direction="row" sx={{ pl: 1 }}>
-                  {(expandedIndices.includes(index)
+                  {(expandedIndices?.includes(index)
                     ? manualPayments[parentId]
                     : [manualPayments[parentId][0]]
                   )?.map((item) => (
@@ -198,12 +200,12 @@ function BouncePayments({ handleClose, debtorId }) {
                           sx={{ fontFamily: "Nunito" }}
                         >
                           <strong>Due Date:</strong>{" "}
-                          {new Date(item?.dueDate).toLocaleDateString()}
+                          {new Date(item?.dueDate)?.toLocaleDateString()}
                         </Typography>
                       </Grid>
                     </Grid>
                   ))}
-                  {expandedIndices.includes(index) &&
+                  {expandedIndices?.includes(index) &&
                     manualPayments[parentId]?.length === 1 && (
                       <Typography
                         variant="body2"
