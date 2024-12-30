@@ -221,7 +221,7 @@ export default function ReplyCard({
       setSubject("");
       setPreview("");
       setSelectedEmailTemplates("");
-      bulkEmailTemplates([]);
+      setBulkEmailTemplates([]);
 
       GetLogsById && GetLogsById(caseDataId);
     } else {

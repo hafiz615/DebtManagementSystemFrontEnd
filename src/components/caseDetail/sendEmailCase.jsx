@@ -210,7 +210,11 @@ export default function SendEmailCase({
   const handleSend = async () => {
     setLoading(true);
     const payload = {
-      sendTo: headerName ? sendTo : selectedEmail,
+      sendTo: headerName
+        ? sendTo
+        : compose || replyCheck
+        ? sendTo
+        : selectedEmail,
       content: preview,
       ...(headerName ? {} : { subject: subject }),
       ...(headerName ? {} : { cc: cc }),
