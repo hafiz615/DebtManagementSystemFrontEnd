@@ -75,7 +75,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
       debtorId: debtorId,
       transactionIds: checkedPayments?.map((item) => item?.id),
       amount: amount,
-      commission: commission,
+      commission: parseFloat(commission?.toFixed(2)),
       transactionDate: date,
       referenceId: referenceId,
       transactionType: selectedValue,

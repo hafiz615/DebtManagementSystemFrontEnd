@@ -43,7 +43,7 @@ function BouncePayments({ handleClose, debtorId }) {
 
   const toggleExpand = (index) => {
     setExpandedIndices((prev) =>
-      prev.includes(index) ? prev?.filter((i) => i !== index) : [...prev, index]
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
     );
   };
 
@@ -51,7 +51,7 @@ function BouncePayments({ handleClose, debtorId }) {
     setLoadingParentId(parentId);
     const params = {
       referenceId: parentId || "-",
-      commission: Number(manualPayments?.manualCommission) || 0,
+      commission: manualPayments[parentId]?.[0]?.manualCommission || 0,
     };
     const UpdateManualPaymentsRes = await UpdateManualPayments(
       params,
@@ -132,7 +132,7 @@ function BouncePayments({ handleClose, debtorId }) {
               ...ScrollbarStyles,
             }}
           >
-            {Object?.keys(manualPayments)?.map((parentId, index) => (
+            {Object.keys(manualPayments)?.map((parentId, index) => (
               <div key={parentId}>
                 <Grid
                   container
@@ -146,7 +146,7 @@ function BouncePayments({ handleClose, debtorId }) {
 
                   <div>
                     <IconButton onClick={() => toggleExpand(index)}>
-                      {expandedIndices?.includes(index) ? (
+                      {expandedIndices.includes(index) ? (
                         <ExpandLess />
                       ) : (
                         <ExpandMore />
@@ -164,7 +164,7 @@ function BouncePayments({ handleClose, debtorId }) {
                   </div>
                 </Grid>
                 <Grid direction="row" sx={{ pl: 1 }}>
-                  {(expandedIndices?.includes(index)
+                  {(expandedIndices.includes(index)
                     ? manualPayments[parentId]
                     : [manualPayments[parentId][0]]
                   )?.map((item) => (
@@ -180,7 +180,7 @@ function BouncePayments({ handleClose, debtorId }) {
                           sx={{ fontFamily: "Nunito" }}
                         >
                           <strong>Commission:</strong>{" "}
-                          {formatDollarAmount(item?.commission)}
+                          {formatDollarAmount(item?.manualCommission) || "-"}
                         </Typography>
                       </Grid>
                       <Grid item xs={4}>
@@ -203,7 +203,7 @@ function BouncePayments({ handleClose, debtorId }) {
                       </Grid>
                     </Grid>
                   ))}
-                  {expandedIndices?.includes(index) &&
+                  {expandedIndices.includes(index) &&
                     manualPayments[parentId]?.length === 1 && (
                       <Typography
                         variant="body2"
