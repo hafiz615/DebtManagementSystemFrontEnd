@@ -49,10 +49,14 @@ function App() {
       incomingCall.on("disconnect", () => {
         setIncomingCall(null);
         setIsModalOpen(false);
+        setCallInterval(null);
+        setCallDuration(0);
       });
       incomingCall.on("cancel", () => {
         setIncomingCall(null);
         setIsModalOpen(false);
+        setCallInterval(null);
+        setCallDuration(0);
       });
     });
     twilioDevice.register();
@@ -206,16 +210,18 @@ function App() {
 
         <Route exact path="/set-password" element={<VerifyProfilePage />} />
       </Routes>
-      <IncomingCall
-        incomingCall={incomingCall}
-        setIncomingCall={setIncomingCall}
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
-        callDuration={callDuration}
-        setCallDuration={setCallDuration}
-        callInterval={callInterval}
-        setCallInterval={setCallInterval}
-      />
+      {location.pathname !== "/" && (
+        <IncomingCall
+          incomingCall={incomingCall}
+          setIncomingCall={setIncomingCall}
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          callDuration={callDuration}
+          setCallDuration={setCallDuration}
+          callInterval={callInterval}
+          setCallInterval={setCallInterval}
+        />
+      )}
     </>
   );
 }
