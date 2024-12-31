@@ -1647,3 +1647,14 @@ export const UpdateManualPayments = async (payload, id) => {
     return error;
   }
 };
+export const CallSummary = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/call/callSummary`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
