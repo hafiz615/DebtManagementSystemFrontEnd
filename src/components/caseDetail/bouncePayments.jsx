@@ -129,7 +129,6 @@ function BouncePayments({ handleClose, debtorId }) {
           </Grid>
           <Grid
             sx={{
-              //   height: "35vh",
               overflowY: "auto",
               ...ScrollbarStyles,
             }}
@@ -165,6 +164,20 @@ function BouncePayments({ handleClose, debtorId }) {
                     />
                   </div>
                 </Grid>
+
+                {/* Display Commission below Reference ID */}
+                <Grid sx={{ pl: 1, mt: 1 }}>
+                  <Typography
+                    variant="body2"
+                    sx={{ fontFamily: "Nunito", fontWeight: "600" }}
+                  >
+                    <strong>Commission:</strong>{" "}
+                    {formatDollarAmount(
+                      manualPayments[parentId]?.[0]?.manualCommission
+                    ) || "-"}
+                  </Typography>
+                </Grid>
+
                 <Grid direction="row" sx={{ pl: 1 }}>
                   {(expandedIndices?.includes(index)
                     ? manualPayments[parentId]
@@ -181,8 +194,8 @@ function BouncePayments({ handleClose, debtorId }) {
                           variant="body2"
                           sx={{ fontFamily: "Nunito" }}
                         >
-                          <strong>Commission:</strong>{" "}
-                          {formatDollarAmount(item?.manualCommission) || "-"}
+                          <strong>Amount:</strong>{" "}
+                          {formatDollarAmount(item?.amount) || "-"}
                         </Typography>
                       </Grid>
                       <Grid item xs={4}>

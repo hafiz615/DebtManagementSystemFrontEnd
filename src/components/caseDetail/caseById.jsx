@@ -269,7 +269,7 @@ export default function CaseById({
                       />
                       <MuiModels
                         show="bouncePayments"
-                        height="40vh"
+                        height="50vh"
                         width="55vw"
                         caseId={id}
                         debtorId={caseData?.debtor?._id}
