@@ -31,6 +31,7 @@ import {
   GetAllSenders,
 } from "../services/services";
 import { formatDateString } from "../common";
+import { useNavigate } from "react-router-dom";
 
 const inputStyling = {
   width: "100%",
@@ -85,10 +86,12 @@ function Inbox() {
   const [alltasks, setAllTasks] = useState([]);
   const open = Boolean(anchorEl);
   const [expandedMessages, setExpandedMessages] = useState({});
+  const navigate = useNavigate();
+
   const handleToggleContent = (index) => {
     setExpandedMessages((prevState) => ({
       ...prevState,
-      [index]: !prevState[index], // Toggle the expanded state of the message at this index
+      [index]: !prevState[index],
     }));
   };
 
@@ -188,6 +191,11 @@ function Inbox() {
     setCreditorCompany("");
     setNegotiator("");
     getAllInboxData(true, false);
+  };
+
+  const navigateToCaseDetail = (id) => {
+    localStorage.setItem("route", "all-cases");
+    navigate(`/all-cases/${id}`);
   };
 
   return (
@@ -763,11 +771,13 @@ function Inbox() {
             ) : alltasks ? (
               alltasks[selectedUser]?.map((tasks) => (
                 <CardContent
-                  style={{
+                  onClick={() => navigateToCaseDetail(tasks?.caseId)}
+                  sx={{
                     backgroundColor: Colors.BG_LIGHT_GRAY,
                     borderRadius: "8px",
                     marginTop: "5px",
                     padding: "10px",
+                    cursor: "pointer",
                   }}
                 >
                   <div style={{ display: "flex", gap: "10px" }}>
