@@ -86,11 +86,6 @@ export default function DebtorDetailsCards({
     return formattedKeys;
   };
 
-  const paymentGateways = [
-    { label: "Seamless Chex", value: "Seamless Chex" },
-    { label: "Easy Pay", value: "Easy Pay" },
-  ];
-
   const desiredKeys = [
     "companyName",
     "businessCategory",
@@ -122,10 +117,15 @@ export default function DebtorDetailsCards({
     item?.name?.toLowerCase().includes(searchText.toLowerCase())
   );
 
+  const paymentGateways = [
+    { label: "Seamless Chex", value: "Seamless Chex" },
+    { label: "Easy Pay", value: "Easy Pay" },
+  ];
   const [connectPayment, setConnectPayment] = useState({
     paymentToken: "",
     paymentType: "",
-    platform: "Easypay direct",
+    platform:
+      selectedValue === "Seamless Chex" ? "Seamlesschex" : "Easypay direct",
   });
   const debtorId = caseData?.debtor?._id;
   const { showToast } = useToast();
@@ -188,7 +188,7 @@ export default function DebtorDetailsCards({
               justifyContent: "end",
             }}
           >
-            {/* <Dropdown
+            <Dropdown
               menuWidth="10rem"
               menuItems={paymentGateways}
               placeholder="Type"
@@ -198,7 +198,7 @@ export default function DebtorDetailsCards({
               selectedValue={selectedValue}
               setSelectedValue={setSelectedValue}
               fontSize="12px"
-            /> */}
+            />
             <PaymentCardDetails
               paymentGateway={selectedValue}
               setConnectPayment={setConnectPayment}
