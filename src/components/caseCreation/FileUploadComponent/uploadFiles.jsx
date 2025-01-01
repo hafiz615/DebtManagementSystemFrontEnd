@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import {
   Grid,
   Box,
   Typography,
-  Checkbox,
   Table,
   TableBody,
   TableCell,
@@ -12,7 +11,7 @@ import {
   TableHead,
   TableRow,
   Paper,
-  CircularProgress, // Import CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import UploadIcon from "@mui/icons-material/Upload";
 import CloseIcon from "@mui/icons-material/Close";
@@ -27,7 +26,6 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { truncateText } from "../../../common";
 import CircularProgressWithLabel from "./circularLabel";
 import { isEmpty } from "lodash";
-import { fontWeight } from "@mui/system";
 
 const FileUploadComponent = ({
   files,
@@ -41,31 +39,47 @@ const FileUploadComponent = ({
 }) => {
   const [selectedFileForViewing, setSelectedFileForViewing] = useState(null);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
+  const smallToMediumScreen = useMediaQuery(
+    "(min-width:290px) and (max-width:1020px)"
+  );
+  const truncateValue = smallToMediumScreen ? 20 : 70;
 
-  const handleDropForUploadFiles = async (acceptedFiles) => {
-    const processedFiles = await processFiles(acceptedFiles);
-    setFiles((prevFiles) => [...prevFiles, ...processedFiles]);
-    setSelectedFiles((prevSelectedFiles) => [
-      ...prevSelectedFiles,
-      ...processedFiles?.filter(
-        (file) =>
-          file?.path?.toLowerCase().includes("mca") ||
-          file?.name?.toLowerCase().includes("mca")
-      ),
-    ]);
-  };
+  const handleDropForUploadFiles = useCallback(async (acceptedFiles) => {
+    try {
+      const processedFiles = await processFiles(acceptedFiles);
+      setFiles((prevFiles) => [...prevFiles, ...processedFiles]);
+    } catch (error) {
+      console.error("Error processing uploaded files:", error);
+    }
+  }, []);
+
+  const handleDropMcaFiles = useCallback(async (acceptedFiles) => {
+    try {
+      const processedFiles = await processFiles(acceptedFiles);
+      setFiles((prevFiles) => [...prevFiles, ...processedFiles]);
+      setSelectedFiles((prevSelectedFiles) => [
+        ...prevSelectedFiles,
+        ...processedFiles,
+      ]);
+    } catch (error) {
+      console.error("Error processing uploaded files:", error);
+    }
+  }, []);
 
   const processFiles = async (acceptedFiles) => {
     const processedFiles = [];
-
     await Promise.all(
       acceptedFiles?.map(async (file) => {
         if (file?.name === ".DS_Store") return;
         if (file?.type === "application/zip") {
-          const zipFiles = await getFilesFromZip(file);
-          processedFiles?.push(...zipFiles);
+          try {
+            const zipFiles = await getFilesFromZip(file);
+            processedFiles.push(...zipFiles);
+          } catch (error) {
+            console.error("Error extracting zip file:", error);
+          }
         } else {
-          processedFiles?.push({
+          processedFiles.push({
             name: file?.name,
             type: file?.type,
             path: file?.path,
@@ -74,7 +88,6 @@ const FileUploadComponent = ({
         }
       })
     );
-
     return processedFiles;
   };
 
@@ -89,7 +102,7 @@ const FileUploadComponent = ({
           name: zipEntry?.name,
           type: zipEntry?.name?.split(".").pop(),
           path: relativePath,
-          file: zipEntry?.asUint8Array(), // Convert zip entry to binary data
+          file: zipEntry?.async("uint8array"), // Convert zip entry to Uint8Array
         });
       }
     });
@@ -97,64 +110,52 @@ const FileUploadComponent = ({
     return filesArray;
   };
 
-  const handleEditFileName = (index, newName) => {
-    const file = files[index];
-    const fileExtension = file?.name?.split(".").pop();
-    const newFileName = `${newName}.${fileExtension}`;
-    const newPath = file?.path?.replace(file?.name, newFileName);
-    setFiles((prevFiles) =>
-      prevFiles?.map((f, i) =>
-        i === index ? { ...f, name: newFileName, path: newPath } : f
-      )
-    );
-  };
+  const handleEditFileName = useCallback(
+    (index, newName) => {
+      const file = files[index];
+      const fileExtension = file?.name?.split(".").pop();
+      const newFileName = `${newName}.${fileExtension}`;
+      const newPath = file?.path?.replace(file?.name, newFileName);
+      setFiles((prevFiles) =>
+        prevFiles.map((f, i) =>
+          i === index ? { ...f, name: newFileName, path: newPath } : f
+        )
+      );
+    },
+    [files]
+  );
 
-  const handleDeleteFile = (index) => {
-    setFiles((prevFiles) => prevFiles?.filter((_, i) => i !== index));
-    setSelectedFiles((prevFiles) => prevFiles?.filter((_, i) => i !== index));
-  };
-
-  const handleCheckboxChange = (file, checked) => {
+  const handleDeleteFile = useCallback((index) => {
+    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
     setSelectedFiles((prevSelectedFiles) =>
-      checked
-        ? [...prevSelectedFiles, file]
-        : prevSelectedFiles?.filter((f) => f !== file)
+      prevSelectedFiles.filter((_, i) => i !== index)
     );
-  };
+  }, []);
 
-  const {
-    getRootProps: getRootPropsUpload,
-    getInputProps: getInputPropsUpload,
-  } = useDropzone({
-    onDrop: handleDropForUploadFiles,
-    noClick: true,
-    noKeyboard: true,
-    multiple: true, // Ensure multiple files can be handled
-  });
+  const { getRootProps: getRootPropsBank, getInputProps: getInputPropsBank } =
+    useDropzone({
+      onDrop: handleDropForUploadFiles,
+      noClick: true,
+      noKeyboard: true,
+      multiple: true,
+    });
 
-  const handleViewFile = (file) => {
+  const { getRootProps: getRootPropsMca, getInputProps: getInputPropsMca } =
+    useDropzone({
+      onDrop: handleDropMcaFiles,
+      noClick: true,
+      noKeyboard: true,
+      multiple: true,
+    });
+
+  const handleViewFile = useCallback((file) => {
     setSelectedFileForViewing(file);
     setIsViewerOpen(true);
-  };
+  }, []);
 
-  const handleCloseViewer = () => {
+  const handleCloseViewer = useCallback(() => {
     setIsViewerOpen(false);
     setSelectedFileForViewing(null);
-  };
-
-  const smallScreen = useMediaQuery("(min-width:756px) and (max-width:898px)");
-  const smallToMediumScreen = useMediaQuery(
-    "(min-width:290px) and (max-width:1020px)"
-  );
-  const truncateValue = smallToMediumScreen ? 20 : 70;
-  const [dots, setDots] = useState("");
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setDots((prevDots) => (prevDots.length < 3 ? prevDots + "." : ""));
-    }, 500); // Change dots every 500ms
-
-    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -182,55 +183,61 @@ const FileUploadComponent = ({
           <Grid container>
             <Typography sx={styles.headerText}>Documents</Typography>
           </Grid>
-
-          <Grid
-            container
-            item
-            xs={10}
-            md={12}
-            lg={5.5}
-            sx={styles.uploadContainer}
-          >
-            <Typography sx={styles.headerText}>
-              Upload Folder or File
-            </Typography>
-
-            <Box sx={styles.uploadBox}>
+          <Grid xs={12} item container sx={{ justifyContent: "space-between" }}>
+            {["Bank Statements", "MCA", "Other"]?.map((label, index) => (
               <Grid
+                key={index}
                 container
                 item
-                xs={12}
-                sx={styles.dropzone}
-                {...getRootPropsUpload()}
-                key={inputKey}
+                xs={10}
+                md={12}
+                lg={3.75}
+                sx={styles.uploadContainer}
               >
-                <input
-                  {...getInputPropsUpload()}
-                  type="file"
-                  webkitdirectory=""
-                  directory=""
-                  multiple // Allow selecting multiple files/folders
-                  style={{ display: "none" }} // Hide the input element
-                  id="file-upload"
-                />
-                <label htmlFor="file-upload">
-                  <UploadIcon sx={styles.uploadIcon} />
-                  <Typography sx={styles.uploadText}>
-                    Click or Drag to Upload
-                  </Typography>
-                </label>
+                <Typography
+                  sx={{
+                    ...styles.headerText,
+                    textAlign: "center",
+                    m: "10px 0px",
+                  }}
+                >
+                  Upload {label} Folder or File
+                </Typography>
+
+                <Box
+                  sx={styles.uploadBox}
+                  {...(label === "MCA"
+                    ? getRootPropsMca()
+                    : getRootPropsBank())}
+                >
+                  <input
+                    {...(label === "MCA"
+                      ? getInputPropsMca()
+                      : getInputPropsBank())}
+                    type="file"
+                    webkitdirectory=""
+                    directory=""
+                    multiple
+                    style={{ display: "none" }}
+                    id={`file-upload-${index}`}
+                  />
+                  <label htmlFor={`file-upload-${index}`}>
+                    <UploadIcon sx={styles.uploadIcon} />
+                    <Typography sx={styles.uploadText}>
+                      Click or Drag to Upload
+                    </Typography>
+                  </label>
+                </Box>
               </Grid>
-            </Box>
+            ))}
           </Grid>
 
-          <Grid item sx={{ marginTop: "1rem" }}>
+          <Grid xs={12} item sx={{ marginTop: "1rem" }}>
             <Typography sx={styles.headerText}>List of Documents</Typography>
             <Paper
               sx={{
                 borderRadius: "10px",
-                width: smallScreen
-                  ? "80%"
-                  : { xs: "65vw", md: "90%", lg: "100%" },
+                width: "100%",
               }}
             >
               <TableContainer
@@ -245,14 +252,13 @@ const FileUploadComponent = ({
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell sx={styles.selectColumn}>
-                        <Typography sx={styles.tableHeader}>Select</Typography>
-                      </TableCell>
                       <TableCell sx={styles.typeColumn}>
                         <Typography sx={styles.tableHeader}>Type</Typography>
                       </TableCell>
                       <TableCell sx={styles.pathColumn}>
-                        <Typography sx={styles.tableHeader}>Path</Typography>
+                        <Typography sx={styles.tableHeader}>
+                          File Name
+                        </Typography>
                       </TableCell>
                       <TableCell sx={styles.actionsColumn}>
                         <Typography sx={styles.tableHeader}>Actions</Typography>
@@ -262,20 +268,6 @@ const FileUploadComponent = ({
                   <TableBody>
                     {files?.map((file, index) => (
                       <TableRow key={index}>
-                        <TableCell sx={styles.checkboxCell}>
-                          <Checkbox
-                            checked={selectedFiles?.includes(file)}
-                            onChange={(e) =>
-                              handleCheckboxChange(file, e.target.checked)
-                            }
-                            sx={{
-                              color: Colors.SKY_BLUE,
-                              "&.Mui-checked": {
-                                color: Colors.SKY_BLUE,
-                              },
-                            }}
-                          />
-                        </TableCell>
                         <TableCell sx={styles.pathCell}>
                           <Typography sx={styles.pathText} title={file?.type}>
                             {truncateText(file?.type, truncateValue)}

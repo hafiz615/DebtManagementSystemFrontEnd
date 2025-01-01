@@ -36,11 +36,9 @@ export const ExtractContractData = async (files) => {
 
     files.map(async (file) => {
       let processedFile = file.file;
-      // Check if the file is a JPG and convert to PDF if true
       if (file.file.type === "image/jpeg") {
         processedFile = await convertJpgToPdf(file.file);
       }
-
       const originalFileName = processedFile.name;
       const cleanedFileName = originalFileName.replace("MCA Contracts/", "");
       const cleanedFile = new File([processedFile], cleanedFileName, {

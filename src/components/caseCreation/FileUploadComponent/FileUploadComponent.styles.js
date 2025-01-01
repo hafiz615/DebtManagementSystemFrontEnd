@@ -122,7 +122,7 @@ export const styles = {
   uploadContainer: {
     display: "flex",
     flexDirection: "column",
-    marginTop: "1.5rem",
+    marginTop: "1rem",
     backgroundColor: Colors.WHITE,
     padding: "1rem",
     borderRadius: "10px",
