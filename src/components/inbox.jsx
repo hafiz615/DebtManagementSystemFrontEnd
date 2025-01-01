@@ -31,6 +31,7 @@ import {
   GetAllSenders,
 } from "../services/services";
 import { formatDateString } from "../common";
+import { useNavigate } from "react-router-dom";
 
 const inputStyling = {
   width: "100%",
@@ -84,6 +85,15 @@ function Inbox() {
   const [activeTab, setActiveTab] = useState(0);
   const [alltasks, setAllTasks] = useState([]);
   const open = Boolean(anchorEl);
+  const [expandedMessages, setExpandedMessages] = useState({});
+  const navigate = useNavigate();
+
+  const handleToggleContent = (index) => {
+    setExpandedMessages((prevState) => ({
+      ...prevState,
+      [index]: !prevState[index],
+    }));
+  };
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -181,6 +191,11 @@ function Inbox() {
     setCreditorCompany("");
     setNegotiator("");
     getAllInboxData(true, false);
+  };
+
+  const navigateToCaseDetail = (id) => {
+    localStorage.setItem("route", "all-cases");
+    navigate(`/all-cases/${id}`);
   };
 
   return (
@@ -433,6 +448,7 @@ function Inbox() {
                           onClick={() => {
                             setSelectedUser(key);
                             setSelectedUserData(value);
+                            setExpandedMessages({});
                           }}
                           sx={{
                             ...boxStyling,
@@ -463,6 +479,7 @@ function Inbox() {
                           onClick={() => {
                             setSelectedUser(key);
                             setSelectedUserData(value);
+                            setExpandedMessages({});
                           }}
                           sx={{
                             ...boxStyling,
@@ -604,13 +621,28 @@ function Inbox() {
                                   justifyContent: "space-between",
                                 }}
                               >
-                                <div style={{ display: "flex", gap: "10px" }}>
-                                  <Typography sx={boldTextStyling}>
-                                    To:
-                                  </Typography>
-                                  <Typography sx={fontStyling}>
-                                    {item?.to || "-"}
-                                  </Typography>
+                                <div>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      gap: "10px",
+                                    }}
+                                  >
+                                    <Typography sx={boldTextStyling}>
+                                      To:
+                                    </Typography>
+                                    <Typography sx={fontStyling}>
+                                      {item?.to || "-"}
+                                    </Typography>
+                                  </div>
+                                  <div style={{ display: "flex", gap: "10px" }}>
+                                    <Typography sx={boldTextStyling}>
+                                      From:
+                                    </Typography>
+                                    <Typography sx={fontStyling}>
+                                      {item?.from || "-"}
+                                    </Typography>
+                                  </div>
                                 </div>
                                 <div style={{ display: "flex", gap: "10px" }}>
                                   <Typography sx={fontStyling}>
@@ -673,15 +705,47 @@ function Inbox() {
                                   {item?.negotiatorName || "-"}
                                 </Typography>
                               </div>
-                              <Typography sx={boldTextStyling}>
-                                Content:
-                              </Typography>
-                              <Typography
-                                sx={fontStyling}
-                                dangerouslySetInnerHTML={{
-                                  __html: item?.textAsHtml,
-                                }}
-                              />
+                              <div>
+                                {/* Show content conditionally */}
+                                {expandedMessages[index] && (
+                                  <>
+                                    <Typography sx={boldTextStyling}>
+                                      Content:
+                                    </Typography>
+                                    <Typography
+                                      sx={fontStyling}
+                                      dangerouslySetInnerHTML={{
+                                        __html: item?.textAsHtml,
+                                      }}
+                                    />
+                                  </>
+                                )}
+
+                                {/* Show More / Show Less button */}
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    marginTop: "10px",
+                                    marginBottom: "10px",
+                                  }}
+                                >
+                                  <Typography
+                                    onClick={() => handleToggleContent(index)} // Pass index to toggle specific message
+                                    sx={{
+                                      fontSize: "14px",
+                                      fontWeight: "600",
+                                      color: Colors.SKY_BLUE,
+                                      cursor: "pointer",
+                                      fontFamily: "Nunito",
+                                    }}
+                                  >
+                                    {expandedMessages[index]
+                                      ? "Show Less"
+                                      : "Show More"}
+                                  </Typography>
+                                </Box>
+                              </div>
                             </CardContent>
                           </Box>
                         ))
@@ -707,11 +771,13 @@ function Inbox() {
             ) : alltasks ? (
               alltasks[selectedUser]?.map((tasks) => (
                 <CardContent
-                  style={{
+                  onClick={() => navigateToCaseDetail(tasks?.caseId)}
+                  sx={{
                     backgroundColor: Colors.BG_LIGHT_GRAY,
                     borderRadius: "8px",
                     marginTop: "5px",
                     padding: "10px",
+                    cursor: "pointer",
                   }}
                 >
                   <div style={{ display: "flex", gap: "10px" }}>

@@ -36,6 +36,7 @@ export default function CreditorDetails({
   const [digitsList, setDigitsList] = useState(
     finalCaseData?.map((caseEntry) => [caseEntry?.creditor?.aggression]) || [0]
   );
+
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const handleSearchChange = (value, index) => {
     setSearchText(value);
@@ -213,7 +214,7 @@ export default function CreditorDetails({
             },
             businessInformation: {
               companyName: creditor?.Name || "",
-              businessCategory: "",
+              businessCategory: creditor?.businessCategory || "",
             },
             notes: "",
             lastFundedDate: creditor?.ContractDetails?.signing_date || "",
@@ -243,7 +244,6 @@ export default function CreditorDetails({
         };
       });
     }
-
     setFinalCaseData(processedData);
     setDigitsList(processedData?.map(() => Array(10).fill("")) || []);
   }, [creditors]);

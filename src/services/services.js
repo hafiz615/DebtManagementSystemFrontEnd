@@ -1501,7 +1501,7 @@ export const UpdateContractDetails = async (payload, id) => {
 };
 export const GetCalls = async (id) => {
   try {
-    return await axios.get(BASE_URL + `/v1/case/getCalls/${id}`, setHeaders());
+    return await axios.get(BASE_URL + `/v1/call/getCalls/${id}`, setHeaders());
   } catch (error) {
     return error;
   }
@@ -1567,7 +1567,7 @@ export const GetAllUpcomingPayments = async (id) => {
 };
 export const GetCallToken = async () => {
   try {
-    return await axios.get(BASE_URL + `/v1/case/twilio/token`, setHeaders());
+    return await axios.get(BASE_URL + `/v1/call/twilio/token`, setHeaders());
   } catch (error) {
     return error;
   }
@@ -1597,6 +1597,60 @@ export const CreatePaymentPlan = async (payload, id) => {
   try {
     return await axios.put(
       BASE_URL + `/v1/case/updateCasePlan/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const UpdateWeeklyBudgetSettlement = async (payload, id) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/debtor/updateWeeklyBudget/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetMcaByMonth = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/creditor/mcaByMonth/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetManualPayments = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/debtor/getManualPayments/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateManualPayments = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/revertManualPayments/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const CallSummary = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/call/callSummary`,
       payload,
       setHeaders()
     );

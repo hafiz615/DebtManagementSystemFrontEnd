@@ -22,6 +22,7 @@ import {
   GetDailyCashFlow,
   GetLogs,
   GetLumpSumAmount,
+  GetMcaByMonth,
   GetSettlementRangeWithScores,
   GetStatementSummary,
   PausePayments,
@@ -126,7 +127,9 @@ function CaseDetail() {
   const [paymentData, setPaymentData] = useState();
   const [statementSummariesLoading, setStatementSummariesLoading] =
     useState(false);
+  const [mcaByMonth, setMcaByMonth] = useState();
   const { id } = useParams();
+
   const emailData = caseData?.debtor?.basicInformation;
 
   const tabs = ["All", "Email", "Sms", "Notes", "Case Logs", "Call Logs"];
@@ -298,10 +301,13 @@ function CaseDetail() {
           const allCreditors = settlementRangeData?.data?.data?.creditors;
           setCreditorNames(allCreditors);
           const creditorAccountTitles = allCreditors?.map(
-            (item) => item.creditorAccountTitle
+            (item) => item?.creditorAccountTitle
           );
           if (!isEmpty(creditorAccountTitles)) {
             creditorAccountTitles.push("Summary");
+          }
+          if (!isEmpty(creditorAccountTitles)) {
+            creditorAccountTitles.push("MCA By Month");
           }
           setAllCreditorsNames(creditorAccountTitles || []);
           setOptionStats(
@@ -311,6 +317,11 @@ function CaseDetail() {
           if (typeof settlementRangeData?.data?.data?.getScores !== "string") {
             getLumpSumAmountData();
           }
+          const MCARes = await GetMcaByMonth(id);
+          if (MCARes?.status === 200) {
+            setMcaByMonth(MCARes?.data?.data);
+          }
+
           const senderRes = await GetAllSenders(
             settlementRangeData?.data?.data?.debtor?._id
           );
@@ -612,6 +623,8 @@ function CaseDetail() {
             setPaymentData={setPaymentData}
             selectedCreditorDetails={selectedCreditorDetails}
             caseData={caseData}
+            mcaByMonth={mcaByMonth}
+            setMcaByMonth={setMcaByMonth}
           />
         )}
         {activeTab === 1 && (

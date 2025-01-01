@@ -369,10 +369,9 @@ export default function ClientListDetails() {
   const dataUser = clientData?.debtor || clientData?.creditor;
   const infoItems = [
     { label: "Name", value: truncateText(dataUser?.fullName, 25) || "--" },
-    { label: "Email", value: truncateText(dataUser?.email, 25) || "--" },
     {
-      label: "Total Debt",
-      value: formatDollarAmount(dataUser?.totalDebt) || "--",
+      label: "Current Balance",
+      value: formatDollarAmount(dataUser?.totalRemaining) || "--",
     },
   ];
 
@@ -380,18 +379,20 @@ export default function ClientListDetails() {
     infoItems.push({ label: "Address", value: dataUser?.address || "--" });
   }
   const financialInfo = [
-    {
-      label: "Phone Number",
-      value: dataUser?.phone ? `+1${dataUser?.phone}` : "--",
-    },
+    ...(userRole === "client"
+      ? [
+          {
+            label: "Account Status",
+            value: dataUser?.status || "--",
+          },
+          {
+            label: "Weekly Budget",
+            value: formatDollarAmount(dataUser?.weeklyBudget) || "--",
+          },
+        ]
+      : []),
   ];
 
-  if (userRole === "client") {
-    financialInfo.push({
-      label: "Account Status",
-      value: dataUser?.status || "--",
-    });
-  }
   useEffect(() => {
     setCurrentPage(1);
     GetClientDetails("", "");
@@ -484,7 +485,7 @@ export default function ClientListDetails() {
                 },
               }}
             >
-              <Grid item xs={12} lg={5.5}>
+              <Grid item xs={12} lg={6}>
                 {infoItems?.map((item, index) => (
                   <Box
                     key={index}
@@ -501,6 +502,7 @@ export default function ClientListDetails() {
                         fontWeight: "600",
                         color: Colors.DARK_GRAY,
                         width: "6rem",
+                        width: "50%",
                       }}
                     >
                       {item?.label}
@@ -514,7 +516,7 @@ export default function ClientListDetails() {
                           color: Colors.DIM_LIGHT_GRAY,
                         }}
                       >
-                        {truncateText(item?.value, 20) || "--"}
+                        {truncateText(item?.value, 15) || "--"}
                       </span>
                     </Tooltip>
                   </Box>
