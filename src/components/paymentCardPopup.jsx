@@ -75,7 +75,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
       debtorId: debtorId,
       transactionIds: checkedPayments?.map((item) => item?.id),
       amount: amount,
-      commission: commission,
+      commission: parseFloat(commission?.toFixed(2)),
       transactionDate: date,
       referenceId: referenceId,
       transactionType: selectedValue,
@@ -125,6 +125,15 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
     if (!value) return "";
     return `$${new Intl.NumberFormat("en-US").format(value)}`;
   };
+  const isFormValid = () => {
+    return (
+      amount &&
+      commission > 0 &&
+      referenceId?.trim() !== "" &&
+      date &&
+      selectedValue
+    );
+  };
 
   return (
     <Grid item xs={12}>
@@ -158,7 +167,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
             htmlFor="amount"
             style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
           >
-            Total Amount
+            Total Amount*
           </label>
           <input
             id="amount"
@@ -192,7 +201,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
             htmlFor="commission"
             style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
           >
-            Commission{" "}
+            Commission*{" "}
             {commission <= 0 && (
               <span
                 style={{
@@ -229,7 +238,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
             htmlFor="referenceId"
             style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
           >
-            Reference ID
+            Reference ID*
           </label>
           <input
             id="referenceId"
@@ -245,14 +254,14 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
             htmlFor="date"
             style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
           >
-            Date
+            Date*
           </label>
           <input
             id="date"
             type="date"
             value={date}
             onChange={handleDateChange}
-            placeholder="Enter Date"
+            placeholder="Enter Date*"
             style={textFieldStyling}
           />
         </div>
@@ -261,14 +270,14 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
             htmlFor="paymentType"
             style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
           >
-            Payment Type
+            Payment Type*
           </label>
           <Dropdown
             id="paymentType"
             menuWidth="22rem"
             height="2.5rem"
             menuItems={menuItems}
-            placeholder="Select Payment Type"
+            placeholder="Select Payment Type*"
             backgroundColor={Colors.BG_LIGHT_GRAY}
             hoverColor={Colors.BG_LIGHT_GRAY}
             width="100%"
@@ -365,7 +374,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
         <Button
           buttonText="Add Payment"
           width="8rem"
-          disabled={!amount || commission <= 0}
+          disabled={!isFormValid()}
           onClick={handleSubmit}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}

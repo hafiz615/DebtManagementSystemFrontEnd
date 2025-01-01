@@ -69,10 +69,6 @@ export default function EditDebtorDetail({
       debtorBusinessInfo?.EIN ||
       parseString(debtorBusinessInfo?.["Business EIN Number"]) ||
       "",
-    businessCategory:
-      debtorBusinessInfo?.businessCategory ||
-      debtorBusinessInfo?.["Business Category"] ||
-      "",
     businessDescription: debtorBusinessInfo?.description || "",
     businessState:
       debtorBusinessInfo?.state ||
@@ -97,6 +93,11 @@ export default function EditDebtorDetail({
   });
   const [checked, setChecked] = React.useState(false);
   const [status, setStatus] = useState(debtorBasicInfo?.status || "");
+  const [businessType, setBusinessType] = useState(
+    debtorBusinessInfo?.businessCategory ||
+      debtorBusinessInfo?.["Business Category"] ||
+      ""
+  );
   const [mismatches, setMismatches] = useState({});
   const [errors, setErrors] = useState({
     businessPhone: "",
@@ -153,7 +154,7 @@ export default function EditDebtorDetail({
           data?.debtor?.businessInformation?.EIN
         ),
         businessCategory: checkFieldMismatch(
-          debtorBusinessDetails?.businessCategory,
+          businessType,
           data?.debtor?.businessInformation?.businessCategory
         ),
         businessState: checkFieldMismatch(
@@ -232,7 +233,7 @@ export default function EditDebtorDetail({
       businessInformation: {
         companyName: debtorBusinessDetails?.businessCompanyName,
         EIN: debtorBusinessDetails?.businessEinNumber,
-        businessCategory: debtorBusinessDetails?.businessCategory,
+        businessCategory: businessType,
         description: debtorBusinessDetails?.businessDescription,
         state: debtorBusinessDetails?.businessState,
         city: debtorBusinessDetails?.businessCity,
@@ -311,8 +312,8 @@ export default function EditDebtorDetail({
           setErrors={setErrors}
           misMatches={mismatches}
           showFieldError={showFields}
-          profitMargin={profitMargin}
-          setProfitMargin={setProfitMargin}
+          businessType={businessType}
+          setBusinessType={setBusinessType}
         />
       </Grid>
       {showFields && (

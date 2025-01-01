@@ -196,7 +196,10 @@ export default function ListTable({
                   ?.filter(
                     (header) =>
                       (showFailureReason || header !== "Failure Reason") &&
-                      (showDueDate || header !== "Due Date")
+                      (showDueDate || header !== "Due Date") &&
+                      (arrayName === "upcomingPayments"
+                        ? header !== "Payment Type"
+                        : "auto")
                   )
                   ?.map((header, index) => (
                     <StyledTableCell
@@ -310,6 +313,9 @@ export default function ListTable({
                         ([key]) =>
                           key !== "id" &&
                           key !== "caseId" &&
+                          (arrayName === "upcomingPayments"
+                            ? key !== "transactionType"
+                            : true) &&
                           (showFailureReason || key !== "failureReason") &&
                           (showDueDate || key !== "dueDate")
                       )
@@ -443,7 +449,7 @@ export default function ListTable({
                     )}
 
                     {/* Handle special case for failedAuthorizations or failedPayments */}
-                    {arrayName === "Upcoming Payments" && (
+                    {/* {arrayName === "Upcoming Payments" && (
                       <StyledTableCell
                         sx={{
                           display: "flex",
@@ -453,7 +459,7 @@ export default function ListTable({
                       >
                         fhfjfhj
                       </StyledTableCell>
-                    )}
+                    )} */}
                     {(arrayName === "failedAuthorizations" ||
                       arrayName === "failedPayments") && (
                       <StyledTableCell

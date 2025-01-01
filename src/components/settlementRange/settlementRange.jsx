@@ -58,6 +58,7 @@ import StatementSummaryAccordion from "../statementSummaryAccordion";
 import DebtorUploadedFiles from "../debtorUploadedFiles";
 import TransactionHistory from "../transactionHistory";
 import CashFlowPercentage from "./cashFlowPercentage";
+import MCAByMonthAccordion from "../settlementRange/mcaByMonthAccordion";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -204,6 +205,8 @@ export default function SettlementRange({
   setPaymentData,
   selectedCreditorDetails,
   caseData,
+  mcaByMonth,
+  setMcaByMonth,
 }) {
   const caseId = id;
   const [value, setValue] = useState(0);
@@ -651,7 +654,7 @@ export default function SettlementRange({
                 /[$,]/g,
                 ""
               )
-            ).toLocaleString("en-US", {
+            )?.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })} (daily)`
@@ -838,7 +841,9 @@ export default function SettlementRange({
       (item) => item.creditorName !== "Summary"
     );
 
-  const isAnyChecked = Object.values(checkboxStates).some((checked) => checked);
+  const isAnyChecked = Object.values(checkboxStates)?.some(
+    (checked) => checked
+  );
 
   const countData =
     scores &&
@@ -854,8 +859,8 @@ export default function SettlementRange({
 
   const formatCurrencyValue = (value) => {
     if (value === null || value === undefined) return "--";
-    const valueStr = typeof value === "number" ? value.toString() : value;
-    const cleanedValue = valueStr.replace(/[^0-9.]/g, "");
+    const valueStr = typeof value === "number" ? value?.toString() : value;
+    const cleanedValue = valueStr?.replace(/[^0-9.]/g, "");
     const numericValue = parseFloat(cleanedValue);
     if (!isNaN(numericValue)) {
       return `$${numericValue?.toLocaleString(undefined, {
@@ -1069,9 +1074,19 @@ export default function SettlementRange({
                           color: Colors.DARK_GRAY,
                           fontSize: FONT_SIZE_LARGE,
                           marginTop: "0.5rem",
+                          display: "flex",
+                          alignItems: "center",
                         }}
                       >
                         {data?.item}
+                        {data?.item === "Weekly Budget" && (
+                          <MuiModels
+                            show="updateWeeklyBudget"
+                            data={data}
+                            popUpDebtorData={popUpDebtorData}
+                            getAllRanges={getAllRanges}
+                          />
+                        )}
                       </div>
                       <Tooltip title={data?.value} placement="top-end">
                         <span
@@ -1135,6 +1150,11 @@ export default function SettlementRange({
               loading={statementSummariesLoading}
             />
           </Grid>
+          <>
+            <Grid item xs={12} sx={{ mt: "1rem" }}>
+              <MCAByMonthAccordion mcaByMonth={mcaByMonth} />
+            </Grid>
+          </>
 
           <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
             {/* <GridItem
@@ -1625,6 +1645,7 @@ export default function SettlementRange({
                     label={item?.creditorAccountTitle}
                   />
                 ))}
+
               <AntTab
                 sx={{
                   bgcolor: Colors.WHITE,
@@ -1760,7 +1781,6 @@ export default function SettlementRange({
                   </Grid>
                 </>
               )}
-
             {creditorNamesTabs[tabValue] === "Summary" && (
               <>
                 <Grid item xs={12} sx={{ mt: "1rem" }}>

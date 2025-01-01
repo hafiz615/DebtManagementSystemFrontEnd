@@ -10,6 +10,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import PaymentFields from "../caseCreationFields/paymentFields";
 import Autocomplete from "@mui/material/Autocomplete";
 import { handleNumberInput } from "../../common";
+import Dropdown from "../dropdown";
 
 export default function CreditorFields({
   debtorCaseData,
@@ -24,6 +25,15 @@ export default function CreditorFields({
   businessErrors,
   showErrors,
 }) {
+  const debtTypes = [
+    { label: "MCA", value: "MCA" },
+    { label: "LOC", value: "LOC" },
+    { label: "Bank Loan", value: "Bank Loan" },
+    { label: "Credit Card", value: "Credit Card" },
+    { label: "Equipment", value: "Equipment" },
+    { label: "Other", value: "Other" },
+  ];
+
   const accountMenuList =
     debtorCaseData &&
     debtorCaseData?.creditorNames?.creditor_names?.map((item, index) => ({
@@ -91,7 +101,7 @@ export default function CreditorFields({
               sx={{ fontFamily: "Nunito", fontWeight: "600" }}
               gutterBottom
             >
-              Business Information
+              Creditor Information
             </Typography>
             <Grid container item xs={12}>
               <PaymentsTextFields
@@ -116,9 +126,9 @@ export default function CreditorFields({
                     : "1px solid transparent"
                 }
               />
-              <PaymentsTextFields
+              {/* <PaymentsTextFields
                 type="text"
-                label="Debt Type*"
+                label="Debt Types*"
                 placeHolderValue="Enter Debt Type"
                 width={smallScreen ? "100%" : "97%"}
                 value={
@@ -139,7 +149,40 @@ export default function CreditorFields({
                     ? "2px solid red"
                     : "1px solid transparent"
                 }
-              />
+              /> */}
+              <Grid item xs={12} md={3.9}>
+                <Typography
+                  sx={{
+                    fontWeight: "500",
+                    fontFamily: "Nunito",
+                    marginLeft: "1rem",
+                    color: Colors.DARK_GRAY,
+                  }}
+                >
+                  Debt Types
+                </Typography>
+
+                <Dropdown
+                  height="2.5rem"
+                  menuItems={debtTypes}
+                  menuWidth="11.7rem"
+                  placeholder="Choose Type"
+                  backgroundColor={Colors.BG_LIGHT_GRAY}
+                  hoverColor={Colors.BG_LIGHT_GRAY}
+                  width={smallScreen ? "100%" : "98%"}
+                  selectedValue={
+                    thisCaseData?.creditor?.businessInformation
+                      ?.businessCategory
+                  }
+                  setSelectedValue={(value) =>
+                    handleCaseDataChange(
+                      caseIndex,
+                      "creditor.businessInformation.businessCategory",
+                      value
+                    )
+                  }
+                />
+              </Grid>
               {typeof debtorCaseData?.creditorNames !== "string" &&
               debtorCaseData?.creditorNames?.creditor_names?.length > 0 ? (
                 <Grid item xs={12} md={4} lg={4}>

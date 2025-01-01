@@ -64,6 +64,8 @@ import PaymentCardPopup from "./paymentCardPopup";
 import DialPad from "./dialPad";
 import EditContractInformation from "./settlementRange/editContractInformation";
 import CreditorSync from "./caseDetail/creditorSync";
+import UpdateWeeklyBudget from "./settlementRange/updateWeeklyBudget";
+import BouncePayments from "./caseDetail/bouncePayments";
 
 export default function MuiModels({
   buttonName,
@@ -472,6 +474,16 @@ export default function MuiModels({
             }}
           />
         </IconButton>
+      ) : show === "updateWeeklyBudget" ? (
+        <IconButton
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <EditIcon
+            sx={{ fontSize: "16px", color: Colors.BLACK, cursor: "pointer" }}
+          />
+        </IconButton>
       ) : show === "EditCaseCustomField" ? (
         <IconButton
           disabled={isEmpty(customFieldsData)}
@@ -486,6 +498,16 @@ export default function MuiModels({
       ) : show === "AddPayments" ? (
         <TextButton
           buttonText="Add Manual Payments"
+          height="2.5rem"
+          width="12rem"
+          onClick={handleOpen}
+          disabled={disabled}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
+      ) : show === "bouncePayments" ? (
+        <TextButton
+          buttonText="Bounce Payments"
           height="2.5rem"
           width="12rem"
           onClick={handleOpen}
@@ -818,6 +840,7 @@ export default function MuiModels({
               verifiedSenders={verifiedSenders}
               buttonText={buttonText}
               handleClose={handleClose}
+              buttonName={buttonName}
               headerName={headerName}
               compose={compose}
               caseDataId={caseDataId}
@@ -997,6 +1020,8 @@ export default function MuiModels({
               debtorId={debtorId}
               GetCaseDetails={GetCaseDetails}
             />
+          ) : show === "bouncePayments" ? (
+            <BouncePayments handleClose={handleClose} debtorId={debtorId} />
           ) : show === "extractFiles" ? (
             <ExtractFieldPopup
               selectedFiles={selectedFiles}
@@ -1039,6 +1064,13 @@ export default function MuiModels({
               handleClose={handleClose}
               caseData={caseData}
               GetCaseDetails={GetCaseDetails}
+            />
+          ) : show === "updateWeeklyBudget" ? (
+            <UpdateWeeklyBudget
+              handleClose={handleClose}
+              data={data}
+              popUpDebtorData={popUpDebtorData}
+              getAllRanges={getAllRanges}
             />
           ) : (
             ""

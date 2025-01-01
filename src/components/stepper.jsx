@@ -69,17 +69,17 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   const [debtorBusinessDetails, setDebtorBusinessDetails] = useState({
     businessCompanyName: debtorBusinessInfo?.companyName || "",
     businessEinNumber: debtorBusinessInfo?.EIN || "",
-    businessCategory: debtorBusinessInfo?.businessCategory || "",
-    businessDescription: debtorBusinessInfo?.description || "",
     businessState: debtorBusinessInfo?.state || "",
     businessCity: debtorBusinessInfo?.city || "",
     businessZipCode: debtorBusinessInfo?.zipCode || "",
-    businessPhoneNumber: debtorBusinessInfo?.phone || "",
     businessAddress: debtorBusinessInfo?.address || "",
   });
 
   const [checked, setChecked] = React.useState(false);
   const [status, setStatus] = useState(debtorBasicInfo?.status || "");
+  const [businessType, setBusinessType] = useState(
+    debtorBusinessInfo?.businessCategory || "Construction"
+  );
   const [extractedData, setExtractedData] = useState({});
   const [inputKey, setInputKey] = useState(Date.now());
   //Debtor-Contact-State
@@ -93,10 +93,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
             : contact?.phone
           : "",
         email: contact?.email || "",
-        state: contact?.state || "",
-        city: contact?.city || "",
-        zipCode: contact?.zipCode || "",
-        relationWithDebtor: contact?.relationWithDebtor || "",
       }))
     : [
         {
@@ -104,10 +100,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           title: "",
           phone: "",
           email: "",
-          state: "",
-          city: "",
-          zipCode: "",
-          relationWithDebtor: "",
         },
       ];
 
@@ -126,7 +118,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   const [remainingAmount, setRemainingAmount] = useState(null);
   const [lastPaymentDate, setLastPaymentDate] = useState("");
   const [debtorDetailsStatus, setDebtorDetailsStatus] = useState("");
-  const [profitMargin, setProfitMargin] = useState("");
   const [feePayment, setFeePayment] = useState("");
   const today = new Date().toISOString().split("T")[0];
   const [newDataList, setNewDataList] = useState([
@@ -367,9 +358,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       businessZipCode: response?.BusinessInfo
         ? response?.BusinessInfo["Business Zip code"]
         : "",
-      businessPhoneNumber: response?.BusinessInfo
-        ? phoneNumberFormat(response?.BusinessInfo["Business Phone Number"])
-        : "",
       businessAddress: response?.BusinessInfo
         ? response?.BusinessInfo["Business Street Address"]
         : "",
@@ -400,16 +388,18 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       BasicWeeklyBudget: debtorData?.basicInformation?.weeklyBudget || 0,
     });
     setWalletId(debtorData?.customerVaultId || "");
+    setUrl(debtorData?.documents || []);
     setStatus(debtorData?.basicInformation?.status);
+    setBusinessType(debtorData?.businessInformation?.businessCategory || "");
     setDebtorBusinessDetails({
       businessCompanyName: debtorData?.businessInformation?.companyName || "",
       businessEinNumber: debtorData?.businessInformation?.EIN || "",
-      businessCategory: debtorData?.businessInformation?.businessCategory || "",
-      businessDescription: debtorData?.businessInformation?.description || "",
+      // businessCategory: debtorData?.businessInformation?.businessCategory || "",
+      // businessDescription: debtorData?.businessInformation?.description || "",
       businessState: debtorData?.businessInformation?.state || "",
       businessCity: debtorData?.businessInformation?.city || "",
       businessZipCode: debtorData?.businessInformation?.zipCode || "",
-      businessPhoneNumber: debtorData?.businessInformation?.phone || "",
+      // businessPhoneNumber: debtorData?.businessInformation?.phone || "",
       businessAddress: debtorData?.businessInformation?.address || "",
     });
     if (!isEmpty(debtorData?.contacts)) {
@@ -419,10 +409,10 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           title: contact?.title || "",
           phone: contact?.phone || "",
           email: contact?.email || "",
-          state: contact?.state || "",
-          city: contact?.city || "",
-          zipCode: contact?.zipCode || "",
-          relationWithDebtor: contact?.relationWithDebtor || "",
+          // state: contact?.state || "",
+          // city: contact?.city || "",
+          // zipCode: contact?.zipCode || "",
+          // relationWithDebtor: contact?.relationWithDebtor || "",
         }))
       );
     } else {
@@ -432,10 +422,10 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           title: "",
           phone: "",
           email: "",
-          state: "",
-          city: "",
-          zipCode: "",
-          relationWithDebtor: "",
+          // state: "",
+          // city: "",
+          // zipCode: "",
+          // relationWithDebtor: "",
         },
       ]);
     }
@@ -481,19 +471,20 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
             prevProgress >= 100 ? 100 : prevProgress + 100 / calculateTime
           );
         }, 1000);
-        const extractedDataMCAs = selectedFiles
-          ? await ExtractContractData(selectedFiles).then((res) => {
-              if (isEmpty(res)) {
-                showToast("Could not extract data from files", "error");
-                setProgress(101);
-                clearInterval(timer);
-                setActiveStep(activeStep + 1);
-              } else {
-                setExtractedData(res);
-                return res;
-              }
-            })
-          : [];
+        const extractedDataMCAs =
+          selectedFiles?.length > 0
+            ? await ExtractContractData(selectedFiles).then((res) => {
+                if (isEmpty(res)) {
+                  showToast("Could not extract data from files", "error");
+                  setProgress(101);
+                  clearInterval(timer);
+                  setActiveStep(activeStep + 1);
+                } else {
+                  setExtractedData(res);
+                  return res;
+                }
+              })
+            : [];
 
         if (files) {
           const uploadFile = await UploadFiles(files, setProgress);
@@ -538,19 +529,19 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           businessInformation: {
             companyName: debtorBusinessDetails?.businessCompanyName,
             EIN: debtorBusinessDetails?.businessEinNumber,
-            businessCategory: debtorBusinessDetails?.businessCategory,
-            description: debtorBusinessDetails?.businessDescription,
+            businessCategory: businessType,
+            // description: debtorBusinessDetails?.businessDescription,
             state: debtorBusinessDetails?.businessState,
             city: debtorBusinessDetails?.businessCity,
             zipCode: debtorBusinessDetails?.businessZipCode,
-            phone: debtorBusinessDetails?.businessPhoneNumber
-              ? debtorBusinessDetails?.businessPhoneNumber.startsWith("+1")
-                ? debtorBusinessDetails?.businessPhoneNumber.slice(2)
-                : debtorBusinessDetails?.businessPhoneNumber
-              : "",
+            // phone: debtorBusinessDetails?.businessPhoneNumber
+            //   ? debtorBusinessDetails?.businessPhoneNumber.startsWith("+1")
+            //     ? debtorBusinessDetails?.businessPhoneNumber.slice(2)
+            //     : debtorBusinessDetails?.businessPhoneNumber
+            //   : "",
             address: debtorBusinessDetails?.businessAddress,
           },
-          profitMargin: Number(profitMargin) || 20,
+          // profitMargin: Number(profitMargin) || 20,
           contacts: debtorContacts,
           paymentToken: connectPayment?.paymentToken,
           paymentType: connectPayment?.paymentType,
@@ -645,25 +636,26 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       businessCompanyName: "",
       businessEinNumber: "",
       businessCategory: "",
-      businessDescription: "",
+      // businessDescription: "",
       businessState: "",
       businessCity: "",
       businessZipCode: "",
-      businessPhoneNumber: "",
+      // businessPhoneNumber: "",
       businessAddress: "",
     });
     setWalletId("");
     setStatus("");
+    setBusinessType("");
     setDebtorContactDetails([
       {
         name: "",
         title: "",
         phone: "",
         email: "",
-        state: "",
-        city: "",
-        zipCode: "",
-        relationWithDebtor: "",
+        // state: "",
+        // city: "",
+        // zipCode: "",
+        // relationWithDebtor: "",
       },
     ]);
   };
@@ -874,8 +866,8 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               setFilteredArray={setFilteredArray}
               connectPayment={connectPayment}
               setConnectPayment={setConnectPayment}
-              setProfitMargin={setProfitMargin}
-              profitMargin={profitMargin}
+              businessType={businessType}
+              setBusinessType={setBusinessType}
               walletId={walletId}
             />
           ) : activeStep === 2 && creditors ? (
