@@ -69,7 +69,7 @@ export default function EditDebtorDetail({
       debtorBusinessInfo?.EIN ||
       parseString(debtorBusinessInfo?.["Business EIN Number"]) ||
       "",
-    businessDescription: debtorBusinessInfo?.description || "",
+    // businessDescription: debtorBusinessInfo?.description || "",
     businessState:
       debtorBusinessInfo?.state ||
       debtorBusinessInfo?.["Business State Name"] ||
@@ -82,10 +82,10 @@ export default function EditDebtorDetail({
       debtorBusinessInfo?.zipCode ||
       debtorBusinessInfo?.["Business Zip code"] ||
       "",
-    businessPhoneNumber:
-      debtorBusinessInfo?.phone ||
-      phoneNumberFormat(debtorBusinessInfo?.["Business Phone Number"]) ||
-      "",
+    // businessPhoneNumber:
+    //   debtorBusinessInfo?.phone ||
+    //   phoneNumberFormat(debtorBusinessInfo?.["Business Phone Number"]) ||
+    //   "",
     businessAddress:
       debtorBusinessInfo?.address ||
       debtorBusinessInfo?.["Business Street Address"] ||
