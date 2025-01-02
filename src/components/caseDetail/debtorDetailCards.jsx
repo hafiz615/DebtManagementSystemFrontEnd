@@ -127,6 +127,7 @@ export default function DebtorDetailsCards({
     platform:
       selectedValue === "Seamless Chex" ? "Seamlesschex" : "Easypay direct",
   });
+
   const debtorId = caseData?.debtor?._id;
   const { showToast } = useToast();
   const addDebtorDetails = async () => {

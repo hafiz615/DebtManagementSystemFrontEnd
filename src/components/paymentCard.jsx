@@ -9,10 +9,10 @@ function PaymentCardDetails({ paymentGateway, setConnectPayment }) {
 
   // Dynamically load the script for the selected payment gateway
   const loadScript = (src, dataKey) => {
-    if (document.querySelector(`script[src="${src}"]`)) {
-      console.log(`${src} is already loaded.`);
-      return;
-    }
+    // if (document.querySelector(`script[src="${src}"]`)) {
+    //   console.log(`${src} is already loaded.`);
+    //   return;
+    // }
 
     // Check if 'apple-spinner' is already defined
     if (customElements.get("apple-spinner")) {
@@ -25,11 +25,9 @@ function PaymentCardDetails({ paymentGateway, setConnectPayment }) {
     script.setAttribute("data-tokenization-key", dataKey);
     script.async = true;
     document.body.appendChild(script);
-
     script.onload = () => {
       console.log(`${src} loaded successfully.`);
     };
-
     script.onerror = () => {
       console.error(`Failed to load ${src}.`);
     };
@@ -41,7 +39,7 @@ function PaymentCardDetails({ paymentGateway, setConnectPayment }) {
         "https://secure.easypaydirectgateway.com/token/Collect.js",
         "Qsugrp-m7EZre-Em45Cy-Gm7mH5"
       );
-    } else if (paymentGateway === "Seamless Chex") {
+    } else {
       loadScript(
         "https://seamlesschex.transactiongateway.com/token/Collect.js",
         "r4G87X-gVM2Pg-wj64h7-yB7EtR"
@@ -71,6 +69,7 @@ function PaymentCardDetails({ paymentGateway, setConnectPayment }) {
         variant: "lightbox",
         paymentType: type,
         callback: (token) => {
+          console.log(token, "token");
           setConnectPayment({
             paymentToken: token?.token,
             paymentType: type,
