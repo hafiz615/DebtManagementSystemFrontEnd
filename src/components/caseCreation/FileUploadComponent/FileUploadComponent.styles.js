@@ -10,7 +10,7 @@ export const styles = {
     fontWeight: 600,
     width: "100%",
     color: Colors.BLACK,
-    fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+    fontSize: FONT_SIZE_LARGE,
   },
   listContainer: {
     marginTop: "1rem",
@@ -122,7 +122,7 @@ export const styles = {
   uploadContainer: {
     display: "flex",
     flexDirection: "column",
-    marginTop: "1.5rem",
+    marginTop: "1rem",
     backgroundColor: Colors.WHITE,
     padding: "1rem",
     borderRadius: "10px",

@@ -36,11 +36,9 @@ export const ExtractContractData = async (files) => {
 
     files.map(async (file) => {
       let processedFile = file.file;
-      // Check if the file is a JPG and convert to PDF if true
       if (file.file.type === "image/jpeg") {
         processedFile = await convertJpgToPdf(file.file);
       }
-
       const originalFileName = processedFile.name;
       const cleanedFileName = originalFileName.replace("MCA Contracts/", "");
       const cleanedFile = new File([processedFile], cleanedFileName, {
@@ -1545,12 +1543,15 @@ export const deleteCreditor = async (id) => {
     return error;
   }
 };
-export const handleDeleteFile = async (itemKey, caseDataId) => {
+export const handleDeleteFile = async (itemKey, caseDataId, type) => {
   try {
-    return await axios.delete(`${BASE_URL}/v1/case/deleteFile/${caseDataId}`, {
-      ...setHeaders(),
-      data: { key: itemKey },
-    });
+    return await axios.delete(
+      `${BASE_URL}/v1/case/deleteFile/${caseDataId}?documentField=${type}`,
+      {
+        ...setHeaders(),
+        data: { key: itemKey },
+      }
+    );
   } catch (error) {
     return error;
   }

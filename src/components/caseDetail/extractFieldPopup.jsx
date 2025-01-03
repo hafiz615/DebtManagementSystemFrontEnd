@@ -48,7 +48,7 @@ function ExtractFieldPopup({
   const ExtractFields = async () => {
     setLoading(true);
     const params = {
-      documents: selectedFiles,
+      mcaDocuments: selectedFiles,
     };
 
     const extractRes = await ExtractedCaseFields(caseDataId, params);

@@ -7,14 +7,9 @@ import { RemoveRedEye } from "@mui/icons-material";
 export default function DebtorUploadedFiles({ data }) {
   const [url, setUrl] = useState("");
   const [isViewerOpen, setIsViewerOpen] = useState(false);
-
-  const documents = data?.debtor?.documents || [];
-  const mcaFiles = documents?.filter((doc) =>
-    doc?.originalFileName?.toLowerCase().includes("mca")
-  );
-  const bankStatements = documents?.filter(
-    (item) => !item?.originalFileName?.toLowerCase().includes("mca")
-  );
+  const bankDocuments = data?.debtor?.bankStatementDocuments || [];
+  const mcaDocuments = data?.debtor?.mcaDocuments || [];
+  const otherDocuments = data?.debtor?.otherDocuments || [];
 
   const handleFileView = (url) => {
     setUrl(url);
@@ -81,6 +76,11 @@ export default function DebtorUploadedFiles({ data }) {
     return null;
   };
 
+  const hasNoFiles =
+    bankDocuments?.length === 0 &&
+    mcaDocuments?.length === 0 &&
+    otherDocuments?.length === 0;
+
   return (
     <Grid
       item
@@ -111,8 +111,23 @@ export default function DebtorUploadedFiles({ data }) {
           height: "10rem",
         }}
       >
-        {renderFiles(mcaFiles, "MCA Files")}
-        {renderFiles(bankStatements, "Bank Statements")}
+        {renderFiles(mcaDocuments, "MCA's")}
+        {renderFiles(bankDocuments, "Bank Statements")}
+        {renderFiles(otherDocuments, "Others")}
+
+        {hasNoFiles && (
+          <Grid item xs={12} sx={{ textAlign: "center", marginTop: "2rem" }}>
+            <p
+              style={{
+                color: Colors.DIM_LIGHT_GRAY,
+                fontFamily: "Nunito",
+                fontSize: "13px",
+              }}
+            >
+              No files available.
+            </p>
+          </Grid>
+        )}
 
         {isViewerOpen && (
           <div

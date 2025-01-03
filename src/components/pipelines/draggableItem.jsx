@@ -35,9 +35,7 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
   const modifiedIntervalArray = item?.intervals?.map(
     ({ _id, ...rest }) => rest
   );
-  const allDocuments = item?.documents?.map((item) => item);
   const debtorContacts = item?.debtor?.contacts?.map((item) => item);
-
   const creditorContacts = item?.creditor?.contacts?.map((item) => item);
 
   const handleDuplicate = async () => {
@@ -68,8 +66,6 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
         },
         contacts: debtorContacts,
       },
-      // paymentToken: item?.paymentToken,
-      // paymentType: item?.paymentType,
       creditor: {
         basicInformation: {
           fullName: creditorBasicInfoItem?.fullName,
@@ -95,7 +91,10 @@ const DraggableItem = ({ item, columnId, GetAllPipelineDetail }) => {
       lastPaymentDate: item?.lastPaymentDate,
       paidAmount: parseInt(item?.paidAmount),
       remaining: parseInt(item?.remaining),
-      documents: allDocuments || [],
+      mcaDocuments: item?.mcaDocuments?.map((item) => item) || [],
+      bankStatementDocuments:
+        item?.bankStatementDocuments?.map((item) => item) || [],
+      otherDocuments: item?.otherDocuments?.map((item) => item) || [],
       intervals: modifiedIntervalArray || [],
       confidence: item?.confidence,
     };
