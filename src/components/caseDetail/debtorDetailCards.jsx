@@ -65,7 +65,7 @@ export default function DebtorDetailsCards({
   fetchCalls,
 }) {
   const [searchText, setSearchText] = useState("");
-  const [selectedValue, setSelectedValue] = useState("Seamless Chex");
+  const [selectedValue, setSelectedValue] = useState("");
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 2;
   const handleNext = () => {
