@@ -68,6 +68,7 @@ import CreditorSync from "./caseDetail/creditorSync";
 import UpdateWeeklyBudget from "./settlementRange/updateWeeklyBudget";
 import BouncePayments from "./caseDetail/bouncePayments";
 import GetTransactionDetails from "./caseDetail/getTransactionDetails";
+import SeeCheckDetails from "./caseDetail/seeCheckDetails";
 
 export default function MuiModels({
   buttonName,
@@ -516,9 +517,19 @@ export default function MuiModels({
         </IconButton>
       ) : show === "AddPayments" ? (
         <TextButton
-          buttonText="Add Manual Payments"
+          buttonText="Manual Payments"
           height="2.5rem"
-          width="12rem"
+          width="10rem"
+          onClick={handleOpen}
+          disabled={disabled}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
+      ) : show === "SeeCheckDetails" ? (
+        <TextButton
+          buttonText="Check Details"
+          height="2.5rem"
+          width="8rem"
           onClick={handleOpen}
           disabled={disabled}
           backgroundColor={Colors.SKY_BLUE}
@@ -528,7 +539,7 @@ export default function MuiModels({
         <TextButton
           buttonText="Bounce Payments"
           height="2.5rem"
-          width="12rem"
+          width="10rem"
           onClick={handleOpen}
           disabled={disabled}
           backgroundColor={Colors.SKY_BLUE}
@@ -1097,6 +1108,12 @@ export default function MuiModels({
               GetCaseDetails={GetCaseDetails}
               caseData={caseData}
               transactionId={transactionId}
+            />
+          ) : show === "SeeCheckDetails" ? (
+            <SeeCheckDetails
+              handleClose={handleClose}
+              GetCaseDetails={GetCaseDetails}
+              caseData={caseData}
             />
           ) : (
             ""

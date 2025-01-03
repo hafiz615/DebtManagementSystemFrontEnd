@@ -1680,3 +1680,34 @@ export const CallSummary = async (payload) => {
     return error;
   }
 };
+export const GetCheckDetails = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/seemlesschex/getClientChecks/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const DeleteCheckDetails = async (checkId, id) => {
+  try {
+    return await axios.delete(BASE_URL + `/v1/seemlesschex/voidCheck/${id}`, {
+      ...setHeaders(),
+      data: { checkId: checkId },
+    });
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateCheckIds = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/seemlesschex/updateCheck/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
