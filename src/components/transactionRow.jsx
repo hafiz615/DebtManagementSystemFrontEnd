@@ -170,12 +170,15 @@ function TransactionRow({
                 </Box>
               ) : null}
             </p>
+
             <p style={typographyStyle}>
-              <MuiModels
-                show="getTransactionDetails"
-                transactionId={item?.transactionId}
-                height="40vh"
-              />
+              {heading !== "Upcoming" && (
+                <MuiModels
+                  show="getTransactionDetails"
+                  transactionId={item?.transactionId}
+                  height="40vh"
+                />
+              )}
             </p>
           </div>
         );
