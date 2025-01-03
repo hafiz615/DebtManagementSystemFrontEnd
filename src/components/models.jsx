@@ -1095,6 +1095,7 @@ export default function MuiModels({
             <GetTransactionDetails
               handleClose={handleClose}
               GetCaseDetails={GetCaseDetails}
+              caseData={caseData}
               transactionId={transactionId}
             />
           ) : (

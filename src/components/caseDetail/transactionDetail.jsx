@@ -12,6 +12,8 @@ export default function TransactionDetails({
   GetCasePaymentDetails,
   getCommissionPayments,
   hideTransferPayment,
+  caseData,
+  GetCaseDetails,
 }) {
   return (
     <Grid
@@ -96,6 +98,8 @@ export default function TransactionDetails({
               GetCasePaymentDetails={GetCasePaymentDetails}
               getCommissionPayments={getCommissionPayments}
               hideTransferPayment={hideTransferPayment}
+              caseData={caseData}
+              GetCaseDetails={GetCaseDetails}
             />
             <TransactionRow
               data={paymentDetails?.transactions?.upcomingPayments}
@@ -103,6 +107,8 @@ export default function TransactionDetails({
               GetCasePaymentDetails={GetCasePaymentDetails}
               getCommissionPayments={getCommissionPayments}
               hideTransferPayment={hideTransferPayment}
+              caseData={caseData}
+              GetCaseDetails={GetCaseDetails}
             />
           </Grid>
         </Grid>

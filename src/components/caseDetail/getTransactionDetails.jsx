@@ -18,7 +18,12 @@ import { formatDollarAmount } from "../../common";
 import ScrollbarStyles from "../customScroll";
 import Button from "../button";
 
-function GetTransactionDetails({ handleClose, transactionId }) {
+function GetTransactionDetails({
+  handleClose,
+  transactionId,
+  caseData,
+  GetCaseDetails,
+}) {
   const { showToast } = useToast();
   const [relatedPayments, setRelatedPayments] = useState(null);
   const [loadingParentId, setLoadingParentId] = useState(null);
@@ -54,16 +59,20 @@ function GetTransactionDetails({ handleClose, transactionId }) {
 
   const handleUpdateAll = async () => {
     setLoadingParentId(transactionId);
+    const firstKey = Object.keys(relatedPayments)?.[0];
+    const selectedPayment = relatedPayments?.[firstKey]?.[0];
     const params = {
       referenceId: transactionId || "-",
-      commission: relatedPayments?.[0]?.manualCommission || 0,
+      commission: selectedPayment?.manualCommission || 0,
     };
     const UpdateManualPaymentsRes = await UpdateManualPayments(
       params,
-      relatedPayments?.[0]?.debtorId
+      selectedPayment?.debtorId
     );
+
     if (UpdateManualPaymentsRes?.status === 200) {
       showToast(UpdateManualPaymentsRes?.data?.message, "success");
+      GetCaseDetails(caseData._id);
       handleClose();
     } else if (UpdateManualPaymentsRes?.response?.status === 400) {
       const errorMessage = UpdateManualPaymentsRes?.response?.data?.message;
@@ -136,48 +145,44 @@ function GetTransactionDetails({ handleClose, transactionId }) {
               ...ScrollbarStyles,
             }}
           >
-            {relatedPayments?.map((payment, index) => (
-              <div key={payment?.debtorTransId}>
-                <Grid
-                  container
-                  alignItems="center"
-                  justifyContent="space-between"
-                >
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ fontFamily: "Nunito" }}
-                  >{`Payment ID: ${payment?.debtorTransId}`}</Typography>
+            {Object?.entries(relatedPayments || {})?.map(
+              ([key, payment], index) => (
+                <div key={key}>
+                  <Grid
+                    container
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ fontFamily: "Nunito" }}
+                    >{`Payment ID: ${key}`}</Typography>
 
-                  <div>
-                    <IconButton onClick={() => toggleExpand(index)}>
-                      {expandedIndices?.includes(index) ? (
-                        <ExpandLess />
-                      ) : (
-                        <ExpandMore />
-                      )}
-                    </IconButton>
-                    <Button
-                      buttonText="REVERT"
-                      onClick={() => handleUpdateAll(transactionId)}
-                      backgroundColor={Colors.SKY_BLUE}
-                      hoverColor={Colors.SKY_BLUE}
-                      loading={loadingParentId === transactionId}
-                      loginFont="600"
-                      width="5rem"
-                    />
-                  </div>
-                </Grid>
+                    <div>
+                      <IconButton onClick={() => toggleExpand(index)}>
+                        {expandedIndices?.includes(index) ? (
+                          <ExpandLess />
+                        ) : (
+                          <ExpandMore />
+                        )}
+                      </IconButton>
+                      <Button
+                        buttonText="REVERT"
+                        onClick={() => handleUpdateAll(key)}
+                        backgroundColor={Colors.SKY_BLUE}
+                        hoverColor={Colors.SKY_BLUE}
+                        loading={loadingParentId === key}
+                        loginFont="600"
+                        width="5rem"
+                      />
+                    </div>
+                  </Grid>
 
-                {/* Display Payment Details below Payment ID */}
-
-                <Grid direction="row" sx={{ pl: 1 }}>
-                  {(expandedIndices?.includes(index)
-                    ? [payment]
-                    : [payment]
-                  )?.map((item) => (
+                  {/* Display Payment Details below Payment ID */}
+                  <Grid direction="row" sx={{ pl: 1 }}>
+                    {/* Always display the first row */}
                     <Grid
                       container
-                      key={item._id || index} // Use a unique key, fall back to `index` if `_id` isn't available
                       spacing={2}
                       sx={{ padding: "8px 0", alignItems: "center" }}
                     >
@@ -187,7 +192,7 @@ function GetTransactionDetails({ handleClose, transactionId }) {
                           sx={{ fontFamily: "Nunito" }}
                         >
                           <strong>Amount:</strong>{" "}
-                          {formatDollarAmount(item?.amount) || "-"}
+                          {formatDollarAmount(payment[0]?.amount) || "-"}
                         </Typography>
                       </Grid>
                       <Grid item xs={4}>
@@ -196,7 +201,7 @@ function GetTransactionDetails({ handleClose, transactionId }) {
                           sx={{ fontFamily: "Nunito" }}
                         >
                           <strong>Transaction Type:</strong>{" "}
-                          {item?.transactionType || "--"}
+                          {payment[0]?.transactionType || "--"}
                         </Typography>
                       </Grid>
                       <Grid item xs={4}>
@@ -205,37 +210,76 @@ function GetTransactionDetails({ handleClose, transactionId }) {
                           sx={{ fontFamily: "Nunito" }}
                         >
                           <strong>Due Date:</strong>{" "}
-                          {new Date(item?.dueDate)?.toLocaleDateString() ||
-                            "--"}
+                          {new Date(
+                            payment[0]?.dueDate
+                          )?.toLocaleDateString() || "--"}
                         </Typography>
                       </Grid>
                     </Grid>
-                  ))}
-                  {expandedIndices?.includes(index) && (
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        fontFamily: "Nunito",
-                        color: Colors.BLACK,
-                        mt: 1,
-                        fontWeight: "600",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        textAlign: "center",
-                      }}
-                    >
-                      {expandedIndices?.includes(index) &&
-                      [payment]?.length <= 1
-                        ? "No more data"
-                        : ""}
-                    </Typography>
-                  )}
-                </Grid>
 
-                <Divider sx={{ my: 2 }} />
-              </div>
-            ))}
+                    {/* Additional rows when expanded */}
+                    {expandedIndices?.includes(index) &&
+                    payment?.slice(1)?.length > 0
+                      ? payment?.slice(1)?.map((row, rowIndex) => (
+                          <Grid
+                            key={rowIndex}
+                            container
+                            spacing={2}
+                            sx={{ padding: "8px 0", alignItems: "center" }}
+                          >
+                            <Grid item xs={4}>
+                              <Typography
+                                variant="body2"
+                                sx={{ fontFamily: "Nunito" }}
+                              >
+                                <strong>Amount:</strong>{" "}
+                                {formatDollarAmount(row?.amount) || "-"}
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={4}>
+                              <Typography
+                                variant="body2"
+                                sx={{ fontFamily: "Nunito" }}
+                              >
+                                <strong>Transaction Type:</strong>{" "}
+                                {row?.transactionType || "--"}
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={4}>
+                              <Typography
+                                variant="body2"
+                                sx={{ fontFamily: "Nunito" }}
+                              >
+                                <strong>Due Date:</strong>{" "}
+                                {new Date(row?.dueDate)?.toLocaleDateString() ||
+                                  "--"}
+                              </Typography>
+                            </Grid>
+                          </Grid>
+                        ))
+                      : expandedIndices?.includes(index) && (
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              fontFamily: "Nunito",
+                              color: Colors.BLACK,
+                              mt: 1,
+                              fontWeight: "600",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              textAlign: "center",
+                            }}
+                          >
+                            No more data
+                          </Typography>
+                        )}
+                  </Grid>
+
+                  <Divider sx={{ my: 2 }} />
+                </div>
+              )
+            )}
           </Grid>
         </>
       )}
