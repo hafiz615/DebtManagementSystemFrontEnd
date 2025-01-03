@@ -17,6 +17,8 @@ function TransactionRow({
   GetCasePaymentDetails,
   getCommissionPayments,
   hideTransferPayment,
+  caseData,
+  GetCaseDetails,
 }) {
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
@@ -177,6 +179,8 @@ function TransactionRow({
                   show="getTransactionDetails"
                   transactionId={item?.transactionId}
                   height="40vh"
+                  caseData={caseData}
+                  GetCaseDetails={GetCaseDetails}
                 />
               )}
             </p>

@@ -491,6 +491,8 @@ export default function CaseById({
                     loading={isPaymentLoading}
                     paymentDetails={paymentDetails}
                     GetCasePaymentDetails={GetCasePaymentDetails}
+                    caseData={caseData}
+                    GetCaseDetails={GetCaseDetails}
                   />
                 ) : (
                   <CaseFileCard
