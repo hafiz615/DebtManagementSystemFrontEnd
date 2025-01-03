@@ -10,7 +10,7 @@ export const styles = {
     fontWeight: 600,
     width: "100%",
     color: Colors.BLACK,
-    fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
+    fontSize: FONT_SIZE_LARGE,
   },
   listContainer: {
     marginTop: "1rem",

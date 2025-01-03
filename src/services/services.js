@@ -1543,12 +1543,15 @@ export const deleteCreditor = async (id) => {
     return error;
   }
 };
-export const handleDeleteFile = async (itemKey, caseDataId) => {
+export const handleDeleteFile = async (itemKey, caseDataId, type) => {
   try {
-    return await axios.delete(`${BASE_URL}/v1/case/deleteFile/${caseDataId}`, {
-      ...setHeaders(),
-      data: { key: itemKey },
-    });
+    return await axios.delete(
+      `${BASE_URL}/v1/case/deleteFile/${caseDataId}?documentField=${type}`,
+      {
+        ...setHeaders(),
+        data: { key: itemKey },
+      }
+    );
   } catch (error) {
     return error;
   }

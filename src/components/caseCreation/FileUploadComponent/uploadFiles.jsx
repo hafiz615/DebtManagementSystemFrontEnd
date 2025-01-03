@@ -26,14 +26,16 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { truncateText } from "../../../common";
 import CircularProgressWithLabel from "./circularLabel";
 import { isEmpty } from "lodash";
+import { FONT_SIZE_LARGE } from "../../../constants/appConstants";
+import { InsertDriveFile } from "@mui/icons-material";
 
 const FileUploadComponent = ({
   files,
   setFiles,
   selectedFiles,
   setSelectedFiles,
-  setInputKey,
-  inputKey,
+  otherFiles,
+  setOtherFiles,
   progress,
   loading,
 }) => {
@@ -56,11 +58,19 @@ const FileUploadComponent = ({
   const handleDropMcaFiles = useCallback(async (acceptedFiles) => {
     try {
       const processedFiles = await processFiles(acceptedFiles);
-      setFiles((prevFiles) => [...prevFiles, ...processedFiles]);
       setSelectedFiles((prevSelectedFiles) => [
         ...prevSelectedFiles,
         ...processedFiles,
       ]);
+    } catch (error) {
+      console.error("Error processing uploaded files:", error);
+    }
+  }, []);
+
+  const handleDropOtherFiles = useCallback(async (acceptedFiles) => {
+    try {
+      const processedFiles = await processFiles(acceptedFiles);
+      setOtherFiles((prevFiles) => [...prevFiles, ...processedFiles]);
     } catch (error) {
       console.error("Error processing uploaded files:", error);
     }
@@ -111,8 +121,13 @@ const FileUploadComponent = ({
   };
 
   const handleEditFileName = useCallback(
-    (index, newName) => {
-      const file = files[index];
+    (index, newName, type) => {
+      const file =
+        type === "bank"
+          ? files[index]
+          : type === "mca"
+          ? selectedFiles[index]
+          : otherFiles[index];
       const fileExtension = file?.name?.split(".").pop();
       const newFileName = `${newName}.${fileExtension}`;
       const newPath = file?.path?.replace(file?.name, newFileName);
@@ -125,11 +140,14 @@ const FileUploadComponent = ({
     [files]
   );
 
-  const handleDeleteFile = useCallback((index) => {
-    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
-    setSelectedFiles((prevSelectedFiles) =>
-      prevSelectedFiles.filter((_, i) => i !== index)
-    );
+  const handleDeleteFile = useCallback((index, type) => {
+    type === "bank"
+      ? setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index))
+      : type === "mca"
+      ? setSelectedFiles((prevSelectedFiles) =>
+          prevSelectedFiles.filter((_, i) => i !== index)
+        )
+      : setOtherFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   }, []);
 
   const { getRootProps: getRootPropsBank, getInputProps: getInputPropsBank } =
@@ -147,6 +165,16 @@ const FileUploadComponent = ({
       noKeyboard: true,
       multiple: true,
     });
+
+  const {
+    getRootProps: getRootPropsOthers,
+    getInputProps: getInputPropsOthers,
+  } = useDropzone({
+    onDrop: handleDropOtherFiles,
+    noClick: true,
+    noKeyboard: true,
+    multiple: true,
+  });
 
   const handleViewFile = useCallback((file) => {
     setSelectedFileForViewing(file);
@@ -208,11 +236,15 @@ const FileUploadComponent = ({
                   sx={styles.uploadBox}
                   {...(label === "MCA"
                     ? getRootPropsMca()
+                    : label === "Other"
+                    ? getRootPropsOthers()
                     : getRootPropsBank())}
                 >
                   <input
                     {...(label === "MCA"
                       ? getInputPropsMca()
+                      : label === "Other"
+                      ? getInputPropsOthers()
                       : getInputPropsBank())}
                     type="file"
                     webkitdirectory=""
@@ -266,6 +298,21 @@ const FileUploadComponent = ({
                     </TableRow>
                   </TableHead>
                   <TableBody>
+                    {files?.length > 0 && (
+                      <Typography
+                        sx={{
+                          fontWeight: "600",
+                          fontFamily: "Nunito",
+                          fontSize: FONT_SIZE_LARGE,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          m: "10px",
+                        }}
+                      >
+                        <InsertDriveFile /> Bank Statements
+                      </Typography>
+                    )}
                     {files?.map((file, index) => (
                       <TableRow key={index}>
                         <TableCell sx={styles.pathCell}>
@@ -292,11 +339,123 @@ const FileUploadComponent = ({
                             <AlertDialog
                               initialFileName={file?.name}
                               handleEditFileName={(newName) =>
-                                handleEditFileName(index, newName)
+                                handleEditFileName(index, newName, "bank")
                               }
                             />
                             <CloseIcon
-                              onClick={() => handleDeleteFile(index)}
+                              onClick={() => handleDeleteFile(index, "bank")}
+                              sx={{
+                                fontSize: "1.2rem",
+                                cursor: "pointer",
+                                color: Colors.ORANGE_COLOR,
+                              }}
+                            />
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {selectedFiles?.length > 0 && (
+                      <Typography
+                        sx={{
+                          fontWeight: "600",
+                          fontFamily: "Nunito",
+                          fontSize: FONT_SIZE_LARGE,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          m: "10px",
+                        }}
+                      >
+                        <InsertDriveFile /> MCA's
+                      </Typography>
+                    )}
+                    {selectedFiles?.map((file, index) => (
+                      <TableRow key={index}>
+                        <TableCell sx={styles.pathCell}>
+                          <Typography sx={styles.pathText} title={file?.type}>
+                            {truncateText(file?.type, truncateValue)}
+                          </Typography>
+                        </TableCell>
+
+                        <TableCell sx={styles.pathDataCell}>
+                          <Typography sx={styles.pathText} title={file?.path}>
+                            {truncateText(file?.path, truncateValue)}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Box sx={styles.actionIcons}>
+                            <VisibilityIcon
+                              sx={{
+                                fontSize: "1.2rem",
+                                cursor: "pointer",
+                                color: Colors.DARK_GRAY,
+                              }}
+                              onClick={() => handleViewFile(file?.file)}
+                            />
+                            <AlertDialog
+                              initialFileName={file?.name}
+                              handleEditFileName={(newName) =>
+                                handleEditFileName(index, newName, "mca")
+                              }
+                            />
+                            <CloseIcon
+                              onClick={() => handleDeleteFile(index, "mca")}
+                              sx={{
+                                fontSize: "1.2rem",
+                                cursor: "pointer",
+                                color: Colors.ORANGE_COLOR,
+                              }}
+                            />
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {otherFiles?.length > 0 && (
+                      <Typography
+                        sx={{
+                          fontWeight: "600",
+                          fontFamily: "Nunito",
+                          fontSize: FONT_SIZE_LARGE,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          m: "10px",
+                        }}
+                      >
+                        <InsertDriveFile /> Others
+                      </Typography>
+                    )}
+                    {otherFiles?.map((file, index) => (
+                      <TableRow key={index}>
+                        <TableCell sx={styles.pathCell}>
+                          <Typography sx={styles.pathText} title={file?.type}>
+                            {truncateText(file?.type, truncateValue)}
+                          </Typography>
+                        </TableCell>
+
+                        <TableCell sx={styles.pathDataCell}>
+                          <Typography sx={styles.pathText} title={file?.path}>
+                            {truncateText(file?.path, truncateValue)}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Box sx={styles.actionIcons}>
+                            <VisibilityIcon
+                              sx={{
+                                fontSize: "1.2rem",
+                                cursor: "pointer",
+                                color: Colors.DARK_GRAY,
+                              }}
+                              onClick={() => handleViewFile(file?.file)}
+                            />
+                            <AlertDialog
+                              initialFileName={file?.name}
+                              handleEditFileName={(newName) =>
+                                handleEditFileName(index, newName, "other")
+                              }
+                            />
+                            <CloseIcon
+                              onClick={() => handleDeleteFile(index, "other")}
                               sx={{
                                 fontSize: "1.2rem",
                                 cursor: "pointer",
