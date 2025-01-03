@@ -53,7 +53,7 @@ function PaymentCardDetails({ paymentGateway, setConnectPayment }) {
                 paymentType: "cc", // default to "cc" or adjust based on type
                 platform:
                   paymentGateway === "Seamless Chex"
-                    ? "Seamlesschex"
+                    ? "Seamlesschex merchant"
                     : "Easypay direct",
               });
             },
@@ -102,7 +102,7 @@ function PaymentCardDetails({ paymentGateway, setConnectPayment }) {
             paymentType: type,
             platform:
               paymentGateway === "Seamless Chex"
-                ? "Seamlesschex"
+                ? "Seamlesschex merchant"
                 : "Easypay direct",
           });
         },

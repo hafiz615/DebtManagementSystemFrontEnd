@@ -65,7 +65,7 @@ export default function DebtorDetailsCards({
   fetchCalls,
 }) {
   const [searchText, setSearchText] = useState("");
-  const [selectedValue, setSelectedValue] = useState("");
+  const [selectedValue, setSelectedValue] = useState("Seamless Chex");
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 2;
   const handleNext = () => {
@@ -125,7 +125,9 @@ export default function DebtorDetailsCards({
     paymentToken: "",
     paymentType: "",
     platform:
-      selectedValue === "Seamless Chex" ? "Seamlesschex" : "Easypay direct",
+      selectedValue === "Seamless Chex"
+        ? "Seamlesschex merchant"
+        : "Easypay direct",
   });
 
   const debtorId = caseData?.debtor?._id;
