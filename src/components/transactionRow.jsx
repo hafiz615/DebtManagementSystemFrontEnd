@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { isEmpty } from "lodash";
 import { useParams } from "react-router-dom";
 import { Colors } from "../config/default";
-import { Typography, Box, IconButton, Checkbox } from "@mui/material";
+import { Typography, Box, IconButton, Checkbox, Tooltip } from "@mui/material";
 import { formatDollarAmount } from "../common";
 import { useToast } from "../toast/toastContext";
 import Prompt from "./prompt";
 import { RetryAuth, RetryCapture, SendPayment } from "../services/services";
 import { useSelector } from "react-redux";
 import { Paid } from "@mui/icons-material";
+import MuiModels from "././models";
 
 function TransactionRow({
   data,
@@ -115,11 +116,30 @@ function TransactionRow({
             <p style={typographyStyle}>
               {heading
                 ? item?.status || "-"
+                : item?.type === "authorization"
+                ? item?.authorized === "Failed"
+                  ? "Authorization Failed"
+                  : "Authorized"
+                : item?.type === "capture"
+                ? item?.captured === "Failed"
+                  ? "Capture Failed"
+                  : "Captured"
                 : item?.type === "payment"
                 ? "Capture"
                 : capitalizeFirstLetter(item?.type) || "-"}
             </p>
-            <p style={typographyStyle}>{item?.creditorName || "-"}</p>
+            <p style={typographyStyle}>
+              {item?.creditorName?.length > 15 ? (
+                <Tooltip title={item?.creditorName} placement="top">
+                  <span>{item?.creditorName?.slice(0, 15)}...</span>
+                  {/* Show first 20 chars with ellipsis */}
+                </Tooltip>
+              ) : (
+                item?.creditorName || "-"
+              )}
+            </p>
+            <p style={typographyStyle}>{item?.transactionType || "-"}</p>
+            <p style={typographyStyle}>{item?.paymentGateway || "-"}</p>
             <p style={typographyStyle}>
               {(item?.type === "authorization" &&
                 item?.authorized === "Failed") ||
@@ -149,6 +169,13 @@ function TransactionRow({
                   </IconButton>
                 </Box>
               ) : null}
+            </p>
+            <p style={typographyStyle}>
+              <MuiModels
+                show="getTransactionDetails"
+                transactionId={item?.transactionId}
+                height="40vh"
+              />
             </p>
           </div>
         );

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   Typography,
@@ -8,39 +8,42 @@ import {
 } from "@mui/material";
 import { Close, ExpandMore, ExpandLess } from "@mui/icons-material";
 import {
-  GetManualPayments,
+  GetRelatedPayments,
   UpdateManualPayments,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import { Colors } from "../../config/default";
-import Button from "../button";
+import { isEmpty } from "lodash";
 import { formatDollarAmount } from "../../common";
 import ScrollbarStyles from "../customScroll";
-import { isEmpty } from "lodash";
+import Button from "../button";
 
-function BouncePayments({ handleClose, debtorId }) {
-  const [manualPaymentsLoading, setManualPaymentsLoading] = useState(false);
-  const [loadingParentId, setLoadingParentId] = useState(null);
-  const [manualPayments, setManualPayments] = useState(null);
-  const [expandedIndices, setExpandedIndices] = useState([]);
+function GetTransactionDetails({ handleClose, transactionId }) {
   const { showToast } = useToast();
+  const [relatedPayments, setRelatedPayments] = useState(null);
+  const [loadingParentId, setLoadingParentId] = useState(null);
+  const [relatedPaymentsLoading, setRelatedPaymentsLoading] = useState(false);
+  const [expandedIndices, setExpandedIndices] = useState([]);
 
-  const GetManualPaymentsDetails = async () => {
-    setManualPaymentsLoading(true);
-    const GetManualPaymentsDetailsRes = await GetManualPayments(debtorId);
-    if (GetManualPaymentsDetailsRes?.status === 200) {
-      setManualPayments(GetManualPaymentsDetailsRes?.data?.data);
-    } else if (GetManualPaymentsDetailsRes?.response?.status === 400) {
-      const errorMessage = GetManualPaymentsDetailsRes?.response?.data?.message;
+  // Fetch Related Payments
+  const GetRelatedPaymentsDetails = async () => {
+    setRelatedPaymentsLoading(true);
+    const response = await GetRelatedPayments(transactionId);
+    if (response?.status === 200) {
+      setRelatedPayments(response?.data?.data);
+    } else if (response?.response?.status === 400) {
+      const errorMessage = response?.response?.data?.message;
       showToast(errorMessage, "error");
     }
-    setManualPaymentsLoading(false);
+    setRelatedPaymentsLoading(false);
   };
 
+  // Fetch data when the component mounts
   useEffect(() => {
-    GetManualPaymentsDetails();
-  }, []);
+    GetRelatedPaymentsDetails();
+  }, [transactionId]);
 
+  // Toggle Expand/Collapse for Payment Details
   const toggleExpand = (index) => {
     setExpandedIndices((prev) =>
       prev?.includes(index)
@@ -49,15 +52,15 @@ function BouncePayments({ handleClose, debtorId }) {
     );
   };
 
-  const handleUpdateAll = async (parentId) => {
-    setLoadingParentId(parentId);
+  const handleUpdateAll = async () => {
+    setLoadingParentId(transactionId);
     const params = {
-      referenceId: parentId || "-",
-      commission: manualPayments[parentId]?.[0]?.manualCommission || 0,
+      referenceId: transactionId || "-",
+      commission: relatedPayments?.[0]?.manualCommission || 0,
     };
     const UpdateManualPaymentsRes = await UpdateManualPayments(
       params,
-      debtorId
+      relatedPayments?.[0]?.debtorId
     );
     if (UpdateManualPaymentsRes?.status === 200) {
       showToast(UpdateManualPaymentsRes?.data?.message, "success");
@@ -69,11 +72,11 @@ function BouncePayments({ handleClose, debtorId }) {
     setLoadingParentId(null);
   };
 
-  const isDataEmpty = !manualPayments || isEmpty(manualPayments);
+  const isDataEmpty = !relatedPayments || isEmpty(relatedPayments);
 
   return (
     <>
-      {manualPaymentsLoading ? (
+      {relatedPaymentsLoading ? (
         <Grid
           item
           xs={12}
@@ -123,7 +126,7 @@ function BouncePayments({ handleClose, debtorId }) {
               variant="h6"
               sx={{ fontFamily: "Nunito", mb: "1rem", fontWeight: "600" }}
             >
-              Bounce Payment Details
+              Revert Payments
             </Typography>
             <Close onClick={handleClose} />
           </Grid>
@@ -133,8 +136,8 @@ function BouncePayments({ handleClose, debtorId }) {
               ...ScrollbarStyles,
             }}
           >
-            {Object?.keys(manualPayments)?.map((parentId, index) => (
-              <div key={parentId}>
+            {relatedPayments?.map((payment, index) => (
+              <div key={payment?.debtorTransId}>
                 <Grid
                   container
                   alignItems="center"
@@ -143,11 +146,11 @@ function BouncePayments({ handleClose, debtorId }) {
                   <Typography
                     variant="subtitle1"
                     sx={{ fontFamily: "Nunito" }}
-                  >{`Reference ID: ${parentId}`}</Typography>
+                  >{`Payment ID: ${payment?.debtorTransId}`}</Typography>
 
                   <div>
                     <IconButton onClick={() => toggleExpand(index)}>
-                      {expandedIndices.includes(index) ? (
+                      {expandedIndices?.includes(index) ? (
                         <ExpandLess />
                       ) : (
                         <ExpandMore />
@@ -155,37 +158,26 @@ function BouncePayments({ handleClose, debtorId }) {
                     </IconButton>
                     <Button
                       buttonText="REVERT"
-                      onClick={() => handleUpdateAll(parentId)}
+                      onClick={() => handleUpdateAll(transactionId)}
                       backgroundColor={Colors.SKY_BLUE}
                       hoverColor={Colors.SKY_BLUE}
-                      loading={loadingParentId === parentId}
+                      loading={loadingParentId === transactionId}
                       loginFont="600"
                       width="5rem"
                     />
                   </div>
                 </Grid>
 
-                {/* Display Commission below Reference ID */}
-                <Grid sx={{ pl: 1, mt: 1 }}>
-                  <Typography
-                    variant="body2"
-                    sx={{ fontFamily: "Nunito", fontWeight: "600" }}
-                  >
-                    <strong>Commission:</strong>{" "}
-                    {formatDollarAmount(
-                      manualPayments[parentId]?.[0]?.manualCommission
-                    ) || "-"}
-                  </Typography>
-                </Grid>
+                {/* Display Payment Details below Payment ID */}
 
                 <Grid direction="row" sx={{ pl: 1 }}>
                   {(expandedIndices?.includes(index)
-                    ? manualPayments[parentId]
-                    : [manualPayments[parentId][0]]
+                    ? [payment]
+                    : [payment]
                   )?.map((item) => (
                     <Grid
                       container
-                      key={item._id}
+                      key={item._id || index} // Use a unique key, fall back to `index` if `_id` isn't available
                       spacing={2}
                       sx={{ padding: "8px 0", alignItems: "center" }}
                     >
@@ -203,8 +195,8 @@ function BouncePayments({ handleClose, debtorId }) {
                           variant="body2"
                           sx={{ fontFamily: "Nunito" }}
                         >
-                          <strong>Time Period:</strong>{" "}
-                          {item?.timePeriod || "--"}
+                          <strong>Transaction Type:</strong>{" "}
+                          {item?.transactionType || "--"}
                         </Typography>
                       </Grid>
                       <Grid item xs={4}>
@@ -213,30 +205,34 @@ function BouncePayments({ handleClose, debtorId }) {
                           sx={{ fontFamily: "Nunito" }}
                         >
                           <strong>Due Date:</strong>{" "}
-                          {new Date(item?.dueDate)?.toLocaleDateString()}
+                          {new Date(item?.dueDate)?.toLocaleDateString() ||
+                            "--"}
                         </Typography>
                       </Grid>
                     </Grid>
                   ))}
-                  {expandedIndices?.includes(index) &&
-                    manualPayments[parentId]?.length === 1 && (
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          fontFamily: "Nunito",
-                          color: Colors.BLACK,
-                          mt: 1,
-                          fontWeight: "600",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          textAlign: "center",
-                        }}
-                      >
-                        No more data
-                      </Typography>
-                    )}
+                  {expandedIndices?.includes(index) && (
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontFamily: "Nunito",
+                        color: Colors.BLACK,
+                        mt: 1,
+                        fontWeight: "600",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        textAlign: "center",
+                      }}
+                    >
+                      {expandedIndices?.includes(index) &&
+                      [payment]?.length <= 1
+                        ? "No more data"
+                        : ""}
+                    </Typography>
+                  )}
                 </Grid>
+
                 <Divider sx={{ my: 2 }} />
               </div>
             ))}
@@ -247,4 +243,4 @@ function BouncePayments({ handleClose, debtorId }) {
   );
 }
 
-export default BouncePayments;
+export default GetTransactionDetails;
