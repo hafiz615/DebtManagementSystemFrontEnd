@@ -268,6 +268,15 @@ export default function CaseById({
                         GetCaseDetails={GetCaseDetails}
                       />
                       <MuiModels
+                        show="SeeCheckDetails"
+                        maxHeight="70vh"
+                        width="55vw"
+                        caseId={id}
+                        debtorId={caseData?.debtor?._id}
+                        caseData={caseData}
+                        GetCaseDetails={GetCaseDetails}
+                      />
+                      <MuiModels
                         show="bouncePayments"
                         height="40vh"
                         caseId={id}
