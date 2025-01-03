@@ -1640,8 +1640,18 @@ export const GetManualPayments = async (id) => {
 export const UpdateManualPayments = async (payload, id) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/debtor/revertManualPayments/${id}`,
+      BASE_URL + `/v1/debtor/revertPayments/${id}`,
       payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetRelatedPayments = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/payment/getRelatedPayments/${id}`,
       setHeaders()
     );
   } catch (error) {
