@@ -131,7 +131,9 @@ export default function SeeCheckDetails({
   const isPaymentFormValid = (index) => {
     const isBankAccountValid =
       paymentDetails[index]?.bankAccount?.length === 4 ||
-      paymentDetails[index]?.bankAccount?.length === 17;
+      (paymentDetails[index]?.bankAccount?.length > 4 &&
+        paymentDetails[index]?.bankAccount?.length <= 17);
+
     const isBankRoutingValid = paymentDetails[index]?.bankRouting?.length === 9;
     return (
       paymentDetails[index]?.firstName &&
@@ -393,8 +395,11 @@ export default function SeeCheckDetails({
                           style={textFieldStyling}
                         />
                         {paymentDetails[index]?.bankAccount &&
-                          paymentDetails[index]?.bankAccount.length !== 4 &&
-                          paymentDetails[index]?.bankAccount.length !== 17 && (
+                          !(
+                            paymentDetails[index]?.bankAccount?.length === 4 ||
+                            (paymentDetails[index]?.bankAccount?.length > 4 &&
+                              paymentDetails[index]?.bankAccount?.length <= 17)
+                          ) && (
                             <Typography
                               sx={{
                                 color: "red",
