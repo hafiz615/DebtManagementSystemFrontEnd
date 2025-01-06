@@ -75,6 +75,13 @@ function TransactionRow({
     width: "20%",
     margin: "5px 0px",
   };
+  const typographyHeadingStyle = {
+    fontSize: "13px",
+    fontFamily: "Nunito",
+    fontWeight: "600",
+    width: "20%",
+    margin: "5px 0px",
+  };
 
   return (
     <>
@@ -91,6 +98,32 @@ function TransactionRow({
           {heading}
         </Typography>
       )}
+
+      {!isEmpty(data) && heading !== "Upcoming" && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            borderBottom: `1px solid ${Colors.BLACK}`,
+            width: "100%",
+            marginBottom: "10px",
+            position: "sticky",
+            top: 0,
+            backgroundColor: "white",
+            zIndex: 1,
+          }}
+        >
+          <p style={typographyHeadingStyle}>Date</p>
+          <p style={typographyHeadingStyle}>Amount</p>
+          <p style={typographyHeadingStyle}>Payment Status</p>
+          <p style={typographyHeadingStyle}>Creditor Name</p>
+          <p style={typographyHeadingStyle}>Payment Type</p>
+          <p style={typographyHeadingStyle}>Payment Gateway</p>
+          <p style={typographyHeadingStyle}>Retry Transaction</p>
+          <p style={typographyHeadingStyle}>Revert Transactions</p>
+        </div>
+      )}
+
       {data?.map((item, index) => {
         const colorScheme =
           item?.type === "authorization" && item?.authorized === "Failed"
@@ -105,9 +138,7 @@ function TransactionRow({
             style={{
               display: "flex",
               alignItems: "center",
-              // height: "15%",
               width: "100%",
-              // justifyContent: "space-between",
               color: heading ? Colors.BLACK : colorScheme,
             }}
           >
@@ -134,7 +165,6 @@ function TransactionRow({
               {item?.creditorName?.length > 15 ? (
                 <Tooltip title={item?.creditorName} placement="top">
                   <span>{item?.creditorName?.slice(0, 15)}...</span>
-                  {/* Show first 20 chars with ellipsis */}
                 </Tooltip>
               ) : (
                 item?.creditorName || "-"

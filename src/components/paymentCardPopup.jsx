@@ -277,7 +277,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
             htmlFor="referenceId"
             style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
           >
-            Reference ID*
+            Reference ID {selectedValue === "Check" ? "" : "*"}
           </label>
           <input
             id="referenceId"
