@@ -55,7 +55,7 @@ export default function SeeCheckDetails({
   const [checkedPayments, setCheckedPayments] = useState(null);
   const [checkDetailsPayements, setCheckDetailsPayements] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [expandedIndices, setExpandedIndices] = useState();
+  const [expandedIndices, setExpandedIndices] = useState({});
   const [expandEdit, setExpandEdit] = useState({});
 
   const [paymentDetails, setPaymentDetails] = useState([]);
@@ -78,13 +78,25 @@ export default function SeeCheckDetails({
     GetCheckDetailsPayements();
   }, []);
 
-  const toggleExpand = () => {
-    setExpandedIndices(!expandedIndices);
+  // const toggleExpand = () => {
+  //   setExpandedIndices(!expandedIndices);
+  // };
+  const toggleExpand = (index) => {
+    setExpandedIndices((prevState) => ({
+      ...prevState,
+      [index]: !prevState[index], // Toggle the specific index's expansion state
+    }));
   };
   const toggleUpdateExpand = (index) => {
     setExpandEdit((prevState) => ({
       ...prevState,
       [index]: !prevState[index],
+    }));
+  };
+  const handleCancelClick = (index) => {
+    setExpandEdit((prevState) => ({
+      ...prevState,
+      [index]: false, // This will close the editor for the specific index
     }));
   };
   const handleUpdate = async (checkId, index) => {
@@ -166,14 +178,14 @@ export default function SeeCheckDetails({
       </Grid>
       {checkDetailsPayements ? (
         <Grid
+          container
+          item
           xs={12}
           sx={{
-            height: "15rem",
+            maxHeight: "70vh",
             alignItems: "center",
             justifyContent: "center",
           }}
-          container
-          item
         >
           <CircularProgress sx={{ color: Colors.SKY_BLUE }} />
         </Grid>
@@ -191,7 +203,7 @@ export default function SeeCheckDetails({
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                height: "100%",
+                maxHeight: "70vh",
                 textAlign: "center",
               }}
             >
@@ -203,7 +215,7 @@ export default function SeeCheckDetails({
                   fontWeight: "600",
                 }}
               >
-                No Data Available
+                Check list does not exist...
               </Typography>
             </div>
           ) : (
@@ -235,8 +247,12 @@ export default function SeeCheckDetails({
                         GetCaseDetails={GetCaseDetails}
                         caseData={caseData}
                       />
-                      <IconButton onClick={() => toggleExpand()}>
-                        {expandedIndices ? <ExpandLess /> : <ExpandMore />}
+                      <IconButton onClick={() => toggleExpand(index)}>
+                        {expandedIndices[index] ? (
+                          <ExpandLess />
+                        ) : (
+                          <ExpandMore />
+                        )}
                       </IconButton>
                     </div>
                   </Grid>
@@ -287,6 +303,70 @@ export default function SeeCheckDetails({
                       </Typography>
                     </Grid>
                   </Grid>
+                  {expandedIndices[index] && (
+                    <>
+                      <Grid direction="row" sx={{ marginBottom: "1rem" }}>
+                        {payment?.payments?.length > 0 ? (
+                          payment?.payments?.map((row, rowIndex) => (
+                            <Grid key={rowIndex} container>
+                              <Grid item xs={3}>
+                                <Typography
+                                  sx={{
+                                    fontFamily: "Nunito",
+                                    fontSize: FONT_SIZE_MEDIUM,
+                                  }}
+                                >
+                                  <strong>Amount:</strong>{" "}
+                                  {formatDollarAmount(row?.amount) || "-"}
+                                </Typography>
+                              </Grid>
+                              <Grid item xs={3}>
+                                <Typography
+                                  sx={{
+                                    fontFamily: "Nunito",
+                                    fontSize: FONT_SIZE_MEDIUM,
+                                  }}
+                                >
+                                  <strong>Transaction Type:</strong>{" "}
+                                  {row?.transactionType || "--"}
+                                </Typography>
+                              </Grid>
+                              <Grid item xs={3}>
+                                <Typography
+                                  sx={{
+                                    fontFamily: "Nunito",
+                                    fontSize: FONT_SIZE_MEDIUM,
+                                  }}
+                                >
+                                  <strong>Due Date:</strong>{" "}
+                                  {new Date(
+                                    row?.dueDate
+                                  )?.toLocaleDateString() || "--"}
+                                </Typography>
+                              </Grid>
+                            </Grid>
+                          ))
+                        ) : (
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              fontFamily: "Nunito",
+                              color: Colors.BLACK,
+                              mt: 1,
+                              fontWeight: "600",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              textAlign: "center",
+                            }}
+                          >
+                            No more data
+                          </Typography>
+                        )}
+                      </Grid>
+                      <Divider sx={{ my: 2 }} />
+                    </>
+                  )}
                   {expandEdit[index] && (
                     <Grid
                       container
@@ -461,11 +541,22 @@ export default function SeeCheckDetails({
                       <Grid
                         item
                         xs={12}
-                        sx={{ display: "flex", justifyContent: "flex-end" }}
+                        sx={{
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          gap: "2%",
+                        }}
                       >
                         <Button
+                          buttonText="Cancel"
+                          width="6rem"
+                          backgroundColor={Colors.ORANGE_COLOR}
+                          hoverColor={Colors.ORANGE_COLOR}
+                          onClick={() => handleCancelClick(index)}
+                        />
+                        <Button
                           buttonText="Update"
-                          width="8rem"
+                          width="6rem"
                           onClick={() =>
                             handleUpdate(payment?.checkInfo?.checkId, index)
                           }
@@ -476,69 +567,6 @@ export default function SeeCheckDetails({
                       </Grid>
                     </Grid>
                   )}
-
-                  {expandedIndices && (
-                    <Grid direction="row">
-                      {payment?.payments?.length > 0 ? (
-                        payment?.payments?.map((row, rowIndex) => (
-                          <Grid key={rowIndex} container>
-                            <Grid item xs={3}>
-                              <Typography
-                                sx={{
-                                  fontFamily: "Nunito",
-                                  fontSize: FONT_SIZE_MEDIUM,
-                                }}
-                              >
-                                <strong>Amount:</strong>{" "}
-                                {formatDollarAmount(row?.amount) || "-"}
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={3}>
-                              <Typography
-                                sx={{
-                                  fontFamily: "Nunito",
-                                  fontSize: FONT_SIZE_MEDIUM,
-                                }}
-                              >
-                                <strong>Transaction Type:</strong>{" "}
-                                {row?.transactionType || "--"}
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={3}>
-                              <Typography
-                                sx={{
-                                  fontFamily: "Nunito",
-                                  fontSize: FONT_SIZE_MEDIUM,
-                                }}
-                              >
-                                <strong>Due Date:</strong>{" "}
-                                {new Date(row?.dueDate)?.toLocaleDateString() ||
-                                  "--"}
-                              </Typography>
-                            </Grid>
-                          </Grid>
-                        ))
-                      ) : (
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            fontFamily: "Nunito",
-                            color: Colors.BLACK,
-                            mt: 1,
-                            fontWeight: "600",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            textAlign: "center",
-                          }}
-                        >
-                          No more data
-                        </Typography>
-                      )}
-                    </Grid>
-                  )}
-
-                  <Divider sx={{ my: 2 }} />
                 </div>
               )
             )

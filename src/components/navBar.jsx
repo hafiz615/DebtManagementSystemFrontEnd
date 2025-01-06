@@ -98,25 +98,33 @@ export default function NavBar({ onClick }) {
               </div>
             )}
 
-            <NotificationsBell
-              notificationsLength={notificationsLength}
-              setNotificationLength={setNotificationLength}
-            />
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end",
+              }}
+            >
+              <NotificationsBell
+                notificationsLength={notificationsLength}
+                setNotificationLength={setNotificationLength}
+              />
 
-            <Tooltip title="logout" placement="top-end">
-              <IconButton
-                onClick={handleLogout}
-                size="large"
-                edge="end"
-                aria-label="account of current user"
-                aria-haspopup="true"
-                sx={{
-                  color: Colors.WHITE,
-                }}
-              >
-                <LogoutIcon sx={{ fontSize: "30px" }} />
-              </IconButton>
-            </Tooltip>
+              <Tooltip title="logout" placement="top-end">
+                <IconButton
+                  onClick={handleLogout}
+                  size="large"
+                  edge="end"
+                  aria-label="account of current user"
+                  aria-haspopup="true"
+                  sx={{
+                    color: Colors.WHITE,
+                  }}
+                >
+                  <LogoutIcon sx={{ fontSize: "30px" }} />
+                </IconButton>
+              </Tooltip>
+            </Box>
           </div>
         </Toolbar>
       </AppBar>
