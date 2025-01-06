@@ -161,7 +161,9 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
 
   const isPaymentFormValid = () => {
     const isBankAccountValid =
-      bankAccount?.length === 4 || bankAccount?.length === 17;
+      bankAccount &&
+      (bankAccount?.length === 4 ||
+        (bankAccount?.length > 4 && bankAccount?.length <= 17));
     const isBankRoutingValid = bankRouting?.length === 9;
     return (
       firstName &&
@@ -398,8 +400,10 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
                 }}
               />
               {bankAccount &&
-                bankAccount?.length !== 4 &&
-                bankAccount?.length !== 17 && (
+                !(
+                  bankAccount?.length === 4 ||
+                  (bankAccount?.length > 4 && bankAccount?.length <= 17)
+                ) && (
                   <Typography
                     sx={{
                       color: "red",
@@ -408,7 +412,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
                       marginBottom: "0.5rem",
                     }}
                   >
-                    Bank Account between 4 and 17 characters.
+                    Bank Account must be between 4 and 17 characters.
                   </Typography>
                 )}
             </div>
