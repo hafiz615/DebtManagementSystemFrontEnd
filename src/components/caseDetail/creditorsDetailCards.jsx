@@ -11,11 +11,9 @@ import {
 } from "@mui/material";
 import {
   Search,
-  Sms,
-  Email,
-  Call,
   ChevronLeft,
   NavigateNext,
+  Verified,
 } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
@@ -68,6 +66,7 @@ export default function CreditorsDetailCards({
   verifiedSenders,
   fetchCalls,
 }) {
+  console.log(caseData, "caseData");
   const [searchText, setSearchText] = useState("");
 
   const [startIndex, setStartIndex] = useState(0);
@@ -186,12 +185,13 @@ export default function CreditorsDetailCards({
             {
               label: "Email",
               value: caseData?.creditor?.basicInformation?.email,
+              showVerifiedIcon: caseData?.creditor?.paynoteUserFound,
             },
             {
               label: "Phone #",
               value: caseData?.creditor?.basicInformation?.phone,
             },
-          ].map((item, index) => (
+          ]?.map((item, index) => (
             <div
               key={index}
               style={{
@@ -206,9 +206,29 @@ export default function CreditorsDetailCards({
                   fontFamily: "Nunito",
                   color: Colors.DARK_GRAY,
                   fontWeight: "700",
+                  display: "flex",
+                  alignItems: "center",
                 }}
               >
-                {item?.label}
+                {item?.label || "--"}
+                {item?.label === "Email" && item?.showVerifiedIcon && (
+                  <Tooltip
+                    placement="top"
+                    title={
+                      caseData?.creditor?.paynoteUserFound
+                        ? "Verified with Paynote"
+                        : "--"
+                    }
+                  >
+                    <Verified
+                      sx={{
+                        fontSize: "16px",
+                        color: "green",
+                        marginLeft: "4px",
+                      }}
+                    />
+                  </Tooltip>
+                )}
               </Typography>
               {item?.label === "Phone #" ? (
                 <div style={{ display: "flex", alignItems: "center" }}>
@@ -219,7 +239,7 @@ export default function CreditorsDetailCards({
                     data={item?.value ? `+1${item?.value}` : ""}
                     width={300}
                   />
-                  <Tooltip title={item?.value || ""} placement="top-end">
+                  <Tooltip title={item?.value || "--"} placement="top-end">
                     <Typography
                       sx={{
                         fontSize: smallScreen ? "11px" : "13px",
@@ -251,6 +271,7 @@ export default function CreditorsDetailCards({
             </div>
           ))}
         </>
+
         <span
           style={{
             display: "flex",
