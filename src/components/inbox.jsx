@@ -20,10 +20,17 @@ import {
   Tabs,
   Tab,
   Divider,
+  Tooltip,
 } from "@mui/material";
 import MuiModels from "./models";
 import SearchBar from "./searchBar";
-import { FilterListOutlined } from "@mui/icons-material";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ExpandLess,
+  ExpandMore,
+  FilterListOutlined,
+} from "@mui/icons-material";
 import TextButton from "./button";
 import {
   GetAllCasesTasks,
@@ -619,24 +626,101 @@ function Inbox() {
                                 style={{
                                   display: "flex",
                                   justifyContent: "space-between",
+                                  // paddingLeft: "20px",
                                 }}
                               >
                                 <div>
                                   <div
                                     style={{
                                       display: "flex",
+                                      alignItems: "center",
                                       gap: "10px",
+                                    }}
+                                  >
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        // marginTop: "10px",
+                                        // marginBottom: "10px",
+                                      }}
+                                    >
+                                      <Typography
+                                        onClick={() =>
+                                          handleToggleContent(index)
+                                        } // Pass index to toggle specific message
+                                      >
+                                        {expandedMessages[index] ? (
+                                          <IconButton>
+                                            <ExpandMore
+                                              sx={{
+                                                color: Colors.SKY_BLUE,
+                                                cursor: "pointer",
+                                              }}
+                                            />
+                                          </IconButton>
+                                        ) : (
+                                          <IconButton>
+                                            <ChevronRight
+                                              sx={{
+                                                color: Colors.SKY_BLUE,
+                                                cursor: "pointer",
+                                              }}
+                                            />
+                                          </IconButton>
+                                        )}
+                                      </Typography>
+                                    </Box>
+                                    <Typography
+                                      sx={{
+                                        fontFamily: "Nunito",
+                                        fontSize: FONT_SIZE_MEDIUM,
+                                        fontWeight: "bold",
+                                      }}
+                                    >
+                                      {`${
+                                        item?.debtorCompanyName
+                                      } ${"-"} ${formatDateString(
+                                        item?.createdAt
+                                      )} `}
+                                    </Typography>
+                                  </div>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: "10px",
+                                      paddingLeft: "3.2rem",
                                     }}
                                   >
                                     <Typography sx={boldTextStyling}>
                                       To:
                                     </Typography>
+
                                     <Typography sx={fontStyling}>
-                                      {item?.to || "-"}
+                                      <Tooltip
+                                        placement="top"
+                                        title={item?.to || "-"}
+                                      >
+                                        {item?.to && item?.to?.length > 30
+                                          ? `${item?.to?.slice(0, 70)}...`
+                                          : item?.to || "-"}
+                                      </Tooltip>
                                     </Typography>
                                   </div>
-                                  <div style={{ display: "flex", gap: "10px" }}>
-                                    <Typography sx={boldTextStyling}>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      gap: "10px",
+                                      paddingLeft: "3.2rem",
+                                    }}
+                                  >
+                                    <Typography
+                                      sx={{
+                                        ...boldTextStyling,
+                                      }}
+                                    >
                                       From:
                                     </Typography>
                                     <Typography sx={fontStyling}>
@@ -644,10 +728,13 @@ function Inbox() {
                                     </Typography>
                                   </div>
                                 </div>
-                                <div style={{ display: "flex", gap: "10px" }}>
-                                  <Typography sx={fontStyling}>
-                                    {formatDateString(item?.createdAt)}
-                                  </Typography>
+
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    gap: "10px",
+                                  }}
+                                >
                                   {item?.type === "received" && (
                                     <MuiModels
                                       show="sendEmailCase"
@@ -665,87 +752,58 @@ function Inbox() {
                                   )}
                                 </div>
                               </div>
-                              <div style={{ display: "flex", gap: "10px" }}>
-                                <Typography sx={boldTextStyling}>
-                                  Subject:
-                                </Typography>
-                                <Typography sx={fontStyling}>
-                                  {item?.subject || "-"}
-                                </Typography>
-                              </div>
-                              <div style={{ display: "flex", gap: "10px" }}>
-                                <Typography sx={boldTextStyling}>
-                                  Case Code:
-                                </Typography>
-                                <Typography sx={fontStyling}>
-                                  {item?.caseCode}
-                                </Typography>
-                              </div>
-                              <div style={{ display: "flex", gap: "10px" }}>
-                                <Typography sx={boldTextStyling}>
-                                  Creditor Company Name:
-                                </Typography>
-                                <Typography sx={fontStyling}>
-                                  {item?.creditorCompanyName || "-"}
-                                </Typography>
-                              </div>
-                              <div style={{ display: "flex", gap: "10px" }}>
-                                <Typography sx={boldTextStyling}>
-                                  Client Company Name:
-                                </Typography>
-                                <Typography sx={fontStyling}>
-                                  {item?.debtorCompanyName || "-"}
-                                </Typography>
-                              </div>
-                              <div style={{ display: "flex", gap: "10px" }}>
-                                <Typography sx={boldTextStyling}>
-                                  Negotiator Name:
-                                </Typography>
-                                <Typography sx={fontStyling}>
-                                  {item?.negotiatorName || "-"}
-                                </Typography>
-                              </div>
-                              <div>
-                                {/* Show content conditionally */}
-                                {expandedMessages[index] && (
-                                  <>
+                              {expandedMessages[index] && (
+                                <div style={{ paddingLeft: "3.2rem" }}>
+                                  <div style={{ display: "flex", gap: "10px" }}>
                                     <Typography sx={boldTextStyling}>
-                                      Content:
+                                      Subject:
                                     </Typography>
-                                    <Typography
-                                      sx={fontStyling}
-                                      dangerouslySetInnerHTML={{
-                                        __html: item?.textAsHtml,
-                                      }}
-                                    />
-                                  </>
-                                )}
+                                    <Typography sx={fontStyling}>
+                                      {item?.subject || "-"}
+                                    </Typography>
+                                  </div>
+                                  <div style={{ display: "flex", gap: "10px" }}>
+                                    <Typography sx={boldTextStyling}>
+                                      Case Code:
+                                    </Typography>
+                                    <Typography sx={fontStyling}>
+                                      {item?.caseCode}
+                                    </Typography>
+                                  </div>
+                                  <div style={{ display: "flex", gap: "10px" }}>
+                                    <Typography sx={boldTextStyling}>
+                                      Creditor Company Name:
+                                    </Typography>
+                                    <Typography sx={fontStyling}>
+                                      {item?.creditorCompanyName || "-"}
+                                    </Typography>
+                                  </div>
+                                  <div style={{ display: "flex", gap: "10px" }}>
+                                    <Typography sx={boldTextStyling}>
+                                      Negotiator Name:
+                                    </Typography>
+                                    <Typography sx={fontStyling}>
+                                      {item?.negotiatorName || "-"}
+                                    </Typography>
+                                  </div>
+                                  <div>
+                                    <>
+                                      <Typography sx={boldTextStyling}>
+                                        Content:
+                                      </Typography>
+                                      <Typography
+                                        sx={fontStyling}
+                                        dangerouslySetInnerHTML={{
+                                          __html: item?.textAsHtml,
+                                        }}
+                                      />
+                                    </>
+                                    {/* )} */}
 
-                                {/* Show More / Show Less button */}
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    marginTop: "10px",
-                                    marginBottom: "10px",
-                                  }}
-                                >
-                                  <Typography
-                                    onClick={() => handleToggleContent(index)} // Pass index to toggle specific message
-                                    sx={{
-                                      fontSize: "14px",
-                                      fontWeight: "600",
-                                      color: Colors.SKY_BLUE,
-                                      cursor: "pointer",
-                                      fontFamily: "Nunito",
-                                    }}
-                                  >
-                                    {expandedMessages[index]
-                                      ? "Show Less"
-                                      : "Show More"}
-                                  </Typography>
-                                </Box>
-                              </div>
+                                    {/* Show More / Show Less button */}
+                                  </div>
+                                </div>
+                              )}
                             </CardContent>
                           </Box>
                         ))
