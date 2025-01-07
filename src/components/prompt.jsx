@@ -16,6 +16,7 @@ import {
   DeleteRole,
   DeleteTasks,
   DeleteLink,
+  DeleteCheckDetails,
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import TextButton from "./button";
@@ -61,6 +62,9 @@ export default function Prompt({
   getLinks,
   deleteHandler,
   setFileToDelete,
+  caseData,
+  checkId,
+  GetCaseDetails,
 }) {
   const { showToast } = useToast();
   const [open, setOpen] = React.useState(false);
@@ -187,6 +191,13 @@ export default function Prompt({
     }
   };
 
+  const deleteCheckIds = async () => {
+    const res = await DeleteCheckDetails(checkId, caseData?.debtor?._id);
+    if (res?.status === 200) {
+      GetCaseDetails(caseData?._id);
+    }
+  };
+
   const handleConfirm = async (event) => {
     event.stopPropagation();
     setLoading(true);
@@ -209,6 +220,8 @@ export default function Prompt({
       await deleteLink();
     } else if (deleting === "delete File") {
       await deleteHandler();
+    } else if (deleting === "checkIds") {
+      await deleteCheckIds();
     } else if (deleteRole) {
       await deleteRole();
     } else {

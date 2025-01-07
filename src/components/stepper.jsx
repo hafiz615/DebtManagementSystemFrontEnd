@@ -131,7 +131,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   //upload files
   const [files, setFiles] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  // const [extractFiles, setExtractFiles] = useState("Extract Files");
+  const [otherFiles, setOtherFiles] = useState([]);
 
   //Search Debtor and Creditor State
   const [debtorSearchText, setDebtorSearchText] = useState("");
@@ -180,7 +180,11 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   //disable button On Empty Fields
   const [contactError, setContactErrors] = useState({});
   const [emailContactError, setEmailContactError] = useState({});
-  const [url, setUrl] = useState([]);
+  //states for uploaded signed url
+  const [bankStatementUrl, setBankSatementUrl] = useState([]);
+  const [mcaUrl, setMcaUrl] = useState([]);
+  const [otherFileUrl, setOtherFileUrl] = useState([]);
+  //
   const [debtorCaseData, setDebtorCaseData] = useState([]);
 
   const [connectPayment, setConnectPayment] = useState({
@@ -388,7 +392,9 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       BasicWeeklyBudget: debtorData?.basicInformation?.weeklyBudget || 0,
     });
     setWalletId(debtorData?.customerVaultId || "");
-    setUrl(debtorData?.documents || []);
+    setBankSatementUrl(debtorData?.bankStatementDocuments || []);
+    setMcaUrl(debtorData?.mcaDocuments || []);
+    setOtherFileUrl(debtorData?.otherDocuments || []);
     setStatus(debtorData?.basicInformation?.status);
     setBusinessType(debtorData?.businessInformation?.businessCategory || "");
     setDebtorBusinessDetails({
@@ -486,10 +492,22 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               })
             : [];
 
-        if (files) {
+        if (files?.length > 0) {
           const uploadFile = await UploadFiles(files, setProgress);
           if (uploadFile?.status === 200) {
-            setUrl(uploadFile?.data?.data);
+            setBankSatementUrl(uploadFile?.data?.data);
+          }
+        }
+        if (selectedFiles?.length > 0) {
+          const uploadFile = await UploadFiles(selectedFiles, setProgress);
+          if (uploadFile?.status === 200) {
+            setMcaUrl(uploadFile?.data?.data);
+          }
+        }
+        if (otherFiles?.length > 0) {
+          const uploadFile = await UploadFiles(otherFiles, setProgress);
+          if (uploadFile?.status === 200) {
+            setOtherFileUrl(uploadFile?.data?.data);
           }
         }
 
@@ -545,7 +563,9 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           contacts: debtorContacts,
           paymentToken: connectPayment?.paymentToken,
           paymentType: connectPayment?.paymentType,
-          documents: url || [],
+          mcaDocuments: mcaUrl || [],
+          bankStatementDocuments: bankStatementUrl || [],
+          otherDocuments: otherFileUrl || [],
           extractedFields: isEmpty(extractedData) ? [] : extractedData,
         };
         const res = await CreateDebtor(params);
@@ -663,6 +683,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     if (activeStep === 0) {
       setFiles([]);
       setSelectedFiles([]);
+      setOtherFiles([]);
       setExtractedData({});
       setInputKey(Date.now());
     } else if (activeStep === 1) {
@@ -690,6 +711,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   const resetAll = () => {
     setFiles([]);
     setSelectedFiles([]);
+    setOtherFiles([]);
     setExtractedData({});
     setInputKey(Date.now());
     clearDebtor();
@@ -832,6 +854,8 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
                 setFiles={setFiles}
                 selectedFiles={selectedFiles}
                 setSelectedFiles={setSelectedFiles}
+                otherFiles={otherFiles}
+                setOtherFiles={setOtherFiles}
                 setInputKey={setInputKey}
                 inputKey={inputKey}
                 loading={loading}

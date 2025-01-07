@@ -36,6 +36,7 @@ import {
   LocalAtm,
   Phone,
   Sync,
+  CompareArrows,
 } from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
@@ -66,6 +67,8 @@ import EditContractInformation from "./settlementRange/editContractInformation";
 import CreditorSync from "./caseDetail/creditorSync";
 import UpdateWeeklyBudget from "./settlementRange/updateWeeklyBudget";
 import BouncePayments from "./caseDetail/bouncePayments";
+import GetTransactionDetails from "./caseDetail/getTransactionDetails";
+import SeeCheckDetails from "./caseDetail/seeCheckDetails";
 
 export default function MuiModels({
   buttonName,
@@ -155,6 +158,7 @@ export default function MuiModels({
   selectedCreditorDetails,
   selectedCreditorDetailsKey,
   fetchCalls,
+  transactionId,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -440,6 +444,22 @@ export default function MuiModels({
             }}
           />
         </IconButton>
+      ) : show === "getTransactionDetails" ? (
+        <Tooltip title="Revert Transaction" placement="top-start">
+          <IconButton
+            onClick={() => {
+              handleOpen();
+            }}
+          >
+            <CompareArrows
+              sx={{
+                fontSize: "1.2rem",
+                color: Colors.DARK_GRAY,
+                cursor: "pointer",
+              }}
+            />
+          </IconButton>
+        </Tooltip>
       ) : buttonName === "sendEmail" ? (
         <IconButton
           onClick={() => {
@@ -497,9 +517,19 @@ export default function MuiModels({
         </IconButton>
       ) : show === "AddPayments" ? (
         <TextButton
-          buttonText="Add Manual Payments"
+          buttonText="Manual Payments"
           height="2.5rem"
-          width="12rem"
+          width="10rem"
+          onClick={handleOpen}
+          disabled={disabled}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
+      ) : show === "SeeCheckDetails" ? (
+        <TextButton
+          buttonText="Check Details"
+          height="2.5rem"
+          width="8rem"
           onClick={handleOpen}
           disabled={disabled}
           backgroundColor={Colors.SKY_BLUE}
@@ -509,7 +539,7 @@ export default function MuiModels({
         <TextButton
           buttonText="Bounce Payments"
           height="2.5rem"
-          width="12rem"
+          width="10rem"
           onClick={handleOpen}
           disabled={disabled}
           backgroundColor={Colors.SKY_BLUE}
@@ -1071,6 +1101,19 @@ export default function MuiModels({
               data={data}
               popUpDebtorData={popUpDebtorData}
               getAllRanges={getAllRanges}
+            />
+          ) : show === "getTransactionDetails" ? (
+            <GetTransactionDetails
+              handleClose={handleClose}
+              GetCaseDetails={GetCaseDetails}
+              caseData={caseData}
+              transactionId={transactionId}
+            />
+          ) : show === "SeeCheckDetails" ? (
+            <SeeCheckDetails
+              handleClose={handleClose}
+              GetCaseDetails={GetCaseDetails}
+              caseData={caseData}
             />
           ) : (
             ""

@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { isEmpty } from "lodash";
 import { useParams } from "react-router-dom";
 import { Colors } from "../config/default";
-import { Typography, Box, IconButton, Checkbox } from "@mui/material";
+import { Typography, Box, IconButton, Checkbox, Tooltip } from "@mui/material";
 import { formatDollarAmount } from "../common";
 import { useToast } from "../toast/toastContext";
 import Prompt from "./prompt";
 import { RetryAuth, RetryCapture, SendPayment } from "../services/services";
 import { useSelector } from "react-redux";
 import { Paid } from "@mui/icons-material";
+import MuiModels from "././models";
 
 function TransactionRow({
   data,
@@ -16,6 +17,8 @@ function TransactionRow({
   GetCasePaymentDetails,
   getCommissionPayments,
   hideTransferPayment,
+  caseData,
+  GetCaseDetails,
 }) {
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
@@ -72,6 +75,13 @@ function TransactionRow({
     width: "20%",
     margin: "5px 0px",
   };
+  const typographyHeadingStyle = {
+    fontSize: "13px",
+    fontFamily: "Nunito",
+    fontWeight: "600",
+    width: "20%",
+    margin: "5px 0px",
+  };
 
   return (
     <>
@@ -88,6 +98,32 @@ function TransactionRow({
           {heading}
         </Typography>
       )}
+
+      {!isEmpty(data) && heading !== "Upcoming" && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            borderBottom: `1px solid ${Colors.BLACK}`,
+            width: "100%",
+            marginBottom: "10px",
+            position: "sticky",
+            top: 0,
+            backgroundColor: "white",
+            zIndex: 1,
+          }}
+        >
+          <p style={typographyHeadingStyle}>Date</p>
+          <p style={typographyHeadingStyle}>Amount</p>
+          <p style={typographyHeadingStyle}>Payment Status</p>
+          <p style={typographyHeadingStyle}>Creditor Name</p>
+          <p style={typographyHeadingStyle}>Payment Type</p>
+          <p style={typographyHeadingStyle}>Payment Gateway</p>
+          <p style={typographyHeadingStyle}>Retry Transaction</p>
+          <p style={typographyHeadingStyle}>Revert Transactions</p>
+        </div>
+      )}
+
       {data?.map((item, index) => {
         const colorScheme =
           item?.type === "authorization" && item?.authorized === "Failed"
@@ -102,9 +138,7 @@ function TransactionRow({
             style={{
               display: "flex",
               alignItems: "center",
-              // height: "15%",
               width: "100%",
-              // justifyContent: "space-between",
               color: heading ? Colors.BLACK : colorScheme,
             }}
           >
@@ -115,11 +149,29 @@ function TransactionRow({
             <p style={typographyStyle}>
               {heading
                 ? item?.status || "-"
+                : item?.type === "authorization"
+                ? item?.authorized === "Failed"
+                  ? "Authorization Failed"
+                  : "Authorized"
+                : item?.type === "capture"
+                ? item?.captured === "Failed"
+                  ? "Capture Failed"
+                  : "Captured"
                 : item?.type === "payment"
                 ? "Capture"
                 : capitalizeFirstLetter(item?.type) || "-"}
             </p>
-            <p style={typographyStyle}>{item?.creditorName || "-"}</p>
+            <p style={typographyStyle}>
+              {item?.creditorName?.length > 15 ? (
+                <Tooltip title={item?.creditorName} placement="top">
+                  <span>{item?.creditorName?.slice(0, 15)}...</span>
+                </Tooltip>
+              ) : (
+                item?.creditorName || "-"
+              )}
+            </p>
+            <p style={typographyStyle}>{item?.transactionType || "-"}</p>
+            <p style={typographyStyle}>{item?.paymentGateway || "-"}</p>
             <p style={typographyStyle}>
               {(item?.type === "authorization" &&
                 item?.authorized === "Failed") ||
@@ -149,6 +201,18 @@ function TransactionRow({
                   </IconButton>
                 </Box>
               ) : null}
+            </p>
+
+            <p style={typographyStyle}>
+              {heading !== "Upcoming" && (
+                <MuiModels
+                  show="getTransactionDetails"
+                  transactionId={item?.transactionId}
+                  height="40vh"
+                  caseData={caseData}
+                  GetCaseDetails={GetCaseDetails}
+                />
+              )}
             </p>
           </div>
         );

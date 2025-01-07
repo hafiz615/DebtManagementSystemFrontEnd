@@ -13,23 +13,29 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const { showToast } = useToast();
-  const [documents, setDocuments] = useState(caseData?.debtor?.documents);
   const [fileToDelete, setFileToDelete] = useState(null);
+  const bankDocuments = caseData?.debtor?.bankStatementDocuments || [];
+  const mcaDocuments = caseData?.debtor?.mcaDocuments || [];
+  const otherDocuments = caseData?.debtor?.otherDocuments || [];
 
   const handleFileView = (url) => {
     setUrl(url);
     setIsViewerOpen(true);
   };
 
-  useEffect(() => {}, [documents.length]);
-  const deleteHandler = async () => {
-    const response = await handleDeleteFile(fileToDelete?.key, caseDataId);
-
+  const deleteHandler = async (type) => {
+    const fileType =
+      type === "Bank Statements"
+        ? "bankStatementDocuments"
+        : type === "MCA's"
+        ? "mcaDocuments"
+        : "otherDocuments";
+    const response = await handleDeleteFile(
+      fileToDelete?.key,
+      caseDataId,
+      fileType
+    );
     if (response.status === 200) {
-      const filterDoc = documents.filter(
-        (doc) => doc?.key !== fileToDelete?.key
-      );
-      setDocuments(filterDoc);
       GetCaseDetails(caseDataId);
       showToast(response?.data?.message, "success");
     } else {
@@ -54,13 +60,6 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
       }
     });
   };
-
-  const mcaFiles = documents?.filter((doc) =>
-    doc?.originalFileName?.toLowerCase().includes("mca")
-  );
-  const bankStatements = documents?.filter(
-    (item) => !item?.originalFileName?.toLowerCase().includes("mca")
-  );
 
   const renderFiles = (files, label) => (
     <>
@@ -116,23 +115,15 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
                   checked={selectedFiles.some((file) => file.key === item?.key)}
                   onChange={() => handleFileSelect(item)}
                 />
-
                 <RemoveRedEye
                   sx={{ color: Colors.SKY_BLUE, cursor: "pointer" }}
                   onClick={() => handleFileView(item?.url)}
                 />
-                {/* <IconButton
-                  onClick={() => handleClickOpen(item)} 
-                  color="error"
-                >
-                  <Delete />
-                  
-                </IconButton> */}
                 <Prompt
                   text="Are you sure you want to delete this file"
                   heading="Delete File"
                   deleting="delete File"
-                  deleteHandler={() => deleteHandler()}
+                  deleteHandler={() => deleteHandler(label)}
                   item={item}
                   setFileToDelete={setFileToDelete}
                 />
@@ -144,7 +135,10 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
     </>
   );
 
-  const hasFiles = documents.length > 0;
+  const hasNoFiles =
+    bankDocuments?.length === 0 &&
+    mcaDocuments?.length === 0 &&
+    otherDocuments?.length === 0;
 
   return (
     <Grid
@@ -189,10 +183,11 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
           height: "10rem",
         }}
       >
-        {renderFiles(mcaFiles, "MCA Files")}
-        {renderFiles(bankStatements, "Bank Statements")}
+        {renderFiles(mcaDocuments, "MCA's")}
+        {renderFiles(bankDocuments, "Bank Statements")}
+        {renderFiles(otherDocuments, "Others")}
 
-        {documents?.length === 0 && (
+        {hasNoFiles && (
           <Grid item xs={12} sx={{ textAlign: "center", marginTop: "2rem" }}>
             <p
               style={{
@@ -230,7 +225,7 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
             caseDataId={caseDataId}
             caseData={caseData}
             GetCaseDetails={GetCaseDetails}
-            disabled={!hasFiles}
+            disabled={hasNoFiles}
           />
         </Grid>
       </Grid>

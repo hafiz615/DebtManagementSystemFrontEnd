@@ -268,9 +268,17 @@ export default function CaseById({
                         GetCaseDetails={GetCaseDetails}
                       />
                       <MuiModels
-                        show="bouncePayments"
-                        height="50vh"
+                        show="SeeCheckDetails"
+                        maxHeight="70vh"
                         width="55vw"
+                        caseId={id}
+                        debtorId={caseData?.debtor?._id}
+                        caseData={caseData}
+                        GetCaseDetails={GetCaseDetails}
+                      />
+                      <MuiModels
+                        show="bouncePayments"
+                        maxHeight="70vh"
                         caseId={id}
                         debtorId={caseData?.debtor?._id}
                         GetCaseDetails={GetCaseDetails}
@@ -492,6 +500,8 @@ export default function CaseById({
                     loading={isPaymentLoading}
                     paymentDetails={paymentDetails}
                     GetCasePaymentDetails={GetCasePaymentDetails}
+                    caseData={caseData}
+                    GetCaseDetails={GetCaseDetails}
                   />
                 ) : (
                   <CaseFileCard

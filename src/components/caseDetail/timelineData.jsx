@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Button from "../button";
-import { Box, Card, IconButton, Typography } from "@mui/material";
+import { Box, Card, IconButton, Tooltip, Typography } from "@mui/material";
 import {
   Timeline,
   TimelineItem,
@@ -9,7 +9,15 @@ import {
   TimelineContent,
   TimelineOppositeContent,
 } from "@mui/lab";
-import { CallOutlined, Email, NoteAlt, Sms, Work } from "@mui/icons-material";
+import {
+  CallOutlined,
+  ChevronRight,
+  Email,
+  ExpandMore,
+  NoteAlt,
+  Sms,
+  Work,
+} from "@mui/icons-material";
 import { Colors } from "../../config/default";
 import ConversationHistory from "../callHistory";
 import ReplyCard from "./replyCard";
@@ -158,16 +166,52 @@ export default function TimelineData({
                   <div
                     style={{ display: "flex", justifyContent: "space-between" }}
                   >
-                    <Typography
-                      sx={{
-                        fontSize: "13px",
-                        fontFamily: "Nunito",
-                        mb: "10px",
-                        fontWeight: "700",
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
-                      {value?.Action} {formatDate(value?.Time)}
-                    </Typography>
+                      {hideShowMore && (
+                        <Box>
+                          {value?.Action === "EMAIL" && (
+                            <Typography
+                              onClick={() => setIsExpanded(!isExpanded)}
+                            >
+                              {isExpanded ? (
+                                <IconButton>
+                                  <ExpandMore
+                                    sx={{
+                                      color: Colors.SKY_BLUE,
+                                      cursor: "pointer",
+                                    }}
+                                  />
+                                </IconButton>
+                              ) : (
+                                <IconButton>
+                                  <ChevronRight
+                                    sx={{
+                                      color: Colors.SKY_BLUE,
+                                      cursor: "pointer",
+                                    }}
+                                  />
+                                </IconButton>
+                              )}
+                            </Typography>
+                          )}
+                        </Box>
+                      )}
+                      <Typography
+                        sx={{
+                          fontSize: "13px",
+                          fontFamily: "Nunito",
+                          fontWeight: "700",
+                        }}
+                      >
+                        {value?.Action} {formatDate(value?.Time)}
+                      </Typography>
+                    </div>
 
                     {value?.Action === "EMAIL" && !Array.isArray(value?.To) && (
                       <>
@@ -191,7 +235,7 @@ export default function TimelineData({
                       Object.entries(value)
                         ?.filter(([key]) => key !== "Action" && key !== "Time")
                         ?.map(([key, value]) => (
-                          <Box key={key}>
+                          <Box key={key} sx={{ paddingLeft: "2.5rem" }}>
                             {key === "Content" ? (
                               <>
                                 <Typography
@@ -205,7 +249,9 @@ export default function TimelineData({
                                   {key}:
                                 </Typography>
                                 <div
-                                  dangerouslySetInnerHTML={{ __html: value }}
+                                  dangerouslySetInnerHTML={{
+                                    __html: value,
+                                  }}
                                   style={{
                                     fontSize: "13px",
                                     fontFamily: "Nunito",
@@ -275,6 +321,7 @@ export default function TimelineData({
                             fontSize: "13px",
                             fontFamily: "Nunito",
                             mb: "10px",
+                            paddingLeft: "2.5rem",
                           }}
                         >
                           <strong>From:</strong> {value?.From}
@@ -284,21 +331,31 @@ export default function TimelineData({
                             fontSize: "13px",
                             fontFamily: "Nunito",
                             mb: "10px",
+                            paddingLeft: "2.5rem",
                           }}
                         >
                           <strong>To:</strong>{" "}
-                          {Array.isArray(value?.To)
-                            ? value?.To.join(", ")
-                            : value?.To}
-                        </Typography>
-                        <Typography
-                          sx={{
-                            fontSize: "13px",
-                            fontFamily: "Nunito",
-                            mb: "10px",
-                          }}
-                        >
-                          <strong>Subject:</strong> {value?.Subject}
+                          {Array.isArray(value?.To) ? (
+                            <Tooltip
+                              title={value?.To.join(", ")}
+                              placement="top"
+                              arrow
+                            >
+                              <span>
+                                {value?.To.join(", ").length > 70
+                                  ? value?.To.join(", ").slice(0, 70) + "..."
+                                  : value?.To.join(", ")}
+                              </span>
+                            </Tooltip>
+                          ) : (
+                            <Tooltip title={value?.To} placement="top" arrow>
+                              <span>
+                                {value?.To?.length > 70
+                                  ? value?.To.slice(0, 70) + "..."
+                                  : value?.To}
+                              </span>
+                            </Tooltip>
+                          )}
                         </Typography>
                       </>
                     )
@@ -385,32 +442,6 @@ export default function TimelineData({
                       ))
                   )}
                 </>
-              )}
-              {/* Show More / Show Less Typography for EMAIL actions */}
-              {hideShowMore && (
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    marginTop: "10px",
-                    marginBottom: "10px",
-                  }}
-                >
-                  {value?.Action === "EMAIL" && (
-                    <Typography
-                      onClick={() => setIsExpanded(!isExpanded)}
-                      sx={{
-                        fontSize: "14px",
-                        fontWeight: "600",
-                        color: Colors.SKY_BLUE,
-                        cursor: "pointer",
-                        fontFamily: "Nunito",
-                      }}
-                    >
-                      {isExpanded ? "Show Less" : "Show More"}
-                    </Typography>
-                  )}
-                </Box>
               )}
             </Card>
           )}

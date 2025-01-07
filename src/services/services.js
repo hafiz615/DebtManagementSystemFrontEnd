@@ -36,11 +36,9 @@ export const ExtractContractData = async (files) => {
 
     files.map(async (file) => {
       let processedFile = file.file;
-      // Check if the file is a JPG and convert to PDF if true
       if (file.file.type === "image/jpeg") {
         processedFile = await convertJpgToPdf(file.file);
       }
-
       const originalFileName = processedFile.name;
       const cleanedFileName = originalFileName.replace("MCA Contracts/", "");
       const cleanedFile = new File([processedFile], cleanedFileName, {
@@ -1545,12 +1543,15 @@ export const deleteCreditor = async (id) => {
     return error;
   }
 };
-export const handleDeleteFile = async (itemKey, caseDataId) => {
+export const handleDeleteFile = async (itemKey, caseDataId, type) => {
   try {
-    return await axios.delete(`${BASE_URL}/v1/case/deleteFile/${caseDataId}`, {
-      ...setHeaders(),
-      data: { key: itemKey },
-    });
+    return await axios.delete(
+      `${BASE_URL}/v1/case/deleteFile/${caseDataId}?documentField=${type}`,
+      {
+        ...setHeaders(),
+        data: { key: itemKey },
+      }
+    );
   } catch (error) {
     return error;
   }
@@ -1639,7 +1640,28 @@ export const GetManualPayments = async (id) => {
 export const UpdateManualPayments = async (payload, id) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/debtor/revertManualPayments/${id}`,
+      BASE_URL + `/v1/debtor/revertPayments/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetRelatedPayments = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/payment/getRelatedPayments/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const AddCheckPayment = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + "/v1/seemlesschex/createCheck",
       payload,
       setHeaders()
     );
@@ -1651,6 +1673,37 @@ export const CallSummary = async (payload) => {
   try {
     return await axios.post(
       BASE_URL + `/v1/call/callSummary`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetCheckDetails = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/seemlesschex/getClientChecks/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const DeleteCheckDetails = async (checkId, id) => {
+  try {
+    return await axios.delete(BASE_URL + `/v1/seemlesschex/voidCheck/${id}`, {
+      ...setHeaders(),
+      data: { checkId: checkId },
+    });
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateCheckIds = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/seemlesschex/updateCheck/${id}`,
       payload,
       setHeaders()
     );

@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from "react";
-import {
-  Grid,
-  Typography,
-  TextField,
-  MenuItem,
-  Checkbox,
-  CircularProgress,
-} from "@mui/material";
+import { Grid, Typography, Checkbox, CircularProgress } from "@mui/material";
 import Button from "./button";
 import { Colors } from "../config/default";
 import Dropdown from "./dropdown";
 import { useToast } from "../toast/toastContext";
-import { AddManualPayment, GetAllUpcomingPayments } from "../services/services";
-import AmountTextField from "./amountTextField";
+import {
+  AddCheckPayment,
+  AddManualPayment,
+  GetAllUpcomingPayments,
+} from "../services/services";
 import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../constants/appConstants";
 import { formatDollarAmount } from "../common";
 import ScrollbarStyles from "./customScroll";
 import { Close } from "@mui/icons-material";
+import { REACT_APP_SECURITY_KEY } from "../constants/appConstants";
+import { encrypt } from "n-krypta";
 
 const paymentStyling = {
   fontFamily: "Nunito",
@@ -47,6 +45,10 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
   const [checkedPayments, setCheckedPayments] = useState([]);
   const [checkboxStates, setCheckboxStates] = useState({});
   const [loadingPayments, setLoadingPayments] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [bankAccount, setBankAccount] = useState("");
+  const [bankRouting, setBankRouting] = useState("");
   const { showToast } = useToast();
   const totalSelectedAmount =
     checkedPayments &&
@@ -80,14 +82,35 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
       referenceId: referenceId,
       transactionType: selectedValue,
     };
-    const AddManualPaymentRes = await AddManualPayment(params);
-    if (AddManualPaymentRes?.status === 200) {
-      showToast(AddManualPaymentRes?.data?.message, "success");
-      handleClose();
-      GetCaseDetails(caseId);
-    } else if (AddManualPaymentRes?.response?.status === 400) {
-      const errorMessage = AddManualPaymentRes?.response?.data?.message;
-      showToast(errorMessage, "error");
+
+    if (selectedValue === "Check") {
+      const checkParams = {
+        firstName: firstName,
+        lastName: lastName,
+        bankAccount: bankAccount,
+        bankRouting: bankRouting,
+      };
+      const encryptedData = encrypt(checkParams, REACT_APP_SECURITY_KEY);
+      params.data = encryptedData;
+      const AddCheckPaymentRes = await AddCheckPayment(params);
+      if (AddCheckPaymentRes?.status === 200) {
+        showToast(AddCheckPaymentRes?.data?.message, "success");
+        handleClose();
+        GetCaseDetails(caseId);
+      } else if (AddCheckPaymentRes?.response?.status === 400) {
+        const errorMessage = AddCheckPaymentRes?.response?.data?.message;
+        showToast(errorMessage, "error");
+      }
+    } else {
+      const AddManualPaymentRes = await AddManualPayment(params);
+      if (AddManualPaymentRes?.status === 200) {
+        showToast(AddManualPaymentRes?.data?.message, "success");
+        handleClose();
+        GetCaseDetails(caseId);
+      } else if (AddManualPaymentRes?.response?.status === 400) {
+        const errorMessage = AddManualPaymentRes?.response?.data?.message;
+        showToast(errorMessage, "error");
+      }
     }
     setLoading(false);
   };
@@ -125,13 +148,30 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
     if (!value) return "";
     return `$${new Intl.NumberFormat("en-US").format(value)}`;
   };
+
   const isFormValid = () => {
     return (
       amount &&
       commission > 0 &&
-      referenceId?.trim() !== "" &&
       date &&
-      selectedValue
+      selectedValue &&
+      referenceId?.trim() !== ""
+    );
+  };
+
+  const isPaymentFormValid = () => {
+    const isBankAccountValid =
+      bankAccount &&
+      (bankAccount?.length === 4 ||
+        (bankAccount?.length > 4 && bankAccount?.length <= 17));
+    const isBankRoutingValid = bankRouting?.length === 9;
+    return (
+      firstName &&
+      lastName &&
+      bankAccount &&
+      bankRouting &&
+      isBankAccountValid &&
+      isBankRoutingValid
     );
   };
 
@@ -225,7 +265,6 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
         </div>
       </Grid>
       <Grid
-        xs={12}
         container
         item
         sx={{
@@ -238,7 +277,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
             htmlFor="referenceId"
             style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
           >
-            Reference ID*
+            Reference ID {selectedValue === "Check" ? "" : "*"}
           </label>
           <input
             id="referenceId"
@@ -286,6 +325,142 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
           />
         </div>
       </Grid>
+      <Grid
+        container
+        item
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        {selectedValue === "Check" && (
+          <>
+            <div
+              style={{ width: "48%", display: "flex", flexDirection: "column" }}
+            >
+              <label
+                htmlFor="firstName"
+                style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
+              >
+                First Name*
+              </label>
+              <input
+                id="firstName"
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="Enter First Name"
+                style={textFieldStyling}
+              />
+            </div>
+            <div
+              style={{ width: "48%", display: "flex", flexDirection: "column" }}
+            >
+              <label
+                htmlFor="lastName"
+                style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
+              >
+                Last Name*
+              </label>
+              <input
+                id="lastName"
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="Enter Last Name"
+                style={textFieldStyling}
+              />
+            </div>
+            <div
+              style={{ width: "48%", display: "flex", flexDirection: "column" }}
+            >
+              <label
+                htmlFor="bankAccount"
+                style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
+              >
+                Bank Account*
+              </label>
+              <input
+                id="bankAccount"
+                type="text"
+                value={bankAccount}
+                onChange={(e) => setBankAccount(e.target.value)}
+                placeholder="Enter Bank Account"
+                style={{
+                  backgroundColor: Colors.BG_LIGHT_GRAY,
+                  height: "2.5rem",
+                  color: Colors.DIM_LIGHT_GRAY,
+                  paddingLeft: "1rem",
+                  outline: "none",
+                  border: "1px solid transparent",
+                  borderRadius: "5px",
+                  width: "100%",
+                  fontFamily: "Nunito",
+                  marginBottom: ".5rem",
+                }}
+              />
+              {bankAccount &&
+                !(
+                  bankAccount?.length === 4 ||
+                  (bankAccount?.length > 4 && bankAccount?.length <= 17)
+                ) && (
+                  <Typography
+                    sx={{
+                      color: "red",
+                      fontSize: FONT_SIZE_SMALL,
+                      fontFamily: "Nunito",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    Bank Account must be between 4 and 17 characters.
+                  </Typography>
+                )}
+            </div>
+            <div
+              style={{ width: "48%", display: "flex", flexDirection: "column" }}
+            >
+              <label
+                htmlFor="bankRouting"
+                style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
+              >
+                Bank Routing*
+              </label>
+              <input
+                id="bankRouting"
+                type="text"
+                value={bankRouting}
+                onChange={(e) => setBankRouting(e.target.value)}
+                placeholder="Enter Bank Routing"
+                style={{
+                  backgroundColor: Colors.BG_LIGHT_GRAY,
+                  height: "2.5rem",
+                  color: Colors.DIM_LIGHT_GRAY,
+                  paddingLeft: "1rem",
+                  outline: "none",
+                  border: "1px solid transparent",
+                  borderRadius: "5px",
+                  width: "100%",
+                  fontFamily: "Nunito",
+                  marginBottom: ".5rem",
+                }}
+              />
+              {bankRouting && bankRouting.length !== 9 && (
+                <Typography
+                  sx={{
+                    color: "red",
+                    fontSize: FONT_SIZE_SMALL,
+                    fontFamily: "Nunito",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  Bank Routing must be 9 characters.
+                </Typography>
+              )}
+            </div>
+          </>
+        )}
+      </Grid>
+
       <Grid item xs={12} sx={{ mb: "1rem" }}>
         {loadingPayments ? (
           <Grid
@@ -374,7 +549,9 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
         <Button
           buttonText="Add Payment"
           width="8rem"
-          disabled={!isFormValid()}
+          disabled={
+            selectedValue === "Check" ? !isPaymentFormValid() : !isFormValid()
+          }
           onClick={handleSubmit}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}

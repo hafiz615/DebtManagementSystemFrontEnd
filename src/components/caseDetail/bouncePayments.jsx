@@ -81,7 +81,7 @@ function BouncePayments({ handleClose, debtorId }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            height: "40vh",
+            maxHeight: "70vh",
           }}
         >
           <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
@@ -94,7 +94,7 @@ function BouncePayments({ handleClose, debtorId }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            height: "40vh",
+            maxHeight: "70vh",
           }}
         >
           <Typography
@@ -105,7 +105,7 @@ function BouncePayments({ handleClose, debtorId }) {
               fontWeight: "600",
             }}
           >
-            No Data Exist
+            Bounce payments does not exist...
           </Typography>
         </Grid>
       ) : (

@@ -778,7 +778,7 @@ export default function DebtorFields({
               sx={{ fontFamily: "Nunito", fontWeight: "600" }}
               gutterBottom
             >
-              Additional Contract
+              Additional Contact
             </Typography>
             <Add
               onClick={handleAddNewContact}
