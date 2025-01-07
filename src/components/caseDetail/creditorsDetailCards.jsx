@@ -66,7 +66,6 @@ export default function CreditorsDetailCards({
   verifiedSenders,
   fetchCalls,
 }) {
-  console.log(caseData, "caseData");
   const [searchText, setSearchText] = useState("");
 
   const [startIndex, setStartIndex] = useState(0);
