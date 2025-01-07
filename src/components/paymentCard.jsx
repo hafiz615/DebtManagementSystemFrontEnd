@@ -47,7 +47,6 @@ function PaymentCardDetails({ paymentGateway, setConnectPayment }) {
           window.CollectJS.configure({
             variant: "lightbox",
             callback: (token) => {
-              console.log(token, "token");
               setConnectPayment({
                 paymentToken: token?.token,
                 paymentType: "cc", // default to "cc" or adjust based on type
@@ -81,7 +80,6 @@ function PaymentCardDetails({ paymentGateway, setConnectPayment }) {
     if (newAlignment !== null) {
       handleTypeChange(newAlignment);
     } else {
-      console.log("i am in");
       window?.CollectJS?.startPaymentRequest();
     }
   };
@@ -96,7 +94,6 @@ function PaymentCardDetails({ paymentGateway, setConnectPayment }) {
         variant: "lightbox",
         paymentType: type,
         callback: (token) => {
-          console.log(token, "token");
           setConnectPayment({
             paymentToken: token?.token,
             paymentType: type,
