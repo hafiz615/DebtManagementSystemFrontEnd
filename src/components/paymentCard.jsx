@@ -40,7 +40,6 @@ function PaymentCardDetails({ paymentGateway, setConnectPayment }) {
       script.async = true;
 
       script.onload = () => {
-        console.log(`${scriptSrc} loaded successfully.`);
 
         // Reinitialize CollectJS after script loads
         if (window?.CollectJS) {
@@ -70,7 +69,6 @@ function PaymentCardDetails({ paymentGateway, setConnectPayment }) {
         // Cleanup CollectJS instance, but leave the script to avoid disruption
         if (window.CollectJS) {
           delete window.CollectJS;
-          console.log("Cleaned up CollectJS object.");
         }
       };
     }
