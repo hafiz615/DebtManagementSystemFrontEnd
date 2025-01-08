@@ -75,13 +75,13 @@ function TransactionRow({
     width: "20%",
     margin: "5px 0px",
   };
-  const typographyHeadingStyle = {
-    fontSize: "13px",
-    fontFamily: "Nunito",
-    fontWeight: "600",
-    width: "20%",
-    margin: "5px 0px",
-  };
+  // const typographyHeadingStyle = {
+  //   fontSize: "13px",
+  //   fontFamily: "Nunito",
+  //   fontWeight: "600",
+  //   width: "20%",
+  //   margin: "5px 0px",
+  // };
 
   return (
     <>
@@ -99,7 +99,7 @@ function TransactionRow({
         </Typography>
       )}
       {/* headers */}
-      {!isEmpty(data) && heading !== "Upcoming" && (
+      {/* {!isEmpty(data) && heading !== "Upcoming" && (
         <div
           style={{
             display: "flex",
@@ -122,7 +122,7 @@ function TransactionRow({
           <p style={typographyHeadingStyle}>Retry Transaction</p>
           <p style={typographyHeadingStyle}>Revert Transactions</p>
         </div>
-      )}
+      )} */}
 
       {data?.map((item, index) => {
         const colorScheme =

@@ -6,6 +6,13 @@ import TransactionRow from "../transactionRow";
 import { Colors } from "../../config/default";
 import { isEmpty } from "lodash";
 
+const typographyHeadingStyle = {
+  fontSize: "13px",
+  fontFamily: "Nunito",
+  fontWeight: "600",
+  width: "20%",
+  margin: "5px 0px",
+};
 export default function TransactionDetails({
   paymentDetails,
   loading,
@@ -92,6 +99,28 @@ export default function TransactionDetails({
             },
           }}
         >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              borderBottom: `1px solid ${Colors.BLACK}`,
+              width: "100%",
+              marginBottom: "10px",
+              position: "sticky",
+              top: 0,
+              backgroundColor: "white",
+              zIndex: 1,
+            }}
+          >
+            <p style={typographyHeadingStyle}>Date</p>
+            <p style={typographyHeadingStyle}>Amount</p>
+            <p style={typographyHeadingStyle}>Payment Status</p>
+            <p style={typographyHeadingStyle}>Creditor Name</p>
+            <p style={typographyHeadingStyle}>Payment Type</p>
+            <p style={typographyHeadingStyle}>Payment Gateway</p>
+            <p style={typographyHeadingStyle}>Retry Transaction</p>
+            <p style={typographyHeadingStyle}>Revert Transactions</p>
+          </div>
           <Grid container item xs={12}>
             <TransactionRow
               data={paymentDetails?.transactions?.previous}
