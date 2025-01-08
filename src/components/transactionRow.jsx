@@ -98,7 +98,7 @@ function TransactionRow({
           {heading}
         </Typography>
       )}
-
+      {/* headers */}
       {!isEmpty(data) && heading !== "Upcoming" && (
         <div
           style={{
