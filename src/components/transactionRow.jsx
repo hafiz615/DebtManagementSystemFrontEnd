@@ -75,13 +75,6 @@ function TransactionRow({
     width: "20%",
     margin: "5px 0px",
   };
-  const typographyHeadingStyle = {
-    fontSize: "13px",
-    fontFamily: "Nunito",
-    fontWeight: "600",
-    width: "20%",
-    margin: "5px 0px",
-  };
 
   return (
     <>
@@ -97,31 +90,6 @@ function TransactionRow({
         >
           {heading}
         </Typography>
-      )}
-      {/* headers */}
-      {!isEmpty(data) && heading !== "Upcoming" && (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            borderBottom: `1px solid ${Colors.BLACK}`,
-            width: "100%",
-            marginBottom: "10px",
-            position: "sticky",
-            top: 0,
-            backgroundColor: "white",
-            zIndex: 1,
-          }}
-        >
-          <p style={typographyHeadingStyle}>Date</p>
-          <p style={typographyHeadingStyle}>Amount</p>
-          <p style={typographyHeadingStyle}>Payment Status</p>
-          <p style={typographyHeadingStyle}>Creditor Name</p>
-          <p style={typographyHeadingStyle}>Payment Type</p>
-          <p style={typographyHeadingStyle}>Payment Gateway</p>
-          <p style={typographyHeadingStyle}>Retry Transaction</p>
-          <p style={typographyHeadingStyle}>Revert Transactions</p>
-        </div>
       )}
 
       {data?.map((item, index) => {
