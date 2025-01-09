@@ -30,6 +30,7 @@ function App() {
   const [callInterval, setCallInterval] = useState(null);
   const [allCases, setAllCases] = useState([]);
   const [callSid, setCallSid] = useState();
+  const [caseMenuActive, setCaseMenuActive] = useState(false);
 
   const startupClient = async () => {
     try {
@@ -59,6 +60,7 @@ function App() {
       codecPreferences: ["opus", "pcmu"],
     });
     twilioDevice.on("incoming", (incomingCall) => {
+      setCaseMenuActive(false);
       setIncomingCall(incomingCall);
       setIsModalOpen(true);
       getCreditorCompanies();
@@ -68,6 +70,7 @@ function App() {
         setIncomingCall(null);
         setCallInterval(null);
         setCallDuration(0);
+        setCaseMenuActive(true);
       });
       incomingCall.on("cancel", () => {
         setIncomingCall(null);
@@ -239,6 +242,8 @@ function App() {
           setCallInterval={setCallInterval}
           allCases={allCases}
           callSid={callSid}
+          caseMenuActive={caseMenuActive}
+          setCaseMenuActive={setCaseMenuActive}
         />
       )}
     </>
