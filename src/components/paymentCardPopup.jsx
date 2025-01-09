@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Typography, Checkbox, CircularProgress } from "@mui/material";
+import {
+  Grid,
+  Typography,
+  Checkbox,
+  CircularProgress,
+  IconButton,
+} from "@mui/material";
 import Button from "./button";
 import { Colors } from "../config/default";
 import Dropdown from "./dropdown";
@@ -12,7 +18,7 @@ import {
 import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../constants/appConstants";
 import { formatDollarAmount } from "../common";
 import ScrollbarStyles from "./customScroll";
-import { Close } from "@mui/icons-material";
+import { ArrowLeft, ArrowRight, Close } from "@mui/icons-material";
 import { REACT_APP_SECURITY_KEY } from "../constants/appConstants";
 import { encrypt } from "n-krypta";
 
@@ -49,6 +55,8 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
   const [lastName, setLastName] = useState("");
   const [bankAccount, setBankAccount] = useState("");
   const [bankRouting, setBankRouting] = useState("");
+  const [currentPaymentPage, setCurrentPaymentPage] = useState(1);
+  const [totalPaymentPage, setTotalPaymentPage] = useState();
   const { showToast } = useToast();
   const totalSelectedAmount =
     checkedPayments &&
@@ -129,16 +137,19 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
 
   const getUpcommingPayments = async () => {
     setLoadingPayments(true);
-    const res = await GetAllUpcomingPayments(debtorId);
+    const res = await GetAllUpcomingPayments(currentPaymentPage, debtorId);
     if (res?.status === 200) {
+      let totalPage =
+        Math.ceil(res?.data?.data?.transactions?.totalCount / 10) || 0;
       setUpcomingPayments(res?.data?.data?.transactions?.upcomingPayments);
+      setTotalPaymentPage(totalPage);
     }
     setLoadingPayments(false);
   };
 
   useEffect(() => {
     getUpcommingPayments();
-  }, []);
+  }, [currentPaymentPage]);
 
   useEffect(() => {
     setCommission(amount - totalSelectedAmount);
@@ -544,7 +555,33 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
           </Grid>
         )}
       </Grid>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-end",
+        }}
+      >
+        <Typography sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}>
+          {totalPaymentPage === 0 ? 0 : currentPaymentPage} of{" "}
+          {totalPaymentPage}
+        </Typography>
+        <IconButton
+          onClick={() => setCurrentPaymentPage(currentPaymentPage - 1)}
+          disabled={currentPaymentPage === 1}
+        >
+          <ArrowLeft />
+        </IconButton>
 
+        <IconButton
+          onClick={() => setCurrentPaymentPage(currentPaymentPage + 1)}
+          disabled={
+            totalPaymentPage === 0 || currentPaymentPage === totalPaymentPage
+          }
+        >
+          <ArrowRight />
+        </IconButton>
+      </div>
       <Grid item sx={{ display: "flex", justifyContent: "flex-end" }}>
         <Button
           buttonText="Add Payment"

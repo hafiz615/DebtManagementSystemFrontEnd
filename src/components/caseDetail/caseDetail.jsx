@@ -125,6 +125,8 @@ function CaseDetail() {
   const [cashFlowLoading, setCashFlowLoading] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [paymentData, setPaymentData] = useState();
+  const [currentPaymentPage, setCurrentPaymentPage] = useState(1);
+  const [totalPaymentPage, setTotalPaymentPage] = useState();
   const [statementSummariesLoading, setStatementSummariesLoading] =
     useState(false);
   const [mcaByMonth, setMcaByMonth] = useState();
@@ -189,11 +191,17 @@ function CaseDetail() {
     setValue(newValue);
   };
 
-  const GetCasePaymentDetails = async (rowId) => {
-    setIsPaymentLoading(true);
-    const casePayment = await GetCasePaymentById(rowId);
+  const GetCasePaymentDetails = async (rowId, load) => {
+    if (!load) {
+      setIsPaymentLoading(true);
+    }
+    const casePayment = await GetCasePaymentById(currentPaymentPage, rowId);
     if (casePayment?.status === 200) {
+      let totalPage = Math.ceil(
+        casePayment?.data?.data?.transactions?.totalCount / 10
+      );
       setPaymentDetails(casePayment?.data?.data);
+      setTotalPaymentPage(totalPage);
     } else if (
       casePayment?.response?.status === 401 ||
       casePayment?.response?.status === 403
@@ -375,6 +383,10 @@ function CaseDetail() {
     GetCasePaymentDetails(id);
   }, [id]);
 
+  useEffect(() => {
+    GetCasePaymentDetails(id, true);
+  }, [currentPaymentPage]);
+
   const currentCreditor = allCreditorNames[tabValue];
 
   const selectedCreditorDetails = creditorNames?.find(
@@ -527,26 +539,6 @@ function CaseDetail() {
           GetLogsById={GetLogsById}
           data={caseData}
         />
-        {/* {caseData?.settlementRange ? (
-              <TextButton
-                buttonText="Get Settlement Range"
-                height="2.5rem"
-                width="14rem"
-                onClick={() => {
-                  navigate(`/all-cases/${id}`);
-                }}
-                backgroundColor={Colors.SKY_BLUE}
-                hoverColor={Colors.SKY_BLUE}
-              />
-            ) : (
-              <MuiModels
-                show="WeeklyBudget"
-                buttonName="Get Settlement Range"
-                iconColor={Colors.BLACK}
-                maxHeight="78vh"
-                caseData={caseData}
-              />
-            )} */}
       </div>
 
       <AntTabs
@@ -654,6 +646,9 @@ function CaseDetail() {
             isChecked={isChecked}
             handleToggle={handleToggle}
             GetCasePaymentDetails={GetCasePaymentDetails}
+            currentPaymentPage={currentPaymentPage}
+            setCurrentPaymentPage={setCurrentPaymentPage}
+            totalPaymentPage={totalPaymentPage}
           />
         )}
       </Grid>

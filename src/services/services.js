@@ -246,10 +246,10 @@ export const GetCaseById = async (id) => {
   }
 };
 
-export const GetCasePaymentById = async (id) => {
+export const GetCasePaymentById = async (page, id) => {
   try {
     return await axios.get(
-      BASE_URL + `/v1/payment/getCasePayments/${id}`,
+      BASE_URL + `/v1/payment/getCasePayments/${id}?page=${page}&limit=10`,
       setHeaders()
     );
   } catch (error) {
@@ -1414,10 +1414,10 @@ export const CancelDebtorPaymentPlan = async (id) => {
     return error;
   }
 };
-export const GetAllTransactions = async () => {
+export const GetAllTransactions = async (page) => {
   try {
     return await axios.get(
-      BASE_URL + `/v1/payment/getCommissionPayments`,
+      BASE_URL + `/v1/payment/getCommissionPayments?page=${page}&limit=10`,
       setHeaders()
     );
   } catch (error) {
@@ -1556,10 +1556,11 @@ export const handleDeleteFile = async (itemKey, caseDataId, type) => {
     return error;
   }
 };
-export const GetAllUpcomingPayments = async (id) => {
+export const GetAllUpcomingPayments = async (page, id) => {
   try {
     return await axios.get(
-      BASE_URL + `/v1/payment/getAllUpcomingPayments/${id}`,
+      BASE_URL +
+        `/v1/payment/getAllUpcomingPayments/${id}?page=${page}&limit=10`,
       setHeaders()
     );
   } catch (error) {

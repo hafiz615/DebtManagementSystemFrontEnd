@@ -101,6 +101,9 @@ export default function CaseById({
   handleToggle,
   isChecked,
   GetCasePaymentDetails,
+  currentPaymentPage,
+  setCurrentPaymentPage,
+  totalPaymentPage,
 }) {
   const navigate = useNavigate();
   const [deleting, setDeleting] = useState(false);
@@ -502,6 +505,9 @@ export default function CaseById({
                     GetCasePaymentDetails={GetCasePaymentDetails}
                     caseData={caseData}
                     GetCaseDetails={GetCaseDetails}
+                    currentPaymentPage={currentPaymentPage}
+                    setCurrentPaymentPage={setCurrentPaymentPage}
+                    totalPaymentPage={totalPaymentPage}
                   />
                 ) : (
                   <CaseFileCard
