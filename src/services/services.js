@@ -1711,3 +1711,21 @@ export const UpdateCheckIds = async (payload, id) => {
     return error;
   }
 };
+export const GetAllUserCases = async () => {
+  try {
+    return await axios.get(BASE_URL + `/v1/case/getAllUserCases`, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateCallByCase = async (payload, callId) => {
+  try {
+    return await axios.patch(
+      BASE_URL + `/v1/call/updateCall/${callId}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

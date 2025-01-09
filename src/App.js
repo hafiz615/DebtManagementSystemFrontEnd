@@ -19,7 +19,7 @@ import PipelinesPage from "./pages/pipelinePage";
 import UpdateCase from "./pages/updateCase";
 import InboxPage from "./pages/inboxPage";
 import { useEffect, useState } from "react";
-import { GetCallToken } from "./services/services";
+import { GetAllUserCases, GetCallToken } from "./services/services";
 import { Device } from "@twilio/voice-sdk";
 import IncomingCall from "./components/incomingCall";
 
@@ -28,6 +28,8 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
   const [callInterval, setCallInterval] = useState(null);
+  const [allCases, setAllCases] = useState([]);
+  const [callSid, setCallSid] = useState();
 
   const startupClient = async () => {
     try {
@@ -35,6 +37,13 @@ function App() {
       initializeDevice(response.data.data.token);
     } catch (err) {
       console.error("Failed to fetch token", err);
+    }
+  };
+
+  const getCreditorCompanies = async () => {
+    const res = await GetAllUserCases();
+    if (res?.status === 200) {
+      setAllCases(res?.data?.data);
     }
   };
 
@@ -46,9 +55,10 @@ function App() {
     twilioDevice.on("incoming", (incomingCall) => {
       setIncomingCall(incomingCall);
       setIsModalOpen(true);
+      getCreditorCompanies();
+      setCallSid(incomingCall?.parameters?.CallSid)
       incomingCall.on("disconnect", () => {
         setIncomingCall(null);
-        setIsModalOpen(false);
         setCallInterval(null);
         setCallDuration(0);
       });
@@ -61,6 +71,8 @@ function App() {
     });
     twilioDevice.register();
   };
+
+ 
 
   useEffect(() => {
     startupClient();
@@ -220,6 +232,8 @@ function App() {
           setCallDuration={setCallDuration}
           callInterval={callInterval}
           setCallInterval={setCallInterval}
+          allCases={allCases}
+          callSid={callSid}
         />
       )}
     </>
