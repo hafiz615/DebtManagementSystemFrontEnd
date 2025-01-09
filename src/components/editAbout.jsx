@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Box, Grid, Typography, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Typography,
+  CircularProgress,
+  Menu,
+  Popover,
+  MenuItem,
+  Button,
+} from "@mui/material";
 import Close from "@mui/icons-material/Close";
 import { Colors } from "../config/default";
 import Dropdown from "./dropdown";
@@ -12,6 +21,33 @@ import {
 import { isEmpty } from "lodash";
 import { useParams } from "react-router-dom";
 import { useToast } from "../toast/toastContext";
+import ScrollbarStyles from "../components/customScroll";
+import { FONT_SIZE_LARGE } from "../constants/appConstants";
+import { ArrowRight, ExpandMore } from "@mui/icons-material";
+
+const fontStyling = { fontSize: FONT_SIZE_LARGE, fontFamily: "Nunito" };
+const divStyling = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  backgroundColor: Colors.BG_LIGHT_GRAY,
+  color: Colors.DARK_GRAY,
+  borderRadius: "5px",
+  height: "2.5rem",
+  cursor: "pointer",
+  fontSize: FONT_SIZE_LARGE,
+  fontFamily: "Nunito",
+  padding: "0px 10px",
+  width: "100%",
+  // marginBottom: headerName ? "0.8rem" : "auto",
+};
+const buttonStyling = {
+  textTransform: "none",
+  color: Colors.DARK_GRAY,
+  fontFamily: "Nunito",
+  fontSize: FONT_SIZE_LARGE,
+  textAlign: "left",
+};
 
 export default function EditAbout({ handleClose, data, GetCaseDetails }) {
   const [userArray, setUserArray] = useState([]);
@@ -44,6 +80,28 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
   const [negotiatorId, setNegotiatorId] = useState(data?.negotiatorId || "");
   const [caseOwnerId, setCaseOwnerId] = useState(data?.caseOwnerId || "");
 
+  const pipleStatudRes = data?.pipelineStatus;
+  const pipelineStatus = pipleStatudRes || [];
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [subMenuAnchorEl, setSubMenuAnchorEl] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState(data?.status || "");
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+    setSubMenuAnchorEl(null);
+  };
+
+  const handleOpenSubMenu = (event, category) => {
+    setSubMenuAnchorEl(event.currentTarget);
+    setSelectedCategory(category);
+  };
+
+  const handleMenuClick = (statusName) => {
+    setSelectedStatus(statusName);
+    setAnchorEl(null);
+    setSubMenuAnchorEl(null);
+  };
+
   const { showToast } = useToast();
 
   const GetUsers = async () => {
@@ -74,11 +132,10 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
   const handleUpdate = async () => {
     setUpdating(true);
     const params = {
-      status: status,
+      status: selectedStatus,
       caseOwner: caseOwner,
       manager: manager,
       negotiator: negotiator,
-
       caseOwnerId: caseOwnerId,
       negotiatorId: negotiatorId,
       managerId: managerId,
@@ -100,19 +157,8 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
         sx={{
           cursor: "pointer",
           display: "flex",
-          justifyContent: "flex-end",
+          justifyContent: "space-between",
           marginBottom: "1rem",
-        }}
-      >
-        <Close />
-      </Box>
-      <Grid
-        item
-        xs={12}
-        sx={{
-          borderRadius: "10px",
-          marginTop: { xs: ".5rem", xl: "0rem" },
-          backgroundColor: Colors.WHITE,
         }}
       >
         <Typography
@@ -125,6 +171,17 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
         >
           Edit Information
         </Typography>
+        <Close />
+      </Box>
+      <Grid
+        item
+        xs={12}
+        sx={{
+          borderRadius: "10px",
+          marginTop: { xs: ".5rem", xl: "0rem" },
+          backgroundColor: Colors.WHITE,
+        }}
+      >
         {loading ? (
           <Grid
             item
@@ -155,18 +212,93 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
                     color: Colors.DARK_GRAY,
                   }}
                 >
-                  Status
+                  Select Pipeline Status
                 </Typography>
-                <Dropdown
-                  menuWidth="20.5rem"
-                  menuItems={menu}
-                  placeholder="Status"
-                  backgroundColor={Colors.BG_LIGHT_GRAY}
-                  hoverColor={Colors.BG_LIGHT_GRAY}
-                  width="100%"
-                  selectedValue={status}
-                  setSelectedValue={setStatus}
-                />
+                <div>
+                  <div
+                    style={divStyling}
+                    onClick={(e) => setAnchorEl(e.currentTarget)}
+                  >
+                    <span>{`${selectedStatus || data?.status}`}</span>
+                    <span style={{ marginTop: "5px" }}>
+                      <ExpandMore />
+                    </span>
+                  </div>
+
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleCloseMenu}
+                  >
+                    {pipelineStatus.map((pipeline) => (
+                      <MenuItem
+                        key={pipeline.pipeline}
+                        onClick={(event) =>
+                          handleOpenSubMenu(event, pipeline.pipeline)
+                        }
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          fontFamily: "Nunito",
+                          color: Colors.DARK_GRAY,
+                        }}
+                      >
+                        {pipeline.pipeline}
+                        <ArrowRight />
+                      </MenuItem>
+                    ))}
+                  </Menu>
+
+                  <Popover
+                    anchorEl={subMenuAnchorEl}
+                    open={Boolean(subMenuAnchorEl)}
+                    onClose={() => setSubMenuAnchorEl(null)}
+                    anchorOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "left",
+                    }}
+                  >
+                    <Grid
+                      sx={{
+                        maxHeight: "300px",
+                        overflowY: "auto",
+                        ...ScrollbarStyles,
+                      }}
+                    >
+                      {selectedCategory &&
+                        pipelineStatus
+                          .find(
+                            (pipeline) => pipeline.pipeline === selectedCategory
+                          )
+                          ?.status.map((status, index) => (
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                              }}
+                            >
+                              <Button
+                                key={index}
+                                sx={buttonStyling}
+                                onClick={() => {
+                                  handleMenuClick(
+                                    status.name,
+                                    selectedCategory
+                                  );
+                                  handleCloseMenu();
+                                }}
+                              >
+                                {status.name}
+                              </Button>
+                            </div>
+                          ))}
+                    </Grid>
+                  </Popover>
+                </div>
               </Grid>
               <Grid item xs={12} md={5.5}>
                 <Typography
