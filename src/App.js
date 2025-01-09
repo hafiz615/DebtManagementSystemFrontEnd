@@ -19,7 +19,7 @@ import PipelinesPage from "./pages/pipelinePage";
 import UpdateCase from "./pages/updateCase";
 import InboxPage from "./pages/inboxPage";
 import { useEffect, useState } from "react";
-import { GetAllUserCases, GetCallToken } from "./services/services";
+import { GetAllUserCases, GetCallSid, GetCallToken } from "./services/services";
 import { Device } from "@twilio/voice-sdk";
 import IncomingCall from "./components/incomingCall";
 
@@ -46,6 +46,12 @@ function App() {
       setAllCases(res?.data?.data);
     }
   };
+  const getCallSID = async (callSid) => {
+    const SIDres = await GetCallSid(callSid);
+    if (SIDres?.status === 200) {
+      setCallSid(SIDres?.data?.data);
+    }
+  };
 
   const initializeDevice = (token) => {
     const twilioDevice = new Device(token, {
@@ -56,7 +62,8 @@ function App() {
       setIncomingCall(incomingCall);
       setIsModalOpen(true);
       getCreditorCompanies();
-      setCallSid(incomingCall?.parameters?.CallSid)
+      getCallSID(incomingCall?.parameters?.CallSid);
+
       incomingCall.on("disconnect", () => {
         setIncomingCall(null);
         setCallInterval(null);
@@ -71,8 +78,6 @@ function App() {
     });
     twilioDevice.register();
   };
-
- 
 
   useEffect(() => {
     startupClient();
