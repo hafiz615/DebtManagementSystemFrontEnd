@@ -230,11 +230,11 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
                     open={Boolean(anchorEl)}
                     onClose={handleCloseMenu}
                   >
-                    {pipelineStatus.map((pipeline) => (
+                    {pipelineStatus?.map((pipeline) => (
                       <MenuItem
-                        key={pipeline.pipeline}
+                        key={pipeline?.pipeline}
                         onClick={(event) =>
-                          handleOpenSubMenu(event, pipeline.pipeline)
+                          handleOpenSubMenu(event, pipeline?.pipeline)
                         }
                         sx={{
                           display: "flex",
@@ -243,7 +243,7 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
                           color: Colors.DARK_GRAY,
                         }}
                       >
-                        {pipeline.pipeline}
+                        {pipeline?.pipeline}
                         <ArrowRight />
                       </MenuItem>
                     ))}
@@ -271,10 +271,11 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
                     >
                       {selectedCategory &&
                         pipelineStatus
-                          .find(
-                            (pipeline) => pipeline.pipeline === selectedCategory
+                          ?.find(
+                            (pipeline) =>
+                              pipeline?.pipeline === selectedCategory
                           )
-                          ?.status.map((status, index) => (
+                          ?.status?.map((status, index) => (
                             <div
                               style={{
                                 display: "flex",
@@ -286,13 +287,13 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
                                 sx={buttonStyling}
                                 onClick={() => {
                                   handleMenuClick(
-                                    status.name,
+                                    status?.name,
                                     selectedCategory
                                   );
                                   handleCloseMenu();
                                 }}
                               >
-                                {status.name}
+                                {status?.name}
                               </Button>
                             </div>
                           ))}
