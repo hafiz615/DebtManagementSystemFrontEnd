@@ -19,7 +19,7 @@ import PipelinesPage from "./pages/pipelinePage";
 import UpdateCase from "./pages/updateCase";
 import InboxPage from "./pages/inboxPage";
 import { useEffect, useState } from "react";
-import { GetAllUserCases, GetCallToken } from "./services/services";
+import { GetAllUserCases, GetCallSid, GetCallToken } from "./services/services";
 import { Device } from "@twilio/voice-sdk";
 import IncomingCall from "./components/incomingCall";
 
@@ -30,6 +30,7 @@ function App() {
   const [callInterval, setCallInterval] = useState(null);
   const [allCases, setAllCases] = useState([]);
   const [callSid, setCallSid] = useState();
+  const [caseMenuActive, setCaseMenuActive] = useState(false);
 
   const startupClient = async () => {
     try {
@@ -46,6 +47,12 @@ function App() {
       setAllCases(res?.data?.data);
     }
   };
+  const getCallSID = async (callSid) => {
+    const SIDres = await GetCallSid(callSid);
+    if (SIDres?.status === 200) {
+      setCallSid(SIDres?.data?.data);
+    }
+  };
 
   const initializeDevice = (token) => {
     const twilioDevice = new Device(token, {
@@ -53,14 +60,17 @@ function App() {
       codecPreferences: ["opus", "pcmu"],
     });
     twilioDevice.on("incoming", (incomingCall) => {
+      setCaseMenuActive(false);
       setIncomingCall(incomingCall);
       setIsModalOpen(true);
       getCreditorCompanies();
-      setCallSid(incomingCall?.parameters?.CallSid)
+      getCallSID(incomingCall?.parameters?.CallSid);
+
       incomingCall.on("disconnect", () => {
         setIncomingCall(null);
         setCallInterval(null);
         setCallDuration(0);
+        setCaseMenuActive(true);
       });
       incomingCall.on("cancel", () => {
         setIncomingCall(null);
@@ -71,8 +81,6 @@ function App() {
     });
     twilioDevice.register();
   };
-
- 
 
   useEffect(() => {
     startupClient();
@@ -234,6 +242,8 @@ function App() {
           setCallInterval={setCallInterval}
           allCases={allCases}
           callSid={callSid}
+          caseMenuActive={caseMenuActive}
+          setCaseMenuActive={setCaseMenuActive}
         />
       )}
     </>

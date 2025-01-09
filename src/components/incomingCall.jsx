@@ -28,9 +28,10 @@ export default function IncomingCall({
   setCallInterval,
   allCases,
   callSid,
+  caseMenuActive,
+  setCaseMenuActive,
 }) {
   const [selectedCase, setSelectedCase] = useState();
-  const [caseMenuActive, setCaseMenuActive] = useState(false);
   const [loading, setLoading] = useState(false);
   const menuItem =
     allCases &&

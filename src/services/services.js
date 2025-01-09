@@ -1729,3 +1729,14 @@ export const UpdateCallByCase = async (payload, callId) => {
     return error;
   }
 };
+
+export const GetCallSid = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/call/twilio/getIncomingCall/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
