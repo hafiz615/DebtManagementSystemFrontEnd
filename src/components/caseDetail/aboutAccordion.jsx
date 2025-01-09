@@ -25,9 +25,14 @@ export default function AboutAccordion({ caseDetails, GetCaseDetails }) {
 
   const aboutData = [
     {
+      name: "Pipeline Status",
+      value: caseDetails?.status || "-",
+    },
+    {
       name: "Creditor",
       value: caseDetails?.creditor?.basicInformation?.fullName || "-",
     },
+
     { name: "Manager", value: caseDetails?.manager || "-" },
     { name: "CSM", value: caseDetails?.caseOwner || "-" },
 
