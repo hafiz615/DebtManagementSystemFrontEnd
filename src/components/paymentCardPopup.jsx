@@ -140,7 +140,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
     const res = await GetAllUpcomingPayments(currentPaymentPage, debtorId);
     if (res?.status === 200) {
       let totalPage =
-        Math.ceil(res?.data?.data?.transactions?.totalCount / 10) || 0;
+        Math.ceil(res?.data?.data?.transactions?.totalCount / 20) || 0;
       setUpcomingPayments(res?.data?.data?.transactions?.upcomingPayments);
       setTotalPaymentPage(totalPage);
     }
