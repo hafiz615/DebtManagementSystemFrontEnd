@@ -45,7 +45,7 @@ export default function TransactionAccordion() {
     if (response?.status === 200) {
       setPaymentDetails(response?.data?.data);
       let totalPage = Math.ceil(
-        response?.data?.data?.transactions?.totalCount / 10
+        response?.data?.data?.transactions?.totalCount / 20
       );
       setTotalPaymentPage(totalPage);
     } else if (
