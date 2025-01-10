@@ -1,10 +1,12 @@
 import React from "react";
 
-import { Grid, CircularProgress, Typography } from "@mui/material";
+import { Grid, CircularProgress, Typography, IconButton } from "@mui/material";
 import TransactionRow from "../transactionRow";
 
 import { Colors } from "../../config/default";
 import { isEmpty } from "lodash";
+import { ArrowLeft, ArrowRight } from "@mui/icons-material";
+import { FONT_SIZE_LARGE } from "../../constants/appConstants";
 
 const typographyHeadingStyle = {
   fontSize: "13px",
@@ -21,6 +23,9 @@ export default function TransactionDetails({
   hideTransferPayment,
   caseData,
   GetCaseDetails,
+  currentPaymentPage,
+  setCurrentPaymentPage,
+  totalPaymentPage,
 }) {
   return (
     <Grid
@@ -140,6 +145,38 @@ export default function TransactionDetails({
               GetCaseDetails={GetCaseDetails}
             />
           </Grid>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              position: "absolute",
+              bottom: -8,
+              right: 10,
+            }}
+          >
+            <Typography
+              sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
+            >
+              {totalPaymentPage === 0 ? 0 : currentPaymentPage} of{" "}
+              {totalPaymentPage}
+            </Typography>
+            <IconButton
+              onClick={() => setCurrentPaymentPage(currentPaymentPage - 1)}
+              disabled={currentPaymentPage === 1}
+            >
+              <ArrowLeft />
+            </IconButton>
+
+            <IconButton
+              onClick={() => setCurrentPaymentPage(currentPaymentPage + 1)}
+              disabled={
+                totalPaymentPage === 0 ||
+                currentPaymentPage === totalPaymentPage
+              }
+            >
+              <ArrowRight />
+            </IconButton>
+          </div>
         </Grid>
       )}
     </Grid>

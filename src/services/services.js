@@ -246,10 +246,10 @@ export const GetCaseById = async (id) => {
   }
 };
 
-export const GetCasePaymentById = async (id) => {
+export const GetCasePaymentById = async (page, id) => {
   try {
     return await axios.get(
-      BASE_URL + `/v1/payment/getCasePayments/${id}`,
+      BASE_URL + `/v1/payment/getCasePayments/${id}?page=${page}&limit=10`,
       setHeaders()
     );
   } catch (error) {
@@ -1414,10 +1414,10 @@ export const CancelDebtorPaymentPlan = async (id) => {
     return error;
   }
 };
-export const GetAllTransactions = async () => {
+export const GetAllTransactions = async (page) => {
   try {
     return await axios.get(
-      BASE_URL + `/v1/payment/getCommissionPayments`,
+      BASE_URL + `/v1/payment/getCommissionPayments?page=${page}&limit=10`,
       setHeaders()
     );
   } catch (error) {
@@ -1497,9 +1497,12 @@ export const UpdateContractDetails = async (payload, id) => {
     return error;
   }
 };
-export const GetCalls = async (id) => {
+export const GetCalls = async (id, page) => {
   try {
-    return await axios.get(BASE_URL + `/v1/call/getCalls/${id}`, setHeaders());
+    return await axios.get(
+      BASE_URL + `/v1/call/getCalls/${id}?page=${page}&limit=10`,
+      setHeaders()
+    );
   } catch (error) {
     return error;
   }
@@ -1556,10 +1559,11 @@ export const handleDeleteFile = async (itemKey, caseDataId, type) => {
     return error;
   }
 };
-export const GetAllUpcomingPayments = async (id) => {
+export const GetAllUpcomingPayments = async (page, id) => {
   try {
     return await axios.get(
-      BASE_URL + `/v1/payment/getAllUpcomingPayments/${id}`,
+      BASE_URL +
+        `/v1/payment/getAllUpcomingPayments/${id}?page=${page}&limit=10`,
       setHeaders()
     );
   } catch (error) {
@@ -1705,6 +1709,35 @@ export const UpdateCheckIds = async (payload, id) => {
     return await axios.post(
       BASE_URL + `/v1/seemlesschex/updateCheck/${id}`,
       payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetAllUserCases = async () => {
+  try {
+    return await axios.get(BASE_URL + `/v1/case/getAllUserCases`, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateCallByCase = async (payload, callId) => {
+  try {
+    return await axios.patch(
+      BASE_URL + `/v1/call/updateCall/${callId}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetCallSid = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/call/twilio/getIncomingCall/${id}`,
       setHeaders()
     );
   } catch (error) {

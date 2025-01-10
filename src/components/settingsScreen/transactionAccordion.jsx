@@ -17,6 +17,7 @@ const StyledAccordion = styled(Accordion)({
   width: "100%",
   borderRadius: "1rem !important",
   backgroundColor: Colors.WHITE,
+  marginTop: "1rem",
   boxShadow: "none",
 });
 const StyledAccordionSummary = styled(AccordionSummary)({
@@ -35,12 +36,18 @@ const StyledAccordionDetails = styled(AccordionDetails)({
 export default function TransactionAccordion() {
   const [paymentDetails, setPaymentDetails] = useState({});
   const [isPaymentLoading, setIsPaymentLoading] = useState(false);
+  const [currentPaymentPage, setCurrentPaymentPage] = useState(1);
+  const [totalPaymentPage, setTotalPaymentPage] = useState();
 
   const getCommissionPayments = async () => {
     setIsPaymentLoading(true);
-    const response = await GetAllTransactions();
+    const response = await GetAllTransactions(currentPaymentPage);
     if (response?.status === 200) {
       setPaymentDetails(response?.data?.data);
+      let totalPage = Math.ceil(
+        response?.data?.data?.transactions?.totalCount / 10
+      );
+      setTotalPaymentPage(totalPage);
     } else if (
       response?.response?.status === 401 ||
       response?.response?.status === 403
@@ -53,7 +60,7 @@ export default function TransactionAccordion() {
 
   useEffect(() => {
     getCommissionPayments();
-  }, []);
+  }, [currentPaymentPage]);
 
   return (
     <StyledAccordion>
@@ -66,6 +73,9 @@ export default function TransactionAccordion() {
           paymentDetails={paymentDetails}
           getCommissionPayments={getCommissionPayments}
           hideTransferPayment={true}
+          currentPaymentPage={currentPaymentPage}
+          setCurrentPaymentPage={setCurrentPaymentPage}
+          totalPaymentPage={totalPaymentPage}
         />
       </StyledAccordionDetails>
     </StyledAccordion>

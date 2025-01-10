@@ -19,7 +19,7 @@ import PipelinesPage from "./pages/pipelinePage";
 import UpdateCase from "./pages/updateCase";
 import InboxPage from "./pages/inboxPage";
 import { useEffect, useState } from "react";
-import { GetCallToken } from "./services/services";
+import { GetAllUserCases, GetCallSid, GetCallToken } from "./services/services";
 import { Device } from "@twilio/voice-sdk";
 import IncomingCall from "./components/incomingCall";
 
@@ -28,6 +28,9 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
   const [callInterval, setCallInterval] = useState(null);
+  const [allCases, setAllCases] = useState([]);
+  const [callSid, setCallSid] = useState();
+  const [caseMenuActive, setCaseMenuActive] = useState(false);
 
   const startupClient = async () => {
     try {
@@ -38,19 +41,36 @@ function App() {
     }
   };
 
+  const getCreditorCompanies = async () => {
+    const res = await GetAllUserCases();
+    if (res?.status === 200) {
+      setAllCases(res?.data?.data);
+    }
+  };
+  const getCallSID = async (callSid) => {
+    const SIDres = await GetCallSid(callSid);
+    if (SIDres?.status === 200) {
+      setCallSid(SIDres?.data?.data);
+    }
+  };
+
   const initializeDevice = (token) => {
     const twilioDevice = new Device(token, {
       logLevel: 1,
       codecPreferences: ["opus", "pcmu"],
     });
     twilioDevice.on("incoming", (incomingCall) => {
+      setCaseMenuActive(false);
       setIncomingCall(incomingCall);
       setIsModalOpen(true);
+      getCreditorCompanies();
+      getCallSID(incomingCall?.parameters?.CallSid);
+
       incomingCall.on("disconnect", () => {
         setIncomingCall(null);
-        setIsModalOpen(false);
         setCallInterval(null);
         setCallDuration(0);
+        setCaseMenuActive(true);
       });
       incomingCall.on("cancel", () => {
         setIncomingCall(null);
@@ -220,6 +240,10 @@ function App() {
           setCallDuration={setCallDuration}
           callInterval={callInterval}
           setCallInterval={setCallInterval}
+          allCases={allCases}
+          callSid={callSid}
+          caseMenuActive={caseMenuActive}
+          setCaseMenuActive={setCaseMenuActive}
         />
       )}
     </>

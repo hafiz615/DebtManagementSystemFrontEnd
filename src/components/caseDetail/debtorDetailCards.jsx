@@ -24,6 +24,7 @@ import {
 import PaymentCardDetails from "../paymentCard";
 import { AddDebtorAccount } from "../../services/services";
 import Dropdown from "../dropdown";
+import { isEmpty } from "lodash";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -131,6 +132,17 @@ export default function DebtorDetailsCards({
   });
 
   const debtorId = caseData?.debtor?._id;
+  const accountExist = !isEmpty(caseData?.debtor?.accounts);
+  useEffect(() => {
+    if (selectedValue === "Easy Pay" && accountExist) {
+      const firstCustomerVaultId =
+        caseData?.debtor?.accounts[0]?.customerVaultId;
+      showToast(
+        `Already synced on Easypay with this VaultID: ${firstCustomerVaultId}`,
+        "success"
+      );
+    }
+  }, [selectedValue]);
   const { showToast } = useToast();
   const addDebtorDetails = async () => {
     const params = connectPayment;
