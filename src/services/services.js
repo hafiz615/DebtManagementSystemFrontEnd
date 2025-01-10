@@ -1497,9 +1497,12 @@ export const UpdateContractDetails = async (payload, id) => {
     return error;
   }
 };
-export const GetCalls = async (id) => {
+export const GetCalls = async (id, page) => {
   try {
-    return await axios.get(BASE_URL + `/v1/call/getCalls/${id}`, setHeaders());
+    return await axios.get(
+      BASE_URL + `/v1/call/getCalls/${id}?page=${page}&limit=10`,
+      setHeaders()
+    );
   } catch (error) {
     return error;
   }
