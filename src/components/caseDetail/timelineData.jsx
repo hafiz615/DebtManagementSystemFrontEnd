@@ -10,6 +10,8 @@ import {
   TimelineOppositeContent,
 } from "@mui/lab";
 import {
+  ArrowLeft,
+  ArrowRight,
   CallOutlined,
   ChevronRight,
   Email,
@@ -32,6 +34,9 @@ export default function TimelineData({
   GetLogsById,
   iconValue,
   caseData,
+  currentCallPage,
+  setCurrentCallPage,
+  totalCallPage,
 }) {
   const [showReplyCard, setShowReplyCard] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -118,28 +123,61 @@ export default function TimelineData({
               </Typography>
             </Card>
           ) : iconValue === 5 ? (
-            callLogs?.length > 0 ? (
-              callLogs?.map((callDetails) => (
-                <ConversationHistory callDetails={callDetails} />
-              ))
-            ) : (
-              <div
-                style={{
-                  backgroundColor: Colors.WHITE,
-                  padding: "1rem 10px",
-                  borderRadius: "10px",
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontSize: FONT_SIZE_LARGE,
-                    fontFamily: "Nunito",
+            <>
+              {callLogs?.length > 0 ? (
+                <>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      width: "100%",
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    <Typography
+                      sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
+                    >
+                      {totalCallPage === 0 ? 0 : currentCallPage} of{" "}
+                      {totalCallPage}
+                    </Typography>
+                    <IconButton
+                      onClick={() => setCurrentCallPage(currentCallPage - 1)}
+                      disabled={currentCallPage === 1}
+                    >
+                      <ArrowLeft />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => setCurrentCallPage(currentCallPage + 1)}
+                      disabled={
+                        totalCallPage === 0 || currentCallPage === totalCallPage
+                      }
+                    >
+                      <ArrowRight />
+                    </IconButton>
+                  </div>
+                  {callLogs?.map((callDetails) => (
+                    <ConversationHistory callDetails={callDetails} />
+                  ))}
+                </>
+              ) : (
+                <div
+                  style={{
+                    backgroundColor: Colors.WHITE,
+                    padding: "1rem 10px",
+                    borderRadius: "10px",
                   }}
                 >
-                  No Calls
-                </Typography>
-              </div>
-            )
+                  <Typography
+                    sx={{
+                      fontSize: FONT_SIZE_LARGE,
+                      fontFamily: "Nunito",
+                    }}
+                  >
+                    No Calls
+                  </Typography>
+                </div>
+              )}
+            </>
           ) : (
             <Card
               sx={{
