@@ -395,6 +395,16 @@ export default function TimelineData({
                             </Tooltip>
                           )}
                         </Typography>
+                        <Typography
+                          sx={{
+                            fontSize: "13px",
+                            fontFamily: "Nunito",
+                            mb: "10px",
+                            paddingLeft: "2.5rem",
+                          }}
+                        >
+                          <strong>Subject:</strong> {value?.Subject}
+                        </Typography>
                       </>
                     )
                   ) : (
@@ -410,6 +420,7 @@ export default function TimelineData({
                                   fontFamily: "Nunito",
                                   mb: "10px",
                                   fontWeight: "700",
+                                  border: "1px solid red",
                                 }}
                               >
                                 {key}:

@@ -727,6 +727,21 @@ function Inbox() {
                                       {item?.from || "-"}
                                     </Typography>
                                   </div>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      gap: "10px",
+                                      paddingLeft: "3.2rem",
+                                    }}
+                                  >
+                                    <Typography sx={boldTextStyling}>
+                                      Subject:
+                                    </Typography>
+
+                                    <Typography sx={fontStyling}>
+                                      {item?.subject || "-"}
+                                    </Typography>
+                                  </div>
                                 </div>
 
                                 <div
@@ -754,14 +769,6 @@ function Inbox() {
                               </div>
                               {expandedMessages[index] && (
                                 <div style={{ paddingLeft: "3.2rem" }}>
-                                  <div style={{ display: "flex", gap: "10px" }}>
-                                    <Typography sx={boldTextStyling}>
-                                      Subject:
-                                    </Typography>
-                                    <Typography sx={fontStyling}>
-                                      {item?.subject || "-"}
-                                    </Typography>
-                                  </div>
                                   <div style={{ display: "flex", gap: "10px" }}>
                                     <Typography sx={boldTextStyling}>
                                       Case Code:
