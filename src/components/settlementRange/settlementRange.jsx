@@ -59,6 +59,7 @@ import DebtorUploadedFiles from "../debtorUploadedFiles";
 import TransactionHistory from "../transactionHistory";
 import CashFlowPercentage from "./cashFlowPercentage";
 import MCAByMonthAccordion from "../settlementRange/mcaByMonthAccordion";
+import SendEmail from "../sendEmail";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -207,6 +208,16 @@ export default function SettlementRange({
   caseData,
   mcaByMonth,
   setMcaByMonth,
+
+  to,
+  payableAmount,
+  selectedCreditor,
+  paymentData,
+  debtorInfo,
+  creditorInfo,
+  fullProfit,
+  handleClose,
+  showEmailAgreement,
 }) {
   const caseId = id;
   const [value, setValue] = useState(0);
@@ -1155,6 +1166,35 @@ export default function SettlementRange({
               <MCAByMonthAccordion mcaByMonth={mcaByMonth} />
             </Grid>
           </>
+          {showEmailAgreement && (
+            <Grid
+              item
+              xs={12}
+              id="targetComponent"
+              sx={{
+                backgroundColor: Colors.WHITE,
+                padding: "1rem",
+                marginBottom: "1rem",
+                borderRadius: "10px",
+                marginTop: "1rem",
+              }}
+            >
+              <SendEmail
+                payableAmount={payableAmount}
+                debtorInfo={debtorInfo}
+                creditorInfo={creditorInfo}
+                data={apiData}
+                selectedCreditor={selectedCreditor}
+                lumpSump={lumpSumpData}
+                fullProfit={fullProfit}
+                caseId={id}
+                paymentData={paymentData}
+                debtorId={verifiedSender}
+                to={to}
+                handleClose={handleClose}
+              />
+            </Grid>
+          )}
 
           <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
             {/* <GridItem

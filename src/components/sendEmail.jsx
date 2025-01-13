@@ -5,14 +5,13 @@ import { Colors } from "../config/default";
 import TextButton from "./button";
 import { Editor } from "@tinymce/tinymce-react";
 import ScrollbarStyles from "./customScroll";
-import { GetAllSenders, SendSettlementEmail } from "../services/services";
+import { SendSettlementEmail } from "../services/services";
 import {
   FONT_SIZE_MEDIUM,
   initialHtmlContent,
   TEXT_EDITOR_KEY,
 } from "../constants/appConstants";
 import Dropdown from "./dropdown";
-import { Download } from "@mui/icons-material";
 
 const lineStyle = {
   width: "100%",
@@ -196,7 +195,7 @@ export default function SendEmail({
   }, [strategy, rangeMinToMax, recommendation, paymentData]);
 
   return (
-    <div>
+    <div style={{ width: "100%" }}>
       <Grid item>
         <Typography
           sx={{ fontWeight: "500", fontFamily: "Nunito", color: Colors.BLACK }}

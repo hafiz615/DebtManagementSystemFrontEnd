@@ -130,6 +130,45 @@ function CaseDetail() {
   const [statementSummariesLoading, setStatementSummariesLoading] =
     useState(false);
   const [mcaByMonth, setMcaByMonth] = useState();
+
+  const [showEmail, setShowEmail] = useState(false);
+  const [showEmailAgreement, setShowEmailAgreement] = useState(false);
+
+  const scrollToComponent = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  const handleShowEmail = () => {
+    if (!showEmail) {
+      setShowEmail(true); // Make the component visible
+      setTimeout(() => {
+        scrollToComponent("targetComponent"); // Ensure scrolling happens after the component is rendered
+      }, 0);
+    } else {
+      scrollToComponent("targetComponent"); // Scroll to the component if it is already visible
+    }
+  };
+
+  const handleShowEmailAgreement = () => {
+    if (!showEmailAgreement) {
+      setShowEmailAgreement(true); // Make the component visible
+      setTimeout(() => {
+        scrollToComponent("targetComponent"); // Ensure scrolling happens after the component is rendered
+      }, 0);
+    } else {
+      scrollToComponent("targetComponent"); // Scroll to the component if it is already visible
+    }
+  };
+  const handleClose = () => {
+    setShowEmail(false);
+    if (setShowEmailAgreement) {
+      setShowEmailAgreement(false);
+    }
+  };
+
   const { id } = useParams();
 
   const emailData = caseData?.debtor?.basicInformation;
@@ -151,7 +190,7 @@ function CaseDetail() {
     return false;
   });
 
-  const handleClose = () => setOpen(false);
+  const handleCloseNotes = () => setOpen(false);
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -238,7 +277,7 @@ function CaseDetail() {
         GetLogsById(id);
       }
       setAddTaskModal("");
-      handleClose();
+      handleCloseNotes();
     }
   };
 
@@ -472,7 +511,7 @@ function CaseDetail() {
               lumpSumpData={lumpSumpData}
               disabled={!apiData}
             />
-            <MuiModels
+            {/* <MuiModels
               show="sendEmail"
               to={caseData?.creditor?.basicInformation?.email}
               creditorInfo={
@@ -492,6 +531,15 @@ function CaseDetail() {
               caseId={id}
               paymentData={paymentData}
               debtorId={verifiedSender}
+            /> */}
+            <TextButton
+              id="scrollAgreementButton"
+              buttonText="Send Agreement"
+              height="2.5rem"
+              width="12rem"
+              onClick={handleShowEmailAgreement}
+              backgroundColor={Colors.SKY_BLUE}
+              hoverColor={Colors.SKY_BLUE}
             />
             <TextButton
               disabled={!apiData}
@@ -518,16 +566,25 @@ function CaseDetail() {
           hoverColor={Colors.SKY_BLUE}
         />
 
-        <MuiModels
+        {/* <MuiModels
           show="sendEmailCase"
           buttonName="sendEmailCase"
           iconColor={Colors.BLACK}
-          from={caseData?.creditor?.basicInformation?.email}
           maxHeight="78vh"
+          from={caseData?.creditor?.basicInformation?.email}
           caseDataId={id}
           GetLogsById={GetLogsById}
           data={caseData}
           verifiedSenders={verifiedSenders}
+        /> */}
+        <TextButton
+          id="scrollButton"
+          buttonText="Send Email"
+          height="2.5rem"
+          width="9rem"
+          onClick={handleShowEmail}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
         />
         <MuiModels
           show="sendEmailCase"
@@ -617,6 +674,21 @@ function CaseDetail() {
             caseData={caseData}
             mcaByMonth={mcaByMonth}
             setMcaByMonth={setMcaByMonth}
+            to={caseData?.creditor?.basicInformation?.email}
+            creditorInfo={
+              allCreditorNames[tabValue] === "Summary"
+                ? "Summary"
+                : selectedCreditorDetails?.name
+            }
+            payableAmount={
+              allCreditorNames[tabValue] === "Summary"
+                ? summaryAmount?.payableAmount
+                : selectedCreditorDetails?.contractDetails?.payable_amount
+            }
+            selectedCreditor={allCreditorNames[tabValue]}
+            paymentData={paymentData}
+            showEmailAgreement={showEmailAgreement}
+            handleClose={handleClose}
           />
         )}
         {activeTab === 1 && (
@@ -649,6 +721,8 @@ function CaseDetail() {
             currentPaymentPage={currentPaymentPage}
             setCurrentPaymentPage={setCurrentPaymentPage}
             totalPaymentPage={totalPaymentPage}
+            showEmail={showEmail}
+            from={caseData?.creditor?.basicInformation?.email}
           />
         )}
       </Grid>

@@ -4,9 +4,12 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { Colors } from "../config/default";
 
-function PaymentCardDetails({ paymentGateway, setConnectPayment }) {
-  const [type, setType] = useState("cc");
-
+function PaymentCardDetails({
+  paymentGateway,
+  setConnectPayment,
+  type,
+  setType,
+}) {
   useEffect(() => {
     if (paymentGateway !== "") {
       const scriptSrc =
@@ -40,7 +43,6 @@ function PaymentCardDetails({ paymentGateway, setConnectPayment }) {
       script.async = true;
 
       script.onload = () => {
-
         // Reinitialize CollectJS after script loads
         if (window?.CollectJS) {
           window.CollectJS.configure({
@@ -48,7 +50,7 @@ function PaymentCardDetails({ paymentGateway, setConnectPayment }) {
             callback: (token) => {
               setConnectPayment({
                 paymentToken: token?.token,
-                paymentType: "cc", // default to "cc" or adjust based on type
+                paymentType: type, // default to "cc" or adjust based on type
                 platform:
                   paymentGateway === "Seamless Chex"
                     ? "Seamlesschex merchant"
@@ -78,12 +80,14 @@ function PaymentCardDetails({ paymentGateway, setConnectPayment }) {
     if (newAlignment !== null) {
       handleTypeChange(newAlignment);
     } else {
+      setType(type);
       window?.CollectJS?.startPaymentRequest();
     }
   };
 
   const handleTypeChange = (newType) => {
     setType(newType);
+    window?.CollectJS?.startPaymentRequest();
   };
 
   useEffect(() => {
@@ -104,7 +108,9 @@ function PaymentCardDetails({ paymentGateway, setConnectPayment }) {
       });
     }
   }, [type, paymentGateway]);
-
+  // useEffect(() => {
+  //   setType("cc");
+  // }, [paymentGateway]);
   return (
     <Grid item sx={{ zIndex: "1" }}>
       <ToggleButtonGroup
@@ -123,7 +129,7 @@ function PaymentCardDetails({ paymentGateway, setConnectPayment }) {
             fontSize: "10px",
           }}
           value="cc"
-          onClick={() => window.CollectJS?.startPaymentRequest()}
+          // onClick={() => window.CollectJS?.startPaymentRequest()}
         >
           CC
         </ToggleButton>
@@ -134,7 +140,7 @@ function PaymentCardDetails({ paymentGateway, setConnectPayment }) {
             fontSize: "10px",
           }}
           value="ck"
-          onClick={() => window.CollectJS?.startPaymentRequest()}
+          // onClick={() => window.CollectJS?.startPaymentRequest()}
         >
           ACH
         </ToggleButton>
