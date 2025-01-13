@@ -21,15 +21,16 @@ import {
   Tab,
   Divider,
   Tooltip,
+  Button,
 } from "@mui/material";
 import MuiModels from "./models";
 import SearchBar from "./searchBar";
 import {
-  ChevronLeft,
+  Attachment,
   ChevronRight,
-  ExpandLess,
   ExpandMore,
   FilterListOutlined,
+  RemoveRedEye,
 } from "@mui/icons-material";
 import TextButton from "./button";
 import {
@@ -93,6 +94,8 @@ function Inbox() {
   const [alltasks, setAllTasks] = useState([]);
   const open = Boolean(anchorEl);
   const [expandedMessages, setExpandedMessages] = useState({});
+  const [showViewer, setShowViewer] = useState(false);
+  const [fileUrl, setFileUrl] = useState();
   const navigate = useNavigate();
 
   const handleToggleContent = (index) => {
@@ -203,6 +206,11 @@ function Inbox() {
   const navigateToCaseDetail = (id) => {
     localStorage.setItem("route", "all-cases");
     navigate(`/all-cases/${id}`);
+  };
+
+  const handleShowFile = (url) => {
+    setShowViewer(true);
+    setFileUrl(url);
   };
 
   return (
@@ -626,7 +634,6 @@ function Inbox() {
                                 style={{
                                   display: "flex",
                                   justifyContent: "space-between",
-                                  // paddingLeft: "20px",
                                 }}
                               >
                                 <div>
@@ -642,14 +649,12 @@ function Inbox() {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
-                                        // marginTop: "10px",
-                                        // marginBottom: "10px",
                                       }}
                                     >
                                       <Typography
                                         onClick={() =>
                                           handleToggleContent(index)
-                                        } // Pass index to toggle specific message
+                                        }
                                       >
                                         {expandedMessages[index] ? (
                                           <IconButton>
@@ -794,24 +799,118 @@ function Inbox() {
                                     </Typography>
                                   </div>
                                   <div>
-                                    <>
-                                      <Typography sx={boldTextStyling}>
-                                        Content:
-                                      </Typography>
-                                      <Typography
-                                        sx={fontStyling}
-                                        dangerouslySetInnerHTML={{
-                                          __html: item?.textAsHtml,
-                                        }}
-                                      />
-                                    </>
-                                    {/* )} */}
-
-                                    {/* Show More / Show Less button */}
+                                    <Typography sx={boldTextStyling}>
+                                      Content:
+                                    </Typography>
+                                    <Typography
+                                      sx={fontStyling}
+                                      dangerouslySetInnerHTML={{
+                                        __html: item?.textAsHtml,
+                                      }}
+                                    />
                                   </div>
+                                  {item?.attachments?.length > 0 && (
+                                    <div>
+                                      <Typography sx={boldTextStyling}>
+                                        Attachment:
+                                      </Typography>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          gap: "10px",
+                                          flexWrap: "wrap",
+                                        }}
+                                      >
+                                        {item?.attachments?.map((item) => (
+                                          <Grid
+                                            container
+                                            sx={{
+                                              display: "flex",
+                                              border: `1px solid ${Colors.SKY_BLUE}`,
+                                              width: "25%",
+                                              borderRadius: "10px",
+                                              justifyContent: "space-between",
+                                              alignItems: "center",
+                                              padding: "10px",
+                                              cursor: "pointer",
+                                              transition: "all 0.3s ease",
+                                              "&:hover": {
+                                                backgroundColor:
+                                                  Colors.lIGHT_PURPLE,
+                                              },
+                                            }}
+                                            onClick={() =>
+                                              handleShowFile(item?.url)
+                                            }
+                                          >
+                                            <Typography
+                                              sx={{
+                                                fontSize: "13px",
+                                                fontFamily: "Nunito",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: "10px",
+                                              }}
+                                            >
+                                              <Attachment
+                                                sx={{ color: Colors.SKY_BLUE }}
+                                              />{" "}
+                                              {item?.originalFileName}
+                                            </Typography>
+                                          </Grid>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
                                 </div>
                               )}
                             </CardContent>
+                            {showViewer && (
+                              <div
+                                style={{
+                                  position: "fixed",
+                                  top: 0,
+                                  left: 0,
+                                  width: "100%",
+                                  height: "100%",
+                                  backgroundColor: "rgba(0, 0, 0, 0.8)",
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  zIndex: 1000,
+                                  padding: "1rem",
+                                }}
+                              >
+                                <Button
+                                  onClick={() => setShowViewer(false)}
+                                  style={{
+                                    position: "fixed",
+                                    top: "5rem",
+                                    right: "1rem",
+                                    bottom: 0,
+                                    backgroundColor: "white",
+                                    border: "none",
+                                    borderRadius: "4px",
+                                    padding: "0.5rem",
+                                    cursor: "pointer",
+                                    zIndex: 1100,
+                                    height: "2rem",
+                                  }}
+                                >
+                                  Close
+                                </Button>
+                                <iframe
+                                  src={fileUrl}
+                                  style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    border: "none",
+                                    position: "relative",
+                                  }}
+                                />
+                              </div>
+                            )}
                           </Box>
                         ))
                     )}
