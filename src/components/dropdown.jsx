@@ -28,6 +28,7 @@ export default function Dropdown({
   showCaseStatus,
   emptyMessage,
   fontSize,
+  setType,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -46,7 +47,11 @@ export default function Dropdown({
     if (onChange) {
       onChange(value);
     } else {
+      if (setType) {
+        setType("cc");
+      }
       setSelectedValue(value);
+
       if (show === "editAbout" || show === "addTask" || show === "editTask") {
         setId(id);
       }

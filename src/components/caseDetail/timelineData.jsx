@@ -382,7 +382,6 @@ export default function TimelineData({
                                   fontFamily: "Nunito",
                                   mb: "10px",
                                   fontWeight: "700",
-                                  border: "1px solid red",
                                 }}
                               >
                                 {key}:

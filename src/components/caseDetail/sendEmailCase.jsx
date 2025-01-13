@@ -63,6 +63,7 @@ export default function SendEmailCase({
   compose,
   buttonName,
   composeEmail,
+  setShowEmail,
 }) {
   const [loading, setLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -172,12 +173,14 @@ export default function SendEmailCase({
     (!headerName && !subject?.trim()) ||
     !preview?.trim() ||
     (headerName && errors);
+
   const menu = replyCheck
     ? []
     : verifiedSenders?.map((name) => ({
         label: name,
         value: name,
       }));
+
   const menuSendto = bulkEmail?.map((name) => ({
     label: name,
     value: name,
@@ -651,55 +654,65 @@ export default function SendEmailCase({
           </>
         </Grid>
       </Grid>
-
-      <div style={{ marginTop: "1rem" }}>
-        {headerName ? (
-          <textarea
-            placeholder="Type something"
-            rows="6"
-            style={smsTemplateStyling}
-            value={preview}
-            onChange={(e) => setPreview(e.target.value)}
-          />
-        ) : (
-          <Editor
-            style={{ margin: "0px !important" }}
-            apiKey={TEXT_EDITOR_KEY}
-            init={{
-              menubar: "false",
-              toolbar:
-                "formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat",
-              height: 250,
-            }}
-            value={preview}
-            onEditorChange={(content) => setPreview(content)}
-          />
-        )}
-      </div>
-
-      <Box
-        sx={{ display: "flex", justifyContent: "flex-end", marginTop: "1rem" }}
+      <Grid
+        container
+        item
+        xs={12}
+        sx={{ display: "flex", flexDirection: "column" }}
       >
-        <TextButton
-          buttonText="CANCEL"
-          height="2rem"
-          marginRight="1rem"
-          width="6rem"
-          onClick={handleClose}
-          backgroundColor={Colors.ORANGE_COLOR}
-          hoverColor={Colors.ORANGE_COLOR}
-        />
-        <TextButton
-          buttonText="SEND"
-          height="2rem"
-          width="6rem"
-          backgroundColor={Colors.SKY_BLUE}
-          hoverColor={Colors.SKY_BLUE}
-          onClick={handleSend}
-          disabled={disable}
-          loading={loading}
-        />
-      </Box>
+        <div style={{ marginTop: "1rem" }}>
+          {headerName ? (
+            <textarea
+              placeholder="Type something"
+              rows="6"
+              style={smsTemplateStyling}
+              value={preview}
+              onChange={(e) => setPreview(e.target.value)}
+            />
+          ) : (
+            <Editor
+              style={{ margin: "0px !important" }}
+              apiKey={TEXT_EDITOR_KEY}
+              init={{
+                menubar: "false",
+                toolbar:
+                  "formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat",
+                height: 250,
+              }}
+              value={preview}
+              onEditorChange={(content) => setPreview(content)}
+            />
+          )}
+        </div>
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginTop: "1rem",
+          }}
+        >
+          <TextButton
+            buttonText="CANCEL"
+            height="2rem"
+            marginRight="1rem"
+            width="6rem"
+            onClick={handleClose}
+            backgroundColor={Colors.ORANGE_COLOR}
+            hoverColor={Colors.ORANGE_COLOR}
+          />
+          <TextButton
+            buttonText="SEND"
+            height="2rem"
+            width="6rem"
+            backgroundColor={Colors.SKY_BLUE}
+            hoverColor={Colors.SKY_BLUE}
+            onClick={handleSend}
+            disabled={disable}
+            loading={loading}
+          />
+        </Box>
+      </Grid>
     </>
   );
 }

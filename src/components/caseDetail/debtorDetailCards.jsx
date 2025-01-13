@@ -25,6 +25,7 @@ import PaymentCardDetails from "../paymentCard";
 import { AddDebtorAccount } from "../../services/services";
 import Dropdown from "../dropdown";
 import { isEmpty } from "lodash";
+import { type } from "@testing-library/user-event/dist/type";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -67,6 +68,7 @@ export default function DebtorDetailsCards({
 }) {
   const [searchText, setSearchText] = useState("");
   const [selectedValue, setSelectedValue] = useState("Seamless Chex");
+  const [type, setType] = useState("cc");
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 2;
   const handleNext = () => {
@@ -213,10 +215,13 @@ export default function DebtorDetailsCards({
               selectedValue={selectedValue}
               setSelectedValue={setSelectedValue}
               fontSize="12px"
+              setType={setType}
             />
             <PaymentCardDetails
               paymentGateway={selectedValue}
               setConnectPayment={setConnectPayment}
+              type={type}
+              setType={setType}
             />
             <MuiModels
               show="debtorDetail"
@@ -562,6 +567,7 @@ export default function DebtorDetailsCards({
                       maxHeight="78vh"
                       GetLogsById={GetLogsById}
                       data={caseData}
+                      from={caseData?.creditor?.basicInformation?.email}
                     />
                     <MuiModels
                       show="sendEmailCase"
