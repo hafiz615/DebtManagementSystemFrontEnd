@@ -557,16 +557,18 @@ function CaseDetail() {
           </>
         )}
 
-        <TextButton
-          buttonText="Sync Client Email"
-          height="2.5rem"
-          width="12rem"
-          onClick={AddSenderInformation}
-          backgroundColor={Colors.SKY_BLUE}
-          hoverColor={Colors.SKY_BLUE}
-        />
+        {activeTab !== 0 && (
+          <>
+            <TextButton
+              buttonText="Sync Client Email"
+              height="2.5rem"
+              width="12rem"
+              onClick={AddSenderInformation}
+              backgroundColor={Colors.SKY_BLUE}
+              hoverColor={Colors.SKY_BLUE}
+            />
 
-        {/* <MuiModels
+            {/* <MuiModels
           show="sendEmailCase"
           buttonName="sendEmailCase"
           iconColor={Colors.BLACK}
@@ -577,25 +579,27 @@ function CaseDetail() {
           data={caseData}
           verifiedSenders={verifiedSenders}
         /> */}
-        <TextButton
-          id="scrollButton"
-          buttonText="Send Email"
-          height="2.5rem"
-          width="9rem"
-          onClick={handleShowEmail}
-          backgroundColor={Colors.SKY_BLUE}
-          hoverColor={Colors.SKY_BLUE}
-        />
-        <MuiModels
-          show="sendEmailCase"
-          buttonName="sendSmsCase"
-          headerName={true}
-          iconColor={Colors.BLACK}
-          maxHeight="78vh"
-          caseDataId={id}
-          GetLogsById={GetLogsById}
-          data={caseData}
-        />
+            <TextButton
+              id="scrollButton"
+              buttonText="Send Email"
+              height="2.5rem"
+              width="9rem"
+              onClick={handleShowEmail}
+              backgroundColor={Colors.SKY_BLUE}
+              hoverColor={Colors.SKY_BLUE}
+            />
+            <MuiModels
+              show="sendEmailCase"
+              buttonName="sendSmsCase"
+              headerName={true}
+              iconColor={Colors.BLACK}
+              maxHeight="78vh"
+              caseDataId={id}
+              GetLogsById={GetLogsById}
+              data={caseData}
+            />
+          </>
+        )}
       </div>
 
       <AntTabs

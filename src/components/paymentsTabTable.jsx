@@ -149,7 +149,8 @@ export default function PaymentTabsTable({
           (item?.tryDate && new Date(item?.tryDate)?.toLocaleDateString()) ||
           "-",
         totalDebt: formatDollarAmount(item?.totalDebt) || "-",
-        ssid: item?.SSID || "-",
+        transactionType: item?.transactionType || "-",
+        // ssid: item?.SSID || "-",
         caseOwner: item?.caseOwner || "-",
       };
       if (value === 4) {
@@ -367,50 +368,26 @@ export default function PaymentTabsTable({
                           </IconButton>
                         </StyledTableCell>
                       )}
-                      <IconsContainer className="icons">
-                        <IconStyle
-                          onClick={() => {
-                            alert("clicked");
-                          }}
-                        >
+                      {/* <IconsContainer className="icons">
+                        <IconStyle>
                           <LocalPhone />
                         </IconStyle>
-                        <IconStyle
-                          onClick={() => {
-                            alert("clicked");
-                          }}
-                        >
+                        <IconStyle>
                           <Textsms />
                         </IconStyle>
-                        <IconStyle
-                          onClick={() => {
-                            alert("clicked");
-                          }}
-                        >
+                        <IconStyle>
                           <Mail />
                         </IconStyle>
-                        <IconStyle
-                          onClick={() => {
-                            alert("clicked");
-                          }}
-                        >
+                        <IconStyle>
                           <EditCalendar />
                         </IconStyle>
-                        <IconStyle
-                          onClick={() => {
-                            alert("clicked");
-                          }}
-                        >
+                        <IconStyle>
                           <OpenInNew />
                         </IconStyle>
-                        <IconStyle
-                          onClick={() => {
-                            alert("clicked");
-                          }}
-                        >
+                        <IconStyle>
                           <Sync />
                         </IconStyle>
-                      </IconsContainer>
+                      </IconsContainer> */}
                     </StyledTableRow>
                   );
                 })
