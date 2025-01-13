@@ -111,16 +111,21 @@ export default function CaseById({
   const navigate = useNavigate();
   const [deleting, setDeleting] = useState(false);
   const [callLogs, setCallLogs] = useState([]);
+  const [currentCallPage, setCurrentCallPage] = useState(1);
+  const [totalCallPage, setTotalCallPage] = useState();
 
   const fetchCalls = async () => {
-    const res = await GetCalls(id);
+    const res = await GetCalls(id, currentCallPage);
     if (res?.status === 200) {
-      setCallLogs(res?.data?.data);
+      let totalPage = Math.ceil(res?.data?.data?.callCount / 10);
+      setCallLogs(res?.data?.data?.calls);
+      setTotalCallPage(totalPage);
     }
   };
+
   useEffect(() => {
     fetchCalls();
-  }, []);
+  }, [currentCallPage]);
 
   return (
     <Grid item sx={{ marginTop: "1rem" }}>
@@ -669,6 +674,9 @@ export default function CaseById({
                   caseDataId={id}
                   GetLogsById={GetLogsById}
                   iconValue={caseHistoryTabs}
+                  currentCallPage={currentCallPage}
+                  setCurrentCallPage={setCurrentCallPage}
+                  totalCallPage={totalCallPage}
                 />
               ) : filteredLogs?.length > 0 ? (
                 filteredLogs?.map((item, index) => (
