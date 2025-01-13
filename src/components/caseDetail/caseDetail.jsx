@@ -198,7 +198,7 @@ function CaseDetail() {
     const casePayment = await GetCasePaymentById(currentPaymentPage, rowId);
     if (casePayment?.status === 200) {
       let totalPage = Math.ceil(
-        casePayment?.data?.data?.transactions?.totalCount / 10
+        casePayment?.data?.data?.transactions?.totalCount / 20
       );
       setPaymentDetails(casePayment?.data?.data);
       setTotalPaymentPage(totalPage);
