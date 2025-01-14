@@ -56,11 +56,18 @@ export default function PaymentsTabs({
   loading,
   paginationRows,
   setPaginationRows,
+  hideCheck,
 }) {
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
   );
-  const headers = ["Name", "Try Date", "Total Debt", "SSN", "Case Owner"];
+  const headers = [
+    "Name",
+    "Try Date",
+    "Total Debt",
+    value !== 5 && "Payment Type",
+    "Case Owner",
+  ];
   if (value === 2) {
     headers.push("Send Payment");
   }
@@ -69,7 +76,7 @@ export default function PaymentsTabs({
   }
   if (generalPermissions?.retryPayment) {
     if (value === 0) {
-      headers.push("Re Try");
+      headers.push("Retry");
     }
   }
 
@@ -267,6 +274,7 @@ export default function PaymentsTabs({
             loading={loading}
             paginationRows={paginationRows}
             setPaginationRows={setPaginationRows}
+            hideCheck={hideCheck}
           />
         )}
       </Box>

@@ -148,7 +148,7 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
         backgroundColor: Colors.WHITE,
         borderRadius: "10px",
         padding: "0px 10px",
-        height: "13rem",
+        height: "14rem",
         marginBottom: "0.5rem",
       }}
     >

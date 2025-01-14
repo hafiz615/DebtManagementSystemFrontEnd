@@ -180,7 +180,9 @@ export default function DebtorDetailsCards({
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",
           padding: "0px 10px",
-          height: "13rem",
+          height: "14rem",
+          overflowY: "auto",
+          ...ScrollbarStyles,
         }}
       >
         <div
@@ -251,7 +253,7 @@ export default function DebtorDetailsCards({
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
-                    width: "45%",
+                    width: "48%",
                     marginBottom: "8px",
                   }}
                 >
@@ -291,7 +293,7 @@ export default function DebtorDetailsCards({
                             wordBreak: "break-word",
                           }}
                         >
-                          {getTruncatedText(formatValue(value), 15) || "--"}
+                          {getTruncatedText(formatValue(value), 10) || "--"}
                         </Typography>
                       </Tooltip>
                     </div>
@@ -327,7 +329,7 @@ export default function DebtorDetailsCards({
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",
           padding: "0px 10px",
-          height: "13rem",
+          height: "14rem",
           marginBottom: "0.5rem",
         }}
       >
@@ -436,7 +438,7 @@ export default function DebtorDetailsCards({
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",
           padding: "0px 10px",
-          height: "13rem",
+          height: "14rem",
           marginBottom: "0.5rem",
         }}
       >
