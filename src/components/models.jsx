@@ -620,13 +620,17 @@ export default function MuiModels({
           borderRadius="5px"
           disabled={disabled}
         />
-      ) : buttonName === "sendEmailCase" || buttonName === "composeEmail" ? (
+      ) : buttonName === "sendEmailCase" ||
+        buttonName === "composeEmail" ||
+        buttonName === "draft" ? (
         <TextButton
           buttonText={
             replyButton
               ? "Reply"
               : buttonName === "composeEmail"
               ? "Compose Email"
+              : buttonName === "draft"
+              ? "Edit"
               : "Send Email"
           }
           height="2.5rem"
@@ -750,7 +754,6 @@ export default function MuiModels({
       )}
       <Modal
         open={open}
-        onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
