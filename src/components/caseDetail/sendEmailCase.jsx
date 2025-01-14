@@ -9,6 +9,10 @@ import {
   Popover,
   Tooltip,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 
 import TextButton from "../button";
@@ -22,6 +26,7 @@ import {
 import styled from "styled-components";
 import {
   GetCustomVariable,
+  SaveAsDraft,
   SendEmailSmsCase,
   UploadFiles,
 } from "../../services/services";
@@ -129,6 +134,7 @@ export default function SendEmailCase({
   compose,
 }) {
   const [loading, setLoading] = useState(false);
+  const [draftLoading, setDraftLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [sendTo, setSendTo] = useState(from || "");
   const [bulkEmail, setBulkEmail] = useState(data?.allEmails || []);
@@ -153,6 +159,7 @@ export default function SendEmailCase({
   const [subMenuAnchorEl, setSubMenuAnchorEl] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [customVariables, setCustomVariables] = useState({});
+  const [draftMenu, setDraftMenu] = useState(false);
   const { showToast } = useToast();
 
   const handleKeyDown = (e) => {
@@ -223,7 +230,7 @@ export default function SendEmailCase({
 
   const disable =
     !sendTo?.trim() ||
-    (!headerName && !selectedValue) ||
+    (!headerName && !replyCheck && !selectedValue) ||
     (!headerName && !subject?.trim()) ||
     !preview?.trim() ||
     (headerName && errors);
@@ -244,6 +251,7 @@ export default function SendEmailCase({
     label: item?.name,
     value: item?.name,
   }));
+
   const menuBulkSmsTemplates = bulkSmsTemplates?.map((item) => ({
     label: item?.name,
     value: item?.name,
@@ -348,6 +356,40 @@ export default function SendEmailCase({
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     setSelectedFiles(files);
+  };
+
+  const handleDraftMenu = () => {
+    if (
+      sendTo?.trim() ||
+      selectedValue?.trim() ||
+      subject?.trim() ||
+      preview?.trim()
+    ) {
+      setDraftMenu(true);
+    } else {
+      handleClose();
+    }
+  };
+
+  const handleSaveDraft = async () => {
+    setDraftLoading(true);
+    const payload = {
+      from: replyCheck ? sendFrom : selectedValue,
+      to: compose || replyCheck ? sendTo : selectedEmail,
+      cc: cc || [],
+      subject: subject,
+      content: preview,
+      caseId: caseDataId || "",
+    };
+    const res = await SaveAsDraft(payload);
+    if (res?.status === 201) {
+      handleClose();
+      showToast(res?.data?.message, "success");
+    } else {
+      const errorMessage = res?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setDraftLoading(false);
   };
 
   return (
@@ -801,7 +843,7 @@ export default function SendEmailCase({
             height="2rem"
             marginRight="1rem"
             width="6rem"
-            onClick={handleClose}
+            onClick={handleDraftMenu}
             backgroundColor={Colors.ORANGE_COLOR}
             hoverColor={Colors.ORANGE_COLOR}
           />
@@ -816,6 +858,48 @@ export default function SendEmailCase({
             loading={loading}
           />
         </Box>
+        <Dialog
+          open={draftMenu}
+          sx={{
+            "& .MuiPaper-root": {
+              borderRadius: "10px",
+              padding: "10px",
+            },
+          }}
+        >
+          <DialogTitle
+            sx={{
+              fontFamily: "Nunito",
+              fontWeight: 600,
+            }}
+          >
+            Save Your Work as a Draft
+          </DialogTitle>
+          <DialogContent sx={{ fontFamily: "Nunito", fontSize: 16 }}>
+            Would you like to save your progress as a draft? You can come back
+            and complete it later.
+          </DialogContent>
+          <DialogActions>
+            <TextButton
+              buttonText="CANCEL"
+              height="2rem"
+              marginRight="10px"
+              width="6rem"
+              onClick={handleClose}
+              backgroundColor={Colors.ORANGE_COLOR}
+              hoverColor={Colors.ORANGE_COLOR}
+            />
+            <TextButton
+              buttonText="Save as Draft"
+              height="2rem"
+              width="8rem"
+              backgroundColor={Colors.SKY_BLUE}
+              hoverColor={Colors.SKY_BLUE}
+              onClick={handleSaveDraft}
+              loading={draftLoading}
+            />
+          </DialogActions>
+        </Dialog>
       </Grid>
     </>
   );

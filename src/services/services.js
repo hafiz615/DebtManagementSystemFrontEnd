@@ -1436,6 +1436,18 @@ export const GetAllInbox = async (page, limit, search, filter, payload) => {
     return error;
   }
 };
+export const GetAllDrafts = async (page, limit, search, filter, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL +
+        `/v1/draft/getAllDraftMessages?search=${search}&filter=${filter}&page=${page}&limit=${limit}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
 export const GetAllNotifications = async (payload) => {
   try {
     return await axios.post(
@@ -1733,11 +1745,21 @@ export const UpdateCallByCase = async (payload, callId) => {
     return error;
   }
 };
-
 export const GetCallSid = async (id) => {
   try {
     return await axios.get(
       BASE_URL + `/v1/call/twilio/getIncomingCall/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const SaveAsDraft = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/draft/createEmailDraft`,
+      payload,
       setHeaders()
     );
   } catch (error) {
