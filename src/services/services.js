@@ -1758,7 +1758,7 @@ export const GetCallSid = async (id) => {
 export const SaveAsDraft = async (payload) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/draft/createEmailDraft`,
+      BASE_URL + `/v1/inbox/createEmailDraft`,
       payload,
       setHeaders()
     );
