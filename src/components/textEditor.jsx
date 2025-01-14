@@ -7,6 +7,7 @@ import {
   Menu,
   MenuItem,
   Popover,
+  IconButton,
 } from "@mui/material";
 
 import TextButton from "./button";
@@ -21,7 +22,7 @@ import {
   SaveSettings,
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
-import { ArrowRight, ExpandMore, Preview } from "@mui/icons-material";
+import { ArrowRight, Close, ExpandMore, Preview } from "@mui/icons-material";
 import Dropdown from "./dropdown";
 import { Editor } from "@tinymce/tinymce-react";
 
@@ -307,9 +308,29 @@ export default function TextEditor({
     fontFamily: "Nunito",
     borderRadius: "5px",
   };
+  const textStyling = {
+    fontSize: FONT_SIZE_LARGE,
+    fontFamily: "Nunito",
+    color: Colors.BLACK,
+    fontWeight: "700",
+  };
 
   return (
     <>
+      <Box
+        sx={{
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: "1rem",
+        }}
+      >
+        <Typography sx={textStyling}>Template</Typography>
+        <IconButton onClick={handleClose}>
+          <Close />
+        </IconButton>
+      </Box>
       <Grid
         container
         item

@@ -340,6 +340,7 @@ export default function AuthorizationDetails() {
           totalPages={totalPages}
           data={data}
           value={value}
+          hideCheck={value}
           setValue={setValue}
           getHomeData={getHomeData}
           paginationRows={paginationRows}

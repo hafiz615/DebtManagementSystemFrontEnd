@@ -56,6 +56,7 @@ export default function PaymentsTabs({
   loading,
   paginationRows,
   setPaginationRows,
+  hideCheck,
 }) {
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
@@ -75,7 +76,7 @@ export default function PaymentsTabs({
   }
   if (generalPermissions?.retryPayment) {
     if (value === 0) {
-      headers.push("Re Try");
+      headers.push("Retry");
     }
   }
 
@@ -273,6 +274,7 @@ export default function PaymentsTabs({
             loading={loading}
             paginationRows={paginationRows}
             setPaginationRows={setPaginationRows}
+            hideCheck={hideCheck}
           />
         )}
       </Box>

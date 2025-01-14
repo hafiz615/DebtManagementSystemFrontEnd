@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid, IconButton, Typography } from "@mui/material";
 
 import PaymentDetails from "./caseCreation/paymentDetails";
 import PaymentProcess from "./radioPayment";
@@ -12,6 +12,7 @@ import { useToast } from "../toast/toastContext";
 import { calculateNextWeek } from "../common";
 import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../constants/appConstants";
 import DeletePrompt from "./deletePrompt";
+import { Close } from "@mui/icons-material";
 
 const lineStyle = {
   width: "100%",
@@ -167,27 +168,40 @@ export default function PaymentPopup({
 
   return (
     <div>
-      <Typography
+      <Box
         sx={{
-          fontFamily: "Nunito",
-          fontWeight: "600",
-          fontSize: FONT_SIZE_XL,
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: "1rem",
         }}
       >
-        Settlement Plan Automation{" "}
-        {data?.intervals?.length > 0 && (
-          <span
-            style={{
-              fontFamily: "Nunito",
-              fontWeight: "600",
-              fontSize: FONT_SIZE_XL,
-              color: Colors.SKY_BLUE,
-            }}
-          >
-            (Plan Already In Progress)
-          </span>
-        )}
-      </Typography>
+        <Typography
+          sx={{
+            fontFamily: "Nunito",
+            fontWeight: "600",
+            fontSize: FONT_SIZE_XL,
+          }}
+        >
+          Settlement Plan Automation{" "}
+          {data?.intervals?.length > 0 && (
+            <span
+              style={{
+                fontFamily: "Nunito",
+                fontWeight: "600",
+                fontSize: FONT_SIZE_XL,
+                color: Colors.SKY_BLUE,
+              }}
+            >
+              (Plan Already In Progress)
+            </span>
+          )}
+        </Typography>
+        <IconButton onClick={handleClose}>
+          <Close />
+        </IconButton>
+      </Box>
       <Box sx={lineStyle} />
 
       <Typography

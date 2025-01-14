@@ -73,6 +73,23 @@ function BouncePayments({ handleClose, debtorId }) {
 
   return (
     <>
+      <Grid
+        item
+        xs={12}
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          cursor: "pointer",
+        }}
+      >
+        <Typography
+          variant="h6"
+          sx={{ fontFamily: "Nunito", mb: "1rem", fontWeight: "600" }}
+        >
+          Bounce Payment Details
+        </Typography>
+        <Close onClick={handleClose} />
+      </Grid>
       {manualPaymentsLoading ? (
         <Grid
           item
@@ -110,23 +127,6 @@ function BouncePayments({ handleClose, debtorId }) {
         </Grid>
       ) : (
         <>
-          <Grid
-            item
-            xs={12}
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              cursor: "pointer",
-            }}
-          >
-            <Typography
-              variant="h6"
-              sx={{ fontFamily: "Nunito", mb: "1rem", fontWeight: "600" }}
-            >
-              Bounce Payment Details
-            </Typography>
-            <Close onClick={handleClose} />
-          </Grid>
           <Grid
             sx={{
               overflowY: "auto",
