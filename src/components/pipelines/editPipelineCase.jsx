@@ -34,7 +34,7 @@ export default function EditPipelineCase({
   };
 
   const GetUsers = async () => {
-    const res = await GetAllUsers("", false, false);
+    const res = await GetAllUsers(0, 0, false, false);
     if (res?.status === 200) {
       setUsersArray(res?.data?.data?.users);
     }

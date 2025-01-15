@@ -25,7 +25,7 @@ const styles = {
   gridContainer: {
     backgroundColor: Colors.WHITE,
     width: "100%",
-    height: "40vh",
+    maxHeight: "40vh",
     overflowY: "auto",
     ...ScrollbarStyles,
   },
@@ -128,8 +128,20 @@ export default function StatementSummaryAccordion({ data, loading }) {
                 </div>
               ))
             ) : (
-              <Typography sx={styles.noDataText}>
-                No Statement Summary Data
+              <Typography
+                sx={{
+                  backgroundColor: Colors.WHITE,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "5vh",
+                  borderRadius: "1rem",
+                  fontFamily: "Nunito",
+                  textAlign: "center",
+                  marginTop: "2rem",
+                }}
+              >
+                No Statement Summary Data.
               </Typography>
             )}
           </Grid>

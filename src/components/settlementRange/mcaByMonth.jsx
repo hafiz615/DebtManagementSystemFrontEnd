@@ -48,7 +48,7 @@ const McaByMonthTable = ({ mcaByMonth }) => {
           marginTop: "2rem",
         }}
       >
-        No data available.
+        No MCA Data.
       </Typography>
     );
   }
