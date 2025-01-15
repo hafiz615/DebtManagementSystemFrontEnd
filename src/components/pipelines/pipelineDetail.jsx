@@ -84,7 +84,7 @@ export default function PipelineDetail() {
   }
 
   const getUsers = async () => {
-    const res = await GetAllUsers("", false, false);
+    const res = await GetAllUsers(0, 0, false, false);
     if (res?.status === 200) {
       setUsersArray(res?.data?.data?.users);
     } else if (res?.response?.status === 401 || res?.response?.status === 403) {

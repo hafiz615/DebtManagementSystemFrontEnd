@@ -32,15 +32,6 @@ function App() {
   const [callSid, setCallSid] = useState();
   const [caseMenuActive, setCaseMenuActive] = useState(false);
 
-  const startupClient = async () => {
-    try {
-      const response = await GetCallToken();
-      initializeDevice(response.data.data.token);
-    } catch (err) {
-      console.error("Failed to fetch token", err);
-    }
-  };
-
   const getCreditorCompanies = async () => {
     const res = await GetAllUserCases();
     if (res?.status === 200) {
@@ -54,7 +45,9 @@ function App() {
     }
   };
 
-  const initializeDevice = (token) => {
+  const initializeDevice = () => {
+    const token = localStorage.getItem("twilioToken") || "";
+
     const twilioDevice = new Device(token, {
       logLevel: 1,
       codecPreferences: ["opus", "pcmu"],
@@ -83,7 +76,7 @@ function App() {
   };
 
   useEffect(() => {
-    startupClient();
+    initializeDevice();
     return () => {
       clearInterval(callInterval);
     };

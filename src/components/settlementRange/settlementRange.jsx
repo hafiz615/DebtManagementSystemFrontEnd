@@ -929,7 +929,7 @@ export default function SettlementRange({
   const debtorData = [
     { item: "Full Name", value: debtor?.fullName || "--" },
     { item: "Customer Status", value: debtor?.status || "--" },
-    { item: "phone", value: debtor?.phone ? `+1${debtor?.phone}` : "--" },
+    { item: "Phone", value: debtor?.phone ? `+1${debtor?.phone}` : "--" },
     {
       item: "Weekly Budget",
       value: debtor?.weeklyBudget
