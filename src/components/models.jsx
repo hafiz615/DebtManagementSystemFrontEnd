@@ -341,7 +341,7 @@ export default function MuiModels({
           </IconButton>
         </Tooltip>
       ) : show === "showClientSync" ? (
-        <Tooltip title="Sync EasyPay Client" placement="top-end">
+        <Tooltip title={`Sync ${paymentPlatform} `} placement="top-end">
           <IconButton
             onClick={() => {
               handleOpen();
