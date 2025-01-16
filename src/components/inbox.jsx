@@ -32,12 +32,10 @@ import {
   ChevronRight,
   ExpandMore,
   FilterListOutlined,
-  RemoveRedEye,
 } from "@mui/icons-material";
 import TextButton from "./button";
 import {
   GetAllCasesTasks,
-  GetAllDrafts,
   GetAllInbox,
   GetAllSenders,
   GetAllUsers,
@@ -432,8 +430,8 @@ function Inbox() {
             compose={true}
             iconColor={Colors.BLACK}
             maxHeight="78vh"
-            GetLogsById={getAllInboxData}
             verifiedSenders={verifiedSenders}
+            getAllInboxData={getAllInboxData}
           />
         </div>
       </Grid>
@@ -516,47 +514,6 @@ function Inbox() {
                   >
                     Viewing Inbox for:
                   </Typography>
-                  {/* <Select
-                    value={userSelected?._id || ""}
-                    onChange={handleChange}
-                    sx={{
-                      fontFamily: "Nunito",
-                      minWidth: 200,
-                      "& .MuiOutlinedInput-notchedOutline": {
-                        borderColor: Colors.SKY_BLUE,
-                        borderRadius: "10px",
-                      },
-                      "&:hover .MuiOutlinedInput-notchedOutline": {
-                        borderColor: Colors.SKY_BLUE,
-                        borderRadius: "10px",
-                      },
-                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                        borderColor: Colors.SKY_BLUE,
-                        borderRadius: "10px",
-                      },
-                      "& .MuiSelect-select": {
-                        padding: "10px",
-                        color: "#333",
-                        fontSize: FONT_SIZE_LARGE,
-                        fontFamily: "Nunito",
-                      },
-                    }}
-                  >
-                    {users?.map((user) => (
-                      <MenuItem
-                        key={user._id}
-                        value={user._id}
-                        sx={{
-                          fontFamily: "Nunito",
-                          "&:hover": {
-                            backgroundColor: Colors.lIGHT_PURPLE,
-                          },
-                        }}
-                      >
-                        {user.name}
-                      </MenuItem>
-                    ))}
-                  </Select> */}
                   <Dropdown
                     menuWidth="10rem"
                     menuItems={users?.map((user) => ({
@@ -760,6 +717,7 @@ function Inbox() {
                                   maxHeight="78vh"
                                   replyCheck={true}
                                   caseDataId={item?.caseId}
+                                  getAllInboxData={getAllInboxData}
                                 />
                               )}
                               {activeTab === "Draft" && (
@@ -767,13 +725,14 @@ function Inbox() {
                                   show="sendEmailCase"
                                   from={item?.from}
                                   to={item?.to}
-                                  content={item?.content}
+                                  content={item?.text}
                                   emailSubject={item?.subject}
                                   buttonName="draft"
                                   iconColor={Colors.BLACK}
                                   maxHeight="78vh"
                                   replyCheck={true}
                                   caseDataId={item?.caseId}
+                                  getAllInboxData={getAllInboxData}
                                 />
                               )}
                             </div>
@@ -803,7 +762,10 @@ function Inbox() {
                                 <Typography
                                   sx={fontStyling}
                                   dangerouslySetInnerHTML={{
-                                    __html: item?.textAsHtml,
+                                    __html:
+                                      activeTab === "Draft"
+                                        ? item?.text || "-"
+                                        : item?.textAsHtml,
                                   }}
                                 />
                               </div>
@@ -825,7 +787,7 @@ function Inbox() {
                                         sx={{
                                           display: "flex",
                                           border: `1px solid ${Colors.SKY_BLUE}`,
-                                          width: "25%",
+                                          width: "20%",
                                           borderRadius: "10px",
                                           justifyContent: "space-between",
                                           alignItems: "center",
