@@ -1754,3 +1754,14 @@ export const SaveAsDraft = async (payload) => {
     return error;
   }
 };
+export const GetCallerName = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/call/twilio/callerName`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

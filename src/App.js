@@ -19,7 +19,12 @@ import PipelinesPage from "./pages/pipelinePage";
 import UpdateCase from "./pages/updateCase";
 import InboxPage from "./pages/inboxPage";
 import { useEffect, useState } from "react";
-import { GetAllUserCases, GetCallSid, GetCallToken } from "./services/services";
+import {
+  GetAllUserCases,
+  GetCallerName,
+  GetCallSid,
+  GetCallToken,
+} from "./services/services";
 import { Device } from "@twilio/voice-sdk";
 import IncomingCall from "./components/incomingCall";
 
@@ -30,10 +35,9 @@ function App() {
   const [callInterval, setCallInterval] = useState(null);
   const [allCases, setAllCases] = useState([]);
   const [callSid, setCallSid] = useState();
+  const [callerName, setCallerName] = useState();
   const [caseMenuActive, setCaseMenuActive] = useState(false);
-
   const [token, setToken] = useState(localStorage.getItem("twilioToken"));
-  // const token = ;
 
   const getCreditorCompanies = async () => {
     const res = await GetAllUserCases();
@@ -41,49 +45,29 @@ function App() {
       setAllCases(res?.data?.data);
     }
   };
+
   const getCallSID = async (callSid) => {
     const SIDres = await GetCallSid(callSid);
     if (SIDres?.status === 200) {
       setCallSid(SIDres?.data?.data);
     }
   };
-  // const initializeDevice = () => {
-  //   const token = localStorage.getItem("twilioToken") || "";
 
-  //   const twilioDevice = new Device(token, {
-  //     logLevel: 1,
-  //     codecPreferences: ["opus", "pcmu"],
-  //   });
-  //   twilioDevice.register();
-  //   twilioDevice.on("incoming", (incomingCall) => {
-  //     setCaseMenuActive(false);
-  //     setIncomingCall(incomingCall);
-  //     setIsModalOpen(true);
-  //     getCreditorCompanies();
-  //     getCallSID(incomingCall?.parameters?.CallSid);
+  const getNameFromCall = async (from) => {
+    const payoload = {
+      from: from,
+    };
+    const callerNameRes = await GetCallerName(payoload);
+    if (callerNameRes?.status === 200) {
+      setCallerName(callerNameRes?.data?.data);
+    }
+  };
 
-  //     incomingCall.on("disconnect", () => {
-  //       setIncomingCall(null);
-  //       setCallInterval(null);
-  //       setCallDuration(0);
-  //       setCaseMenuActive(true);
-  //     });
-  //     incomingCall.on("cancel", () => {
-  //       setIncomingCall(null);
-  //       setIsModalOpen(false);
-  //       setCallInterval(null);
-  //       setCallDuration(0);
-  //     });
-  //   });
-  // };
   const initializeDevice = () => {
     const token = localStorage.getItem("twilioToken") || "";
     if (window.twilioDevice) {
-      // Destroy the old device if it exists
       window.twilioDevice.destroy();
     }
-
-    // Create and register a new device
     const twilioDevice = new Device(token, {
       logLevel: 1,
       codecPreferences: ["opus", "pcmu"],
@@ -97,6 +81,7 @@ function App() {
       setIncomingCall(incomingCall);
       setIsModalOpen(true);
       getCreditorCompanies();
+      getNameFromCall(incomingCall?.parameters?.From);
       getCallSID(incomingCall?.parameters?.CallSid);
 
       incomingCall.on("disconnect", () => {
@@ -104,6 +89,7 @@ function App() {
         setCallInterval(null);
         setCallDuration(0);
         setCaseMenuActive(true);
+        setCallerName("");
       });
 
       incomingCall.on("cancel", () => {
@@ -111,6 +97,7 @@ function App() {
         setIsModalOpen(false);
         setCallInterval(null);
         setCallDuration(0);
+        setCallerName("");
       });
     });
   };
@@ -294,6 +281,7 @@ function App() {
           callSid={callSid}
           caseMenuActive={caseMenuActive}
           setCaseMenuActive={setCaseMenuActive}
+          callerName={callerName}
         />
       )}
     </>

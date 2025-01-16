@@ -30,6 +30,7 @@ export default function IncomingCall({
   callSid,
   caseMenuActive,
   setCaseMenuActive,
+  callerName,
 }) {
   const [selectedCase, setSelectedCase] = useState();
   const [loading, setLoading] = useState(false);
@@ -177,9 +178,18 @@ export default function IncomingCall({
                 Incoming Call
               </Typography>
             )}
-
+            <Typography variant="body1" sx={{ fontFamily: "Nunito" }}>
+              {callerName?.debtorName ||
+                callerName?.creditorName ||
+                "Unknown Caller"}
+            </Typography>
+            {callerName?.companyName && (
+              <Typography variant="body1" sx={{ fontFamily: "Nunito" }}>
+                {callerName?.companyName}
+              </Typography>
+            )}
             <Typography variant="body1" sx={{ mb: 3, fontFamily: "Nunito" }}>
-              {incomingCall?.parameters?.From || "Unknown Caller"}
+              {incomingCall?.parameters?.From}
             </Typography>
             {callInterval ? (
               <Box>
