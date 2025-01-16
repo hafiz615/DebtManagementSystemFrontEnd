@@ -207,6 +207,18 @@ export default function DebtorDetailsCards({
               justifyContent: "end",
             }}
           >
+            <MuiModels
+              show="showClientSync"
+              iconColor={Colors.BLACK}
+              caseData={caseData}
+              GetCaseDetails={GetCaseDetails}
+              height="22vh"
+              paymentPlatform={
+                selectedValue === "Seamless Chex"
+                  ? "Seamlesschex merchant"
+                  : "Easypay direct"
+              }
+            />
             <Dropdown
               menuWidth="10rem"
               menuItems={paymentGateways}

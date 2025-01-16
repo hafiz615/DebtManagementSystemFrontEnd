@@ -1587,10 +1587,32 @@ export const GetCreditorSyncEmail = async (id) => {
     return error;
   }
 };
+
 export const SyncPaynoteCreditor = async (payload, id) => {
   try {
     return await axios.post(
       BASE_URL + `/v1/creditor/syncPaynoteCreditor/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetClientSyncEmail = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/debtor/getClientSyncEmail/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const SyncEasyPayEmail = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/clientSync/${id}`,
       payload,
       setHeaders()
     );

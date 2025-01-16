@@ -24,6 +24,7 @@ import {
   Button,
   Select,
   MenuItem,
+  colors,
 } from "@mui/material";
 import MuiModels from "./models";
 import SearchBar from "./searchBar";
@@ -595,37 +596,6 @@ function Inbox() {
                                   gap: "10px",
                                 }}
                               >
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                  }}
-                                >
-                                  <Typography
-                                    onClick={() => handleToggleContent(index)}
-                                  >
-                                    {expandedMessages[index] ? (
-                                      <IconButton>
-                                        <ExpandMore
-                                          sx={{
-                                            color: Colors.SKY_BLUE,
-                                            cursor: "pointer",
-                                          }}
-                                        />
-                                      </IconButton>
-                                    ) : (
-                                      <IconButton>
-                                        <ChevronRight
-                                          sx={{
-                                            color: Colors.SKY_BLUE,
-                                            cursor: "pointer",
-                                          }}
-                                        />
-                                      </IconButton>
-                                    )}
-                                  </Typography>
-                                </Box>
                                 <Typography
                                   sx={{
                                     fontFamily: "Nunito",
@@ -645,7 +615,6 @@ function Inbox() {
                                   display: "flex",
                                   alignItems: "center",
                                   gap: "10px",
-                                  paddingLeft: "3.2rem",
                                 }}
                               >
                                 <Typography sx={boldTextStyling}>
@@ -667,7 +636,6 @@ function Inbox() {
                                 style={{
                                   display: "flex",
                                   gap: "10px",
-                                  paddingLeft: "3.2rem",
                                 }}
                               >
                                 <Typography
@@ -685,7 +653,6 @@ function Inbox() {
                                 style={{
                                   display: "flex",
                                   gap: "10px",
-                                  paddingLeft: "3.2rem",
                                 }}
                               >
                                 <Typography sx={boldTextStyling}>
@@ -737,93 +704,138 @@ function Inbox() {
                               )}
                             </div>
                           </div>
-                          {expandedMessages[index] && (
-                            <div style={{ paddingLeft: "3.2rem" }}>
-                              <div style={{ display: "flex", gap: "10px" }}>
-                                <Typography sx={boldTextStyling}>
-                                  Creditor Company Name:
-                                </Typography>
-                                <Typography sx={fontStyling}>
-                                  {item?.creditorCompanyName || "-"}
-                                </Typography>
-                              </div>
-                              <div style={{ display: "flex", gap: "10px" }}>
-                                <Typography sx={boldTextStyling}>
-                                  Negotiator Name:
-                                </Typography>
-                                <Typography sx={fontStyling}>
-                                  {item?.negotiatorName || "-"}
-                                </Typography>
-                              </div>
+
+                          <div>
+                            <div style={{ display: "flex", gap: "10px" }}>
+                              <Typography sx={boldTextStyling}>
+                                Creditor Company Name:
+                              </Typography>
+                              <Typography sx={fontStyling}>
+                                {item?.creditorCompanyName || "-"}
+                              </Typography>
+                            </div>
+                            <div style={{ display: "flex", gap: "10px" }}>
+                              <Typography sx={boldTextStyling}>
+                                Negotiator Name:
+                              </Typography>
+                              <Typography sx={fontStyling}>
+                                {item?.negotiatorName || "-"}
+                              </Typography>
+                            </div>
+                            <Typography sx={boldTextStyling}>
+                              Content:
+                            </Typography>
+
+                            {/* Show truncated or expanded content based on expandedMessages[index] */}
+                            {!expandedMessages[index] ? (
                               <div>
-                                <Typography sx={boldTextStyling}>
-                                  Content:
-                                </Typography>
+                                {/* Truncated content (100 characters) */}
                                 <Typography
                                   sx={fontStyling}
                                   dangerouslySetInnerHTML={{
                                     __html:
-                                      activeTab === "Draft"
-                                        ? item?.text || "-"
-                                        : item?.textAsHtml,
+                                      (activeTab === "Draft"
+                                        ? item?.text
+                                        : item?.textAsHtml
+                                      )?.substring(0, 200) +
+                                      (item?.text?.length > 200 ||
+                                      item?.textAsHtml?.length > 200
+                                        ? "..."
+                                        : ""),
                                   }}
                                 />
                               </div>
-                              {item?.attachments?.length > 0 && (
+                            ) : (
+                              <>
+                                {/* Expanded content */}
                                 <div>
-                                  <Typography sx={boldTextStyling}>
-                                    Attachment:
-                                  </Typography>
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      gap: "10px",
-                                      flexWrap: "wrap",
+                                  <Typography
+                                    sx={fontStyling}
+                                    dangerouslySetInnerHTML={{
+                                      __html:
+                                        activeTab === "Draft"
+                                          ? item?.text
+                                          : item?.textAsHtml,
                                     }}
-                                  >
-                                    {item?.attachments?.map((item) => (
-                                      <Grid
-                                        container
-                                        sx={{
-                                          display: "flex",
-                                          border: `1px solid ${Colors.SKY_BLUE}`,
-                                          width: "20%",
-                                          borderRadius: "10px",
-                                          justifyContent: "space-between",
-                                          alignItems: "center",
-                                          padding: "10px",
-                                          cursor: "pointer",
-                                          transition: "all 0.3s ease",
-                                          "&:hover": {
-                                            backgroundColor:
-                                              Colors.lIGHT_PURPLE,
-                                          },
-                                        }}
-                                        onClick={() =>
-                                          handleShowFile(item?.url)
-                                        }
-                                      >
-                                        <Typography
-                                          sx={{
-                                            fontSize: "13px",
-                                            fontFamily: "Nunito",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            gap: "10px",
-                                          }}
-                                        >
-                                          <Attachment
-                                            sx={{ color: Colors.SKY_BLUE }}
-                                          />{" "}
-                                          {item?.originalFileName}
-                                        </Typography>
-                                      </Grid>
-                                    ))}
-                                  </div>
+                                  />
                                 </div>
-                              )}
-                            </div>
-                          )}
+
+                                {/* Attachments (if any) */}
+                                {item?.attachments?.length > 0 && (
+                                  <div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        gap: "10px",
+                                        flexWrap: "wrap",
+                                      }}
+                                    >
+                                      {item?.attachments?.map((attachment) => (
+                                        <Grid
+                                          container
+                                          sx={{
+                                            display: "flex",
+                                            border: `1px solid ${Colors.SKY_BLUE}`,
+                                            width: "20%",
+                                            borderRadius: "10px",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            padding: "10px",
+                                            cursor: "pointer",
+                                            transition: "all 0.3s ease",
+                                            "&:hover": {
+                                              backgroundColor:
+                                                Colors.lIGHT_PURPLE,
+                                            },
+                                          }}
+                                          onClick={() =>
+                                            handleShowFile(attachment?.url)
+                                          }
+                                        >
+                                          <Typography
+                                            sx={{
+                                              fontSize: "13px",
+                                              fontFamily: "Nunito",
+                                              display: "flex",
+                                              alignItems: "center",
+                                              gap: "10px",
+                                            }}
+                                          >
+                                            <Attachment
+                                              sx={{ color: Colors.SKY_BLUE }}
+                                            />
+                                            {attachment?.originalFileName}
+                                          </Typography>
+                                        </Grid>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                              </>
+                            )}
+
+                            {/* Show More / Show Less button */}
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                cursor: "pointer",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  color: Colors.SKY_BLUE,
+                                  fontSize: FONT_SIZE_MEDIUM,
+                                }}
+                                onClick={() => handleToggleContent(index)}
+                              >
+                                {expandedMessages[index]
+                                  ? "Show Less..."
+                                  : "Show More..."}
+                              </Typography>
+                            </Box>
+                          </div>
                         </CardContent>
                         {showViewer && (
                           <div

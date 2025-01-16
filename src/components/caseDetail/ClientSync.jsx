@@ -6,19 +6,16 @@ import { isEmpty } from "lodash";
 import { Colors } from "../../config/default";
 import Button from "../button";
 import { isEmailValid } from "../../common";
-import {
-  GetCreditorSyncEmail,
-  SyncPaynoteCreditor,
-} from "../../services/services";
+import { GetClientSyncEmail, SyncEasyPayEmail } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 
-function CreditorSync({ handleClose, caseData, GetCaseDetails }) {
+function ClientSync({ handleClose, caseData, paymentPlatform }) {
+  const debtorId = caseData?.debtor?._id;
   const { showToast } = useToast();
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [paynoteSyncloading, setPaynoteSyncloading] = useState(false);
+  const [easyPaySyncloading, setEasyPaySyncloading] = useState(false);
   const [loading, setLoading] = useState(false);
-  const creditorId = caseData?.creditor?._id;
 
   const handleEmailChange = (e) => {
     const { value } = e.target;
@@ -34,34 +31,30 @@ function CreditorSync({ handleClose, caseData, GetCaseDetails }) {
   };
   const isButtonDisabled = !email?.trim() || !isEmailValid(email);
 
-  const GetCreditorPaynoteSync = async () => {
-    setPaynoteSyncloading(true);
-    const GetCreditorPaynoteSyncRes = await GetCreditorSyncEmail(creditorId);
-    if (GetCreditorPaynoteSyncRes?.status === 200) {
-      setEmail(GetCreditorPaynoteSyncRes?.data?.data);
-    } else if (GetCreditorPaynoteSyncRes?.response?.status === 400) {
-      const errorMessage = GetCreditorPaynoteSyncRes?.response?.data?.message;
+  const GetClientEasyPaySync = async () => {
+    setEasyPaySyncloading(true);
+    const GetClientEasyPaySyncRes = await GetClientSyncEmail(debtorId);
+    if (GetClientEasyPaySyncRes?.status === 200) {
+      setEmail(GetClientEasyPaySyncRes?.data?.data);
+    } else if (GetClientEasyPaySyncRes?.response?.status === 400) {
+      const errorMessage = GetClientEasyPaySyncRes?.response?.data?.message;
       showToast(errorMessage, "error");
     }
-    setPaynoteSyncloading(false);
+    setEasyPaySyncloading(false);
   };
   useEffect(() => {
-    GetCreditorPaynoteSync();
+    GetClientEasyPaySync();
   }, []);
 
-  const AddSyncPaynoteCreditorEmail = async () => {
+  const AddSyncEasyPayEmail = async () => {
     setLoading(true);
-    const params = { email: email };
-    const AddSyncPaynoteCreditorEmailRes = await SyncPaynoteCreditor(
-      params,
-      creditorId
-    );
-    if (AddSyncPaynoteCreditorEmailRes?.status === 200) {
-      showToast(AddSyncPaynoteCreditorEmailRes?.data?.message, "success");
+    const params = { email: email, platform: paymentPlatform };
+    const AddSyncClientEmailRes = await SyncEasyPayEmail(params, debtorId);
+    if (AddSyncClientEmailRes?.status === 200) {
+      showToast(AddSyncClientEmailRes?.data?.message, "success");
       handleClose();
-    } else if (AddSyncPaynoteCreditorEmailRes?.response?.status === 400) {
-      const errorMessage =
-        AddSyncPaynoteCreditorEmailRes?.response?.data?.message;
+    } else if (AddSyncClientEmailRes?.response?.status === 400) {
+      const errorMessage = AddSyncClientEmailRes?.response?.data?.message;
       showToast(errorMessage, "error");
     }
     setLoading(false);
@@ -69,7 +62,7 @@ function CreditorSync({ handleClose, caseData, GetCaseDetails }) {
 
   return (
     <>
-      {paynoteSyncloading ? (
+      {easyPaySyncloading ? (
         <Grid
           item
           xs={12}
@@ -93,7 +86,7 @@ function CreditorSync({ handleClose, caseData, GetCaseDetails }) {
             }}
           >
             <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
-              Sync Paynote Creditor
+              Sync EasyPay Client
             </Typography>
             <Close onClick={handleClose} />
           </Box>
@@ -136,7 +129,7 @@ function CreditorSync({ handleClose, caseData, GetCaseDetails }) {
             <Grid item xs={2.5}>
               <Button
                 disabled={isButtonDisabled}
-                onClick={AddSyncPaynoteCreditorEmail}
+                onClick={AddSyncEasyPayEmail}
                 buttonText="SYNC"
                 height="2.5rem"
                 width="100%"
@@ -153,4 +146,4 @@ function CreditorSync({ handleClose, caseData, GetCaseDetails }) {
   );
 }
 
-export default CreditorSync;
+export default ClientSync;

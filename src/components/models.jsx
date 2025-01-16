@@ -69,6 +69,7 @@ import UpdateWeeklyBudget from "./settlementRange/updateWeeklyBudget";
 import BouncePayments from "./caseDetail/bouncePayments";
 import GetTransactionDetails from "./caseDetail/getTransactionDetails";
 import SeeCheckDetails from "./caseDetail/seeCheckDetails";
+import ClientSync from "./caseDetail/ClientSync";
 
 export default function MuiModels({
   buttonName,
@@ -159,6 +160,7 @@ export default function MuiModels({
   selectedCreditorDetailsKey,
   fetchCalls,
   transactionId,
+  paymentPlatform,
   getAllInboxData,
 }) {
   const [open, setOpen] = React.useState(false);
@@ -328,6 +330,18 @@ export default function MuiModels({
         </IconButton>
       ) : show === "showCreditorSync" ? (
         <Tooltip title="Sync Paynote Creditor" placement="top-end">
+          <IconButton
+            onClick={() => {
+              handleOpen();
+            }}
+          >
+            <Sync
+              sx={{ color: Colors.DARK_GRAY, fontSize: iconSize || "16px" }}
+            />
+          </IconButton>
+        </Tooltip>
+      ) : show === "showClientSync" ? (
+        <Tooltip title="Sync EasyPay Client" placement="top-end">
           <IconButton
             onClick={() => {
               handleOpen();
@@ -1099,6 +1113,13 @@ export default function MuiModels({
               handleClose={handleClose}
               caseData={caseData}
               GetCaseDetails={GetCaseDetails}
+            />
+          ) : show === "showClientSync" ? (
+            <ClientSync
+              handleClose={handleClose}
+              caseData={caseData}
+              GetCaseDetails={GetCaseDetails}
+              paymentPlatform={paymentPlatform}
             />
           ) : show === "updateWeeklyBudget" ? (
             <UpdateWeeklyBudget
