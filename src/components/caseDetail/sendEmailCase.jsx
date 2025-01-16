@@ -132,6 +132,7 @@ export default function SendEmailCase({
   data,
   verifiedSenders,
   compose,
+  getAllInboxData,
 }) {
   const [loading, setLoading] = useState(false);
   const [draftLoading, setDraftLoading] = useState(false);
@@ -294,6 +295,7 @@ export default function SendEmailCase({
       );
       if (resEmail?.status === 200) {
         showToast(resEmail?.data?.message, "success");
+        getAllInboxData && getAllInboxData(false, false);
         setCc([]);
         setBulkEmail([]);
         setBulkEmailTemplates([]);
@@ -332,6 +334,7 @@ export default function SendEmailCase({
       if (resEmail?.status === 200) {
         showToast(resEmail?.data?.message, "success");
         setCc([]);
+        getAllInboxData && getAllInboxData(false, false);
         setBulkEmail([]);
         setBulkEmailTemplates([]);
         setBulkSmsTemplates([]);
@@ -359,20 +362,33 @@ export default function SendEmailCase({
 
   const handleSaveDraft = async () => {
     setDraftLoading(true);
-    const payload = {
-      from: replyCheck ? sendFrom : selectedValue,
-      to: compose || replyCheck ? sendTo : selectedEmail,
-      cc: cc || [],
-      subject: subject,
-      content: preview,
-      caseId: caseDataId || "",
-    };
-    const res = await SaveAsDraft(payload);
-    if (res?.status === 201) {
-      handleClose();
-      showToast(res?.data?.message, "success");
+
+    const formData = new FormData();
+    if (selectedFiles?.length > 0) {
+      selectedFiles.forEach((file) => {
+        formData.append("files", file);
+      });
     } else {
-      const errorMessage = res?.response?.data?.message;
+      formData.append("files", `[]`);
+    }
+
+    formData.append(
+      "sendTo",
+      headerName ? sendTo : compose || replyCheck ? sendTo : selectedEmail
+    );
+    formData.append("content", preview);
+    formData.append("subject", subject);
+    const ccString = JSON.stringify(cc);
+    formData.append("cc", ccString);
+    formData.append("from", replyCheck ? sendFrom : selectedValue);
+    formData.append("caseId", caseDataId || "");
+    const resEmail = await SaveAsDraft(formData);
+    if (resEmail?.status === 201) {
+      getAllInboxData && getAllInboxData(false, false);
+      handleClose();
+      showToast(resEmail?.data?.message, "success");
+    } else {
+      const errorMessage = resEmail?.response?.data?.message;
       showToast(errorMessage, "error");
     }
     setDraftLoading(false);
@@ -839,7 +855,8 @@ export default function SendEmailCase({
               !subject?.trim() &&
               !preview?.trim() &&
               !selectedEmail &&
-              !cc?.length > 0
+              !cc?.length > 0 &&
+              !selectedFiles?.length > 0
             }
           />
           <TextButton
