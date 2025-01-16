@@ -33,12 +33,10 @@ import {
   ChevronRight,
   ExpandMore,
   FilterListOutlined,
-  RemoveRedEye,
 } from "@mui/icons-material";
 import TextButton from "./button";
 import {
   GetAllCasesTasks,
-  GetAllDrafts,
   GetAllInbox,
   GetAllSenders,
   GetAllUsers,
@@ -433,8 +431,8 @@ function Inbox() {
             compose={true}
             iconColor={Colors.BLACK}
             maxHeight="78vh"
-            GetLogsById={getAllInboxData}
             verifiedSenders={verifiedSenders}
+            getAllInboxData={getAllInboxData}
           />
         </div>
       </Grid>
@@ -517,47 +515,6 @@ function Inbox() {
                   >
                     Viewing Inbox for:
                   </Typography>
-                  {/* <Select
-                    value={userSelected?._id || ""}
-                    onChange={handleChange}
-                    sx={{
-                      fontFamily: "Nunito",
-                      minWidth: 200,
-                      "& .MuiOutlinedInput-notchedOutline": {
-                        borderColor: Colors.SKY_BLUE,
-                        borderRadius: "10px",
-                      },
-                      "&:hover .MuiOutlinedInput-notchedOutline": {
-                        borderColor: Colors.SKY_BLUE,
-                        borderRadius: "10px",
-                      },
-                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                        borderColor: Colors.SKY_BLUE,
-                        borderRadius: "10px",
-                      },
-                      "& .MuiSelect-select": {
-                        padding: "10px",
-                        color: "#333",
-                        fontSize: FONT_SIZE_LARGE,
-                        fontFamily: "Nunito",
-                      },
-                    }}
-                  >
-                    {users?.map((user) => (
-                      <MenuItem
-                        key={user._id}
-                        value={user._id}
-                        sx={{
-                          fontFamily: "Nunito",
-                          "&:hover": {
-                            backgroundColor: Colors.lIGHT_PURPLE,
-                          },
-                        }}
-                      >
-                        {user.name}
-                      </MenuItem>
-                    ))}
-                  </Select> */}
                   <Dropdown
                     menuWidth="10rem"
                     menuItems={users?.map((user) => ({
@@ -727,6 +684,7 @@ function Inbox() {
                                   maxHeight="78vh"
                                   replyCheck={true}
                                   caseDataId={item?.caseId}
+                                  getAllInboxData={getAllInboxData}
                                 />
                               )}
                               {activeTab === "Draft" && (
@@ -734,13 +692,14 @@ function Inbox() {
                                   show="sendEmailCase"
                                   from={item?.from}
                                   to={item?.to}
-                                  content={item?.content}
+                                  content={item?.text}
                                   emailSubject={item?.subject}
                                   buttonName="draft"
                                   iconColor={Colors.BLACK}
                                   maxHeight="78vh"
                                   replyCheck={true}
                                   caseDataId={item?.caseId}
+                                  getAllInboxData={getAllInboxData}
                                 />
                               )}
                             </div>
@@ -766,38 +725,44 @@ function Inbox() {
                             <Typography sx={boldTextStyling}>
                               Content:
                             </Typography>
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                cursor: "pointer",
-                                justifyContent: "center",
-                              }}
-                            >
-                              <Typography
-                                sx={{ color: Colors.SKY_BLUE }}
-                                onClick={() => handleToggleContent(index)}
-                              >
-                                {expandedMessages[index]
-                                  ? "Show Less..."
-                                  : "Show More..."}
-                              </Typography>
-                            </Box>
-                            {expandedMessages[index] && (
+
+                            {/* Show truncated or expanded content based on expandedMessages[index] */}
+                            {!expandedMessages[index] ? (
+                              <div>
+                                {/* Truncated content (100 characters) */}
+                                <Typography
+                                  sx={fontStyling}
+                                  dangerouslySetInnerHTML={{
+                                    __html:
+                                      (activeTab === "Draft"
+                                        ? item?.text
+                                        : item?.textAsHtml
+                                      )?.substring(0, 200) +
+                                      (item?.text?.length > 200 ||
+                                      item?.textAsHtml?.length > 200
+                                        ? "..."
+                                        : ""),
+                                  }}
+                                />
+                              </div>
+                            ) : (
                               <>
+                                {/* Expanded content */}
                                 <div>
                                   <Typography
                                     sx={fontStyling}
                                     dangerouslySetInnerHTML={{
-                                      __html: item?.textAsHtml,
+                                      __html:
+                                        activeTab === "Draft"
+                                          ? item?.text
+                                          : item?.textAsHtml,
                                     }}
                                   />
                                 </div>
+
+                                {/* Attachments (if any) */}
                                 {item?.attachments?.length > 0 && (
                                   <div>
-                                    <Typography sx={boldTextStyling}>
-                                      Attachment:
-                                    </Typography>
                                     <div
                                       style={{
                                         display: "flex",
@@ -805,13 +770,13 @@ function Inbox() {
                                         flexWrap: "wrap",
                                       }}
                                     >
-                                      {item?.attachments?.map((item) => (
+                                      {item?.attachments?.map((attachment) => (
                                         <Grid
                                           container
                                           sx={{
                                             display: "flex",
                                             border: `1px solid ${Colors.SKY_BLUE}`,
-                                            width: "25%",
+                                            width: "20%",
                                             borderRadius: "10px",
                                             justifyContent: "space-between",
                                             alignItems: "center",
@@ -824,7 +789,7 @@ function Inbox() {
                                             },
                                           }}
                                           onClick={() =>
-                                            handleShowFile(item?.url)
+                                            handleShowFile(attachment?.url)
                                           }
                                         >
                                           <Typography
@@ -838,8 +803,8 @@ function Inbox() {
                                           >
                                             <Attachment
                                               sx={{ color: Colors.SKY_BLUE }}
-                                            />{" "}
-                                            {item?.originalFileName}
+                                            />
+                                            {attachment?.originalFileName}
                                           </Typography>
                                         </Grid>
                                       ))}
@@ -848,6 +813,28 @@ function Inbox() {
                                 )}
                               </>
                             )}
+
+                            {/* Show More / Show Less button */}
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                cursor: "pointer",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  color: Colors.SKY_BLUE,
+                                  fontSize: FONT_SIZE_MEDIUM,
+                                }}
+                                onClick={() => handleToggleContent(index)}
+                              >
+                                {expandedMessages[index]
+                                  ? "Show Less..."
+                                  : "Show More..."}
+                              </Typography>
+                            </Box>
                           </div>
                         </CardContent>
                         {showViewer && (

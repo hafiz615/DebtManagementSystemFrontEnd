@@ -161,6 +161,7 @@ export default function MuiModels({
   fetchCalls,
   transactionId,
   paymentPlatform,
+  getAllInboxData,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -898,6 +899,7 @@ export default function MuiModels({
               emailSubject={emailSubject}
               replyCheck={replyCheck}
               data={data}
+              getAllInboxData={getAllInboxData}
             />
           ) : show === "editPipeline" ? (
             <EditPipeline
