@@ -9,7 +9,7 @@ import { isEmailValid } from "../../common";
 import { GetClientSyncEmail, SyncEasyPayEmail } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 
-function ClientSync({ handleClose, caseData }) {
+function ClientSync({ handleClose, caseData, paymentPlatform }) {
   const debtorId = caseData?.debtor?._id;
   const { showToast } = useToast();
   const [email, setEmail] = useState("");
@@ -48,7 +48,7 @@ function ClientSync({ handleClose, caseData }) {
 
   const AddSyncEasyPayEmail = async () => {
     setLoading(true);
-    const params = { email: email };
+    const params = { email: email, platform: paymentPlatform };
     const AddSyncClientEmailRes = await SyncEasyPayEmail(params, debtorId);
     if (AddSyncClientEmailRes?.status === 200) {
       showToast(AddSyncClientEmailRes?.data?.message, "success");
@@ -70,7 +70,7 @@ function ClientSync({ handleClose, caseData }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            height: "22vh",
+            height: "15vh",
           }}
         >
           <CircularProgress size={20} sx={{ color: Colors.SKY_BLUE }} />

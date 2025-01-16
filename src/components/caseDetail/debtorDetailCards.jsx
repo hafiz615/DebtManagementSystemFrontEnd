@@ -213,6 +213,11 @@ export default function DebtorDetailsCards({
               caseData={caseData}
               GetCaseDetails={GetCaseDetails}
               height="22vh"
+              paymentPlatform={
+                selectedValue === "Seamless Chex"
+                  ? "Seamlesschex merchant"
+                  : "Easypay direct"
+              }
             />
             <Dropdown
               menuWidth="10rem"

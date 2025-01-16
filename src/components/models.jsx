@@ -160,6 +160,7 @@ export default function MuiModels({
   selectedCreditorDetailsKey,
   fetchCalls,
   transactionId,
+  paymentPlatform,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -1116,6 +1117,7 @@ export default function MuiModels({
               handleClose={handleClose}
               caseData={caseData}
               GetCaseDetails={GetCaseDetails}
+              paymentPlatform={paymentPlatform}
             />
           ) : show === "updateWeeklyBudget" ? (
             <UpdateWeeklyBudget

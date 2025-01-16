@@ -1612,7 +1612,7 @@ export const GetClientSyncEmail = async (id) => {
 export const SyncEasyPayEmail = async (payload, id) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/creditor/syncPaynoteCreditor/${id}`,
+      BASE_URL + `/v1/debtor/clientSync/${id}`,
       payload,
       setHeaders()
     );
