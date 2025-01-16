@@ -22,6 +22,8 @@ import {
   Divider,
   Tooltip,
   Button,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import MuiModels from "./models";
 import SearchBar from "./searchBar";
@@ -38,9 +40,11 @@ import {
   GetAllDrafts,
   GetAllInbox,
   GetAllSenders,
+  GetAllUsers,
 } from "../services/services";
 import { formatDateString } from "../common";
 import { useNavigate } from "react-router-dom";
+import Dropdown from "./dropdown";
 
 const inputStyling = {
   width: "100%",
@@ -77,9 +81,7 @@ const fontStyling = {
 function Inbox() {
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const [inboxData, setInboxData] = useState();
-  const [draftData, setDraftData] = useState();
   const [selectedUser, setSelectedUser] = useState();
-  const [selectedUserData, setSelectedUserData] = useState();
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);
   const [creditorCompany, setCreditorCompany] = useState("");
@@ -89,23 +91,31 @@ function Inbox() {
   const [filterActive, setFilterActive] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [verifiedSenders, setVerified] = useState([]);
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState("Inbox");
   const [alltasks, setAllTasks] = useState([]);
-  const open = Boolean(anchorEl);
   const [expandedMessages, setExpandedMessages] = useState({});
   const [showViewer, setShowViewer] = useState(false);
   const [fileUrl, setFileUrl] = useState();
+  const [users, setUsers] = useState();
+  const [userSelected, setUserSelected] = useState();
   const navigate = useNavigate();
+  const open = Boolean(anchorEl);
+  const tabs = ["Inbox", "Outbox", "Draft", "Tasks"];
+  const disabled = caseCode || debtorCompany || creditorCompany || negotiator;
+  const activeInbox =
+    activeTab === "Inbox"
+      ? "received"
+      : activeTab === "Outbox"
+      ? "sent"
+      : activeTab === "Draft"
+      ? "draft"
+      : "";
 
   const handleToggleContent = (index) => {
     setExpandedMessages((prevState) => ({
       ...prevState,
       [index]: !prevState[index],
     }));
-  };
-
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
   };
 
   const handleKeyPress = (e) => {
@@ -131,37 +141,10 @@ function Inbox() {
       },
       text: searchText,
     };
-    const response = await GetAllInbox(1, 5, search, filter, payload);
+    const response = await GetAllInbox(search, filter, payload);
     if (response?.status === 200) {
       const data = response?.data?.data;
       setInboxData(data);
-      const firstKey = data && Object.keys(data)?.[0];
-      const value = data && data[firstKey];
-      setSelectedUser(firstKey);
-      setSelectedUserData(value);
-    }
-    setLoading(false);
-  };
-
-  const getAllDraftData = async (search, filter) => {
-    setLoading(true);
-    const payload = {
-      filter: {
-        caseCode: caseCode || "",
-        debtorCompanyName: debtorCompany || "",
-        creditorCompanyName: creditorCompany || "",
-        negotiatorName: negotiator || "",
-      },
-      text: searchText,
-    };
-    const response = await GetAllDrafts(1, 5, search, filter, payload);
-    if (response?.status === 200) {
-      const data = response?.data?.data;
-      setDraftData(data);
-      const firstKey = data && Object.keys(data)?.[0];
-      const value = data && data[firstKey];
-      setSelectedUser(firstKey);
-      setSelectedUserData(value);
     }
     setLoading(false);
   };
@@ -181,50 +164,45 @@ function Inbox() {
     }
   };
 
+  const getAllUser = async () => {
+    const users = await GetAllUsers(0, 0, false, false, {});
+    if (users?.status === 200) {
+      setUsers(users?.data?.data?.users);
+    }
+  };
+
   useEffect(() => {
     if (
       searchText &&
       (caseCode || debtorCompany || creditorCompany || negotiator)
     ) {
       getAllInboxData(true, true);
-      getAllDraftData(true, true);
     } else if (searchText) {
       getAllInboxData(true, false);
-      getAllDraftData(true, false);
     } else if (caseCode || debtorCompany || creditorCompany || negotiator) {
       getAllInboxData(false, true);
-      getAllDraftData(false, true);
     } else {
       getAllInboxData(false, false);
-      getAllDraftData(false, false);
     }
   }, [searchText, filterActive]);
 
   useEffect(() => {
     getVerifiedIdentites();
     getAllTasks();
+    getAllUser();
   }, []);
 
   useEffect(() => {
-    if (activeTab === 3) {
+    if (activeTab === "Tasks") {
       const firstKey = alltasks && Object.keys(alltasks)?.[0];
       const value = alltasks && alltasks[firstKey];
       setSelectedUser(firstKey);
-      setSelectedUserData(value);
-    } else if (activeTab === 2) {
-      const firstKey = draftData && Object.keys(draftData)?.[0];
-      const value = draftData && draftData[firstKey];
-      setSelectedUser(firstKey);
-      setSelectedUserData(value);
-    } else {
-      const firstKey = inboxData && Object.keys(inboxData)?.[0];
-      const value = inboxData && inboxData[firstKey];
-      setSelectedUser(firstKey);
-      setSelectedUserData(value);
     }
   }, [activeTab]);
 
-  const disabled = caseCode || debtorCompany || creditorCompany || negotiator;
+  useEffect(() => {
+    handleUserChange();
+  }, [userSelected]);
 
   const handleClear = async () => {
     setCaseCode("");
@@ -244,23 +222,37 @@ function Inbox() {
     setFileUrl(url);
   };
 
+  const handleUserChange = async () => {
+    const user = users?.find((user) => user.name === userSelected);
+    setLoading(true);
+    const payload = {
+      filter: {
+        userId: user?._id,
+      },
+      text: searchText,
+    };
+    const response = await GetAllInbox(false, false, payload);
+    if (response?.status === 200) {
+      const data = response?.data?.data;
+      setInboxData(data);
+    }
+    setLoading(false);
+  };
+
   const renderBox = (
     data,
     selectedUser,
     setSelectedUser,
-    setSelectedUserData,
     setExpandedMessages
   ) => {
     return (
       data &&
-      Object.keys(data).map((key) => {
-        const value = data[key];
+      Object.keys(data)?.map((key) => {
         return (
           <Box
             key={key}
             onClick={() => {
               setSelectedUser(key);
-              setSelectedUserData(value);
               setExpandedMessages({});
             }}
             sx={{
@@ -278,18 +270,6 @@ function Inbox() {
             >
               {key}
             </Typography>
-            {value?.[0]?.subject && (
-              <Typography
-                sx={{
-                  fontFamily: "Nunito",
-                  fontSize: FONT_SIZE_MEDIUM,
-                }}
-              >
-                {value[0].subject.length > 50
-                  ? `${value[0].subject.slice(0, 50)}...`
-                  : value[0].subject}
-              </Typography>
-            )}
           </Box>
         );
       })
@@ -463,127 +443,11 @@ function Inbox() {
         xs={12}
         sx={{
           borderRadius: "10px",
-          height: "80vh",
+          height: "77vh",
         }}
         spacing={2}
       >
-        <Grid item xs={3.5}>
-          <Card
-            sx={{
-              padding: "10px",
-              borderRadius: "8px",
-              height: "75vh",
-              overflowY: "auto",
-              ...ScrollbarStyles,
-            }}
-          >
-            {loading ? (
-              <Grid
-                item
-                xs={12}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  height: "100%",
-                }}
-              >
-                <CircularProgress size={40} sx={{ color: Colors.SKY_BLUE }} />
-              </Grid>
-            ) : (
-              <>
-                <Tabs
-                  value={activeTab}
-                  onChange={handleTabChange}
-                  centered
-                  textColor="primary"
-                  TabIndicatorProps={{
-                    style: {
-                      backgroundColor: Colors.SKY_BLUE,
-                    },
-                  }}
-                  sx={{ mb: "10px", width: "100%" }}
-                >
-                  <Tab
-                    sx={{
-                      textTransform: "none",
-                      color: Colors.SKY_BLUE,
-                      "&.Mui-selected": {
-                        color: Colors.SKY_BLUE,
-                      },
-                    }}
-                    label="Inbox"
-                  />
-                  <Tab
-                    sx={{
-                      textTransform: "none",
-                      color: Colors.SKY_BLUE,
-                      "&.Mui-selected": {
-                        color: Colors.SKY_BLUE,
-                      },
-                    }}
-                    label="Outbox"
-                  />
-                  <Tab
-                    sx={{
-                      textTransform: "none",
-                      color: Colors.SKY_BLUE,
-                      "&.Mui-selected": {
-                        color: Colors.SKY_BLUE,
-                      },
-                    }}
-                    label="Draft"
-                  />
-                  <Tab
-                    sx={{
-                      textTransform: "none",
-                      color: Colors.SKY_BLUE,
-                      "&.Mui-selected": {
-                        color: Colors.SKY_BLUE,
-                      },
-                    }}
-                    label="Tasks"
-                  />
-                </Tabs>
-                <Divider sx={{ mb: "10px" }} />
-                {activeTab === 0 &&
-                  renderBox(
-                    inboxData,
-                    selectedUser,
-                    setSelectedUser,
-                    setSelectedUserData,
-                    setExpandedMessages
-                  )}
-                {activeTab === 1 &&
-                  renderBox(
-                    inboxData,
-                    selectedUser,
-                    setSelectedUser,
-                    setSelectedUserData,
-                    setExpandedMessages
-                  )}
-                {activeTab === 2 &&
-                  renderBox(
-                    draftData,
-                    selectedUser,
-                    setSelectedUser,
-                    setSelectedUserData,
-                    setExpandedMessages
-                  )}
-                {activeTab === 3 &&
-                  renderBox(
-                    alltasks,
-                    selectedUser,
-                    setSelectedUser,
-                    setSelectedUserData,
-                    setExpandedMessages
-                  )}
-              </>
-            )}
-          </Card>
-        </Grid>
-
-        <Grid item xs={8.5}>
+        <Grid item xs={12}>
           <Card
             sx={{
               display: "flex",
@@ -595,7 +459,121 @@ function Inbox() {
               ...ScrollbarStyles,
             }}
           >
-            {activeTab === 0 || activeTab === 1 ? (
+            <Box
+              display="flex"
+              alignItems="center"
+              padding="10px"
+              sx={{
+                backgroundColor: Colors.lIGHT_PURPLE,
+                borderRadius: "8px",
+                justifyContent: "space-between",
+              }}
+            >
+              <Grid container item xs={4}>
+                {tabs?.map((tab) => (
+                  <Grid
+                    item
+                    xs={3}
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    sx={{
+                      textAlign: "center",
+                      cursor: "pointer",
+                      padding: "10px",
+                      borderRadius: "10px",
+                      border:
+                        activeTab === tab
+                          ? `2px solid ${Colors.SKY_BLUE}`
+                          : "none",
+                      color: activeTab === tab ? Colors.SKY_BLUE : "inherit",
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        textTransform: "none",
+                        fontFamily: "Nunito",
+                        fontWeight: "600",
+                        fontSize: FONT_SIZE_LARGE,
+                        color: activeTab === tab ? Colors.SKY_BLUE : "inherit",
+                      }}
+                    >
+                      {tab}
+                    </Typography>
+                  </Grid>
+                ))}
+              </Grid>
+
+              {activeTab !== "Tasks" && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                  }}
+                >
+                  <Typography
+                    sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
+                  >
+                    Viewing Inbox for:
+                  </Typography>
+                  {/* <Select
+                    value={userSelected?._id || ""}
+                    onChange={handleChange}
+                    sx={{
+                      fontFamily: "Nunito",
+                      minWidth: 200,
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: Colors.SKY_BLUE,
+                        borderRadius: "10px",
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: Colors.SKY_BLUE,
+                        borderRadius: "10px",
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: Colors.SKY_BLUE,
+                        borderRadius: "10px",
+                      },
+                      "& .MuiSelect-select": {
+                        padding: "10px",
+                        color: "#333",
+                        fontSize: FONT_SIZE_LARGE,
+                        fontFamily: "Nunito",
+                      },
+                    }}
+                  >
+                    {users?.map((user) => (
+                      <MenuItem
+                        key={user._id}
+                        value={user._id}
+                        sx={{
+                          fontFamily: "Nunito",
+                          "&:hover": {
+                            backgroundColor: Colors.lIGHT_PURPLE,
+                          },
+                        }}
+                      >
+                        {user.name}
+                      </MenuItem>
+                    ))}
+                  </Select> */}
+                  <Dropdown
+                    menuWidth="10rem"
+                    menuItems={users?.map((user) => ({
+                      label: user?.name,
+                      value: user?.name,
+                    }))}
+                    placeholder={inboxData?.userName}
+                    backgroundColor={Colors.BG_LIGHT_GRAY}
+                    hoverColor={Colors.BG_LIGHT_GRAY}
+                    width="10rem"
+                    selectedValue={userSelected}
+                    setSelectedValue={setUserSelected}
+                  />
+                </div>
+              )}
+            </Box>
+            {activeTab !== "Tasks" ? (
               loading ? (
                 <Grid
                   item
@@ -610,563 +588,181 @@ function Inbox() {
                   <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
                 </Grid>
               ) : inboxData ? (
-                <>
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    padding="10px"
-                    style={{
-                      backgroundColor: Colors.lIGHT_PURPLE,
-                      borderRadius: "8px",
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        fontFamily: "Nunito",
-                        fontWeight: "700",
-                        fontSize: FONT_SIZE_LARGE,
-                      }}
-                    >
-                      {selectedUser}
-                    </Typography>
-                  </Box>
-                  <Box
-                    flex={1}
-                    sx={{
-                      marginTop: "10px",
-                      padding: "10px",
-                      overflowY: "auto",
-                      ...ScrollbarStyles,
-                    }}
-                  >
-                    {selectedUserData?.filter((item) =>
-                      activeTab === 0
-                        ? item?.type === "received"
-                        : item?.type === "sent"
-                    )?.length === 0 ? (
-                      <Typography
-                        sx={{
-                          textAlign: "center",
-                          marginTop: "20px",
-                          color: Colors.GRAY,
-                          fontFamily: "Nunito",
-                        }}
-                      >
-                        No messages found.
-                      </Typography>
-                    ) : (
-                      selectedUserData
-                        ?.filter((item) =>
-                          activeTab === 0
-                            ? item?.type === "received"
-                            : item?.type === "sent"
-                        )
-                        ?.map((item, index) => (
-                          <Box
-                            key={index}
-                            display="flex"
-                            flexDirection="column"
-                            marginBottom="10px"
-                          >
-                            <CardContent
-                              style={{
-                                backgroundColor:
-                                  item?.type === "sent"
-                                    ? Colors.lIGHT_PURPLE
-                                    : Colors.BG_LIGHT_GRAY,
-                                borderRadius: "8px",
-                                marginTop: "5px",
-                                padding: "10px",
-                              }}
-                            >
-                              <div
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                }}
-                              >
-                                <div>
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      gap: "10px",
-                                    }}
-                                  >
-                                    <Box
-                                      sx={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                      }}
-                                    >
-                                      <Typography
-                                        onClick={() =>
-                                          handleToggleContent(index)
-                                        }
-                                      >
-                                        {expandedMessages[index] ? (
-                                          <IconButton>
-                                            <ExpandMore
-                                              sx={{
-                                                color: Colors.SKY_BLUE,
-                                                cursor: "pointer",
-                                              }}
-                                            />
-                                          </IconButton>
-                                        ) : (
-                                          <IconButton>
-                                            <ChevronRight
-                                              sx={{
-                                                color: Colors.SKY_BLUE,
-                                                cursor: "pointer",
-                                              }}
-                                            />
-                                          </IconButton>
-                                        )}
-                                      </Typography>
-                                    </Box>
-                                    <Typography
-                                      sx={{
-                                        fontFamily: "Nunito",
-                                        fontSize: FONT_SIZE_MEDIUM,
-                                        fontWeight: "bold",
-                                      }}
-                                    >
-                                      {`${
-                                        item?.debtorCompanyName
-                                      } ${"-"} ${formatDateString(
-                                        item?.createdAt
-                                      )} `}
-                                    </Typography>
-                                  </div>
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      gap: "10px",
-                                      paddingLeft: "3.2rem",
-                                    }}
-                                  >
-                                    <Typography sx={boldTextStyling}>
-                                      To:
-                                    </Typography>
-
-                                    <Typography sx={fontStyling}>
-                                      <Tooltip
-                                        placement="top"
-                                        title={item?.to || "-"}
-                                      >
-                                        {item?.to && item?.to?.length > 30
-                                          ? `${item?.to?.slice(0, 70)}...`
-                                          : item?.to || "-"}
-                                      </Tooltip>
-                                    </Typography>
-                                  </div>
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      gap: "10px",
-                                      paddingLeft: "3.2rem",
-                                    }}
-                                  >
-                                    <Typography
-                                      sx={{
-                                        ...boldTextStyling,
-                                      }}
-                                    >
-                                      From:
-                                    </Typography>
-                                    <Typography sx={fontStyling}>
-                                      {item?.from || "-"}
-                                    </Typography>
-                                  </div>
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      gap: "10px",
-                                      paddingLeft: "3.2rem",
-                                    }}
-                                  >
-                                    <Typography sx={boldTextStyling}>
-                                      Subject:
-                                    </Typography>
-
-                                    <Typography sx={fontStyling}>
-                                      {item?.subject || "-"}
-                                    </Typography>
-                                  </div>
-                                </div>
-
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    gap: "10px",
-                                  }}
-                                >
-                                  {item?.type === "received" && (
-                                    <MuiModels
-                                      show="sendEmailCase"
-                                      replyButton={true}
-                                      from={item?.from}
-                                      to={item?.to}
-                                      content={item?.textAsHtml}
-                                      emailSubject={item?.subject}
-                                      buttonName="sendEmailCase"
-                                      iconColor={Colors.BLACK}
-                                      maxHeight="78vh"
-                                      replyCheck={true}
-                                      caseDataId={item?.caseId}
-                                    />
-                                  )}
-                                </div>
-                              </div>
-                              {expandedMessages[index] && (
-                                <div style={{ paddingLeft: "3.2rem" }}>
-                                  <div style={{ display: "flex", gap: "10px" }}>
-                                    <Typography sx={boldTextStyling}>
-                                      Creditor Company Name:
-                                    </Typography>
-                                    <Typography sx={fontStyling}>
-                                      {item?.creditorCompanyName || "-"}
-                                    </Typography>
-                                  </div>
-                                  <div style={{ display: "flex", gap: "10px" }}>
-                                    <Typography sx={boldTextStyling}>
-                                      Negotiator Name:
-                                    </Typography>
-                                    <Typography sx={fontStyling}>
-                                      {item?.negotiatorName || "-"}
-                                    </Typography>
-                                  </div>
-                                  <div>
-                                    <Typography sx={boldTextStyling}>
-                                      Content:
-                                    </Typography>
-                                    <Typography
-                                      sx={fontStyling}
-                                      dangerouslySetInnerHTML={{
-                                        __html: item?.textAsHtml,
-                                      }}
-                                    />
-                                  </div>
-                                  {item?.attachments?.length > 0 && (
-                                    <div>
-                                      <Typography sx={boldTextStyling}>
-                                        Attachment:
-                                      </Typography>
-                                      <div
-                                        style={{
-                                          display: "flex",
-                                          gap: "10px",
-                                          flexWrap: "wrap",
-                                        }}
-                                      >
-                                        {item?.attachments?.map((item) => (
-                                          <Grid
-                                            container
-                                            sx={{
-                                              display: "flex",
-                                              border: `1px solid ${Colors.SKY_BLUE}`,
-                                              width: "25%",
-                                              borderRadius: "10px",
-                                              justifyContent: "space-between",
-                                              alignItems: "center",
-                                              padding: "10px",
-                                              cursor: "pointer",
-                                              transition: "all 0.3s ease",
-                                              "&:hover": {
-                                                backgroundColor:
-                                                  Colors.lIGHT_PURPLE,
-                                              },
-                                            }}
-                                            onClick={() =>
-                                              handleShowFile(item?.url)
-                                            }
-                                          >
-                                            <Typography
-                                              sx={{
-                                                fontSize: "13px",
-                                                fontFamily: "Nunito",
-                                                display: "flex",
-                                                alignItems: "center",
-                                                gap: "10px",
-                                              }}
-                                            >
-                                              <Attachment
-                                                sx={{ color: Colors.SKY_BLUE }}
-                                              />{" "}
-                                              {item?.originalFileName}
-                                            </Typography>
-                                          </Grid>
-                                        ))}
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                            </CardContent>
-                            {showViewer && (
-                              <div
-                                style={{
-                                  position: "fixed",
-                                  top: 0,
-                                  left: 0,
-                                  width: "100%",
-                                  height: "100%",
-                                  backgroundColor: "rgba(0, 0, 0, 0.8)",
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  zIndex: 1000,
-                                  padding: "1rem",
-                                }}
-                              >
-                                <Button
-                                  onClick={() => setShowViewer(false)}
-                                  style={{
-                                    position: "fixed",
-                                    top: "5rem",
-                                    right: "1rem",
-                                    bottom: 0,
-                                    backgroundColor: "white",
-                                    border: "none",
-                                    borderRadius: "4px",
-                                    padding: "0.5rem",
-                                    cursor: "pointer",
-                                    zIndex: 1100,
-                                    height: "2rem",
-                                  }}
-                                >
-                                  Close
-                                </Button>
-                                <iframe
-                                  src={fileUrl}
-                                  style={{
-                                    width: "100%",
-                                    height: "100%",
-                                    border: "none",
-                                    position: "relative",
-                                  }}
-                                />
-                              </div>
-                            )}
-                          </Box>
-                        ))
-                    )}
-                  </Box>
-                </>
-              ) : (
-                <Grid
-                  item
-                  xs={12}
-                  container
+                <Box
+                  flex={1}
                   sx={{
-                    height: "100%",
-                    alignItems: "center",
-                    justifyContent: "center",
+                    marginTop: "10px",
+                    padding: "10px",
+                    overflowY: "auto",
+                    ...ScrollbarStyles,
                   }}
                 >
-                  <Typography sx={fontStyling}>
-                    Looks like you have'nt started a conversation yet
-                  </Typography>
-                </Grid>
-              )
-            ) : activeTab === 2 ? (
-              loading ? (
-                <Grid
-                  item
-                  xs={12}
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: "100%",
-                  }}
-                >
-                  <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
-                </Grid>
-              ) : draftData ? (
-                <>
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    padding="10px"
-                    style={{
-                      backgroundColor: Colors.lIGHT_PURPLE,
-                      borderRadius: "8px",
-                    }}
-                  >
+                  {inboxData?.[activeInbox]?.length === 0 ? (
                     <Typography
                       sx={{
+                        textAlign: "center",
+                        marginTop: "20px",
+                        color: Colors.GRAY,
                         fontFamily: "Nunito",
-                        fontWeight: "700",
-                        fontSize: FONT_SIZE_LARGE,
                       }}
                     >
-                      {selectedUser}
+                      No messages found.
                     </Typography>
-                  </Box>
-                  <Box
-                    flex={1}
-                    sx={{
-                      marginTop: "10px",
-                      padding: "10px",
-                      overflowY: "auto",
-                      ...ScrollbarStyles,
-                    }}
-                  >
-                    {selectedUserData?.length === 0 ? (
-                      <Typography
-                        sx={{
-                          textAlign: "center",
-                          marginTop: "20px",
-                          color: Colors.GRAY,
-                          fontFamily: "Nunito",
-                        }}
+                  ) : (
+                    inboxData?.[activeInbox]?.map((item, index) => (
+                      <Box
+                        key={index}
+                        display="flex"
+                        flexDirection="column"
+                        marginBottom="10px"
                       >
-                        No messages found.
-                      </Typography>
-                    ) : (
-                      selectedUserData?.map((item, index) => (
-                        <Box
-                          key={index}
-                          display="flex"
-                          flexDirection="column"
-                          marginBottom="10px"
+                        <CardContent
+                          style={{
+                            backgroundColor: Colors.BG_LIGHT_GRAY,
+                            borderRadius: "8px",
+                            marginTop: "5px",
+                            padding: "10px",
+                          }}
                         >
-                          <CardContent
+                          <div
                             style={{
-                              backgroundColor: Colors.BG_LIGHT_GRAY,
-                              borderRadius: "8px",
-                              marginTop: "5px",
-                              padding: "10px",
+                              display: "flex",
+                              justifyContent: "space-between",
                             }}
                           >
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div>
-                                <div
-                                  style={{
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "10px",
+                                }}
+                              >
+                                <Box
+                                  sx={{
                                     display: "flex",
                                     alignItems: "center",
-                                    gap: "10px",
-                                  }}
-                                >
-                                  <Box
-                                    sx={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                    }}
-                                  >
-                                    <Typography
-                                      onClick={() => handleToggleContent(index)}
-                                    >
-                                      {expandedMessages[index] ? (
-                                        <IconButton>
-                                          <ExpandMore
-                                            sx={{
-                                              color: Colors.SKY_BLUE,
-                                              cursor: "pointer",
-                                            }}
-                                          />
-                                        </IconButton>
-                                      ) : (
-                                        <IconButton>
-                                          <ChevronRight
-                                            sx={{
-                                              color: Colors.SKY_BLUE,
-                                              cursor: "pointer",
-                                            }}
-                                          />
-                                        </IconButton>
-                                      )}
-                                    </Typography>
-                                  </Box>
-                                  <Typography
-                                    sx={{
-                                      fontFamily: "Nunito",
-                                      fontSize: FONT_SIZE_MEDIUM,
-                                      fontWeight: "bold",
-                                    }}
-                                  >
-                                    {`${
-                                      item?.debtorCompanyName
-                                    } ${"-"} ${formatDateString(
-                                      item?.createdAt
-                                    )} `}
-                                  </Typography>
-                                </div>
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "10px",
-                                    paddingLeft: "3.2rem",
-                                  }}
-                                >
-                                  <Typography sx={boldTextStyling}>
-                                    To:
-                                  </Typography>
-
-                                  <Typography sx={fontStyling}>
-                                    <Tooltip
-                                      placement="top"
-                                      title={item?.to || "-"}
-                                    >
-                                      {item?.to && item?.to?.length > 30
-                                        ? `${item?.to?.slice(0, 70)}...`
-                                        : item?.to || "-"}
-                                    </Tooltip>
-                                  </Typography>
-                                </div>
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    gap: "10px",
-                                    paddingLeft: "3.2rem",
+                                    justifyContent: "center",
                                   }}
                                 >
                                   <Typography
-                                    sx={{
-                                      ...boldTextStyling,
-                                    }}
+                                    onClick={() => handleToggleContent(index)}
                                   >
-                                    From:
+                                    {expandedMessages[index] ? (
+                                      <IconButton>
+                                        <ExpandMore
+                                          sx={{
+                                            color: Colors.SKY_BLUE,
+                                            cursor: "pointer",
+                                          }}
+                                        />
+                                      </IconButton>
+                                    ) : (
+                                      <IconButton>
+                                        <ChevronRight
+                                          sx={{
+                                            color: Colors.SKY_BLUE,
+                                            cursor: "pointer",
+                                          }}
+                                        />
+                                      </IconButton>
+                                    )}
                                   </Typography>
-                                  <Typography sx={fontStyling}>
-                                    {item?.from || "-"}
-                                  </Typography>
-                                </div>
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    gap: "10px",
-                                    paddingLeft: "3.2rem",
+                                </Box>
+                                <Typography
+                                  sx={{
+                                    fontFamily: "Nunito",
+                                    fontSize: FONT_SIZE_MEDIUM,
+                                    fontWeight: "bold",
                                   }}
                                 >
-                                  <Typography sx={boldTextStyling}>
-                                    Subject:
-                                  </Typography>
-
-                                  <Typography sx={fontStyling}>
-                                    {item?.subject || "-"}
-                                  </Typography>
-                                </div>
+                                  {`${
+                                    item?.debtorCompanyName
+                                  } ${"-"} ${formatDateString(
+                                    item?.createdAt
+                                  )} `}
+                                </Typography>
                               </div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "10px",
+                                  paddingLeft: "3.2rem",
+                                }}
+                              >
+                                <Typography sx={boldTextStyling}>
+                                  To:
+                                </Typography>
 
+                                <Typography sx={fontStyling}>
+                                  <Tooltip
+                                    placement="top"
+                                    title={item?.to || "-"}
+                                  >
+                                    {item?.to && item?.to?.length > 30
+                                      ? `${item?.to?.slice(0, 70)}...`
+                                      : item?.to || "-"}
+                                  </Tooltip>
+                                </Typography>
+                              </div>
                               <div
                                 style={{
                                   display: "flex",
                                   gap: "10px",
+                                  paddingLeft: "3.2rem",
                                 }}
                               >
+                                <Typography
+                                  sx={{
+                                    ...boldTextStyling,
+                                  }}
+                                >
+                                  From:
+                                </Typography>
+                                <Typography sx={fontStyling}>
+                                  {item?.from || "-"}
+                                </Typography>
+                              </div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  gap: "10px",
+                                  paddingLeft: "3.2rem",
+                                }}
+                              >
+                                <Typography sx={boldTextStyling}>
+                                  Subject:
+                                </Typography>
+
+                                <Typography sx={fontStyling}>
+                                  {item?.subject || "-"}
+                                </Typography>
+                              </div>
+                            </div>
+
+                            <div
+                              style={{
+                                display: "flex",
+                                gap: "10px",
+                              }}
+                            >
+                              {item?.type === "received" && (
+                                <MuiModels
+                                  show="sendEmailCase"
+                                  replyButton={true}
+                                  from={item?.from}
+                                  to={item?.to}
+                                  content={item?.textAsHtml}
+                                  emailSubject={item?.subject}
+                                  buttonName="sendEmailCase"
+                                  iconColor={Colors.BLACK}
+                                  maxHeight="78vh"
+                                  replyCheck={true}
+                                  caseDataId={item?.caseId}
+                                />
+                              )}
+                              {activeTab === "Draft" && (
                                 <MuiModels
                                   show="sendEmailCase"
                                   from={item?.from}
@@ -1179,144 +775,144 @@ function Inbox() {
                                   replyCheck={true}
                                   caseDataId={item?.caseId}
                                 />
-                              </div>
+                              )}
                             </div>
-                            {expandedMessages[index] && (
-                              <div style={{ paddingLeft: "3.2rem" }}>
-                                <div style={{ display: "flex", gap: "10px" }}>
-                                  <Typography sx={boldTextStyling}>
-                                    Creditor Company Name:
-                                  </Typography>
-                                  <Typography sx={fontStyling}>
-                                    {item?.creditorCompanyName || "-"}
-                                  </Typography>
-                                </div>
-                                <div style={{ display: "flex", gap: "10px" }}>
-                                  <Typography sx={boldTextStyling}>
-                                    Negotiator Name:
-                                  </Typography>
-                                  <Typography sx={fontStyling}>
-                                    {item?.negotiatorName || "-"}
-                                  </Typography>
-                                </div>
+                          </div>
+                          {expandedMessages[index] && (
+                            <div style={{ paddingLeft: "3.2rem" }}>
+                              <div style={{ display: "flex", gap: "10px" }}>
+                                <Typography sx={boldTextStyling}>
+                                  Creditor Company Name:
+                                </Typography>
+                                <Typography sx={fontStyling}>
+                                  {item?.creditorCompanyName || "-"}
+                                </Typography>
+                              </div>
+                              <div style={{ display: "flex", gap: "10px" }}>
+                                <Typography sx={boldTextStyling}>
+                                  Negotiator Name:
+                                </Typography>
+                                <Typography sx={fontStyling}>
+                                  {item?.negotiatorName || "-"}
+                                </Typography>
+                              </div>
+                              <div>
+                                <Typography sx={boldTextStyling}>
+                                  Content:
+                                </Typography>
+                                <Typography
+                                  sx={fontStyling}
+                                  dangerouslySetInnerHTML={{
+                                    __html: item?.textAsHtml,
+                                  }}
+                                />
+                              </div>
+                              {item?.attachments?.length > 0 && (
                                 <div>
                                   <Typography sx={boldTextStyling}>
-                                    Content:
+                                    Attachment:
                                   </Typography>
-                                  <Typography
-                                    sx={fontStyling}
-                                    dangerouslySetInnerHTML={{
-                                      __html: item?.content,
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      gap: "10px",
+                                      flexWrap: "wrap",
                                     }}
-                                  />
-                                </div>
-                                {item?.attachments?.length > 0 && (
-                                  <div>
-                                    <Typography sx={boldTextStyling}>
-                                      Attachment:
-                                    </Typography>
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                        gap: "10px",
-                                        flexWrap: "wrap",
-                                      }}
-                                    >
-                                      {item?.attachments?.map((item) => (
-                                        <Grid
-                                          container
+                                  >
+                                    {item?.attachments?.map((item) => (
+                                      <Grid
+                                        container
+                                        sx={{
+                                          display: "flex",
+                                          border: `1px solid ${Colors.SKY_BLUE}`,
+                                          width: "25%",
+                                          borderRadius: "10px",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                          padding: "10px",
+                                          cursor: "pointer",
+                                          transition: "all 0.3s ease",
+                                          "&:hover": {
+                                            backgroundColor:
+                                              Colors.lIGHT_PURPLE,
+                                          },
+                                        }}
+                                        onClick={() =>
+                                          handleShowFile(item?.url)
+                                        }
+                                      >
+                                        <Typography
                                           sx={{
+                                            fontSize: "13px",
+                                            fontFamily: "Nunito",
                                             display: "flex",
-                                            border: `1px solid ${Colors.SKY_BLUE}`,
-                                            width: "25%",
-                                            borderRadius: "10px",
-                                            justifyContent: "space-between",
                                             alignItems: "center",
-                                            padding: "10px",
-                                            cursor: "pointer",
-                                            transition: "all 0.3s ease",
-                                            "&:hover": {
-                                              backgroundColor:
-                                                Colors.lIGHT_PURPLE,
-                                            },
+                                            gap: "10px",
                                           }}
-                                          onClick={() =>
-                                            handleShowFile(item?.url)
-                                          }
                                         >
-                                          <Typography
-                                            sx={{
-                                              fontSize: "13px",
-                                              fontFamily: "Nunito",
-                                              display: "flex",
-                                              alignItems: "center",
-                                              gap: "10px",
-                                            }}
-                                          >
-                                            <Attachment
-                                              sx={{ color: Colors.SKY_BLUE }}
-                                            />{" "}
-                                            {item?.originalFileName}
-                                          </Typography>
-                                        </Grid>
-                                      ))}
-                                    </div>
+                                          <Attachment
+                                            sx={{ color: Colors.SKY_BLUE }}
+                                          />{" "}
+                                          {item?.originalFileName}
+                                        </Typography>
+                                      </Grid>
+                                    ))}
                                   </div>
-                                )}
-                              </div>
-                            )}
-                          </CardContent>
-                          {showViewer && (
-                            <div
-                              style={{
-                                position: "fixed",
-                                top: 0,
-                                left: 0,
-                                width: "100%",
-                                height: "100%",
-                                backgroundColor: "rgba(0, 0, 0, 0.8)",
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                zIndex: 1000,
-                                padding: "1rem",
-                              }}
-                            >
-                              <Button
-                                onClick={() => setShowViewer(false)}
-                                style={{
-                                  position: "fixed",
-                                  top: "5rem",
-                                  right: "1rem",
-                                  bottom: 0,
-                                  backgroundColor: "white",
-                                  border: "none",
-                                  borderRadius: "4px",
-                                  padding: "0.5rem",
-                                  cursor: "pointer",
-                                  zIndex: 1100,
-                                  height: "2rem",
-                                }}
-                              >
-                                Close
-                              </Button>
-                              <iframe
-                                src={fileUrl}
-                                style={{
-                                  width: "100%",
-                                  height: "100%",
-                                  border: "none",
-                                  position: "relative",
-                                }}
-                              />
+                                </div>
+                              )}
                             </div>
                           )}
-                        </Box>
-                      ))
-                    )}
-                  </Box>
-                </>
+                        </CardContent>
+                        {showViewer && (
+                          <div
+                            style={{
+                              position: "fixed",
+                              top: 0,
+                              left: 0,
+                              width: "100%",
+                              height: "100%",
+                              backgroundColor: "rgba(0, 0, 0, 0.8)",
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              zIndex: 1000,
+                              padding: "1rem",
+                            }}
+                          >
+                            <Button
+                              onClick={() => setShowViewer(false)}
+                              style={{
+                                position: "fixed",
+                                top: "5rem",
+                                right: "1rem",
+                                bottom: 0,
+                                backgroundColor: "white",
+                                border: "none",
+                                borderRadius: "4px",
+                                padding: "0.5rem",
+                                cursor: "pointer",
+                                zIndex: 1100,
+                                height: "2rem",
+                              }}
+                            >
+                              Close
+                            </Button>
+                            <iframe
+                              src={fileUrl}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                border: "none",
+                                position: "relative",
+                              }}
+                            />
+                          </div>
+                        )}
+                      </Box>
+                    ))
+                  )}
+                </Box>
               ) : (
                 <Grid
                   item
@@ -1333,62 +929,74 @@ function Inbox() {
                   </Typography>
                 </Grid>
               )
-            ) : alltasks ? (
-              alltasks[selectedUser]?.map((tasks) => (
-                <CardContent
-                  onClick={() => navigateToCaseDetail(tasks?.caseId)}
-                  sx={{
-                    backgroundColor: Colors.BG_LIGHT_GRAY,
-                    borderRadius: "8px",
-                    marginTop: "5px",
-                    padding: "10px",
-                    cursor: "pointer",
-                  }}
-                >
-                  <div style={{ display: "flex", gap: "10px" }}>
-                    <Typography sx={boldTextStyling}>Title:</Typography>
-                    <Typography sx={fontStyling}>
-                      {tasks?.title || "-"}
-                    </Typography>
-                  </div>
-                  <div style={{ display: "flex", gap: "10px" }}>
-                    <Typography sx={boldTextStyling}>Assignee:</Typography>
-                    <Typography sx={fontStyling}>
-                      {tasks?.assignee || "-"}
-                    </Typography>
-                  </div>
-                  <div style={{ display: "flex", gap: "10px" }}>
-                    <Typography sx={boldTextStyling}>Due Date:</Typography>
-                    <Typography sx={fontStyling}>
-                      {formatDateString(tasks?.dueDate) || "-"}
-                    </Typography>
-                  </div>
-                  <div style={{ display: "flex", gap: "10px" }}>
-                    <Typography sx={boldTextStyling}>Status:</Typography>
-                    <Typography sx={fontStyling}>
-                      {tasks?.status || "-"}
-                    </Typography>
-                  </div>
-                  <div style={{ display: "flex", gap: "10px" }}>
-                    <Typography sx={boldTextStyling}>Notes:</Typography>
-                    <Typography sx={fontStyling}>
-                      {tasks?.notes || "-"}
-                    </Typography>
-                  </div>
-                </CardContent>
-              ))
             ) : (
               <Grid
                 container
                 xs={12}
                 sx={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "100%",
-                  fontSize: FONT_SIZE_MEDIUM,
+                  justifyContent: "space-between",
+                  overflowY: "auto",
+                  ...ScrollbarStyles,
                 }}
               >
-                No Tasks Yet
+                <Grid
+                  xs={2}
+                  sx={{
+                    padding: "10px 0px",
+                  }}
+                >
+                  {renderBox(
+                    alltasks,
+                    selectedUser,
+                    setSelectedUser,
+                    setExpandedMessages
+                  )}
+                </Grid>
+                <Grid xs={9.5} sx={{ overflowY: "auto", ...ScrollbarStyles }}>
+                  {alltasks[selectedUser]?.map((tasks) => (
+                    <CardContent
+                      onClick={() => navigateToCaseDetail(tasks?.caseId)}
+                      sx={{
+                        backgroundColor: Colors.BG_LIGHT_GRAY,
+                        borderRadius: "8px",
+                        marginTop: "5px",
+                        padding: "10px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <div style={{ display: "flex", gap: "10px" }}>
+                        <Typography sx={boldTextStyling}>Title:</Typography>
+                        <Typography sx={fontStyling}>
+                          {tasks?.title || "-"}
+                        </Typography>
+                      </div>
+                      <div style={{ display: "flex", gap: "10px" }}>
+                        <Typography sx={boldTextStyling}>Assignee:</Typography>
+                        <Typography sx={fontStyling}>
+                          {tasks?.assignee || "-"}
+                        </Typography>
+                      </div>
+                      <div style={{ display: "flex", gap: "10px" }}>
+                        <Typography sx={boldTextStyling}>Due Date:</Typography>
+                        <Typography sx={fontStyling}>
+                          {formatDateString(tasks?.dueDate) || "-"}
+                        </Typography>
+                      </div>
+                      <div style={{ display: "flex", gap: "10px" }}>
+                        <Typography sx={boldTextStyling}>Status:</Typography>
+                        <Typography sx={fontStyling}>
+                          {tasks?.status || "-"}
+                        </Typography>
+                      </div>
+                      <div style={{ display: "flex", gap: "10px" }}>
+                        <Typography sx={boldTextStyling}>Notes:</Typography>
+                        <Typography sx={fontStyling}>
+                          {tasks?.notes || "-"}
+                        </Typography>
+                      </div>
+                    </CardContent>
+                  ))}
+                </Grid>
               </Grid>
             )}
           </Card>
