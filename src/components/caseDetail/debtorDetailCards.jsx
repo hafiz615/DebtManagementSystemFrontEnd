@@ -207,6 +207,13 @@ export default function DebtorDetailsCards({
               justifyContent: "end",
             }}
           >
+            <MuiModels
+              show="showClientSync"
+              iconColor={Colors.BLACK}
+              caseData={caseData}
+              GetCaseDetails={GetCaseDetails}
+              height="22vh"
+            />
             <Dropdown
               menuWidth="10rem"
               menuItems={paymentGateways}
