@@ -1424,23 +1424,11 @@ export const GetAllTransactions = async (page) => {
     return error;
   }
 };
-export const GetAllInbox = async (page, limit, search, filter, payload) => {
+export const GetAllInbox = async (search, filter, payload) => {
   try {
     return await axios.post(
       BASE_URL +
-        `/v1/inbox/getAllMessages?page=${page}&limit=${limit}&search=${search}&filter=${filter}`,
-      payload,
-      setHeaders()
-    );
-  } catch (error) {
-    return error;
-  }
-};
-export const GetAllDrafts = async (page, limit, search, filter, payload) => {
-  try {
-    return await axios.post(
-      BASE_URL +
-        `/v1/draft/getAllDraftMessages?search=${search}&filter=${filter}&page=${page}&limit=${limit}`,
+        `/v1/inbox/getAllMessages?search=${search}&filter=${filter}&type=default`,
       payload,
       setHeaders()
     );
