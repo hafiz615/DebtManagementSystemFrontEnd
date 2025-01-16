@@ -229,7 +229,7 @@ function Inbox() {
       },
       text: searchText,
     };
-    const response = await GetAllInbox(false, false, payload);
+    const response = await GetAllInbox(false, true, payload);
     if (response?.status === 200) {
       const data = response?.data?.data;
       setInboxData(data);
