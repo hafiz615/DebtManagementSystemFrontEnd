@@ -341,7 +341,14 @@ export default function MuiModels({
           </IconButton>
         </Tooltip>
       ) : show === "showClientSync" ? (
-        <Tooltip title={`Sync ${paymentPlatform} `} placement="top-end">
+        <Tooltip
+          title={`Sync ${
+            paymentPlatform === "Seamlesschex merchant"
+              ? "Seamlesschex Merchant"
+              : "Easypay Direct"
+          } Client`}
+          placement="top-end"
+        >
           <IconButton
             onClick={() => {
               handleOpen();
