@@ -98,12 +98,16 @@ export default function DataSummaryTable({
   };
   const calculateRepaymentAmountSum = (data) => {
     return data?.reduce((total, row) => {
-      let repaymentAmount = row.repayment_amount;
+      let repaymentAmount = row?.repayment_amount;
 
       if (repaymentAmount?.includes("(monthly)")) {
         // If repayment_amount includes (monthly), convert it to weekly
         repaymentAmount =
-          (parseFloat(repaymentAmount.replace(/[^\d.]/g, "")) / 22) * 5;
+          (parseFloat(repaymentAmount?.replace(/[^\d.]/g, "")) / 22) * 5;
+      } else if (repaymentAmount?.includes("(daily)")) {
+        // If repayment_amount includes (daily), convert it to weekly by multiplying by 5
+        repaymentAmount =
+          parseFloat(repaymentAmount?.replace(/[^\d.]/g, "")) * 5;
       } else {
         // Otherwise, just parse the repayment amount normally
         repaymentAmount = parseFloat(repaymentAmount?.replace(/[^\d.]/g, ""));
@@ -185,14 +189,19 @@ export default function DataSummaryTable({
                         {key === "repayment_amount" &&
                         row[key]?.includes("(monthly)")
                           ? `$${(
-                              (parseFloat(row[key].replace(/[^\d.]/g, "")) /
+                              (parseFloat(row[key]?.replace(/[^\d.]/g, "")) /
                                 22) *
                               5
-                            ).toFixed(2)} (Weekly)`
+                            )?.toFixed(2)} (Weekly)`
+                          : key === "repayment_amount" &&
+                            row[key]?.includes("(daily)")
+                          ? `$${(
+                              parseFloat(row[key]?.replace(/[^\d.]/g, "")) * 5
+                            )?.toFixed(2)} (Weekly)`
                           : key === "repayment_amount"
                           ? row[key] // Show the value from the backend as-is for other cases
                           : key === "purchased_percentage"
-                          ? row[key].replace(/\s*\(.*?\)/, "")
+                          ? row[key]?.replace(/\s*\(.*?\)/, "")
                           : row[key]}
                       </StyledTableCell>
                     ))}
