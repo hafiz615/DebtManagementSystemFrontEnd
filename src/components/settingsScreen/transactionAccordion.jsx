@@ -44,10 +44,15 @@ export default function TransactionAccordion() {
     const response = await GetAllTransactions(currentPaymentPage);
     if (response?.status === 200) {
       setPaymentDetails(response?.data?.data);
-      let totalPage = Math.ceil(
-        response?.data?.data?.transactions?.totalCount / 10
-      );
-      setTotalPaymentPage(totalPage);
+      let totalPreviousPage =
+        Math.ceil(response?.data?.data?.transactions?.previousCount / 10) || 0;
+      let totalUpcomingPage =
+        Math.ceil(response?.data?.data?.transactions?.upcomingCount / 10) || 0;
+      if (totalPreviousPage > totalUpcomingPage) {
+        setTotalPaymentPage(totalPreviousPage);
+      } else {
+        setTotalPaymentPage(totalUpcomingPage);
+      }
     } else if (
       response?.response?.status === 401 ||
       response?.response?.status === 403
