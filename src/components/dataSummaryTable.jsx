@@ -88,7 +88,6 @@ export default function DataSummaryTable({
   summaryDetails,
   loading,
 }) {
-  console.log(data, "data");
   const formatSummaryDetails = (value) => {
     if (value === null || value === undefined || isNaN(value)) return "--";
     return `$${Number(value)?.toLocaleString(undefined, {
