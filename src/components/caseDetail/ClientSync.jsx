@@ -86,7 +86,11 @@ function ClientSync({ handleClose, caseData, paymentPlatform }) {
             }}
           >
             <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
-              Sync EasyPay Client
+              Sync{" "}
+              {paymentPlatform === "Seamlesschex merchant"
+                ? "Seamlesschex Merchant"
+                : "Easypay Direct"}{" "}
+              Client
             </Typography>
             <Close onClick={handleClose} />
           </Box>
