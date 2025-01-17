@@ -142,10 +142,12 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
                     },
                   }}
                   onClick={() =>
-                    handleNotificationClick(
-                      notification?.caseId,
-                      notification?._id
-                    )
+                    notification?.caseId
+                      ? handleNotificationClick(
+                          notification?.caseId,
+                          notification?._id
+                        )
+                      : undefined
                   }
                   key={index}
                   divider
