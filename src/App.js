@@ -19,7 +19,12 @@ import PipelinesPage from "./pages/pipelinePage";
 import UpdateCase from "./pages/updateCase";
 import InboxPage from "./pages/inboxPage";
 import { useEffect, useState } from "react";
-import { GetAllUserCases, GetCallSid, GetCallToken } from "./services/services";
+import {
+  GetAllUserCases,
+  GetCallerName,
+  GetCallSid,
+  GetCallToken,
+} from "./services/services";
 import { Device } from "@twilio/voice-sdk";
 import IncomingCall from "./components/incomingCall";
 
@@ -30,16 +35,9 @@ function App() {
   const [callInterval, setCallInterval] = useState(null);
   const [allCases, setAllCases] = useState([]);
   const [callSid, setCallSid] = useState();
+  const [callerName, setCallerName] = useState();
   const [caseMenuActive, setCaseMenuActive] = useState(false);
-
-  const startupClient = async () => {
-    try {
-      const response = await GetCallToken();
-      initializeDevice(response.data.data.token);
-    } catch (err) {
-      console.error("Failed to fetch token", err);
-    }
-  };
+  const [token, setToken] = useState(localStorage.getItem("twilioToken"));
 
   const getCreditorCompanies = async () => {
     const res = await GetAllUserCases();
@@ -47,6 +45,7 @@ function App() {
       setAllCases(res?.data?.data);
     }
   };
+
   const getCallSID = async (callSid) => {
     const SIDres = await GetCallSid(callSid);
     if (SIDres?.status === 200) {
@@ -54,16 +53,35 @@ function App() {
     }
   };
 
-  const initializeDevice = (token) => {
+  const getNameFromCall = async (from) => {
+    const payoload = {
+      from: from,
+    };
+    const callerNameRes = await GetCallerName(payoload);
+    if (callerNameRes?.status === 200) {
+      setCallerName(callerNameRes?.data?.data);
+    }
+  };
+
+  const initializeDevice = () => {
+    const token = localStorage.getItem("twilioToken") || "";
+    if (window.twilioDevice) {
+      window.twilioDevice.destroy();
+    }
     const twilioDevice = new Device(token, {
       logLevel: 1,
       codecPreferences: ["opus", "pcmu"],
     });
+
+    twilioDevice.register();
+    window.twilioDevice = twilioDevice;
+
     twilioDevice.on("incoming", (incomingCall) => {
       setCaseMenuActive(false);
       setIncomingCall(incomingCall);
       setIsModalOpen(true);
       getCreditorCompanies();
+      getNameFromCall(incomingCall?.parameters?.From);
       getCallSID(incomingCall?.parameters?.CallSid);
 
       incomingCall.on("disconnect", () => {
@@ -71,23 +89,42 @@ function App() {
         setCallInterval(null);
         setCallDuration(0);
         setCaseMenuActive(true);
+        setCallerName("");
       });
+
       incomingCall.on("cancel", () => {
         setIncomingCall(null);
         setIsModalOpen(false);
         setCallInterval(null);
         setCallDuration(0);
+        setCallerName("");
       });
     });
-    twilioDevice.register();
   };
 
   useEffect(() => {
-    startupClient();
+    const updateToken = () => {
+      const newToken = localStorage.getItem("twilioToken");
+      if (newToken !== token) {
+        setToken(newToken);
+      }
+    };
+    window.addEventListener("storage", updateToken);
+    const interval = setInterval(updateToken, 100);
+    return () => {
+      window.removeEventListener("storage", updateToken);
+      clearInterval(interval);
+    };
+  }, [token]);
+
+  useEffect(() => {
+    if (token) {
+      initializeDevice();
+    }
     return () => {
       clearInterval(callInterval);
     };
-  }, []);
+  }, [token]);
 
   return (
     <>
@@ -244,6 +281,7 @@ function App() {
           callSid={callSid}
           caseMenuActive={caseMenuActive}
           setCaseMenuActive={setCaseMenuActive}
+          callerName={callerName}
         />
       )}
     </>

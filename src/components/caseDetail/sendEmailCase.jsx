@@ -8,6 +8,11 @@ import {
   MenuItem,
   Popover,
   Tooltip,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 
 import TextButton from "../button";
@@ -15,16 +20,20 @@ import { Colors } from "../../config/default";
 import {
   FONT_SIZE_LARGE,
   FONT_SIZE_MEDIUM,
+  FONT_SIZE_SMALL,
   TEXT_EDITOR_KEY,
 } from "../../constants/appConstants";
 import styled from "styled-components";
 import {
-  GetAllSenders,
+  DeleteDraft,
   GetCustomVariable,
+  SaveAsDraft,
   SendEmailSmsCase,
+  UpdateDraft,
+  UploadFiles,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
-import { ArrowRight, ExpandMore } from "@mui/icons-material";
+import { ArrowRight, Delete, ExpandMore } from "@mui/icons-material";
 import ScrollbarStyles from "./../customScroll";
 import { handleNumberInput } from "../../common";
 import { Editor } from "@tinymce/tinymce-react";
@@ -48,6 +57,70 @@ const StyledInput = styled.input`
   width: 98%;
 `;
 
+const buttonStyling = {
+  textTransform: "none",
+  color: Colors.BLACK,
+  fontFamily: "Nunito",
+  fontSize: FONT_SIZE_LARGE,
+  textAlign: "left",
+};
+const inputContainerStyle = {
+  display: "flex",
+  flexWrap: "wrap",
+  alignItems: "center",
+  border: "1px solid #ccc",
+  borderRadius: "5px",
+  padding: "5px",
+  marginBottom: "10px",
+  borderRadius: "10px",
+};
+
+const emailChipStyle = {
+  backgroundColor: "#EAEBEB",
+  borderRadius: "3px",
+  padding: "5px 10px",
+  marginRight: "5px",
+  display: "flex",
+  alignItems: "center",
+  fontFamily: "Nunito",
+  fontSize: FONT_SIZE_MEDIUM,
+  borderRadius: "10px",
+};
+const removeIconStyle = {
+  marginLeft: "8px",
+  cursor: "pointer",
+  color: "#888",
+};
+
+const fontStyling = { fontSize: FONT_SIZE_LARGE, fontFamily: "Nunito" };
+
+const divStyling = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  backgroundColor: Colors.BG_LIGHT_GRAY,
+  borderRadius: "5px",
+  height: "2.5rem",
+  cursor: "pointer",
+  fontSize: FONT_SIZE_LARGE,
+  fontFamily: "Nunito",
+  padding: "0px 10px",
+  width: "98%",
+  marginBottom: "auto",
+};
+
+const smsTemplateStyling = {
+  backgroundColor: Colors.BG_LIGHT_GRAY,
+  border: "none",
+  outline: "none",
+  minWidth: "100%",
+  maxWidth: "100%",
+  maxHeight: "40vh",
+  padding: "1em",
+  fontFamily: "Nunito",
+  borderRadius: "5px",
+};
+
 export default function SendEmailCase({
   handleClose,
   headerName,
@@ -61,20 +134,21 @@ export default function SendEmailCase({
   data,
   verifiedSenders,
   compose,
-  buttonName,
-  composeEmail,
+  getAllInboxData,
+  emailOrCompose,
+  updateDraft,
+  draftId,
 }) {
   const [loading, setLoading] = useState(false);
+  const [draftLoading, setDraftLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [sendTo, setSendTo] = useState(from || "");
   const [bulkEmail, setBulkEmail] = useState(data?.allEmails || []);
   const [selectedEmail, setSelectedEmail] = useState("");
-
   const [bulkEmailTemplates, setBulkEmailTemplates] = useState(
     data?.emailTemplates || []
   );
   const [selectedEmailTemplates, setSelectedEmailTemplates] = useState("");
-
   const [bulkSmsTemplates, setBulkSmsTemplates] = useState(
     data?.smsTemplates || []
   );
@@ -86,9 +160,13 @@ export default function SendEmailCase({
   const [inputValue, setInputValue] = useState("");
   const [preview, setPreview] = useState(content || "");
   const [fromNumber, setFromNumber] = useState("2564880968");
-  const editorRef = useRef(null);
-  const { showToast } = useToast();
   const [errors, setErrors] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [subMenuAnchorEl, setSubMenuAnchorEl] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [customVariables, setCustomVariables] = useState({});
+  const { showToast } = useToast();
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter" || e.key === "Tab" || e.key === ",") {
       e.preventDefault();
@@ -108,10 +186,6 @@ export default function SendEmailCase({
   const handleRemoveEmail = (index) => {
     setCc(cc?.filter((_, i) => i !== index));
   };
-
-  const [subMenuAnchorEl, setSubMenuAnchorEl] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [customVariables, setCustomVariables] = useState({});
 
   const getVariableAndEvents = async () => {
     const resVariable = await GetCustomVariable();
@@ -139,7 +213,6 @@ export default function SendEmailCase({
     setAnchorEl(null);
     if (action) {
       const newContent = `{{${selectedCategory}.${action}}}`;
-
       setPreview((prevContent) => {
         if (prevContent.endsWith("</p>")) {
           return prevContent.replace(/<\/p>$/, newContent + "</p>");
@@ -149,35 +222,31 @@ export default function SendEmailCase({
       });
     }
   };
+
   const handleInputChange = (e) => {
     const value = e.target.value;
-
-    // Update input value
     setSendTo(value);
-
-    // Validate length
     if (value?.length > 10 || value?.length < 10) {
       setErrors("Phone number must be exactly 10 digits.");
     } else {
       setErrors("");
     }
   };
-  const isFieldEmpty = (field) => {
-    return !field.trim();
-  };
 
   const disable =
     !sendTo?.trim() ||
-    (!headerName && !selectedValue) ||
+    (!headerName && !replyCheck && !selectedValue) ||
     (!headerName && !subject?.trim()) ||
     !preview?.trim() ||
     (headerName && errors);
+
   const menu = replyCheck
     ? []
     : verifiedSenders?.map((name) => ({
         label: name,
         value: name,
       }));
+
   const menuSendto = bulkEmail?.map((name) => ({
     label: name,
     value: name,
@@ -187,6 +256,7 @@ export default function SendEmailCase({
     label: item?.name,
     value: item?.name,
   }));
+
   const menuBulkSmsTemplates = bulkSmsTemplates?.map((item) => ({
     label: item?.name,
     value: item?.name,
@@ -199,6 +269,7 @@ export default function SendEmailCase({
       }
     });
   }, [selectedEmailTemplates]);
+
   useEffect(() => {
     const selectedTemplate = bulkSmsTemplates?.find((template) => {
       if (template?.name === selectedSmsTemplates) {
@@ -207,106 +278,178 @@ export default function SendEmailCase({
     });
   }, [selectedSmsTemplates]);
 
+  const deleteDraft = async () => {
+    const res = await DeleteDraft(draftId);
+    if (res?.status === 200) {
+      getAllInboxData(false, false);
+    }
+  };
+
   const handleSend = async () => {
     setLoading(true);
-    const payload = {
-      sendTo: headerName
-        ? sendTo
-        : compose || replyCheck
-        ? sendTo
-        : selectedEmail,
-      content: preview,
-      ...(headerName ? {} : { subject: subject }),
-      ...(headerName ? {} : { cc: cc }),
-      ...(headerName ? {} : { from: replyCheck ? sendFrom : selectedValue }),
-    };
-    const resEmail = await SendEmailSmsCase(
-      caseDataId || "1231123",
-      headerName ? "sms" : compose ? "compose" : "email",
-      payload
+    if (selectedFiles?.length > 0) {
+      const formData = new FormData();
+      selectedFiles.forEach((file) => {
+        formData.append("files", file);
+      });
+      formData.append(
+        "sendTo",
+        headerName ? sendTo : compose || replyCheck ? sendTo : selectedEmail
+      );
+      formData.append("content", preview);
+      formData.append("subject", subject);
+      const ccString = JSON.stringify(cc);
+      formData.append("cc", ccString);
+      formData.append("from", replyCheck ? sendFrom : selectedValue);
+      const resEmail = await SendEmailSmsCase(
+        caseDataId || "1231123",
+        compose
+          ? "compose"
+          : emailOrCompose === "compose"
+          ? "compose"
+          : "email",
+        formData
+      );
+      if (resEmail?.status === 200) {
+        showToast(resEmail?.data?.message, "success");
+        getAllInboxData && getAllInboxData(false, false);
+        draftId && deleteDraft();
+        setCc([]);
+        setBulkEmail([]);
+        setBulkEmailTemplates([]);
+        setBulkSmsTemplates([]);
+        setSelectedSmsTemplates("");
+        setSelectedEmailTemplates("");
+        setSelectedEmail("");
+        setSendTo("");
+        setSubject("");
+        setPreview("");
+        handleClose();
+        GetLogsById && GetLogsById(caseDataId);
+      } else {
+        const errorMessage = resEmail?.response?.data?.message;
+        showToast(errorMessage, "error");
+      }
+    } else {
+      const formData = new FormData();
+      formData.append(
+        "sendTo",
+        headerName ? sendTo : compose || replyCheck ? sendTo : selectedEmail
+      );
+      formData.append("content", preview);
+      if (!headerName) {
+        formData.append("subject", subject);
+        const ccString = JSON.stringify(cc);
+        formData.append("cc", ccString);
+        formData.append("from", replyCheck ? sendFrom : selectedValue);
+        formData.append("files", `[]`);
+      }
+      const resEmail = await SendEmailSmsCase(
+        caseDataId || "1231123",
+        headerName
+          ? "sms"
+          : compose
+          ? "compose"
+          : emailOrCompose === "compose"
+          ? "compose"
+          : "email",
+        formData
+      );
+      if (resEmail?.status === 200) {
+        showToast(resEmail?.data?.message, "success");
+        setCc([]);
+        draftId && deleteDraft();
+        getAllInboxData && getAllInboxData(false, false);
+        setBulkEmail([]);
+        setBulkEmailTemplates([]);
+        setBulkSmsTemplates([]);
+        setSelectedSmsTemplates("");
+        setSelectedEmailTemplates("");
+        setSelectedEmail("");
+        setSendTo("");
+        setSubject("");
+        setPreview("");
+        handleClose();
+        GetLogsById && GetLogsById(caseDataId);
+      } else {
+        const errorMessage = resEmail?.response?.data?.message;
+        showToast(errorMessage, "error");
+      }
+    }
+
+    setLoading(false);
+  };
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    setSelectedFiles(files);
+  };
+
+  const handleSaveDraft = async () => {
+    setDraftLoading(true);
+    const formData = new FormData();
+    if (selectedFiles?.length > 0) {
+      selectedFiles.forEach((file) => {
+        formData.append("files", file);
+      });
+    } else {
+      formData.append("files", `[]`);
+    }
+
+    formData.append(
+      "sendTo",
+      headerName ? sendTo : compose || replyCheck ? sendTo : selectedEmail
     );
-    if (resEmail?.status === 200) {
-      showToast(resEmail?.data?.message, "success");
-      setCc([]);
-      setBulkEmail([]);
-      setBulkEmailTemplates([]);
-      setBulkSmsTemplates([]);
-      setSelectedSmsTemplates("");
-      setSelectedEmailTemplates("");
-      setSelectedEmail("");
-      setSendTo("");
-      setSubject("");
-      setPreview("");
+    formData.append("content", preview);
+    formData.append("subject", subject);
+    const ccString = JSON.stringify(cc);
+    formData.append("cc", ccString);
+    formData.append("from", replyCheck ? sendFrom : selectedValue);
+    formData.append("caseId", caseDataId || "");
+    const resEmail = await SaveAsDraft(formData);
+    if (resEmail?.status === 201) {
+      getAllInboxData && getAllInboxData(false, false);
       handleClose();
-      GetLogsById && GetLogsById(caseDataId);
+      showToast(resEmail?.data?.message, "success");
     } else {
       const errorMessage = resEmail?.response?.data?.message;
       showToast(errorMessage, "error");
     }
-    setLoading(false);
-  };
-  const buttonStyling = {
-    textTransform: "none",
-    color: Colors.BLACK,
-    fontFamily: "Nunito",
-    fontSize: FONT_SIZE_LARGE,
-    textAlign: "left",
-  };
-  const inputContainerStyle = {
-    display: "flex",
-    flexWrap: "wrap",
-    alignItems: "center",
-    border: "1px solid #ccc",
-    borderRadius: "5px",
-    padding: "5px",
-    marginBottom: "10px",
-    borderRadius: "10px",
+    setDraftLoading(false);
   };
 
-  const emailChipStyle = {
-    backgroundColor: "#EAEBEB",
-    borderRadius: "3px",
-    padding: "5px 10px",
-    marginRight: "5px",
-    display: "flex",
-    alignItems: "center",
-    fontFamily: "Nunito",
-    fontSize: FONT_SIZE_MEDIUM,
-    borderRadius: "10px",
-  };
-  const removeIconStyle = {
-    marginLeft: "8px",
-    cursor: "pointer",
-    color: "#888",
+  const handleUpdateDraft = async () => {
+    setDraftLoading(true);
+    const formData = new FormData();
+    if (selectedFiles?.length > 0) {
+      selectedFiles.forEach((file) => {
+        formData.append("files", file);
+      });
+    } else {
+      formData.append("files", `[]`);
+    }
+    formData.append(
+      "sendTo",
+      headerName ? sendTo : compose || replyCheck ? sendTo : selectedEmail
+    );
+    formData.append("content", preview);
+    formData.append("subject", subject);
+    const ccString = JSON.stringify(cc);
+    formData.append("cc", ccString);
+    formData.append("from", replyCheck ? sendFrom : selectedValue);
+    formData.append("caseId", caseDataId || "");
+    const resEmail = await UpdateDraft(draftId, formData);
+    if (resEmail?.status === 200) {
+      getAllInboxData && getAllInboxData(false, false);
+      handleClose();
+      showToast(resEmail?.data?.message, "success");
+    } else {
+      const errorMessage = resEmail?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setDraftLoading(false);
   };
 
-  const fontStyling = { fontSize: FONT_SIZE_LARGE, fontFamily: "Nunito" };
-  const divStyling = {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: Colors.BG_LIGHT_GRAY,
-    borderRadius: "5px",
-    height: "2.5rem",
-    cursor: "pointer",
-    fontSize: FONT_SIZE_LARGE,
-    fontFamily: "Nunito",
-    padding: "0px 10px",
-    width: "98%",
-    marginBottom: headerName ? "0.8rem" : "auto",
-  };
-
-  const smsTemplateStyling = {
-    backgroundColor: Colors.BG_LIGHT_GRAY,
-    border: "none",
-    outline: "none",
-    minWidth: "100%",
-    maxWidth: "100%",
-    maxHeight: "40vh",
-    padding: "1em",
-    fontFamily: "Nunito",
-    borderRadius: "5px",
-  };
   return (
     <>
       <Grid container sx={{ justifyContent: "space-between" }}>
@@ -403,12 +546,6 @@ export default function SendEmailCase({
             />
           ) : (
             <>
-              {/* <StyledInput
-                type="text"
-                placeholder="Send To*"
-                value={sendTo}
-                onChange={(e) => setSendTo(e.target.value)}
-              /> */}
               <Dropdown
                 height="2.5rem"
                 menuItems={menuSendto}
@@ -424,7 +561,6 @@ export default function SendEmailCase({
             </>
           )}
         </Grid>
-
         {headerName ? null : (
           <Grid xs={6}>
             <>
@@ -486,89 +622,159 @@ export default function SendEmailCase({
             </>
           </Grid>
         )}
-
-        <Grid item xs={6}>
-          <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontWeight: "600",
-              color: Colors.DARK_GRAY,
-              fontSize: FONT_SIZE_LARGE,
-            }}
-          >
-            Variable
-          </Typography>
-          <div>
-            <div
-              style={divStyling}
-              onClick={(e) => setAnchorEl(e.currentTarget)}
-            >
-              <span>Select Variable</span>
-              <span style={{ marginTop: "5px" }}>
-                <ExpandMore />
-              </span>
-            </div>
-
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleCloseMenu}
-            >
-              {Object.keys(customVariables)
-                ?.filter((category) => category !== "event") // Exclude the 'event' key
-                .map((category) => (
-                  <MenuItem
-                    key={category}
-                    onClick={(event) => handleOpenSubMenu(event, category)}
-                    sx={{
-                      ...fontStyling,
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    {category?.charAt(0).toUpperCase() + category?.slice(1)}
-                    <ArrowRight />
-                  </MenuItem>
-                ))}
-            </Menu>
-            <Popover
-              anchorEl={subMenuAnchorEl}
-              open={Boolean(subMenuAnchorEl)}
-              onClose={() => setSubMenuAnchorEl(null)}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
+        {!compose && (
+          <Grid item xs={6}>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "600",
+                color: Colors.DARK_GRAY,
+                fontSize: FONT_SIZE_LARGE,
               }}
             >
-              <Grid
-                sx={{
-                  maxHeight: "300px",
-                  overflowY: "auto",
-                  ...ScrollbarStyles,
+              Variable
+            </Typography>
+            <div>
+              <div
+                style={divStyling}
+                onClick={(e) => setAnchorEl(e.currentTarget)}
+              >
+                <span>Select Variable</span>
+                <span style={{ marginTop: "5px" }}>
+                  <ExpandMore />
+                </span>
+              </div>
+
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleCloseMenu}
+              >
+                {Object.keys(customVariables)
+                  ?.filter((category) => category !== "event") // Exclude the 'event' key
+                  .map((category) => (
+                    <MenuItem
+                      key={category}
+                      onClick={(event) => handleOpenSubMenu(event, category)}
+                      sx={{
+                        ...fontStyling,
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      {category?.charAt(0).toUpperCase() + category?.slice(1)}
+                      <ArrowRight />
+                    </MenuItem>
+                  ))}
+              </Menu>
+              <Popover
+                anchorEl={subMenuAnchorEl}
+                open={Boolean(subMenuAnchorEl)}
+                onClose={() => setSubMenuAnchorEl(null)}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
                 }}
               >
-                {selectedCategory &&
-                  Object.entries(customVariables[selectedCategory])?.map(
-                    ([label, action]) => (
-                      <div style={{ display: "flex", flexDirection: "column" }}>
-                        <Button
-                          sx={buttonStyling}
-                          onClick={() =>
-                            handleMenuClick(label, selectedCategory)
-                          }
+                <Grid
+                  sx={{
+                    maxHeight: "300px",
+                    overflowY: "auto",
+                    ...ScrollbarStyles,
+                  }}
+                >
+                  {selectedCategory &&
+                    Object.entries(customVariables[selectedCategory])?.map(
+                      ([label, action]) => (
+                        <div
+                          style={{ display: "flex", flexDirection: "column" }}
                         >
-                          {action}
-                        </Button>
-                      </div>
-                    )
-                  )}
-              </Grid>
-            </Popover>
-          </div>
+                          <Button
+                            sx={buttonStyling}
+                            onClick={() =>
+                              handleMenuClick(label, selectedCategory)
+                            }
+                          >
+                            {action}
+                          </Button>
+                        </div>
+                      )
+                    )}
+                </Grid>
+              </Popover>
+            </div>
+          </Grid>
+        )}
+
+        {headerName ? null : (
+          <Grid item xs={6}>
+            <>
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontWeight: "600",
+                  color: Colors.DARK_GRAY,
+                  fontSize: FONT_SIZE_LARGE,
+                }}
+              >
+                Attachment
+              </Typography>
+              <input
+                type="file"
+                multiple
+                onChange={(e) => handleFileChange(e)}
+                style={{
+                  fontFamily: "Nunito",
+                  backgroundColor: Colors.BG_LIGHT_GRAY,
+                  height: "2.5rem",
+                  color: Colors.DIM_LIGHT_GRAY,
+                  paddingLeft: "1rem",
+                  border: "none",
+                  outline: "none",
+                  borderRadius: "5px",
+                  width: "98%",
+                }}
+              />
+            </>
+          </Grid>
+        )}
+        <Grid item xs={6}>
+          <>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "600",
+                color: Colors.DARK_GRAY,
+                fontSize: FONT_SIZE_LARGE,
+              }}
+            >
+              {headerName ? "Sms Templates" : "Email Templates"}
+            </Typography>
+            <Dropdown
+              height="2.5rem"
+              menuItems={headerName ? menuBulkSmsTemplates : menuBulkTemplates}
+              menuWidth="11.7rem"
+              placeholder={
+                headerName ? "Select SMS Templates" : "Select Email Templates"
+              }
+              backgroundColor={Colors.BG_LIGHT_GRAY}
+              hoverColor={Colors.BG_LIGHT_GRAY}
+              width="98%"
+              selectedValue={
+                headerName ? selectedSmsTemplates : selectedEmailTemplates
+              }
+              setSelectedValue={
+                headerName ? setSelectedSmsTemplates : setSelectedEmailTemplates
+              }
+              emptyMessage={
+                headerName ? "Empty Sms Templates" : "Empty Email Templates"
+              }
+            />
+          </>
         </Grid>
         {headerName ? null : (
           <>
@@ -616,90 +822,125 @@ export default function SendEmailCase({
             </Grid>
           </>
         )}
-        <Grid item xs={6}>
-          <>
-            <Typography
-              sx={{
-                fontFamily: "Nunito",
-                fontWeight: "600",
-                color: Colors.DARK_GRAY,
-                fontSize: FONT_SIZE_LARGE,
-              }}
-            >
-              {headerName ? "Sms Templates" : "Email Templates"}
-            </Typography>
-            <Dropdown
-              height="2.5rem"
-              menuItems={headerName ? menuBulkSmsTemplates : menuBulkTemplates}
-              menuWidth="11.7rem"
-              placeholder={
-                headerName ? "Select SMS Templates" : "Select Email Templates"
-              }
-              backgroundColor={Colors.BG_LIGHT_GRAY}
-              hoverColor={Colors.BG_LIGHT_GRAY}
-              width="98%"
-              selectedValue={
-                headerName ? selectedSmsTemplates : selectedEmailTemplates
-              }
-              setSelectedValue={
-                headerName ? setSelectedSmsTemplates : setSelectedEmailTemplates
-              }
-              emptyMessage={
-                headerName ? "Empty Sms Templates" : "Empty Email Templates"
-              }
-            />
-          </>
-        </Grid>
-      </Grid>
-
-      <div style={{ marginTop: "1rem" }}>
-        {headerName ? (
-          <textarea
-            placeholder="Type something"
-            rows="6"
-            style={smsTemplateStyling}
-            value={preview}
-            onChange={(e) => setPreview(e.target.value)}
-          />
-        ) : (
-          <Editor
-            style={{ margin: "0px !important" }}
-            apiKey={TEXT_EDITOR_KEY}
-            init={{
-              menubar: "false",
-              toolbar:
-                "formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat",
-              height: 250,
+        {!headerName && (
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              gap: "1%",
+              flexWrap: "wrap",
             }}
-            value={preview}
-            onEditorChange={(content) => setPreview(content)}
-          />
+          >
+            {selectedFiles?.map((item, index) => (
+              <Typography
+                key={index}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  padding: "10px",
+                  fontSize: FONT_SIZE_MEDIUM,
+                  fontFamily: "Nunito",
+                  borderRadius: "10px",
+                  border: `1px solid ${Colors.SKY_BLUE}`,
+                  width: "24%",
+                  mt: "10px",
+                }}
+              >
+                {item?.name}
+                <IconButton
+                  onClick={() => {
+                    setSelectedFiles((prevFiles) =>
+                      prevFiles.filter((_, i) => i !== index)
+                    );
+                  }}
+                >
+                  <Delete
+                    sx={{ color: Colors.ORANGE_COLOR, fontSize: "16px" }}
+                  />
+                </IconButton>
+              </Typography>
+            ))}
+          </div>
         )}
-      </div>
-
-      <Box
-        sx={{ display: "flex", justifyContent: "flex-end", marginTop: "1rem" }}
+      </Grid>
+      <Grid
+        container
+        item
+        xs={12}
+        sx={{ display: "flex", flexDirection: "column" }}
       >
-        <TextButton
-          buttonText="CANCEL"
-          height="2rem"
-          marginRight="1rem"
-          width="6rem"
-          onClick={handleClose}
-          backgroundColor={Colors.ORANGE_COLOR}
-          hoverColor={Colors.ORANGE_COLOR}
-        />
-        <TextButton
-          buttonText="SEND"
-          height="2rem"
-          width="6rem"
-          backgroundColor={Colors.SKY_BLUE}
-          hoverColor={Colors.SKY_BLUE}
-          onClick={handleSend}
-          disabled={disable}
-          loading={loading}
-        />
-      </Box>
+        <div style={{ marginTop: "1rem" }}>
+          {headerName ? (
+            <textarea
+              placeholder="Type something"
+              rows="6"
+              style={smsTemplateStyling}
+              value={preview}
+              onChange={(e) => setPreview(e.target.value)}
+            />
+          ) : (
+            <Editor
+              style={{ margin: "0px !important" }}
+              apiKey={TEXT_EDITOR_KEY}
+              init={{
+                menubar: "false",
+                toolbar:
+                  "formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat",
+                height: 250,
+              }}
+              value={preview}
+              onEditorChange={(content) => setPreview(content)}
+            />
+          )}
+        </div>
+
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "flex-end",
+            marginTop: "1rem",
+          }}
+        >
+          <TextButton
+            buttonText={updateDraft ? "Update Draft" : "Save as Draft"}
+            height="2rem"
+            marginRight="1rem"
+            width="10rem"
+            backgroundColor={Colors.SKY_BLUE}
+            hoverColor={Colors.SKY_BLUE}
+            onClick={updateDraft ? handleUpdateDraft : handleSaveDraft}
+            loading={draftLoading}
+            disabled={
+              !selectedValue &&
+              !subject?.trim() &&
+              !preview?.trim() &&
+              !selectedEmail &&
+              !cc?.length > 0 &&
+              !selectedFiles?.length > 0
+            }
+          />
+          <TextButton
+            buttonText="CANCEL"
+            height="2rem"
+            marginRight="1rem"
+            width="6rem"
+            onClick={handleClose}
+            backgroundColor={Colors.ORANGE_COLOR}
+            hoverColor={Colors.ORANGE_COLOR}
+          />
+          <TextButton
+            buttonText="SEND"
+            height="2rem"
+            width="6rem"
+            backgroundColor={Colors.SKY_BLUE}
+            hoverColor={Colors.SKY_BLUE}
+            onClick={handleSend}
+            disabled={disable}
+            loading={loading}
+          />
+        </Box>
+      </Grid>
     </>
   );
 }

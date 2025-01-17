@@ -1,6 +1,13 @@
 import React, { useState } from "react";
-import Button from "../button";
-import { Box, Card, IconButton, Tooltip, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  IconButton,
+  Tooltip,
+  Typography,
+  Button,
+  Grid,
+} from "@mui/material";
 import {
   Timeline,
   TimelineItem,
@@ -12,11 +19,13 @@ import {
 import {
   ArrowLeft,
   ArrowRight,
+  Attachment,
   CallOutlined,
   ChevronRight,
   Email,
   ExpandMore,
   NoteAlt,
+  RemoveRedEye,
   Sms,
   Work,
 } from "@mui/icons-material";
@@ -41,6 +50,8 @@ export default function TimelineData({
   const [showReplyCard, setShowReplyCard] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [hideShowMore, setHideShowMore] = useState(true);
+  const [showViewer, setShowViewer] = useState(false);
+  const [fileUrl, setFileUrl] = useState();
 
   const formattedDate = new Date(date);
   const estTime = new Intl.DateTimeFormat("en-US", {
@@ -86,6 +97,11 @@ export default function TimelineData({
         </IconButton>
       );
     return <Work />;
+  };
+
+  const handleShowFile = (url) => {
+    setShowViewer(true);
+    setFileUrl(url);
   };
 
   return (
@@ -336,6 +352,108 @@ export default function TimelineData({
                                   {value}
                                 </Typography>
                               </>
+                            ) : key === "Attachments" && value?.length > 0 ? (
+                              <>
+                                <Typography
+                                  sx={{
+                                    fontSize: "13px",
+                                    fontFamily: "Nunito",
+                                    mb: "10px",
+                                    fontWeight: "700",
+                                  }}
+                                >
+                                  Attachments:
+                                </Typography>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    gap: "10px",
+                                    flexWrap: "wrap",
+                                  }}
+                                >
+                                  {value?.map((item) => (
+                                    <Grid
+                                      container
+                                      sx={{
+                                        display: "flex",
+                                        border: `1px solid ${Colors.SKY_BLUE}`,
+                                        width: "25%",
+                                        borderRadius: "10px",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        padding: "10px",
+                                        cursor: "pointer",
+                                        transition: "all 0.3s ease",
+                                        "&:hover": {
+                                          backgroundColor: Colors.lIGHT_PURPLE,
+                                        },
+                                      }}
+                                      onClick={() => handleShowFile(item?.url)}
+                                    >
+                                      <Typography
+                                        sx={{
+                                          fontSize: "13px",
+                                          fontFamily: "Nunito",
+                                          display: "flex",
+                                          alignItems: "center",
+                                          gap: "10px",
+                                        }}
+                                      >
+                                        <Attachment
+                                          sx={{ color: Colors.SKY_BLUE }}
+                                        />{" "}
+                                        {item?.originalFileName}
+                                      </Typography>
+                                    </Grid>
+                                  ))}
+                                </div>
+                                {showViewer && (
+                                  <div
+                                    style={{
+                                      position: "fixed",
+                                      top: 0,
+                                      left: 0,
+                                      width: "100%",
+                                      height: "100%",
+                                      backgroundColor: "rgba(0, 0, 0, 0.8)",
+                                      display: "flex",
+                                      flexDirection: "column",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      zIndex: 1000,
+                                      padding: "1rem",
+                                    }}
+                                  >
+                                    <Button
+                                      onClick={() => setShowViewer(false)}
+                                      style={{
+                                        position: "fixed",
+                                        top: "5rem",
+                                        right: "1rem",
+                                        bottom: 0,
+                                        backgroundColor: "white",
+                                        border: "none",
+                                        borderRadius: "4px",
+                                        padding: "0.5rem",
+                                        cursor: "pointer",
+                                        zIndex: 1100,
+                                        height: "2rem",
+                                      }}
+                                    >
+                                      Close
+                                    </Button>
+                                    <iframe
+                                      src={fileUrl}
+                                      style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        border: "none",
+                                        position: "relative",
+                                      }}
+                                    />
+                                  </div>
+                                )}
+                              </>
                             ) : (
                               <Typography
                                 sx={{
@@ -394,6 +512,16 @@ export default function TimelineData({
                               </span>
                             </Tooltip>
                           )}
+                        </Typography>
+                        <Typography
+                          sx={{
+                            fontSize: "13px",
+                            fontFamily: "Nunito",
+                            mb: "10px",
+                            paddingLeft: "2.5rem",
+                          }}
+                        >
+                          <strong>Subject:</strong> {value?.Subject}
                         </Typography>
                       </>
                     )

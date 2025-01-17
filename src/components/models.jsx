@@ -69,6 +69,7 @@ import UpdateWeeklyBudget from "./settlementRange/updateWeeklyBudget";
 import BouncePayments from "./caseDetail/bouncePayments";
 import GetTransactionDetails from "./caseDetail/getTransactionDetails";
 import SeeCheckDetails from "./caseDetail/seeCheckDetails";
+import ClientSync from "./caseDetail/ClientSync";
 
 export default function MuiModels({
   buttonName,
@@ -159,6 +160,11 @@ export default function MuiModels({
   selectedCreditorDetailsKey,
   fetchCalls,
   transactionId,
+  paymentPlatform,
+  getAllInboxData,
+  emailOrCompose,
+  updateDraft,
+  draftId,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -337,6 +343,25 @@ export default function MuiModels({
             />
           </IconButton>
         </Tooltip>
+      ) : show === "showClientSync" ? (
+        <Tooltip
+          title={`Sync ${
+            paymentPlatform === "Seamlesschex merchant"
+              ? "Seamlesschex Merchant"
+              : "Easypay Direct"
+          } Client`}
+          placement="top-end"
+        >
+          <IconButton
+            onClick={() => {
+              handleOpen();
+            }}
+          >
+            <Sync
+              sx={{ color: Colors.DARK_GRAY, fontSize: iconSize || "16px" }}
+            />
+          </IconButton>
+        </Tooltip>
       ) : show === "editAbout" ? (
         <IconButton
           onClick={() => {
@@ -494,7 +519,7 @@ export default function MuiModels({
             }}
           />
         </IconButton>
-      ) : show === "updateWeeklyBudget" ? (
+      ) : show === "updateWeeklyBudget" || buttonName === "draft" ? (
         <IconButton
           onClick={() => {
             handleOpen();
@@ -627,6 +652,8 @@ export default function MuiModels({
               ? "Reply"
               : buttonName === "composeEmail"
               ? "Compose Email"
+              : buttonName === "draft"
+              ? "Edit"
               : "Send Email"
           }
           height="2.5rem"
@@ -750,7 +777,6 @@ export default function MuiModels({
       )}
       <Modal
         open={open}
-        onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -881,6 +907,10 @@ export default function MuiModels({
               emailSubject={emailSubject}
               replyCheck={replyCheck}
               data={data}
+              getAllInboxData={getAllInboxData}
+              emailOrCompose={emailOrCompose}
+              updateDraft={updateDraft}
+              draftId={draftId}
             />
           ) : show === "editPipeline" ? (
             <EditPipeline
@@ -1094,6 +1124,13 @@ export default function MuiModels({
               handleClose={handleClose}
               caseData={caseData}
               GetCaseDetails={GetCaseDetails}
+            />
+          ) : show === "showClientSync" ? (
+            <ClientSync
+              handleClose={handleClose}
+              caseData={caseData}
+              GetCaseDetails={GetCaseDetails}
+              paymentPlatform={paymentPlatform}
             />
           ) : show === "updateWeeklyBudget" ? (
             <UpdateWeeklyBudget

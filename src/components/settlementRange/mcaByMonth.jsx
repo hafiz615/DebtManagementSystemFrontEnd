@@ -9,6 +9,7 @@ import {
   Typography,
   Paper,
   Grid,
+  Tooltip,
 } from "@mui/material";
 import ScrollbarStyles from "../customScroll";
 import { Colors } from "../../config/default";
@@ -24,15 +25,13 @@ const McaByMonthTable = ({ mcaByMonth }) => {
   };
 
   // Function to format amounts with dollar sign
-  const formatCurrency = (amount) => {
-    if (!amount || isNaN(amount)) return "--";
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-    }).format(amount);
-  };
-
+  const formatAsDollar = (value) =>
+    value !== undefined && value !== null
+      ? `$${Number(value).toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`
+      : "--";
   if (!mcaByMonth || Object.keys(mcaByMonth).length === 0) {
     return (
       <Typography
@@ -48,7 +47,7 @@ const McaByMonthTable = ({ mcaByMonth }) => {
           marginTop: "2rem",
         }}
       >
-        No data available.
+        No MCA Data.
       </Typography>
     );
   }
@@ -66,6 +65,20 @@ const McaByMonthTable = ({ mcaByMonth }) => {
       {Object.entries(mcaByMonth)?.map(([month, records]) => {
         const { work_days, account } = records[0] || {};
 
+        const totalWithdrawal = records?.reduce(
+          (sum, record) => sum + (Number(record?.withdrawal_total) || 0),
+          0
+        );
+        const totalDeposit = records?.reduce(
+          (sum, record) => sum + (Number(record?.deposit_total) || 0),
+          0
+        );
+        const totalLatestWithdrawal = records?.reduce(
+          (sum, record) =>
+            sum + (Number(record?.latest_withdrawal_amount) || 0),
+          0
+        );
+
         return (
           <Paper elevation={3} key={month}>
             <Typography
@@ -73,7 +86,7 @@ const McaByMonthTable = ({ mcaByMonth }) => {
                 fontFamily: "Nunito",
                 backgroundColor: Colors.BG_LIGHT_GRAY,
                 "&:hover": {
-                  backgroundColor: Colors.VIOLET,
+                  backgroundColor: Colors.BG_LIGHT_GRAY,
                 },
                 height: "8vh",
                 display: "flex",
@@ -95,7 +108,7 @@ const McaByMonthTable = ({ mcaByMonth }) => {
                 fontFamily: "Nunito",
                 backgroundColor: Colors.BG_LIGHT_GRAY,
                 "&:hover": {
-                  backgroundColor: Colors.VIOLET,
+                  backgroundColor: Colors.BG_LIGHT_GRAY,
                 },
                 height: "8vh",
                 display: "flex",
@@ -144,19 +157,71 @@ const McaByMonthTable = ({ mcaByMonth }) => {
                         {record?.withdrawal_count || "--"}
                       </TableCell>
                       <TableCell sx={cellStyleBody}>
-                        {formatCurrency(record?.withdrawal_total)}
+                        {formatAsDollar(record?.withdrawal_total) || "--"}
                       </TableCell>
                       <TableCell sx={cellStyleBody}>
-                        {formatCurrency(record?.deposit_total)}
+                        {formatAsDollar(record?.deposit_total) || "--"}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          ...cellStyleBody,
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          maxWidth: "150px",
+                        }}
+                      >
+                        <Tooltip title={record?.deposit_dates || "--"} arrow>
+                          <span>{record?.deposit_dates || "--"}</span>
+                        </Tooltip>
                       </TableCell>
                       <TableCell sx={cellStyleBody}>
-                        {record?.deposit_dates || "--"}
-                      </TableCell>
-                      <TableCell sx={cellStyleBody}>
-                        {formatCurrency(record?.latest_withdrawal_amount)}
+                        {formatAsDollar(record?.latest_withdrawal_amount) ||
+                          "--"}
                       </TableCell>
                     </TableRow>
                   ))}
+                  {/* Add Totals Row */}
+                  <TableRow>
+                    <TableCell
+                      sx={{
+                        fontWeight: "bold",
+                        textAlign: "left",
+                        fontFamily: "Nunito",
+                      }}
+                    >
+                      Total:
+                    </TableCell>
+                    <TableCell colSpan={1}></TableCell>
+                    <TableCell
+                      sx={{
+                        fontWeight: "bold",
+                        textAlign: "left",
+                        fontFamily: "Nunito",
+                      }}
+                    >
+                      {formatAsDollar(totalWithdrawal) || "--"}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        fontWeight: "bold",
+                        textAlign: "left",
+                        fontFamily: "Nunito",
+                      }}
+                    >
+                      {formatAsDollar(totalDeposit) || "--"}
+                    </TableCell>
+                    <TableCell colSpan={1}></TableCell>
+                    <TableCell
+                      sx={{
+                        fontWeight: "bold",
+                        textAlign: "left",
+                        fontFamily: "Nunito",
+                      }}
+                    >
+                      {formatAsDollar(totalLatestWithdrawal) || "--"}
+                    </TableCell>
+                  </TableRow>
                 </TableBody>
               </Table>
             </TableContainer>

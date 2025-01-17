@@ -23,11 +23,13 @@ function TextButton({
   loginFont,
   boxShadow,
   marginLeft,
+  id,
 }) {
   return (
     <Button
       variant="contained"
       startIcon={startIcon}
+      id={id}
       sx={{
         width: width,
         fontFamily: "Nunito",

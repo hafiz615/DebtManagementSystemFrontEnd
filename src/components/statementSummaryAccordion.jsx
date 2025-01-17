@@ -25,7 +25,7 @@ const styles = {
   gridContainer: {
     backgroundColor: Colors.WHITE,
     width: "100%",
-    height: "40vh",
+    maxHeight: "40vh",
     overflowY: "auto",
     ...ScrollbarStyles,
   },
@@ -59,49 +59,125 @@ const styles = {
   },
 };
 
-const formatAsDollar = (value) => (value ? `$${value}` : "--");
+const formatAsDollar = (value) =>
+  value !== undefined && value !== null
+    ? `$${Number(value).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`
+    : "--";
 
 export default function StatementSummaryAccordion({ data, loading }) {
-  const renderTable = (value) => (
-    <Table sx={styles.table} size="small">
-      <TableHead>
-        <TableRow>
-          {[
-            "Statement Month",
-            "Starting Balance",
-            "True Credits",
-            "Ending Balance",
-            "MCA Number",
-            "MCA Withhold Percent",
-            "WithDrawal Total",
-          ]?.map((header, index) => (
-            <TableCell key={index} sx={styles.tableHeaderCell}>
-              {header}
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {value?.map((item, rowIndex) => (
-          <TableRow key={rowIndex}>
+  const renderTable = (value) => {
+    // Calculate totals
+    const totals = value.reduce(
+      (acc, item) => ({
+        startingBalance:
+          acc.startingBalance + (Number(item?.startingBalance) || 0),
+        trueCredits: acc.trueCredits + (Number(item?.trueCredits) || 0),
+        endingBalance: acc.endingBalance + (Number(item?.endingBalance) || 0),
+        withdrawalTotal:
+          acc.withdrawalTotal + (Number(item?.withdrawalTotal) || 0),
+      }),
+      {
+        startingBalance: 0,
+        trueCredits: 0,
+        endingBalance: 0,
+        withdrawalTotal: 0,
+      }
+    );
+
+    return (
+      <Table sx={styles.table} size="small">
+        <TableHead>
+          <TableRow>
             {[
-              item?.statement_month,
-              formatAsDollar(item?.startingBalance),
-              formatAsDollar(item?.trueCredits),
-              formatAsDollar(item?.endingBalance),
-              item?.mcaNumber,
-              item?.mcaWithholdPercent ? `${item?.mcaWithholdPercent}` : "--",
-              formatAsDollar(item?.withdrawalTotal),
-            ]?.map((cellData, cellIndex) => (
-              <TableCell key={cellIndex} sx={styles.tableCell}>
-                {cellData}
+              "Statement Month",
+              "Starting Balance",
+              "True Credits",
+              "Ending Balance",
+              "MCA Number",
+              "MCA Withhold Percent",
+              "WithDrawal Total",
+            ]?.map((header, index) => (
+              <TableCell key={index} sx={styles.tableHeaderCell}>
+                {header}
               </TableCell>
             ))}
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
+        </TableHead>
+        <TableBody>
+          {value?.map((item, rowIndex) => (
+            <TableRow key={rowIndex}>
+              {[
+                item?.statement_month,
+                formatAsDollar(item?.startingBalance),
+                formatAsDollar(item?.trueCredits),
+                formatAsDollar(item?.endingBalance),
+                item?.mcaNumber,
+                item?.mcaWithholdPercent ? `${item?.mcaWithholdPercent}` : "--",
+                formatAsDollar(item?.withdrawalTotal),
+              ]?.map((cellData, cellIndex) => (
+                <TableCell key={cellIndex} sx={styles.tableCell}>
+                  {cellData}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+          {/* Add totals row */}
+          <TableRow>
+            <TableCell
+              colSpan={1}
+              sx={{
+                fontWeight: "bold",
+                textAlign: "left",
+                fontFamily: "Nunito",
+              }}
+            >
+              Total:
+            </TableCell>
+            <TableCell
+              sx={{
+                fontWeight: "bold",
+                textAlign: "left",
+                fontFamily: "Nunito",
+              }}
+            >
+              {formatAsDollar(totals?.startingBalance)}
+            </TableCell>
+            <TableCell
+              sx={{
+                fontWeight: "bold",
+                textAlign: "left",
+                fontFamily: "Nunito",
+              }}
+            >
+              {formatAsDollar(totals?.trueCredits)}
+            </TableCell>
+            <TableCell
+              sx={{
+                fontWeight: "bold",
+                textAlign: "left",
+                fontFamily: "Nunito",
+              }}
+            >
+              {formatAsDollar(totals?.endingBalance)}
+            </TableCell>
+            <TableCell colSpan={2}></TableCell>
+            <TableCell
+              sx={{
+                fontWeight: "bold",
+                textAlign: "left",
+                fontFamily: "Nunito",
+              }}
+            >
+              {formatAsDollar(totals?.withdrawalTotal)}
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    );
+  };
 
   return (
     <Accordion>
@@ -128,8 +204,20 @@ export default function StatementSummaryAccordion({ data, loading }) {
                 </div>
               ))
             ) : (
-              <Typography sx={styles.noDataText}>
-                No Statement Summary Data
+              <Typography
+                sx={{
+                  backgroundColor: Colors.WHITE,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "5vh",
+                  borderRadius: "1rem",
+                  fontFamily: "Nunito",
+                  textAlign: "center",
+                  marginTop: "2rem",
+                }}
+              >
+                No Statement Summary Data.
               </Typography>
             )}
           </Grid>

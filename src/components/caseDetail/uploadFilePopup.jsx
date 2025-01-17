@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Grid, Box, Typography, Button } from "@mui/material";
+import { Grid, Box, Typography, Button, IconButton } from "@mui/material";
 import UploadIcon from "@mui/icons-material/Upload";
 import { styles } from "../caseCreation/FileUploadComponent/FileUploadComponent.styles";
-import { InsertDriveFile, DeleteOutlineOutlined } from "@mui/icons-material";
+import {
+  InsertDriveFile,
+  DeleteOutlineOutlined,
+  Close,
+} from "@mui/icons-material";
 import { Colors } from "../../config/default";
 import TextButton from "../button";
 import { isEmpty } from "lodash";
@@ -117,10 +121,24 @@ function UploadFilePopup({ handleClose, GetCaseDetails }) {
 
   return (
     <Grid container>
-      <Grid container item xs={12}>
+      <Box
+        sx={{
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: "1rem",
+          width: "100%",
+        }}
+      >
         <Typography sx={{ ...styles.headerText, marginBottom: "10px" }}>
           Upload Files
         </Typography>
+        <IconButton onClick={handleClose}>
+          <Close />
+        </IconButton>
+      </Box>
+      <Grid container item xs={12}>
         <Box
           sx={{
             display: "flex",

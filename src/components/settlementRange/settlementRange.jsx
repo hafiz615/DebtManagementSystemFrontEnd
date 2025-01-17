@@ -59,6 +59,7 @@ import DebtorUploadedFiles from "../debtorUploadedFiles";
 import TransactionHistory from "../transactionHistory";
 import CashFlowPercentage from "./cashFlowPercentage";
 import MCAByMonthAccordion from "../settlementRange/mcaByMonthAccordion";
+import SendEmail from "../sendEmail";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -207,6 +208,16 @@ export default function SettlementRange({
   caseData,
   mcaByMonth,
   setMcaByMonth,
+
+  to,
+  payableAmount,
+  selectedCreditor,
+  paymentData,
+  debtorInfo,
+  creditorInfo,
+  fullProfit,
+  handleClose,
+  showEmailAgreement,
 }) {
   const caseId = id;
   const [value, setValue] = useState(0);
@@ -827,7 +838,15 @@ export default function SettlementRange({
       }, 0)
     ),
 
-    purchased_percentage: "--",
+    purchased_percentage:
+      creditorNames
+        ?.reduce((total, creditor) => {
+          const percentage = parseFloat(
+            creditor?.contractDetails?.purchased_percentage || "0"
+          );
+          return total + percentage;
+        }, 0)
+        .toFixed(2) + "%",
     repayment_amount: "--",
   };
 
@@ -918,7 +937,7 @@ export default function SettlementRange({
   const debtorData = [
     { item: "Full Name", value: debtor?.fullName || "--" },
     { item: "Customer Status", value: debtor?.status || "--" },
-    { item: "phone", value: debtor?.phone ? `+1${debtor?.phone}` : "--" },
+    { item: "Phone", value: debtor?.phone ? `+1${debtor?.phone}` : "--" },
     {
       item: "Weekly Budget",
       value: debtor?.weeklyBudget
@@ -1155,6 +1174,35 @@ export default function SettlementRange({
               <MCAByMonthAccordion mcaByMonth={mcaByMonth} />
             </Grid>
           </>
+          {showEmailAgreement && (
+            <Grid
+              item
+              xs={12}
+              id="targetComponent"
+              sx={{
+                backgroundColor: Colors.WHITE,
+                padding: "1rem",
+                marginBottom: "1rem",
+                borderRadius: "10px",
+                marginTop: "1rem",
+              }}
+            >
+              <SendEmail
+                payableAmount={payableAmount}
+                debtorInfo={debtorInfo}
+                creditorInfo={creditorInfo}
+                data={apiData}
+                selectedCreditor={selectedCreditor}
+                lumpSump={lumpSumpData}
+                fullProfit={fullProfit}
+                caseId={id}
+                paymentData={paymentData}
+                debtorId={verifiedSender}
+                to={to}
+                handleClose={handleClose}
+              />
+            </Grid>
+          )}
 
           <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
             {/* <GridItem

@@ -39,6 +39,7 @@ import SettlementAccordion from "./settlementRanges";
 import DeletePrompt from "../deletePrompt";
 import { GetCalls } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
+import SendEmailCase from "./sendEmailCase";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -104,6 +105,8 @@ export default function CaseById({
   currentPaymentPage,
   setCurrentPaymentPage,
   totalPaymentPage,
+  showEmail,
+  from,
 }) {
   const navigate = useNavigate();
   const [deleting, setDeleting] = useState(false);
@@ -381,7 +384,7 @@ export default function CaseById({
                       backgroundColor: Colors.WHITE,
                       borderRadius: "10px",
                       padding: "0px 10px",
-                      height: "13rem",
+                      height: "14rem",
                       marginBottom: "0.5rem",
                       overflowY: "auto",
                       ...ScrollbarStyles,
@@ -636,6 +639,33 @@ export default function CaseById({
                   />
                 ))}
               </AntTabs>
+              {showEmail && (
+                <Grid
+                  container
+                  id="targetComponent"
+                  item
+                  xs={12}
+                  sx={{
+                    backgroundColor: Colors.WHITE,
+                    marginLeft: "1rem",
+                    padding: "1rem",
+                    marginBottom: "1rem",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <SendEmailCase
+                    headerName={false}
+                    verifiedSenders={verifiedSenders}
+                    GetLogsById={GetLogsById}
+                    data={caseData}
+                    caseDataId={id}
+                    buttonName="sendEmailCase"
+                    handleClose={handleClose}
+                    from={from}
+                  />
+                </Grid>
+              )}
+
               {caseHistoryTabs === 5 ? (
                 <TimelineData
                   callLogs={callLogs}
@@ -661,6 +691,7 @@ export default function CaseById({
                     GetLogsById={GetLogsById}
                     iconValue={caseHistoryTabs}
                     caseData={caseData}
+                    verifiedSenders={verifiedSenders}
                   />
                 ))
               ) : (

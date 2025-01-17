@@ -25,6 +25,7 @@ import PaymentCardDetails from "../paymentCard";
 import { AddDebtorAccount } from "../../services/services";
 import Dropdown from "../dropdown";
 import { isEmpty } from "lodash";
+import { type } from "@testing-library/user-event/dist/type";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -67,6 +68,7 @@ export default function DebtorDetailsCards({
 }) {
   const [searchText, setSearchText] = useState("");
   const [selectedValue, setSelectedValue] = useState("Seamless Chex");
+  const [type, setType] = useState("cc");
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 2;
   const handleNext = () => {
@@ -178,7 +180,9 @@ export default function DebtorDetailsCards({
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",
           padding: "0px 10px",
-          height: "13rem",
+          height: "14rem",
+          overflowY: "auto",
+          ...ScrollbarStyles,
         }}
       >
         <div
@@ -203,6 +207,18 @@ export default function DebtorDetailsCards({
               justifyContent: "end",
             }}
           >
+            <MuiModels
+              show="showClientSync"
+              iconColor={Colors.BLACK}
+              caseData={caseData}
+              GetCaseDetails={GetCaseDetails}
+              height="22vh"
+              paymentPlatform={
+                selectedValue === "Seamless Chex"
+                  ? "Seamlesschex merchant"
+                  : "Easypay direct"
+              }
+            />
             <Dropdown
               menuWidth="10rem"
               menuItems={paymentGateways}
@@ -213,10 +229,13 @@ export default function DebtorDetailsCards({
               selectedValue={selectedValue}
               setSelectedValue={setSelectedValue}
               fontSize="12px"
+              setType={setType}
             />
             <PaymentCardDetails
               paymentGateway={selectedValue}
               setConnectPayment={setConnectPayment}
+              type={type}
+              setType={setType}
             />
             <MuiModels
               show="debtorDetail"
@@ -246,7 +265,7 @@ export default function DebtorDetailsCards({
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
-                    width: "45%",
+                    width: "48%",
                     marginBottom: "8px",
                   }}
                 >
@@ -286,7 +305,7 @@ export default function DebtorDetailsCards({
                             wordBreak: "break-word",
                           }}
                         >
-                          {getTruncatedText(formatValue(value), 15) || "--"}
+                          {getTruncatedText(formatValue(value), 10) || "--"}
                         </Typography>
                       </Tooltip>
                     </div>
@@ -322,7 +341,7 @@ export default function DebtorDetailsCards({
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",
           padding: "0px 10px",
-          height: "13rem",
+          height: "14rem",
           marginBottom: "0.5rem",
         }}
       >
@@ -431,7 +450,7 @@ export default function DebtorDetailsCards({
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",
           padding: "0px 10px",
-          height: "13rem",
+          height: "14rem",
           marginBottom: "0.5rem",
         }}
       >
@@ -562,6 +581,7 @@ export default function DebtorDetailsCards({
                       maxHeight="78vh"
                       GetLogsById={GetLogsById}
                       data={caseData}
+                      from={caseData?.creditor?.basicInformation?.email}
                     />
                     <MuiModels
                       show="sendEmailCase"

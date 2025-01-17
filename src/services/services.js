@@ -1424,11 +1424,11 @@ export const GetAllTransactions = async (page) => {
     return error;
   }
 };
-export const GetAllInbox = async (page, limit, search, filter, payload) => {
+export const GetAllInbox = async (search, filter, payload) => {
   try {
     return await axios.post(
       BASE_URL +
-        `/v1/inbox/getAllMessages?page=${page}&limit=${limit}&search=${search}&filter=${filter}`,
+        `/v1/inbox/getAllMessages?search=${search}&filter=${filter}&type=default`,
       payload,
       setHeaders()
     );
@@ -1587,10 +1587,32 @@ export const GetCreditorSyncEmail = async (id) => {
     return error;
   }
 };
+
 export const SyncPaynoteCreditor = async (payload, id) => {
   try {
     return await axios.post(
       BASE_URL + `/v1/creditor/syncPaynoteCreditor/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetClientSyncEmail = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/debtor/getClientSyncEmail/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const SyncEasyPayEmail = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/clientSync/${id}`,
       payload,
       setHeaders()
     );
@@ -1733,11 +1755,70 @@ export const UpdateCallByCase = async (payload, callId) => {
     return error;
   }
 };
-
 export const GetCallSid = async (id) => {
   try {
     return await axios.get(
       BASE_URL + `/v1/call/twilio/getIncomingCall/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const SaveAsDraft = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/inbox/createEmailDraft`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetCallerName = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/call/twilio/callerName`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetUsers = async () => {
+  try {
+    return await axios.get(BASE_URL + `/v1/user/getUsers`, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+export const DeleteDraft = async (id) => {
+  try {
+    return await axios.delete(
+      BASE_URL + `/v1/inbox/deleteDraftEmail/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateDraft = async (id, payload) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/inbox/updateDraftEmail/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetNotificationTemplates = async () => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/settings/getTemplates`,
       setHeaders()
     );
   } catch (error) {

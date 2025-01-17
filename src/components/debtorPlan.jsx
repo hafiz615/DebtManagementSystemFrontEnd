@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid, IconButton, Typography } from "@mui/material";
 
 import PaymentDetails from "./caseCreation/paymentDetails";
 import TextButton from "./button";
@@ -12,6 +12,7 @@ import {
 import { useToast } from "../toast/toastContext";
 import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../constants/appConstants";
 import DeletePrompt from "./deletePrompt";
+import { Close } from "@mui/icons-material";
 
 const lineStyle = {
   width: "100%",
@@ -155,27 +156,40 @@ export default function DebtorPlan({ caseData, handleClose, GetCaseDetails }) {
 
   return (
     <div>
-      <Typography
+      <Box
         sx={{
-          fontFamily: "Nunito",
-          fontWeight: "600",
-          fontSize: FONT_SIZE_XL,
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: "1rem",
         }}
       >
-        Fee Payment Plan{" "}
-        {caseData?.debtor?.intervals?.length > 0 && (
-          <span
-            style={{
-              fontFamily: "Nunito",
-              fontWeight: "600",
-              fontSize: FONT_SIZE_XL,
-              color: Colors.SKY_BLUE,
-            }}
-          >
-            (Plan Already In Progress)
-          </span>
-        )}
-      </Typography>
+        <Typography
+          sx={{
+            fontFamily: "Nunito",
+            fontWeight: "600",
+            fontSize: FONT_SIZE_XL,
+          }}
+        >
+          Fee Payment Plan{" "}
+          {caseData?.debtor?.intervals?.length > 0 && (
+            <span
+              style={{
+                fontFamily: "Nunito",
+                fontWeight: "600",
+                fontSize: FONT_SIZE_XL,
+                color: Colors.SKY_BLUE,
+              }}
+            >
+              (Plan Already In Progress)
+            </span>
+          )}
+        </Typography>
+        <IconButton onClick={handleClose}>
+          <Close />
+        </IconButton>
+      </Box>
       <Box sx={lineStyle} />
 
       <Typography

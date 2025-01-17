@@ -1,7 +1,9 @@
 import {
+  Box,
   FormControl,
   FormControlLabel,
   Grid,
+  IconButton,
   Radio,
   RadioGroup,
   Typography,
@@ -10,6 +12,7 @@ import React, { useState } from "react";
 import { FONT_SIZE_LARGE } from "../constants/appConstants";
 import { Colors } from "../config/default";
 import MuiModels from "./models";
+import { Close } from "@mui/icons-material";
 
 export default function SettlementPayment({
   title,
@@ -32,9 +35,22 @@ export default function SettlementPayment({
   };
   return (
     <div>
-      <Typography sx={textStyling}>
-        Payment Plan According to {title}
-      </Typography>
+      <Box
+        sx={{
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: "1rem",
+        }}
+      >
+        <Typography sx={textStyling}>
+          Payment Plan According to {title}
+        </Typography>
+        <IconButton onClick={handleClose}>
+          <Close />
+        </IconButton>
+      </Box>
       <FormControl component="fieldset">
         <p style={{ ...textStyling, marginTop: "1rem" }}>
           Select Range You Want To Choose

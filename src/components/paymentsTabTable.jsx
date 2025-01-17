@@ -83,24 +83,24 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const IconsContainer = styled("div")({
-  display: "none",
-  justifyContent: "center",
-  alignItems: "center",
-  width: "calc(100% - 16%)",
-  marginTop: "1rem",
-  position: "absolute",
-  left: 0,
-  top: 5,
-  backgroundColor: "transparent",
-  zIndex: 1,
-});
+// const IconsContainer = styled("div")({
+//   display: "none",
+//   justifyContent: "center",
+//   alignItems: "center",
+//   width: "calc(100% - 16%)",
+//   marginTop: "1rem",
+//   position: "absolute",
+//   left: 0,
+//   top: 5,
+//   backgroundColor: "transparent",
+//   zIndex: 1,
+// });
 
-const IconStyle = styled("div")({
-  cursor: "pointer",
-  marginLeft: "0.5rem",
-  marginRight: "1rem",
-});
+// const IconStyle = styled("div")({
+//   cursor: "pointer",
+//   marginLeft: "0.5rem",
+//   marginRight: "1rem",
+// });
 
 export default function PaymentTabsTable({
   currentPage,
@@ -115,6 +115,7 @@ export default function PaymentTabsTable({
   onRowClick,
   paginationRows,
   setPaginationRows,
+  hideCheck,
 }) {
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
@@ -149,7 +150,9 @@ export default function PaymentTabsTable({
           (item?.tryDate && new Date(item?.tryDate)?.toLocaleDateString()) ||
           "-",
         totalDebt: formatDollarAmount(item?.totalDebt) || "-",
-        ssid: item?.SSID || "-",
+        transactionType: value !== 5 ? item?.transactionType || "-" : "",
+
+        // ssid: item?.SSID || "-",
         caseOwner: item?.caseOwner || "-",
       };
       if (value === 4) {
@@ -367,50 +370,26 @@ export default function PaymentTabsTable({
                           </IconButton>
                         </StyledTableCell>
                       )}
-                      <IconsContainer className="icons">
-                        <IconStyle
-                          onClick={() => {
-                            alert("clicked");
-                          }}
-                        >
+                      {/* <IconsContainer className="icons">
+                        <IconStyle>
                           <LocalPhone />
                         </IconStyle>
-                        <IconStyle
-                          onClick={() => {
-                            alert("clicked");
-                          }}
-                        >
+                        <IconStyle>
                           <Textsms />
                         </IconStyle>
-                        <IconStyle
-                          onClick={() => {
-                            alert("clicked");
-                          }}
-                        >
+                        <IconStyle>
                           <Mail />
                         </IconStyle>
-                        <IconStyle
-                          onClick={() => {
-                            alert("clicked");
-                          }}
-                        >
+                        <IconStyle>
                           <EditCalendar />
                         </IconStyle>
-                        <IconStyle
-                          onClick={() => {
-                            alert("clicked");
-                          }}
-                        >
+                        <IconStyle>
                           <OpenInNew />
                         </IconStyle>
-                        <IconStyle
-                          onClick={() => {
-                            alert("clicked");
-                          }}
-                        >
+                        <IconStyle>
                           <Sync />
                         </IconStyle>
-                      </IconsContainer>
+                      </IconsContainer> */}
                     </StyledTableRow>
                   );
                 })

@@ -20,7 +20,7 @@ const styles = {
   gridContainer: {
     backgroundColor: Colors.WHITE,
     width: "100%",
-    height: "60vh",
+    maxHeight: "60vh",
     overflowY: "auto",
     ...ScrollbarStyles,
   },

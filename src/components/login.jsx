@@ -19,7 +19,7 @@ import {
   FONT_SIZE_SMALL,
   LoginPage,
 } from "../constants/appConstants";
-import { GetRoleByName, SignIn } from "../services/services";
+import { GetCallToken, GetRoleByName, SignIn } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import Button from "./button";
 import ForgotPassword from "./forgortPassword";
@@ -58,10 +58,13 @@ function Login() {
       dispatch(sign_In(login?.data?.data));
       const token = login?.data?.data?.token;
       localStorage.setItem("token", token);
-
       const role = login?.data?.data?.user?.role;
+      const twilioTokenResponse = await GetCallToken();
+      if (twilioTokenResponse?.status === 200) {
+        let twilioToken = twilioTokenResponse.data.data.token;
+        localStorage.setItem("twilioToken", twilioToken);
+      }
       const GetRoleName = await GetRoleByName(role);
-
       if (GetRoleName?.status === 200) {
         dispatch(permissions(GetRoleName?.data?.data));
         navigate("/home");
