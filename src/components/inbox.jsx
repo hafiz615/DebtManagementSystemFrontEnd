@@ -726,10 +726,8 @@ function Inbox() {
                               Content:
                             </Typography>
 
-                            {/* Show truncated or expanded content based on expandedMessages[index] */}
                             {!expandedMessages[index] ? (
                               <div>
-                                {/* Truncated content (100 characters) */}
                                 <Typography
                                   sx={fontStyling}
                                   dangerouslySetInnerHTML={{
@@ -747,21 +745,30 @@ function Inbox() {
                               </div>
                             ) : (
                               <>
-                                {/* Expanded content */}
                                 <div>
-                                  <Typography
-                                    sx={fontStyling}
-                                    dangerouslySetInnerHTML={{
-                                      __html:
-                                        activeTab === "Draft"
-                                          ? item?.text
-                                          : item?.textAsHtml,
-                                    }}
-                                  />
+                                  {item?.text || item?.textAsHtml ? (
+                                    <Typography
+                                      sx={fontStyling}
+                                      dangerouslySetInnerHTML={{
+                                        __html:
+                                          activeTab === "Draft"
+                                            ? item?.text
+                                            : item?.textAsHtml,
+                                      }}
+                                    />
+                                  ) : (
+                                    <Typography
+                                      sx={{
+                                        fontSize: "14px",
+                                        color: Colors.GRAY,
+                                      }}
+                                    >
+                                      No content available.
+                                    </Typography>
+                                  )}
                                 </div>
 
-                                {/* Attachments (if any) */}
-                                {item?.attachments?.length > 0 && (
+                                {item?.attachments?.length > 0 ? (
                                   <div>
                                     <div
                                       style={{
@@ -785,7 +792,7 @@ function Inbox() {
                                             transition: "all 0.3s ease",
                                             "&:hover": {
                                               backgroundColor:
-                                                Colors.lIGHT_PURPLE,
+                                                Colors.LIGHT_PURPLE,
                                             },
                                           }}
                                           onClick={() =>
@@ -810,11 +817,19 @@ function Inbox() {
                                       ))}
                                     </div>
                                   </div>
+                                ) : (
+                                  <Typography
+                                    sx={{
+                                      fontSize: "14px",
+                                      color: Colors.GRAY,
+                                    }}
+                                  >
+                                    No attachments available.
+                                  </Typography>
                                 )}
                               </>
                             )}
 
-                            {/* Show More / Show Less button */}
                             <Box
                               sx={{
                                 display: "flex",
