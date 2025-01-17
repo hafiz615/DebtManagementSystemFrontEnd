@@ -236,11 +236,18 @@ function CaseDetail() {
     }
     const casePayment = await GetCasePaymentById(currentPaymentPage, rowId);
     if (casePayment?.status === 200) {
-      let totalPage = Math.ceil(
-        casePayment?.data?.data?.transactions?.totalCount / 20
-      );
+      let totalPreviousPage =
+        Math.ceil(casePayment?.data?.data?.transactions?.previousCount / 10) ||
+        0;
+      let totalUpcomingPage =
+        Math.ceil(casePayment?.data?.data?.transactions?.upcomingCount / 10) ||
+        0;
+      if (totalPreviousPage > totalUpcomingPage) {
+        setTotalPaymentPage(totalPreviousPage);
+      } else {
+        setTotalPaymentPage(totalUpcomingPage);
+      }
       setPaymentDetails(casePayment?.data?.data);
-      setTotalPaymentPage(totalPage);
     } else if (
       casePayment?.response?.status === 401 ||
       casePayment?.response?.status === 403
@@ -567,18 +574,6 @@ function CaseDetail() {
               backgroundColor={Colors.SKY_BLUE}
               hoverColor={Colors.SKY_BLUE}
             />
-
-            {/* <MuiModels
-          show="sendEmailCase"
-          buttonName="sendEmailCase"
-          iconColor={Colors.BLACK}
-          maxHeight="78vh"
-          from={caseData?.creditor?.basicInformation?.email}
-          caseDataId={id}
-          GetLogsById={GetLogsById}
-          data={caseData}
-          verifiedSenders={verifiedSenders}
-        /> */}
             <TextButton
               id="scrollButton"
               buttonText="Send Email"

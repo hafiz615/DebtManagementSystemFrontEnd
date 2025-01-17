@@ -1787,3 +1787,41 @@ export const GetCallerName = async (payload) => {
     return error;
   }
 };
+export const GetUsers = async () => {
+  try {
+    return await axios.get(BASE_URL + `/v1/user/getUsers`, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+export const DeleteDraft = async (id) => {
+  try {
+    return await axios.delete(
+      BASE_URL + `/v1/inbox/deleteDraftEmail/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateDraft = async (id, payload) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/inbox/updateDraftEmail/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetNotificationTemplates = async () => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/settings/getTemplates`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

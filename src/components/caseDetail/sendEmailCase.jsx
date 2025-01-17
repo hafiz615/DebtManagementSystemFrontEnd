@@ -28,6 +28,7 @@ import {
   GetCustomVariable,
   SaveAsDraft,
   SendEmailSmsCase,
+  UpdateDraft,
   UploadFiles,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
@@ -133,6 +134,9 @@ export default function SendEmailCase({
   verifiedSenders,
   compose,
   getAllInboxData,
+  emailOrCompose,
+  updateDraft,
+  draftId,
 }) {
   const [loading, setLoading] = useState(false);
   const [draftLoading, setDraftLoading] = useState(false);
@@ -290,7 +294,11 @@ export default function SendEmailCase({
       formData.append("from", replyCheck ? sendFrom : selectedValue);
       const resEmail = await SendEmailSmsCase(
         caseDataId || "1231123",
-        compose ? "compose" : "email",
+        compose
+          ? "compose"
+          : emailOrCompose === "compose"
+          ? "compose"
+          : "email",
         formData
       );
       if (resEmail?.status === 200) {
@@ -328,7 +336,13 @@ export default function SendEmailCase({
       }
       const resEmail = await SendEmailSmsCase(
         caseDataId || "1231123",
-        headerName ? "sms" : compose ? "compose" : "email",
+        headerName
+          ? "sms"
+          : compose
+          ? "compose"
+          : emailOrCompose === "compose"
+          ? "compose"
+          : "email",
         formData
       );
       if (resEmail?.status === 200) {
@@ -362,7 +376,6 @@ export default function SendEmailCase({
 
   const handleSaveDraft = async () => {
     setDraftLoading(true);
-
     const formData = new FormData();
     if (selectedFiles?.length > 0) {
       selectedFiles.forEach((file) => {
@@ -384,6 +397,38 @@ export default function SendEmailCase({
     formData.append("caseId", caseDataId || "");
     const resEmail = await SaveAsDraft(formData);
     if (resEmail?.status === 201) {
+      getAllInboxData && getAllInboxData(false, false);
+      handleClose();
+      showToast(resEmail?.data?.message, "success");
+    } else {
+      const errorMessage = resEmail?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setDraftLoading(false);
+  };
+
+  const handleUpdateDraft = async () => {
+    setDraftLoading(true);
+    const formData = new FormData();
+    if (selectedFiles?.length > 0) {
+      selectedFiles.forEach((file) => {
+        formData.append("files", file);
+      });
+    } else {
+      formData.append("files", `[]`);
+    }
+    formData.append(
+      "sendTo",
+      headerName ? sendTo : compose || replyCheck ? sendTo : selectedEmail
+    );
+    formData.append("content", preview);
+    formData.append("subject", subject);
+    const ccString = JSON.stringify(cc);
+    formData.append("cc", ccString);
+    formData.append("from", replyCheck ? sendFrom : selectedValue);
+    formData.append("caseId", caseDataId || "");
+    const resEmail = await UpdateDraft(draftId, formData);
+    if (resEmail?.status === 200) {
       getAllInboxData && getAllInboxData(false, false);
       handleClose();
       showToast(resEmail?.data?.message, "success");
@@ -566,89 +611,94 @@ export default function SendEmailCase({
             </>
           </Grid>
         )}
-        <Grid item xs={6}>
-          <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontWeight: "600",
-              color: Colors.DARK_GRAY,
-              fontSize: FONT_SIZE_LARGE,
-            }}
-          >
-            Variable
-          </Typography>
-          <div>
-            <div
-              style={divStyling}
-              onClick={(e) => setAnchorEl(e.currentTarget)}
+        {!compose && (
+          <Grid item xs={6}>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "600",
+                color: Colors.DARK_GRAY,
+                fontSize: FONT_SIZE_LARGE,
+              }}
             >
-              <span>Select Variable</span>
-              <span style={{ marginTop: "5px" }}>
-                <ExpandMore />
-              </span>
-            </div>
+              Variable
+            </Typography>
+            <div>
+              <div
+                style={divStyling}
+                onClick={(e) => setAnchorEl(e.currentTarget)}
+              >
+                <span>Select Variable</span>
+                <span style={{ marginTop: "5px" }}>
+                  <ExpandMore />
+                </span>
+              </div>
 
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleCloseMenu}
-            >
-              {Object.keys(customVariables)
-                ?.filter((category) => category !== "event") // Exclude the 'event' key
-                .map((category) => (
-                  <MenuItem
-                    key={category}
-                    onClick={(event) => handleOpenSubMenu(event, category)}
-                    sx={{
-                      ...fontStyling,
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    {category?.charAt(0).toUpperCase() + category?.slice(1)}
-                    <ArrowRight />
-                  </MenuItem>
-                ))}
-            </Menu>
-            <Popover
-              anchorEl={subMenuAnchorEl}
-              open={Boolean(subMenuAnchorEl)}
-              onClose={() => setSubMenuAnchorEl(null)}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-            >
-              <Grid
-                sx={{
-                  maxHeight: "300px",
-                  overflowY: "auto",
-                  ...ScrollbarStyles,
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleCloseMenu}
+              >
+                {Object.keys(customVariables)
+                  ?.filter((category) => category !== "event") // Exclude the 'event' key
+                  .map((category) => (
+                    <MenuItem
+                      key={category}
+                      onClick={(event) => handleOpenSubMenu(event, category)}
+                      sx={{
+                        ...fontStyling,
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      {category?.charAt(0).toUpperCase() + category?.slice(1)}
+                      <ArrowRight />
+                    </MenuItem>
+                  ))}
+              </Menu>
+              <Popover
+                anchorEl={subMenuAnchorEl}
+                open={Boolean(subMenuAnchorEl)}
+                onClose={() => setSubMenuAnchorEl(null)}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
                 }}
               >
-                {selectedCategory &&
-                  Object.entries(customVariables[selectedCategory])?.map(
-                    ([label, action]) => (
-                      <div style={{ display: "flex", flexDirection: "column" }}>
-                        <Button
-                          sx={buttonStyling}
-                          onClick={() =>
-                            handleMenuClick(label, selectedCategory)
-                          }
+                <Grid
+                  sx={{
+                    maxHeight: "300px",
+                    overflowY: "auto",
+                    ...ScrollbarStyles,
+                  }}
+                >
+                  {selectedCategory &&
+                    Object.entries(customVariables[selectedCategory])?.map(
+                      ([label, action]) => (
+                        <div
+                          style={{ display: "flex", flexDirection: "column" }}
                         >
-                          {action}
-                        </Button>
-                      </div>
-                    )
-                  )}
-              </Grid>
-            </Popover>
-          </div>
-        </Grid>
+                          <Button
+                            sx={buttonStyling}
+                            onClick={() =>
+                              handleMenuClick(label, selectedCategory)
+                            }
+                          >
+                            {action}
+                          </Button>
+                        </div>
+                      )
+                    )}
+                </Grid>
+              </Popover>
+            </div>
+          </Grid>
+        )}
+
         {headerName ? null : (
           <Grid item xs={6}>
             <>
@@ -842,13 +892,13 @@ export default function SendEmailCase({
           }}
         >
           <TextButton
-            buttonText="Save as Draft"
+            buttonText={updateDraft ? "Update Draft" : "Save as Draft"}
             height="2rem"
             marginRight="1rem"
             width="10rem"
             backgroundColor={Colors.SKY_BLUE}
             hoverColor={Colors.SKY_BLUE}
-            onClick={handleSaveDraft}
+            onClick={updateDraft ? handleUpdateDraft : handleSaveDraft}
             loading={draftLoading}
             disabled={
               !selectedValue &&

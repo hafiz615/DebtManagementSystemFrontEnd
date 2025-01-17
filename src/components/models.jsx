@@ -162,6 +162,9 @@ export default function MuiModels({
   transactionId,
   paymentPlatform,
   getAllInboxData,
+  emailOrCompose,
+  updateDraft,
+  draftId,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -516,7 +519,7 @@ export default function MuiModels({
             }}
           />
         </IconButton>
-      ) : show === "updateWeeklyBudget" ? (
+      ) : show === "updateWeeklyBudget" || buttonName === "draft" ? (
         <IconButton
           onClick={() => {
             handleOpen();
@@ -642,9 +645,7 @@ export default function MuiModels({
           borderRadius="5px"
           disabled={disabled}
         />
-      ) : buttonName === "sendEmailCase" ||
-        buttonName === "composeEmail" ||
-        buttonName === "draft" ? (
+      ) : buttonName === "sendEmailCase" || buttonName === "composeEmail" ? (
         <TextButton
           buttonText={
             replyButton
@@ -907,6 +908,9 @@ export default function MuiModels({
               replyCheck={replyCheck}
               data={data}
               getAllInboxData={getAllInboxData}
+              emailOrCompose={emailOrCompose}
+              updateDraft={updateDraft}
+              draftId={draftId}
             />
           ) : show === "editPipeline" ? (
             <EditPipeline
