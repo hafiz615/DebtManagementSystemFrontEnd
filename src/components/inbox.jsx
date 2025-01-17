@@ -40,10 +40,13 @@ import {
   GetAllInbox,
   GetAllSenders,
   GetAllUsers,
+  GetNotificationTemplates,
+  GetUsers,
 } from "../services/services";
 import { formatDateString } from "../common";
 import { useNavigate } from "react-router-dom";
 import Dropdown from "./dropdown";
+import Prompt from "./prompt";
 
 const inputStyling = {
   width: "100%",
@@ -97,6 +100,7 @@ function Inbox() {
   const [fileUrl, setFileUrl] = useState();
   const [users, setUsers] = useState();
   const [userSelected, setUserSelected] = useState();
+  const [notificationTemplate, setNotificationTemplate] = useState();
   const navigate = useNavigate();
   const open = Boolean(anchorEl);
   const tabs = ["Inbox", "Outbox", "Draft", "Tasks"];
@@ -164,9 +168,16 @@ function Inbox() {
   };
 
   const getAllUser = async () => {
-    const users = await GetAllUsers(0, 0, false, false, {});
+    const users = await GetUsers();
     if (users?.status === 200) {
-      setUsers(users?.data?.data?.users);
+      setUsers(users?.data?.data);
+    }
+  };
+
+  const getNotificationTemplates = async () => {
+    const res = await GetNotificationTemplates();
+    if (res?.status === 200) {
+      setNotificationTemplate(res?.data?.data);
     }
   };
 
@@ -189,18 +200,20 @@ function Inbox() {
     getVerifiedIdentites();
     getAllTasks();
     getAllUser();
+    getNotificationTemplates();
   }, []);
 
   useEffect(() => {
     if (activeTab === "Tasks") {
       const firstKey = alltasks && Object.keys(alltasks)?.[0];
-      const value = alltasks && alltasks[firstKey];
       setSelectedUser(firstKey);
     }
   }, [activeTab]);
 
   useEffect(() => {
-    handleUserChange();
+    if (userSelected) {
+      handleUserChange();
+    }
   }, [userSelected]);
 
   const handleClear = async () => {
@@ -433,6 +446,7 @@ function Inbox() {
             maxHeight="78vh"
             verifiedSenders={verifiedSenders}
             getAllInboxData={getAllInboxData}
+            data={notificationTemplate}
           />
         </div>
       </Grid>
@@ -545,7 +559,7 @@ function Inbox() {
                 >
                   <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
                 </Grid>
-              ) : inboxData ? (
+              ) : (
                 <Box
                   flex={1}
                   sx={{
@@ -556,16 +570,20 @@ function Inbox() {
                   }}
                 >
                   {inboxData?.[activeInbox]?.length === 0 ? (
-                    <Typography
+                    <Grid
+                      item
+                      xs={12}
+                      container
                       sx={{
-                        textAlign: "center",
-                        marginTop: "20px",
-                        color: Colors.GRAY,
-                        fontFamily: "Nunito",
+                        height: "100%",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
-                      No messages found.
-                    </Typography>
+                      <Typography sx={fontStyling}>
+                        Looks like you have'nt started a conversation yet
+                      </Typography>
+                    </Grid>
                   ) : (
                     inboxData?.[activeInbox]?.map((item, index) => (
                       <Box
@@ -604,7 +622,7 @@ function Inbox() {
                                   }}
                                 >
                                   {`${
-                                    item?.debtorCompanyName
+                                    item?.debtorCompanyName || "Composed At"
                                   } ${"-"} ${formatDateString(
                                     item?.createdAt
                                   )} `}
@@ -685,51 +703,73 @@ function Inbox() {
                                   replyCheck={true}
                                   caseDataId={item?.caseId}
                                   getAllInboxData={getAllInboxData}
+                                  data={notificationTemplate}
                                 />
                               )}
                               {activeTab === "Draft" && (
-                                <MuiModels
-                                  show="sendEmailCase"
-                                  from={item?.from}
-                                  to={item?.to}
-                                  content={item?.text}
-                                  emailSubject={item?.subject}
-                                  buttonName="draft"
-                                  iconColor={Colors.BLACK}
-                                  maxHeight="78vh"
-                                  replyCheck={true}
-                                  caseDataId={item?.caseId}
-                                  getAllInboxData={getAllInboxData}
-                                />
+                                <div
+                                  style={{ display: "flex", height: "2rem" }}
+                                >
+                                  <MuiModels
+                                    show="sendEmailCase"
+                                    from={item?.to}
+                                    to={item?.from}
+                                    content={item?.text}
+                                    emailSubject={item?.subject}
+                                    buttonName="draft"
+                                    iconColor={Colors.BLACK}
+                                    maxHeight="78vh"
+                                    replyCheck={true}
+                                    caseDataId={item?.caseId}
+                                    getAllInboxData={getAllInboxData}
+                                    emailOrCompose={
+                                      item?.debtorCompanyName
+                                        ? "email"
+                                        : "compose"
+                                    }
+                                    updateDraft={true}
+                                    draftId={item?._id}
+                                    data={notificationTemplate}
+                                  />
+                                  <Prompt
+                                    text="Are you sure you want to remove this draft?"
+                                    item={item?._id}
+                                    deleting="deleteDraft"
+                                    getAllInboxData={getAllInboxData}
+                                  />
+                                </div>
                               )}
                             </div>
                           </div>
 
                           <div>
-                            <div style={{ display: "flex", gap: "10px" }}>
-                              <Typography sx={boldTextStyling}>
-                                Creditor Company Name:
-                              </Typography>
-                              <Typography sx={fontStyling}>
-                                {item?.creditorCompanyName || "-"}
-                              </Typography>
-                            </div>
-                            <div style={{ display: "flex", gap: "10px" }}>
-                              <Typography sx={boldTextStyling}>
-                                Negotiator Name:
-                              </Typography>
-                              <Typography sx={fontStyling}>
-                                {item?.negotiatorName || "-"}
-                              </Typography>
-                            </div>
+                            {item?.creditorCompanyName && (
+                              <div style={{ display: "flex", gap: "10px" }}>
+                                <Typography sx={boldTextStyling}>
+                                  Creditor Company Name:
+                                </Typography>
+                                <Typography sx={fontStyling}>
+                                  {item?.creditorCompanyName || "-"}
+                                </Typography>
+                              </div>
+                            )}
+                            {item?.negotiatorName && (
+                              <div style={{ display: "flex", gap: "10px" }}>
+                                <Typography sx={boldTextStyling}>
+                                  Negotiator Name:
+                                </Typography>
+                                <Typography sx={fontStyling}>
+                                  {item?.negotiatorName || "-"}
+                                </Typography>
+                              </div>
+                            )}
+
                             <Typography sx={boldTextStyling}>
                               Content:
                             </Typography>
 
-                            {/* Show truncated or expanded content based on expandedMessages[index] */}
                             {!expandedMessages[index] ? (
                               <div>
-                                {/* Truncated content (100 characters) */}
                                 <Typography
                                   sx={fontStyling}
                                   dangerouslySetInnerHTML={{
@@ -747,21 +787,30 @@ function Inbox() {
                               </div>
                             ) : (
                               <>
-                                {/* Expanded content */}
                                 <div>
-                                  <Typography
-                                    sx={fontStyling}
-                                    dangerouslySetInnerHTML={{
-                                      __html:
-                                        activeTab === "Draft"
-                                          ? item?.text
-                                          : item?.textAsHtml,
-                                    }}
-                                  />
+                                  {item?.text || item?.textAsHtml ? (
+                                    <Typography
+                                      sx={fontStyling}
+                                      dangerouslySetInnerHTML={{
+                                        __html:
+                                          activeTab === "Draft"
+                                            ? item?.text
+                                            : item?.textAsHtml,
+                                      }}
+                                    />
+                                  ) : (
+                                    <Typography
+                                      sx={{
+                                        fontSize: "14px",
+                                        color: Colors.GRAY,
+                                      }}
+                                    >
+                                      No content available.
+                                    </Typography>
+                                  )}
                                 </div>
 
-                                {/* Attachments (if any) */}
-                                {item?.attachments?.length > 0 && (
+                                {item?.attachments?.length > 0 ? (
                                   <div>
                                     <div
                                       style={{
@@ -810,17 +859,26 @@ function Inbox() {
                                       ))}
                                     </div>
                                   </div>
+                                ) : (
+                                  <Typography
+                                    sx={{
+                                      fontSize: "14px",
+                                      color: Colors.GRAY,
+                                    }}
+                                  >
+                                    No attachments available.
+                                  </Typography>
                                 )}
                               </>
                             )}
 
-                            {/* Show More / Show Less button */}
                             <Box
                               sx={{
                                 display: "flex",
                                 alignItems: "center",
                                 cursor: "pointer",
                                 justifyContent: "center",
+                                mt: "10px",
                               }}
                             >
                               <Typography
@@ -887,21 +945,6 @@ function Inbox() {
                     ))
                   )}
                 </Box>
-              ) : (
-                <Grid
-                  item
-                  xs={12}
-                  container
-                  sx={{
-                    height: "100%",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Typography sx={fontStyling}>
-                    Looks like you have'nt started a conversation yet
-                  </Typography>
-                </Grid>
               )
             ) : (
               <Grid

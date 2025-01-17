@@ -574,18 +574,6 @@ function CaseDetail() {
               backgroundColor={Colors.SKY_BLUE}
               hoverColor={Colors.SKY_BLUE}
             />
-
-            {/* <MuiModels
-          show="sendEmailCase"
-          buttonName="sendEmailCase"
-          iconColor={Colors.BLACK}
-          maxHeight="78vh"
-          from={caseData?.creditor?.basicInformation?.email}
-          caseDataId={id}
-          GetLogsById={GetLogsById}
-          data={caseData}
-          verifiedSenders={verifiedSenders}
-        /> */}
             <TextButton
               id="scrollButton"
               buttonText="Send Email"
