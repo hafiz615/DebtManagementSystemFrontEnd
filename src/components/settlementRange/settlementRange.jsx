@@ -838,7 +838,15 @@ export default function SettlementRange({
       }, 0)
     ),
 
-    purchased_percentage: "--",
+    purchased_percentage:
+      creditorNames
+        ?.reduce((total, creditor) => {
+          const percentage = parseFloat(
+            creditor?.contractDetails?.purchased_percentage || "0"
+          );
+          return total + percentage;
+        }, 0)
+        .toFixed(2) + "%",
     repayment_amount: "--",
   };
 

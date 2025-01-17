@@ -88,6 +88,37 @@ export default function DataSummaryTable({
   summaryDetails,
   loading,
 }) {
+  console.log(data, "data");
+  const formatSummaryDetails = (value) => {
+    if (value === null || value === undefined || isNaN(value)) return "--";
+    return `$${Number(value)?.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+  };
+  const calculateRepaymentAmountSum = (data) => {
+    return data?.reduce((total, row) => {
+      let repaymentAmount = row.repayment_amount;
+
+      if (repaymentAmount?.includes("(monthly)")) {
+        // If repayment_amount includes (monthly), convert it to weekly
+        repaymentAmount =
+          (parseFloat(repaymentAmount.replace(/[^\d.]/g, "")) / 22) * 5;
+      } else {
+        // Otherwise, just parse the repayment amount normally
+        repaymentAmount = parseFloat(repaymentAmount?.replace(/[^\d.]/g, ""));
+      }
+
+      return total + (isNaN(repaymentAmount) ? 0 : repaymentAmount);
+    }, 0);
+  };
+
+  const repaymentAmountSum = calculateRepaymentAmountSum(data);
+
+  const updatedSummaryDetails = {
+    ...summaryDetails,
+    repayment_amount: formatSummaryDetails(repaymentAmountSum),
+  };
   return (
     <Paper
       sx={{
@@ -151,7 +182,16 @@ export default function DataSummaryTable({
                   <StyledTableRow key={i}>
                     {headerData?.map(({ key, width }, i) => (
                       <StyledTableCell key={i} sx={{ width }}>
-                        {key === "purchased_percentage"
+                        {key === "repayment_amount" &&
+                        row[key]?.includes("(monthly)")
+                          ? `$${(
+                              (parseFloat(row[key].replace(/[^\d.]/g, "")) /
+                                22) *
+                              5
+                            ).toFixed(2)} (Weekly)`
+                          : key === "repayment_amount"
+                          ? row[key] // Show the value from the backend as-is for other cases
+                          : key === "purchased_percentage"
                           ? row[key].replace(/\s*\(.*?\)/, "")
                           : row[key]}
                       </StyledTableCell>
@@ -163,7 +203,7 @@ export default function DataSummaryTable({
             <StickySummaryRow>
               {headerData?.map((header, i) => (
                 <StyledTableCell key={i} sx={{ width: header.width }}>
-                  {summaryDetails[header?.key] || "--"}
+                  {updatedSummaryDetails[header?.key] || "--"}
                 </StyledTableCell>
               ))}
             </StickySummaryRow>
