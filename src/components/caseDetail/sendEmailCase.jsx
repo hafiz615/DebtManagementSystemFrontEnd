@@ -25,6 +25,7 @@ import {
 } from "../../constants/appConstants";
 import styled from "styled-components";
 import {
+  DeleteDraft,
   GetCustomVariable,
   SaveAsDraft,
   SendEmailSmsCase,
@@ -268,6 +269,7 @@ export default function SendEmailCase({
       }
     });
   }, [selectedEmailTemplates]);
+
   useEffect(() => {
     const selectedTemplate = bulkSmsTemplates?.find((template) => {
       if (template?.name === selectedSmsTemplates) {
@@ -275,6 +277,13 @@ export default function SendEmailCase({
       }
     });
   }, [selectedSmsTemplates]);
+
+  const deleteDraft = async () => {
+    const res = await DeleteDraft(draftId);
+    if (res?.status === 200) {
+      getAllInboxData(false, false);
+    }
+  };
 
   const handleSend = async () => {
     setLoading(true);
@@ -304,6 +313,7 @@ export default function SendEmailCase({
       if (resEmail?.status === 200) {
         showToast(resEmail?.data?.message, "success");
         getAllInboxData && getAllInboxData(false, false);
+        draftId && deleteDraft();
         setCc([]);
         setBulkEmail([]);
         setBulkEmailTemplates([]);
@@ -348,6 +358,7 @@ export default function SendEmailCase({
       if (resEmail?.status === 200) {
         showToast(resEmail?.data?.message, "success");
         setCc([]);
+        draftId && deleteDraft();
         getAllInboxData && getAllInboxData(false, false);
         setBulkEmail([]);
         setBulkEmailTemplates([]);
