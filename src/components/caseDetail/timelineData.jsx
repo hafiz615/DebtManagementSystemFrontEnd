@@ -25,14 +25,14 @@ import {
   Email,
   ExpandMore,
   NoteAlt,
-  RemoveRedEye,
   Sms,
   Work,
 } from "@mui/icons-material";
 import { Colors } from "../../config/default";
 import ConversationHistory from "../callHistory";
-import ReplyCard from "./replyCard";
 import { FONT_SIZE_LARGE } from "../../constants/appConstants";
+import TextButton from "../button";
+import SendEmailCase from "./sendEmailCase";
 
 export default function TimelineData({
   callLogs,
@@ -46,6 +46,7 @@ export default function TimelineData({
   currentCallPage,
   setCurrentCallPage,
   totalCallPage,
+  verifiedSenders,
 }) {
   const [showReplyCard, setShowReplyCard] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -102,6 +103,11 @@ export default function TimelineData({
   const handleShowFile = (url) => {
     setShowViewer(true);
     setFileUrl(url);
+  };
+
+  const handleClose = () => {
+    setShowReplyCard(false);
+    setHideShowMore(true);
   };
 
   return (
@@ -204,16 +210,19 @@ export default function TimelineData({
               }}
             >
               {showReplyCard ? (
-                <ReplyCard
+                <SendEmailCase
+                  caseDataId={caseDataId}
+                  headerName={false}
+                  GetLogsById={GetLogsById}
+                  emailSubject={value?.Subject}
+                  data={caseData}
+                  buttonName="sendEmailCase"
+                  verifiedSenders={verifiedSenders}
+                  handleClose={handleClose}
                   from={value?.From}
                   to={value?.To}
                   content={value?.Content}
-                  emailSubject={value?.Subject}
-                  caseDataId={caseDataId}
-                  GetLogsById={GetLogsById}
-                  setShowReplyCard={setShowReplyCard}
-                  caseData={caseData}
-                  setHideShowMore={setHideShowMore}
+                  attachment={value?.Attachments}
                 />
               ) : (
                 <>
@@ -268,19 +277,15 @@ export default function TimelineData({
                     </div>
 
                     {value?.Action === "EMAIL" && !Array.isArray(value?.To) && (
-                      <>
-                        {!showReplyCard && (
-                          <Button
-                            buttonText="Reply"
-                            onClick={() => {
-                              setShowReplyCard(true);
-                              setHideShowMore(false);
-                            }}
-                            backgroundColor={Colors.SKY_BLUE}
-                            hoverColor={Colors.SKY_BLUE}
-                          />
-                        )}
-                      </>
+                      <TextButton
+                        buttonText="Reply"
+                        onClick={() => {
+                          setShowReplyCard(true);
+                          setHideShowMore(false);
+                        }}
+                        backgroundColor={Colors.SKY_BLUE}
+                        hoverColor={Colors.SKY_BLUE}
+                      />
                     )}
                   </div>
 

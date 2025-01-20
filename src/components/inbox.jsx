@@ -696,6 +696,7 @@ function Inbox() {
                                   from={item?.from}
                                   to={item?.to}
                                   content={item?.textAsHtml}
+                                  attachment={item?.attachments}
                                   emailSubject={item?.subject}
                                   buttonName="sendEmailCase"
                                   iconColor={Colors.BLACK}
@@ -716,6 +717,7 @@ function Inbox() {
                                     to={item?.from}
                                     content={item?.text}
                                     emailSubject={item?.subject}
+                                    attachment={item?.attachments}
                                     buttonName="draft"
                                     iconColor={Colors.BLACK}
                                     maxHeight="78vh"
