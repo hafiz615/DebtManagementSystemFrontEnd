@@ -14,6 +14,29 @@ import {
 import ScrollbarStyles from "../customScroll";
 import { Colors } from "../../config/default";
 import { Divider } from "@mui/material";
+const styles = {
+  table: {
+    width: "100%",
+    border: "1px solid lightgray",
+  },
+  tableHeaderCell: {
+    fontWeight: "bold",
+    fontFamily: "Nunito",
+  },
+  tableCell: {
+    fontFamily: "Nunito",
+  },
+  title: {
+    fontWeight: "bold",
+    fontFamily: "Nunito",
+    fontSize: "18px",
+    marginBottom: "10px",
+  },
+  noDataText: {
+    fontFamily: "Nunito",
+    textAlign: "center",
+  },
+};
 
 const McaByMonthTable = ({ mcaByMonth }) => {
   const cellStyleHeader = {
@@ -125,7 +148,7 @@ const McaByMonthTable = ({ mcaByMonth }) => {
               }}
             />
             <TableContainer>
-              <Table>
+              <Table sx={styles.table} size="small">
                 <TableHead>
                   <TableRow>
                     <TableCell sx={cellStyleHeader}>Lender</TableCell>
@@ -140,26 +163,17 @@ const McaByMonthTable = ({ mcaByMonth }) => {
                 </TableHead>
                 <TableBody>
                   {records?.map((record, index) => (
-                    <TableRow
-                      key={index}
-                      sx={{
-                        backgroundColor: Colors.VIOLET,
-                        "&:hover": {
-                          backgroundColor: "#f0f0f0",
-                        },
-                        borderBottom: `1px solid ${Colors.BLACK}`,
-                      }}
-                    >
-                      <TableCell sx={cellStyleBody}>
+                    <TableRow key={index}>
+                      <TableCell sx={styles.tableCell}>
                         {record?.lender || "--"}
                       </TableCell>
-                      <TableCell sx={cellStyleBody}>
+                      <TableCell sx={styles.tableCell}>
                         {record?.withdrawal_count || "--"}
                       </TableCell>
-                      <TableCell sx={cellStyleBody}>
+                      <TableCell sx={styles.tableCell}>
                         {formatAsDollar(record?.withdrawal_total) || "--"}
                       </TableCell>
-                      <TableCell sx={cellStyleBody}>
+                      <TableCell sx={styles.tableCell}>
                         {formatAsDollar(record?.deposit_total) || "--"}
                       </TableCell>
                       <TableCell
@@ -175,7 +189,7 @@ const McaByMonthTable = ({ mcaByMonth }) => {
                           <span>{record?.deposit_dates || "--"}</span>
                         </Tooltip>
                       </TableCell>
-                      <TableCell sx={cellStyleBody}>
+                      <TableCell sx={styles.tableCell}>
                         {formatAsDollar(record?.latest_withdrawal_amount) ||
                           "--"}
                       </TableCell>

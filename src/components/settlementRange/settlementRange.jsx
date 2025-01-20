@@ -60,6 +60,7 @@ import TransactionHistory from "../transactionHistory";
 import CashFlowPercentage from "./cashFlowPercentage";
 import MCAByMonthAccordion from "../settlementRange/mcaByMonthAccordion";
 import SendEmail from "../sendEmail";
+import ProfitMarginPerMonth from "./profitMarginPerMonth";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -241,6 +242,7 @@ export default function SettlementRange({
   );
   const [selectedOption, setSelectedOption] = useState("percentageReceivable");
   const [checked, setChecked] = useState(false);
+  const profitMarginPerMonthData = allData?.profitMarginPerMonth;
 
   const creditorNamesTabs = allCreditorNames;
   const popUpDebtorData = allData?.debtor;
@@ -1172,6 +1174,11 @@ export default function SettlementRange({
           <>
             <Grid item xs={12} sx={{ mt: "1rem" }}>
               <MCAByMonthAccordion mcaByMonth={mcaByMonth} />
+            </Grid>
+            <Grid item xs={12} sx={{ mt: "1rem" }}>
+              <ProfitMarginPerMonth
+                profitMarginPerMonthData={profitMarginPerMonthData}
+              />
             </Grid>
           </>
           {showEmailAgreement && (
