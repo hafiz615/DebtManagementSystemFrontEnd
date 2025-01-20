@@ -432,9 +432,6 @@ export default function SendEmailCase({
     setRemovedFiles((prevRemoved) => [...prevRemoved, removedFile]);
     setExistingFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
-  console.log(removedFiles, "removed files");
-
-  console.log(existingFiles, "existing files");
 
   return (
     <>
