@@ -165,6 +165,7 @@ export default function MuiModels({
   emailOrCompose,
   updateDraft,
   draftId,
+  attachment,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -911,6 +912,7 @@ export default function MuiModels({
               emailOrCompose={emailOrCompose}
               updateDraft={updateDraft}
               draftId={draftId}
+              attachment={attachment}
             />
           ) : show === "editPipeline" ? (
             <EditPipeline

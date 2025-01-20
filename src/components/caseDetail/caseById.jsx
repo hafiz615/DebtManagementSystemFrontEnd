@@ -711,6 +711,7 @@ export default function CaseById({
                   date={null}
                   caseData={caseData}
                   iconValue={caseHistoryTabs}
+                  verifiedSenders={verifiedSenders}
                 />
               )}
             </Grid>
