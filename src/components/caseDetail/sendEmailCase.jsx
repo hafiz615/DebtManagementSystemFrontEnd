@@ -138,6 +138,7 @@ export default function SendEmailCase({
   emailOrCompose,
   updateDraft,
   draftId,
+  attachment,
 }) {
   const [loading, setLoading] = useState(false);
   const [draftLoading, setDraftLoading] = useState(false);
@@ -165,6 +166,8 @@ export default function SendEmailCase({
   const [subMenuAnchorEl, setSubMenuAnchorEl] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [customVariables, setCustomVariables] = useState({});
+  const [existingFiles, setExistingFiles] = useState(attachment || []);
+  const [removedFiles, setRemovedFiles] = useState([]);
   const { showToast } = useToast();
 
   const handleKeyDown = (e) => {
@@ -287,96 +290,61 @@ export default function SendEmailCase({
 
   const handleSend = async () => {
     setLoading(true);
-    if (selectedFiles?.length > 0) {
-      const formData = new FormData();
-      selectedFiles.forEach((file) => {
-        formData.append("files", file);
-      });
+    const formData = new FormData();
+    formData.append("content", preview);
+    if (!headerName) {
+      if (selectedFiles?.length > 0) {
+        selectedFiles.forEach((file) => {
+          formData.append("files", file);
+        });
+      } else {
+        formData.append("files", `[]`);
+      }
+      if (existingFiles?.length > 0) {
+        formData.append("signedUrls", JSON.stringify(existingFiles));
+      } else {
+        formData.append("signedUrls", `[]`);
+      }
       formData.append(
         "sendTo",
         headerName ? sendTo : compose || replyCheck ? sendTo : selectedEmail
       );
-      formData.append("content", preview);
       formData.append("subject", subject);
       const ccString = JSON.stringify(cc);
       formData.append("cc", ccString);
       formData.append("from", replyCheck ? sendFrom : selectedValue);
-      const resEmail = await SendEmailSmsCase(
-        caseDataId || "1231123",
-        compose
-          ? "compose"
-          : emailOrCompose === "compose"
-          ? "compose"
-          : "email",
-        formData
-      );
-      if (resEmail?.status === 200) {
-        showToast(resEmail?.data?.message, "success");
-        getAllInboxData && getAllInboxData(false, false);
-        draftId && deleteDraft();
-        setCc([]);
-        setBulkEmail([]);
-        setBulkEmailTemplates([]);
-        setBulkSmsTemplates([]);
-        setSelectedSmsTemplates("");
-        setSelectedEmailTemplates("");
-        setSelectedEmail("");
-        setSendTo("");
-        setSubject("");
-        setPreview("");
-        handleClose();
-        GetLogsById && GetLogsById(caseDataId);
-      } else {
-        const errorMessage = resEmail?.response?.data?.message;
-        showToast(errorMessage, "error");
-      }
-    } else {
-      const formData = new FormData();
-      formData.append(
-        "sendTo",
-        headerName ? sendTo : compose || replyCheck ? sendTo : selectedEmail
-      );
-      formData.append("content", preview);
-      if (!headerName) {
-        formData.append("subject", subject);
-        const ccString = JSON.stringify(cc);
-        formData.append("cc", ccString);
-        formData.append("from", replyCheck ? sendFrom : selectedValue);
-        formData.append("files", `[]`);
-      }
-      const resEmail = await SendEmailSmsCase(
-        caseDataId || "1231123",
-        headerName
-          ? "sms"
-          : compose
-          ? "compose"
-          : emailOrCompose === "compose"
-          ? "compose"
-          : "email",
-        formData
-      );
-      if (resEmail?.status === 200) {
-        showToast(resEmail?.data?.message, "success");
-        setCc([]);
-        draftId && deleteDraft();
-        getAllInboxData && getAllInboxData(false, false);
-        setBulkEmail([]);
-        setBulkEmailTemplates([]);
-        setBulkSmsTemplates([]);
-        setSelectedSmsTemplates("");
-        setSelectedEmailTemplates("");
-        setSelectedEmail("");
-        setSendTo("");
-        setSubject("");
-        setPreview("");
-        handleClose();
-        GetLogsById && GetLogsById(caseDataId);
-      } else {
-        const errorMessage = resEmail?.response?.data?.message;
-        showToast(errorMessage, "error");
-      }
     }
-
+    const resEmail = await SendEmailSmsCase(
+      caseDataId || "1231123",
+      headerName
+        ? "sms"
+        : compose
+        ? "compose"
+        : emailOrCompose === "compose"
+        ? "compose"
+        : "email",
+      formData
+    );
+    if (resEmail?.status === 200) {
+      showToast(resEmail?.data?.message, "success");
+      getAllInboxData && getAllInboxData(false, false);
+      draftId && deleteDraft();
+      setCc([]);
+      setBulkEmail([]);
+      setBulkEmailTemplates([]);
+      setBulkSmsTemplates([]);
+      setSelectedSmsTemplates("");
+      setSelectedEmailTemplates("");
+      setSelectedEmail("");
+      setSendTo("");
+      setSubject("");
+      setPreview("");
+      handleClose();
+      GetLogsById && GetLogsById(caseDataId);
+    } else {
+      const errorMessage = resEmail?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
     setLoading(false);
   };
 
@@ -428,6 +396,11 @@ export default function SendEmailCase({
     } else {
       formData.append("files", `[]`);
     }
+    if (removedFiles?.length > 0) {
+      formData.append("removedFiles", JSON.stringify(removedFiles));
+    } else {
+      formData.append("removedFiles", `[]`);
+    }
     formData.append(
       "sendTo",
       headerName ? sendTo : compose || replyCheck ? sendTo : selectedEmail
@@ -448,6 +421,16 @@ export default function SendEmailCase({
       showToast(errorMessage, "error");
     }
     setDraftLoading(false);
+  };
+
+  const handleRemoveFile = (index) => {
+    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+  };
+
+  const handleRemoveExistingFile = (index) => {
+    const removedFile = existingFiles[index];
+    setRemovedFiles((prevRemoved) => [...prevRemoved, removedFile]);
+    setExistingFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
   return (
@@ -831,6 +814,29 @@ export default function SendEmailCase({
               flexWrap: "wrap",
             }}
           >
+            {existingFiles?.map((item, index) => (
+              <Typography
+                key={index}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  padding: "10px",
+                  fontSize: FONT_SIZE_MEDIUM,
+                  fontFamily: "Nunito",
+                  borderRadius: "10px",
+                  border: `1px solid ${Colors.SKY_BLUE}`,
+                  width: "24%",
+                  mt: "10px",
+                }}
+              >
+                {item?.originalFileName}
+                <IconButton onClick={() => handleRemoveExistingFile(index)}>
+                  <Delete
+                    sx={{ color: Colors.ORANGE_COLOR, fontSize: "16px" }}
+                  />
+                </IconButton>
+              </Typography>
+            ))}
             {selectedFiles?.map((item, index) => (
               <Typography
                 key={index}
@@ -846,14 +852,8 @@ export default function SendEmailCase({
                   mt: "10px",
                 }}
               >
-                {item?.name}
-                <IconButton
-                  onClick={() => {
-                    setSelectedFiles((prevFiles) =>
-                      prevFiles.filter((_, i) => i !== index)
-                    );
-                  }}
-                >
+                {item?.name || item?.originalFileName}
+                <IconButton onClick={() => handleRemoveFile(index)}>
                   <Delete
                     sx={{ color: Colors.ORANGE_COLOR, fontSize: "16px" }}
                   />
