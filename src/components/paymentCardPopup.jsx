@@ -163,7 +163,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
   const isFormValid = () => {
     return (
       amount &&
-      commission > 0 &&
+      commission >= 0 &&
       date &&
       selectedValue &&
       referenceId?.trim() !== ""
@@ -253,7 +253,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
             style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
           >
             Commission*{" "}
-            {commission <= 0 && (
+            {commission < 0 && (
               <span
                 style={{
                   fontFamily: "Nunito",
