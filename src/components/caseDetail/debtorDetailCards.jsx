@@ -220,12 +220,12 @@ export default function DebtorDetailsCards({
               }
             />
             <Dropdown
-              menuWidth="10rem"
+              menuWidth="14rem"
               menuItems={paymentGateways}
               placeholder="Type"
               backgroundColor={Colors.BG_LIGHT_GRAY}
               hoverColor={Colors.BG_LIGHT_GRAY}
-              width="10rem"
+              width="14rem"
               selectedValue={selectedValue}
               setSelectedValue={setSelectedValue}
               fontSize="12px"
