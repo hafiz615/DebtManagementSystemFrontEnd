@@ -116,22 +116,6 @@ export default function PaymentFields({
             >
               Paid
             </Typography>
-            {/* <AmountTextField
-            value={parseFloat(thisCaseData?.paidAmount?.toFixed(2))}
-            onChange={(e) =>
-              handleCaseDataChange(
-                caseIndex,
-                "paidAmount",
-                parseFloat(e.target.value)
-              )
-            }
-            onKeyDown={handleNumberInput}
-            border={
-              hasError("paidAmount") && showErrors
-                ? "2px solid red"
-                : "none !important"
-            }
-          /> */}
 
             <AmountTextField
               value={parseFloat(thisCaseData?.paidAmount?.toFixed(2))}
@@ -168,31 +152,6 @@ export default function PaymentFields({
               Current Balance
             </Typography>
 
-            {/* <AmountTextField
-              // readonly={true}
-              marginRight={smallScreen ? "0rem" : "2rem"}
-              value={
-                thisCaseData?.paidAmount
-                  ? thisCaseData?.totalDebt?.toFixed(2) -
-                    thisCaseData?.paidAmount?.toFixed(2)
-                  : thisCaseData?.totalDebt?.toFixed(2)
-              }
-              onChange={(e) =>
-                handleCaseDataChange(
-                  caseIndex,
-                  "remaining",
-                  parseFloat(e.target.value)
-                )
-              }
-              onKeyDown={handleNumberInput}
-              border={
-                thisCaseData?.remaining === 0
-                  ? "2px solid red"
-                  : "auto" && hasError("remaining") && showErrors
-                  ? "2px solid red"
-                  : "none !important"
-              }
-            /> */}
             <AmountTextField
               marginRight={smallScreen ? "0rem" : "2rem"}
               value={
@@ -271,12 +230,13 @@ export default function PaymentFields({
           </Typography>
           <Dropdown
             menuWidth={smallScreen ? "17rem" : "14.8rem"}
-            selectedValue={thisCaseData.status}
+            selectedValue={thisCaseData?.status}
             setSelectedValue={setStatus}
             menuItems={menu}
             placeholder="Choose Status"
             backgroundColor={Colors.BG_LIGHT_GRAY}
             width="100%"
+            showCaseStatus={thisCaseData?.status === "" && true}
           />
         </Grid>
 
