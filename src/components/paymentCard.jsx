@@ -52,7 +52,7 @@ function PaymentCardDetails({
                 paymentToken: token?.token,
                 paymentType: type, // default to "cc" or adjust based on type
                 platform:
-                  paymentGateway === "Seamless Chex"
+                  paymentGateway === "Seamless Chex Merchant"
                     ? "Seamlesschex merchant"
                     : "Easypay direct",
               });
@@ -100,7 +100,7 @@ function PaymentCardDetails({
             paymentToken: token?.token,
             paymentType: type,
             platform:
-              paymentGateway === "Seamless Chex"
+              paymentGateway === "Seamless Chex Merchant"
                 ? "Seamlesschex merchant"
                 : "Easypay direct",
           });
