@@ -139,6 +139,7 @@ export default function SendEmailCase({
   updateDraft,
   draftId,
   attachment,
+  threadId,
 }) {
   const [loading, setLoading] = useState(false);
   const [draftLoading, setDraftLoading] = useState(false);
@@ -323,7 +324,8 @@ export default function SendEmailCase({
         : emailOrCompose === "compose"
         ? "compose"
         : "email",
-      formData
+      formData,
+      threadId || ""
     );
     if (resEmail?.status === 200) {
       showToast(resEmail?.data?.message, "success");

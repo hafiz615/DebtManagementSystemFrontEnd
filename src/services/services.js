@@ -1108,10 +1108,11 @@ export const ResendInvite = async (payload) => {
   }
 };
 
-export const SendEmailSmsCase = async (id, type, payload) => {
+export const SendEmailSmsCase = async (id, type, payload, threadId) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/email/sendSmsEmailDebtorCreditor/${id}?type=${type}`,
+      BASE_URL +
+        `/v1/email/sendSmsEmailDebtorCreditor/${id}?type=${type}&threadId=${threadId}`,
       payload,
       setHeaders()
     );
