@@ -778,14 +778,9 @@ function Inbox() {
                                 sx={fontStyling}
                                 dangerouslySetInnerHTML={{
                                   __html:
-                                    (activeTab === "Draft"
+                                    activeTab === "Draft"
                                       ? item?.text
-                                      : item?.textAsHtml
-                                    )?.substring(0, 200) +
-                                    (item?.text?.length > 200 ||
-                                    item?.textAsHtml?.length > 200
-                                      ? "..."
-                                      : ""),
+                                      : item?.textAsHtml,
                                 }}
                               />
                             </div>
