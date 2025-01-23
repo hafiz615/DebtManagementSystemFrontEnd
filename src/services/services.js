@@ -1826,3 +1826,15 @@ export const GetNotificationTemplates = async () => {
     return error;
   }
 };
+
+export const SaveWeeklyBudget = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/saveWeeklyBudgetValues/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

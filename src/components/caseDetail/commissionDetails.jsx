@@ -5,7 +5,7 @@ import TextButton from "../button";
 import { Close } from "@mui/icons-material";
 import StrategyOne from "./StrategyOne";
 import StrategyThree from "./StrategyThree";
-import { GetSettlementRangeWithScores } from "../../services/services";
+import { SaveWeeklyBudget } from "../../services/services";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../toast/toastContext";
 
@@ -100,20 +100,21 @@ function CommissionDetails({
     if (!isStrategyOneSaved) {
       setIsStrategyOneSaved(true);
     } else {
-      const settlementRangeData = await GetSettlementRangeWithScores(
+      const SaveWeeklyBudgetRes = await SaveWeeklyBudget(
         payload,
-        popUpDebtorData ? caseId : data?._id,
-        true,
-        true
+        caseId
+        // popUpDebtorData ? caseId : data?._id,
+        // true,
+        // true
       );
-      if (settlementRangeData?.status === 200) {
-        showToast(settlementRangeData?.data?.message, "success");
-        const settlementId = popUpDebtorData ? caseId : data?._id;
-        navigate(`/all-cases/${settlementId}`);
+      if (SaveWeeklyBudgetRes?.status === 200) {
+        showToast(SaveWeeklyBudgetRes?.data?.message, "success");
+        // const settlementId = SaveWeeklyBudgetRes ? caseId : data?._id;
+        // navigate(`/all-cases/${caseId}`);
         getAllRanges && getAllRanges([], false);
         handleClose();
       } else {
-        const errorMessage = settlementRangeData?.response?.data?.message;
+        const errorMessage = SaveWeeklyBudgetRes?.response?.data?.message;
         showToast(errorMessage, "error");
       }
     }
