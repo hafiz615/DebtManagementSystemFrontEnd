@@ -47,6 +47,7 @@ import { formatDateString } from "../common";
 import { useNavigate } from "react-router-dom";
 import Dropdown from "./dropdown";
 import Prompt from "./prompt";
+import ThreadMessages from "./threadMessages";
 
 const inputStyling = {
   width: "100%",
@@ -614,13 +615,7 @@ function Inbox() {
                                   gap: "10px",
                                 }}
                               >
-                                <Typography
-                                  sx={{
-                                    fontFamily: "Nunito",
-                                    fontSize: FONT_SIZE_MEDIUM,
-                                    fontWeight: "bold",
-                                  }}
-                                >
+                                <Typography sx={boldTextStyling}>
                                   {`${
                                     item?.debtorCompanyName || "Composed At"
                                   } ${"-"} ${formatDateString(
@@ -698,6 +693,9 @@ function Inbox() {
                                   content={item?.textAsHtml}
                                   attachment={item?.attachments}
                                   emailSubject={item?.subject}
+                                  emailOrCompose={
+                                    item?.caseId ? "email" : "compose"
+                                  }
                                   buttonName="sendEmailCase"
                                   iconColor={Colors.BLACK}
                                   maxHeight="78vh"
@@ -705,6 +703,7 @@ function Inbox() {
                                   caseDataId={item?.caseId}
                                   getAllInboxData={getAllInboxData}
                                   data={notificationTemplate}
+                                  threadId={item?.threadId}
                                 />
                               )}
                               {activeTab === "Draft" && (
@@ -725,13 +724,12 @@ function Inbox() {
                                     caseDataId={item?.caseId}
                                     getAllInboxData={getAllInboxData}
                                     emailOrCompose={
-                                      item?.debtorCompanyName
-                                        ? "email"
-                                        : "compose"
+                                      item?.caseId ? "email" : "compose"
                                     }
                                     updateDraft={true}
                                     draftId={item?._id}
                                     data={notificationTemplate}
+                                    threadId={item?.threadId}
                                   />
                                   <Prompt
                                     text="Are you sure you want to remove this draft?"
@@ -765,136 +763,130 @@ function Inbox() {
                                 </Typography>
                               </div>
                             )}
-
                             <Typography sx={boldTextStyling}>
                               Content:
                             </Typography>
-
-                            {!expandedMessages[index] ? (
-                              <div>
-                                <Typography
-                                  sx={fontStyling}
-                                  dangerouslySetInnerHTML={{
-                                    __html:
-                                      (activeTab === "Draft"
-                                        ? item?.text
-                                        : item?.textAsHtml
-                                      )?.substring(0, 200) +
-                                      (item?.text?.length > 200 ||
-                                      item?.textAsHtml?.length > 200
-                                        ? "..."
-                                        : ""),
-                                  }}
-                                />
-                              </div>
-                            ) : (
-                              <>
-                                <div>
-                                  {item?.text || item?.textAsHtml ? (
-                                    <Typography
-                                      sx={fontStyling}
-                                      dangerouslySetInnerHTML={{
-                                        __html:
-                                          activeTab === "Draft"
-                                            ? item?.text
-                                            : item?.textAsHtml,
-                                      }}
-                                    />
-                                  ) : (
+                            <div>
+                              <Typography
+                                sx={fontStyling}
+                                dangerouslySetInnerHTML={{
+                                  __html:
+                                    (activeTab === "Draft"
+                                      ? item?.text
+                                      : item?.textAsHtml
+                                    )?.substring(0, 200) +
+                                    (item?.text?.length > 200 ||
+                                    item?.textAsHtml?.length > 200
+                                      ? "..."
+                                      : ""),
+                                }}
+                              />
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  gap: "10px",
+                                  flexWrap: "wrap",
+                                }}
+                              >
+                                {item?.attachments?.map((attachment) => (
+                                  <Grid
+                                    container
+                                    sx={{
+                                      display: "flex",
+                                      border: `1px solid ${Colors.SKY_BLUE}`,
+                                      width: "20%",
+                                      borderRadius: "10px",
+                                      justifyContent: "space-between",
+                                      alignItems: "center",
+                                      padding: "10px",
+                                      cursor: "pointer",
+                                      transition: "all 0.3s ease",
+                                      "&:hover": {
+                                        backgroundColor: Colors.lIGHT_PURPLE,
+                                      },
+                                    }}
+                                    onClick={() =>
+                                      handleShowFile(attachment?.url)
+                                    }
+                                  >
                                     <Typography
                                       sx={{
-                                        fontSize: "14px",
-                                        color: Colors.GRAY,
-                                      }}
-                                    >
-                                      No content available.
-                                    </Typography>
-                                  )}
-                                </div>
-
-                                {item?.attachments?.length > 0 ? (
-                                  <div>
-                                    <div
-                                      style={{
+                                        fontSize: "13px",
+                                        fontFamily: "Nunito",
                                         display: "flex",
+                                        alignItems: "center",
                                         gap: "10px",
-                                        flexWrap: "wrap",
                                       }}
                                     >
-                                      {item?.attachments?.map((attachment) => (
-                                        <Grid
-                                          container
-                                          sx={{
-                                            display: "flex",
-                                            border: `1px solid ${Colors.SKY_BLUE}`,
-                                            width: "20%",
-                                            borderRadius: "10px",
-                                            justifyContent: "space-between",
-                                            alignItems: "center",
-                                            padding: "10px",
-                                            cursor: "pointer",
-                                            transition: "all 0.3s ease",
-                                            "&:hover": {
-                                              backgroundColor:
-                                                Colors.lIGHT_PURPLE,
-                                            },
-                                          }}
-                                          onClick={() =>
-                                            handleShowFile(attachment?.url)
-                                          }
-                                        >
-                                          <Typography
-                                            sx={{
-                                              fontSize: "13px",
-                                              fontFamily: "Nunito",
-                                              display: "flex",
-                                              alignItems: "center",
-                                              gap: "10px",
+                                      <Attachment
+                                        sx={{ color: Colors.SKY_BLUE }}
+                                      />
+                                      {attachment?.originalFileName}
+                                    </Typography>
+                                  </Grid>
+                                ))}
+                              </div>
+                            </div>
+                            {expandedMessages[index] && (
+                              <Box>
+                                {item?.previousMessages?.map(
+                                  (message, index) => (
+                                    <div style={{ display: "flex" }}>
+                                      {Array.from({ length: index + 1 }).map(
+                                        (_, repeatIndex) => (
+                                          <div
+                                            key={repeatIndex}
+                                            style={{
+                                              border: `1px solid ${Colors.DIM_LIGHT_GRAY}`,
+                                              margin: "6px",
+                                              borderRadius: "10px",
                                             }}
-                                          >
-                                            <Attachment
-                                              sx={{ color: Colors.SKY_BLUE }}
-                                            />
-                                            {attachment?.originalFileName}
-                                          </Typography>
-                                        </Grid>
-                                      ))}
+                                          ></div>
+                                        )
+                                      )}
+                                      <Box
+                                        key={index}
+                                        sx={{
+                                          padding: "15px",
+                                          margin: "10px 0",
+                                          boxShadow:
+                                            "0px 0px 4px rgba(0, 0, 0, 0.2)",
+                                          borderRadius: "10px",
+                                          width: "100%",
+                                        }}
+                                      >
+                                        <ThreadMessages data={message} />
+                                      </Box>
                                     </div>
-                                  </div>
-                                ) : (
-                                  <Typography
-                                    sx={{
-                                      fontSize: "14px",
-                                      color: Colors.GRAY,
-                                    }}
-                                  >
-                                    No attachments available.
-                                  </Typography>
+                                  )
                                 )}
-                              </>
+                              </Box>
                             )}
-
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                cursor: "pointer",
-                                justifyContent: "center",
-                                mt: "10px",
-                              }}
-                            >
-                              <Typography
+                            {item?.previousMessages?.length > 0 && (
+                              <Box
                                 sx={{
-                                  color: Colors.SKY_BLUE,
-                                  fontSize: FONT_SIZE_MEDIUM,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  cursor: "pointer",
+                                  justifyContent: "center",
+                                  mt: "10px",
                                 }}
-                                onClick={() => handleToggleContent(index)}
                               >
-                                {expandedMessages[index]
-                                  ? "Show Less..."
-                                  : "Show More..."}
-                              </Typography>
-                            </Box>
+                                <Typography
+                                  sx={{
+                                    color: Colors.SKY_BLUE,
+                                    fontSize: FONT_SIZE_MEDIUM,
+                                  }}
+                                  onClick={() => handleToggleContent(index)}
+                                >
+                                  {expandedMessages[index]
+                                    ? "Hide Replies..."
+                                    : "See All Replies..."}
+                                </Typography>
+                              </Box>
+                            )}
                           </div>
                         </CardContent>
                         {showViewer && (
