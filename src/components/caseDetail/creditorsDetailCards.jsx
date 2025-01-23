@@ -65,6 +65,7 @@ export default function CreditorsDetailCards({
   GetLogsById,
   verifiedSenders,
   fetchCalls,
+  getAllRanges,
 }) {
   const [searchText, setSearchText] = useState("");
 
@@ -173,6 +174,7 @@ export default function CreditorsDetailCards({
                 height="75vh"
                 caseData={caseData}
                 GetCaseDetails={GetCaseDetails}
+                getAllRanges={getAllRanges}
               />
             </div>
           </div>

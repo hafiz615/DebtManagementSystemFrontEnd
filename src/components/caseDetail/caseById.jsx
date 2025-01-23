@@ -107,6 +107,7 @@ export default function CaseById({
   totalPaymentPage,
   showEmail,
   from,
+  getAllRanges,
 }) {
   const navigate = useNavigate();
   const [deleting, setDeleting] = useState(false);
@@ -375,6 +376,7 @@ export default function CaseById({
                     GetCaseDetails={GetCaseDetails}
                     caseDataId={id}
                     GetLogsById={GetLogsById}
+                    getAllRanges={getAllRanges}
                   />
                 ) : value === "Other Creditors" ? (
                   <Grid

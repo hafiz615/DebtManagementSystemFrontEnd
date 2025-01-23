@@ -838,6 +838,7 @@ export default function MuiModels({
               caseData={caseData}
               GetCaseDetails={GetCaseDetails}
               maxHeight={maxHeight}
+              getAllRanges={getAllRanges}
             />
           ) : show === "editAbout" ? (
             <EditAbout
