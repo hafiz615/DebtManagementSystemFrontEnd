@@ -166,6 +166,7 @@ export default function MuiModels({
   updateDraft,
   draftId,
   attachment,
+  threadId,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -837,6 +838,7 @@ export default function MuiModels({
               caseData={caseData}
               GetCaseDetails={GetCaseDetails}
               maxHeight={maxHeight}
+              getAllRanges={getAllRanges}
             />
           ) : show === "editAbout" ? (
             <EditAbout
@@ -913,6 +915,7 @@ export default function MuiModels({
               updateDraft={updateDraft}
               draftId={draftId}
               attachment={attachment}
+              threadId={threadId}
             />
           ) : show === "editPipeline" ? (
             <EditPipeline

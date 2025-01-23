@@ -1108,10 +1108,11 @@ export const ResendInvite = async (payload) => {
   }
 };
 
-export const SendEmailSmsCase = async (id, type, payload) => {
+export const SendEmailSmsCase = async (id, type, payload, threadId) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/email/sendSmsEmailDebtorCreditor/${id}?type=${type}`,
+      BASE_URL +
+        `/v1/email/sendSmsEmailDebtorCreditor/${id}?type=${type}&threadId=${threadId}`,
       payload,
       setHeaders()
     );
@@ -1819,6 +1820,18 @@ export const GetNotificationTemplates = async () => {
   try {
     return await axios.get(
       BASE_URL + `/v1/settings/getTemplates`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const SaveWeeklyBudget = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/saveWeeklyBudgetValues/${id}`,
+      payload,
       setHeaders()
     );
   } catch (error) {

@@ -722,6 +722,7 @@ function CaseDetail() {
             totalPaymentPage={totalPaymentPage}
             showEmail={showEmail}
             from={caseData?.creditor?.basicInformation?.email}
+            getAllRanges={getAllRanges}
           />
         )}
       </Grid>

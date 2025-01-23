@@ -139,6 +139,7 @@ export default function SendEmailCase({
   updateDraft,
   draftId,
   attachment,
+  threadId,
 }) {
   const [loading, setLoading] = useState(false);
   const [draftLoading, setDraftLoading] = useState(false);
@@ -159,7 +160,9 @@ export default function SendEmailCase({
   const [subject, setSubject] = useState(emailSubject || "");
   const [cc, setCc] = useState([]);
   const [inputValue, setInputValue] = useState("");
-  const [preview, setPreview] = useState(content || "");
+  const [preview, setPreview] = useState(
+    replyCheck ? `<p></p><p></p>${content}` : content || ""
+  );
   const [fromNumber, setFromNumber] = useState("2564880968");
   const [errors, setErrors] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -323,7 +326,8 @@ export default function SendEmailCase({
         : emailOrCompose === "compose"
         ? "compose"
         : "email",
-      formData
+      formData,
+      threadId || ""
     );
     if (resEmail?.status === 200) {
       showToast(resEmail?.data?.message, "success");

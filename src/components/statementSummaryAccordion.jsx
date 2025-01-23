@@ -111,12 +111,12 @@ export default function StatementSummaryAccordion({ data, loading }) {
             <TableRow key={rowIndex}>
               {[
                 item?.statement_month,
-                formatAsDollar(item?.startingBalance),
-                formatAsDollar(item?.trueCredits),
-                formatAsDollar(item?.endingBalance),
-                item?.mcaNumber,
+                formatAsDollar(item?.startingBalance) || "--",
+                formatAsDollar(item?.trueCredits) || "--",
+                formatAsDollar(item?.endingBalance) || "--",
+                item?.mcaNumber || "--",
                 item?.mcaWithholdPercent ? `${item?.mcaWithholdPercent}` : "--",
-                formatAsDollar(item?.withdrawalTotal),
+                formatAsDollar(item?.withdrawalTotal) || "--",
               ]?.map((cellData, cellIndex) => (
                 <TableCell key={cellIndex} sx={styles.tableCell}>
                   {cellData}
@@ -143,7 +143,7 @@ export default function StatementSummaryAccordion({ data, loading }) {
                 fontFamily: "Nunito",
               }}
             >
-              {formatAsDollar(totals?.startingBalance)}
+              {formatAsDollar(totals?.startingBalance) || "--"}
             </TableCell>
             <TableCell
               sx={{
@@ -152,7 +152,7 @@ export default function StatementSummaryAccordion({ data, loading }) {
                 fontFamily: "Nunito",
               }}
             >
-              {formatAsDollar(totals?.trueCredits)}
+              {formatAsDollar(totals?.trueCredits) || "--"}
             </TableCell>
             <TableCell
               sx={{
@@ -161,7 +161,7 @@ export default function StatementSummaryAccordion({ data, loading }) {
                 fontFamily: "Nunito",
               }}
             >
-              {formatAsDollar(totals?.endingBalance)}
+              {formatAsDollar(totals?.endingBalance) || "--"}
             </TableCell>
             <TableCell colSpan={2}></TableCell>
             <TableCell
@@ -171,7 +171,7 @@ export default function StatementSummaryAccordion({ data, loading }) {
                 fontFamily: "Nunito",
               }}
             >
-              {formatAsDollar(totals?.withdrawalTotal)}
+              {formatAsDollar(totals?.withdrawalTotal) || "--"}
             </TableCell>
           </TableRow>
         </TableBody>
@@ -197,7 +197,20 @@ export default function StatementSummaryAccordion({ data, loading }) {
             {data ? (
               Object.entries(data)?.map(([key, value], index) => (
                 <div key={index} style={{ marginBottom: "20px" }}>
-                  <Typography sx={styles.sectionTitle}>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      backgroundColor: Colors.BG_LIGHT_GRAY,
+                      "&:hover": {
+                        backgroundColor: Colors.BG_LIGHT_GRAY,
+                      },
+                      height: "8vh",
+                      display: "flex",
+                      alignItems: "center",
+                      paddingLeft: "1rem",
+                      fontWeight: "600",
+                    }}
+                  >
                     Account No: {key}
                   </Typography>
                   {renderTable(value)}

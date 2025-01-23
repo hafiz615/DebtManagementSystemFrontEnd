@@ -223,6 +223,7 @@ export default function TimelineData({
                   to={value?.To}
                   content={value?.Content}
                   attachment={value?.Attachments}
+                  replyCheck={true}
                 />
               ) : (
                 <>
@@ -357,18 +358,21 @@ export default function TimelineData({
                                   {value}
                                 </Typography>
                               </>
-                            ) : key === "Attachments" && value?.length > 0 ? (
+                            ) : key === "Attachments" ? (
                               <>
-                                <Typography
-                                  sx={{
-                                    fontSize: "13px",
-                                    fontFamily: "Nunito",
-                                    mb: "10px",
-                                    fontWeight: "700",
-                                  }}
-                                >
-                                  Attachments:
-                                </Typography>
+                                {value?.length > 0 && (
+                                  <Typography
+                                    sx={{
+                                      fontSize: "13px",
+                                      fontFamily: "Nunito",
+                                      mb: "10px",
+                                      fontWeight: "700",
+                                    }}
+                                  >
+                                    Attachments:
+                                  </Typography>
+                                )}
+
                                 <div
                                   style={{
                                     display: "flex",

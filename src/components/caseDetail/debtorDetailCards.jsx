@@ -67,7 +67,7 @@ export default function DebtorDetailsCards({
   fetchCalls,
 }) {
   const [searchText, setSearchText] = useState("");
-  const [selectedValue, setSelectedValue] = useState("Seamless Chex");
+  const [selectedValue, setSelectedValue] = useState("Seamless Chex Merchant");
   const [type, setType] = useState("cc");
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 2;
@@ -121,14 +121,14 @@ export default function DebtorDetailsCards({
   );
 
   const paymentGateways = [
-    { label: "Seamless Chex", value: "Seamless Chex" },
+    { label: "Seamless Chex Merchant", value: "Seamless Chex Merchant" },
     { label: "Easy Pay", value: "Easy Pay" },
   ];
   const [connectPayment, setConnectPayment] = useState({
     paymentToken: "",
     paymentType: "",
     platform:
-      selectedValue === "Seamless Chex"
+      selectedValue === "Seamless Chex Merchant"
         ? "Seamlesschex merchant"
         : "Easypay direct",
   });
@@ -214,18 +214,18 @@ export default function DebtorDetailsCards({
               GetCaseDetails={GetCaseDetails}
               height="22vh"
               paymentPlatform={
-                selectedValue === "Seamless Chex"
+                selectedValue === "Seamless Chex Merchant"
                   ? "Seamlesschex merchant"
                   : "Easypay direct"
               }
             />
             <Dropdown
-              menuWidth="10rem"
+              menuWidth="14rem"
               menuItems={paymentGateways}
               placeholder="Type"
               backgroundColor={Colors.BG_LIGHT_GRAY}
               hoverColor={Colors.BG_LIGHT_GRAY}
-              width="10rem"
+              width="14rem"
               selectedValue={selectedValue}
               setSelectedValue={setSelectedValue}
               fontSize="12px"
