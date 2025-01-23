@@ -160,7 +160,9 @@ export default function SendEmailCase({
   const [subject, setSubject] = useState(emailSubject || "");
   const [cc, setCc] = useState([]);
   const [inputValue, setInputValue] = useState("");
-  const [preview, setPreview] = useState(content || "");
+  const [preview, setPreview] = useState(
+    replyCheck ? `<p></p><p></p>${content}` : content || ""
+  );
   const [fromNumber, setFromNumber] = useState("2564880968");
   const [errors, setErrors] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);

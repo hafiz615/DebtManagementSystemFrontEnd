@@ -223,6 +223,7 @@ export default function TimelineData({
                   to={value?.To}
                   content={value?.Content}
                   attachment={value?.Attachments}
+                  replyCheck={true}
                 />
               ) : (
                 <>
