@@ -33,6 +33,7 @@ import {
   ChevronRight,
   ExpandMore,
   FilterListOutlined,
+  ReplayOutlined,
 } from "@mui/icons-material";
 import TextButton from "./button";
 import {
@@ -328,16 +329,22 @@ function Inbox() {
           justifyContent: "space-between",
         }}
       >
-        <Typography
-          sx={{
-            fontWeight: "600",
-            fontSize: "2rem",
-            fontFamily: "Nunito",
-            color: Colors.BLACK,
-          }}
-        >
-          Inbox
-        </Typography>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <Typography
+            sx={{
+              fontWeight: "600",
+              fontSize: "2rem",
+              fontFamily: "Nunito",
+              color: Colors.BLACK,
+            }}
+          >
+            Mailbox
+          </Typography>
+          <IconButton onClick={() => getAllInboxData(false, false)}>
+            <ReplayOutlined />
+          </IconButton>
+        </div>
+
         <div
           style={{
             display: "flex",
@@ -882,8 +889,8 @@ function Inbox() {
                                   onClick={() => handleToggleContent(index)}
                                 >
                                   {expandedMessages[index]
-                                    ? "Hide Replies..."
-                                    : "See All Replies..."}
+                                    ? "See Less..."
+                                    : "See More..."}
                                 </Typography>
                               </Box>
                             )}

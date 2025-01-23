@@ -141,7 +141,7 @@ export default function PersistentDrawerLeft({ children }) {
         case "Pipelines":
           navigate("/pipelines");
           break;
-        case "Inbox":
+        case "Mailbox":
           navigate("/inbox");
           break;
         default:
@@ -155,7 +155,7 @@ export default function PersistentDrawerLeft({ children }) {
   const menuItems = [
     { text: "Pipelines", icon: <Handyman /> },
     { text: "Settings", icon: <Settings /> },
-    { text: "Inbox", icon: <Mail /> },
+    { text: "Mailbox", icon: <Mail /> },
   ];
 
   if (generalPermissions?.viewHomeScreen) {
@@ -330,7 +330,6 @@ export default function PersistentDrawerLeft({ children }) {
                 >
                   {icon}
                 </ListItemIcon>
-
                 <ListItemText
                   primary={text}
                   sx={{
