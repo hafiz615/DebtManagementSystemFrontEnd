@@ -81,11 +81,7 @@ function CommissionDetails({
       popUpDebtorData?.strategy3MaxProfit ||
       0,
 
-    strategy3ProfitMargin:
-      debtorDetails?.profitMargin ||
-      data?.debtor?.profitMargin ||
-      popUpDebtorData?.profitMargin ||
-      0,
+    strategy3ProfitMargin: 0,
 
     strategy3Custom:
       customValueThree !== undefined && customValueThree !== null
@@ -100,18 +96,10 @@ function CommissionDetails({
     if (!isStrategyOneSaved) {
       setIsStrategyOneSaved(true);
     } else {
-      const SaveWeeklyBudgetRes = await SaveWeeklyBudget(
-        payload,
-        caseId
-        // popUpDebtorData ? caseId : data?._id,
-        // true,
-        // true
-      );
+      const SaveWeeklyBudgetRes = await SaveWeeklyBudget(payload, caseId);
       if (SaveWeeklyBudgetRes?.status === 200) {
         showToast(SaveWeeklyBudgetRes?.data?.message, "success");
-        // const settlementId = SaveWeeklyBudgetRes ? caseId : data?._id;
-        // navigate(`/all-cases/${caseId}`);
-        getAllRanges && getAllRanges([], false);
+        getAllRanges && getAllRanges([], true);
         handleClose();
       } else {
         const errorMessage = SaveWeeklyBudgetRes?.response?.data?.message;

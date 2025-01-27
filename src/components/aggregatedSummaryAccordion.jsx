@@ -14,7 +14,6 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Colors } from "../config/default";
-import ScrollbarStyles from "./customScroll";
 import { useSelector } from "react-redux";
 
 const styles = {
@@ -74,15 +73,15 @@ const styles = {
   },
 };
 
-const formatAsDollar = (value) =>
-  value !== undefined && value !== null
-    ? `$${Number(value).toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}`
-    : "--";
+const formatAsDollar = (value) => {
+  if (value === undefined || value === null) {
+    return "--";
+  }
+  const fixedValue = Number(value).toFixed(2);
+  return `$${Number(fixedValue).toLocaleString()}`;
+};
 
-export default function StatementSummaryAccordion({ data, loading }) {
+export default function AggregatedSummaryAccordion({ data, loading }) {
   const drawerOpen = useSelector((state) => state.drawer.open);
 
   const widthStyling = drawerOpen
@@ -90,69 +89,48 @@ export default function StatementSummaryAccordion({ data, loading }) {
     : "calc(100vw - 70px - 4rem)";
 
   const renderTable = (value) => {
-    const totals = value.reduce(
-      (acc, item) => ({
-        startingBalance:
-          acc.startingBalance + (Number(item?.startingBalance) || 0),
-        totalCredits: acc.totalCredits + (Number(item?.totalCredits) || 0),
-        credits: acc.credits + (Number(item?.credits) || 0),
-        trueCredits: acc.trueCredits + (Number(item?.trueCredits) || 0),
-        trueCredits1: acc.trueCredits1 + (Number(item?.trueCredits1) || 0),
-        totalDebits: acc.totalDebits + (Number(item?.totalDebits) || 0),
-        debits: acc.debits + (Number(item?.debits) || 0),
-        endingBalance: acc.endingBalance + (Number(item?.endingBalance) || 0),
-        avgBalance: acc.avgBalance + (Number(item?.avgBalance) || 0),
-        avgTrueBalance:
-          acc.avgTrueBalance + (Number(item?.avgTrueBalance) || 0),
-        daysNeg: acc.daysNeg + (Number(item?.daysNeg) || 0),
-        ods: acc.ods + (Number(item?.ods) || 0),
-        nsfs: acc.nsfs + (Number(item?.nsfs) || 0),
-        lowDays: acc.lowDays + (Number(item?.lowDays) || 0),
-        mcas: acc.mcas + (Number(item?.mcas) || 0),
-      }),
-      {
-        startingBalance: 0,
-        totalCredits: 0,
-        credits: 0,
-        trueCredits: 0,
-        totalCredits: 0,
-        trueCredits1: 0,
-        totalDebits: 0,
-        debits: 0,
-        endingBalance: 0,
-        avgBalance: 0,
-        avgTrueBalance: 0,
-        daysNeg: 0,
-        ods: 0,
-        nsfs: 0,
-        lowDays: 0,
-        mcas: 0,
-      }
-    );
+    const totals =
+      value &&
+      value?.reduce(
+        (acc, item) => ({
+          startingBalance:
+            acc.startingBalance + (Number(item?.startingBalance) || 0),
+          trueCredits: acc.trueCredits + (Number(item?.trueCredits) || 0),
+          totalDebits: acc.totalDebits + (Number(item?.totalDebits) || 0),
+          endingBalance: acc.endingBalance + (Number(item?.endingBalance) || 0),
+          mca: acc.mca + (Number(item?.mca) || 0),
+          mcaWithoutHold:
+            acc.mcaWithoutHold + (Number(item?.mcaWithoutHold) || 0),
+          withdrawalTotal:
+            acc.withdrawalTotal + (Number(item?.withdrawalTotal) || 0),
+          pf: acc.pf + (Number(item?.pf) || 0),
+        }),
+        {
+          startingBalance: 0,
+          trueCredits: 0,
+          totalDebits: 0,
+          endingBalance: 0,
+          mca: 0,
+          mcaWithoutHold: 0,
+          withdrawalTotal: 0,
+          pf: 0,
+        }
+      );
 
     return (
-      <Table sx={styles.table}>
+      <Table sx={styles.table} size="small">
         <TableHead>
           <TableRow>
             {[
-              "Bank Name",
               "Statement Month",
               "Starting Balance",
-              "Total Credits",
-              "# Credits",
               "True Credits",
-              "# True Credits",
               "Total Debits",
-              "# Debits",
               "Ending Balance",
-              "Avg Balance",
-              "Avg True Balance",
-              "Days Neg",
-              "# Ods",
-              "# Nsfs",
-              "Low Days",
               "# Mcas",
               "Mca Withhold Percent",
+              "Withdrawal Total",
+              "PF",
             ]?.map((header, index) => (
               <TableCell key={index} sx={styles.tableHeaderCell}>
                 {header}
@@ -164,24 +142,15 @@ export default function StatementSummaryAccordion({ data, loading }) {
           {value?.map((item, rowIndex) => (
             <TableRow key={rowIndex}>
               {[
-                item?.bankName || "--",
-                item?.statementMonth || "--",
+                item?.statementMonthAndYear || "--",
                 formatAsDollar(item?.startingBalance) || "--",
-                formatAsDollar(item?.totalCredits) || "--",
-                item?.credits || "--",
                 formatAsDollar(item?.trueCredits) || "--",
-                item?.trueCredits1 || "--",
                 formatAsDollar(item?.totalDebits) || "--",
-                item?.debits || "--",
                 formatAsDollar(item?.endingBalance) || "--",
-                formatAsDollar(item?.avgBalance) || "--",
-                formatAsDollar(item?.avgTrueBalance) || "--",
-                item?.daysNeg || "--",
-                item?.ods || "--",
-                item?.nsfs || "--",
-                item?.lowDays || "--",
-                item?.mcas || "--",
+                item?.mca || "--",
                 item?.mcaWithoutHold || "--",
+                formatAsDollar(item?.withdrawalTotal) || "--",
+                formatAsDollar(item?.pf) || "--",
               ]?.map((cellData, cellIndex) => (
                 <TableCell key={cellIndex} sx={styles.tableCell}>
                   {cellData}
@@ -200,8 +169,6 @@ export default function StatementSummaryAccordion({ data, loading }) {
             >
               Total:
             </TableCell>
-            <TableCell></TableCell>
-
             <TableCell
               sx={{
                 fontWeight: "bold",
@@ -210,24 +177,6 @@ export default function StatementSummaryAccordion({ data, loading }) {
               }}
             >
               {formatAsDollar(totals?.startingBalance) || "--"}
-            </TableCell>
-            <TableCell
-              sx={{
-                fontWeight: "bold",
-                textAlign: "left",
-                fontFamily: "Nunito",
-              }}
-            >
-              {formatAsDollar(totals?.totalCredits) || "--"}
-            </TableCell>
-            <TableCell
-              sx={{
-                fontWeight: "bold",
-                textAlign: "left",
-                fontFamily: "Nunito",
-              }}
-            >
-              {totals?.credits || "--"}
             </TableCell>
             <TableCell
               sx={{
@@ -245,25 +194,7 @@ export default function StatementSummaryAccordion({ data, loading }) {
                 fontFamily: "Nunito",
               }}
             >
-              {totals?.trueCredits1 || "--"}
-            </TableCell>
-            <TableCell
-              sx={{
-                fontWeight: "bold",
-                textAlign: "left",
-                fontFamily: "Nunito",
-              }}
-            >
               {formatAsDollar(totals?.totalDebits) || "--"}
-            </TableCell>
-            <TableCell
-              sx={{
-                fontWeight: "bold",
-                textAlign: "left",
-                fontFamily: "Nunito",
-              }}
-            >
-              {totals?.debits || "--"}
             </TableCell>
             <TableCell
               sx={{
@@ -281,7 +212,7 @@ export default function StatementSummaryAccordion({ data, loading }) {
                 fontFamily: "Nunito",
               }}
             >
-              {formatAsDollar(totals?.avgBalance) || "--"}
+              {totals?.mca || "--"}
             </TableCell>
             <TableCell
               sx={{
@@ -290,7 +221,7 @@ export default function StatementSummaryAccordion({ data, loading }) {
                 fontFamily: "Nunito",
               }}
             >
-              {formatAsDollar(totals?.avgTrueBalance) || "--"}
+              {totals?.mcaWithoutHold || "--"}
             </TableCell>
             <TableCell
               sx={{
@@ -299,7 +230,7 @@ export default function StatementSummaryAccordion({ data, loading }) {
                 fontFamily: "Nunito",
               }}
             >
-              {totals?.daysNeg || "--"}
+              {formatAsDollar(totals?.withdrawalTotal) || "--"}
             </TableCell>
             <TableCell
               sx={{
@@ -308,43 +239,7 @@ export default function StatementSummaryAccordion({ data, loading }) {
                 fontFamily: "Nunito",
               }}
             >
-              {totals?.ods || "--"}
-            </TableCell>
-            <TableCell
-              sx={{
-                fontWeight: "bold",
-                textAlign: "left",
-                fontFamily: "Nunito",
-              }}
-            >
-              {totals?.nsfs || "--"}
-            </TableCell>
-            <TableCell
-              sx={{
-                fontWeight: "bold",
-                textAlign: "left",
-                fontFamily: "Nunito",
-              }}
-            >
-              {totals?.lowDays || "--"}
-            </TableCell>
-            <TableCell
-              sx={{
-                fontWeight: "bold",
-                textAlign: "left",
-                fontFamily: "Nunito",
-              }}
-            >
-              {totals?.mcas || "--"}
-            </TableCell>
-            <TableCell
-              sx={{
-                fontWeight: "bold",
-                textAlign: "left",
-                fontFamily: "Nunito",
-              }}
-            >
-              --
+              {formatAsDollar(totals?.pf) || "--"}
             </TableCell>
           </TableRow>
         </TableBody>
@@ -363,7 +258,7 @@ export default function StatementSummaryAccordion({ data, loading }) {
         sx={styles.accordionSummary}
         expandIcon={<ExpandMoreIcon sx={{ color: Colors.WHITE }} />}
       >
-        Statement Summary
+        Aggregated Statement Summary
       </AccordionSummary>
       <AccordionDetails
         sx={{
@@ -376,35 +271,21 @@ export default function StatementSummaryAccordion({ data, loading }) {
           </Grid>
         ) : (
           <Grid sx={styles.gridContainer}>
-            {data && Object.keys(data)?.length > 0 ? (
-              Object.entries(data)?.map(([key, value], index) => (
+            {data && data?.length > 0 ? (
+              data?.map((value, index) => (
                 <div
                   key={index}
                   style={{
                     marginBottom: "20px",
                   }}
                 >
-                  <Typography
-                    sx={{
-                      fontFamily: "Nunito",
-                      backgroundColor: Colors.BG_LIGHT_GRAY,
-                      "&:hover": {
-                        backgroundColor: Colors.BG_LIGHT_GRAY,
-                      },
-                      height: "8vh",
-                      display: "flex",
-                      alignItems: "center",
-                      fontWeight: "600",
-                    }}
-                  >
-                    Account No: {key}
-                  </Typography>
-                  {renderTable(value)}
+                  {renderTable(data)}
                 </div>
               ))
             ) : (
               <Typography
                 sx={{
+                  backgroundColor: Colors.WHITE,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",

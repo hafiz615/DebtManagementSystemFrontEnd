@@ -1838,3 +1838,13 @@ export const SaveWeeklyBudget = async (payload, id) => {
     return error;
   }
 };
+export const GetAggregatedSummary = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/debtor/getStatementsSummaryWithPf/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
