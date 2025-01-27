@@ -99,8 +99,8 @@ export default function AggregatedSummaryAccordion({ data, loading }) {
           totalDebits: acc.totalDebits + (Number(item?.totalDebits) || 0),
           endingBalance: acc.endingBalance + (Number(item?.endingBalance) || 0),
           mca: acc.mca + (Number(item?.mca) || 0),
-          mcaWithoutHold:
-            acc.mcaWithoutHold + (Number(item?.mcaWithoutHold) || 0),
+          mcaWithholdPercent:
+            acc.mcaWithholdPercent + (Number(item?.mcaWithholdPercent) || 0),
           withdrawalTotal:
             acc.withdrawalTotal + (Number(item?.withdrawalTotal) || 0),
           pf: acc.pf + (Number(item?.pf) || 0),
@@ -111,7 +111,7 @@ export default function AggregatedSummaryAccordion({ data, loading }) {
           totalDebits: 0,
           endingBalance: 0,
           mca: 0,
-          mcaWithoutHold: 0,
+          mcaWithholdPercent: 0,
           withdrawalTotal: 0,
           pf: 0,
         }
@@ -148,7 +148,7 @@ export default function AggregatedSummaryAccordion({ data, loading }) {
                 formatAsDollar(item?.totalDebits) || "--",
                 formatAsDollar(item?.endingBalance) || "--",
                 item?.mca || "--",
-                item?.mcaWithoutHold || "--",
+                item?.mcaWithholdPercent || "--",
                 formatAsDollar(item?.withdrawalTotal) || "--",
                 formatAsDollar(item?.pf) || "--",
               ]?.map((cellData, cellIndex) => (
@@ -221,7 +221,7 @@ export default function AggregatedSummaryAccordion({ data, loading }) {
                 fontFamily: "Nunito",
               }}
             >
-              {totals?.mcaWithoutHold || "--"}
+              {totals?.mcaWithholdPercent || "--"}
             </TableCell>
             <TableCell
               sx={{
@@ -272,16 +272,13 @@ export default function AggregatedSummaryAccordion({ data, loading }) {
         ) : (
           <Grid sx={styles.gridContainer}>
             {data && data?.length > 0 ? (
-              data?.map((value, index) => (
-                <div
-                  key={index}
-                  style={{
-                    marginBottom: "20px",
-                  }}
-                >
-                  {renderTable(data)}
-                </div>
-              ))
+              <div
+                style={{
+                  marginBottom: "20px",
+                }}
+              >
+                {renderTable(data)}
+              </div>
             ) : (
               <Typography
                 sx={{
