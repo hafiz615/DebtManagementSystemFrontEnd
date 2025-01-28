@@ -286,7 +286,6 @@ export default function AggregatedSummaryAccordion({ data, loading }) {
             ) : (
               <Typography
                 sx={{
-                  backgroundColor: Colors.WHITE,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -297,7 +296,7 @@ export default function AggregatedSummaryAccordion({ data, loading }) {
                   marginTop: "2rem",
                 }}
               >
-                No Statement Summary Data.
+                No Aggregated Statement Summary Data.
               </Typography>
             )}
           </Grid>
