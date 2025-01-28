@@ -99,11 +99,15 @@ export default function AggregatedSummaryAccordion({ data, loading }) {
           totalDebits: acc.totalDebits + (Number(item?.totalDebits) || 0),
           endingBalance: acc.endingBalance + (Number(item?.endingBalance) || 0),
           mca: acc.mca + (Number(item?.mca) || 0),
-          mcaWithholdPercent:
-            acc.mcaWithholdPercent + (Number(item?.mcaWithholdPercent) || 0),
+          mcaWithholdPercent: parseFloat(
+            (
+              acc.mcaWithholdPercent +
+              (parseFloat(item.mcaWithholdPercent?.replace("%", "")) || 0)
+            )?.toFixed(2)
+          ),
           withdrawalTotal:
             acc.withdrawalTotal + (Number(item?.withdrawalTotal) || 0),
-          pf: acc.pf + (Number(item?.pf) || 0),
+          profitMargin: acc.profitMargin + (Number(item?.profitMargin) || 0),
         }),
         {
           startingBalance: 0,
@@ -113,7 +117,7 @@ export default function AggregatedSummaryAccordion({ data, loading }) {
           mca: 0,
           mcaWithholdPercent: 0,
           withdrawalTotal: 0,
-          pf: 0,
+          profitMargin: 0,
         }
       );
 
@@ -130,7 +134,7 @@ export default function AggregatedSummaryAccordion({ data, loading }) {
               "# Mcas",
               "Mca Withhold Percent",
               "Withdrawal Total",
-              "PF",
+              "Profit Margin",
             ]?.map((header, index) => (
               <TableCell key={index} sx={styles.tableHeaderCell}>
                 {header}
@@ -150,7 +154,7 @@ export default function AggregatedSummaryAccordion({ data, loading }) {
                 item?.mca || "--",
                 item?.mcaWithholdPercent || "--",
                 formatAsDollar(item?.withdrawalTotal) || "--",
-                formatAsDollar(item?.pf) || "--",
+                formatAsDollar(item?.profitMargin) || "--",
               ]?.map((cellData, cellIndex) => (
                 <TableCell key={cellIndex} sx={styles.tableCell}>
                   {cellData}
@@ -221,7 +225,7 @@ export default function AggregatedSummaryAccordion({ data, loading }) {
                 fontFamily: "Nunito",
               }}
             >
-              {totals?.mcaWithholdPercent || "--"}
+              {`${totals?.mcaWithholdPercent / data?.length}%` || "--"}
             </TableCell>
             <TableCell
               sx={{
@@ -239,7 +243,7 @@ export default function AggregatedSummaryAccordion({ data, loading }) {
                 fontFamily: "Nunito",
               }}
             >
-              {formatAsDollar(totals?.pf) || "--"}
+              {formatAsDollar(totals?.profitMargin) || "--"}
             </TableCell>
           </TableRow>
         </TableBody>
