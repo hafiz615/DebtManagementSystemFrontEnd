@@ -66,6 +66,7 @@ export default function DebtorDetailsCards({
   verifiedSenders,
   fetchCalls,
 }) {
+  const streetAdress = caseData?.debtor?.basicInformation;
   const [searchText, setSearchText] = useState("");
   const [selectedValue, setSelectedValue] = useState("Seamless Chex Merchant");
   const [type, setType] = useState("cc");
@@ -259,7 +260,8 @@ export default function DebtorDetailsCards({
         >
           {Object.entries(caseData?.debtor?.basicInformation)?.map(
             ([key, value]) =>
-              key !== "weeklyBudget" && (
+              key !== "weeklyBudget" &&
+              key !== "address" && (
                 <div
                   key={key}
                   style={{
@@ -277,11 +279,7 @@ export default function DebtorDetailsCards({
                       color: Colors.DARK_GRAY,
                     }}
                   >
-                    {key === "SSID"
-                      ? "SSN"
-                      : key === "address"
-                      ? "Street Address"
-                      : formatKeys(key)}
+                    {key === "SSID" ? "SSN" : formatKeys(key)}
                   </Typography>
                   {key === "phone" ? (
                     <div style={{ display: "flex", alignItems: "center" }}>
@@ -330,6 +328,39 @@ export default function DebtorDetailsCards({
                 </div>
               )
           )}
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              width: "100%",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: smallScreen ? "11px" : "13px",
+                fontWeight: "700",
+                fontFamily: "Nunito",
+                color: Colors.DARK_GRAY,
+                width: "35%",
+              }}
+            >
+              Street Adress
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: smallScreen ? "11px" : "13px",
+                color: Colors.DIM_LIGHT_GRAY,
+                fontFamily: "Nunito",
+                fontWeight: "500",
+                textAlign: "right",
+                flexWrap: "wrap",
+                maxWidth: "100%",
+                wordBreak: "break-word",
+              }}
+            >
+              {getTruncatedText(formatValue(streetAdress?.address), 37) || "--"}
+            </Typography>
+          </div>
         </div>
       </Grid>
 

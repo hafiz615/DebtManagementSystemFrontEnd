@@ -123,6 +123,7 @@ export default function TransactionDetails({
             <p style={typographyHeadingStyle}>Creditor Name</p>
             <p style={typographyHeadingStyle}>Payment Type</p>
             <p style={typographyHeadingStyle}>Payment Gateway</p>
+            <p style={typographyHeadingStyle}>Send Payment</p>
             <p style={typographyHeadingStyle}>Retry Transaction</p>
             <p style={typographyHeadingStyle}>Revert Transactions</p>
           </div>

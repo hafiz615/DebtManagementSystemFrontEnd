@@ -10,6 +10,11 @@ import { RetryAuth, RetryCapture, SendPayment } from "../services/services";
 import { useSelector } from "react-redux";
 import { Paid } from "@mui/icons-material";
 import MuiModels from "././models";
+import {
+  FONT_SIZE_LARGE,
+  FONT_SIZE_MEDIUM,
+  FONT_SIZE_SMALL,
+} from "../constants/appConstants";
 
 function TransactionRow({
   data,
@@ -73,6 +78,13 @@ function TransactionRow({
     fontFamily: "Nunito",
     fontWeight: "500",
     width: "20%",
+    margin: "0px 0px",
+  };
+  const typographyStyleUpcoming = {
+    fontSize: "13px",
+    fontFamily: "Nunito",
+    fontWeight: "500",
+    width: "20%",
     margin: "5px 0px",
   };
 
@@ -85,7 +97,7 @@ function TransactionRow({
             fontWeight: "600",
             fontSize: "13px",
             fontFamily: "Nunito",
-            m: "10px 0px",
+            m: "0px 0px",
           }}
         >
           {heading}
@@ -141,10 +153,52 @@ function TransactionRow({
             <p style={typographyStyle}>{item?.transactionType || "-"}</p>
             <p style={typographyStyle}>{item?.paymentGateway || "-"}</p>
             <p style={typographyStyle}>
+              {item?.type === "capture" &&
+              item?.captured === "Success" &&
+              !hideTransferPayment ? (
+                <Box sx={{ cursor: "pointer" }}>
+                  <IconButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      sendPaymentCreditor(item?.id);
+                    }}
+                  >
+                    <Paid
+                      sx={{
+                        color: Colors.SKY_BLUE,
+                      }}
+                    />
+                  </IconButton>
+                </Box>
+              ) : (
+                <p
+                  style={{
+                    paddingLeft: "1rem",
+                    fontSize: "13px",
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "20%",
+                    margin: "0px 0px",
+                  }}
+                >
+                  -
+                </p>
+              )}
+            </p>
+            <p style={typographyStyle}>
               {(item?.type === "authorization" &&
                 item?.authorized === "Failed") ||
               (item?.type === "payment" && item?.captured === "Failed") ? (
-                <Box sx={{ cursor: "pointer" }}>
+                <Box
+                  sx={{
+                    cursor: "pointer",
+                    fontSize: "13px",
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "20%",
+                    margin: "0px 0px",
+                  }}
+                >
                   {generalPermissions?.retryPayment && (
                     <Prompt
                       heading="Retry"
@@ -155,24 +209,24 @@ function TransactionRow({
                     />
                   )}
                 </Box>
-              ) : item?.type === "capture" &&
-                item?.captured === "Success" &&
-                !hideTransferPayment ? (
-                <Box sx={{ cursor: "pointer" }}>
-                  <IconButton
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      sendPaymentCreditor(item?.id);
-                    }}
-                  >
-                    <Paid sx={{ color: Colors.SKY_BLUE }} />
-                  </IconButton>
-                </Box>
-              ) : null}
+              ) : (
+                <p
+                  style={{
+                    paddingLeft: "1rem",
+                    fontSize: "13px",
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "20%",
+                    margin: "0px 0px",
+                  }}
+                >
+                  -
+                </p>
+              )}
             </p>
 
-            <p style={typographyStyle}>
-              {heading !== "Upcoming" && (
+            <p style={typographyStyleUpcoming}>
+              {heading !== "Upcoming" ? (
                 <MuiModels
                   show="getTransactionDetails"
                   transactionId={item?.transactionId}
@@ -180,6 +234,19 @@ function TransactionRow({
                   caseData={caseData}
                   GetCaseDetails={GetCaseDetails}
                 />
+              ) : (
+                <p
+                  style={{
+                    paddingLeft: ".5rem",
+                    fontSize: "13px",
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "20%",
+                    margin: "0px 0px",
+                  }}
+                >
+                  -
+                </p>
               )}
             </p>
           </div>
