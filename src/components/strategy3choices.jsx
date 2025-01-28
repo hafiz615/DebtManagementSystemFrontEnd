@@ -1,7 +1,9 @@
 import {
+  Box,
   FormControl,
   FormControlLabel,
   Grid,
+  IconButton,
   Radio,
   RadioGroup,
   Typography,
@@ -10,6 +12,7 @@ import React, { useState } from "react";
 import { FONT_SIZE_LARGE } from "../constants/appConstants";
 import { Colors } from "../config/default";
 import MuiModels from "./models";
+import { Close } from "@mui/icons-material";
 
 export default function Strategy3choices({
   title,
@@ -35,13 +38,23 @@ export default function Strategy3choices({
   };
   return (
     <div>
-      <Typography sx={textStyling}>
-        Payment Plan According to Recommended Strategy
-      </Typography>
+      <Box
+        sx={{
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <Typography sx={textStyling}>
+          Payment Plan According to Recommended Strategy
+        </Typography>
+        <IconButton onClick={handleClose}>
+          <Close />
+        </IconButton>
+      </Box>
       <FormControl component="fieldset">
-        <p style={{ ...textStyling, marginTop: "1rem" }}>
-          Select Range You Want To Choose
-        </p>
+        <p style={{ ...textStyling }}>Select Range You Want To Choose</p>
         <RadioGroup
           aria-label="format"
           name="format"
