@@ -141,6 +141,44 @@ function TransactionRow({
             <p style={typographyStyle}>{item?.transactionType || "-"}</p>
             <p style={typographyStyle}>{item?.paymentGateway || "-"}</p>
             <p style={typographyStyle}>
+              {item?.type === "capture" &&
+              item?.captured === "Success" &&
+              !hideTransferPayment ? (
+                <Box sx={{ cursor: "pointer" }}>
+                  <IconButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      sendPaymentCreditor(item?.id);
+                    }}
+                  >
+                    <Paid sx={{ color: Colors.SKY_BLUE }} />
+                  </IconButton>
+                </Box>
+              ) : (
+                <p style={{ paddingLeft: "1rem" }}>-</p>
+              )}
+            </p>
+            <p style={typographyStyle}>
+              {(item?.type === "authorization" &&
+                item?.authorized === "Failed") ||
+              (item?.type === "payment" && item?.captured === "Failed") ? (
+                <Box sx={{ cursor: "pointer" }}>
+                  {generalPermissions?.retryPayment && (
+                    <Prompt
+                      heading="Retry"
+                      text={`Are you sure you want to Retry?`}
+                      handleRetry={handleRetry}
+                      item={item}
+                      show={true}
+                    />
+                  )}
+                </Box>
+              ) : (
+                <p style={{ paddingLeft: "1rem" }}>-</p>
+              )}
+            </p>
+
+            {/* <p style={typographyStyle}>
               {(item?.type === "authorization" &&
                 item?.authorized === "Failed") ||
               (item?.type === "payment" && item?.captured === "Failed") ? (
@@ -165,11 +203,13 @@ function TransactionRow({
                       sendPaymentCreditor(item?.id);
                     }}
                   >
-                    <Paid sx={{ color: Colors.SKY_BLUE }} />
+                    <Paid
+                      sx={{ color: Colors.SKY_BLUE, border: "1px solid red" }}
+                    />
                   </IconButton>
                 </Box>
               ) : null}
-            </p>
+            </p> */}
 
             <p style={typographyStyle}>
               {heading !== "Upcoming" && (
