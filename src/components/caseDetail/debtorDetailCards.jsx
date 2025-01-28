@@ -67,7 +67,6 @@ export default function DebtorDetailsCards({
   fetchCalls,
 }) {
   const streetAdress = caseData?.debtor?.basicInformation;
-  console.log(streetAdress);
   const [searchText, setSearchText] = useState("");
   const [selectedValue, setSelectedValue] = useState("Seamless Chex Merchant");
   const [type, setType] = useState("cc");
