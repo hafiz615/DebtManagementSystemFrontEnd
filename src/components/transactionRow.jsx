@@ -178,39 +178,6 @@ function TransactionRow({
               )}
             </p>
 
-            {/* <p style={typographyStyle}>
-              {(item?.type === "authorization" &&
-                item?.authorized === "Failed") ||
-              (item?.type === "payment" && item?.captured === "Failed") ? (
-                <Box sx={{ cursor: "pointer" }}>
-                  {generalPermissions?.retryPayment && (
-                    <Prompt
-                      heading="Retry"
-                      text={`Are you sure you want to Retry?`}
-                      handleRetry={handleRetry}
-                      item={item}
-                      show={true}
-                    />
-                  )}
-                </Box>
-              ) : item?.type === "capture" &&
-                item?.captured === "Success" &&
-                !hideTransferPayment ? (
-                <Box sx={{ cursor: "pointer" }}>
-                  <IconButton
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      sendPaymentCreditor(item?.id);
-                    }}
-                  >
-                    <Paid
-                      sx={{ color: Colors.SKY_BLUE, border: "1px solid red" }}
-                    />
-                  </IconButton>
-                </Box>
-              ) : null}
-            </p> */}
-
             <p style={typographyStyle}>
               {heading !== "Upcoming" && (
                 <MuiModels
