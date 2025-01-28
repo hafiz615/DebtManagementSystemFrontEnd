@@ -10,11 +10,6 @@ import { RetryAuth, RetryCapture, SendPayment } from "../services/services";
 import { useSelector } from "react-redux";
 import { Paid } from "@mui/icons-material";
 import MuiModels from "././models";
-import {
-  FONT_SIZE_LARGE,
-  FONT_SIZE_MEDIUM,
-  FONT_SIZE_SMALL,
-} from "../constants/appConstants";
 
 function TransactionRow({
   data,
@@ -48,7 +43,7 @@ function TransactionRow({
     let response;
     if (item?.type === "authorization" && item?.authorized === "Failed") {
       response = await RetryAuth(item?.id);
-    } else if (item?.type === "payment" && item?.captured === "Failed") {
+    } else if (item?.type === "capture" && item?.captured === "Failed") {
       response = await RetryCapture(item?.id);
     }
     if (response?.status === 200) {
@@ -108,7 +103,7 @@ function TransactionRow({
         const colorScheme =
           item?.type === "authorization" && item?.authorized === "Failed"
             ? Colors.ORANGE_COLOR
-            : item?.type === "payment" && item?.captured === "Failed"
+            : item?.type === "capture" && item?.captured === "Failed"
             ? Colors.ORANGE_COLOR
             : Colors.SKY_BLUE;
 
@@ -188,7 +183,7 @@ function TransactionRow({
             <p style={typographyStyle}>
               {(item?.type === "authorization" &&
                 item?.authorized === "Failed") ||
-              (item?.type === "payment" && item?.captured === "Failed") ? (
+              (item?.type === "capture" && item?.captured === "Failed") ? (
                 <Box
                   sx={{
                     cursor: "pointer",
