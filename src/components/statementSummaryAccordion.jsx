@@ -109,6 +109,12 @@ export default function StatementSummaryAccordion({ data, loading }) {
         nsfs: acc.nsfs + (Number(item?.nsfs) || 0),
         lowDays: acc.lowDays + (Number(item?.lowDays) || 0),
         mcas: acc.mcas + (Number(item?.mcas) || 0),
+        mcaWithholdPercent: parseFloat(
+          (
+            acc.mcaWithholdPercent +
+            (parseFloat(item.mcaWithholdPercent?.replace("%", "")) || 0)
+          )?.toFixed(2)
+        ),
       }),
       {
         startingBalance: 0,
@@ -127,6 +133,7 @@ export default function StatementSummaryAccordion({ data, loading }) {
         nsfs: 0,
         lowDays: 0,
         mcas: 0,
+        mcaWithholdPercent: 0,
       }
     );
 
@@ -181,7 +188,7 @@ export default function StatementSummaryAccordion({ data, loading }) {
                 item?.nsfs || "--",
                 item?.lowDays || "--",
                 item?.mcas || "--",
-                item?.mcaWithoutHold || "--",
+                item?.mcaWithholdPercent || "--",
               ]?.map((cellData, cellIndex) => (
                 <TableCell key={cellIndex} sx={styles.tableCell}>
                   {cellData}
@@ -344,7 +351,7 @@ export default function StatementSummaryAccordion({ data, loading }) {
                 fontFamily: "Nunito",
               }}
             >
-              --
+              {`${totals?.mcaWithholdPercent / value?.length}%` || "--"}
             </TableCell>
           </TableRow>
         </TableBody>
