@@ -684,7 +684,7 @@ const generatePDF = (data, lumpSumpData, checkboxState) => {
   // strategy 3
   if (checkboxState["Strategy 3 Recommendations"]) {
     doc.setFontSize(14);
-    doc.text("Percentage Recievable Minimum", 14, currentY);
+    doc.text("Percentage Receivable Minimum", 14, currentY);
     currentY += 10;
 
     const recommendationThreeMinVal = creditors?.map((creditor) => {
@@ -723,7 +723,7 @@ const generatePDF = (data, lumpSumpData, checkboxState) => {
     currentY = doc.autoTable.previous.finalY + 10;
 
     doc.setFontSize(14);
-    doc.text("Percentage Recievable Maximum", 14, currentY);
+    doc.text("Percentage Receivable Maximum", 14, currentY);
     currentY += 10;
 
     const recommendationThree = creditors?.map((creditor) => {

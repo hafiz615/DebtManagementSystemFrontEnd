@@ -62,7 +62,7 @@ export default function AddUrlsAccordion() {
   return (
     <StyledAccordion>
       <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
-        Add Url
+        Email Identity Url
       </StyledAccordionSummary>
       <StyledAccordionDetails>
         <Grid

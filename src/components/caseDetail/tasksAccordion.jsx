@@ -143,7 +143,7 @@ export default function TaskAccordion({ GetLogsById, caseData }) {
                   fontWeight: "700",
                 }}
               >
-                No tasks exist
+                No Task Exist
               </Typography>
             </Grid>
           ) : (

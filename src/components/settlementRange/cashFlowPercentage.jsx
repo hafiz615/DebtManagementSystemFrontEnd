@@ -1,6 +1,7 @@
 import {
   Box,
   CircularProgress,
+  Grid,
   IconButton,
   Popover,
   Tooltip,
@@ -8,9 +9,9 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { Colors } from "../../config/default";
-import TextButton from "../button";
 import { FONT_SIZE_LARGE } from "../../constants/appConstants";
 import { ExpandMore } from "@mui/icons-material";
+import ScrollbarStyles from "../customScroll";
 
 export default function CashFlowPercentage({ cashFlow, cashFlowLoading }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -25,12 +26,18 @@ export default function CashFlowPercentage({ cashFlow, cashFlowLoading }) {
 
   const isPopoverOpen = Boolean(anchorEl);
   return (
-    <Box
+    <Grid
+      item
+      xs={12}
+      sm={5.8}
+      md={3.8}
+      lg={2.8}
       sx={{
+        maxHeight: "17vh",
         width: "23.35%",
         backgroundColor: Colors.WHITE,
         borderRadius: "10px",
-        padding: "1rem",
+        padding: "5px 16px 16px 16px",
       }}
     >
       <div
@@ -39,7 +46,6 @@ export default function CashFlowPercentage({ cashFlow, cashFlowLoading }) {
           justifyContent: "space-between",
           alignItems: "center",
           width: "100%",
-          marginBottom: "10px",
         }}
       >
         <Typography
@@ -72,7 +78,13 @@ export default function CashFlowPercentage({ cashFlow, cashFlowLoading }) {
       ) : (
         <>
           {cashFlow && (
-            <div>
+            <div
+              style={{
+                maxHeight: "4rem",
+                overflow: "auto",
+                ...ScrollbarStyles,
+              }}
+            >
               {cashFlow?.highest?.map((item, index) => (
                 <Typography key={index}>
                   {Object.entries(item)?.map(([day, value]) => (
@@ -155,6 +167,6 @@ export default function CashFlowPercentage({ cashFlow, cashFlowLoading }) {
           )}
         </>
       )}
-    </Box>
+    </Grid>
   );
 }
