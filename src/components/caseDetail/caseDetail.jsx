@@ -16,6 +16,7 @@ import {
 import {
   AddNotesCase,
   AddSenderIdentity,
+  GetAggregatedSummary,
   GetAllSenders,
   GetCaseById,
   GetCasePaymentById,
@@ -118,6 +119,7 @@ function CaseDetail() {
   const [allData, setAllData] = useState();
   const [verifiedSender, setVerifiedSender] = useState([]);
   const [statementSummaries, setStatementSummaries] = useState();
+  const [aggregatedSummaries, setAggregatedSummaries] = useState();
   const [lumpSumpData, setLumpSumpData] = useState({});
   const [scoresBackend, setScoresBackend] = useState(false);
   const [optionStats, setOptionStats] = useState();
@@ -128,6 +130,8 @@ function CaseDetail() {
   const [currentPaymentPage, setCurrentPaymentPage] = useState(1);
   const [totalPaymentPage, setTotalPaymentPage] = useState();
   const [statementSummariesLoading, setStatementSummariesLoading] =
+    useState(false);
+  const [aggregatedSummariesLoading, setAggregatedSummariesLoading] =
     useState(false);
   const [mcaByMonth, setMcaByMonth] = useState();
 
@@ -330,6 +334,7 @@ function CaseDetail() {
         );
         if (settlementRangeData?.status === 200) {
           setStatementSummariesLoading(true);
+          setAggregatedSummariesLoading(true);
           setCashFlowLoading(true);
           setSettlementLoading(false);
           if (typeof settlementRangeData?.data?.data?.getScores === "string") {
@@ -388,6 +393,13 @@ function CaseDetail() {
           if (resStatementSummary?.status === 200) {
             setStatementSummaries(resStatementSummary?.data?.data);
             setStatementSummariesLoading(false);
+          }
+          const resAggregatedSummary = await GetAggregatedSummary(
+            settlementRangeData?.data?.data?.debtor?._id
+          );
+          if (resAggregatedSummary?.status === 200) {
+            setAggregatedSummaries(resAggregatedSummary?.data?.data);
+            setAggregatedSummariesLoading(false);
           }
           const resCashFlow = await GetDailyCashFlow(
             settlementRangeData?.data?.data?.debtor?._id
@@ -658,6 +670,8 @@ function CaseDetail() {
             verifiedSender={verifiedSender}
             statementSummaries={statementSummaries}
             statementSummariesLoading={statementSummariesLoading}
+            aggregatedSummaries={aggregatedSummaries}
+            aggregatedSummariesLoading={aggregatedSummariesLoading}
             getLumpSumAmountData={getLumpSumAmountData}
             lumpSumpData={lumpSumpData}
             scoresBackend={scoresBackend}

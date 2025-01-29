@@ -41,7 +41,6 @@ export default function SettlementPayment({
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          marginBottom: "1rem",
         }}
       >
         <Typography sx={textStyling}>
@@ -52,9 +51,7 @@ export default function SettlementPayment({
         </IconButton>
       </Box>
       <FormControl component="fieldset">
-        <p style={{ ...textStyling, marginTop: "1rem" }}>
-          Select Range You Want To Choose
-        </p>
+        <p style={{ ...textStyling }}>Select Range You Want To Choose</p>
         <RadioGroup
           aria-label="format"
           name="format"

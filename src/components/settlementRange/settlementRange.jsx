@@ -61,6 +61,7 @@ import CashFlowPercentage from "./cashFlowPercentage";
 import MCAByMonthAccordion from "../settlementRange/mcaByMonthAccordion";
 import SendEmail from "../sendEmail";
 import ProfitMarginPerMonth from "./profitMarginPerMonth";
+import AggregatedSummaryAccordion from "../aggregatedSummaryAccordion";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -197,6 +198,8 @@ export default function SettlementRange({
   verifiedSender,
   statementSummaries,
   statementSummariesLoading,
+  aggregatedSummaries,
+  aggregatedSummariesLoading,
   lumpSumpData,
   scoresBackend,
   optionStats,
@@ -1166,21 +1169,26 @@ export default function SettlementRange({
           </Grid>
 
           <Grid xs={12} sx={{ mt: "1rem" }}>
+            <AggregatedSummaryAccordion
+              data={aggregatedSummaries}
+              loading={aggregatedSummariesLoading}
+            />
+          </Grid>
+          <Grid xs={12} sx={{ mt: "1rem" }}>
             <StatementSummaryAccordion
               data={statementSummaries}
               loading={statementSummariesLoading}
             />
           </Grid>
-          <>
-            <Grid item xs={12} sx={{ mt: "1rem" }}>
-              <MCAByMonthAccordion mcaByMonth={mcaByMonth} />
-            </Grid>
-            <Grid item xs={12} sx={{ mt: "1rem" }}>
+          <Grid item xs={12} sx={{ mt: "1rem" }}>
+            <MCAByMonthAccordion mcaByMonth={mcaByMonth} />
+          </Grid>
+          {/* <Grid item xs={12} sx={{ mt: "1rem" }}>
               <ProfitMarginPerMonth
                 profitMarginPerMonthData={profitMarginPerMonthData}
               />
-            </Grid>
-          </>
+            </Grid> */}
+
           {showEmailAgreement && (
             <Grid
               item

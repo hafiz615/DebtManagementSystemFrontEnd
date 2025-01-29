@@ -55,18 +55,6 @@ function StrategyThree({
           disabled={!isMaxProfitAvailable} // Disable if max profit is not available
         />
         <FormControlLabel
-          value="strategy3ProfitMargin"
-          control={<Radio sx={radioStyle} />}
-          label={`Stated receivable margin of debtor: ${
-            isProfitMarginAvailable
-              ? `${
-                  data?.debtor?.profitMargin || popUpDebtorData?.profitMargin
-                }%`
-              : "Profit Margin was not entered when case was created"
-          }`}
-          disabled={!isProfitMarginAvailable}
-        />
-        <FormControlLabel
           value="strategy3Custom"
           control={<Radio sx={radioStyle} />}
           label="Create your own"

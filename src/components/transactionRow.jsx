@@ -43,7 +43,7 @@ function TransactionRow({
     let response;
     if (item?.type === "authorization" && item?.authorized === "Failed") {
       response = await RetryAuth(item?.id);
-    } else if (item?.type === "payment" && item?.captured === "Failed") {
+    } else if (item?.type === "capture" && item?.captured === "Failed") {
       response = await RetryCapture(item?.id);
     }
     if (response?.status === 200) {
@@ -73,6 +73,13 @@ function TransactionRow({
     fontFamily: "Nunito",
     fontWeight: "500",
     width: "20%",
+    margin: "0px 0px",
+  };
+  const typographyStyleUpcoming = {
+    fontSize: "13px",
+    fontFamily: "Nunito",
+    fontWeight: "500",
+    width: "20%",
     margin: "5px 0px",
   };
 
@@ -85,7 +92,7 @@ function TransactionRow({
             fontWeight: "600",
             fontSize: "13px",
             fontFamily: "Nunito",
-            m: "10px 0px",
+            m: "0px 0px",
           }}
         >
           {heading}
@@ -96,7 +103,7 @@ function TransactionRow({
         const colorScheme =
           item?.type === "authorization" && item?.authorized === "Failed"
             ? Colors.ORANGE_COLOR
-            : item?.type === "payment" && item?.captured === "Failed"
+            : item?.type === "capture" && item?.captured === "Failed"
             ? Colors.ORANGE_COLOR
             : Colors.SKY_BLUE;
 
@@ -141,10 +148,52 @@ function TransactionRow({
             <p style={typographyStyle}>{item?.transactionType || "-"}</p>
             <p style={typographyStyle}>{item?.paymentGateway || "-"}</p>
             <p style={typographyStyle}>
+              {item?.type === "capture" &&
+              item?.captured === "Success" &&
+              !hideTransferPayment ? (
+                <Box sx={{ cursor: "pointer" }}>
+                  <IconButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      sendPaymentCreditor(item?.id);
+                    }}
+                  >
+                    <Paid
+                      sx={{
+                        color: Colors.SKY_BLUE,
+                      }}
+                    />
+                  </IconButton>
+                </Box>
+              ) : (
+                <p
+                  style={{
+                    paddingLeft: "1rem",
+                    fontSize: "13px",
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "20%",
+                    margin: "0px 0px",
+                  }}
+                >
+                  -
+                </p>
+              )}
+            </p>
+            <p style={typographyStyle}>
               {(item?.type === "authorization" &&
                 item?.authorized === "Failed") ||
-              (item?.type === "payment" && item?.captured === "Failed") ? (
-                <Box sx={{ cursor: "pointer" }}>
+              (item?.type === "capture" && item?.captured === "Failed") ? (
+                <Box
+                  sx={{
+                    cursor: "pointer",
+                    fontSize: "13px",
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "20%",
+                    margin: "0px 0px",
+                  }}
+                >
                   {generalPermissions?.retryPayment && (
                     <Prompt
                       heading="Retry"
@@ -155,24 +204,24 @@ function TransactionRow({
                     />
                   )}
                 </Box>
-              ) : item?.type === "capture" &&
-                item?.captured === "Success" &&
-                !hideTransferPayment ? (
-                <Box sx={{ cursor: "pointer" }}>
-                  <IconButton
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      sendPaymentCreditor(item?.id);
-                    }}
-                  >
-                    <Paid sx={{ color: Colors.SKY_BLUE }} />
-                  </IconButton>
-                </Box>
-              ) : null}
+              ) : (
+                <p
+                  style={{
+                    paddingLeft: "1rem",
+                    fontSize: "13px",
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "20%",
+                    margin: "0px 0px",
+                  }}
+                >
+                  -
+                </p>
+              )}
             </p>
 
-            <p style={typographyStyle}>
-              {heading !== "Upcoming" && (
+            <p style={typographyStyleUpcoming}>
+              {heading !== "Upcoming" ? (
                 <MuiModels
                   show="getTransactionDetails"
                   transactionId={item?.transactionId}
@@ -180,6 +229,19 @@ function TransactionRow({
                   caseData={caseData}
                   GetCaseDetails={GetCaseDetails}
                 />
+              ) : (
+                <p
+                  style={{
+                    paddingLeft: ".5rem",
+                    fontSize: "13px",
+                    fontFamily: "Nunito",
+                    fontWeight: "500",
+                    width: "20%",
+                    margin: "0px 0px",
+                  }}
+                >
+                  -
+                </p>
               )}
             </p>
           </div>

@@ -156,7 +156,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
   }, [amount, checkboxStates]);
 
   const formatCurrency = (value) => {
-    if (!value) return "";
+    if (!value) return `$${new Intl.NumberFormat("en-US").format(0)}`;
     return `$${new Intl.NumberFormat("en-US").format(value)}`;
   };
 
@@ -496,8 +496,6 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
               ...ScrollbarStyles,
               backgroundColor: Colors.BG_LIGHT_GRAY,
             }}
-            container
-            item
           >
             <Typography
               sx={{
