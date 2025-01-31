@@ -94,6 +94,7 @@ function CaseDetail() {
   const { showToast } = useToast();
   const [value, setValue] = React.useState("Debtor");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
+  const loginUser = useSelector((state) => state?.signIn?.signIn?.user);
   const { AUTHORITY_TEXT } = UserListPage;
   const [loading, setLoading] = useState(false);
   const [isPaymentLoading, setIsPaymentLoading] = useState(false);
@@ -604,6 +605,7 @@ function CaseDetail() {
               caseDataId={id}
               GetLogsById={GetLogsById}
               data={caseData}
+              loginUser={loginUser}
             />
           </>
         )}
