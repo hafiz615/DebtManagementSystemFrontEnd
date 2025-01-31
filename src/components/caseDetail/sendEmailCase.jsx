@@ -35,7 +35,7 @@ import {
 import { useToast } from "../../toast/toastContext";
 import { ArrowRight, Delete, ExpandMore } from "@mui/icons-material";
 import ScrollbarStyles from "./../customScroll";
-import { handleNumberInput } from "../../common";
+import { handleNumberInput, phoneNumberFormat } from "../../common";
 import { Editor } from "@tinymce/tinymce-react";
 import Dropdown from "../dropdown";
 
@@ -140,6 +140,7 @@ export default function SendEmailCase({
   draftId,
   attachment,
   threadId,
+  loginUser,
 }) {
   const [loading, setLoading] = useState(false);
   const [draftLoading, setDraftLoading] = useState(false);
@@ -163,7 +164,14 @@ export default function SendEmailCase({
   const [preview, setPreview] = useState(
     replyCheck ? `<p></p><p></p>${content}` : content || ""
   );
-  const [fromNumber, setFromNumber] = useState("2564880968");
+  const [fromNumber, setFromNumber] = useState(
+    parseInt(
+      loginUser?.twilioNo
+        ? parseInt(loginUser.twilioNo.replace("+1", ""))
+        : data?.defaultNumber,
+      10
+    )
+  );
   const [errors, setErrors] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [subMenuAnchorEl, setSubMenuAnchorEl] = useState(null);
@@ -308,14 +316,15 @@ export default function SendEmailCase({
       } else {
         formData.append("signedUrls", `[]`);
       }
-      formData.append(
-        "sendTo",
-        headerName ? sendTo : compose || replyCheck ? sendTo : selectedEmail
-      );
+      formData.append("sendTo", compose || replyCheck ? sendTo : selectedEmail);
+      formData.append("from", replyCheck ? sendFrom : selectedValue);
       formData.append("subject", subject);
       const ccString = JSON.stringify(cc);
       formData.append("cc", ccString);
-      formData.append("from", replyCheck ? sendFrom : selectedValue);
+    } else {
+      // const formattedFromNumber = fromNumber?.replace(/^\+1/, "");
+      formData.append("from", fromNumber.toString());
+      formData.append("sendTo", sendTo.toString());
     }
     const resEmail = await SendEmailSmsCase(
       caseDataId || "1231123",
@@ -610,91 +619,98 @@ export default function SendEmailCase({
           </Grid>
         )}
         {!compose && (
-          <Grid item xs={6}>
-            <Typography
-              sx={{
-                fontFamily: "Nunito",
-                fontWeight: "600",
-                color: Colors.DARK_GRAY,
-                fontSize: FONT_SIZE_LARGE,
-              }}
-            >
-              Variable
-            </Typography>
-            <div>
-              <div
-                style={divStyling}
-                onClick={(e) => setAnchorEl(e.currentTarget)}
+          <>
+            <Grid item xs={6}>
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontWeight: "600",
+                  color: Colors.DARK_GRAY,
+                  fontSize: FONT_SIZE_LARGE,
+                }}
               >
-                <span>Select Variable</span>
-                <span style={{ marginTop: "5px" }}>
-                  <ExpandMore />
-                </span>
-              </div>
+                Variable
+              </Typography>
+              <div>
+                <div
+                  style={divStyling}
+                  onClick={(e) => setAnchorEl(e.currentTarget)}
+                >
+                  <span>Select Variable</span>
+                  <span style={{ marginTop: "5px" }}>
+                    <ExpandMore />
+                  </span>
+                </div>
 
-              <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleCloseMenu}
-              >
-                {Object.keys(customVariables)
-                  ?.filter((category) => category !== "event") // Exclude the 'event' key
-                  .map((category) => (
-                    <MenuItem
-                      key={category}
-                      onClick={(event) => handleOpenSubMenu(event, category)}
-                      sx={{
-                        ...fontStyling,
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      {category?.charAt(0).toUpperCase() + category?.slice(1)}
-                      <ArrowRight />
-                    </MenuItem>
-                  ))}
-              </Menu>
-              <Popover
-                anchorEl={subMenuAnchorEl}
-                open={Boolean(subMenuAnchorEl)}
-                onClose={() => setSubMenuAnchorEl(null)}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "left",
-                }}
-              >
-                <Grid
-                  sx={{
-                    maxHeight: "300px",
-                    overflowY: "auto",
-                    ...ScrollbarStyles,
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleCloseMenu}
+                >
+                  {Object.keys(customVariables)
+                    ?.filter((category) => category !== "event") // Exclude the 'event' key
+                    .map((category) => (
+                      <MenuItem
+                        key={category}
+                        onClick={(event) => handleOpenSubMenu(event, category)}
+                        sx={{
+                          ...fontStyling,
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        {category?.charAt(0).toUpperCase() + category?.slice(1)}
+                        <ArrowRight />
+                      </MenuItem>
+                    ))}
+                </Menu>
+                <Popover
+                  anchorEl={subMenuAnchorEl}
+                  open={Boolean(subMenuAnchorEl)}
+                  onClose={() => setSubMenuAnchorEl(null)}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
                   }}
                 >
-                  {selectedCategory &&
-                    Object.entries(customVariables[selectedCategory])?.map(
-                      ([label, action]) => (
-                        <div
-                          style={{ display: "flex", flexDirection: "column" }}
-                        >
-                          <Button
-                            sx={buttonStyling}
-                            onClick={() =>
-                              handleMenuClick(label, selectedCategory)
-                            }
+                  <Grid
+                    sx={{
+                      maxHeight: "300px",
+                      overflowY: "auto",
+                      ...ScrollbarStyles,
+                    }}
+                  >
+                    {selectedCategory &&
+                      Object.entries(customVariables[selectedCategory])?.map(
+                        ([label, action]) => (
+                          <div
+                            style={{ display: "flex", flexDirection: "column" }}
                           >
-                            {action}
-                          </Button>
-                        </div>
-                      )
-                    )}
-                </Grid>
-              </Popover>
-            </div>
-          </Grid>
+                            <Button
+                              sx={buttonStyling}
+                              onClick={() =>
+                                handleMenuClick(label, selectedCategory)
+                              }
+                            >
+                              {action}
+                            </Button>
+                          </div>
+                        )
+                      )}
+                  </Grid>
+                </Popover>
+              </div>
+              <Box
+                sx={{
+                  height: "0.7rem",
+                }}
+              ></Box>
+            </Grid>
+          </>
         )}
 
         {headerName ? null : (

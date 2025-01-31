@@ -11,6 +11,7 @@ import AppLogo from "../../src/assets/FC White.png";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useSelector } from "react-redux";
 import NotificationsBell from "./notificationBell";
+import MissedCalls from "./missedCalls";
 
 export default function NavBar({ onClick }) {
   const navigate = useNavigate();
@@ -105,6 +106,7 @@ export default function NavBar({ onClick }) {
                 justifyContent: "flex-end",
               }}
             >
+              <MissedCalls />
               <NotificationsBell
                 notificationsLength={notificationsLength}
                 setNotificationLength={setNotificationLength}
