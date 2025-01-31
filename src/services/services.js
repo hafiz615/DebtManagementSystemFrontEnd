@@ -1848,3 +1848,13 @@ export const GetAggregatedSummary = async (id) => {
     return error;
   }
 };
+export const GetMissedCalls = async () => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/call/twilio/getNumberMissedCalls`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
