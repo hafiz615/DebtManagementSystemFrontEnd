@@ -100,7 +100,7 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
 
 const commonStyles = {
   backgroundColor: Colors.WHITE,
-  height: "15vh",
+  height: "17vh",
   borderRadius: "10px",
   paddingLeft: "1%",
   justifyContent: "center",
@@ -282,7 +282,7 @@ export default function SettlementRange({
     });
   };
 
-  const tabs = ["Fixed Amount", "Lump Sum", "Percentage Recievable"];
+  const tabs = ["Fixed Amount", "Lump Sum", "Percentage Receivable"];
   const recommendations = ["recommendation 1"];
   const strat3Recommendations = ["recommendation 1"];
   const strat2Recommendations = ["lump Sum"];
@@ -1450,13 +1450,10 @@ export default function SettlementRange({
                   }
                   rawValue={scores?.Scores?.["Default Risk Score"]}
                 />
-
-                <Grid xs={12}>
-                  <CashFlowPercentage
-                    cashFlowLoading={cashFlowLoading}
-                    cashFlow={cashFlow}
-                  />
-                </Grid>
+                <CashFlowPercentage
+                  cashFlowLoading={cashFlowLoading}
+                  cashFlow={cashFlow}
+                />
 
                 <Grid
                   item
@@ -1493,7 +1490,7 @@ export default function SettlementRange({
                       <>
                         <div
                           style={{
-                            width: "50%",
+                            width: "35%",
                             height: "100%",
                           }}
                         >
@@ -1502,7 +1499,7 @@ export default function SettlementRange({
                               {
                                 id: countData,
                                 data: countData,
-                                cx: 130,
+                                cx: 100,
                                 cy: 120,
                                 highlightScope: {
                                   faded: "global",
@@ -1524,7 +1521,7 @@ export default function SettlementRange({
                             flexDirection: "column",
                             padding: "1em",
                             height: "90%",
-                            width: "40%",
+                            width: "65%",
                             overflowY: "scroll !important",
                             borderRadius: "15px",
                             backgroundColor: Colors.BG_LIGHT_GRAY,
@@ -1544,11 +1541,12 @@ export default function SettlementRange({
                                 style={{
                                   display: "flex",
                                   alignItems: "center",
+                                  marginTop: ".5rem",
                                 }}
                               >
                                 <div
                                   style={{
-                                    width: "16px",
+                                    width: "1rem",
                                     height: "16px",
                                     backgroundColor:
                                       categories[colorScheme][item?.id],
