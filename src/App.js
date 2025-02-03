@@ -27,6 +27,7 @@ import {
 } from "./services/services";
 import { Device } from "@twilio/voice-sdk";
 import IncomingCall from "./components/incomingCall";
+import { formLabelClasses } from "@mui/material";
 // hh
 
 function App() {
@@ -34,7 +35,7 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
   const [callInterval, setCallInterval] = useState(null);
-  const [allCases, setAllCases] = useState([]);
+  const [allCases, setAllCases] = useState({});
   const [callSid, setCallSid] = useState();
   const [callerName, setCallerName] = useState();
   const [caseMenuActive, setCaseMenuActive] = useState(false);
