@@ -146,7 +146,7 @@ function Inbox() {
       },
       text: searchText,
     };
-    const response = await GetAllInbox(search, filter, payload);
+    const response = await GetAllInbox(search, filter, "EMAIL", payload);
     if (response?.status === 200) {
       const data = response?.data?.data;
       setInboxData(data);
@@ -245,7 +245,7 @@ function Inbox() {
       },
       text: searchText,
     };
-    const response = await GetAllInbox(false, true, payload);
+    const response = await GetAllInbox(false, true, "EMAIL", payload);
     if (response?.status === 200) {
       const data = response?.data?.data;
       setInboxData(data);

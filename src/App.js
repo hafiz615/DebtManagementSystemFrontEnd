@@ -27,6 +27,7 @@ import {
 } from "./services/services";
 import { Device } from "@twilio/voice-sdk";
 import IncomingCall from "./components/incomingCall";
+import SmsPage from "./pages/smsPage";
 // hh
 
 function App() {
@@ -262,6 +263,16 @@ function App() {
           element={
             <Protected>
               <PipelinesPage />
+            </Protected>
+          }
+        />
+
+        <Route
+          exact
+          path="/sms"
+          element={
+            <Protected>
+              <SmsPage />
             </Protected>
           }
         />
