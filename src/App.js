@@ -23,12 +23,10 @@ import {
   GetAllUserCases,
   GetCallerName,
   GetCallSid,
-  GetCallToken,
 } from "./services/services";
 import { Device } from "@twilio/voice-sdk";
 import IncomingCall from "./components/incomingCall";
-import { formLabelClasses } from "@mui/material";
-// hh
+import SmsPage from "./pages/smsPage";
 
 function App() {
   const [incomingCall, setIncomingCall] = useState(null);
@@ -263,6 +261,16 @@ function App() {
           element={
             <Protected>
               <PipelinesPage />
+            </Protected>
+          }
+        />
+
+        <Route
+          exact
+          path="/sms"
+          element={
+            <Protected>
+              <SmsPage />
             </Protected>
           }
         />

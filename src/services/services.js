@@ -1425,11 +1425,11 @@ export const GetAllTransactions = async (page) => {
     return error;
   }
 };
-export const GetAllInbox = async (search, filter, payload) => {
+export const GetAllInbox = async (search, filter, medium, payload) => {
   try {
     return await axios.post(
       BASE_URL +
-        `/v1/inbox/getAllMessages?search=${search}&filter=${filter}&type=default`,
+        `/v1/inbox/getAllMessages?search=${search}&filter=${filter}&type=default&medium=${medium}`,
       payload,
       setHeaders()
     );
@@ -1826,7 +1826,6 @@ export const GetNotificationTemplates = async () => {
     return error;
   }
 };
-
 export const SaveWeeklyBudget = async (payload, id) => {
   try {
     return await axios.post(
