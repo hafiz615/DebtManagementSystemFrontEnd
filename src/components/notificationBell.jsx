@@ -7,6 +7,9 @@ import {
   ListItem,
   Typography,
   CircularProgress,
+  Box,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { io } from "socket.io-client";
@@ -16,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import {
   baseUrl,
   FONT_SIZE_LARGE,
+  FONT_SIZE_MEDIUM,
   FONT_SIZE_SMALL,
 } from "../constants/appConstants";
 import {
@@ -29,10 +33,25 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
   const [notifications, setNotifications] = useState([]);
   const [socket, setSocket] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [value, setValue] = useState(0);
   const navigate = useNavigate();
   const BASE_URL = baseUrl();
   const { showToast } = useToast();
   const updatedBaseUrl = BASE_URL?.replace(/\/api$/, "");
+
+  const handleChange = async (event, newValue) => {
+    setValue(newValue);
+    setLoading(true);
+    const payload = {
+      type: newValue === 0 ? "EMAIL" : "SMS",
+    };
+    const res = await GetAllNotifications(payload);
+    if (res?.status === 200) {
+      setNotificationLength(0);
+      setNotifications(res?.data?.data);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
     const socketInstance = io(updatedBaseUrl);
@@ -53,7 +72,10 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
   const handleOpen = async (event) => {
     setLoading(true);
     setAnchorEl(event.currentTarget);
-    const res = await GetAllNotifications();
+    const payload = {
+      type: value === 0 ? "EMAIL" : "SMS",
+    };
+    const res = await GetAllNotifications(payload);
     if (res?.status === 200) {
       setNotificationLength(0);
       setNotifications(res?.data?.data);
@@ -106,6 +128,35 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
         >
           Notifications
         </Typography>
+        <Box sx={{ width: "100%", backgroundColor: Colors.BG_LIGHT_GRAY }}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            centered
+            sx={{
+              "& .MuiTabs-indicator": { backgroundColor: Colors.SKY_BLUE },
+            }}
+          >
+            <Tab
+              sx={{
+                textTransform: "none",
+                fontSize: FONT_SIZE_MEDIUM,
+                color: Colors.SKY_BLUE,
+                "&.Mui-selected": { color: Colors.SKY_BLUE },
+              }}
+              label="Email"
+            />
+            <Tab
+              sx={{
+                textTransform: "none",
+                fontSize: FONT_SIZE_MEDIUM,
+                color: Colors.SKY_BLUE,
+                "&.Mui-selected": { color: Colors.SKY_BLUE },
+              }}
+              label="SMS"
+            />
+          </Tabs>
+        </Box>
 
         {loading ? (
           <List
