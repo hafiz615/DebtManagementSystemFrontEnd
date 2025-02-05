@@ -487,107 +487,92 @@ function Sms() {
                       >
                         <div
                           style={{
+                            width: "100%",
                             display: "flex",
                             justifyContent: "space-between",
                           }}
                         >
-                          <div>
-                            <div
-                              style={{
-                                width: "100%",
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  gap: "10px",
-                                }}
-                              >
-                                <Typography sx={boldTextStyling}>
-                                  {`${
-                                    item?.debtorCompanyName || "Composed At"
-                                  } ${"-"} ${formatDateString(
-                                    item?.createdAt
-                                  )} `}
-                                </Typography>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "10px",
+                            }}
+                          >
+                            <Typography sx={boldTextStyling}>
+                              {`${
+                                item?.debtorCompanyName || "Composed At"
+                              } ${"-"} ${formatDateString(item?.createdAt)} `}
+                            </Typography>
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: "10px",
+                            }}
+                          >
+                            {activeTab === "Draft" && (
+                              <div style={{ display: "flex", height: "2rem" }}>
+                                <MuiModels
+                                  show="sendEmailCase"
+                                  headerName={true}
+                                  from={item?.to}
+                                  to={item?.from}
+                                  content={item?.text}
+                                  buttonName="draft"
+                                  iconColor={Colors.BLACK}
+                                  maxHeight="78vh"
+                                  caseDataId={item?.caseId}
+                                  getAllInboxData={getAllInboxData}
+                                  updateDraft={true}
+                                  draftId={item?._id}
+                                  data={notificationTemplate}
+                                />
+                                <Prompt
+                                  text="Are you sure you want to remove this draft?"
+                                  item={item?._id}
+                                  deleting="deleteSmsDraft"
+                                  getAllInboxData={getAllInboxData}
+                                />
                               </div>
-                              <div
-                                style={{
-                                  display: "flex",
-                                  gap: "10px",
-                                }}
-                              >
-                                {activeTab === "Draft" && (
-                                  <div
-                                    style={{ display: "flex", height: "2rem" }}
-                                  >
-                                    <MuiModels
-                                      show="sendEmailCase"
-                                      headerName={true}
-                                      from={item?.to}
-                                      to={item?.from}
-                                      content={item?.text}
-                                      buttonName="draft"
-                                      iconColor={Colors.BLACK}
-                                      maxHeight="78vh"
-                                      caseDataId={item?.caseId}
-                                      getAllInboxData={getAllInboxData}
-                                      updateDraft={true}
-                                      draftId={item?._id}
-                                      data={notificationTemplate}
-                                    />
-                                    <Prompt
-                                      text="Are you sure you want to remove this draft?"
-                                      item={item?._id}
-                                      deleting="deleteSmsDraft"
-                                      getAllInboxData={getAllInboxData}
-                                    />
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                            <div
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "10px",
-                              }}
-                            >
-                              <Typography sx={boldTextStyling}>To:</Typography>
-
-                              <Typography sx={fontStyling}>
-                                <Tooltip
-                                  placement="top"
-                                  title={item?.to || "-"}
-                                >
-                                  {item?.to && item?.to?.length > 30
-                                    ? `${item?.to?.slice(0, 70)}...`
-                                    : item?.to || "-"}
-                                </Tooltip>
-                              </Typography>
-                            </div>
-                            <div
-                              style={{
-                                display: "flex",
-                                gap: "10px",
-                              }}
-                            >
-                              <Typography
-                                sx={{
-                                  ...boldTextStyling,
-                                }}
-                              >
-                                From:
-                              </Typography>
-                              <Typography sx={fontStyling}>
-                                {item?.from || "-"}
-                              </Typography>
-                            </div>
+                            )}
                           </div>
                         </div>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "10px",
+                          }}
+                        >
+                          <Typography sx={boldTextStyling}>To:</Typography>
+
+                          <Typography sx={fontStyling}>
+                            <Tooltip placement="top" title={item?.to || "-"}>
+                              {item?.to && item?.to?.length > 30
+                                ? `${item?.to?.slice(0, 70)}...`
+                                : item?.to || "-"}
+                            </Tooltip>
+                          </Typography>
+                        </div>
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: "10px",
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              ...boldTextStyling,
+                            }}
+                          >
+                            From:
+                          </Typography>
+                          <Typography sx={fontStyling}>
+                            {item?.from || "-"}
+                          </Typography>
+                        </div>
+
                         <div>
                           {item?.creditorCompanyName && (
                             <div style={{ display: "flex", gap: "10px" }}>
