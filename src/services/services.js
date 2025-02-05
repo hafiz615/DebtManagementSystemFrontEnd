@@ -1857,3 +1857,35 @@ export const GetMissedCalls = async () => {
     return error;
   }
 };
+export const UpdateSmsDraft = async (id, payload) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/inbox/updateDraft/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const CreateSmsDraft = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/inbox/createDraft`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const DeleteSmsDraft = async (id) => {
+  try {
+    return await axios.delete(
+      BASE_URL + `/v1/inbox/deleteDraft/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
