@@ -18,6 +18,7 @@ import {
   DeleteLink,
   DeleteCheckDetails,
   DeleteDraft,
+  DeleteSmsDraft,
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import TextButton from "./button";
@@ -71,7 +72,6 @@ export default function Prompt({
   const { showToast } = useToast();
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const navigate = useNavigate();
 
   const deleteCustomField = async () => {
     setLoading(true);
@@ -208,6 +208,13 @@ export default function Prompt({
     }
   };
 
+  const deleteSmsDraft = async () => {
+    const res = await DeleteSmsDraft(item);
+    if (res?.status === 200) {
+      getAllInboxData(false, false);
+    }
+  };
+
   const handleConfirm = async (event) => {
     event.stopPropagation();
     setLoading(true);
@@ -234,6 +241,8 @@ export default function Prompt({
       await deleteCheckIds();
     } else if (deleting === "deleteDraft") {
       await deleteDraft();
+    } else if (deleting === "deleteSmsDraft") {
+      await deleteSmsDraft();
     } else if (deleteRole) {
       await deleteRole();
     } else {

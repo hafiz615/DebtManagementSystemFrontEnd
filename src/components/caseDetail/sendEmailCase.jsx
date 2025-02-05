@@ -9,10 +9,6 @@ import {
   Popover,
   Tooltip,
   IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
 } from "@mui/material";
 
 import TextButton from "../button";
@@ -20,17 +16,17 @@ import { Colors } from "../../config/default";
 import {
   FONT_SIZE_LARGE,
   FONT_SIZE_MEDIUM,
-  FONT_SIZE_SMALL,
   TEXT_EDITOR_KEY,
 } from "../../constants/appConstants";
 import styled from "styled-components";
 import {
+  CreateSmsDraft,
   DeleteDraft,
   GetCustomVariable,
   SaveAsDraft,
   SendEmailSmsCase,
   UpdateDraft,
-  UploadFiles,
+  UpdateSmsDraft,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import { ArrowRight, Delete, ExpandMore } from "@mui/icons-material";
@@ -156,7 +152,7 @@ export default function SendEmailCase({
     data?.smsTemplates || []
   );
   const [selectedSmsTemplates, setSelectedSmsTemplates] = useState("");
-  const [sendFrom, setSendFrom] = useState(replyCheck ? to || "" : []);
+  const [sendFrom, setSendFrom] = useState(replyCheck ? to || "" : "");
   const [selectedValue, setSelectedValue] = useState(to || "");
   const [subject, setSubject] = useState(emailSubject || "");
   const [cc, setCc] = useState([]);
@@ -165,12 +161,13 @@ export default function SendEmailCase({
     replyCheck ? `<p></p><p></p>${content}` : content || ""
   );
   const [fromNumber, setFromNumber] = useState(
-    parseInt(
-      loginUser?.twilioNo
-        ? parseInt(loginUser.twilioNo.replace("+1", ""))
-        : data?.defaultNumber,
-      10
-    )
+    to ||
+      parseInt(
+        loginUser?.twilioNo
+          ? parseInt(loginUser.twilioNo.replace("+1", ""))
+          : data?.defaultNumber,
+        10
+      )
   );
   const [errors, setErrors] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -293,9 +290,16 @@ export default function SendEmailCase({
   }, [selectedSmsTemplates]);
 
   const deleteDraft = async () => {
-    const res = await DeleteDraft(draftId);
-    if (res?.status === 200) {
-      getAllInboxData(false, false);
+    if (headerName) {
+      const res = await DeleteDraft(draftId);
+      if (res?.status === 200) {
+        getAllInboxData(false, false);
+      }
+    } else {
+      const res = await DeleteDraft(draftId);
+      if (res?.status === 200) {
+        getAllInboxData(false, false);
+      }
     }
   };
 
@@ -322,7 +326,6 @@ export default function SendEmailCase({
       const ccString = JSON.stringify(cc);
       formData.append("cc", ccString);
     } else {
-      // const formattedFromNumber = fromNumber?.replace(/^\+1/, "");
       formData.append("from", fromNumber.toString());
       formData.append("sendTo", sendTo.toString());
     }
@@ -399,6 +402,26 @@ export default function SendEmailCase({
     setDraftLoading(false);
   };
 
+  const handleSaveSmsDraft = async () => {
+    setDraftLoading(true);
+    const payload = {
+      sendTo: sendTo || "",
+      from: fromNumber || "",
+      content: preview || "",
+      caseId: caseDataId || "",
+    };
+    const res = await CreateSmsDraft(payload);
+    if (res?.status === 201) {
+      getAllInboxData && getAllInboxData(false, false);
+      handleClose();
+      showToast(res?.data?.message, "success");
+    } else {
+      const errorMessage = res?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setDraftLoading(false);
+  };
+
   const handleUpdateDraft = async () => {
     setDraftLoading(true);
     const formData = new FormData();
@@ -431,6 +454,27 @@ export default function SendEmailCase({
       showToast(resEmail?.data?.message, "success");
     } else {
       const errorMessage = resEmail?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setDraftLoading(false);
+  };
+
+  const handleSmsUpdateDraft = async () => {
+    setDraftLoading(true);
+    const payload = {
+      sendTo: sendTo || "",
+
+      from: fromNumber || "",
+      content: preview || "",
+      caseId: caseDataId || "",
+    };
+    const res = await UpdateSmsDraft(draftId, payload);
+    if (res?.status === 200) {
+      getAllInboxData && getAllInboxData(false, false);
+      handleClose();
+      showToast(res?.data?.message, "success");
+    } else {
+      const errorMessage = res?.response?.data?.message;
       showToast(errorMessage, "error");
     }
     setDraftLoading(false);
@@ -929,15 +973,25 @@ export default function SendEmailCase({
             width="10rem"
             backgroundColor={Colors.SKY_BLUE}
             hoverColor={Colors.SKY_BLUE}
-            onClick={updateDraft ? handleUpdateDraft : handleSaveDraft}
+            onClick={
+              updateDraft
+                ? headerName
+                  ? handleSmsUpdateDraft
+                  : handleUpdateDraft
+                : headerName
+                ? handleSaveSmsDraft
+                : handleSaveDraft
+            }
             loading={draftLoading}
             disabled={
-              !selectedValue &&
-              !subject?.trim() &&
-              !preview?.trim() &&
-              !selectedEmail &&
-              !cc?.length > 0 &&
-              !selectedFiles?.length > 0
+              headerName
+                ? !preview?.trim() && !sendTo?.trim()
+                : !selectedValue &&
+                  !subject?.trim() &&
+                  !preview?.trim() &&
+                  !selectedEmail &&
+                  !cc?.length > 0 &&
+                  !selectedFiles?.length > 0
             }
           />
           <TextButton
