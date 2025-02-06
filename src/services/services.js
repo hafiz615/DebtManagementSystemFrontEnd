@@ -1879,10 +1879,31 @@ export const CreateSmsDraft = async (payload) => {
     return error;
   }
 };
+export const saveCaseDetailNotification = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/sms/saveCaseDetailNotification`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
 export const DeleteSmsDraft = async (id) => {
   try {
     return await axios.delete(
       BASE_URL + `/v1/inbox/deleteDraft/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetCreditorsFromDebtorId = async (debtorId) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/case/getAllUserCases?debtorId=${debtorId}`,
       setHeaders()
     );
   } catch (error) {

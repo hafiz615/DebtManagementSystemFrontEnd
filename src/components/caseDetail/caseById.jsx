@@ -108,6 +108,7 @@ export default function CaseById({
   showEmail,
   from,
   getAllRanges,
+  handleCloseNotes,
 }) {
   const navigate = useNavigate();
   const [deleting, setDeleting] = useState(false);
@@ -600,8 +601,17 @@ export default function CaseById({
                       style={{
                         display: "flex",
                         justifyContent: "flex-end",
+                        gap: "10px",
                       }}
                     >
+                      <TextButton
+                        buttonText="Cancel"
+                        height="2rem"
+                        width="8rem"
+                        onClick={() => handleCloseNotes()}
+                        backgroundColor={Colors.ORANGE_COLOR}
+                        hoverColor={Colors.ORANGE_COLOR}
+                      />
                       <TextButton
                         buttonText="Submit"
                         height="2rem"
