@@ -231,7 +231,12 @@ function Sms() {
           >
             SMS
           </Typography>
-          <IconButton onClick={() => getAllInboxData(false, false)}>
+          <IconButton
+            onClick={() => {
+              getAllInboxData(false, false);
+              setUserSelected("");
+            }}
+          >
             <ReplayOutlined />
           </IconButton>
         </div>
