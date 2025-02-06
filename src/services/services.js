@@ -1425,11 +1425,11 @@ export const GetAllTransactions = async (page) => {
     return error;
   }
 };
-export const GetAllInbox = async (search, filter, payload) => {
+export const GetAllInbox = async (search, filter, medium, payload) => {
   try {
     return await axios.post(
       BASE_URL +
-        `/v1/inbox/getAllMessages?search=${search}&filter=${filter}&type=default`,
+        `/v1/inbox/getAllMessages?search=${search}&filter=${filter}&type=default&medium=${medium}`,
       payload,
       setHeaders()
     );
@@ -1826,7 +1826,6 @@ export const GetNotificationTemplates = async () => {
     return error;
   }
 };
-
 export const SaveWeeklyBudget = async (payload, id) => {
   try {
     return await axios.post(
@@ -1852,6 +1851,59 @@ export const GetMissedCalls = async () => {
   try {
     return await axios.get(
       BASE_URL + `/v1/call/twilio/getNumberMissedCalls`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateSmsDraft = async (id, payload) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/inbox/updateDraft/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const CreateSmsDraft = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/inbox/createDraft`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const saveCaseDetailNotification = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/sms/saveCaseDetailNotification`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const DeleteSmsDraft = async (id) => {
+  try {
+    return await axios.delete(
+      BASE_URL + `/v1/inbox/deleteDraft/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetCreditorsFromDebtorId = async (debtorId) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/case/getAllUserCases?debtorId=${debtorId}`,
       setHeaders()
     );
   } catch (error) {

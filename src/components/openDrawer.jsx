@@ -25,6 +25,7 @@ import {
   People,
   Handyman,
   Mail,
+  Sms,
 } from "@mui/icons-material";
 
 import ListItemText from "@mui/material/ListItemText";
@@ -144,6 +145,9 @@ export default function PersistentDrawerLeft({ children }) {
         case "Mailbox":
           navigate("/inbox");
           break;
+        case "Sms":
+          navigate("/sms");
+          break;
         default:
           break;
       }
@@ -156,6 +160,7 @@ export default function PersistentDrawerLeft({ children }) {
     { text: "Pipelines", icon: <Handyman /> },
     { text: "Settings", icon: <Settings /> },
     { text: "Mailbox", icon: <Mail /> },
+    { text: "Sms", icon: <Sms /> },
   ];
 
   if (generalPermissions?.viewHomeScreen) {

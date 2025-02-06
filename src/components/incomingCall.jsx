@@ -10,12 +10,34 @@ import {
   Modal,
   Backdrop,
   Fade,
+  Menu,
+  Popover,
+  MenuItem,
 } from "@mui/material";
 import { Colors } from "../config/default";
 import Dropdown from "./dropdown";
 import TextButton from "./button";
-import { UpdateCallByCase } from "../services/services";
+import { GetAllUserCases, UpdateCallByCase } from "../services/services";
 import { useToast } from "../toast/toastContext";
+import { useEffect } from "react";
+import { ArrowRight, ExpandMore } from "@mui/icons-material";
+import { FONT_SIZE_LARGE, FONT_SIZE_MEDIUM } from "../constants/appConstants";
+
+const divStyling = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  backgroundColor: Colors.BG_LIGHT_GRAY,
+  borderRadius: "5px",
+  border: `2px solid  ${Colors.SKY_BLUE}`,
+  height: "2.5rem",
+  cursor: "pointer",
+  fontSize: FONT_SIZE_LARGE,
+  fontFamily: "Nunito",
+  padding: "0px 10px",
+  width: "100%",
+  marginBottom: "auto",
+};
 
 export default function IncomingCall({
   incomingCall,
@@ -32,15 +54,28 @@ export default function IncomingCall({
   setCaseMenuActive,
   callerName,
 }) {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [subMenuAnchorEl, setSubMenuAnchorEl] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedCase, setSelectedCase] = useState();
   const [loading, setLoading] = useState(false);
-  const menuItem =
-    allCases &&
-    allCases?.map((item) => ({
-      label: item?.creditorCompanyName,
-      value: item?.creditorCompanyName,
-    }));
   const { showToast } = useToast();
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+    setSubMenuAnchorEl(null);
+  };
+
+  const handleOpenSubMenu = (event, category) => {
+    setSubMenuAnchorEl(event.currentTarget);
+    setSelectedCategory(category);
+  };
+
+  const handleMenuClick = (selectedCategory) => {
+    setSubMenuAnchorEl(null);
+    setAnchorEl(null);
+    setSelectedCase(selectedCategory);
+  };
 
   const formatDuration = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -82,11 +117,8 @@ export default function IncomingCall({
 
   const handleSave = async () => {
     setLoading(true);
-    const selectedCaseId = allCases?.find(
-      (caseItem) => caseItem.creditorCompanyName === selectedCase
-    )?.caseId;
     const payload = {
-      caseId: selectedCaseId,
+      caseId: selectedCase?.caseId,
     };
     const res = await UpdateCallByCase(payload, callSid);
     if (res?.status === 200) {
@@ -128,16 +160,67 @@ export default function IncomingCall({
             <Typography sx={{ mb: 3, fontFamily: "Nunito" }}>
               Save Call Log
             </Typography>
-            <Dropdown
-              menuWidth={260}
-              menuItems={menuItem}
-              placeholder="Cases"
-              backgroundColor={Colors.BG_LIGHT_GRAY}
-              hoverColor={Colors.BG_LIGHT_GRAY}
-              width={260}
-              selectedValue={selectedCase}
-              setSelectedValue={setSelectedCase}
-            />
+            <div
+              style={divStyling}
+              onClick={(e) => setAnchorEl(e.currentTarget)}
+            >
+              <span>{selectedCase?.creditorCompanyName || "Select Case"}</span>
+              <span style={{ marginTop: "5px" }}>
+                <ExpandMore />
+              </span>
+            </div>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleCloseMenu}
+            >
+              {Object.entries(allCases)?.map(([key, value]) => (
+                <MenuItem
+                  key={key}
+                  onClick={(event) => handleOpenSubMenu(event, value)}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    fontSize: FONT_SIZE_MEDIUM,
+                    fontFamily: "Nunito",
+                  }}
+                >
+                  {key}
+                  <ArrowRight />
+                </MenuItem>
+              ))}
+            </Menu>
+
+            {/* Popover for second-level dropdown */}
+            <Popover
+              anchorEl={subMenuAnchorEl}
+              open={Boolean(subMenuAnchorEl)}
+              onClose={() => setSubMenuAnchorEl(null)}
+              anchorOrigin={{ vertical: "top", horizontal: "right" }}
+              transformOrigin={{ vertical: "top", horizontal: "left" }}
+            >
+              <Grid
+                sx={{ maxHeight: "300px", overflowY: "auto", padding: "10px" }}
+              >
+                {selectedCategory &&
+                  selectedCategory?.map((caseItem) => (
+                    <Button
+                      key={caseItem.caseId}
+                      sx={{
+                        textAlign: "left",
+                        width: "100%",
+                        color: Colors.BLACK,
+                        fontSize: FONT_SIZE_MEDIUM,
+                        fontFamily: "Nunito",
+                      }}
+                      onClick={() => handleMenuClick(caseItem)}
+                    >
+                      {caseItem.creditorCompanyName}
+                    </Button>
+                  ))}
+              </Grid>
+            </Popover>
+
             <div
               style={{
                 display: "flex",

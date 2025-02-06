@@ -23,18 +23,17 @@ import {
   GetAllUserCases,
   GetCallerName,
   GetCallSid,
-  GetCallToken,
 } from "./services/services";
 import { Device } from "@twilio/voice-sdk";
 import IncomingCall from "./components/incomingCall";
-// hh
+import SmsPage from "./pages/smsPage";
 
 function App() {
   const [incomingCall, setIncomingCall] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
   const [callInterval, setCallInterval] = useState(null);
-  const [allCases, setAllCases] = useState([]);
+  const [allCases, setAllCases] = useState({});
   const [callSid, setCallSid] = useState();
   const [callerName, setCallerName] = useState();
   const [caseMenuActive, setCaseMenuActive] = useState(false);
@@ -262,6 +261,16 @@ function App() {
           element={
             <Protected>
               <PipelinesPage />
+            </Protected>
+          }
+        />
+
+        <Route
+          exact
+          path="/sms"
+          element={
+            <Protected>
+              <SmsPage />
             </Protected>
           }
         />

@@ -51,7 +51,6 @@ function CaseHistory({
     "Weeks Remaining",
   ];
   useEffect(() => {
-    // Simulate fetching data from an API
     const fetchData = () => {
       const generatedData =
         data &&
@@ -157,7 +156,7 @@ function CaseHistory({
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
           loading={tableLoading}
-          defaultHeight="30vh"
+          defaultHeight="50vh"
           paginationRows={paginationRows}
           setPaginationRows={setPaginationRows}
         />
