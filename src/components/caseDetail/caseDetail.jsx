@@ -739,6 +739,7 @@ function CaseDetail() {
             showEmail={showEmail}
             from={caseData?.creditor?.basicInformation?.email}
             getAllRanges={getAllRanges}
+            handleCloseNotes={handleCloseNotes}
           />
         )}
       </Grid>
