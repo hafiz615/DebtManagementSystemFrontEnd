@@ -23,6 +23,9 @@ import { formatDollarAmount } from "../common";
 import TextButton from "./button";
 const headers = [
   "Company Name",
+  "Client Name",
+  "Email",
+  "Phone Number",
   "Number of Cases",
   "Number of Creditors",
   "Client Status",
@@ -238,9 +241,13 @@ export default function ClientList() {
       userArray?.map((item) => ({
         id: item?.id,
         name: item?.companyName || "-",
+        clientName: item?.clientName || "--",
+        email: item?.email || "--",
+        phoneNumber: item?.phoneNumber || "--",
         totalCases: item?.totalCases || "-",
         totalCreditors: item?.totalCreditors || "-",
         status: item?.status || "-",
+
         totalDebt: formatDollarAmount(item?.totalDebt) || "-",
       }))
     );
