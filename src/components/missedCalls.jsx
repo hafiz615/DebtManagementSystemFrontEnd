@@ -7,18 +7,16 @@ import {
   ListItem,
   Typography,
   CircularProgress,
+  Tooltip,
 } from "@mui/material";
 import { Colors } from "../config/default";
 import ScrollbarStyles from "./customScroll";
 import { useNavigate } from "react-router-dom";
-import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../constants/appConstants";
-import {
-  GetAllNotifications,
-  GetMissedCalls,
-  MarkAsReadNotifications,
-} from "../services/services";
+import { FONT_SIZE_LARGE } from "../constants/appConstants";
+import { GetMissedCalls } from "../services/services";
 import PhoneMissedIcon from "@mui/icons-material/PhoneMissed";
-import { formatDateString } from "../common";
+import { formatDateString, truncateText } from "../common";
+import CallReceivedIcon from "@mui/icons-material/CallReceived";
 
 const MissedCalls = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -129,33 +127,81 @@ const MissedCalls = () => {
                       width: "100%",
                       justifyContent: "space-between",
                       alignItems: "center",
+                      marginBottom: ".5rem",
                     }}
                   >
+                    <PhoneMissedIcon
+                      sx={{
+                        color: Colors.ORANGE_COLOR,
+                        fontSize: "16px",
+                        mr: "10px",
+                      }}
+                    />
                     <Typography
-                      sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
-                    >
-                      <PhoneMissedIcon
-                        sx={{
-                          color: Colors.ORANGE_COLOR,
-                          fontSize: "16px",
-                          mr: "10px",
-                        }}
-                      />
-                      {missedCalls?.from}
-                    </Typography>
-
-                    <Typography
-                      sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
+                      sx={{
+                        fontFamily: "Nunito",
+                        fontSize: FONT_SIZE_LARGE,
+                        fontWeight: "600",
+                      }}
                     >
                       {formatDateString(missedCalls?.time)}
                     </Typography>
                   </div>
-                  <div style={{ width: "100%" }}>
-                    <Typography
-                      sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
-                    >
-                      {missedCalls?.companyName}
-                    </Typography>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      width: "100%",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div>
+                      <Typography
+                        sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
+                      >
+                        <Tooltip title={"Call From"} placement="top-end">
+                          {missedCalls?.from}
+                        </Tooltip>
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontSize: FONT_SIZE_LARGE,
+                          fontWeight: "600",
+                        }}
+                      >
+                        <Tooltip
+                          title={missedCalls?.companyName || ""}
+                          placement="top-end"
+                        >
+                          {truncateText(missedCalls?.companyName, 15) || "--"}
+                        </Tooltip>
+                      </Typography>
+                    </div>
+                    <div>
+                      <Typography
+                        sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
+                      >
+                        <Tooltip title={"Call To"} placement="top-end">
+                          {missedCalls?.recepientNumber}
+                        </Tooltip>
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontSize: FONT_SIZE_LARGE,
+                          fontWeight: "600",
+                        }}
+                      >
+                        <Tooltip
+                          title={missedCalls?.recepientName || ""}
+                          placement="top-end"
+                        >
+                          {truncateText(missedCalls?.recepientName, 15) || "--"}
+                        </Tooltip>
+                      </Typography>
+                    </div>
                   </div>
                 </ListItem>
               ))

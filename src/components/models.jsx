@@ -897,6 +897,7 @@ export default function MuiModels({
             />
           ) : show === "sendEmailCase" ? (
             <SendEmailCase
+              caseData={caseData}
               verifiedSenders={verifiedSenders}
               buttonText={buttonText}
               handleClose={handleClose}

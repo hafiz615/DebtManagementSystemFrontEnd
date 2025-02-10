@@ -250,18 +250,6 @@ export default function ListTable({
                     Send Payment
                   </StyledTableCell>
                 )}
-                {/* {arrayName === "upcomingPayments" && (
-                  <StyledTableCell
-                    align="left"
-                    sx={{
-                      fontWeight: "700",
-                      fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
-                      paddingRight: "0.5rem !important",
-                    }}
-                  >
-                    Add Payment
-                  </StyledTableCell>
-                )} */}
               </TableRow>
             </TableHead>
             {loading ? (
@@ -368,23 +356,6 @@ export default function ListTable({
                         />
                       </StyledTableCell>
                     )}
-                    {/* {arrayName === "upcomingPayments" && (
-                      <StyledTableCell
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <MuiModels
-                          show="AddPayments"
-                          button="addPayments"
-                          width="55vw"
-                          paymentId={row?.id}
-                          caseId={row?.caseId}
-                        />
-                      </StyledTableCell>
-                    )} */}
                     {/* Display other icons like requiredIcons */}
                     {requiredIcons && (
                       <StyledTableCell
@@ -448,18 +419,6 @@ export default function ListTable({
                       </StyledTableCell>
                     )}
 
-                    {/* Handle special case for failedAuthorizations or failedPayments */}
-                    {/* {arrayName === "Upcoming Payments" && (
-                      <StyledTableCell
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          zIndex: 999,
-                        }}
-                      >
-                        fhfjfhj
-                      </StyledTableCell>
-                    )} */}
                     {(arrayName === "failedAuthorizations" ||
                       arrayName === "failedPayments") && (
                       <StyledTableCell
