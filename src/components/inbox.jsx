@@ -27,6 +27,7 @@ import {
   ArrowBack,
   FilterListOutlined,
   ReplayOutlined,
+  RemoveRedEye,
 } from "@mui/icons-material";
 import TextButton from "./button";
 import {
@@ -207,6 +208,10 @@ function Inbox() {
       const firstKey = alltasks && Object.keys(alltasks)?.[0];
       setSelectedUser(firstKey);
     }
+    setActivePreview({
+      id: 0,
+      active: false,
+    });
   }, [activeTab]);
 
   useEffect(() => {
@@ -226,6 +231,11 @@ function Inbox() {
   const navigateToCaseDetail = (id) => {
     localStorage.setItem("route", "all-cases");
     navigate(`/all-cases/${id}`);
+  };
+
+  const navigateToClientDetail = (debtorId) => {
+    localStorage.setItem("route", "list-details");
+    navigate(`/client/list-details/${debtorId}`);
   };
 
   const handleShowFile = (url) => {
@@ -710,6 +720,26 @@ function Inbox() {
                                     gap: "10px",
                                   }}
                                 >
+                                  <div>
+                                    <Tooltip title="View Client Detaills">
+                                      <IconButton
+                                        disabled={
+                                          !inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.debtorId
+                                        }
+                                        onClick={() =>
+                                          navigateToClientDetail(
+                                            inboxData?.[activeInbox]?.[
+                                              activePreview?.id
+                                            ]?.debtorId
+                                          )
+                                        }
+                                      >
+                                        <RemoveRedEye />
+                                      </IconButton>
+                                    </Tooltip>
+                                  </div>
                                   <div>
                                     <Prompt
                                       text={`Are you sure you want to add this mail into complete list?`}
