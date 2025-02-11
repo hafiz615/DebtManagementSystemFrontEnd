@@ -272,7 +272,7 @@ export default function IncomingCall({
               </Typography>
             )}
             <Typography variant="body1" sx={{ mb: 3, fontFamily: "Nunito" }}>
-              {incomingCall?.parameters?.From}
+              {incomingCall?.parameters?.From?.replace(/^client:/, "")}
             </Typography>
             {callInterval ? (
               <Box>
