@@ -43,7 +43,7 @@ const DialPad = ({ data, caseId, handleClose, fetchCalls }) => {
       return;
     }
     const params = {
-      To: phoneNumber,
+      To: `+${phoneNumber}`,
       record: true,
       CaseId: caseId,
       email: userEmail,
