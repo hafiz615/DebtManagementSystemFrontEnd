@@ -158,6 +158,13 @@ function Sms() {
   }, []);
 
   useEffect(() => {
+    setActivePreview({
+      id: 0,
+      active: false,
+    });
+  }, [activeTab]);
+
+  useEffect(() => {
     if (userSelected) {
       handleUserChange();
     }
