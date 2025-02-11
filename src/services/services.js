@@ -1910,3 +1910,25 @@ export const GetCreditorsFromDebtorId = async (debtorId) => {
     return error;
   }
 };
+export const InboxStatus = async (id, payload) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/inbox/inboxStatus/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const TaskStatus = async (id, payload) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/inbox/inboxStatus/${id}?task=true`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

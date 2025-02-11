@@ -19,12 +19,14 @@ import {
   DeleteCheckDetails,
   DeleteDraft,
   DeleteSmsDraft,
+  InboxStatus,
+  TaskStatus,
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import TextButton from "./button";
-import { IconButton } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { Delete } from "@mui/icons-material";
+import { Delete, Done } from "@mui/icons-material";
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiPaper-root": {
@@ -68,6 +70,8 @@ export default function Prompt({
   checkId,
   GetCaseDetails,
   getAllInboxData,
+  task,
+  setActivePreview,
 }) {
   const { showToast } = useToast();
   const [open, setOpen] = React.useState(false);
@@ -105,6 +109,7 @@ export default function Prompt({
     }
     setLoading(false);
   };
+
   const deleteTemplate = async () => {
     const newTemplate = {
       name: row?.name,
@@ -215,6 +220,21 @@ export default function Prompt({
     }
   };
 
+  const handleCompleteStatus = async () => {
+    if (task) {
+      const res = await TaskStatus(item);
+      if (res?.status === 200) {
+        getAllInboxData(false, false);
+      }
+    } else {
+      const res = await InboxStatus(item);
+      if (res?.status === 200) {
+        getAllInboxData(false, false);
+        setActivePreview({ id: 0, active: false });
+      }
+    }
+  };
+
   const handleConfirm = async (event) => {
     event.stopPropagation();
     setLoading(true);
@@ -241,6 +261,8 @@ export default function Prompt({
       await deleteCheckIds();
     } else if (deleting === "deleteDraft") {
       await deleteDraft();
+    } else if (deleting === "markAsComplete") {
+      await handleCompleteStatus();
     } else if (deleting === "deleteSmsDraft") {
       await deleteSmsDraft();
     } else if (deleteRole) {
@@ -257,7 +279,16 @@ export default function Prompt({
         onClick={(event) => handleClickOpen(event)}
         disabled={disabled}
       >
-        {show ? (
+        {deleting === "markAsComplete" ? (
+          <Tooltip title="Mark as complete" placement="top">
+            <Done
+              sx={{
+                color: Colors.NAVY_BLUE,
+                fontSize: "20px",
+              }}
+            />
+          </Tooltip>
+        ) : show ? (
           <Replay
             sx={{
               color: Colors.ORANGE_COLOR,
