@@ -32,11 +32,14 @@ import {
 import {
   GetAllNotifications,
   GetCreditorsFromDebtorId,
+  GetNotificationsCount,
   MarkAsReadNotifications,
   saveCaseDetailNotification,
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import TextButton from "./button";
+import { useDispatch, useSelector } from "react-redux";
+import { setCounts } from "../redux/action/action";
 
 const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -54,6 +57,8 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
   const BASE_URL = baseUrl();
   const { showToast } = useToast();
   const updatedBaseUrl = BASE_URL?.replace(/\/api$/, "");
+  const user = useSelector((state) => state?.signIn?.signIn?.user);
+  const dispatch = useDispatch();
 
   const handleCheckboxChange = (index) => {
     setSelected(index);
@@ -73,13 +78,27 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
     setLoading(false);
   };
 
+  const getNotificationsCount = async () => {
+    const response = await GetNotificationsCount();
+    if (response?.status === 200) {
+      dispatch(
+        setCounts(
+          response?.data?.data?.smsCount,
+          response?.data?.data?.emailCount
+        )
+      );
+    }
+  };
+
   useEffect(() => {
     const socketInstance = io(updatedBaseUrl);
     setSocket(socketInstance);
-
     socketInstance.on("notify", (arg) => {
-      setNotificationLength(arg?.notificationCount);
-      showToast(arg?.notification?.text, "success");
+      if (arg?.notification?.userId === user?._id) {
+        setNotificationLength(arg?.notificationCount);
+        showToast(arg?.notification?.text, "success");
+        getNotificationsCount();
+      }
     });
 
     return () => {
