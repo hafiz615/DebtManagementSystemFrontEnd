@@ -56,7 +56,7 @@ export default function NavBar({ onClick }) {
   const getNotificationsCount = async () => {
     const response = await GetNotificationsCount();
     if (response?.status === 200) {
-      setNotificationLength(response?.data?.data);
+      setNotificationLength(response?.data?.data?.count);
     }
   };
 
