@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Colors } from "../config/default";
 import {
   FONT_SIZE_LARGE,
@@ -33,6 +33,7 @@ import TextButton from "./button";
 import {
   GetAllCasesTasks,
   GetAllInbox,
+  GetAllNotifications,
   GetAllSenders,
   GetAllUsers,
   GetNotificationTemplates,
@@ -43,6 +44,7 @@ import { useNavigate } from "react-router-dom";
 import Dropdown from "./dropdown";
 import Prompt from "./prompt";
 import ThreadMessages from "./threadMessages";
+import { setCounts } from "../redux/action/action";
 
 const inputStyling = {
   width: "100%",
@@ -102,6 +104,8 @@ function Inbox() {
     active: false,
   });
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { smsCount, emailCount } = useSelector((state) => state.counts);
   const open = Boolean(anchorEl);
   const tabs = ["Inbox", "Outbox", "Draft", "Tasks"];
   const disabled = caseCode || debtorCompany || creditorCompany || negotiator;
@@ -181,6 +185,15 @@ function Inbox() {
     }
   };
 
+  const getAllNotifications = async () => {
+    dispatch(setCounts(smsCount, 0));
+    const payload = {
+      type: "EMAIL",
+      status: "none",
+    };
+    await GetAllNotifications(payload);
+  };
+
   useEffect(() => {
     if (
       searchText &&
@@ -201,6 +214,7 @@ function Inbox() {
     getAllTasks();
     getAllUser();
     getNotificationTemplates();
+    getAllNotifications();
   }, []);
 
   useEffect(() => {

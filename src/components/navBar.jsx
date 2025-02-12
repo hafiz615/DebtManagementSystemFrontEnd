@@ -32,7 +32,6 @@ export default function NavBar({ onClick }) {
     ? "calc(100vw - 250px - 4rem)"
     : "calc(100vw - 70px - 4rem)";
 
-  // Function to clear all cache (localStorage, sessionStorage)
   const clearAllCache = () => {
     localStorage.clear();
     sessionStorage.clear();
