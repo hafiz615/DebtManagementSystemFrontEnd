@@ -37,7 +37,6 @@ import {
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import TextButton from "./button";
-import Checkboxes from "./checkBox";
 
 const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
   const [anchorEl, setAnchorEl] = useState(null);
