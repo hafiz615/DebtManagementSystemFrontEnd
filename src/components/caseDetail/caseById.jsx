@@ -115,9 +115,10 @@ export default function CaseById({
   const [callLogs, setCallLogs] = useState([]);
   const [currentCallPage, setCurrentCallPage] = useState(1);
   const [totalCallPage, setTotalCallPage] = useState();
+  const [creditorsTabs, setCreditorsTabs] = useState("singleCreditor");
 
-  const fetchCalls = async () => {
-    const res = await GetCalls(id, currentCallPage);
+  const fetchCalls = async (caseId) => {
+    const res = await GetCalls(caseId || id, currentCallPage);
     if (res?.status === 200) {
       let totalPage = Math.ceil(res?.data?.data?.callCount / 10);
       setCallLogs(res?.data?.data?.calls);
@@ -429,6 +430,7 @@ export default function CaseById({
                             "&:hover": {
                               backgroundColor: Colors.BG_LIGHT_GRAY,
                             },
+
                             cursor: "pointer",
                             paddingRight: ".2rem",
                             paddingLeft: ".2rem",
@@ -625,6 +627,70 @@ export default function CaseById({
                   </Box>
                 </Modal>
               </span>
+
+              <AntTabs
+                value={creditorsTabs}
+                onChange={(e, value) => {
+                  setCreditorsTabs(value);
+
+                  // If the first tab (custom tab) is selected
+                  if (value === "singleCreditor") {
+                    const singleCreditorId = caseData?._id;
+                    if (singleCreditorId) {
+                      GetLogsById(singleCreditorId);
+                      fetchCalls(singleCreditorId);
+                    }
+                  } else {
+                    const selectedCreditor = caseData?.creditors?.[value];
+                    const caseDataId = selectedCreditor?._id;
+                    if (caseDataId) {
+                      GetLogsById(caseDataId);
+                      fetchCalls(caseDataId);
+                    }
+                  }
+                }}
+                variant="scrollable"
+                scrollButtons="auto"
+                sx={{
+                  minWidth: "100%",
+                  backgroundColor: Colors.WHITE,
+                  borderTopLeftRadius: "10px",
+                  borderTopRightRadius: "10px",
+                  m: "10px 10px",
+                }}
+              >
+                {/* Additional Tab for Single Creditor */}
+                <AntTab
+                  key="singleCreditor"
+                  label={
+                    caseData?.creditor?.businessInformation?.companyName ||
+                    "Single Creditor"
+                  }
+                  sx={{
+                    bgcolor: Colors.WHITE,
+                    width: "max-content",
+                    fontWeight: "600",
+                    height: "3.5rem",
+                  }}
+                  value="singleCreditor"
+                />
+
+                {/* Existing Creditors Tabs */}
+                {caseData?.creditors?.map((item, index) => (
+                  <AntTab
+                    key={index}
+                    label={item?.creditor?.businessInformation?.companyName}
+                    sx={{
+                      bgcolor: Colors.WHITE,
+                      width: "max-content",
+                      fontWeight: "600",
+                      height: "3.5rem",
+                    }}
+                    value={index}
+                  />
+                ))}
+              </AntTabs>
+
               <AntTabs
                 value={caseHistoryTabs}
                 onChange={(e, value) => setCaseHistoryTabs(value)}
