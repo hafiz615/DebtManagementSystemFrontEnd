@@ -4,7 +4,7 @@ os: linux
 
 files:
   - source: /
-    destination: /home/ubuntu/DebtManagementSystemFrontEnd
+    destination: /DebtManagementSystemFrontEnd
     overwrite: true
 
 permissions:

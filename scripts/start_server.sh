@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /home/ubuntu/DebtManagementSystemFrontEnd
+cd /DebtManagementSystemFrontEnd
 systemctl restart nginx
 #npm start
 #pm2 start npm --name "myapp" -- start
