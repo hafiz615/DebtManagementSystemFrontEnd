@@ -16,7 +16,7 @@ import { FONT_SIZE_LARGE } from "../constants/appConstants";
 import { GetMissedCalls } from "../services/services";
 import PhoneMissedIcon from "@mui/icons-material/PhoneMissed";
 import { formatDateString, truncateText } from "../common";
-import CallReceivedIcon from "@mui/icons-material/CallReceived";
+import { PhoneDisabled } from "@mui/icons-material";
 
 const MissedCalls = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -130,13 +130,28 @@ const MissedCalls = () => {
                       marginBottom: ".5rem",
                     }}
                   >
-                    <PhoneMissedIcon
-                      sx={{
-                        color: Colors.ORANGE_COLOR,
-                        fontSize: "16px",
-                        mr: "10px",
-                      }}
-                    />
+                    {missedCalls?.status === "no-answer" ? (
+                      <Tooltip title="Missed call" placement="top">
+                        <PhoneMissedIcon
+                          sx={{
+                            color: Colors.ORANGE_COLOR,
+                            fontSize: "16px",
+                            mr: "10px",
+                          }}
+                        />
+                      </Tooltip>
+                    ) : (
+                      <Tooltip title="Rejected call" placement="top">
+                        <PhoneDisabled
+                          sx={{
+                            color: Colors.ORANGE_COLOR,
+                            fontSize: "16px",
+                            mr: "10px",
+                          }}
+                        />
+                      </Tooltip>
+                    )}
+
                     <Typography
                       sx={{
                         fontFamily: "Nunito",
