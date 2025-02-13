@@ -602,6 +602,7 @@ function CaseDetail() {
               headerName={true}
               iconColor={Colors.BLACK}
               maxHeight="78vh"
+              caseData={caseData}
               caseDataId={id}
               GetLogsById={GetLogsById}
               data={caseData}
