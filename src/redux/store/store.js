@@ -11,6 +11,7 @@ import drawerReducer from "../reducers/drawerReducer";
 import permissionReducer from "../reducers/permissionReducer";
 import caseIdReducer from "../reducers/caseIdReducer";
 import caseCreditorIdReducer from "../reducers/caseCreditorIdReducer";
+import countsReducer from "../reducers/emailSmsCount";
 
 const middleware = [thunk];
 
@@ -21,6 +22,7 @@ const Reducer = combineReducers({
   permissions: permissionReducer,
   caseId: caseIdReducer,
   creditorCaseId: caseCreditorIdReducer,
+  counts: countsReducer,
 });
 const persistConfig = {
   key: "root",

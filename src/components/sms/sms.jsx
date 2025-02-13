@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Colors } from "../../config/default";
 import {
   FONT_SIZE_LARGE,
@@ -20,10 +20,15 @@ import {
   Tooltip,
 } from "@mui/material";
 import SearchBar from "./../searchBar";
-import { FilterListOutlined, ReplayOutlined } from "@mui/icons-material";
+import {
+  FilterListOutlined,
+  ReplayOutlined,
+  ArrowBack,
+} from "@mui/icons-material";
 import TextButton from "./../button";
 import {
   GetAllInbox,
+  GetAllNotifications,
   GetNotificationTemplates,
   GetUsers,
 } from "../../services/services";
@@ -32,6 +37,7 @@ import { useNavigate } from "react-router-dom";
 import Dropdown from "../dropdown";
 import MuiModels from "../models";
 import Prompt from "../prompt";
+import { setCounts } from "../../redux/action/action";
 
 const inputStyling = {
   width: "100%",
@@ -74,9 +80,15 @@ function Sms() {
   const [users, setUsers] = useState();
   const [userSelected, setUserSelected] = useState();
   const [notificationTemplate, setNotificationTemplate] = useState();
-  const navigate = useNavigate();
+  const [activePreview, setActivePreview] = useState({
+    id: 0,
+    active: false,
+  });
   const open = Boolean(anchorEl);
   const tabs = ["Sent", "Received", "Draft"];
+  const dispatch = useDispatch();
+  const { smsCount, emailCount } = useSelector((state) => state.counts);
+
   const disabled = caseCode || debtorCompany || creditorCompany || negotiator;
   const activeInbox =
     activeTab === "Sent"
@@ -130,6 +142,15 @@ function Sms() {
     }
   };
 
+  const getAllNotifications = async () => {
+    dispatch(setCounts(0, emailCount));
+    const payload = {
+      type: "SMS",
+      status: "none",
+    };
+    await GetAllNotifications(payload);
+  };
+
   useEffect(() => {
     if (
       searchText &&
@@ -148,7 +169,15 @@ function Sms() {
   useEffect(() => {
     getAllUser();
     getNotificationTemplates();
+    getAllNotifications();
   }, []);
+
+  useEffect(() => {
+    setActivePreview({
+      id: 0,
+      active: false,
+    });
+  }, [activeTab]);
 
   useEffect(() => {
     if (userSelected) {
@@ -475,28 +504,126 @@ function Sms() {
                     </Typography>
                   </Grid>
                 ) : (
-                  inboxData?.[activeInbox]?.map((item, index) => (
-                    <Box
-                      key={index}
-                      display="flex"
-                      flexDirection="column"
-                      marginBottom="10px"
-                    >
-                      <CardContent
-                        style={{
-                          backgroundColor: Colors.BG_LIGHT_GRAY,
-                          borderRadius: "8px",
-                          marginTop: "5px",
-                          padding: "10px",
-                        }}
+                  <>
+                    {activePreview?.active && (
+                      <Box
+                        display="flex"
+                        flexDirection="column"
+                        marginBottom="10px"
                       >
-                        <div
+                        <div>
+                          <IconButton
+                            onClick={() =>
+                              setActivePreview({ id: 0, active: false })
+                            }
+                          >
+                            <ArrowBack />
+                          </IconButton>
+                        </div>
+                        <CardContent
                           style={{
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "space-between",
+                            backgroundColor: Colors.BG_LIGHT_GRAY,
+                            borderRadius: "8px",
+                            marginTop: "5px",
+                            padding: "10px",
                           }}
                         >
+                          <div
+                            style={{
+                              width: "100%",
+                              display: "flex",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "10px",
+                              }}
+                            >
+                              <Typography sx={boldTextStyling}>
+                                {`${
+                                  inboxData?.[activeInbox]?.[activePreview?.id]
+                                    ?.debtorCompanyName || "Composed"
+                                } ${"-"} ${formatDateString(
+                                  inboxData?.[activeInbox]?.[activePreview?.id]
+                                    ?.createdAt
+                                )} `}
+                              </Typography>
+                            </div>
+                            <div
+                              style={{
+                                display: "flex",
+                                gap: "10px",
+                              }}
+                            >
+                              <div>
+                                <Prompt
+                                  text={`Are you sure you want to add this SMS into complete list?`}
+                                  item={
+                                    inboxData?.[activeInbox]?.[
+                                      activePreview?.id
+                                    ]?._id
+                                  }
+                                  deleting="markAsComplete"
+                                  getAllInboxData={getAllInboxData}
+                                  setActivePreview={setActivePreview}
+                                />
+                              </div>
+                              {activeTab === "Draft" && (
+                                <div
+                                  style={{ display: "flex", height: "2rem" }}
+                                >
+                                  <MuiModels
+                                    show="sendEmailCase"
+                                    headerName={true}
+                                    from={
+                                      inboxData?.[activeInbox]?.[
+                                        activePreview?.id
+                                      ]?.to
+                                    }
+                                    to={
+                                      inboxData?.[activeInbox]?.[
+                                        activePreview?.id
+                                      ]?.from
+                                    }
+                                    content={
+                                      inboxData?.[activeInbox]?.[
+                                        activePreview?.id
+                                      ]?.text
+                                    }
+                                    buttonName="draft"
+                                    iconColor={Colors.BLACK}
+                                    maxHeight="78vh"
+                                    caseDataId={
+                                      inboxData?.[activeInbox]?.[
+                                        activePreview?.id
+                                      ]?.caseId
+                                    }
+                                    getAllInboxData={getAllInboxData}
+                                    updateDraft={true}
+                                    draftId={
+                                      inboxData?.[activeInbox]?.[
+                                        activePreview?.id
+                                      ]?._id
+                                    }
+                                    data={notificationTemplate}
+                                  />
+                                  <Prompt
+                                    text="Are you sure you want to remove this draft?"
+                                    item={
+                                      inboxData?.[activeInbox]?.[
+                                        activePreview?.id
+                                      ]?._id
+                                    }
+                                    deleting="deleteSmsDraft"
+                                    getAllInboxData={getAllInboxData}
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          </div>
                           <div
                             style={{
                               display: "flex",
@@ -504,10 +631,11 @@ function Sms() {
                               gap: "10px",
                             }}
                           >
-                            <Typography sx={boldTextStyling}>
-                              {`${
-                                item?.debtorCompanyName || "Composed At"
-                              } ${"-"} ${formatDateString(item?.createdAt)} `}
+                            <Typography sx={boldTextStyling}>To:</Typography>
+
+                            <Typography sx={fontStyling}>
+                              {inboxData?.[activeInbox]?.[activePreview?.id]
+                                ?.to || "-"}
                             </Typography>
                           </div>
                           <div
@@ -516,99 +644,108 @@ function Sms() {
                               gap: "10px",
                             }}
                           >
-                            {activeTab === "Draft" && (
-                              <div style={{ display: "flex", height: "2rem" }}>
-                                <MuiModels
-                                  show="sendEmailCase"
-                                  headerName={true}
-                                  from={item?.to}
-                                  to={item?.from}
-                                  content={item?.text}
-                                  buttonName="draft"
-                                  iconColor={Colors.BLACK}
-                                  maxHeight="78vh"
-                                  caseDataId={item?.caseId}
-                                  getAllInboxData={getAllInboxData}
-                                  updateDraft={true}
-                                  draftId={item?._id}
-                                  data={notificationTemplate}
-                                />
-                                <Prompt
-                                  text="Are you sure you want to remove this draft?"
-                                  item={item?._id}
-                                  deleting="deleteSmsDraft"
-                                  getAllInboxData={getAllInboxData}
-                                />
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "10px",
-                          }}
-                        >
-                          <Typography sx={boldTextStyling}>To:</Typography>
-
-                          <Typography sx={fontStyling}>
-                            <Tooltip placement="top" title={item?.to || "-"}>
-                              {item?.to && item?.to?.length > 30
-                                ? `${item?.to?.slice(0, 70)}...`
-                                : item?.to || "-"}
-                            </Tooltip>
-                          </Typography>
-                        </div>
-                        <div
-                          style={{
-                            display: "flex",
-                            gap: "10px",
-                          }}
-                        >
-                          <Typography
-                            sx={{
-                              ...boldTextStyling,
-                            }}
-                          >
-                            From:
-                          </Typography>
-                          <Typography sx={fontStyling}>
-                            {item?.from || "-"}
-                          </Typography>
-                        </div>
-
-                        <div>
-                          {item?.creditorCompanyName && (
-                            <div style={{ display: "flex", gap: "10px" }}>
-                              <Typography sx={boldTextStyling}>
-                                Creditor Company Name:
-                              </Typography>
-                              <Typography sx={fontStyling}>
-                                {item?.creditorCompanyName || "-"}
-                              </Typography>
-                            </div>
-                          )}
-                          {item?.negotiatorName && (
-                            <div style={{ display: "flex", gap: "10px" }}>
-                              <Typography sx={boldTextStyling}>
-                                Negotiator Name:
-                              </Typography>
-                              <Typography sx={fontStyling}>
-                                {item?.negotiatorName || "-"}
-                              </Typography>
-                            </div>
-                          )}
-                          <Typography sx={boldTextStyling}>Content:</Typography>
-                          <div>
+                            <Typography
+                              sx={{
+                                ...boldTextStyling,
+                              }}
+                            >
+                              From:
+                            </Typography>
                             <Typography sx={fontStyling}>
-                              {item?.text || "-"}
+                              {inboxData?.[activeInbox]?.[activePreview?.id]
+                                ?.from || "-"}
                             </Typography>
                           </div>
-                        </div>
-                      </CardContent>
-                    </Box>
-                  ))
+                          <div>
+                            {inboxData?.[activeInbox]?.[activePreview?.id]
+                              ?.creditorCompanyName && (
+                              <div style={{ display: "flex", gap: "10px" }}>
+                                <Typography sx={boldTextStyling}>
+                                  Creditor Company Name:
+                                </Typography>
+                                <Typography sx={fontStyling}>
+                                  {inboxData?.[activeInbox]?.[activePreview?.id]
+                                    ?.creditorCompanyName || "-"}
+                                </Typography>
+                              </div>
+                            )}
+                            {inboxData?.[activeInbox]?.[activePreview?.id]
+                              ?.negotiatorName && (
+                              <div style={{ display: "flex", gap: "10px" }}>
+                                <Typography sx={boldTextStyling}>
+                                  Negotiator Name:
+                                </Typography>
+                                <Typography sx={fontStyling}>
+                                  {inboxData?.[activeInbox]?.[activePreview?.id]
+                                    ?.negotiatorName || "-"}
+                                </Typography>
+                              </div>
+                            )}
+                            <Typography sx={boldTextStyling}>
+                              Content:
+                            </Typography>
+                            <div>
+                              <Typography sx={fontStyling}>
+                                {inboxData?.[activeInbox]?.[activePreview?.id]
+                                  ?.text || "-"}
+                              </Typography>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Box>
+                    )}
+                    {inboxData?.[activeInbox]?.map((item, index) => (
+                      <Box
+                        key={index}
+                        display="flex"
+                        flexDirection="column"
+                        marginBottom="10px"
+                      >
+                        {!activePreview?.active && (
+                          <CardContent
+                            style={{
+                              backgroundColor: Colors.BG_LIGHT_GRAY,
+                              borderRadius: "8px",
+                              marginTop: "5px",
+                              padding: "10px",
+                              cursor: "pointer",
+                            }}
+                            onClick={() =>
+                              setActivePreview({
+                                id: index,
+                                active: true,
+                              })
+                            }
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                width: "100%",
+                                justifyContent: "space-between",
+                              }}
+                            >
+                              <Typography
+                                sx={{ ...boldTextStyling, width: "18%" }}
+                              >
+                                {item?.debtorCompanyName || "Composed"}
+                              </Typography>
+                              <Typography
+                                sx={{ ...boldTextStyling, width: "69%" }}
+                              >
+                                {item?.text}
+                              </Typography>
+                              <Typography
+                                sx={{ ...boldTextStyling, width: "10%" }}
+                              >
+                                {formatDateString(item?.createdAt)}
+                              </Typography>
+                            </div>
+                          </CardContent>
+                        )}
+                      </Box>
+                    ))}
+                  </>
                 )}
               </Box>
             )}

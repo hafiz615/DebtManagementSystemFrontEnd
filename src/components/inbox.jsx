@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Colors } from "../config/default";
 import {
   FONT_SIZE_LARGE,
@@ -17,28 +17,23 @@ import {
   IconButton,
   CircularProgress,
   Menu,
-  Tabs,
-  Tab,
-  Divider,
   Tooltip,
   Button,
-  Select,
-  MenuItem,
-  colors,
 } from "@mui/material";
 import MuiModels from "./models";
 import SearchBar from "./searchBar";
 import {
   Attachment,
-  ChevronRight,
-  ExpandMore,
+  ArrowBack,
   FilterListOutlined,
   ReplayOutlined,
+  RemoveRedEye,
 } from "@mui/icons-material";
 import TextButton from "./button";
 import {
   GetAllCasesTasks,
   GetAllInbox,
+  GetAllNotifications,
   GetAllSenders,
   GetAllUsers,
   GetNotificationTemplates,
@@ -49,6 +44,7 @@ import { useNavigate } from "react-router-dom";
 import Dropdown from "./dropdown";
 import Prompt from "./prompt";
 import ThreadMessages from "./threadMessages";
+import { setCounts } from "../redux/action/action";
 
 const inputStyling = {
   width: "100%",
@@ -103,7 +99,13 @@ function Inbox() {
   const [users, setUsers] = useState();
   const [userSelected, setUserSelected] = useState();
   const [notificationTemplate, setNotificationTemplate] = useState();
+  const [activePreview, setActivePreview] = useState({
+    id: 0,
+    active: false,
+  });
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { smsCount, emailCount } = useSelector((state) => state.counts);
   const open = Boolean(anchorEl);
   const tabs = ["Inbox", "Outbox", "Draft", "Tasks"];
   const disabled = caseCode || debtorCompany || creditorCompany || negotiator;
@@ -183,6 +185,15 @@ function Inbox() {
     }
   };
 
+  const getAllNotifications = async () => {
+    dispatch(setCounts(smsCount, 0));
+    const payload = {
+      type: "EMAIL",
+      status: "none",
+    };
+    await GetAllNotifications(payload);
+  };
+
   useEffect(() => {
     if (
       searchText &&
@@ -203,6 +214,7 @@ function Inbox() {
     getAllTasks();
     getAllUser();
     getNotificationTemplates();
+    getAllNotifications();
   }, []);
 
   useEffect(() => {
@@ -210,6 +222,10 @@ function Inbox() {
       const firstKey = alltasks && Object.keys(alltasks)?.[0];
       setSelectedUser(firstKey);
     }
+    setActivePreview({
+      id: 0,
+      active: false,
+    });
   }, [activeTab]);
 
   useEffect(() => {
@@ -229,6 +245,11 @@ function Inbox() {
   const navigateToCaseDetail = (id) => {
     localStorage.setItem("route", "all-cases");
     navigate(`/all-cases/${id}`);
+  };
+
+  const navigateToClientDetail = (debtorId) => {
+    localStorage.setItem("route", "list-details");
+    navigate(`/client/list-details/${debtorId}`);
   };
 
   const handleShowFile = (url) => {
@@ -598,304 +619,450 @@ function Inbox() {
                       </Typography>
                     </Grid>
                   ) : (
-                    inboxData?.[activeInbox]?.map((item, index) => (
+                    <>
                       <Box
-                        key={index}
                         display="flex"
                         flexDirection="column"
                         marginBottom="10px"
                       >
-                        <CardContent
-                          style={{
-                            backgroundColor: Colors.BG_LIGHT_GRAY,
-                            borderRadius: "8px",
-                            marginTop: "5px",
-                            padding: "10px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                            }}
+                        {activePreview?.active && (
+                          <Box
+                            display="flex"
+                            flexDirection="column"
+                            marginBottom="10px"
                           >
                             <div>
-                              <div
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  gap: "10px",
-                                }}
+                              <IconButton
+                                onClick={() =>
+                                  setActivePreview({ id: 0, active: false })
+                                }
                               >
-                                <Typography sx={boldTextStyling}>
-                                  {`${
-                                    item?.debtorCompanyName || "Composed At"
-                                  } ${"-"} ${formatDateString(
-                                    item?.createdAt
-                                  )} `}
-                                </Typography>
-                              </div>
-                              <div
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  gap: "10px",
-                                }}
-                              >
-                                <Typography sx={boldTextStyling}>
-                                  To:
-                                </Typography>
-
-                                <Typography sx={fontStyling}>
-                                  <Tooltip
-                                    placement="top"
-                                    title={item?.to || "-"}
-                                  >
-                                    {item?.to && item?.to?.length > 30
-                                      ? `${item?.to?.slice(0, 70)}...`
-                                      : item?.to || "-"}
-                                  </Tooltip>
-                                </Typography>
-                              </div>
-                              <div
-                                style={{
-                                  display: "flex",
-                                  gap: "10px",
-                                }}
-                              >
-                                <Typography
-                                  sx={{
-                                    ...boldTextStyling,
-                                  }}
-                                >
-                                  From:
-                                </Typography>
-                                <Typography sx={fontStyling}>
-                                  {item?.from || "-"}
-                                </Typography>
-                              </div>
-                              <div
-                                style={{
-                                  display: "flex",
-                                  gap: "10px",
-                                }}
-                              >
-                                <Typography sx={boldTextStyling}>
-                                  Subject:
-                                </Typography>
-
-                                <Typography sx={fontStyling}>
-                                  {item?.subject || "-"}
-                                </Typography>
-                              </div>
+                                <ArrowBack />
+                              </IconButton>
                             </div>
-
-                            <div
+                            <CardContent
                               style={{
-                                display: "flex",
-                                gap: "10px",
+                                backgroundColor: Colors.BG_LIGHT_GRAY,
+                                borderRadius: "8px",
+                                marginTop: "5px",
+                                padding: "10px",
                               }}
                             >
-                              {item?.type === "received" && (
-                                <MuiModels
-                                  show="sendEmailCase"
-                                  replyButton={true}
-                                  from={item?.from}
-                                  to={item?.to}
-                                  content={item?.textAsHtml}
-                                  attachment={item?.attachments}
-                                  emailSubject={item?.subject}
-                                  emailOrCompose={
-                                    item?.caseId ? "email" : "compose"
-                                  }
-                                  buttonName="sendEmailCase"
-                                  iconColor={Colors.BLACK}
-                                  maxHeight="78vh"
-                                  replyCheck={true}
-                                  caseDataId={item?.caseId}
-                                  getAllInboxData={getAllInboxData}
-                                  data={notificationTemplate}
-                                  threadId={item?.threadId}
-                                />
-                              )}
-                              {activeTab === "Draft" && (
-                                <div
-                                  style={{ display: "flex", height: "2rem" }}
-                                >
-                                  <MuiModels
-                                    show="sendEmailCase"
-                                    from={item?.to}
-                                    to={item?.from}
-                                    content={item?.text}
-                                    emailSubject={item?.subject}
-                                    attachment={item?.attachments}
-                                    buttonName="draft"
-                                    iconColor={Colors.BLACK}
-                                    maxHeight="78vh"
-                                    replyCheck={true}
-                                    caseDataId={item?.caseId}
-                                    getAllInboxData={getAllInboxData}
-                                    emailOrCompose={
-                                      item?.caseId ? "email" : "compose"
-                                    }
-                                    updateDraft={true}
-                                    draftId={item?._id}
-                                    data={notificationTemplate}
-                                    threadId={item?.threadId}
-                                  />
-                                  <Prompt
-                                    text="Are you sure you want to remove this draft?"
-                                    item={item?._id}
-                                    deleting="deleteDraft"
-                                    getAllInboxData={getAllInboxData}
-                                  />
-                                </div>
-                              )}
-                            </div>
-                          </div>
-
-                          <div>
-                            {item?.creditorCompanyName && (
-                              <div style={{ display: "flex", gap: "10px" }}>
-                                <Typography sx={boldTextStyling}>
-                                  Creditor Company Name:
-                                </Typography>
-                                <Typography sx={fontStyling}>
-                                  {item?.creditorCompanyName || "-"}
-                                </Typography>
-                              </div>
-                            )}
-                            {item?.negotiatorName && (
-                              <div style={{ display: "flex", gap: "10px" }}>
-                                <Typography sx={boldTextStyling}>
-                                  Negotiator Name:
-                                </Typography>
-                                <Typography sx={fontStyling}>
-                                  {item?.negotiatorName || "-"}
-                                </Typography>
-                              </div>
-                            )}
-                            <Typography sx={boldTextStyling}>
-                              Content:
-                            </Typography>
-                            <div>
-                              <Typography
-                                sx={fontStyling}
-                                dangerouslySetInnerHTML={{
-                                  __html:
-                                    activeTab === "Draft"
-                                      ? item?.text
-                                      : item?.textAsHtml,
-                                }}
-                              />
-                            </div>
-                            <div>
                               <div
                                 style={{
                                   display: "flex",
-                                  gap: "10px",
-                                  flexWrap: "wrap",
+                                  justifyContent: "space-between",
                                 }}
                               >
-                                {item?.attachments?.map((attachment) => (
-                                  <Grid
-                                    container
-                                    sx={{
+                                <div>
+                                  <div
+                                    style={{
                                       display: "flex",
-                                      border: `1px solid ${Colors.SKY_BLUE}`,
-                                      width: "20%",
-                                      borderRadius: "10px",
-                                      justifyContent: "space-between",
                                       alignItems: "center",
-                                      padding: "10px",
-                                      cursor: "pointer",
-                                      transition: "all 0.3s ease",
-                                      "&:hover": {
-                                        backgroundColor: Colors.lIGHT_PURPLE,
-                                      },
+                                      gap: "10px",
                                     }}
-                                    onClick={() =>
-                                      handleShowFile(attachment?.url)
-                                    }
+                                  >
+                                    <Typography sx={boldTextStyling}>
+                                      {`${
+                                        inboxData?.[activeInbox]?.[
+                                          activePreview?.id
+                                        ]?.debtorCompanyName || "Composed"
+                                      } ${"-"} ${formatDateString(
+                                        inboxData?.[activeInbox]?.[
+                                          activePreview?.id
+                                        ]?.createdAt
+                                      )} `}
+                                    </Typography>
+                                  </div>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: "10px",
+                                    }}
+                                  >
+                                    <Typography sx={boldTextStyling}>
+                                      To:
+                                    </Typography>
+
+                                    <Typography sx={fontStyling}>
+                                      {inboxData?.[activeInbox]?.[
+                                        activePreview?.id
+                                      ]?.to || "-"}
+                                    </Typography>
+                                  </div>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      gap: "10px",
+                                    }}
                                   >
                                     <Typography
                                       sx={{
-                                        fontSize: "13px",
-                                        fontFamily: "Nunito",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: "10px",
+                                        ...boldTextStyling,
                                       }}
                                     >
-                                      <Attachment
-                                        sx={{ color: Colors.SKY_BLUE }}
-                                      />
-                                      {attachment?.originalFileName}
+                                      From:
                                     </Typography>
-                                  </Grid>
-                                ))}
-                              </div>
-                            </div>
-                            {expandedMessages[index] && (
-                              <Box>
-                                {item?.previousMessages?.map(
-                                  (message, index) => (
-                                    <div style={{ display: "flex" }}>
-                                      {Array.from({ length: index + 1 }).map(
-                                        (_, repeatIndex) => (
-                                          <div
-                                            key={repeatIndex}
-                                            style={{
-                                              border: `1px solid ${Colors.DIM_LIGHT_GRAY}`,
-                                              margin: "6px",
-                                              borderRadius: "10px",
-                                            }}
-                                          ></div>
-                                        )
-                                      )}
-                                      <Box
-                                        key={index}
-                                        sx={{
-                                          padding: "15px",
-                                          margin: "10px 0",
-                                          boxShadow:
-                                            "0px 0px 4px rgba(0, 0, 0, 0.2)",
-                                          borderRadius: "10px",
-                                          width: "100%",
-                                        }}
-                                      >
-                                        <ThreadMessages data={message} />
-                                      </Box>
-                                    </div>
-                                  )
-                                )}
-                              </Box>
-                            )}
-                            {item?.previousMessages?.length > 0 && (
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  cursor: "pointer",
-                                  justifyContent: "center",
-                                  mt: "10px",
-                                }}
-                              >
-                                <Typography
-                                  sx={{
-                                    color: Colors.SKY_BLUE,
-                                    fontSize: FONT_SIZE_MEDIUM,
+                                    <Typography sx={fontStyling}>
+                                      {inboxData?.[activeInbox]?.[
+                                        activePreview?.id
+                                      ]?.from || "-"}
+                                    </Typography>
+                                  </div>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      gap: "10px",
+                                    }}
+                                  >
+                                    <Typography sx={boldTextStyling}>
+                                      Subject:
+                                    </Typography>
+
+                                    <Typography sx={fontStyling}>
+                                      {inboxData?.[activeInbox]?.[
+                                        activePreview?.id
+                                      ]?.subject || "-"}
+                                    </Typography>
+                                  </div>
+                                </div>
+
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    gap: "10px",
                                   }}
-                                  onClick={() => handleToggleContent(index)}
                                 >
-                                  {expandedMessages[index]
-                                    ? "See Less..."
-                                    : "See More..."}
+                                  <div>
+                                    <Tooltip title="View Client Detaills">
+                                      <IconButton
+                                        disabled={
+                                          !inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.debtorId
+                                        }
+                                        onClick={() =>
+                                          navigateToClientDetail(
+                                            inboxData?.[activeInbox]?.[
+                                              activePreview?.id
+                                            ]?.debtorId
+                                          )
+                                        }
+                                      >
+                                        <RemoveRedEye />
+                                      </IconButton>
+                                    </Tooltip>
+                                  </div>
+                                  <div>
+                                    <Prompt
+                                      text={`Are you sure you want to add this mail into complete list?`}
+                                      item={
+                                        inboxData?.[activeInbox]?.[
+                                          activePreview?.id
+                                        ]?._id
+                                      }
+                                      deleting="markAsComplete"
+                                      getAllInboxData={getAllInboxData}
+                                      setActivePreview={setActivePreview}
+                                    />
+                                  </div>
+                                  {inboxData?.[activeInbox]?.[activePreview?.id]
+                                    ?.type === "received" && (
+                                    <MuiModels
+                                      show="sendEmailCase"
+                                      replyButton={true}
+                                      from={
+                                        inboxData?.[activeInbox]?.[
+                                          activePreview?.id
+                                        ]?.from
+                                      }
+                                      to={
+                                        inboxData?.[activeInbox]?.[
+                                          activePreview?.id
+                                        ]?.to
+                                      }
+                                      content={
+                                        inboxData?.[activeInbox]?.[
+                                          activePreview?.id
+                                        ]?.textAsHtml
+                                      }
+                                      attachment={
+                                        inboxData?.[activeInbox]?.[
+                                          activePreview?.id
+                                        ]?.attachments
+                                      }
+                                      emailSubject={
+                                        inboxData?.[activeInbox]?.[
+                                          activePreview?.id
+                                        ]?.subject
+                                      }
+                                      emailOrCompose={
+                                        inboxData?.[activeInbox]?.[
+                                          activePreview?.id
+                                        ]?.caseId
+                                          ? "email"
+                                          : "compose"
+                                      }
+                                      buttonName="sendEmailCase"
+                                      iconColor={Colors.BLACK}
+                                      maxHeight="78vh"
+                                      replyCheck={true}
+                                      caseDataId={
+                                        inboxData?.[activeInbox]?.[
+                                          activePreview?.id
+                                        ]?.caseId
+                                      }
+                                      getAllInboxData={getAllInboxData}
+                                      data={notificationTemplate}
+                                      threadId={
+                                        inboxData?.[activeInbox]?.[
+                                          activePreview?.id
+                                        ]?.threadId
+                                      }
+                                    />
+                                  )}
+                                  {activeTab === "Draft" && (
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        height: "2rem",
+                                      }}
+                                    >
+                                      <MuiModels
+                                        show="sendEmailCase"
+                                        from={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.to
+                                        }
+                                        to={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.from
+                                        }
+                                        content={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.text
+                                        }
+                                        emailSubject={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.subject
+                                        }
+                                        attachment={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.attachments
+                                        }
+                                        buttonName="draft"
+                                        iconColor={Colors.BLACK}
+                                        maxHeight="78vh"
+                                        replyCheck={true}
+                                        caseDataId={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.caseId
+                                        }
+                                        getAllInboxData={getAllInboxData}
+                                        emailOrCompose={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.caseId
+                                            ? "email"
+                                            : "compose"
+                                        }
+                                        updateDraft={true}
+                                        draftId={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?._id
+                                        }
+                                        data={notificationTemplate}
+                                        threadId={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.threadId
+                                        }
+                                      />
+                                      <Prompt
+                                        text="Are you sure you want to remove this draft?"
+                                        item={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?._id
+                                        }
+                                        deleting="deleteDraft"
+                                        getAllInboxData={getAllInboxData}
+                                      />
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div>
+                                {inboxData?.[activeInbox]?.[activePreview?.id]
+                                  ?.creditorCompanyName && (
+                                  <div style={{ display: "flex", gap: "10px" }}>
+                                    <Typography sx={boldTextStyling}>
+                                      Creditor Company Name:
+                                    </Typography>
+                                    <Typography sx={fontStyling}>
+                                      {inboxData?.[activeInbox]?.[
+                                        activePreview?.id
+                                      ]?.creditorCompanyName || "-"}
+                                    </Typography>
+                                  </div>
+                                )}
+                                {inboxData?.[activeInbox]?.[activePreview?.id]
+                                  ?.negotiatorName && (
+                                  <div style={{ display: "flex", gap: "10px" }}>
+                                    <Typography sx={boldTextStyling}>
+                                      Negotiator Name:
+                                    </Typography>
+                                    <Typography sx={fontStyling}>
+                                      {inboxData?.[activeInbox]?.[
+                                        activePreview?.id
+                                      ]?.negotiatorName || "-"}
+                                    </Typography>
+                                  </div>
+                                )}
+                                <Typography sx={boldTextStyling}>
+                                  Content:
                                 </Typography>
-                              </Box>
-                            )}
-                          </div>
-                        </CardContent>
+                                <div>
+                                  <Typography
+                                    sx={fontStyling}
+                                    dangerouslySetInnerHTML={{
+                                      __html:
+                                        activeTab === "Draft"
+                                          ? inboxData?.[activeInbox]?.[
+                                              activePreview?.id
+                                            ]?.text
+                                          : inboxData?.[activeInbox]?.[
+                                              activePreview?.id
+                                            ]?.textAsHtml,
+                                    }}
+                                  />
+                                </div>
+                                <div>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      gap: "10px",
+                                      flexWrap: "wrap",
+                                    }}
+                                  >
+                                    {inboxData?.[activeInbox]?.[
+                                      activePreview?.id
+                                    ]?.attachments?.map((attachment) => (
+                                      <Grid
+                                        container
+                                        sx={{
+                                          display: "flex",
+                                          border: `1px solid ${Colors.SKY_BLUE}`,
+                                          width: "20%",
+                                          borderRadius: "10px",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                          padding: "10px",
+                                          cursor: "pointer",
+                                          transition: "all 0.3s ease",
+                                          "&:hover": {
+                                            backgroundColor:
+                                              Colors.lIGHT_PURPLE,
+                                          },
+                                        }}
+                                        onClick={() =>
+                                          handleShowFile(attachment?.url)
+                                        }
+                                      >
+                                        <Typography
+                                          sx={{
+                                            fontSize: "13px",
+                                            fontFamily: "Nunito",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: "10px",
+                                          }}
+                                        >
+                                          <Attachment
+                                            sx={{ color: Colors.SKY_BLUE }}
+                                          />
+                                          {attachment?.originalFileName}
+                                        </Typography>
+                                      </Grid>
+                                    ))}
+                                  </div>
+                                </div>
+                                {expandedMessages[activePreview?.id] && (
+                                  <Box>
+                                    {inboxData?.[activeInbox]?.[
+                                      activePreview?.id
+                                    ]?.previousMessages?.map(
+                                      (message, index) => (
+                                        <div style={{ display: "flex" }}>
+                                          {Array.from({
+                                            length: index + 1,
+                                          }).map((_, repeatIndex) => (
+                                            <div
+                                              key={repeatIndex}
+                                              style={{
+                                                border: `1px solid ${Colors.DIM_LIGHT_GRAY}`,
+                                                margin: "6px",
+                                                borderRadius: "10px",
+                                              }}
+                                            ></div>
+                                          ))}
+                                          <Box
+                                            key={index}
+                                            sx={{
+                                              padding: "15px",
+                                              margin: "10px 0",
+                                              boxShadow:
+                                                "0px 0px 4px rgba(0, 0, 0, 0.2)",
+                                              borderRadius: "10px",
+                                              width: "100%",
+                                            }}
+                                          >
+                                            <ThreadMessages data={message} />
+                                          </Box>
+                                        </div>
+                                      )
+                                    )}
+                                  </Box>
+                                )}
+                                {inboxData?.[activeInbox]?.[activePreview?.id]
+                                  ?.previousMessages?.length > 0 && (
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      cursor: "pointer",
+                                      justifyContent: "center",
+                                      mt: "10px",
+                                    }}
+                                  >
+                                    <Typography
+                                      sx={{
+                                        color: Colors.SKY_BLUE,
+                                        fontSize: FONT_SIZE_MEDIUM,
+                                      }}
+                                      onClick={() =>
+                                        handleToggleContent(activePreview?.id)
+                                      }
+                                    >
+                                      {expandedMessages[activePreview?.id]
+                                        ? "See Less..."
+                                        : "See More..."}
+                                    </Typography>
+                                  </Box>
+                                )}
+                              </div>
+                            </CardContent>
+                          </Box>
+                        )}
                         {showViewer && (
                           <div
                             style={{
@@ -943,7 +1110,58 @@ function Inbox() {
                           </div>
                         )}
                       </Box>
-                    ))
+
+                      {!activePreview?.active &&
+                        inboxData?.[activeInbox]?.map((item, index) => (
+                          <Box
+                            key={index}
+                            display="flex"
+                            flexDirection="column"
+                            marginBottom="10px"
+                          >
+                            <CardContent
+                              style={{
+                                backgroundColor: Colors.BG_LIGHT_GRAY,
+                                borderRadius: "8px",
+                                marginTop: "5px",
+                                padding: "10px",
+                                cursor: "pointer",
+                              }}
+                              onClick={() =>
+                                setActivePreview({
+                                  id: index,
+                                  active: true,
+                                })
+                              }
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  width: "100%",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <Typography
+                                  sx={{ ...boldTextStyling, width: "18%" }}
+                                >
+                                  {item?.debtorCompanyName || "Composed"}
+                                </Typography>
+                                <Typography
+                                  sx={{ ...boldTextStyling, width: "69%" }}
+                                >
+                                  {item?.subject}
+                                </Typography>
+                                <Typography
+                                  sx={{ ...boldTextStyling, width: "10%" }}
+                                >
+                                  {formatDateString(item?.createdAt)}
+                                </Typography>
+                              </div>
+                            </CardContent>
+                          </Box>
+                        ))}
+                    </>
                   )}
                 </Box>
               )
@@ -982,11 +1200,28 @@ function Inbox() {
                         cursor: "pointer",
                       }}
                     >
-                      <div style={{ display: "flex", gap: "10px" }}>
-                        <Typography sx={boldTextStyling}>Title:</Typography>
-                        <Typography sx={fontStyling}>
-                          {tasks?.title || "-"}
-                        </Typography>
+                      <div
+                        style={{
+                          width: "100%",
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div style={{ display: "flex", gap: "10px" }}>
+                          <Typography sx={boldTextStyling}>Title:</Typography>
+                          <Typography sx={fontStyling}>
+                            {tasks?.title || "-"}
+                          </Typography>
+                        </div>
+                        <div>
+                          <Prompt
+                            text={`Are you sure you want to add this task into complete list?`}
+                            item={tasks?._id}
+                            deleting="markAsComplete"
+                            task={true}
+                            getAllInboxData={getAllTasks}
+                          />
+                        </div>
                       </div>
                       <div style={{ display: "flex", gap: "10px" }}>
                         <Typography sx={boldTextStyling}>Assignee:</Typography>

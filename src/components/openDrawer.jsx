@@ -88,6 +88,8 @@ export default function PersistentDrawerLeft({ children }) {
   const open = useSelector((state) => state.drawer.open);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { smsCount, emailCount } = useSelector((state) => state.counts);
 
   useEffect(() => {
     if (smallScreen) {
@@ -105,7 +107,6 @@ export default function PersistentDrawerLeft({ children }) {
     dispatch(closeDrawer());
   };
 
-  const navigate = useNavigate();
   useEffect(() => {
     const handleItemClick = (text) => {
       if (text !== "bulk-cases") {
@@ -346,6 +347,25 @@ export default function PersistentDrawerLeft({ children }) {
                         : Colors.DARK_GRAY,
                   }}
                 />
+                {(text === "Mailbox" && emailCount > 0) ||
+                (text === "Sms" && smsCount > 0) ? (
+                  <ListItemText
+                    primary={
+                      text === "Mailbox"
+                        ? `(${emailCount})`
+                        : text === "Sms"
+                        ? `(${smsCount})`
+                        : ""
+                    }
+                    sx={{
+                      opacity: open ? 1 : 0,
+                      fontFamily: "Nunito !important",
+                      color: Colors.ORANGE_COLOR,
+                    }}
+                  />
+                ) : (
+                  ""
+                )}
               </ListItemButton>
             </ListItem>
           ))}

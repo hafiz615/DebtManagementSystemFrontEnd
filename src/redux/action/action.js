@@ -53,3 +53,10 @@ export const setCaseCreditorId = (id) => ({
   type: CREDITOR_ID,
   payload: id,
 });
+
+export const SET_COUNTS = "SET_COUNTS";
+
+export const setCounts = (smsCount, emailCount) => ({
+  type: SET_COUNTS,
+  payload: { smsCount, emailCount },
+});

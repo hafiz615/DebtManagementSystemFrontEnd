@@ -137,11 +137,13 @@ export default function SendEmailCase({
   attachment,
   threadId,
   loginUser,
+  caseData,
 }) {
+  const toPhoneClientNo = caseData?.debtor?.basicInformation?.phone;
   const [loading, setLoading] = useState(false);
   const [draftLoading, setDraftLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [sendTo, setSendTo] = useState(from || "");
+  const [sendTo, setSendTo] = useState(from || toPhoneClientNo || "");
   const [bulkEmail, setBulkEmail] = useState(data?.allEmails || []);
   const [selectedEmail, setSelectedEmail] = useState("");
   const [bulkEmailTemplates, setBulkEmailTemplates] = useState(
