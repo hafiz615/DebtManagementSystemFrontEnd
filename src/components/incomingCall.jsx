@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import CallIcon from "@mui/icons-material/Call";
 import CallEndIcon from "@mui/icons-material/CallEnd";
-
 import {
   Button,
   Grid,
@@ -15,11 +14,9 @@ import {
   MenuItem,
 } from "@mui/material";
 import { Colors } from "../config/default";
-import Dropdown from "./dropdown";
 import TextButton from "./button";
-import { GetAllUserCases, UpdateCallByCase } from "../services/services";
+import { UpdateCallByCase } from "../services/services";
 import { useToast } from "../toast/toastContext";
-import { useEffect } from "react";
 import { ArrowRight, ExpandMore } from "@mui/icons-material";
 import { FONT_SIZE_LARGE, FONT_SIZE_MEDIUM } from "../constants/appConstants";
 

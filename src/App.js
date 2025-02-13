@@ -1,6 +1,6 @@
 import "./App.css";
 
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import Auth from "./pages/auth";
 import UserListPage from "./pages/userListPage";
 import HomePage from "./pages/homePage";
@@ -38,6 +38,7 @@ function App() {
   const [callerName, setCallerName] = useState();
   const [caseMenuActive, setCaseMenuActive] = useState(false);
   const [token, setToken] = useState(localStorage.getItem("twilioToken"));
+  const navigate = useNavigate();
 
   const getCreditorCompanies = async () => {
     const res = await GetAllUserCases();
@@ -54,12 +55,16 @@ function App() {
   };
 
   const getNameFromCall = async (from) => {
-    const payoload = {
-      from: from.replace(/^client:\+1/, ""),
+    const payload = {
+      from: from?.replace(/^client:\+1/, ""),
     };
-    const callerNameRes = await GetCallerName(payoload);
+    const callerNameRes = await GetCallerName(payload);
     if (callerNameRes?.status === 200) {
       setCallerName(callerNameRes?.data?.data);
+      if (callerNameRes?.data?.data?.caseId) {
+        localStorage.setItem("route", "all-cases");
+        navigate(`/all-cases/${callerNameRes?.data?.data?.caseId}`);
+      }
     }
   };
 
