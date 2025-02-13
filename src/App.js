@@ -56,7 +56,7 @@ function App() {
 
   const getNameFromCall = async (from) => {
     const payload = {
-      from: from?.replace(/^client:\+1/, ""),
+      from: from?.replace(/^client:\+1/, "").replace(/^client:\+1/, ""),
     };
     const callerNameRes = await GetCallerName(payload);
     if (callerNameRes?.status === 200) {
