@@ -20,7 +20,7 @@ phases:
         fi
   pre_build:
     commands:
-      #installs dependencies into the node_modules/ directory
+      #installs dependencies into  the node_modules/ directory
       - npm install --force
   build:
     commands:
