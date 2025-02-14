@@ -192,9 +192,9 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
     id,
     inboxId,
     debtorId,
-    caseIds
+    isLinked
   ) => {
-    if (caseIds?.length > 0) {
+    if (isLinked) {
       await MarkAsReadNotifications(id);
       localStorage.setItem("route", "list-details");
       navigate(`/client/list-details/${debtorId}`);
@@ -324,7 +324,7 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
                       notification?._id,
                       notification?.inboxId,
                       notification?.debtorId,
-                      notification?.caseIds
+                      notification?.isLinked
                     )
                   }
                   key={index}
