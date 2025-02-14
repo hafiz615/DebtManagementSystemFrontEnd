@@ -32,6 +32,7 @@ import {
 import TextButton from "./button";
 import {
   GetAllCasesTasks,
+  GetAllCc,
   GetAllInbox,
   GetAllNotifications,
   GetAllSenders,
@@ -273,6 +274,16 @@ function Inbox() {
     }
     setLoading(false);
   };
+  const [cc, setCc] = useState({});
+  const getAllCC = async () => {
+    const res = await GetAllCc();
+    if (res?.status === 200) {
+      setCc(res?.data?.data);
+    }
+  };
+  useEffect(() => {
+    getAllCC();
+  }, []);
 
   const renderBox = (
     data,
@@ -481,6 +492,7 @@ function Inbox() {
             verifiedSenders={verifiedSenders}
             getAllInboxData={getAllInboxData}
             data={notificationTemplate}
+            cc={cc}
           />
         </div>
       </Grid>
@@ -814,6 +826,7 @@ function Inbox() {
                                         ]?.caseId
                                       }
                                       getAllInboxData={getAllInboxData}
+                                      cc={cc}
                                       data={notificationTemplate}
                                       threadId={
                                         inboxData?.[activeInbox]?.[
@@ -860,6 +873,7 @@ function Inbox() {
                                         iconColor={Colors.BLACK}
                                         maxHeight="78vh"
                                         replyCheck={true}
+                                        cc={cc}
                                         caseDataId={
                                           inboxData?.[activeInbox]?.[
                                             activePreview?.id

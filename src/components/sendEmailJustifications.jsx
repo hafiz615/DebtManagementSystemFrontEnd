@@ -4,12 +4,24 @@ import { useToast } from "../toast/toastContext";
 import { Colors } from "../config/default";
 import TextButton from "./button";
 import ScrollbarStyles from "./customScroll";
+import {
+  Select,
+  Checkbox,
+  FormControl,
+  FormGroup,
+  FormControlLabel,
+  Menu,
+  MenuItem,
+  TextField,
+  Button,
+} from "@mui/material";
 import { GetAllSenders, SendSettlementEmail } from "../services/services";
 import { FONT_SIZE_MEDIUM, TEXT_EDITOR_KEY } from "../constants/appConstants";
 import { marked } from "marked";
 import { useParams } from "react-router-dom";
 import { Editor } from "@tinymce/tinymce-react";
 import Dropdown from "./dropdown";
+import { isEmailValid } from "../common";
 
 const lineStyle = {
   width: "100%",
@@ -58,16 +70,18 @@ const inputStyling = {
   borderRadius: "5px",
   width: "48%",
 };
+
 export default function SendEmailJustification({
   handleClose,
   data,
   caseId,
   debtorId,
+  cc,
 }) {
   const [sendTo, setSendTo] = useState("");
   const [sendFrom, setSendFrom] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
-  const [cc, setCc] = useState([]);
+  // const [cc, setCc] = useState([]);
   const [inputValue, setInputValue] = useState("");
 
   const [subject, setSubject] = useState("");
@@ -75,25 +89,11 @@ export default function SendEmailJustification({
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter" || e.key === "Tab" || e.key === ",") {
-      e.preventDefault();
-      const trimmedValue = inputValue.trim();
+  const [selectedKey, setSelectedKey] = useState("");
+  const [selectedValues, setSelectedValues] = useState([]);
+  const [manualEmails, setManualEmails] = useState([]);
+  const [newEmail, setNewEmail] = useState("");
 
-      if (trimmedValue && validateEmail(trimmedValue)) {
-        setCc([...cc, trimmedValue]);
-        setInputValue("");
-      }
-    }
-  };
-
-  const validateEmail = (email) => {
-    return /\S+@\S+\.\S+/.test(email);
-  };
-
-  const handleRemoveEmail = (index) => {
-    setCc(cc?.filter((_, i) => i !== index));
-  };
   const menu = debtorId?.map((name) => ({
     label: name,
     value: name,
@@ -106,12 +106,11 @@ export default function SendEmailJustification({
       from: selectedValue,
       subject: subject,
       content: preview,
-      cc: cc,
+      cc: [...selectedValues, ...manualEmails],
     };
     const resEmail = await SendSettlementEmail(payload, caseId);
     if (resEmail?.status === 200) {
       showToast(resEmail?.data?.message, "success");
-      setCc([]);
       setSendTo("");
       setSubject("");
       setPreview("");
@@ -159,6 +158,40 @@ export default function SendEmailJustification({
     }
   }, [data]);
 
+  const handleKeyChange = (e) => {
+    setSelectedKey(e.target.value);
+  };
+
+  const handleCheckboxChange = (email) => {
+    if (selectedValues.includes(email)) {
+      setSelectedValues(selectedValues.filter((item) => item !== email));
+    } else {
+      setSelectedValues([...selectedValues, email]);
+    }
+  };
+
+  const handleAddEmail = () => {
+    if (
+      newEmail &&
+      isEmailValid(newEmail) &&
+      !manualEmails?.includes(newEmail)
+    ) {
+      setManualEmails([...manualEmails, newEmail]);
+      setNewEmail("");
+    }
+  };
+
+  // Determine if the button should be disabled
+  const isButtonDisabled = !(
+    newEmail &&
+    isEmailValid(newEmail) &&
+    !manualEmails?.includes(newEmail)
+  );
+
+  const handleRemoveManualEmail = (email) => {
+    setManualEmails(manualEmails?.filter((item) => item !== email));
+  };
+
   return (
     <div>
       <Grid item>
@@ -198,16 +231,158 @@ export default function SendEmailJustification({
           onChange={(e) => setSubject(e.target.value)}
           style={inputStyling}
         />
-        <Tooltip title="Press Enter To Save An Email" placement="top">
-          <input
-            type="text"
-            placeholder="Enter CC"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            style={inputStyling}
-          />
-        </Tooltip>
+
+        <div style={{ width: "48%" }}>
+          <FormControl
+            fullWidth
+            sx={{
+              fontFamily: "Nunito",
+              width: "100%",
+              backgroundColor: "#f5f5f5",
+              borderRadius: "5px",
+              "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+              "& .MuiSelect-select": { padding: "10px" },
+            }}
+          >
+            <Select
+              value={selectedKey}
+              onChange={handleKeyChange}
+              displayEmpty
+              sx={{ fontFamily: "Nunito", color: Colors.DARK_GRAY }}
+            >
+              <MenuItem
+                sx={{ fontFamily: "Nunito", color: Colors.DARK_GRAY }}
+                disabled
+                value=""
+              >
+                Select CC
+              </MenuItem>
+              <MenuItem
+                value="Custom"
+                sx={{ fontFamily: "Nunito", color: Colors.DARK_GRAY }}
+              >
+                Custom Email
+              </MenuItem>{" "}
+              {/* Custom Email Item */}
+              {Object?.keys(cc)?.map((key) => (
+                <MenuItem
+                  key={key}
+                  value={key}
+                  sx={{ fontFamily: "Nunito", color: Colors.DARK_GRAY }}
+                >
+                  {key}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          {selectedKey === "Custom" && (
+            <FormGroup
+              sx={{
+                marginTop: "10px",
+                padding: "10px",
+                borderRadius: "5px",
+                overflowY: "auto",
+                border: "1px solid #ddd",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  maxHeight: "15rem",
+                }}
+              >
+                <TextField
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  placeholder="Enter email"
+                  size="small"
+                  sx={{
+                    marginTop: "10px",
+                    color: Colors.DARK_GRAY,
+                    fontFamily: "Nunito",
+                  }}
+                />
+                <Button
+                  onClick={handleAddEmail}
+                  sx={{
+                    marginTop: "5px",
+                    backgroundColor: Colors.SKY_BLUE,
+                    "&:hover": {
+                      background: Colors.SKY_BLUE,
+                      border: "none",
+                    },
+                    fontFamily: "Nunito",
+                  }}
+                  disabled={isButtonDisabled}
+                  variant="contained"
+                >
+                  Add Email
+                </Button>
+                {manualEmails?.map((email, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginTop: "5px",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Typography>{email}</Typography>
+                    <Button
+                      onClick={() => handleRemoveManualEmail(email)}
+                      size="small"
+                      color="error"
+                      sx={{ fontFamily: "Nunito" }}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </FormGroup>
+          )}
+
+          {selectedKey && selectedKey !== "Custom" && (
+            <FormGroup
+              sx={{
+                marginTop: "10px",
+                padding: "10px",
+                borderRadius: "5px",
+                overflowY: "auto",
+                ...ScrollbarStyles,
+                border: "1px solid #ddd",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  maxHeight: "15rem",
+                }}
+              >
+                {cc[selectedKey]?.length > 0 ? (
+                  cc[selectedKey]?.map((email) => (
+                    <FormControlLabel
+                      key={email}
+                      control={
+                        <Checkbox
+                          checked={selectedValues.includes(email)}
+                          onChange={() => handleCheckboxChange(email)}
+                        />
+                      }
+                      label={email}
+                    />
+                  ))
+                ) : (
+                  <Typography color="textSecondary">No email exists</Typography>
+                )}
+              </div>
+            </FormGroup>
+          )}
+        </div>
       </div>
 
       {cc?.length > 0 && (

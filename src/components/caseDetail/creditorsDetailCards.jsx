@@ -66,6 +66,7 @@ export default function CreditorsDetailCards({
   verifiedSenders,
   fetchCalls,
   getAllRanges,
+  cc,
 }) {
   const [searchText, setSearchText] = useState("");
 
@@ -589,6 +590,7 @@ export default function CreditorsDetailCards({
                       caseDataId={caseData?._id}
                       data={caseData}
                       verifiedSenders={verifiedSenders}
+                      cc={cc}
                     />
                     <MuiModels
                       show="sendEmailCase"

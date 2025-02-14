@@ -168,6 +168,7 @@ export default function MuiModels({
   attachment,
   threadId,
   loginUser,
+  cc,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -919,6 +920,7 @@ export default function MuiModels({
               attachment={attachment}
               threadId={threadId}
               loginUser={loginUser}
+              cc={cc}
             />
           ) : show === "editPipeline" ? (
             <EditPipeline
@@ -964,6 +966,7 @@ export default function MuiModels({
               show="Debtor"
               caseId={caseData?._id}
               GetCaseDetails={GetCaseDetails}
+              cc={cc}
             />
           ) : show === "editDebtorContacts" ? (
             <DebtorContacts
@@ -983,6 +986,7 @@ export default function MuiModels({
               show="Creditor"
               caseId={caseData?.creditor?._id}
               GetCaseDetails={GetCaseDetails}
+              cc={cc}
             />
           ) : show === "editCreditorContacts" ? (
             <DebtorContacts
@@ -1063,6 +1067,7 @@ export default function MuiModels({
               data={data}
               caseId={caseId}
               debtorId={debtorId}
+              cc={cc}
             />
           ) : show === "WeeklyBudget" ? (
             <CommissionDetails
