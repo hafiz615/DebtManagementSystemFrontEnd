@@ -1,6 +1,6 @@
 #!/bin/bash
 
 # navigate to app folder
-cd /DebtManagementSystemFrontEnd
+cd home/ubuntu/DebtManagementSystemFrontEnd
 # install node and npm
 #npm install pm2 -g

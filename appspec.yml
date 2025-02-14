@@ -4,9 +4,8 @@ os: linux
 
 files:
   - source: /
-    destination: /DebtManagementSystemFrontEnd
+    destination: home/ubuntu/DebtManagementSystemFrontEnd
     overwrite: true
-    runas: root
 
 permissions:
   - object: /
