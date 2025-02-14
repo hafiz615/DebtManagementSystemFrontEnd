@@ -66,6 +66,7 @@ export default function CreditorsDetailCards({
   verifiedSenders,
   fetchCalls,
   getAllRanges,
+  cc,
 }) {
   const [searchText, setSearchText] = useState("");
 
@@ -237,7 +238,7 @@ export default function CreditorsDetailCards({
                     fetchCalls={fetchCalls}
                     show="dialPad"
                     caseId={caseData?._id}
-                    data={item?.value ? `+1${item?.value}` : ""}
+                    data={item?.value ? `1${item?.value}` : ""}
                     width={300}
                   />
                   <Tooltip title={item?.value || "--"} placement="top-end">
@@ -589,6 +590,7 @@ export default function CreditorsDetailCards({
                       caseDataId={caseData?._id}
                       data={caseData}
                       verifiedSenders={verifiedSenders}
+                      cc={cc}
                     />
                     <MuiModels
                       show="sendEmailCase"

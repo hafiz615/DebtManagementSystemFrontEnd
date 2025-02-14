@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CallIcon from "@mui/icons-material/Call";
 import CallEndIcon from "@mui/icons-material/CallEnd";
 import {
@@ -12,6 +12,7 @@ import {
   Menu,
   Popover,
   MenuItem,
+  Checkbox,
 } from "@mui/material";
 import { Colors } from "../config/default";
 import TextButton from "./button";
@@ -19,6 +20,7 @@ import { UpdateCallByCase } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import { ArrowRight, ExpandMore } from "@mui/icons-material";
 import { FONT_SIZE_LARGE, FONT_SIZE_MEDIUM } from "../constants/appConstants";
+import ScrollbarStyles from "./customScroll";
 
 const divStyling = {
   display: "flex",
@@ -51,27 +53,21 @@ export default function IncomingCall({
   setCaseMenuActive,
   callerName,
 }) {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [subMenuAnchorEl, setSubMenuAnchorEl] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selected, setSelected] = useState([]);
   const [selectedCase, setSelectedCase] = useState();
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
 
-  const handleCloseMenu = () => {
-    setAnchorEl(null);
-    setSubMenuAnchorEl(null);
+  const handleCaseCheckboxChange = (debtor) => {
+    setSelectedCase(debtor);
   };
 
-  const handleOpenSubMenu = (event, category) => {
-    setSubMenuAnchorEl(event.currentTarget);
-    setSelectedCategory(category);
-  };
-
-  const handleMenuClick = (selectedCategory) => {
-    setSubMenuAnchorEl(null);
-    setAnchorEl(null);
-    setSelectedCase(selectedCategory);
+  const handleCheckboxChange = (caseId) => {
+    setSelected((prevSelected) =>
+      prevSelected?.includes(caseId)
+        ? prevSelected?.filter((id) => id !== caseId)
+        : [...prevSelected, caseId]
+    );
   };
 
   const formatDuration = (seconds) => {
@@ -108,14 +104,23 @@ export default function IncomingCall({
       clearInterval(callInterval);
       setCallInterval(null);
       setCallDuration(0);
-      setCaseMenuActive(true);
+      if (!callerName) {
+        setCaseMenuActive(true);
+      } else if (!callerName?.caseId && callerName?.debtorId) {
+        setCaseMenuActive(true);
+      } else if (!callerName?.caseId && callerName?.debtorId) {
+        setCaseMenuActive(true);
+      } else {
+        setCaseMenuActive(false);
+        setIsModalOpen(false);
+      }
     }
   };
 
   const handleSave = async () => {
     setLoading(true);
     const payload = {
-      caseId: selectedCase?.caseId,
+      caseIds: selected,
     };
     const res = await UpdateCallByCase(payload, callSid);
     if (res?.status === 200) {
@@ -128,6 +133,10 @@ export default function IncomingCall({
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    setSelected([]);
+  }, [selectedCase]);
 
   return (
     <Modal
@@ -145,7 +154,7 @@ export default function IncomingCall({
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
-              width: 350,
+              width: 380,
               bgcolor: "background.paper",
               borderRadius: "10px",
               boxShadow: 24,
@@ -157,66 +166,84 @@ export default function IncomingCall({
             <Typography sx={{ mb: 3, fontFamily: "Nunito" }}>
               Save Call Log
             </Typography>
-            <div
-              style={divStyling}
-              onClick={(e) => setAnchorEl(e.currentTarget)}
+
+            <Grid
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                width: "100%",
+                height: "30vh",
+                overflowY: "auto",
+                ...ScrollbarStyles,
+              }}
             >
-              <span>{selectedCase?.creditorCompanyName || "Select Case"}</span>
-              <span style={{ marginTop: "5px" }}>
-                <ExpandMore />
-              </span>
-            </div>
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleCloseMenu}
-            >
-              {Object.entries(allCases)?.map(([key, value]) => (
-                <MenuItem
-                  key={key}
-                  onClick={(event) => handleOpenSubMenu(event, value)}
+              <div style={{ width: "48%" }}>
+                <Typography
                   sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    fontSize: FONT_SIZE_MEDIUM,
                     fontFamily: "Nunito",
+                    fontSize: FONT_SIZE_LARGE,
+                    mb: "10px",
+                    fontWeight: "600",
                   }}
                 >
-                  {key}
-                  <ArrowRight />
-                </MenuItem>
-              ))}
-            </Menu>
-
-            {/* Popover for second-level dropdown */}
-            <Popover
-              anchorEl={subMenuAnchorEl}
-              open={Boolean(subMenuAnchorEl)}
-              onClose={() => setSubMenuAnchorEl(null)}
-              anchorOrigin={{ vertical: "top", horizontal: "right" }}
-              transformOrigin={{ vertical: "top", horizontal: "left" }}
-            >
-              <Grid
-                sx={{ maxHeight: "300px", overflowY: "auto", padding: "10px" }}
-              >
-                {selectedCategory &&
-                  selectedCategory?.map((caseItem) => (
-                    <Button
-                      key={caseItem.caseId}
+                  Client Company Name
+                </Typography>
+                {Object.keys(allCases)?.map((item, index) => (
+                  <Box key={index} display="flex" alignItems="center">
+                    <Checkbox
+                      checked={selectedCase === item}
+                      onChange={() => handleCaseCheckboxChange(item)}
+                      size="small"
                       sx={{
-                        textAlign: "left",
-                        width: "100%",
-                        color: Colors.BLACK,
-                        fontSize: FONT_SIZE_MEDIUM,
-                        fontFamily: "Nunito",
+                        "& .MuiSvgIcon-root": { fontSize: "22px" },
+                        color: Colors.DIM_LIGHT_GRAY,
+                        "&.Mui-checked": {
+                          color: Colors.SKY_BLUE,
+                        },
                       }}
-                      onClick={() => handleMenuClick(caseItem)}
+                    />
+                    <Typography
+                      sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_MEDIUM }}
                     >
-                      {caseItem.creditorCompanyName}
-                    </Button>
-                  ))}
-              </Grid>
-            </Popover>
+                      {item}
+                    </Typography>
+                  </Box>
+                ))}
+              </div>
+              <div style={{ width: "48%" }}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontSize: FONT_SIZE_LARGE,
+                    mb: "10px",
+                    fontWeight: "600",
+                  }}
+                >
+                  Creditor Company Name
+                </Typography>
+                {allCases?.[selectedCase]?.map((item, index) => (
+                  <Box key={index} display="flex" alignItems="center">
+                    <Checkbox
+                      checked={selected?.includes(item?.caseId)}
+                      onChange={() => handleCheckboxChange(item?.caseId)}
+                      size="small"
+                      sx={{
+                        "& .MuiSvgIcon-root": { fontSize: "22px" },
+                        color: Colors.DIM_LIGHT_GRAY,
+                        "&.Mui-checked": {
+                          color: Colors.SKY_BLUE,
+                        },
+                      }}
+                    />
+                    <Typography
+                      sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_MEDIUM }}
+                    >
+                      {item?.creditorCompanyName}
+                    </Typography>
+                  </Box>
+                ))}
+              </div>
+            </Grid>
 
             <div
               style={{

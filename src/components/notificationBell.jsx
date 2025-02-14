@@ -31,6 +31,7 @@ import {
 } from "../constants/appConstants";
 import {
   GetAllNotifications,
+  GetAllUserCases,
   GetCreditorsFromDebtorId,
   GetNotificationsCount,
   MarkAsReadNotifications,
@@ -45,12 +46,15 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [creditors, setCreditors] = useState([]);
+  const [allCases, setAllCases] = useState([]);
+  const [unknownCase, setUnknownCase] = useState(false);
   const [socket, setSocket] = useState(null);
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState(0);
   const [openDialog, setOpenDialog] = useState(false);
   const [saveNotificationLoading, setSaveNotificationLoading] = useState(false);
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState([]);
+  const [selectedCase, setSelectedCase] = useState();
   const [notificationId, setNotificationId] = useState("");
   const [inboxId, setInboxId] = useState("");
   const navigate = useNavigate();
@@ -60,8 +64,21 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
   const user = useSelector((state) => state?.signIn?.signIn?.user);
   const dispatch = useDispatch();
 
-  const handleCheckboxChange = (index) => {
-    setSelected(index);
+  const handleCheckboxChange = (caseId) => {
+    setSelected((prevSelected) =>
+      prevSelected?.includes(caseId)
+        ? prevSelected?.filter((id) => id !== caseId)
+        : [...prevSelected, caseId]
+    );
+  };
+
+  const handleCaseCheckboxChange = (debtor) => {
+    setSelectedCase(debtor);
+  };
+
+  const handleCancel = () => {
+    setOpenDialog(false);
+    setUnknownCase(false);
   };
 
   const handleChange = async (event, newValue) => {
@@ -124,6 +141,7 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
 
   const handleClose = () => {
     setAnchorEl(null);
+    setUnknownCase(false);
   };
 
   const getDebtorCases = async (debtorId) => {
@@ -134,10 +152,19 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
     }
   };
 
+  const getAllCases = async () => {
+    setOpenDialog(true);
+    setUnknownCase(true);
+    const res = await GetAllUserCases();
+    if (res?.status == 200) {
+      setAllCases(res?.data?.data);
+    }
+  };
+
   const saveCaseNotification = async () => {
     setSaveNotificationLoading(true);
     const payload = {
-      caseId: selected,
+      caseIds: selected,
       notificationId: notificationId,
       inboxId: inboxId,
     };
@@ -155,17 +182,31 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
         setNotifications(resNotification?.data?.data);
       }
       setLoading(false);
+      setUnknownCase(false);
     }
     setSaveNotificationLoading(true);
   };
 
-  const handleNotificationClick = async (caseId, id, inboxId, debtorId) => {
-    if (debtorId && !caseId) {
+  const handleNotificationClick = async (
+    caseId,
+    id,
+    inboxId,
+    debtorId,
+    isLinked
+  ) => {
+    if (isLinked) {
+      await MarkAsReadNotifications(id);
+      localStorage.setItem("route", "list-details");
+      navigate(`/client/list-details/${debtorId}`);
+    } else if (debtorId && !caseId && !isLinked) {
       getDebtorCases(debtorId);
       setNotificationId(id);
       setInboxId(inboxId);
     } else if (!caseId && !debtorId) {
       await MarkAsReadNotifications(id);
+      getAllCases();
+      setNotificationId(id);
+      setInboxId(inboxId);
     } else {
       await MarkAsReadNotifications(id);
       localStorage.setItem("route", "all-cases");
@@ -175,6 +216,10 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
 
   const open = Boolean(anchorEl);
   const id = open ? "notification-popover" : undefined;
+
+  useEffect(() => {
+    setSelected([]);
+  }, [selectedCase]);
 
   return (
     <div>
@@ -278,7 +323,8 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
                       notification?.caseId,
                       notification?._id,
                       notification?.inboxId,
-                      notification?.debtorId
+                      notification?.debtorId,
+                      notification?.isLinked
                     )
                   }
                   key={index}
@@ -297,14 +343,16 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
                       {notification?.text}
                     </Typography>
                     <div style={{ display: "flex", gap: "3px" }}>
-                      {notification?.debtorId && !notification?.caseId && (
-                        <Tooltip
-                          title="Link SMS with its respective case"
-                          placement="top"
-                        >
-                          <InfoIcon sx={{ color: Colors.YELLOW }} />
-                        </Tooltip>
-                      )}
+                      {notification?.debtorId &&
+                        !notification?.caseId &&
+                        !notification?.isLinked && (
+                          <Tooltip
+                            title="Link SMS with its respective case"
+                            placement="top"
+                          >
+                            <InfoIcon sx={{ color: Colors.YELLOW }} />
+                          </Tooltip>
+                        )}
                       {!notification?.isRead && (
                         <Typography
                           sx={{
@@ -345,8 +393,8 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
               padding: "10px",
               borderRadius: "10px",
               height: "50vh",
-              maxWidth: "40vw",
-              minWidth: "40vw",
+              maxWidth: "45vw",
+              minWidth: "45vw",
               overflowY: "auto",
               ...ScrollbarStyles,
             },
@@ -362,47 +410,126 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
             }}
           >
             Save Sms in the respective case
-            <Typography
+            {!unknownCase && (
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontSize: FONT_SIZE_LARGE,
+                  fontWeight: "600",
+                  mt: "10px",
+                }}
+              >
+                {Object.keys(creditors)[0]}
+              </Typography>
+            )}
+          </DialogTitle>
+          {!unknownCase ? (
+            <DialogContent>
+              {creditors[Object.keys(creditors)[0]]?.map((item, index) => (
+                <Box key={index} display="flex" alignItems="center">
+                  <Checkbox
+                    checked={selected?.includes(item?.caseId)}
+                    onChange={() => handleCheckboxChange(item?.caseId)}
+                    size="small"
+                    sx={{
+                      "& .MuiSvgIcon-root": { fontSize: "22px" },
+                      color: Colors.DIM_LIGHT_GRAY,
+                      "&.Mui-checked": {
+                        color: Colors.SKY_BLUE,
+                      },
+                    }}
+                  />
+                  <Typography
+                    sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_MEDIUM }}
+                  >
+                    {item?.creditorCompanyName}
+                  </Typography>
+                </Box>
+              ))}
+            </DialogContent>
+          ) : (
+            <DialogContent
               sx={{
-                fontFamily: "Nunito",
-                fontSize: FONT_SIZE_LARGE,
-                fontWeight: "600",
-                mt: "10px",
+                display: "flex",
+                justifyContent: "space-between",
+                width: "100%",
               }}
             >
-              {Object.keys(creditors)[0]}
-            </Typography>
-          </DialogTitle>
-
-          <DialogContent>
-            {creditors[Object.keys(creditors)[0]]?.map((item, index) => (
-              <Box key={index} display="flex" alignItems="center">
-                <Checkbox
-                  checked={selected === item?.caseId}
-                  onChange={() => handleCheckboxChange(item?.caseId)}
-                  size="small"
-                  sx={{
-                    "& .MuiSvgIcon-root": { fontSize: "22px" },
-                    color: Colors.DIM_LIGHT_GRAY,
-                    "&.Mui-checked": {
-                      color: Colors.SKY_BLUE,
-                    },
-                  }}
-                />
+              <div style={{ width: "48%" }}>
                 <Typography
-                  sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontSize: FONT_SIZE_LARGE,
+                    mb: "10px",
+                    fontWeight: "600",
+                  }}
                 >
-                  {item?.creditorCompanyName}
+                  Client Company Name
                 </Typography>
-              </Box>
-            ))}
-          </DialogContent>
+                {Object.keys(allCases)?.map((item, index) => (
+                  <Box key={index} display="flex" alignItems="center">
+                    <Checkbox
+                      checked={selectedCase === item}
+                      onChange={() => handleCaseCheckboxChange(item)}
+                      size="small"
+                      sx={{
+                        "& .MuiSvgIcon-root": { fontSize: "22px" },
+                        color: Colors.DIM_LIGHT_GRAY,
+                        "&.Mui-checked": {
+                          color: Colors.SKY_BLUE,
+                        },
+                      }}
+                    />
+                    <Typography
+                      sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_MEDIUM }}
+                    >
+                      {item}
+                    </Typography>
+                  </Box>
+                ))}
+              </div>
+              <div style={{ width: "48%" }}>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontSize: FONT_SIZE_LARGE,
+                    mb: "10px",
+                    fontWeight: "600",
+                  }}
+                >
+                  Creditor Company Name
+                </Typography>
+                {allCases?.[selectedCase]?.map((item, index) => (
+                  <Box key={index} display="flex" alignItems="center">
+                    <Checkbox
+                      checked={selected?.includes(item?.caseId)}
+                      onChange={() => handleCheckboxChange(item?.caseId)}
+                      size="small"
+                      sx={{
+                        "& .MuiSvgIcon-root": { fontSize: "22px" },
+                        color: Colors.DIM_LIGHT_GRAY,
+                        "&.Mui-checked": {
+                          color: Colors.SKY_BLUE,
+                        },
+                      }}
+                    />
+                    <Typography
+                      sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_MEDIUM }}
+                    >
+                      {item?.creditorCompanyName}
+                    </Typography>
+                  </Box>
+                ))}
+              </div>
+            </DialogContent>
+          )}
+
           <DialogActions>
             <TextButton
               buttonText="Cancel"
               height="2rem"
               width="8rem"
-              onClick={() => setOpenDialog(false)}
+              onClick={handleCancel}
               backgroundColor={Colors.ORANGE_COLOR}
               hoverColor={Colors.ORANGE_COLOR}
             />

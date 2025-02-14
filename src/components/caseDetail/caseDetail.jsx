@@ -17,6 +17,7 @@ import {
   AddNotesCase,
   AddSenderIdentity,
   GetAggregatedSummary,
+  GetAllCc,
   GetAllSenders,
   GetCaseById,
   GetCasePaymentById,
@@ -146,6 +147,16 @@ function CaseDetail() {
     }
   };
 
+  const [cc, setCc] = useState({});
+  const getAllCC = async () => {
+    const res = await GetAllCc();
+    if (res?.status === 200) {
+      setCc(res?.data?.data);
+    }
+  };
+  useEffect(() => {
+    getAllCC();
+  }, []);
   const handleShowEmail = () => {
     if (!showEmail) {
       setShowEmail(true); // Make the component visible
@@ -531,27 +542,6 @@ function CaseDetail() {
               lumpSumpData={lumpSumpData}
               disabled={!apiData}
             />
-            {/* <MuiModels
-              show="sendEmail"
-              to={caseData?.creditor?.basicInformation?.email}
-              creditorInfo={
-                allCreditorNames[tabValue] === "Summary"
-                  ? "Summary"
-                  : selectedCreditorDetails?.name
-              }
-              debtorInfo={debtorInfo}
-              payableAmount={
-                allCreditorNames[tabValue] === "Summary"
-                  ? summaryAmount?.payableAmount
-                  : selectedCreditorDetails?.contractDetails?.payable_amount
-              }
-              data={apiData}
-              selectedCreditor={allCreditorNames[tabValue]}
-              lumpSump={lumpSumpData}
-              caseId={id}
-              paymentData={paymentData}
-              debtorId={verifiedSender}
-            /> */}
             <TextButton
               id="scrollAgreementButton"
               buttonText="Send Agreement"
@@ -705,6 +695,7 @@ function CaseDetail() {
             paymentData={paymentData}
             showEmailAgreement={showEmailAgreement}
             handleClose={handleClose}
+            cc={cc}
           />
         )}
         {activeTab === 1 && (
@@ -741,6 +732,7 @@ function CaseDetail() {
             from={caseData?.creditor?.basicInformation?.email}
             getAllRanges={getAllRanges}
             handleCloseNotes={handleCloseNotes}
+            cc={cc}
           />
         )}
       </Grid>

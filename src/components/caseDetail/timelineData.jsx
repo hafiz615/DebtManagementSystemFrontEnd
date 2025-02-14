@@ -47,6 +47,7 @@ export default function TimelineData({
   setCurrentCallPage,
   totalCallPage,
   verifiedSenders,
+  cc,
 }) {
   const [showReplyCard, setShowReplyCard] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -224,6 +225,7 @@ export default function TimelineData({
                   content={value?.Content}
                   attachment={value?.Attachments}
                   replyCheck={true}
+                  cc={cc}
                 />
               ) : (
                 <>
