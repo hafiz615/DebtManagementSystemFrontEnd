@@ -6,6 +6,7 @@ files:
   - source: /
     destination: /DebtManagementSystemFrontEnd
     overwrite: true
+    runas: root
 
 permissions:
   - object: /
