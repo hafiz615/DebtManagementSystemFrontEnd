@@ -287,7 +287,7 @@ export default function DebtorDetailsCards({
                         fetchCalls={fetchCalls}
                         show="dialPad"
                         caseId={caseDataId}
-                        data={value ? `+1${value}` : ""}
+                        data={value ? `1${value}` : ""}
                         width={300}
                       />
                       <Tooltip title={value} placement="top-end">
@@ -433,7 +433,7 @@ export default function DebtorDetailsCards({
                         fetchCalls={fetchCalls}
                         show="dialPad"
                         caseId={caseDataId}
-                        data={value ? `+1${value}` : ""}
+                        data={value ? `1${value}` : ""}
                         width={300}
                       />
                       <Tooltip title={value} placement="top-end">

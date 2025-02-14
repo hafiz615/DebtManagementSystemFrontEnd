@@ -237,7 +237,7 @@ export default function CreditorsDetailCards({
                     fetchCalls={fetchCalls}
                     show="dialPad"
                     caseId={caseData?._id}
-                    data={item?.value ? `+1${item?.value}` : ""}
+                    data={item?.value ? `1${item?.value}` : ""}
                     width={300}
                   />
                   <Tooltip title={item?.value || "--"} placement="top-end">

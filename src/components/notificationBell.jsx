@@ -198,7 +198,7 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
       await MarkAsReadNotifications(id);
       localStorage.setItem("route", "list-details");
       navigate(`/client/list-details/${debtorId}`);
-    } else if (debtorId && !caseId) {
+    } else if (debtorId && !caseId && !isLinked) {
       getDebtorCases(debtorId);
       setNotificationId(id);
       setInboxId(inboxId);
@@ -343,14 +343,16 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
                       {notification?.text}
                     </Typography>
                     <div style={{ display: "flex", gap: "3px" }}>
-                      {notification?.debtorId && !notification?.caseId && (
-                        <Tooltip
-                          title="Link SMS with its respective case"
-                          placement="top"
-                        >
-                          <InfoIcon sx={{ color: Colors.YELLOW }} />
-                        </Tooltip>
-                      )}
+                      {notification?.debtorId &&
+                        !notification?.caseId &&
+                        !notification?.isLinked && (
+                          <Tooltip
+                            title="Link SMS with its respective case"
+                            placement="top"
+                          >
+                            <InfoIcon sx={{ color: Colors.YELLOW }} />
+                          </Tooltip>
+                        )}
                       {!notification?.isRead && (
                         <Typography
                           sx={{
