@@ -109,6 +109,7 @@ export default function CaseById({
   from,
   getAllRanges,
   handleCloseNotes,
+  cc,
 }) {
   const navigate = useNavigate();
   const [deleting, setDeleting] = useState(false);
@@ -369,6 +370,7 @@ export default function CaseById({
                     GetCaseDetails={GetCaseDetails}
                     caseDataId={id}
                     GetLogsById={GetLogsById}
+                    cc={cc}
                   />
                 ) : value === "Creditor" ? (
                   <CreditorsDetailCards
@@ -379,6 +381,7 @@ export default function CaseById({
                     caseDataId={id}
                     GetLogsById={GetLogsById}
                     getAllRanges={getAllRanges}
+                    cc={cc}
                   />
                 ) : value === "Other Creditors" ? (
                   <Grid
@@ -740,6 +743,7 @@ export default function CaseById({
                     buttonName="sendEmailCase"
                     handleClose={handleClose}
                     from={from}
+                    cc={cc}
                   />
                 </Grid>
               )}
@@ -755,6 +759,7 @@ export default function CaseById({
                   currentCallPage={currentCallPage}
                   setCurrentCallPage={setCurrentCallPage}
                   totalCallPage={totalCallPage}
+                  cc={cc}
                 />
               ) : filteredLogs?.length > 0 ? (
                 filteredLogs?.map((item, index) => (
@@ -770,6 +775,7 @@ export default function CaseById({
                     iconValue={caseHistoryTabs}
                     caseData={caseData}
                     verifiedSenders={verifiedSenders}
+                    cc={cc}
                   />
                 ))
               ) : (

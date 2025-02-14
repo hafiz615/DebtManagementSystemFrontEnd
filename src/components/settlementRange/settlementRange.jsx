@@ -222,6 +222,7 @@ export default function SettlementRange({
   fullProfit,
   handleClose,
   showEmailAgreement,
+  cc,
 }) {
   const caseId = id;
   const [value, setValue] = useState(0);
@@ -1215,6 +1216,7 @@ export default function SettlementRange({
                 debtorId={verifiedSender}
                 to={to}
                 handleClose={handleClose}
+                cc={cc}
               />
             </Grid>
           )}
@@ -1978,6 +1980,7 @@ export default function SettlementRange({
                   data={selectedData}
                   caseId={caseId}
                   debtorId={verifiedSender}
+                  cc={cc}
                 />
               </div>
             </div>

@@ -65,6 +65,7 @@ export default function DebtorDetailsCards({
   GetLogsById,
   verifiedSenders,
   fetchCalls,
+  cc,
 }) {
   const streetAdress = caseData?.debtor?.basicInformation;
   const [searchText, setSearchText] = useState("");
@@ -613,6 +614,7 @@ export default function DebtorDetailsCards({
                       GetLogsById={GetLogsById}
                       data={caseData}
                       from={caseData?.creditor?.basicInformation?.email}
+                      cc={cc}
                     />
                     <MuiModels
                       show="sendEmailCase"

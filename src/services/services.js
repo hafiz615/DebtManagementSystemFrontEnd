@@ -1932,3 +1932,10 @@ export const TaskStatus = async (id, payload) => {
     return error;
   }
 };
+export const GetAllCc = async () => {
+  try {
+    return await axios.get(BASE_URL + "/v1/user/usersByRole", setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
