@@ -363,8 +363,8 @@ export default function SendEmailCase({
   };
 
   const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    setSelectedFiles(files);
+    const newFiles = Array.from(e.target.files);
+    setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles]);
   };
 
   const handleSaveDraft = async () => {
