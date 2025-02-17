@@ -93,6 +93,7 @@ function Inbox() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [verifiedSenders, setVerified] = useState([]);
   const [activeTab, setActiveTab] = useState("Inbox");
+  const [activeMainTab, setActiveMainTab] = useState("Primary");
   const [alltasks, setAllTasks] = useState([]);
   const [expandedMessages, setExpandedMessages] = useState({});
   const [showViewer, setShowViewer] = useState(false);
@@ -109,7 +110,9 @@ function Inbox() {
   const { smsCount, emailCount } = useSelector((state) => state.counts);
   const open = Boolean(anchorEl);
   const tabs = ["Inbox", "Outbox", "Draft", "Tasks"];
+  const maintabs = ["All", "Primary"];
   const disabled = caseCode || debtorCompany || creditorCompany || negotiator;
+  const allTrue = activeMainTab === "All" ? true : false;
   const activeInbox =
     activeTab === "Inbox"
       ? "received"
@@ -149,7 +152,13 @@ function Inbox() {
       },
       text: searchText,
     };
-    const response = await GetAllInbox(search, filter, "EMAIL", payload);
+    const response = await GetAllInbox(
+      search,
+      filter,
+      "EMAIL",
+      payload,
+      allTrue
+    );
     if (response?.status === 200) {
       const data = response?.data?.data;
       setInboxData(data);
@@ -230,6 +239,14 @@ function Inbox() {
   }, [activeTab]);
 
   useEffect(() => {
+    getAllInboxData(false, false);
+    setActivePreview({
+      id: 0,
+      active: false,
+    });
+  }, [activeMainTab]);
+
+  useEffect(() => {
     if (userSelected) {
       handleUserChange();
     }
@@ -267,7 +284,7 @@ function Inbox() {
       },
       text: searchText,
     };
-    const response = await GetAllInbox(false, true, "EMAIL", payload);
+    const response = await GetAllInbox(false, true, "EMAIL", payload, allTrue);
     if (response?.status === 200) {
       const data = response?.data?.data;
       setInboxData(data);
@@ -507,13 +524,64 @@ function Inbox() {
         spacing={2}
       >
         <Grid item xs={12}>
+          <Grid
+            container
+            item
+            xs={6}
+            lg={4}
+            sx={{
+              padding: "10px 20px",
+            }}
+          >
+            {maintabs?.map((tab) => (
+              <Tooltip
+                title={
+                  tab === "All"
+                    ? "View Inbox For All Users"
+                    : "View Inbox For Logged In User"
+                }
+                placement="top"
+              >
+                <Grid
+                  item
+                  xs={3}
+                  key={tab}
+                  onClick={() => setActiveMainTab(tab)}
+                  sx={{
+                    textAlign: "center",
+                    cursor: "pointer",
+                    padding: "10px",
+                    borderRadius: "10px",
+                    border:
+                      activeMainTab === tab
+                        ? `2px solid ${Colors.SKY_BLUE}`
+                        : "none",
+                    color: activeMainTab === tab ? Colors.SKY_BLUE : "inherit",
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      textTransform: "none",
+                      fontFamily: "Nunito",
+                      fontWeight: "600",
+                      fontSize: FONT_SIZE_LARGE,
+                      color:
+                        activeMainTab === tab ? Colors.SKY_BLUE : "inherit",
+                    }}
+                  >
+                    {tab}
+                  </Typography>
+                </Grid>
+              </Tooltip>
+            ))}
+          </Grid>
           <Card
             sx={{
               display: "flex",
               flexDirection: "column",
               padding: "10px",
               borderRadius: "8px",
-              height: "75vh",
+              height: "65vh",
               overflowY: "auto",
               ...ScrollbarStyles,
             }}
@@ -562,7 +630,7 @@ function Inbox() {
                 ))}
               </Grid>
 
-              {activeTab !== "Tasks" && (
+              {activeTab !== "Tasks" && activeMainTab !== "All" && (
                 <div
                   style={{
                     display: "flex",
@@ -635,7 +703,7 @@ function Inbox() {
                       <Box
                         display="flex"
                         flexDirection="column"
-                        marginBottom="10px"
+                        marginBottom="5px"
                       >
                         {activePreview?.active && (
                           <Box
