@@ -152,6 +152,7 @@ export default function SendEmailCase({
   loginUser,
   caseData,
   cc,
+  ccData,
 }) {
   const toPhoneClientNo = caseData?.debtor?.basicInformation?.phone;
   const [loading, setLoading] = useState(false);
@@ -323,7 +324,10 @@ export default function SendEmailCase({
       formData.append("from", replyCheck ? sendFrom : selectedValue);
       formData.append("subject", subject);
       const ccString = JSON.stringify([...selectedValues, ...manualEmails]);
-      formData.append("cc", ccString);
+      formData.append(
+        "cc",
+        ccData?.length > 0 ? JSON.stringify(ccData) : ccString
+      );
     } else {
       formData.append("from", fromNumber.toString());
       formData.append("sendTo", sendTo.toString());
