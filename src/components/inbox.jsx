@@ -849,59 +849,124 @@ function Inbox() {
                                   </div>
                                   {inboxData?.[activeInbox]?.[activePreview?.id]
                                     ?.type === "received" && (
-                                    <MuiModels
-                                      show="sendEmailCase"
-                                      replyButton={true}
-                                      from={
-                                        inboxData?.[activeInbox]?.[
-                                          activePreview?.id
-                                        ]?.from
-                                      }
-                                      to={
-                                        inboxData?.[activeInbox]?.[
-                                          activePreview?.id
-                                        ]?.to
-                                      }
-                                      content={
-                                        inboxData?.[activeInbox]?.[
-                                          activePreview?.id
-                                        ]?.textAsHtml
-                                      }
-                                      attachment={
-                                        inboxData?.[activeInbox]?.[
-                                          activePreview?.id
-                                        ]?.attachments
-                                      }
-                                      emailSubject={
-                                        inboxData?.[activeInbox]?.[
-                                          activePreview?.id
-                                        ]?.subject
-                                      }
-                                      emailOrCompose={
-                                        inboxData?.[activeInbox]?.[
-                                          activePreview?.id
-                                        ]?.caseId
-                                          ? "email"
-                                          : "compose"
-                                      }
-                                      buttonName="sendEmailCase"
-                                      iconColor={Colors.BLACK}
-                                      maxHeight="78vh"
-                                      replyCheck={true}
-                                      caseDataId={
-                                        inboxData?.[activeInbox]?.[
-                                          activePreview?.id
-                                        ]?.caseId
-                                      }
-                                      getAllInboxData={getAllInboxData}
-                                      cc={cc}
-                                      data={notificationTemplate}
-                                      threadId={
-                                        inboxData?.[activeInbox]?.[
-                                          activePreview?.id
-                                        ]?.threadId
-                                      }
-                                    />
+                                    <>
+                                      <MuiModels
+                                        show="sendEmailCase"
+                                        replyButton={true}
+                                        from={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.from
+                                        }
+                                        to={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.to
+                                        }
+                                        content={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.textAsHtml
+                                        }
+                                        attachment={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.attachments
+                                        }
+                                        emailSubject={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.subject
+                                        }
+                                        emailOrCompose={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.caseId
+                                            ? "email"
+                                            : "compose"
+                                        }
+                                        buttonName="sendEmailCase"
+                                        iconColor={Colors.BLACK}
+                                        maxHeight="78vh"
+                                        replyCheck={true}
+                                        caseDataId={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.caseId
+                                        }
+                                        getAllInboxData={getAllInboxData}
+                                        cc={cc}
+                                        data={notificationTemplate}
+                                        threadId={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.threadId
+                                        }
+                                      />
+                                      <MuiModels
+                                        show="sendEmailCase"
+                                        replyButton={true}
+                                        from={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.from
+                                        }
+                                        to={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.to
+                                        }
+                                        ccData={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.cc
+                                        }
+                                        content={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.textAsHtml
+                                        }
+                                        attachment={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.attachments
+                                        }
+                                        emailSubject={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.subject
+                                        }
+                                        emailOrCompose={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.caseId
+                                            ? "email"
+                                            : "compose"
+                                        }
+                                        buttonName="replyAll"
+                                        disabled={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.cc?.length === 0
+                                        }
+                                        iconColor={Colors.BLACK}
+                                        maxHeight="78vh"
+                                        replyCheck={true}
+                                        caseDataId={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.caseId
+                                        }
+                                        getAllInboxData={getAllInboxData}
+                                        cc={cc}
+                                        data={notificationTemplate}
+                                        threadId={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?.threadId
+                                        }
+                                      />
+                                    </>
                                   )}
                                   {activeTab === "Draft" && (
                                     <div
@@ -1008,6 +1073,21 @@ function Inbox() {
                                         activePreview?.id
                                       ]?.negotiatorName || "-"}
                                     </Typography>
+                                  </div>
+                                )}
+                                {inboxData?.[activeInbox]?.[activePreview?.id]
+                                  ?.cc?.length > 0 && (
+                                  <div style={{ display: "flex", gap: "10px" }}>
+                                    <Typography sx={boldTextStyling}>
+                                      CC:
+                                    </Typography>
+                                    {inboxData?.[activeInbox]?.[
+                                      activePreview?.id
+                                    ]?.cc?.map((item, index) => (
+                                      <Typography key={index} sx={fontStyling}>
+                                        {item}
+                                      </Typography>
+                                    ))}
                                   </div>
                                 )}
                                 <Typography sx={boldTextStyling}>

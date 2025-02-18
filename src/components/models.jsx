@@ -169,6 +169,7 @@ export default function MuiModels({
   threadId,
   loginUser,
   cc,
+  ccData,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -649,10 +650,15 @@ export default function MuiModels({
           borderRadius="5px"
           disabled={disabled}
         />
-      ) : buttonName === "sendEmailCase" || buttonName === "composeEmail" ? (
+      ) : buttonName === "sendEmailCase" ||
+        buttonName === "composeEmail" ||
+        buttonName === "replyAll" ? (
         <TextButton
+          disabled={disabled}
           buttonText={
-            replyButton
+            buttonName === "replyAll"
+              ? "Reply All"
+              : replyButton
               ? "Reply"
               : buttonName === "composeEmail"
               ? "Compose Email"
@@ -661,7 +667,9 @@ export default function MuiModels({
               : "Send Email"
           }
           height="2.5rem"
-          width={replyButton ? "5rem" : "9rem"}
+          width={
+            buttonName === "replyAll" ? "8rem" : replyButton ? "5rem" : "9rem"
+          }
           onClick={handleOpen}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
@@ -921,6 +929,7 @@ export default function MuiModels({
               threadId={threadId}
               loginUser={loginUser}
               cc={cc}
+              ccData={ccData}
             />
           ) : show === "editPipeline" ? (
             <EditPipeline
