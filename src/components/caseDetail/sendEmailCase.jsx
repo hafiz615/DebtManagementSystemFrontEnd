@@ -152,6 +152,7 @@ export default function SendEmailCase({
   loginUser,
   caseData,
   cc,
+  ccData,
 }) {
   const toPhoneClientNo = caseData?.debtor?.basicInformation?.phone;
   const [loading, setLoading] = useState(false);
@@ -322,7 +323,11 @@ export default function SendEmailCase({
       formData.append("sendTo", compose || replyCheck ? sendTo : selectedEmail);
       formData.append("from", replyCheck ? sendFrom : selectedValue);
       formData.append("subject", subject);
-      const ccString = JSON.stringify([...selectedValues, ...manualEmails]);
+      const ccString = JSON.stringify([
+        ...selectedValues,
+        ...manualEmails,
+        ...ccData,
+      ]);
       formData.append("cc", ccString);
     } else {
       formData.append("from", fromNumber.toString());
@@ -363,8 +368,8 @@ export default function SendEmailCase({
   };
 
   const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    setSelectedFiles(files);
+    const newFiles = Array.from(e.target.files);
+    setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles]);
   };
 
   const handleSaveDraft = async () => {

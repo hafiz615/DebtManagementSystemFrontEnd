@@ -80,12 +80,16 @@ function Sms() {
   const [users, setUsers] = useState();
   const [userSelected, setUserSelected] = useState();
   const [notificationTemplate, setNotificationTemplate] = useState();
+  const [activeMainTab, setActiveMainTab] = useState("Primary");
   const [activePreview, setActivePreview] = useState({
     id: 0,
     active: false,
   });
   const open = Boolean(anchorEl);
   const tabs = ["Sent", "Received", "Draft"];
+  const maintabs = ["All", "Primary"];
+  const allTrue = activeMainTab === "All" ? true : false;
+
   const dispatch = useDispatch();
   const { smsCount, emailCount } = useSelector((state) => state.counts);
 
@@ -120,7 +124,7 @@ function Sms() {
       },
       text: searchText,
     };
-    const response = await GetAllInbox(search, filter, "SMS", payload);
+    const response = await GetAllInbox(search, filter, "SMS", payload, allTrue);
     if (response?.status === 200) {
       const data = response?.data?.data;
       setInboxData(data);
@@ -180,6 +184,14 @@ function Sms() {
   }, [activeTab]);
 
   useEffect(() => {
+    getAllInboxData(false, false);
+    setActivePreview({
+      id: 0,
+      active: false,
+    });
+  }, [activeMainTab]);
+
+  useEffect(() => {
     if (userSelected) {
       handleUserChange();
     }
@@ -202,7 +214,7 @@ function Sms() {
       },
       text: searchText,
     };
-    const response = await GetAllInbox(false, true, "SMS", payload);
+    const response = await GetAllInbox(false, true, "SMS", payload, allTrue);
     if (response?.status === 200) {
       const data = response?.data?.data;
       setInboxData(data);
@@ -384,13 +396,64 @@ function Sms() {
         spacing={2}
       >
         <Grid item xs={12}>
+          <Grid
+            container
+            item
+            xs={6}
+            lg={4}
+            sx={{
+              padding: "10px 20px",
+            }}
+          >
+            {maintabs?.map((tab) => (
+              <Tooltip
+                title={
+                  tab === "All"
+                    ? "View SMS For All Users"
+                    : "View SMS For Logged In User"
+                }
+                placement="top"
+              >
+                <Grid
+                  item
+                  xs={3}
+                  key={tab}
+                  onClick={() => setActiveMainTab(tab)}
+                  sx={{
+                    textAlign: "center",
+                    cursor: "pointer",
+                    padding: "10px",
+                    borderRadius: "10px",
+                    border:
+                      activeMainTab === tab
+                        ? `2px solid ${Colors.SKY_BLUE}`
+                        : "none",
+                    color: activeMainTab === tab ? Colors.SKY_BLUE : "inherit",
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      textTransform: "none",
+                      fontFamily: "Nunito",
+                      fontWeight: "600",
+                      fontSize: FONT_SIZE_LARGE,
+                      color:
+                        activeMainTab === tab ? Colors.SKY_BLUE : "inherit",
+                    }}
+                  >
+                    {tab}
+                  </Typography>
+                </Grid>
+              </Tooltip>
+            ))}
+          </Grid>
           <Card
             sx={{
               display: "flex",
               flexDirection: "column",
               padding: "10px",
               borderRadius: "8px",
-              height: "75vh",
+              height: "65vh",
               overflowY: "auto",
               ...ScrollbarStyles,
             }}
@@ -438,32 +501,34 @@ function Sms() {
                   </Grid>
                 ))}
               </Grid>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                }}
-              >
-                <Typography
-                  sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
+              {activeMainTab !== "All" && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                  }}
                 >
-                  Viewing Sms for:
-                </Typography>
-                <Dropdown
-                  menuWidth="10rem"
-                  menuItems={users?.map((user) => ({
-                    label: user?.name,
-                    value: user?.name,
-                  }))}
-                  placeholder={inboxData?.userName}
-                  backgroundColor={Colors.BG_LIGHT_GRAY}
-                  hoverColor={Colors.BG_LIGHT_GRAY}
-                  width="10rem"
-                  selectedValue={userSelected}
-                  setSelectedValue={setUserSelected}
-                />
-              </div>
+                  <Typography
+                    sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
+                  >
+                    Viewing Sms for:
+                  </Typography>
+                  <Dropdown
+                    menuWidth="10rem"
+                    menuItems={users?.map((user) => ({
+                      label: user?.name,
+                      value: user?.name,
+                    }))}
+                    placeholder={inboxData?.userName}
+                    backgroundColor={Colors.BG_LIGHT_GRAY}
+                    hoverColor={Colors.BG_LIGHT_GRAY}
+                    width="10rem"
+                    selectedValue={userSelected}
+                    setSelectedValue={setUserSelected}
+                  />
+                </div>
+              )}
             </Box>
             {loading ? (
               <Grid
@@ -509,7 +574,7 @@ function Sms() {
                       <Box
                         display="flex"
                         flexDirection="column"
-                        marginBottom="10px"
+                        marginBottom="5px"
                       >
                         <div>
                           <IconButton

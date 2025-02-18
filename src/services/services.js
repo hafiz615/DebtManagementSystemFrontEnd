@@ -1425,11 +1425,11 @@ export const GetAllTransactions = async (page) => {
     return error;
   }
 };
-export const GetAllInbox = async (search, filter, medium, payload) => {
+export const GetAllInbox = async (search, filter, medium, payload, All) => {
   try {
     return await axios.post(
       BASE_URL +
-        `/v1/inbox/getAllMessages?search=${search}&filter=${filter}&type=default&medium=${medium}`,
+        `/v1/inbox/getAllMessages?search=${search}&filter=${filter}&type=default&medium=${medium}&all=${All}`,
       payload,
       setHeaders()
     );
