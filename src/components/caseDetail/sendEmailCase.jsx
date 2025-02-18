@@ -323,11 +323,12 @@ export default function SendEmailCase({
       formData.append("sendTo", compose || replyCheck ? sendTo : selectedEmail);
       formData.append("from", replyCheck ? sendFrom : selectedValue);
       formData.append("subject", subject);
-      const ccString = JSON.stringify([...selectedValues, ...manualEmails]);
-      formData.append(
-        "cc",
-        ccData?.length > 0 ? JSON.stringify(ccData) : ccString
-      );
+      const ccString = JSON.stringify([
+        ...selectedValues,
+        ...manualEmails,
+        ...ccData,
+      ]);
+      formData.append("cc", ccString);
     } else {
       formData.append("from", fromNumber.toString());
       formData.append("sendTo", sendTo.toString());
