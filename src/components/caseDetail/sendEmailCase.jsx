@@ -326,8 +326,9 @@ export default function SendEmailCase({
       const ccString = JSON.stringify([
         ...selectedValues,
         ...manualEmails,
-        ...ccData,
+        ...(ccData ? ccData : []),
       ]);
+
       formData.append("cc", ccString);
     } else {
       formData.append("from", fromNumber.toString());
