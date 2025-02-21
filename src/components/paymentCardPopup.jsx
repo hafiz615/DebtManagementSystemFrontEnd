@@ -162,6 +162,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
 
   const isFormValid = () => {
     return (
+      upcomingPayments?.length > 0 &&
       amount &&
       commission >= 0 &&
       date &&
@@ -177,6 +178,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
         (bankAccount?.length > 4 && bankAccount?.length <= 17));
     const isBankRoutingValid = bankRouting?.length === 9;
     return (
+      upcomingPayments?.length > 0 &&
       firstName &&
       lastName &&
       bankAccount &&
