@@ -25,6 +25,13 @@ export default function AboutAccordion({ caseDetails, GetCaseDetails }) {
 
   const aboutData = [
     {
+      name: "Weekly Budget",
+      value:
+        formatDollarAmount(
+          caseDetails?.debtor?.basicInformation?.weeklyBudget
+        ) || "-",
+    },
+    {
       name: "Pipeline Status",
       value: caseDetails?.status || "-",
     },
