@@ -110,9 +110,16 @@ function Inbox() {
   const { smsCount, emailCount } = useSelector((state) => state.counts);
   const open = Boolean(anchorEl);
   const tabs = ["Inbox", "Outbox", "Draft", "Tasks"];
-  const maintabs = ["All", "Primary"];
   const disabled = caseCode || debtorCompany || creditorCompany || negotiator;
-  const allTrue = activeMainTab === "All" ? true : false;
+  const maintabs = ["All", "Primary", "Completed"];
+
+  const allTrue =
+    activeMainTab === "All"
+      ? "all"
+      : activeMainTab === "Completed"
+      ? "completed"
+      : "primary";
+
   const activeInbox =
     activeTab === "Inbox"
       ? "received"
@@ -538,7 +545,9 @@ function Inbox() {
                 title={
                   tab === "All"
                     ? "View Inbox For All Users"
-                    : "View Inbox For Logged In User"
+                    : tab === "Primary"
+                    ? "View Inbox For Logged In User"
+                    : "View Completed Emails"
                 }
                 placement="top"
               >
@@ -834,19 +843,22 @@ function Inbox() {
                                       </IconButton>
                                     </Tooltip>
                                   </div>
-                                  <div>
-                                    <Prompt
-                                      text={`Are you sure you want to add this mail into complete list?`}
-                                      item={
-                                        inboxData?.[activeInbox]?.[
-                                          activePreview?.id
-                                        ]?._id
-                                      }
-                                      deleting="markAsComplete"
-                                      getAllInboxData={getAllInboxData}
-                                      setActivePreview={setActivePreview}
-                                    />
-                                  </div>
+                                  {activeMainTab !== "Completed" && (
+                                    <div>
+                                      <Prompt
+                                        text={`Are you sure you want to add this mail into complete list?`}
+                                        item={
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?._id
+                                        }
+                                        deleting="markAsComplete"
+                                        getAllInboxData={getAllInboxData}
+                                        setActivePreview={setActivePreview}
+                                      />
+                                    </div>
+                                  )}
+
                                   {inboxData?.[activeInbox]?.[activePreview?.id]
                                     ?.type === "received" && (
                                     <>
