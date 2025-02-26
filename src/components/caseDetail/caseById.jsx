@@ -654,12 +654,19 @@ export default function CaseById({
                 }}
                 variant="scrollable"
                 scrollButtons="auto"
+                centered={false}
                 sx={{
-                  minWidth: "100%",
-                  backgroundColor: Colors.WHITE,
+                  bgcolor: Colors.WHITE,
+                  maxWidth: "65rem",
+                  minWidth: "120px",
+                  fontWeight: "600",
                   borderTopLeftRadius: "10px",
                   borderTopRightRadius: "10px",
                   m: "10px 10px",
+                  height: "3.5rem",
+                  textOverflow: "ellipsis",
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
                 }}
               >
                 {/* Additional Tab for Single Creditor */}
@@ -671,7 +678,7 @@ export default function CaseById({
                   }
                   sx={{
                     bgcolor: Colors.WHITE,
-                    width: "max-content",
+                    // width: "200px",
                     fontWeight: "600",
                     height: "3.5rem",
                   }}
@@ -700,11 +707,17 @@ export default function CaseById({
                 variant="scrollable"
                 scrollButtons="auto"
                 sx={{
-                  minWidth: "100%",
-                  backgroundColor: Colors.WHITE,
+                  bgcolor: Colors.WHITE,
+                  maxWidth: "65rem",
+                  minWidth: "120px",
+                  fontWeight: "600",
                   borderTopLeftRadius: "10px",
                   borderTopRightRadius: "10px",
                   m: "10px 10px",
+                  height: "3.5rem",
+                  textOverflow: "ellipsis",
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
                 }}
               >
                 {tabs?.map((item, index) => (
