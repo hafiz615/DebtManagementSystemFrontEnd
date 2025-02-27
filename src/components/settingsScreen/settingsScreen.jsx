@@ -20,6 +20,7 @@ import AddUrlsAccordion from "./addUrlsAccordion";
 import EmailIdentityAccordion from "./emailIdentityAccordion";
 import TransactionAccordion from "./transactionAccordion";
 import BulkMainAccordion from "./bulkMainAccordion";
+import ServiceFeeAccordion from "./serviceFeeAccordion";
 
 export default function SettingsScreen() {
   const navigate = useNavigate();
@@ -131,6 +132,7 @@ export default function SettingsScreen() {
           setAuthorizationInterval={setAuthorizationInterval}
           loading={loading}
         />
+        <ServiceFeeAccordion />
         {role === "Super User" && <TransactionAccordion />}
 
         {settings?.viewNotificationTemplates && (
