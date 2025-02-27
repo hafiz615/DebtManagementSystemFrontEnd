@@ -697,6 +697,42 @@ function Sms() {
                                   />
                                 </div>
                               )}
+                              {inboxData?.[activeInbox]?.[activePreview?.id]
+                                ?.type === "received" && (
+                                <>
+                                  <MuiModels
+                                    show="sendEmailCase"
+                                    replyButton={true}
+                                    headerName={true}
+                                    from={
+                                      inboxData?.[activeInbox]?.[
+                                        activePreview?.id
+                                      ]?.from
+                                    }
+                                    to={
+                                      inboxData?.[activeInbox]?.[
+                                        activePreview?.id
+                                      ]?.to
+                                    }
+                                    content={
+                                      inboxData?.[activeInbox]?.[
+                                        activePreview?.id
+                                      ]?.text
+                                    }
+                                    buttonName="sendEmailCase"
+                                    iconColor={Colors.BLACK}
+                                    maxHeight="78vh"
+                                    replyCheck={true}
+                                    caseDataId={
+                                      inboxData?.[activeInbox]?.[
+                                        activePreview?.id
+                                      ]?.caseId
+                                    }
+                                    getAllInboxData={getAllInboxData}
+                                    data={notificationTemplate}
+                                  />
+                                </>
+                              )}
                             </div>
                           </div>
                           <div
