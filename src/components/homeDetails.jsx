@@ -7,7 +7,10 @@ import { Colors } from "../config/default";
 import { PAGE_HEIGHT, HomePageDetails } from "../constants/appConstants";
 import AccordionUsage from "./accordion";
 import Dropdown from "./dropdown";
-import { GetHomePayments } from "../services/services";
+import {
+  GetCreditorSuccessfulPayment,
+  GetHomePayments,
+} from "../services/services";
 import { get_payments } from "../redux/action/action";
 import ScrollbarStyles from "./customScroll";
 import UrlAccordion from "./urlAccordion";
@@ -21,6 +24,7 @@ function HomeDetails() {
   const [loading, setLoading] = useState(false);
   const [paginationRows, setPaginationRows] = useState({
     failedAuthorizations: "5",
+    failedCaptures: "5",
     failedPayments: "5",
     successAuthorizations: "5",
     upcomingPayments: "5",
@@ -108,7 +112,6 @@ function HomeDetails() {
             failedCaptures: 0,
             successAuthorizations: 0,
             upcomingPayments: 0,
-            successPayments: 0,
             successCaptures: 0,
           });
           setHomeData({
@@ -116,7 +119,6 @@ function HomeDetails() {
             failedCaptures: [],
             successAuthorizations: [],
             upcomingPayments: [],
-            successPayments: [],
             successCaptures: [],
           });
         } else {
@@ -149,6 +151,44 @@ function HomeDetails() {
     }
   };
 
+  const getCreditorSuccessfulPayments = async (pageNumber, pageLimit) => {
+    if (selectedValue) {
+      let limit = pageLimit || paginationRows["successPayments"];
+      const result = await GetCreditorSuccessfulPayment(
+        selectedValue,
+        pageNumber,
+        limit,
+        false,
+        false
+      );
+      if (result?.status === 200) {
+        if (!result?.data?.data) {
+          setTotalData({
+            successPayments: 0,
+          });
+          setHomeData({
+            successPayments: [],
+          });
+        } else {
+          setTotalData((prev) => ({
+            ...prev,
+            successPayments: result?.data?.data?.counts?.successPayments,
+          }));
+          setHomeData((prev) => ({
+            ...prev,
+            successPayments: result?.data?.data?.payments?.successPayments,
+          }));
+        }
+      } else if (
+        result?.response?.status === 401 ||
+        result?.response?.status === 403
+      ) {
+        localStorage.clear();
+        navigate("/");
+      }
+    }
+  };
+
   useEffect(() => {
     setPaginationRows({
       failedAuthorizations: 5,
@@ -169,17 +209,26 @@ function HomeDetails() {
     });
 
     getHomeData("default", 1, 5, true);
+    getCreditorSuccessfulPayments(1, 5);
   }, [selectedValue]);
 
   const handlePageChange = (key, page) => {
     setCurrentPage((prev) => ({ ...prev, [key]: page }));
-    getHomeData(key, page);
+    if (key === "successPayments") {
+      getCreditorSuccessfulPayments(page);
+    } else {
+      getHomeData(key, page);
+    }
   };
 
   const handleRowChange = (key, newRow) => {
     setCurrentPage((prev) => ({ ...prev, [key]: 1 }));
     setPaginationRows((prev) => ({ ...prev, [key]: newRow }));
-    getHomeData(key, 1, newRow);
+    if (key === "successPayments") {
+      getCreditorSuccessfulPayments(1, newRow);
+    } else {
+      getHomeData(key, 1, newRow);
+    }
   };
 
   const renderAccordion = (data, index) => (
@@ -189,8 +238,9 @@ function HomeDetails() {
         setPaginationRows={(newRow) => handleRowChange(data?.key, newRow)}
         index={index}
         totalPages={Math.ceil(totalData[data?.key] / paginationRows[data?.key])}
-        totalData={totalData[data?.key]}
+        totalData={totalData?.[data?.key]}
         arrayName={data?.key}
+        successFulPaymentTrue={data?.key === "successPayments" ? true : false}
         currentPage={currentPage[data?.key]}
         setCurrentPage={(page) => handlePageChange(data?.key, page)}
         tableHeading={data?.heading}

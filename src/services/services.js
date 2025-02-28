@@ -1939,3 +1939,40 @@ export const GetAllCc = async () => {
     return error;
   }
 };
+export const GetServiceFee = async () => {
+  try {
+    return await axios.get(BASE_URL + "/v1/settings/serviceFee", setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+export const SaveServiceFee = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/settings/serviceFee`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetCreditorSuccessfulPayment = async (
+  count,
+  page,
+  limit,
+  search,
+  filters,
+  payload
+) => {
+  try {
+    return await axios.post(
+      BASE_URL +
+        `/v1/payment/getCreditorSuccessfulPayments?days=${count}&page=${page}&limit=${limit}&search=${search}&filters=${filters}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

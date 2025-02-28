@@ -24,7 +24,7 @@ const StyledAccordion = styled(Accordion)({
   width: "100%",
   borderRadius: "1rem !important",
   backgroundColor: Colors.WHITE,
-
+  marginBottom: "1rem",
   boxShadow: "none",
 });
 const StyledAccordionSummary = styled(AccordionSummary)({

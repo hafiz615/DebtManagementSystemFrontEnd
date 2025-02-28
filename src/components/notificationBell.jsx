@@ -198,6 +198,7 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
       await MarkAsReadNotifications(id);
       localStorage.setItem("route", "all-cases");
       navigate(`/all-cases/${caseId}`);
+      setAnchorEl(false);
     } else if (!caseId && isLinked) {
       await MarkAsReadNotifications(id);
       localStorage.setItem("route", "list-details");
@@ -541,7 +542,7 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
               buttonText="Save"
               height="2rem"
               width="8rem"
-              disabled={!selected}
+              disabled={!selected?.length > 0}
               loading={saveNotificationLoading}
               onClick={saveCaseNotification}
               backgroundColor={Colors.SKY_BLUE}

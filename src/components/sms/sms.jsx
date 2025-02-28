@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Colors } from "../../config/default";
 import {
@@ -87,9 +87,16 @@ function Sms() {
   });
   const open = Boolean(anchorEl);
   const tabs = ["Sent", "Received", "Draft"];
-  const maintabs = ["All", "Primary"];
-  const allTrue = activeMainTab === "All" ? true : false;
+  const maintabs = ["All", "Primary", "Completed"];
 
+  const allTrue =
+    activeMainTab === "All"
+      ? "all"
+      : activeMainTab === "Completed"
+      ? "completed"
+      : "primary";
+
+  const containerRef = useRef(null);
   const dispatch = useDispatch();
   const { smsCount, emailCount } = useSelector((state) => state.counts);
 
@@ -546,6 +553,7 @@ function Sms() {
             ) : (
               <Box
                 flex={1}
+                ref={containerRef}
                 sx={{
                   marginTop: "10px",
                   padding: "10px",
@@ -623,19 +631,21 @@ function Sms() {
                                 gap: "10px",
                               }}
                             >
-                              <div>
-                                <Prompt
-                                  text={`Are you sure you want to add this SMS into complete list?`}
-                                  item={
-                                    inboxData?.[activeInbox]?.[
-                                      activePreview?.id
-                                    ]?._id
-                                  }
-                                  deleting="markAsComplete"
-                                  getAllInboxData={getAllInboxData}
-                                  setActivePreview={setActivePreview}
-                                />
-                              </div>
+                              {activeMainTab !== "Completed" && (
+                                <div>
+                                  <Prompt
+                                    text={`Are you sure you want to add this SMS into complete list?`}
+                                    item={
+                                      inboxData?.[activeInbox]?.[
+                                        activePreview?.id
+                                      ]?._id
+                                    }
+                                    deleting="markAsComplete"
+                                    getAllInboxData={getAllInboxData}
+                                    setActivePreview={setActivePreview}
+                                  />
+                                </div>
+                              )}
                               {activeTab === "Draft" && (
                                 <div
                                   style={{ display: "flex", height: "2rem" }}
@@ -686,6 +696,42 @@ function Sms() {
                                     getAllInboxData={getAllInboxData}
                                   />
                                 </div>
+                              )}
+                              {inboxData?.[activeInbox]?.[activePreview?.id]
+                                ?.type === "received" && (
+                                <>
+                                  <MuiModels
+                                    show="sendEmailCase"
+                                    replyButton={true}
+                                    headerName={true}
+                                    from={
+                                      inboxData?.[activeInbox]?.[
+                                        activePreview?.id
+                                      ]?.from
+                                    }
+                                    to={
+                                      inboxData?.[activeInbox]?.[
+                                        activePreview?.id
+                                      ]?.to
+                                    }
+                                    content={
+                                      inboxData?.[activeInbox]?.[
+                                        activePreview?.id
+                                      ]?.text
+                                    }
+                                    buttonName="sendEmailCase"
+                                    iconColor={Colors.BLACK}
+                                    maxHeight="78vh"
+                                    replyCheck={true}
+                                    caseDataId={
+                                      inboxData?.[activeInbox]?.[
+                                        activePreview?.id
+                                      ]?.caseId
+                                    }
+                                    getAllInboxData={getAllInboxData}
+                                    data={notificationTemplate}
+                                  />
+                                </>
                               )}
                             </div>
                           </div>
@@ -775,12 +821,18 @@ function Sms() {
                               padding: "10px",
                               cursor: "pointer",
                             }}
-                            onClick={() =>
+                            onClick={() => {
                               setActivePreview({
                                 id: index,
                                 active: true,
-                              })
-                            }
+                              });
+                              if (containerRef.current) {
+                                containerRef.current.scrollTo({
+                                  top: 0,
+                                  behavior: "smooth",
+                                });
+                              }
+                            }}
                           >
                             <div
                               style={{
