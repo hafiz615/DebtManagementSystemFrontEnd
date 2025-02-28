@@ -1957,3 +1957,22 @@ export const SaveServiceFee = async (payload) => {
     return error;
   }
 };
+export const GetCreditorSuccessfulPayment = async (
+  count,
+  page,
+  limit,
+  search,
+  filters,
+  payload
+) => {
+  try {
+    return await axios.post(
+      BASE_URL +
+        `/v1/payment/getCreditorSuccessfulPayments?days=${count}&page=${page}&limit=${limit}&search=${search}&filters=${filters}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

@@ -52,7 +52,10 @@ export default function AccordionUsage({
     const generatedData = rowArray?.map((item, index) => ({
       caseId: item?.caseId,
       id: item?.id,
-      name: item?.fullName || "-",
+      name:
+        arrayName === "successPayments"
+          ? item?.creditorName
+          : item?.fullName || "-",
       dueDate: new Date(item?.dueDate).toLocaleDateString() || "-",
       amount: formatDollarAmount(item?.amount),
       // ssid: item?.SSID || "-",
