@@ -43,6 +43,7 @@ export default function AccordionUsage({
   getHomeData,
   paginationRows,
   setPaginationRows,
+  successFulPaymentTrue,
 }) {
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
@@ -50,7 +51,7 @@ export default function AccordionUsage({
   const [rows, setRows] = useState([]);
   useEffect(() => {
     const generatedData = rowArray?.map((item, index) => ({
-      caseId: item?.caseId,
+      caseId: item?.caseId || item?.debtorId,
       id: item?.id,
       name:
         arrayName === "successPayments"
@@ -58,7 +59,6 @@ export default function AccordionUsage({
           : item?.fullName || "-",
       dueDate: new Date(item?.dueDate).toLocaleDateString() || "-",
       amount: formatDollarAmount(item?.amount),
-      // ssid: item?.SSID || "-",
       transactionType: item?.transactionType || "-",
       failureReason:
         arrayName === "failedAuthorizations"
@@ -92,10 +92,18 @@ export default function AccordionUsage({
   }
 
   const navigate = useNavigate();
+
   const handleRowClick = (id) => {
     localStorage.setItem("route", "all-cases");
     navigate(`/all-cases/${id}`);
   };
+
+  const handleDebtorRowClick = (id) => {
+    localStorage.setItem("route", "list-details");
+    navigate(`/client/list-details/${id}`);
+  };
+
+  console.log(arrayName);
 
   return (
     <Accordion
@@ -194,7 +202,7 @@ export default function AccordionUsage({
       <AccordionDetails>
         <ListTable
           onPaymentRowClick={
-            generalPermissions?.viewCaseDetails ? handleRowClick : undefined
+            successFulPaymentTrue ? handleRowClick : handleDebtorRowClick
           }
           currentPage={currentPage}
           totalPages={totalPages}

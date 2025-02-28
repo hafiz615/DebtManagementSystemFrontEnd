@@ -123,9 +123,11 @@ const DialPad = ({ data, caseId, handleClose, fetchCalls }) => {
         }}
       >
         <Typography sx={textStyling}>Dial Pad</Typography>
-        <IconButton onClick={handleClose}>
-          <Close />
-        </IconButton>
+        {!isCalling && !startTimer && (
+          <IconButton onClick={handleClose}>
+            <Close />
+          </IconButton>
+        )}
       </Box>
       <Box>
         <Typography

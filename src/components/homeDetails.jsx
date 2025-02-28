@@ -238,8 +238,9 @@ function HomeDetails() {
         setPaginationRows={(newRow) => handleRowChange(data?.key, newRow)}
         index={index}
         totalPages={Math.ceil(totalData[data?.key] / paginationRows[data?.key])}
-        totalData={totalData[data?.key]}
+        totalData={totalData?.[data?.key]}
         arrayName={data?.key}
+        successFulPaymentTrue={data?.key === "successPayments" ? true : false}
         currentPage={currentPage[data?.key]}
         setCurrentPage={(page) => handlePageChange(data?.key, page)}
         tableHeading={data?.heading}
