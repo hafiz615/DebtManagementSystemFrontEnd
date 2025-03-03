@@ -21,6 +21,7 @@ import EmailIdentityAccordion from "./emailIdentityAccordion";
 import TransactionAccordion from "./transactionAccordion";
 import BulkMainAccordion from "./bulkMainAccordion";
 import ServiceFeeAccordion from "./serviceFeeAccordion";
+import LegalFeeAccordion from "./legalFeeAccordion";
 
 export default function SettingsScreen() {
   const navigate = useNavigate();
@@ -133,6 +134,7 @@ export default function SettingsScreen() {
           loading={loading}
         />
         <ServiceFeeAccordion />
+        <LegalFeeAccordion />
         {role === "Super User" && <TransactionAccordion />}
 
         {settings?.viewNotificationTemplates && (
