@@ -8,7 +8,7 @@ import {
   Typography,
   IconButton,
 } from "@mui/material";
-import { Search, ChevronLeft, NavigateNext } from "@mui/icons-material";
+import { Search, ChevronLeft, NavigateNext, Phone } from "@mui/icons-material";
 import { useToast } from "../../toast/toastContext";
 
 import { Colors } from "../../config/default";
@@ -26,6 +26,7 @@ import { AddDebtorAccount } from "../../services/services";
 import Dropdown from "../dropdown";
 import { isEmpty } from "lodash";
 import { type } from "@testing-library/user-event/dist/type";
+import DialPad from "../dialPad";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -69,6 +70,7 @@ export default function DebtorDetailsCards({
 }) {
   const streetAdress = caseData?.debtor?.basicInformation;
   const [searchText, setSearchText] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState("Seamless Chex Merchant");
   const [type, setType] = useState("cc");
   const [startIndex, setStartIndex] = useState(0);
@@ -284,12 +286,18 @@ export default function DebtorDetailsCards({
                   </Typography>
                   {key === "phone" ? (
                     <div style={{ display: "flex", alignItems: "center" }}>
-                      <MuiModels
-                        fetchCalls={fetchCalls}
-                        show="dialPad"
-                        caseId={caseDataId}
+                      <IconButton
+                        sx={{ color: Colors.SKY_BLUE }}
+                        onClick={() => setIsModalOpen(true)}
+                      >
+                        <Phone sx={{ fontSize: "16px" }} />
+                      </IconButton>
+                      <DialPad
                         data={value ? `1${value}` : ""}
-                        width={300}
+                        caseId={caseDataId}
+                        fetchCalls={fetchCalls}
+                        isModalOpen={isModalOpen}
+                        setIsModalOpen={setIsModalOpen}
                       />
                       <Tooltip title={value} placement="top-end">
                         <Typography
@@ -430,13 +438,6 @@ export default function DebtorDetailsCards({
                   </Typography>
                   {key === "phone" ? (
                     <div style={{ display: "flex", alignItems: "center" }}>
-                      <MuiModels
-                        fetchCalls={fetchCalls}
-                        show="dialPad"
-                        caseId={caseDataId}
-                        data={value ? `1${value}` : ""}
-                        width={300}
-                      />
                       <Tooltip title={value} placement="top-end">
                         <Typography
                           sx={{

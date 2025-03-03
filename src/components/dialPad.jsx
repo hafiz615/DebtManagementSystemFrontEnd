@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Grid, Box, Typography, IconButton } from "@mui/material";
+import { Button, Grid, Box, Typography, IconButton, Fade } from "@mui/material";
 import CallIcon from "@mui/icons-material/Call";
 import CallEndIcon from "@mui/icons-material/CallEnd";
 import { Colors } from "../config/default";
@@ -11,7 +11,7 @@ import { useSelector } from "react-redux";
 import { Close } from "@mui/icons-material";
 import { FONT_SIZE_LARGE } from "../constants/appConstants";
 
-const DialPad = ({ data, caseId, handleClose, fetchCalls }) => {
+const DialPad = ({ data, caseId, fetchCalls, isModalOpen, setIsModalOpen }) => {
   const [phoneNumber, setPhoneNumber] = useState(data || "");
   const [isCalling, setIsCalling] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
@@ -59,12 +59,16 @@ const DialPad = ({ data, caseId, handleClose, fetchCalls }) => {
 
     newCall.on("disconnect", async () => {
       endCall();
-      handleClose();
+      setIsModalOpen(false);
+      setIsCalling(false);
+      setStartTimer(false);
     });
 
     newCall.on("cancel", () => {
       endCall();
-      handleClose();
+      setIsModalOpen(false);
+      setIsCalling(false);
+      setStartTimer(false);
     });
   };
 
@@ -85,7 +89,7 @@ const DialPad = ({ data, caseId, handleClose, fetchCalls }) => {
       setCallDuration(0);
       setTimer(null);
       setStartTimer(false);
-      handleClose();
+      setIsModalOpen(false);
     }
     fetchCalls && fetchCalls();
   };
@@ -100,11 +104,6 @@ const DialPad = ({ data, caseId, handleClose, fetchCalls }) => {
     };
   }, []);
 
-  const formatDuration = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
-  };
   const textStyling = {
     fontSize: FONT_SIZE_LARGE,
     fontFamily: "Nunito",
@@ -113,104 +112,123 @@ const DialPad = ({ data, caseId, handleClose, fetchCalls }) => {
   };
 
   return (
-    <>
-      <Box
-        sx={{
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <Typography sx={textStyling}>Dial Pad</Typography>
-        {!isCalling && !startTimer && (
-          <IconButton onClick={handleClose}>
-            <Close />
-          </IconButton>
-        )}
-      </Box>
-      <Box>
-        <Typography
-          sx={{ fontSize: "16px", fontFamily: "Nunito", mb: "10px" }}
-          gutterBottom
-          textAlign="center"
+    isModalOpen && (
+      <Fade in={isModalOpen}>
+        <Box
+          sx={{
+            position: "fixed",
+            bottom: "2%",
+            right: "1%",
+            width: 300,
+            bgcolor: Colors.lIGHT_PURPLE,
+            borderRadius: "10px",
+            boxShadow: 24,
+            p: 2,
+            border: `2px solid ${Colors.SKY_BLUE}`,
+            textAlign: "center",
+            zIndex: 1300,
+            pointerEvents: "auto",
+          }}
         >
-          {isCalling
-            ? `Calling...`
-            : startTimer
-            ? "Ringing..."
-            : "Dial or Enter a Phone Number"}
-        </Typography>
-
-        <Box sx={{ mb: 2 }}>
-          <ReactPhoneInput
-            country={"us"}
-            value={phoneNumber}
-            onChange={setPhoneNumber}
-            inputStyle={{
-              padding: "1rem 3rem",
-              width: "100%",
-              fontSize: "16px",
-              borderRadius: "5px",
-              border: "1px solid #ccc",
-              fontFamily: "Nunito",
-            }}
-          />
-        </Box>
-
-        <Box sx={{ mb: 2 }}>
-          <Grid container spacing={1}>
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, "*", 0, "#"]?.map((num) => (
-              <Grid item xs={4} key={num}>
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  sx={{
-                    fontFamily: "Nunito",
-                    height: 50,
-                    borderColor: Colors.SKY_BLUE,
-                    color: Colors.SKY_BLUE,
-                  }}
-                  onClick={() => setPhoneNumber((prev) => prev + num)}
-                >
-                  {num}
-                </Button>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-
-        {!isCalling && !startTimer ? (
-          <Button
-            variant="contained"
+          <Box
             sx={{
-              backgroundColor: Colors.SKY_BLUE,
-              borderRadius: "10px",
-              fontFamily: "Nunito",
-              "&:hover": {
-                background: Colors.SKY_BLUE,
-              },
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
             }}
-            startIcon={<CallIcon />}
-            onClick={makeOutgoingCall}
-            fullWidth
           >
-            Call
-          </Button>
-        ) : (
-          <Button
-            variant="contained"
-            color="error"
-            sx={{ borderRadius: "10px", fontFamily: "Nunito" }}
-            startIcon={<CallEndIcon />}
-            onClick={endCall}
-            fullWidth
-          >
-            End Call
-          </Button>
-        )}
-      </Box>
-    </>
+            <Typography sx={textStyling}>Dial Pad</Typography>
+            {!isCalling && !startTimer && (
+              <IconButton onClick={() => setIsModalOpen(false)}>
+                <Close />
+              </IconButton>
+            )}
+          </Box>
+          <Box>
+            <Typography
+              sx={{ fontSize: "16px", fontFamily: "Nunito", mb: "10px" }}
+              gutterBottom
+              textAlign="center"
+            >
+              {isCalling
+                ? `Calling...`
+                : startTimer
+                ? "Ringing..."
+                : "Dial or Enter a Phone Number"}
+            </Typography>
+
+            <Box sx={{ mb: 2 }}>
+              <ReactPhoneInput
+                country={"us"}
+                value={phoneNumber}
+                onChange={setPhoneNumber}
+                inputStyle={{
+                  padding: "1rem 3rem",
+                  width: "100%",
+                  fontSize: "16px",
+                  borderRadius: "5px",
+                  border: "1px solid #ccc",
+                  fontFamily: "Nunito",
+                }}
+              />
+            </Box>
+
+            <Box sx={{ mb: 2 }}>
+              <Grid container spacing={1}>
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, "*", 0, "#"]?.map((num) => (
+                  <Grid item xs={4} key={num}>
+                    <Button
+                      variant="outlined"
+                      fullWidth
+                      sx={{
+                        fontFamily: "Nunito",
+                        height: 40,
+                        borderColor: Colors.SKY_BLUE,
+                        color: Colors.SKY_BLUE,
+                      }}
+                      onClick={() => setPhoneNumber((prev) => prev + num)}
+                    >
+                      {num}
+                    </Button>
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
+
+            {!isCalling && !startTimer ? (
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: Colors.SKY_BLUE,
+                  borderRadius: "10px",
+                  fontFamily: "Nunito",
+                  "&:hover": {
+                    background: Colors.SKY_BLUE,
+                  },
+                }}
+                startIcon={<CallIcon />}
+                onClick={makeOutgoingCall}
+                fullWidth
+              >
+                Call
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                color="error"
+                sx={{ borderRadius: "10px", fontFamily: "Nunito" }}
+                startIcon={<CallEndIcon />}
+                onClick={endCall}
+                fullWidth
+              >
+                End Call
+              </Button>
+            )}
+          </Box>
+        </Box>
+      </Fade>
+    )
   );
 };
 

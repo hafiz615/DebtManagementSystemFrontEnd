@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   NavigateNext,
   Verified,
+  Phone,
 } from "@mui/icons-material";
 
 import { Colors } from "../../config/default";
@@ -27,6 +28,7 @@ import {
   creditorBusinessDetails,
   creditorPeronsalDetails,
 } from "../../constants/appConstants";
+import DialPad from "../dialPad";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -69,7 +71,7 @@ export default function CreditorsDetailCards({
   cc,
 }) {
   const [searchText, setSearchText] = useState("");
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 2;
   const handleNext = () => {
@@ -234,12 +236,18 @@ export default function CreditorsDetailCards({
               </Typography>
               {item?.label === "Phone #" ? (
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <MuiModels
-                    fetchCalls={fetchCalls}
-                    show="dialPad"
-                    caseId={caseData?._id}
+                  <IconButton
+                    sx={{ color: Colors.SKY_BLUE }}
+                    onClick={() => setIsModalOpen(true)}
+                  >
+                    <Phone sx={{ fontSize: "16px" }} />
+                  </IconButton>
+                  <DialPad
                     data={item?.value ? `1${item?.value}` : ""}
-                    width={300}
+                    caseId={caseData?._id}
+                    fetchCalls={fetchCalls}
+                    isModalOpen={isModalOpen}
+                    setIsModalOpen={setIsModalOpen}
                   />
                   <Tooltip title={item?.value || "--"} placement="top-end">
                     <Typography

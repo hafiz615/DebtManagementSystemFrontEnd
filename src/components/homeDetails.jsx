@@ -163,12 +163,14 @@ function HomeDetails() {
       );
       if (result?.status === 200) {
         if (!result?.data?.data) {
-          setTotalData({
+          setTotalData((prev) => ({
+            ...prev,
             successPayments: 0,
-          });
-          setHomeData({
+          }));
+          setHomeData((prev) => ({
+            ...prev,
             successPayments: [],
-          });
+          }));
         } else {
           setTotalData((prev) => ({
             ...prev,

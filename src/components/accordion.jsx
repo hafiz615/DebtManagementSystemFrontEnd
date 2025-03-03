@@ -52,11 +52,11 @@ export default function AccordionUsage({
   useEffect(() => {
     const generatedData = rowArray?.map((item, index) => ({
       caseId: item?.caseId || item?.debtorId,
-      id: item?.id,
+      id: item?._id,
       name:
         arrayName === "successPayments"
           ? item?.creditorName
-          : item?.fullName || "-",
+          : item?.debtorName || "-",
       dueDate: new Date(item?.dueDate).toLocaleDateString() || "-",
       amount: formatDollarAmount(item?.amount),
       transactionType: item?.transactionType || "-",
@@ -103,12 +103,9 @@ export default function AccordionUsage({
     navigate(`/client/list-details/${id}`);
   };
 
-  console.log(arrayName);
-
   return (
     <Accordion
       defaultExpanded={index < 1}
-      // defaultExpanded={expanded.includes(index)}
       onChange={() => handleChange(index)}
       sx={{
         borderRadius: "1rem !important",
