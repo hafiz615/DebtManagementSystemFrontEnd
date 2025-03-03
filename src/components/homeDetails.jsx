@@ -107,30 +107,42 @@ function HomeDetails() {
       );
       if (result?.status === 200) {
         if (!result?.data?.data) {
-          setTotalData({
+          setTotalData((prev) => ({
+            ...prev,
             failedAuthorizations: 0,
             failedCaptures: 0,
             successAuthorizations: 0,
             upcomingPayments: 0,
             successCaptures: 0,
-          });
-          setHomeData({
+          }));
+          setHomeData((prev) => ({
+            ...prev,
             failedAuthorizations: [],
             failedCaptures: [],
             successAuthorizations: [],
             upcomingPayments: [],
             successCaptures: [],
-          });
+          }));
         } else {
           key === "default"
-            ? setTotalData(result?.data?.data?.counts)
+            ? setTotalData((prev) => ({
+                ...prev,
+                ...result?.data?.data?.counts,
+              }))
             : setTotalData((prev) => ({
                 ...prev,
                 [key]: result?.data?.data?.counts[key],
               }));
 
           key === "default"
-            ? setHomeData(result?.data?.data?.payments)
+            ? setHomeData((prev) => ({
+                ...prev,
+                ...(() => {
+                  const { successPayments, ...rest } =
+                    result?.data?.data?.payments || {};
+                  return rest;
+                })(),
+              }))
             : setHomeData((prev) => ({
                 ...prev,
                 [key]: result?.data?.data?.payments[key],
@@ -163,12 +175,14 @@ function HomeDetails() {
       );
       if (result?.status === 200) {
         if (!result?.data?.data) {
-          setTotalData({
+          setTotalData((prev) => ({
+            ...prev,
             successPayments: 0,
-          });
-          setHomeData({
+          }));
+          setHomeData((prev) => ({
+            ...prev,
             successPayments: [],
-          });
+          }));
         } else {
           setTotalData((prev) => ({
             ...prev,
