@@ -20,7 +20,6 @@ const StyledAccordion = styled(Accordion)({
   borderRadius: "1rem !important",
   backgroundColor: Colors.WHITE,
   boxShadow: "none",
-  marginBottom: "1rem",
 });
 const StyledAccordionSummary = styled(AccordionSummary)({
   fontFamily: "Nunito",
@@ -49,7 +48,7 @@ const textFieldStyling = {
   fontFamily: "Nunito",
 };
 
-export default function ServiceFeeAccordion() {
+export default function LegalFeeAccordion() {
   const [serviceFee, setServiceFee] = useState("");
   const [serviceFeeLoading, setServiceFeeLoading] = useState(false);
   const { showToast } = useToast();
@@ -57,7 +56,7 @@ export default function ServiceFeeAccordion() {
   const getServiceFee = async () => {
     const res = await GetServiceFee();
     if (res?.status === 200) {
-      setServiceFee(res?.data?.data?.serviceFee);
+      setServiceFee(res?.data?.data?.legalFee);
     }
   };
 
@@ -66,7 +65,7 @@ export default function ServiceFeeAccordion() {
     const payload = {
       fee: serviceFee,
     };
-    const res = await SaveServiceFee(payload, "serviceFee");
+    const res = await SaveServiceFee(payload, "legalFee");
     if (res?.status === 200) {
       showToast(res?.data?.message, "success");
     }
@@ -86,7 +85,7 @@ export default function ServiceFeeAccordion() {
   return (
     <StyledAccordion>
       <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
-        Service Fee
+        Legal Fee
       </StyledAccordionSummary>
       <StyledAccordionDetails>
         <div style={{ display: "flex", gap: "10px" }}>

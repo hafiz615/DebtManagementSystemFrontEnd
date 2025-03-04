@@ -7,19 +7,29 @@ import ReactPhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { GetCallToken } from "../services/services";
 import { Device } from "@twilio/voice-sdk";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Close } from "@mui/icons-material";
 import { FONT_SIZE_LARGE } from "../constants/appConstants";
+import { setDialState } from "../redux/action/action";
 
-const DialPad = ({ data, caseId, fetchCalls, isModalOpen, setIsModalOpen }) => {
-  const [phoneNumber, setPhoneNumber] = useState(data || "");
+const DialPad = () => {
+  const phoneNumberState = useSelector((state) => state?.dial?.phoneNumber);
+  const caseId = useSelector((state) => state?.dial?.caseId);
+  const modalState = useSelector((state) => state?.dial?.isModalOpen);
+  const fetchCalls = useSelector((state) => state?.dial?.fetchCalls);
+  const userEmail = useSelector((state) => state?.signIn?.signIn?.user?.email);
+
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [isCalling, setIsCalling] = useState(false);
-  const [callDuration, setCallDuration] = useState(0);
   const [startTimer, setStartTimer] = useState(false);
   const [timer, setTimer] = useState(null);
   const [device, setDevice] = useState(null);
   const [call, setCall] = useState(null);
-  const userEmail = useSelector((state) => state?.signIn?.signIn?.user?.email);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    setPhoneNumber(phoneNumberState);
+  }, [phoneNumberState]);
 
   const initializeDevice = (token) => {
     const twilioDevice = new Device(token, {
@@ -38,6 +48,14 @@ const DialPad = ({ data, caseId, fetchCalls, isModalOpen, setIsModalOpen }) => {
     } catch (err) {}
   };
 
+  const handleClose = () => {
+    dispatch(
+      setDialState({
+        isModalOpen: false,
+      })
+    );
+  };
+
   const makeOutgoingCall = async () => {
     if (!device || !phoneNumber) {
       return;
@@ -53,31 +71,30 @@ const DialPad = ({ data, caseId, fetchCalls, isModalOpen, setIsModalOpen }) => {
     setCall(newCall);
     newCall.on("accept", () => {
       setIsCalling(false);
-      startCallTimer();
       setStartTimer(true);
     });
 
     newCall.on("disconnect", async () => {
       endCall();
-      setIsModalOpen(false);
+      dispatch(
+        setDialState({
+          isModalOpen: false,
+        })
+      );
       setIsCalling(false);
       setStartTimer(false);
     });
 
     newCall.on("cancel", () => {
       endCall();
-      setIsModalOpen(false);
+      dispatch(
+        setDialState({
+          isModalOpen: false,
+        })
+      );
       setIsCalling(false);
       setStartTimer(false);
     });
-  };
-
-  const startCallTimer = () => {
-    setTimer(
-      setInterval(() => {
-        setCallDuration((prev) => prev + 1);
-      }, 1000)
-    );
   };
 
   const endCall = () => {
@@ -86,10 +103,13 @@ const DialPad = ({ data, caseId, fetchCalls, isModalOpen, setIsModalOpen }) => {
       setIsCalling(false);
       setCall(null);
       clearInterval(timer);
-      setCallDuration(0);
       setTimer(null);
       setStartTimer(false);
-      setIsModalOpen(false);
+      dispatch(
+        setDialState({
+          isModalOpen: false,
+        })
+      );
     }
     fetchCalls && fetchCalls();
   };
@@ -112,8 +132,8 @@ const DialPad = ({ data, caseId, fetchCalls, isModalOpen, setIsModalOpen }) => {
   };
 
   return (
-    isModalOpen && (
-      <Fade in={isModalOpen}>
+    modalState && (
+      <Fade in={modalState}>
         <Box
           sx={{
             position: "fixed",
@@ -140,7 +160,7 @@ const DialPad = ({ data, caseId, fetchCalls, isModalOpen, setIsModalOpen }) => {
           >
             <Typography sx={textStyling}>Dial Pad</Typography>
             {!isCalling && !startTimer && (
-              <IconButton onClick={() => setIsModalOpen(false)}>
+              <IconButton onClick={handleClose}>
                 <Close />
               </IconButton>
             )}

@@ -27,6 +27,7 @@ import {
 import { Device } from "@twilio/voice-sdk";
 import IncomingCall from "./components/incomingCall";
 import SmsPage from "./pages/smsPage";
+import DialPad from "./components/dialPad";
 
 function App() {
   const [incomingCall, setIncomingCall] = useState(null);
@@ -299,6 +300,7 @@ function App() {
           callerName={callerName}
         />
       )}
+      <DialPad />
     </>
   );
 }

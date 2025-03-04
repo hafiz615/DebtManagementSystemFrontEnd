@@ -29,6 +29,8 @@ import {
   creditorPeronsalDetails,
 } from "../../constants/appConstants";
 import DialPad from "../dialPad";
+import { useDispatch } from "react-redux";
+import { setDialState } from "../../redux/action/action";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -71,9 +73,11 @@ export default function CreditorsDetailCards({
   cc,
 }) {
   const [searchText, setSearchText] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
+  const dispatch = useDispatch();
+
   const itemsPerPage = 2;
+
   const handleNext = () => {
     if (startIndex + itemsPerPage < caseData?.creditor?.contacts?.length) {
       setStartIndex(startIndex + itemsPerPage);
@@ -122,6 +126,17 @@ export default function CreditorsDetailCards({
     startIndex,
     startIndex + itemsPerPage
   );
+
+  const handleDialPad = (phoneNumber, caseId, fetchCalls) => {
+    dispatch(
+      setDialState({
+        phoneNumber: phoneNumber,
+        caseId: caseId,
+        fetchCalls: fetchCalls,
+        isModalOpen: true,
+      })
+    );
+  };
 
   return (
     <>
@@ -238,17 +253,16 @@ export default function CreditorsDetailCards({
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <IconButton
                     sx={{ color: Colors.SKY_BLUE }}
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={() =>
+                      handleDialPad(
+                        item?.value ? `1${item?.value}` : "",
+                        caseData?._id,
+                        fetchCalls
+                      )
+                    }
                   >
                     <Phone sx={{ fontSize: "16px" }} />
                   </IconButton>
-                  <DialPad
-                    data={item?.value ? `1${item?.value}` : ""}
-                    caseId={caseData?._id}
-                    fetchCalls={fetchCalls}
-                    isModalOpen={isModalOpen}
-                    setIsModalOpen={setIsModalOpen}
-                  />
                   <Tooltip title={item?.value || "--"} placement="top-end">
                     <Typography
                       sx={{
