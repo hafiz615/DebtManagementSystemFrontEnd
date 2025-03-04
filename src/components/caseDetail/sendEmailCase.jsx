@@ -172,7 +172,6 @@ export default function SendEmailCase({
   const [sendFrom, setSendFrom] = useState(replyCheck ? to || "" : "");
   const [selectedValue, setSelectedValue] = useState(to || "");
   const [subject, setSubject] = useState(emailSubject || "");
-  const [inputValue, setInputValue] = useState("");
   const [preview, setPreview] = useState(
     replyCheck ? `<p></p><p></p>${content}` : content || ""
   );
@@ -193,10 +192,6 @@ export default function SendEmailCase({
   const [existingFiles, setExistingFiles] = useState(attachment || []);
   const [removedFiles, setRemovedFiles] = useState([]);
   const { showToast } = useToast();
-
-  const validateEmail = (email) => {
-    return /\S+@\S+\.\S+/.test(email);
-  };
 
   const getVariableAndEvents = async () => {
     const resVariable = await GetCustomVariable();
@@ -390,7 +385,11 @@ export default function SendEmailCase({
     );
     formData.append("content", preview);
     formData.append("subject", subject);
-    const ccString = JSON.stringify(cc);
+    const ccString = JSON.stringify([
+      ...selectedValues,
+      ...manualEmails,
+      ...(ccData ? ccData : []),
+    ]);
     formData.append("cc", ccString);
     formData.append("from", replyCheck ? sendFrom : selectedValue);
     formData.append("caseId", caseDataId || "");
@@ -447,7 +446,11 @@ export default function SendEmailCase({
     );
     formData.append("content", preview);
     formData.append("subject", subject);
-    const ccString = JSON.stringify(cc);
+    const ccString = JSON.stringify([
+      ...selectedValues,
+      ...manualEmails,
+      ...(ccData ? ccData : []),
+    ]);
     formData.append("cc", ccString);
     formData.append("from", replyCheck ? sendFrom : selectedValue);
     formData.append("caseId", caseDataId || "");

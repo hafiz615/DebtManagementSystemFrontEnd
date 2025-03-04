@@ -60,3 +60,10 @@ export const setCounts = (smsCount, emailCount) => ({
   type: SET_COUNTS,
   payload: { smsCount, emailCount },
 });
+
+export const SET_DIAL_STATE = "SET_DIAL_STATE";
+
+export const setDialState = (state) => ({
+  type: SET_DIAL_STATE,
+  payload: state,
+});
