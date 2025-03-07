@@ -62,13 +62,16 @@ export default function PaymentsTabs({
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
   );
-  const headers = [
-    "Name",
-    "Try Date",
-    "Total Debt",
-    value !== 5 && "Payment Type",
-    "Case Owner",
-  ];
+  const headers = ["Name", "Try Date"];
+  if (mainTabValue === 1) {
+    headers.push("Total Debt");
+  }
+  if (value !== 5) {
+    headers.push("Payment Type");
+  }
+  if (mainTabValue === 1) {
+    headers.push("Case Owner");
+  }
   if (value === 2) {
     headers.push("Send Payment");
   }

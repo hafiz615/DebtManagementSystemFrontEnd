@@ -83,7 +83,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
     setLoading(true);
     const params = {
       debtorId: debtorId,
-      transactionIds: checkedPayments?.map((item) => item?.id),
+      transactionIds: checkedPayments?.map((item) => item?._id),
       amount: amount,
       commission: parseFloat(commission?.toFixed(2)),
       transactionDate: date,
@@ -130,7 +130,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
     }));
     setCheckedPayments((prevItems) =>
       checkboxStates[index]
-        ? prevItems?.filter((checkedItem) => checkedItem.id !== item.id)
+        ? prevItems?.filter((checkedItem) => checkedItem.id !== item._id)
         : [...prevItems, item]
     );
   };
