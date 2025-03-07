@@ -1976,3 +1976,22 @@ export const GetCreditorSuccessfulPayment = async (
     return error;
   }
 };
+export const GetCreditorUpcomingPayment = async (
+  count,
+  page,
+  limit,
+  search,
+  filters,
+  payload
+) => {
+  try {
+    return await axios.post(
+      BASE_URL +
+        `/v1/payment/creditorUpcomingPayments?days=${count}&page=${page}&limit=${limit}&search=${search}&filters=${filters}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

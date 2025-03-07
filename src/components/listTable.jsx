@@ -197,7 +197,8 @@ export default function ListTable({
                     (header) =>
                       (showFailureReason || header !== "Failure Reason") &&
                       (showDueDate || header !== "Due Date") &&
-                      (arrayName === "upcomingPayments"
+                      (arrayName === "upcomingPayments" ||
+                      arrayName === "creditorUpcomingPayments"
                         ? header !== "Payment Type"
                         : "auto")
                   )
@@ -301,7 +302,8 @@ export default function ListTable({
                         ([key]) =>
                           key !== "id" &&
                           key !== "caseId" &&
-                          (arrayName === "upcomingPayments"
+                          (arrayName === "upcomingPayments" ||
+                          arrayName === "creditorUpcomingPayments"
                             ? key !== "transactionType"
                             : true) &&
                           (showFailureReason || key !== "failureReason") &&

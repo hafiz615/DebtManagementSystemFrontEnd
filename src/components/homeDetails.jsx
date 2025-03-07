@@ -9,6 +9,7 @@ import AccordionUsage from "./accordion";
 import Dropdown from "./dropdown";
 import {
   GetCreditorSuccessfulPayment,
+  GetCreditorUpcomingPayment,
   GetHomePayments,
 } from "../services/services";
 import { get_payments } from "../redux/action/action";
@@ -29,6 +30,7 @@ function HomeDetails() {
     successAuthorizations: "5",
     upcomingPayments: "5",
     successPayments: "5",
+    creditorUpcomingPayments: "5",
   });
 
   const [totalData, setTotalData] = useState({});
@@ -38,8 +40,9 @@ function HomeDetails() {
     failedCaptures: 1,
     successAuthorizations: 1,
     upcomingPayments: 1,
-    successPayments: 1,
     successCaptures: 1,
+    successPayments: 1,
+    creditorUpcomingPayments: 1,
   });
 
   const accordionData = [
@@ -48,11 +51,7 @@ function HomeDetails() {
       heading: "Client Upcoming Payments",
       number: "4",
     },
-    {
-      key: "successPayments",
-      heading: "Creditor Successful Payments",
-      number: "4",
-    },
+
     {
       key: "successAuthorizations",
       heading: "Client Successful Authorizations",
@@ -74,6 +73,16 @@ function HomeDetails() {
       key: "failedCaptures",
       heading: "Client Failed Captures",
       number: "5",
+    },
+    {
+      key: "successPayments",
+      heading: "Creditor Successful Payments",
+      number: "4",
+    },
+    {
+      key: "creditorUpcomingPayments",
+      heading: "Creditor Upcoming Payments",
+      number: "4",
     },
   ];
 
@@ -190,7 +199,48 @@ function HomeDetails() {
           }));
           setHomeData((prev) => ({
             ...prev,
-            successPayments: result?.data?.data?.payments?.successPayments,
+            successPayments: result?.data?.data?.payments,
+          }));
+        }
+      } else if (
+        result?.response?.status === 401 ||
+        result?.response?.status === 403
+      ) {
+        localStorage.clear();
+        navigate("/");
+      }
+    }
+  };
+
+  const getCreditorUpcomingPayments = async (pageNumber, pageLimit) => {
+    if (selectedValue) {
+      let limit = pageLimit || paginationRows["creditorUpcomingPayments"];
+      const result = await GetCreditorUpcomingPayment(
+        selectedValue,
+        pageNumber,
+        limit,
+        false,
+        false
+      );
+      if (result?.status === 200) {
+        if (!result?.data?.data) {
+          setTotalData((prev) => ({
+            ...prev,
+            creditorUpcomingPayments: 0,
+          }));
+          setHomeData((prev) => ({
+            ...prev,
+            creditorUpcomingPayments: [],
+          }));
+        } else {
+          setTotalData((prev) => ({
+            ...prev,
+            creditorUpcomingPayments:
+              result?.data?.data?.counts?.creditorUpcomingPayments,
+          }));
+          setHomeData((prev) => ({
+            ...prev,
+            creditorUpcomingPayments: result?.data?.data?.payments,
           }));
         }
       } else if (
@@ -211,6 +261,7 @@ function HomeDetails() {
       upcomingPayments: 5,
       successPayments: 5,
       successCaptures: 5,
+      creditorUpcomingPayments: 5,
     });
 
     setCurrentPage({
@@ -220,16 +271,20 @@ function HomeDetails() {
       upcomingPayments: 1,
       successPayments: 1,
       successCaptures: 1,
+      creditorUpcomingPayments: 1,
     });
 
     getHomeData("default", 1, 5, true);
     getCreditorSuccessfulPayments(1, 5);
+    getCreditorUpcomingPayments(1, 5);
   }, [selectedValue]);
 
   const handlePageChange = (key, page) => {
     setCurrentPage((prev) => ({ ...prev, [key]: page }));
     if (key === "successPayments") {
       getCreditorSuccessfulPayments(page);
+    } else if (key === "creditorUpcomingPayments") {
+      getCreditorUpcomingPayments(page);
     } else {
       getHomeData(key, page);
     }
@@ -240,6 +295,8 @@ function HomeDetails() {
     setPaginationRows((prev) => ({ ...prev, [key]: newRow }));
     if (key === "successPayments") {
       getCreditorSuccessfulPayments(1, newRow);
+    } else if (key === "creditorUpcomingPayments") {
+      getCreditorUpcomingPayments(1, newRow);
     } else {
       getHomeData(key, 1, newRow);
     }
@@ -254,7 +311,12 @@ function HomeDetails() {
         totalPages={Math.ceil(totalData[data?.key] / paginationRows[data?.key])}
         totalData={totalData?.[data?.key]}
         arrayName={data?.key}
-        successFulPaymentTrue={data?.key === "successPayments" ? true : false}
+        successFulPaymentTrue={
+          data?.key === "successPayments" ||
+          data?.key === "creditorUpcomingPayments"
+            ? true
+            : false
+        }
         currentPage={currentPage[data?.key]}
         setCurrentPage={(page) => handlePageChange(data?.key, page)}
         tableHeading={data?.heading}
@@ -265,7 +327,8 @@ function HomeDetails() {
           data?.heading !== "Client Upcoming Payments" &&
           data?.heading !== "Client Successful Captures" &&
           data?.heading !== "Client Successful Authorizations" &&
-          data?.heading !== "Creditor Successful Payments"
+          data?.heading !== "Creditor Successful Payments" &&
+          data?.heading !== "Creditor Upcoming Payments"
         }
         showDueDate={
           data?.heading !== "Client Successful Captures" &&
@@ -289,6 +352,10 @@ function HomeDetails() {
       data.heading === "Creditor Successful Payments" ||
       data.heading === "Client Successful Captures" ||
       data.heading === "Client Failed Captures"
+  );
+
+  const groupThree = accordionData?.filter(
+    (data) => data.heading === "Creditor Upcoming Payments"
   );
   return (
     <Grid
@@ -420,9 +487,11 @@ function HomeDetails() {
                 <Grid item xs={12} lg={5.9}>
                   {groupOne?.map(renderAccordion)}
                 </Grid>
-
                 <Grid item xs={12} lg={5.9}>
                   {groupTwo?.map(renderAccordion)}
+                </Grid>
+                <Grid item xs={12} lg={5.9}>
+                  {groupThree?.map(renderAccordion)}
                 </Grid>
               </Grid>
             </>
