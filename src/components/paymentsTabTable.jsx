@@ -151,12 +151,20 @@ export default function PaymentTabsTable({
           name:
             mainTabValue === 1 ? item?.creditorName : item?.debtorName || "-",
           tryDate:
-            (item?.tryDate && new Date(item?.tryDate)?.toLocaleDateString()) ||
+            (item?.rescheduled &&
+              new Date(item?.rescheduled)?.toLocaleDateString()) ||
             "-",
-          totalDebt: formatDollarAmount(item?.totalDebt) || "-",
-          transactionType: value !== 5 ? item?.transactionType || "-" : "",
-          caseOwner: item?.caseOwner || "-",
         };
+        if (mainTabValue === 1) {
+          formattedItem.totalDebt = formatDollarAmount(item?.totalDebt) || "-";
+        }
+        formattedItem.transactionType =
+          value !== 5 ? item?.transactionType || "-" : "";
+
+        if (mainTabValue === 1) {
+          formattedItem.caseOwner = item?.caseOwner || "-";
+        }
+
         if (
           (mainTabValue === 0 && value === 4) ||
           (mainTabValue === 1 && value === 1)
