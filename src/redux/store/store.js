@@ -12,6 +12,7 @@ import permissionReducer from "../reducers/permissionReducer";
 import caseIdReducer from "../reducers/caseIdReducer";
 import caseCreditorIdReducer from "../reducers/caseCreditorIdReducer";
 import countsReducer from "../reducers/emailSmsCount";
+import dialStateReducer from "../reducers/dialReducer";
 
 const middleware = [thunk];
 
@@ -23,6 +24,7 @@ const Reducer = combineReducers({
   caseId: caseIdReducer,
   creditorCaseId: caseCreditorIdReducer,
   counts: countsReducer,
+  dial: dialStateReducer,
 });
 const persistConfig = {
   key: "root",

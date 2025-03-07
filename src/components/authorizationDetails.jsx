@@ -2,24 +2,75 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 
-import { Grid, Typography, Menu, IconButton } from "@mui/material";
+import {
+  Grid,
+  Typography,
+  Menu,
+  IconButton,
+  styled,
+  Tabs,
+  Tab,
+} from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import CustomTextField from "../components/customTextfield";
 
-import { UserListPage, paymentAuthHeading } from "../constants/appConstants";
+import {
+  FONT_SIZE_SMALL,
+  UserListPage,
+  paymentAuthHeading,
+} from "../constants/appConstants";
 import { Colors } from "../config/default";
 import PaymentsTabs from "./paymentsTabs";
 import SearchBar from "./searchBar";
-import { GetHomePayments } from "../services/services";
+import {
+  GetCreditorSuccessfulPayment,
+  GetCreditorUpcomingPayment,
+  GetHomePayments,
+} from "../services/services";
 import TextButton from "./button";
 import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
-import { lime } from "@mui/material/colors";
+
+const AntTabs = styled(Tabs)({
+  borderBottom: "1px solid #e8e8e8",
+  "& .MuiTabs-indicator": {
+    backgroundColor: Colors.SKY_BLUE,
+  },
+});
+
+const AntTab = styled((props) => <Tab disableRipple {...props} />)(
+  ({ theme }) => ({
+    textTransform: "none",
+    minWidth: 0,
+    [theme.breakpoints.up("sm")]: {
+      minWidth: 0,
+      fontSize: "14px !important",
+    },
+    [theme.breakpoints.up("xs")]: {
+      fontSize: FONT_SIZE_SMALL,
+    },
+    fontWeight: "500",
+    color: Colors.DARK_GRAY,
+    fontFamily: ["Nunito"].join(","),
+    "&:hover": {
+      color: Colors.SKY_BLUE,
+      opacity: 1,
+    },
+    "&.Mui-selected": {
+      color: Colors.SKY_BLUE,
+      fontWeight: "500",
+    },
+    "&.Mui-focusVisible": {
+      backgroundColor: "#d1eaff",
+    },
+  })
+);
 
 export default function AuthorizationDetails() {
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState("");
   const [data, setData] = useState({});
   const [value, setValue] = useState(0);
+  const [mainTabValue, setMainTabValue] = useState(0);
   const [paginationRows, setPaginationRows] = useState("5");
   const [totalData, setTotalData] = useState();
   const totalPages = Math.ceil(totalData / paginationRows);
@@ -99,8 +150,13 @@ export default function AuthorizationDetails() {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleChange = (event, newValue) => {
+    setMainTabValue(newValue);
   };
 
   const handleInputChange = (setter) => (e) => {
@@ -172,19 +228,6 @@ export default function AuthorizationDetails() {
   const getHomeData = async (search, filter) => {
     let arrayName;
     let payload = {};
-    if (value === 0) {
-      arrayName = "failedAuthorizations";
-    } else if (value === 1) {
-      arrayName = "successAuthorizations";
-    } else if (value === 2) {
-      arrayName = "successCaptures";
-    } else if (value === 3) {
-      arrayName = "failedCaptures";
-    } else if (value === 4) {
-      arrayName = "successPayments";
-    } else if (value === 5) {
-      arrayName = "upcomingPayments";
-    }
     const filterObj = createFilterObject(
       totalDebtMin,
       totalDebtMax,
@@ -199,25 +242,78 @@ export default function AuthorizationDetails() {
     };
     const count = 0;
     const limit = paginationRows;
-    const result = await GetHomePayments(
-      count,
-      currentPage,
-      limit,
-      arrayName,
-      search,
-      filter,
-      payload
-    );
-    if (result?.status === 200) {
-      setData(result?.data?.data?.payments || []);
-      setTotalData(result?.data?.data?.counts[arrayName] || 0);
-    } else if (
-      result?.response?.status === 401 ||
-      result?.response?.status === 403
-    ) {
-      localStorage.clear();
-      navigate("/");
+
+    if (mainTabValue === 0) {
+      if (value === 0) {
+        arrayName = "failedAuthorizations";
+      } else if (value === 1) {
+        arrayName = "successAuthorizations";
+      } else if (value === 2) {
+        arrayName = "successCaptures";
+      } else if (value === 3) {
+        arrayName = "failedCaptures";
+      } else if (value === 4) {
+        arrayName = "upcomingPayments";
+      }
+      const result = await GetHomePayments(
+        count,
+        currentPage,
+        limit,
+        arrayName,
+        search,
+        filter,
+        payload
+      );
+      if (result?.status === 200) {
+        setData(result?.data?.data?.payments || []);
+        setTotalData(result?.data?.data?.counts[arrayName] || 0);
+      } else if (
+        result?.response?.status === 401 ||
+        result?.response?.status === 403
+      ) {
+        localStorage.clear();
+        navigate("/");
+      }
+    } else if (mainTabValue === 1 && value === 0) {
+      const result = await GetCreditorSuccessfulPayment(
+        count,
+        currentPage,
+        limit,
+        search,
+        filter,
+        payload
+      );
+      if (result?.status === 200) {
+        setData(result?.data?.data?.payments || []);
+        setTotalData(result?.data?.data?.counts?.successPayments || 0);
+      } else if (
+        result?.response?.status === 401 ||
+        result?.response?.status === 403
+      ) {
+        localStorage.clear();
+        navigate("/");
+      }
+    } else if (mainTabValue === 1 && value === 1) {
+      const result = await GetCreditorUpcomingPayment(
+        count,
+        currentPage,
+        limit,
+        search,
+        filter,
+        payload
+      );
+      if (result?.status === 200) {
+        setData(result?.data?.data?.payments || []);
+        setTotalData(result?.data?.data?.counts?.creditorUpcomingPayments || 0);
+      } else if (
+        result?.response?.status === 401 ||
+        result?.response?.status === 403
+      ) {
+        localStorage.clear();
+        navigate("/");
+      }
     }
+
     setLoading(false);
   };
 
@@ -235,7 +331,18 @@ export default function AuthorizationDetails() {
     } else if (!searchText && !filterActive) {
       getHomeData(false, false);
     }
-  }, [currentPage, searchText, saveState, filterActive, searchActive]);
+  }, [
+    currentPage,
+    searchText,
+    saveState,
+    filterActive,
+    searchActive,
+    mainTabValue,
+  ]);
+
+  useEffect(() => {
+    setValue(0);
+  }, [mainTabValue]);
 
   useEffect(() => {
     setLoading(true);
@@ -333,6 +440,38 @@ export default function AuthorizationDetails() {
           width: { xs: "65vw", sm: "auto" },
         }}
       >
+        <AntTabs
+          value={mainTabValue}
+          onChange={handleChange}
+          aria-label="ant example"
+          variant="scrollable"
+          scrollButtons="auto"
+          sx={{
+            width: { xs: "100%", md: "70rem" },
+            borderTopLeftRadius: "10px",
+            borderTopRightRadius: "10px",
+          }}
+        >
+          <AntTab
+            sx={{
+              bgcolor: Colors.WHITE,
+              width: { xs: "30%", sm: "max-content" },
+              fontWeight: "600",
+              height: "3.5rem",
+            }}
+            label="Client"
+          />
+
+          <AntTab
+            sx={{
+              bgcolor: Colors.WHITE,
+              width: { xs: "30%", sm: "max-content" },
+              fontWeight: "600",
+              height: "3.5rem",
+            }}
+            label="Creditor"
+          />
+        </AntTabs>
         <PaymentsTabs
           loading={loading}
           currentPage={currentPage}
@@ -345,6 +484,7 @@ export default function AuthorizationDetails() {
           getHomeData={getHomeData}
           paginationRows={paginationRows}
           setPaginationRows={setPaginationRows}
+          mainTabValue={mainTabValue}
         />
       </Grid>
       <Menu

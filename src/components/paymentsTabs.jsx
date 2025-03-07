@@ -57,25 +57,29 @@ export default function PaymentsTabs({
   paginationRows,
   setPaginationRows,
   hideCheck,
+  mainTabValue,
 }) {
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
   );
-  const headers = [
-    "Name",
-    "Try Date",
-    "Total Debt",
-    value !== 5 && "Payment Type",
-    "Case Owner",
-  ];
+  const headers = ["Name", "Try Date"];
+  if (mainTabValue === 1) {
+    headers.push("Total Debt");
+  }
+  if (value !== 5) {
+    headers.push("Payment Type");
+  }
+  if (mainTabValue === 1) {
+    headers.push("Case Owner");
+  }
   if (value === 2) {
     headers.push("Send Payment");
   }
-  if (value === 4) {
+  if (mainTabValue === 0 && value === 4) {
     headers.push("Due Date");
   }
   if (generalPermissions?.retryPayment) {
-    if (value === 0) {
+    if (mainTabValue === 0 && value === 0) {
       headers.push("Retry");
     }
   }
@@ -86,198 +90,260 @@ export default function PaymentsTabs({
   const navigate = useNavigate();
 
   const handleRowClick = (id) => {
-    localStorage.setItem("route", "all-cases");
-    navigate(`/all-cases/${id}`);
+    if (mainTabValue === 1) {
+      localStorage.setItem("route", "all-cases");
+      navigate(`/all-cases/${id}`);
+    }
+    if (mainTabValue === 0) {
+      localStorage.setItem("route", "list-details");
+      navigate(`/client/list-details/${id}`);
+    }
   };
 
   return (
     <>
-      <Box
-        sx={{
-          marginLeft: { xs: "0", md: "2.5rem" },
-        }}
-      >
-        <AntTabs
-          value={value}
-          onChange={handleChange}
-          aria-label="ant example"
-          variant="scrollable"
-          scrollButtons="auto"
+      <Box>
+        {mainTabValue === 0 && (
+          <AntTabs
+            value={value}
+            onChange={handleChange}
+            aria-label="ant example"
+            variant="scrollable"
+            scrollButtons="auto"
+            sx={{
+              width: { xs: "100%", md: "70rem" },
+              borderTopLeftRadius: "10px",
+              borderTopRightRadius: "10px",
+            }}
+          >
+            <AntTab
+              sx={{
+                bgcolor: Colors.WHITE,
+                width: { xs: "30%", sm: "max-content" },
+                fontWeight: "600",
+                height: "3.5rem",
+              }}
+              label="Failed Authorizations"
+            />
+            <AntTab
+              sx={{
+                bgcolor: Colors.WHITE,
+                width: { xs: "30%", sm: "max-content" },
+                fontWeight: "600",
+                height: "3.5rem",
+              }}
+              label="Successful Authorizations"
+            />
+            <AntTab
+              sx={{
+                bgcolor: Colors.WHITE,
+                width: { xs: "30%", sm: "max-content" },
+                fontWeight: "600",
+                height: "3.5rem",
+              }}
+              label="Successful Captures"
+            />
+            <AntTab
+              sx={{
+                bgcolor: Colors.WHITE,
+                width: { xs: "30%", sm: "max-content" },
+                fontWeight: "600",
+                height: "3.5rem",
+              }}
+              label="Failed Captures"
+            />
+            <AntTab
+              sx={{
+                bgcolor: Colors.WHITE,
+                width: { xs: "30%", sm: "max-content" },
+                borderTopRightRadius: "10px",
+                fontWeight: "600",
+                height: "3.5rem",
+              }}
+              label="Upcoming Payments"
+            />
+          </AntTabs>
+        )}
+        {mainTabValue === 1 && (
+          <AntTabs
+            value={value}
+            onChange={handleChange}
+            aria-label="ant example"
+            variant="scrollable"
+            scrollButtons="auto"
+            sx={{
+              width: { xs: "100%", md: "70rem" },
+              borderTopLeftRadius: "10px",
+              borderTopRightRadius: "10px",
+            }}
+          >
+            <AntTab
+              sx={{
+                bgcolor: Colors.WHITE,
+                width: { xs: "30%", sm: "max-content" },
+                fontWeight: "600",
+                height: "3.5rem",
+              }}
+              label="Successful Payments"
+            />
+            <AntTab
+              sx={{
+                bgcolor: Colors.WHITE,
+                width: { xs: "30%", sm: "max-content" },
+                fontWeight: "600",
+                height: "3.5rem",
+              }}
+              label="Upcoming Payments"
+            />
+          </AntTabs>
+        )}
+      </Box>
+      {mainTabValue === 0 && (
+        <Box
           sx={{
-            width: { xs: "100%", md: "70rem" },
-            borderTopLeftRadius: "10px",
-            borderTopRightRadius: "10px",
+            backgroundColor: Colors.WHITE,
+            borderRadius: "10px ",
           }}
         >
-          <AntTab
-            sx={{
-              bgcolor: Colors.WHITE,
-              width: { xs: "30%", sm: "max-content" },
-              fontWeight: "600",
-              height: "3.5rem",
-            }}
-            label="Failed Authorizations"
-          />
-
-          <AntTab
-            sx={{
-              bgcolor: Colors.WHITE,
-              width: { xs: "30%", sm: "max-content" },
-              fontWeight: "600",
-              height: "3.5rem",
-            }}
-            label="Successful Authorizations"
-          />
-          <AntTab
-            sx={{
-              bgcolor: Colors.WHITE,
-              width: { xs: "30%", sm: "max-content" },
-              fontWeight: "600",
-              height: "3.5rem",
-            }}
-            label="Successful Captures"
-          />
-          <AntTab
-            sx={{
-              bgcolor: Colors.WHITE,
-              width: { xs: "30%", sm: "max-content" },
-              fontWeight: "600",
-              height: "3.5rem",
-            }}
-            label="Failed Captures"
-          />
-          <AntTab
-            sx={{
-              bgcolor: Colors.WHITE,
-              width: { xs: "30%", sm: "max-content" },
-              fontWeight: "600",
-              height: "3.5rem",
-            }}
-            label="Successful Payments"
-          />
-          <AntTab
-            sx={{
-              bgcolor: Colors.WHITE,
-              width: { xs: "30%", sm: "max-content" },
-              borderTopRightRadius: "10px",
-              fontWeight: "600",
-              height: "3.5rem",
-            }}
-            label="Upcoming Payments"
-          />
-        </AntTabs>
-      </Box>
-      <Box
-        sx={{
-          backgroundColor: Colors.WHITE,
-          borderRadius: "10px ",
-        }}
-      >
-        {value === 0 && (
-          <PaymentTabsTable
-            onRowClick={
-              generalPermissions?.viewCaseDetails ? handleRowClick : undefined
-            }
-            data={data?.failedAuthorizations}
-            headerData={headers}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            totalPages={totalPages}
-            apiPagination={true}
-            value={value}
-            getHomeData={getHomeData}
-            loading={loading}
-            paginationRows={paginationRows}
-            setPaginationRows={setPaginationRows}
-          />
-        )}
-        {value === 1 && (
-          <PaymentTabsTable
-            onRowClick={
-              generalPermissions?.viewCaseDetails ? handleRowClick : undefined
-            }
-            data={data?.successAuthorizations}
-            headerData={headers}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            totalPages={totalPages}
-            apiPagination={true}
-            loading={loading}
-            paginationRows={paginationRows}
-            setPaginationRows={setPaginationRows}
-          />
-        )}
-        {value === 2 && (
-          <PaymentTabsTable
-            onRowClick={
-              generalPermissions?.viewCaseDetails ? handleRowClick : undefined
-            }
-            data={data?.successCaptures}
-            headerData={headers}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            totalPages={totalPages}
-            apiPagination={true}
-            value={value}
-            getHomeData={getHomeData}
-            loading={loading}
-            paginationRows={paginationRows}
-            setPaginationRows={setPaginationRows}
-          />
-        )}
-        {value === 3 && (
-          <PaymentTabsTable
-            onRowClick={
-              generalPermissions?.viewCaseDetails ? handleRowClick : undefined
-            }
-            data={data?.failedCaptures}
-            headerData={headers}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            totalPages={totalPages}
-            apiPagination={true}
-            loading={loading}
-            paginationRows={paginationRows}
-            setPaginationRows={setPaginationRows}
-          />
-        )}
-        {value === 4 && (
-          <PaymentTabsTable
-            onRowClick={
-              generalPermissions?.viewCaseDetails ? handleRowClick : undefined
-            }
-            data={data?.successPayments}
-            headerData={headers}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            totalPages={totalPages}
-            apiPagination={true}
-            value={value}
-            loading={loading}
-            paginationRows={paginationRows}
-            setPaginationRows={setPaginationRows}
-          />
-        )}
-        {value === 5 && (
-          <PaymentTabsTable
-            onRowClick={
-              generalPermissions?.viewCaseDetails ? handleRowClick : undefined
-            }
-            data={data?.upcomingPayments}
-            headerData={headers}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            totalPages={totalPages}
-            apiPagination={true}
-            value={value}
-            getHomeData={getHomeData}
-            loading={loading}
-            paginationRows={paginationRows}
-            setPaginationRows={setPaginationRows}
-            hideCheck={hideCheck}
-          />
-        )}
-      </Box>
+          {value === 0 && (
+            <PaymentTabsTable
+              onRowClick={
+                generalPermissions?.viewCaseDetails ? handleRowClick : undefined
+              }
+              data={data?.failedAuthorizations}
+              headerData={headers}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              totalPages={totalPages}
+              apiPagination={true}
+              value={value}
+              getHomeData={getHomeData}
+              loading={loading}
+              paginationRows={paginationRows}
+              setPaginationRows={setPaginationRows}
+              mainTabValue={mainTabValue}
+            />
+          )}
+          {value === 1 && (
+            <PaymentTabsTable
+              onRowClick={
+                generalPermissions?.viewCaseDetails ? handleRowClick : undefined
+              }
+              data={data?.successAuthorizations}
+              headerData={headers}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              totalPages={totalPages}
+              apiPagination={true}
+              loading={loading}
+              paginationRows={paginationRows}
+              setPaginationRows={setPaginationRows}
+              mainTabValue={mainTabValue}
+            />
+          )}
+          {value === 2 && (
+            <PaymentTabsTable
+              onRowClick={
+                generalPermissions?.viewCaseDetails ? handleRowClick : undefined
+              }
+              data={data?.successCaptures}
+              headerData={headers}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              totalPages={totalPages}
+              apiPagination={true}
+              value={value}
+              getHomeData={getHomeData}
+              loading={loading}
+              paginationRows={paginationRows}
+              setPaginationRows={setPaginationRows}
+              mainTabValue={mainTabValue}
+            />
+          )}
+          {value === 3 && (
+            <PaymentTabsTable
+              onRowClick={
+                generalPermissions?.viewCaseDetails ? handleRowClick : undefined
+              }
+              data={data?.failedCaptures}
+              headerData={headers}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              totalPages={totalPages}
+              apiPagination={true}
+              loading={loading}
+              paginationRows={paginationRows}
+              setPaginationRows={setPaginationRows}
+              mainTabValue={mainTabValue}
+            />
+          )}
+          {value === 4 && (
+            <PaymentTabsTable
+              onRowClick={
+                generalPermissions?.viewCaseDetails ? handleRowClick : undefined
+              }
+              data={data?.upcomingPayments}
+              headerData={headers}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              totalPages={totalPages}
+              apiPagination={true}
+              value={value}
+              getHomeData={getHomeData}
+              loading={loading}
+              paginationRows={paginationRows}
+              setPaginationRows={setPaginationRows}
+              hideCheck={hideCheck}
+              mainTabValue={mainTabValue}
+            />
+          )}
+        </Box>
+      )}
+      {mainTabValue === 1 && (
+        <Box
+          sx={{
+            backgroundColor: Colors.WHITE,
+            borderRadius: "10px ",
+          }}
+        >
+          {value === 0 && (
+            <PaymentTabsTable
+              onRowClick={
+                generalPermissions?.viewCaseDetails ? handleRowClick : undefined
+              }
+              data={data}
+              headerData={headers}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              totalPages={totalPages}
+              apiPagination={true}
+              value={value}
+              getHomeData={getHomeData}
+              loading={loading}
+              paginationRows={paginationRows}
+              setPaginationRows={setPaginationRows}
+              mainTabValue={mainTabValue}
+            />
+          )}
+          {value === 1 && (
+            <PaymentTabsTable
+              onRowClick={
+                generalPermissions?.viewCaseDetails ? handleRowClick : undefined
+              }
+              data={data}
+              headerData={headers}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              totalPages={totalPages}
+              apiPagination={true}
+              loading={loading}
+              paginationRows={paginationRows}
+              setPaginationRows={setPaginationRows}
+              mainTabValue={mainTabValue}
+            />
+          )}
+        </Box>
+      )}
     </>
   );
 }

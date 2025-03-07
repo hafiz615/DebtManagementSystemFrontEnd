@@ -116,6 +116,7 @@ export default function PaymentTabsTable({
   paginationRows,
   setPaginationRows,
   hideCheck,
+  mainTabValue,
 }) {
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
@@ -141,31 +142,44 @@ export default function PaymentTabsTable({
   ];
 
   useEffect(() => {
-    const generatedData = data?.map((item) => {
-      const formattedItem = {
-        caseId: item?.caseId,
-        id: item?.id,
-        name: item?.fullName || "-",
-        tryDate:
-          (item?.tryDate && new Date(item?.tryDate)?.toLocaleDateString()) ||
-          "-",
-        totalDebt: formatDollarAmount(item?.totalDebt) || "-",
-        transactionType: value !== 5 ? item?.transactionType || "-" : "",
+    const generatedData =
+      data?.length > 0 &&
+      data?.map((item) => {
+        const formattedItem = {
+          caseId: item?.caseId || item?.debtorId,
+          id: item?.id,
+          name:
+            mainTabValue === 1 ? item?.creditorName : item?.debtorName || "-",
+          tryDate:
+            (item?.rescheduled &&
+              new Date(item?.rescheduled)?.toLocaleDateString()) ||
+            "-",
+        };
+        if (mainTabValue === 1) {
+          formattedItem.totalDebt = formatDollarAmount(item?.totalDebt) || "-";
+        }
+        formattedItem.transactionType =
+          value !== 5 ? item?.transactionType || "-" : "";
 
-        // ssid: item?.SSID || "-",
-        caseOwner: item?.caseOwner || "-",
-      };
-      if (value === 4) {
-        formattedItem.dueDate =
-          new Date(item?.dueDate)?.toLocaleDateString() || "-";
-      }
-      return formattedItem;
-    });
+        if (mainTabValue === 1) {
+          formattedItem.caseOwner = item?.caseOwner || "-";
+        }
+
+        if (
+          (mainTabValue === 0 && value === 4) ||
+          (mainTabValue === 1 && value === 1)
+        ) {
+          formattedItem.dueDate =
+            new Date(item?.dueDate)?.toLocaleDateString() || "-";
+        }
+        return formattedItem;
+      });
 
     if (!isEqual(generatedData, rows)) {
       setRows(generatedData);
     }
   }, [data]);
+
   const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];
@@ -296,7 +310,7 @@ export default function PaymentTabsTable({
                       hover
                       onClick={
                         onRowClick
-                          ? () => onRowClick(row?.caseId)
+                          ? () => onRowClick(row?.caseId || row?.debtorId)
                           : (event) => handleClick(event, id)
                       }
                       role="checkbox"
@@ -325,7 +339,8 @@ export default function PaymentTabsTable({
                           )
                       )}
 
-                      {(value === 0 || value === 3) && (
+                      {((mainTabValue === 0 && value === 0) ||
+                        (mainTabValue === 0 && value === 3)) && (
                         <StyledTableCell
                           align="left"
                           sx={{

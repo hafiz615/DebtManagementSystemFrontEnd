@@ -1941,15 +1941,15 @@ export const GetAllCc = async () => {
 };
 export const GetServiceFee = async () => {
   try {
-    return await axios.get(BASE_URL + "/v1/settings/serviceFee", setHeaders());
+    return await axios.get(BASE_URL + "/v1/settings/fee", setHeaders());
   } catch (error) {
     return error;
   }
 };
-export const SaveServiceFee = async (payload) => {
+export const SaveServiceFee = async (payload, type) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/settings/serviceFee`,
+      BASE_URL + `/v1/settings/fee?type=${type}`,
       payload,
       setHeaders()
     );
@@ -1969,6 +1969,25 @@ export const GetCreditorSuccessfulPayment = async (
     return await axios.post(
       BASE_URL +
         `/v1/payment/getCreditorSuccessfulPayments?days=${count}&page=${page}&limit=${limit}&search=${search}&filters=${filters}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetCreditorUpcomingPayment = async (
+  count,
+  page,
+  limit,
+  search,
+  filters,
+  payload
+) => {
+  try {
+    return await axios.post(
+      BASE_URL +
+        `/v1/payment/creditorUpcomingPayments?days=${count}&page=${page}&limit=${limit}&search=${search}&filters=${filters}`,
       payload,
       setHeaders()
     );

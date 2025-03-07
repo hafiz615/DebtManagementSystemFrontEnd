@@ -8,7 +8,7 @@ import {
   Typography,
   IconButton,
 } from "@mui/material";
-import { Search, ChevronLeft, NavigateNext } from "@mui/icons-material";
+import { Search, ChevronLeft, NavigateNext, Phone } from "@mui/icons-material";
 import { useToast } from "../../toast/toastContext";
 
 import { Colors } from "../../config/default";
@@ -26,6 +26,9 @@ import { AddDebtorAccount } from "../../services/services";
 import Dropdown from "../dropdown";
 import { isEmpty } from "lodash";
 import { type } from "@testing-library/user-event/dist/type";
+import DialPad from "../dialPad";
+import { useDispatch } from "react-redux";
+import { setDialState } from "../../redux/action/action";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -73,6 +76,7 @@ export default function DebtorDetailsCards({
   const [type, setType] = useState("cc");
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 2;
+  const dispatch = useDispatch();
   const handleNext = () => {
     if (startIndex + itemsPerPage < caseData?.debtor?.contacts?.length) {
       setStartIndex(startIndex + itemsPerPage);
@@ -171,6 +175,17 @@ export default function DebtorDetailsCards({
     startIndex,
     startIndex + itemsPerPage
   );
+
+  const handleDialPad = (phoneNumber, caseId, fetchCalls) => {
+    dispatch(
+      setDialState({
+        phoneNumber: phoneNumber,
+        caseId: caseId,
+        fetchCalls: fetchCalls,
+        isModalOpen: true,
+      })
+    );
+  };
 
   return (
     <>
@@ -284,13 +299,18 @@ export default function DebtorDetailsCards({
                   </Typography>
                   {key === "phone" ? (
                     <div style={{ display: "flex", alignItems: "center" }}>
-                      <MuiModels
-                        fetchCalls={fetchCalls}
-                        show="dialPad"
-                        caseId={caseDataId}
-                        data={value ? `1${value}` : ""}
-                        width={300}
-                      />
+                      <IconButton
+                        sx={{ color: Colors.SKY_BLUE }}
+                        onClick={() =>
+                          handleDialPad(
+                            value ? `1${value}` : "",
+                            caseDataId,
+                            fetchCalls
+                          )
+                        }
+                      >
+                        <Phone sx={{ fontSize: "16px" }} />
+                      </IconButton>
                       <Tooltip title={value} placement="top-end">
                         <Typography
                           sx={{
@@ -430,13 +450,6 @@ export default function DebtorDetailsCards({
                   </Typography>
                   {key === "phone" ? (
                     <div style={{ display: "flex", alignItems: "center" }}>
-                      <MuiModels
-                        fetchCalls={fetchCalls}
-                        show="dialPad"
-                        caseId={caseDataId}
-                        data={value ? `1${value}` : ""}
-                        width={300}
-                      />
                       <Tooltip title={value} placement="top-end">
                         <Typography
                           sx={{

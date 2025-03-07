@@ -54,7 +54,8 @@ export default function AccordionUsage({
       caseId: item?.caseId || item?.debtorId,
       id: item?._id,
       name:
-        arrayName === "successPayments"
+        arrayName === "successPayments" ||
+        arrayName === "creditorUpcomingPayments"
           ? item?.creditorName
           : item?.debtorName || "-",
       dueDate: new Date(item?.dueDate).toLocaleDateString() || "-",
