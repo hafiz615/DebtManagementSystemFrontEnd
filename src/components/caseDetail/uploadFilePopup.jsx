@@ -20,6 +20,7 @@ function UploadFilePopup({ handleClose, GetCaseDetails }) {
   const { showToast } = useToast();
   const [bankFiles, setBankFiles] = useState([]);
   const [mcaFiles, setMcaFiles] = useState([]);
+  const [lawsuitFiles, setLawsuitFiles] = useState([]);
   const [otherFiles, setOtherFiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
@@ -29,6 +30,9 @@ function UploadFilePopup({ handleClose, GetCaseDetails }) {
   };
   const handleDropForUploadMcaFiles = async (acceptedFiles) => {
     setMcaFiles(acceptedFiles);
+  };
+  const handleDropForUploadLawsuitFiles = async (acceptedFiles) => {
+    setLawsuitFiles(acceptedFiles);
   };
   const handleDropForUploadOtherFiles = async (acceptedFiles) => {
     setOtherFiles(acceptedFiles);
@@ -42,6 +46,9 @@ function UploadFilePopup({ handleClose, GetCaseDetails }) {
     } else if (type === "mca") {
       filteredFile = mcaFiles?.filter((file) => file.name !== fileName);
       setMcaFiles(filteredFile);
+    } else if (type === "lawsuit") {
+      filteredFile = lawsuitFiles?.filter((file) => file.name !== fileName);
+      setLawsuitFiles(filteredFile);
     } else {
       filteredFile = otherFiles?.filter((file) => file.name !== fileName);
       setOtherFiles(filteredFile);
@@ -78,6 +85,16 @@ function UploadFilePopup({ handleClose, GetCaseDetails }) {
     multiple: true,
   });
 
+  const {
+    getRootProps: getLawsuitRootPropsUpload,
+    getInputProps: getLawsuitPropsUpload,
+  } = useDropzone({
+    onDrop: handleDropForUploadLawsuitFiles,
+    noClick: true,
+    noKeyboard: true,
+    multiple: true,
+  });
+
   const params = {
     bankStatementDocuments: [],
     mcaDocuments: [],
@@ -96,6 +113,12 @@ function UploadFilePopup({ handleClose, GetCaseDetails }) {
       const result = await UploadFiles(mcaFiles);
       if (result?.status === 200) {
         params.mcaDocuments = result?.data?.data;
+      }
+    }
+    if (lawsuitFiles?.length > 0) {
+      const result = await UploadFiles(lawsuitFiles);
+      if (result?.status === 200) {
+        params.lawsuitDocuments = result?.data?.data;
       }
     }
     if (otherFiles?.length > 0) {
@@ -146,56 +169,62 @@ function UploadFilePopup({ handleClose, GetCaseDetails }) {
             justifyContent: "space-between",
           }}
         >
-          {["Bank Statements", "MCA", "Other"]?.map((label, index) => (
-            <Grid
-              key={index}
-              container
-              item
-              xs={10}
-              md={12}
-              lg={3.75}
-              sx={styles.uploadContainer}
-            >
-              <Typography
-                sx={{
-                  ...styles.headerText,
-                  textAlign: "center",
-                  mb: "10px",
-                }}
+          {["Bank Statements", "MCA", "Lawsuit", "Other"]?.map(
+            (label, index) => (
+              <Grid
+                key={index}
+                container
+                item
+                xs={12}
+                md={5.75}
+                lg={2.75}
+                sx={styles.uploadContainer}
               >
-                Upload {label}
-              </Typography>
+                <Typography
+                  sx={{
+                    ...styles.headerText,
+                    textAlign: "center",
+                    mb: "10px",
+                  }}
+                >
+                  Upload {label}
+                </Typography>
 
-              <Box
-                sx={styles.uploadBox}
-                {...(label === "MCA"
-                  ? getMcaRootPropsUpload()
-                  : label === "Other"
-                  ? getOtherRootPropsUpload()
-                  : getBankRootPropsUpload())}
-              >
-                <input
+                <Box
+                  sx={styles.uploadBox}
                   {...(label === "MCA"
-                    ? getMcaPropsUpload()
+                    ? getMcaRootPropsUpload()
                     : label === "Other"
-                    ? getOtherPropsUpload()
-                    : getBankPropsUpload())}
-                  type="file"
-                  webkitdirectory=""
-                  directory=""
-                  multiple
-                  style={{ display: "none" }}
-                  id={`file-upload-${index}`}
-                />
-                <label htmlFor={`file-upload-${index}`}>
-                  <UploadIcon sx={styles.uploadIcon} />
-                  <Typography sx={styles.uploadText}>
-                    Click or Drag to Upload
-                  </Typography>
-                </label>
-              </Box>
-            </Grid>
-          ))}
+                    ? getOtherRootPropsUpload()
+                    : label === "Lawsuit"
+                    ? getLawsuitRootPropsUpload()
+                    : getBankRootPropsUpload())}
+                >
+                  <input
+                    {...(label === "MCA"
+                      ? getMcaPropsUpload()
+                      : label === "Other"
+                      ? getOtherPropsUpload()
+                      : label === "Lawsuit"
+                      ? getLawsuitPropsUpload()
+                      : getBankPropsUpload())}
+                    type="file"
+                    webkitdirectory=""
+                    directory=""
+                    multiple
+                    style={{ display: "none" }}
+                    id={`file-upload-${index}`}
+                  />
+                  <label htmlFor={`file-upload-${index}`}>
+                    <UploadIcon sx={styles.uploadIcon} />
+                    <Typography sx={styles.uploadText}>
+                      Click or Drag to Upload
+                    </Typography>
+                  </label>
+                </Box>
+              </Grid>
+            )
+          )}
         </Box>
       </Grid>
       <Grid item xs={12} sx={{ marginTop: ".5rem" }}>
@@ -218,7 +247,8 @@ function UploadFilePopup({ handleClose, GetCaseDetails }) {
         >
           {bankFiles?.length === 0 &&
           mcaFiles?.length === 0 &&
-          otherFiles?.length === 0 ? (
+          otherFiles?.length === 0 &&
+          lawsuitFiles?.length === 0 ? (
             <Grid sx={{ textAlign: "center", color: Colors.DIM_LIGHT_GRAY }}>
               <h5>No Files</h5>
             </Grid>
@@ -295,6 +325,43 @@ function UploadFilePopup({ handleClose, GetCaseDetails }) {
                     <DeleteOutlineOutlined
                       sx={{ color: Colors.ORANGE_COLOR, cursor: "pointer" }}
                       onClick={() => removeFile(data?.name, "mca")}
+                    />
+                  )}
+                </Grid>
+              ))}
+              {lawsuitFiles?.length > 0 && (
+                <Typography
+                  sx={{
+                    fontWeight: "600",
+                    fontFamily: "Nunito",
+                    fontSize: FONT_SIZE_LARGE,
+                    display: "flex",
+                    alignItems: "center",
+                    m: "10px 0px",
+                  }}
+                >
+                  <InsertDriveFile /> Lawsuit
+                </Typography>
+              )}
+              {lawsuitFiles?.map((data, i) => (
+                <Grid
+                  item
+                  key={`lawsuit-${i}`}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginTop: "1rem",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Grid item sx={{ display: "flex", alignItems: "center" }}>
+                    <Typography variant="body2">{data?.name}</Typography>
+                  </Grid>
+
+                  {!lawsuitFiles?.isUploading && (
+                    <DeleteOutlineOutlined
+                      sx={{ color: Colors.ORANGE_COLOR, cursor: "pointer" }}
+                      onClick={() => removeFile(data?.name, "lawsuit")}
                     />
                   )}
                 </Grid>
