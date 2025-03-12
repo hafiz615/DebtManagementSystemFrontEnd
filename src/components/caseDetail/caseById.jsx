@@ -15,7 +15,6 @@ import {
   Tabs,
   TextField,
   Typography,
-  Tooltip,
 } from "@mui/material";
 import React from "react";
 import { Colors } from "../../config/default";
@@ -29,17 +28,13 @@ import AboutAccordion from "./aboutAccordion";
 import TaskAccordion from "./tasksAccordion";
 import CustomFieldsAccordion from "./customFieldsAccordion";
 import TextButton from "../button";
-import { useNavigate } from "react-router-dom";
 import TimelineData from "./timelineData";
 import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../../constants/appConstants";
-import ScrollbarStyles from "../customScroll";
 import { isEmpty } from "lodash";
-import FinancialAccordion from "./Financial";
-import SettlementAccordion from "./settlementRanges";
-import DeletePrompt from "../deletePrompt";
-import { GetCalls } from "../../services/services";
-import { useToast } from "../../toast/toastContext";
+import { GetCalls, GetLawsuitDetails } from "../../services/services";
 import SendEmailCase from "./sendEmailCase";
+import AttorneyDetail from "./attorneyDetail";
+import OtherCreditors from "./otherCreditors";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -99,7 +94,9 @@ export default function CaseById({
   addTaskModal,
   handleChangeModal,
   open,
-  handleToggle,
+  isAttorneyChecked,
+  handleCreditorToggle,
+  handleAttorneyToggle,
   isChecked,
   GetCasePaymentDetails,
   currentPaymentPage,
@@ -111,12 +108,18 @@ export default function CaseById({
   handleCloseNotes,
   cc,
 }) {
-  const navigate = useNavigate();
-  const [deleting, setDeleting] = useState(false);
   const [callLogs, setCallLogs] = useState([]);
   const [currentCallPage, setCurrentCallPage] = useState(1);
   const [totalCallPage, setTotalCallPage] = useState();
   const [creditorsTabs, setCreditorsTabs] = useState("singleCreditor");
+  const [attorneyData, setAttorneyData] = useState();
+
+  const getAttorneyData = async () => {
+    const res = await GetLawsuitDetails(caseData?._id);
+    if (res?.status === 200) {
+      setAttorneyData(res?.data?.data?.attorney);
+    }
+  };
 
   const fetchCalls = async (caseId) => {
     const res = await GetCalls(caseId || id, currentCallPage);
@@ -130,6 +133,10 @@ export default function CaseById({
   useEffect(() => {
     fetchCalls();
   }, [currentCallPage]);
+
+  useEffect(() => {
+    getAttorneyData();
+  }, []);
 
   return (
     <Grid item sx={{ marginTop: "1rem" }}>
@@ -218,6 +225,18 @@ export default function CaseById({
                       }}
                       label="Creditor"
                       value="Creditor"
+                    />
+                    <Tab
+                      sx={{
+                        fontWeight: "600",
+                        textTransform: "none",
+                        fontFamily: "Nunito",
+                        "&.Mui-selected": {
+                          color: value ? Colors.SKY_BLUE : "inherit",
+                        },
+                      }}
+                      label="Attorney"
+                      value="Attorney"
                     />
                     <Tab
                       sx={{
@@ -330,7 +349,47 @@ export default function CaseById({
                       <Grid item>
                         <Switch
                           checked={isChecked}
-                          onChange={(e) => handleToggle(e.target.checked)}
+                          onChange={(e) =>
+                            handleCreditorToggle(e.target.checked, "creditor")
+                          }
+                          sx={{
+                            "& .MuiSwitch-switchBase.Mui-checked": {
+                              color: Colors.SKY_BLUE,
+                            },
+                            "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
+                              {
+                                backgroundColor: Colors.SKY_BLUE,
+                              },
+                          }}
+                        />
+                      </Grid>
+                    </Grid>
+                  )}
+                  {value === "Attorney" && (
+                    <Grid
+                      sx={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        borderRadius: "10px",
+                        padding: "10px",
+                      }}
+                    >
+                      <Grid item sx={{ mr: 1 }}>
+                        <Typography
+                          sx={{
+                            fontFamily: "Nunito",
+                            fontSize: FONT_SIZE_LARGE,
+                          }}
+                        >
+                          Funds transfer
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <Switch
+                          checked={isAttorneyChecked}
+                          onChange={(e) =>
+                            handleAttorneyToggle(e.target.checked, "attorney")
+                          }
                           sx={{
                             "& .MuiSwitch-switchBase.Mui-checked": {
                               color: Colors.SKY_BLUE,
@@ -384,136 +443,10 @@ export default function CaseById({
                     cc={cc}
                   />
                 ) : value === "Other Creditors" ? (
-                  <Grid
-                    item
-                    xs={12}
-                    sx={{
-                      backgroundColor: Colors.WHITE,
-                      borderRadius: "10px",
-                      padding: "0px 10px",
-                      height: "14rem",
-                      marginBottom: "0.5rem",
-                      overflowY: "auto",
-                      ...ScrollbarStyles,
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <p
-                        style={{
-                          fontWeight: "600",
-                          fontSize: "13px",
-                          fontFamily: "Nunito",
-                        }}
-                      >
-                        Other Creditors
-                      </p>
-                      <Box sx={{ marginTop: "0.5rem" }}>
-                        <MuiModels
-                          show="addCase"
-                          width="80vw"
-                          height="80vh"
-                          caseData={caseData}
-                        />
-                      </Box>
-                    </div>
-                    {caseData?.creditors?.map((item, index) => {
-                      return (
-                        <Grid
-                          container
-                          key={index}
-                          sx={{
-                            display: "flex",
-                            backgroundColor:
-                              index % 2 === 0 ? Colors.WHITE : Colors.VIOLET,
-                            "&:hover": {
-                              backgroundColor: Colors.BG_LIGHT_GRAY,
-                            },
-
-                            cursor: "pointer",
-                            paddingRight: ".2rem",
-                            paddingLeft: ".2rem",
-                            height: "2rem",
-                            alignItems: "center",
-                          }}
-                          onClick={() => navigate(`/all-cases/${item?._id}`)}
-                        >
-                          <Grid item xs={11} md={8} lg={5}>
-                            <span
-                              style={{
-                                color: Colors.DIM_LIGHT_GRAY,
-                                fontWeight: "700",
-                                fontFamily: "Nunito",
-                                fontSize: "11px",
-                              }}
-                            >
-                              <Hidden smDown>
-                                <span
-                                  style={{
-                                    fontWeight: "700",
-                                    color: Colors.DARK_GRAY,
-                                    marginRight: "1rem",
-                                  }}
-                                >
-                                  Name
-                                </span>
-                              </Hidden>
-                              {item?.creditor?.businessInformation?.companyName}
-                            </span>
-                          </Grid>
-                          <Hidden mdDown>
-                            <Grid item xs={3} sm={4} lg={6}>
-                              <span
-                                style={{
-                                  color: Colors.DIM_LIGHT_GRAY,
-                                  fontWeight: "600",
-                                  fontFamily: "Nunito",
-                                  fontSize: "11px",
-                                }}
-                              >
-                                <span
-                                  style={{
-                                    fontWeight: "700",
-                                    color: Colors.DARK_GRAY,
-                                    marginRight: "1rem",
-                                  }}
-                                >
-                                  Case Code
-                                </span>
-
-                                {item?.caseCode}
-                              </span>
-                            </Grid>
-                          </Hidden>
-                          <Grid
-                            item
-                            xs={1}
-                            sm={1}
-                            lg={1}
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <DeletePrompt
-                              buttonName="Delete"
-                              heading="Delete Creditor"
-                              text={`Are you sure you want to delete ${item?.creditor?.businessInformation?.companyName}?`}
-                              creditorId={item?._id}
-                              loading={deleting}
-                              GetCaseDetails={GetCaseDetails}
-                              setLoading={setDeleting}
-                              id={id}
-                            />
-                          </Grid>
-                        </Grid>
-                      );
-                    })}
-                  </Grid>
+                  <OtherCreditors
+                    caseData={caseData}
+                    GetCaseDetails={GetCaseDetails}
+                  />
                 ) : value === "Transactions" ? (
                   <TransactionDetails
                     loading={isPaymentLoading}
@@ -524,6 +457,12 @@ export default function CaseById({
                     currentPaymentPage={currentPaymentPage}
                     setCurrentPaymentPage={setCurrentPaymentPage}
                     totalPaymentPage={totalPaymentPage}
+                  />
+                ) : value === "Attorney" ? (
+                  <AttorneyDetail
+                    caseData={caseData}
+                    GetCaseDetails={GetCaseDetails}
+                    attorneyData={attorneyData}
                   />
                 ) : (
                   <CaseFileCard
@@ -542,7 +481,6 @@ export default function CaseById({
                 loading={isPaymentLoading}
                 paymentDetails={paymentDetails}
               />
-
               {/* <FinancialAccordion />
               <SettlementAccordion /> */}
               <AboutAccordion
@@ -572,7 +510,6 @@ export default function CaseById({
                   backgroundColor={Colors.SKY_BLUE}
                   hoverColor={Colors.SKY_BLUE}
                 />
-
                 <Modal
                   open={open}
                   onClose={handleClose}
@@ -635,8 +572,6 @@ export default function CaseById({
                 value={creditorsTabs}
                 onChange={(e, value) => {
                   setCreditorsTabs(value);
-
-                  // If the first tab (custom tab) is selected
                   if (value === "singleCreditor") {
                     const singleCreditorId = caseData?._id;
                     if (singleCreditorId) {

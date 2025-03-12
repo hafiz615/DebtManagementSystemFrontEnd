@@ -170,6 +170,7 @@ export default function MuiModels({
   loginUser,
   cc,
   ccData,
+  type,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -1094,7 +1095,11 @@ export default function MuiModels({
               handleClose={handleClose}
             />
           ) : show === "paynoteForm" ? (
-            <PaynoteForm handleClose={handleClose} caseData={caseData} />
+            <PaynoteForm
+              type={type}
+              handleClose={handleClose}
+              caseData={caseData}
+            />
           ) : show === "AddPayments" ? (
             <PaymentCardPopup
               handleClose={handleClose}
@@ -1143,6 +1148,7 @@ export default function MuiModels({
             />
           ) : show === "showCreditorSync" ? (
             <CreditorSync
+              type={type}
               handleClose={handleClose}
               caseData={caseData}
               GetCaseDetails={GetCaseDetails}
