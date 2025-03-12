@@ -107,6 +107,7 @@ function CaseDetail() {
   const [caseHistoryTabs, setCaseHistoryTabs] = useState(0);
   const [logs, setLogs] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
+  const [isAttorneyChecked, setAttorneyIsChecked] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   //settlement States
   const [settlementloading, setSettlementLoading] = useState(false);
@@ -323,9 +324,20 @@ function CaseDetail() {
     }
   };
 
-  const handleToggle = async (check) => {
+  const handleCreditorToggle = async (check) => {
     setIsChecked(check);
-    const res = await PausePayments(id, check);
+    const res = await PausePayments(id, check, "", "creditor");
+    if (res?.status === 200) {
+      showToast(res?.data?.message, "success");
+    } else if (res?.response?.status === 400) {
+      const errorMessage = res?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+  };
+
+  const handleAttorneyToggle = async (check) => {
+    setAttorneyIsChecked(check);
+    const res = await PausePayments(id, check, "", "attorney");
     if (res?.status === 200) {
       showToast(res?.data?.message, "success");
     } else if (res?.response?.status === 400) {
@@ -722,8 +734,10 @@ function CaseDetail() {
             addTaskModal={addTaskModal}
             handleChangeModal={handleChangeModal}
             open={open}
+            isAttorneyChecked={isAttorneyChecked}
             isChecked={isChecked}
-            handleToggle={handleToggle}
+            handleCreditorToggle={handleCreditorToggle}
+            handleAttorneyToggle={handleAttorneyToggle}
             GetCasePaymentDetails={GetCasePaymentDetails}
             currentPaymentPage={currentPaymentPage}
             setCurrentPaymentPage={setCurrentPaymentPage}

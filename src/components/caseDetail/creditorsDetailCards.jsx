@@ -177,13 +177,13 @@ export default function CreditorsDetailCards({
               }}
             >
               <MuiModels
+                type="creditor"
                 show="showCreditorSync"
                 iconColor={Colors.BLACK}
                 caseData={caseData}
                 GetCaseDetails={GetCaseDetails}
                 height="22vh"
               />
-
               <MuiModels
                 show="creditorDetail"
                 button="create"
@@ -304,6 +304,7 @@ export default function CreditorsDetailCards({
           }}
         >
           <MuiModels
+            type="creditor"
             show="paynoteForm"
             button="paynoteForm"
             width="55vw"
