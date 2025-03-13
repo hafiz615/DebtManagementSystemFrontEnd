@@ -735,6 +735,7 @@ function CaseDetail() {
             handleChangeModal={handleChangeModal}
             open={open}
             isAttorneyChecked={isAttorneyChecked}
+            setAttorneyIsChecked={setAttorneyIsChecked}
             isChecked={isChecked}
             handleCreditorToggle={handleCreditorToggle}
             handleAttorneyToggle={handleAttorneyToggle}

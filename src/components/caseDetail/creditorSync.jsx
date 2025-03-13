@@ -12,7 +12,7 @@ import {
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 
-function CreditorSync({ handleClose, caseData, type }) {
+function CreditorSync({ attorneyId, handleClose, caseData, type }) {
   const { showToast } = useToast();
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -37,7 +37,7 @@ function CreditorSync({ handleClose, caseData, type }) {
   const GetCreditorPaynoteSync = async () => {
     setPaynoteSyncloading(true);
     const GetCreditorPaynoteSyncRes = await GetCreditorSyncEmail(
-      creditorId,
+      type === "attorney" ? attorneyId : creditorId,
       type
     );
     if (GetCreditorPaynoteSyncRes?.status === 200) {
@@ -57,7 +57,7 @@ function CreditorSync({ handleClose, caseData, type }) {
     const params = { email: email };
     const AddSyncPaynoteCreditorEmailRes = await SyncPaynoteCreditor(
       params,
-      creditorId,
+      type === "attorney" ? attorneyId : creditorId,
       type
     );
     if (AddSyncPaynoteCreditorEmailRes?.status === 200) {
