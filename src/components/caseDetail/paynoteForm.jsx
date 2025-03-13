@@ -11,7 +11,7 @@ import { useToast } from "../../toast/toastContext";
 import { AddCreditorAccount } from "../../services/services";
 import { REACT_APP_SECURITY_KEY } from "../../constants/appConstants";
 
-function PaynoteForm({ type, handleClose, caseData }) {
+function PaynoteForm({ type, handleClose, caseData, attorneyId }) {
   const [errors, setErrors] = useState({});
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -92,7 +92,7 @@ function PaynoteForm({ type, handleClose, caseData }) {
     };
     const addCreditorAccount = await AddCreditorAccount(
       finalData,
-      creditorId,
+      type === "attorney" ? attorneyId : creditorId,
       type
     );
     if (addCreditorAccount?.status === 200) {

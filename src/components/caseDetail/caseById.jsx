@@ -94,6 +94,7 @@ export default function CaseById({
   addTaskModal,
   handleChangeModal,
   open,
+  setAttorneyIsChecked,
   isAttorneyChecked,
   handleCreditorToggle,
   handleAttorneyToggle,
@@ -113,11 +114,14 @@ export default function CaseById({
   const [totalCallPage, setTotalCallPage] = useState();
   const [creditorsTabs, setCreditorsTabs] = useState("singleCreditor");
   const [attorneyData, setAttorneyData] = useState();
+  const [allAttorneyData, setAllAttorneyData] = useState();
 
   const getAttorneyData = async () => {
     const res = await GetLawsuitDetails(caseData?._id);
     if (res?.status === 200) {
-      setAttorneyData(res?.data?.data?.attorney);
+      setAllAttorneyData(res?.data?.data);
+      setAttorneyData(res?.data?.data ? res?.data?.data?.attorney : "");
+      setAttorneyIsChecked(res?.data?.data?.lawSuit?.attorneyPaymentsProceed);
     }
   };
 
@@ -343,7 +347,7 @@ export default function CaseById({
                             fontSize: FONT_SIZE_LARGE,
                           }}
                         >
-                          Funds transfer
+                          Creditor Funds transfer
                         </Typography>
                       </Grid>
                       <Grid item>
@@ -365,43 +369,61 @@ export default function CaseById({
                       </Grid>
                     </Grid>
                   )}
-                  {value === "Attorney" && (
-                    <Grid
-                      sx={{
-                        display: "inline-flex",
+                  {value === "Attorney" && attorneyData && (
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "1rem",
                         alignItems: "center",
-                        borderRadius: "10px",
-                        padding: "10px",
                       }}
                     >
-                      <Grid item sx={{ mr: 1 }}>
-                        <Typography
-                          sx={{
-                            fontFamily: "Nunito",
-                            fontSize: FONT_SIZE_LARGE,
-                          }}
-                        >
-                          Funds transfer
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Switch
-                          checked={isAttorneyChecked}
-                          onChange={(e) =>
-                            handleAttorneyToggle(e.target.checked, "attorney")
-                          }
-                          sx={{
-                            "& .MuiSwitch-switchBase.Mui-checked": {
-                              color: Colors.SKY_BLUE,
-                            },
-                            "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
-                              {
-                                backgroundColor: Colors.SKY_BLUE,
+                      <Grid
+                        sx={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          borderRadius: "10px",
+                          padding: "10px",
+                        }}
+                      >
+                        <Grid item sx={{ mr: 1 }}>
+                          <Typography
+                            sx={{
+                              fontFamily: "Nunito",
+                              fontSize: FONT_SIZE_LARGE,
+                            }}
+                          >
+                            Attorney Funds transfer
+                          </Typography>
+                        </Grid>
+                        <Grid item>
+                          <Switch
+                            checked={isAttorneyChecked}
+                            onChange={(e) =>
+                              handleAttorneyToggle(e.target.checked, "attorney")
+                            }
+                            sx={{
+                              "& .MuiSwitch-switchBase.Mui-checked": {
+                                color: Colors.SKY_BLUE,
                               },
-                          }}
-                        />
+                              "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
+                                {
+                                  backgroundColor: Colors.SKY_BLUE,
+                                },
+                            }}
+                          />
+                        </Grid>
                       </Grid>
-                    </Grid>
+                      <MuiModels
+                        width="65vw"
+                        show="attorneyPaymentPlan"
+                        attorneyId={attorneyData?._id}
+                        data={allAttorneyData?.lawSuit}
+                        caseData={caseData}
+                        remainingAmount={allAttorneyData?.lawSuit?.balance?.toString()}
+                        GetCaseDetails={GetCaseDetails}
+                        getAttorneyData={getAttorneyData}
+                      />
+                    </div>
                   )}
                 </div>
               </div>
@@ -462,6 +484,7 @@ export default function CaseById({
                   <AttorneyDetail
                     caseData={caseData}
                     GetCaseDetails={GetCaseDetails}
+                    getAttorneyData={getAttorneyData}
                     attorneyData={attorneyData}
                   />
                 ) : (

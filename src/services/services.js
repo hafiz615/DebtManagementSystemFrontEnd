@@ -2005,3 +2005,36 @@ export const GetLawsuitDetails = async (id) => {
     return error;
   }
 };
+export const AddAttorneyPaymentPlan = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/payment/addAttorneyPaymentPlan/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const CancelAttorneyPaymentPlan = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/attorney/cancelLawSuitPaymentPlan/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateAttorneyDetail = async (payload, id) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/attorney/updateAttorney/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
