@@ -50,7 +50,6 @@ const MissedCalls = () => {
     localStorage.setItem("route", "all-cases");
     navigate(`/all-cases/${caseId}`);
   };
-
   const open = Boolean(anchorEl);
   const id = open ? "notification-popover" : undefined;
 

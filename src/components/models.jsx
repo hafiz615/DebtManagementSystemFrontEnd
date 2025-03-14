@@ -70,6 +70,8 @@ import BouncePayments from "./caseDetail/bouncePayments";
 import GetTransactionDetails from "./caseDetail/getTransactionDetails";
 import SeeCheckDetails from "./caseDetail/seeCheckDetails";
 import ClientSync from "./caseDetail/ClientSync";
+import AttorneyPaymentPlan from "./attorneyPaymentPlan";
+import EditAttorneyDetails from "./editAttorneyDetails";
 
 export default function MuiModels({
   buttonName,
@@ -153,7 +155,6 @@ export default function MuiModels({
   verifiedSenders,
   scoresBackend,
   compose,
-  paymentId,
   amount,
   creditorDetails,
   selectedCreditorDetails,
@@ -170,6 +171,9 @@ export default function MuiModels({
   loginUser,
   cc,
   ccData,
+  type,
+  attorneyId,
+  getAttorneyData,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -338,15 +342,16 @@ export default function MuiModels({
         </IconButton>
       ) : show === "showCreditorSync" ? (
         <Tooltip title="Sync Paynote Creditor" placement="top-end">
-          <IconButton
+          <Sync
             onClick={() => {
               handleOpen();
             }}
-          >
-            <Sync
-              sx={{ color: Colors.DARK_GRAY, fontSize: iconSize || "16px" }}
-            />
-          </IconButton>
+            sx={{
+              cursor: "pointer",
+              color: Colors.DARK_GRAY,
+              fontSize: iconSize || "16px",
+            }}
+          />
         </Tooltip>
       ) : show === "showClientSync" ? (
         <Tooltip
@@ -401,7 +406,7 @@ export default function MuiModels({
             sx={{ fontSize: "16px", color: Colors.WHITE, cursor: "pointer" }}
           />
         </IconButton>
-      ) : show === "editStatus" ? (
+      ) : show === "editStatus" || show === "editAttorney" ? (
         <IconButton
           onClick={() => {
             handleOpen();
@@ -628,9 +633,9 @@ export default function MuiModels({
         />
       ) : button === "paynoteForm" ? (
         <TextButton
-          buttonText="PAY"
+          buttonText="Add Bank Info"
           height="2rem"
-          width="6rem"
+          width="8rem"
           onClick={handleOpen}
           disabled={disabled}
           backgroundColor={Colors.SKY_BLUE}
@@ -762,7 +767,8 @@ export default function MuiModels({
         />
       ) : show === "settlmentPayment" ||
         buttonName === "settlmentPayment" ||
-        show === "payments" ? (
+        show === "payments" ||
+        show === "attorneyPaymentPlan" ? (
         <TextButton
           buttonText="Choose Plan"
           boxShadow="none"
@@ -1045,6 +1051,16 @@ export default function MuiModels({
               strategy={strategy}
               commission={commission}
             />
+          ) : show === "attorneyPaymentPlan" ? (
+            <AttorneyPaymentPlan
+              attorneyId={attorneyId}
+              data={data}
+              caseData={caseData}
+              handleClose={handleClose}
+              GetCaseDetails={GetCaseDetails}
+              getAttorneyData={getAttorneyData}
+              remainingAmount={remainingAmount}
+            />
           ) : show === "settlmentPayment" ? (
             <SettlementPayment
               title={title}
@@ -1094,7 +1110,12 @@ export default function MuiModels({
               handleClose={handleClose}
             />
           ) : show === "paynoteForm" ? (
-            <PaynoteForm handleClose={handleClose} caseData={caseData} />
+            <PaynoteForm
+              type={type}
+              attorneyId={attorneyId}
+              handleClose={handleClose}
+              caseData={caseData}
+            />
           ) : show === "AddPayments" ? (
             <PaymentCardPopup
               handleClose={handleClose}
@@ -1143,6 +1164,8 @@ export default function MuiModels({
             />
           ) : show === "showCreditorSync" ? (
             <CreditorSync
+              attorneyId={attorneyId}
+              type={type}
               handleClose={handleClose}
               caseData={caseData}
               GetCaseDetails={GetCaseDetails}
@@ -1173,6 +1196,15 @@ export default function MuiModels({
               handleClose={handleClose}
               GetCaseDetails={GetCaseDetails}
               caseData={caseData}
+            />
+          ) : show === "editAttorney" ? (
+            <EditAttorneyDetails
+              data={data}
+              attorneyId={attorneyId}
+              caseData={caseData}
+              GetCaseDetails={GetCaseDetails}
+              getAttorneyData={getAttorneyData}
+              handleClose={handleClose}
             />
           ) : (
             ""

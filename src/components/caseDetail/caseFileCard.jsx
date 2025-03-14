@@ -17,6 +17,7 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
   const bankDocuments = caseData?.debtor?.bankStatementDocuments || [];
   const mcaDocuments = caseData?.debtor?.mcaDocuments || [];
   const otherDocuments = caseData?.debtor?.otherDocuments || [];
+  const lawsuitDocuments = caseData?.debtor?.lawsuitDocuments || [];
 
   const handleFileView = (url) => {
     setUrl(url);
@@ -29,6 +30,8 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
         ? "bankStatementDocuments"
         : type === "MCA's"
         ? "mcaDocuments"
+        : type === "Lawsuit"
+        ? "lawsuitDocuments"
         : "otherDocuments";
     const response = await handleDeleteFile(
       fileToDelete?.key,
@@ -138,7 +141,8 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
   const hasNoFiles =
     bankDocuments?.length === 0 &&
     mcaDocuments?.length === 0 &&
-    otherDocuments?.length === 0;
+    otherDocuments?.length === 0 &&
+    lawsuitDocuments?.length === 0;
 
   return (
     <Grid
@@ -185,6 +189,7 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
       >
         {renderFiles(mcaDocuments, "MCA's")}
         {renderFiles(bankDocuments, "Bank Statements")}
+        {renderFiles(lawsuitDocuments, "Lawsuit")}
         {renderFiles(otherDocuments, "Others")}
 
         {hasNoFiles && (

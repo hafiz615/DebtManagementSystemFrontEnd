@@ -131,6 +131,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   //upload files
   const [files, setFiles] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [lawsuitFiles, setLawsuitFiles] = useState([]);
   const [otherFiles, setOtherFiles] = useState([]);
 
   //Search Debtor and Creditor State
@@ -184,6 +185,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   const [bankStatementUrl, setBankSatementUrl] = useState([]);
   const [mcaUrl, setMcaUrl] = useState([]);
   const [otherFileUrl, setOtherFileUrl] = useState([]);
+  const [lawsuitUrl, setLawsuitUrl] = useState([]);
   //
   const [debtorCaseData, setDebtorCaseData] = useState([]);
 
@@ -510,6 +512,12 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
             setOtherFileUrl(uploadFile?.data?.data);
           }
         }
+        if (lawsuitFiles?.length > 0) {
+          const uploadFile = await UploadFiles(lawsuitFiles, setProgress);
+          if (uploadFile?.status === 200) {
+            setLawsuitUrl(uploadFile?.data?.data);
+          }
+        }
 
         handleExtractedData(extractedDataMCAs);
         setActiveStep(activeStep + 1);
@@ -566,6 +574,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           mcaDocuments: mcaUrl || [],
           bankStatementDocuments: bankStatementUrl || [],
           otherDocuments: otherFileUrl || [],
+          lawsuitDocuments: lawsuitUrl || [],
           extractedFields: isEmpty(extractedData) ? [] : extractedData,
         };
         const res = await CreateDebtor(params);
@@ -684,6 +693,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       setFiles([]);
       setSelectedFiles([]);
       setOtherFiles([]);
+      setLawsuitFiles([]);
       setExtractedData({});
       setInputKey(Date.now());
     } else if (activeStep === 1) {
@@ -712,6 +722,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     setFiles([]);
     setSelectedFiles([]);
     setOtherFiles([]);
+    setLawsuitFiles([]);
     setExtractedData({});
     setInputKey(Date.now());
     clearDebtor();
@@ -856,6 +867,8 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
                 setSelectedFiles={setSelectedFiles}
                 otherFiles={otherFiles}
                 setOtherFiles={setOtherFiles}
+                lawsuitFiles={lawsuitFiles}
+                setLawsuitFiles={setLawsuitFiles}
                 setInputKey={setInputKey}
                 inputKey={inputKey}
                 loading={loading}

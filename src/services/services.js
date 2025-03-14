@@ -1280,10 +1280,10 @@ export const GetBulkCaseDetail = async (id) => {
   }
 };
 
-export const AddCreditorAccount = async (payload, id) => {
+export const AddCreditorAccount = async (payload, id, type) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/payment/addACHDetailsCreditor/${id}`,
+      BASE_URL + `/v1/payment/addACHDetails/${id}?type=${type}`,
       payload,
       setHeaders()
     );
@@ -1373,10 +1373,10 @@ export const VerfiyEmailIdentity = async (payload) => {
     return error;
   }
 };
-export const PausePayments = async (id, pause, payload) => {
+export const PausePayments = async (id, pause, payload, type) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/creditor/pausePayments/${id}?pause=${pause}`,
+      BASE_URL + `/v1/creditor/pausePayments/${id}?pause=${pause}&type=${type}`,
       payload,
       setHeaders()
     );
@@ -1578,10 +1578,10 @@ export const GetCallToken = async () => {
     return error;
   }
 };
-export const GetCreditorSyncEmail = async (id) => {
+export const GetCreditorSyncEmail = async (id, type) => {
   try {
     return await axios.get(
-      BASE_URL + `/v1/creditor/getCreditorSyncEmail/${id}`,
+      BASE_URL + `/v1/creditor/getSyncEmail/${id}?type=${type}`,
       setHeaders()
     );
   } catch (error) {
@@ -1589,10 +1589,10 @@ export const GetCreditorSyncEmail = async (id) => {
   }
 };
 
-export const SyncPaynoteCreditor = async (payload, id) => {
+export const SyncPaynoteCreditor = async (payload, id, type) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/creditor/syncPaynoteCreditor/${id}`,
+      BASE_URL + `/v1/creditor/syncPaynote/${id}?type=${type}`,
       payload,
       setHeaders()
     );
@@ -1988,6 +1988,49 @@ export const GetCreditorUpcomingPayment = async (
     return await axios.post(
       BASE_URL +
         `/v1/payment/creditorUpcomingPayments?days=${count}&page=${page}&limit=${limit}&search=${search}&filters=${filters}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetLawsuitDetails = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/attorney/getLawsuitDetails/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const AddAttorneyPaymentPlan = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/payment/addAttorneyPaymentPlan/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const CancelAttorneyPaymentPlan = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/attorney/cancelLawSuitPaymentPlan/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateAttorneyDetail = async (payload, id) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/attorney/updateAttorney/${id}`,
       payload,
       setHeaders()
     );

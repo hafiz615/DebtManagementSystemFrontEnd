@@ -11,7 +11,7 @@ import { useToast } from "../../toast/toastContext";
 import { AddCreditorAccount } from "../../services/services";
 import { REACT_APP_SECURITY_KEY } from "../../constants/appConstants";
 
-function PaynoteForm({ handleClose, caseData }) {
+function PaynoteForm({ type, handleClose, caseData, attorneyId }) {
   const [errors, setErrors] = useState({});
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -90,7 +90,11 @@ function PaynoteForm({ handleClose, caseData }) {
     const finalData = {
       data: encryptedData,
     };
-    const addCreditorAccount = await AddCreditorAccount(finalData, creditorId);
+    const addCreditorAccount = await AddCreditorAccount(
+      finalData,
+      type === "attorney" ? attorneyId : creditorId,
+      type
+    );
     if (addCreditorAccount?.status === 200) {
       showToast(addCreditorAccount?.data?.message, "success");
       handleClose();
