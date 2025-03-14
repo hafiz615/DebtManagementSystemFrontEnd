@@ -413,7 +413,8 @@ function UploadFilePopup({ handleClose, GetCaseDetails }) {
             loading ||
             (!bankFiles.length > 0 &&
               !mcaFiles.length > 0 &&
-              !otherFiles.length > 0)
+              !otherFiles.length > 0 &&
+              !lawsuitFiles.length > 0)
           }
           buttonText="Upload"
           height="2rem"
