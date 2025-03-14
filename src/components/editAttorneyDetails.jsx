@@ -4,6 +4,7 @@ import { Grid, Typography } from "@mui/material";
 import TextButton from "./button";
 import { UpdateAttorneyDetail } from "../services/services";
 import { useToast } from "../toast/toastContext";
+import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../constants/appConstants";
 
 export default function EditAttorneyDetails({
   data,
@@ -43,12 +44,23 @@ export default function EditAttorneyDetails({
       showToast(res?.data?.message, "success");
       getAttorneyData();
       handleClose();
+    } else {
+      const errorMessage = res?.response?.data?.message;
+      showToast(errorMessage, "error");
     }
+    setLoading(false);
   };
 
   return (
     <div>
-      <Typography sx={{ fontFamily: "Nunito", fontWeight: "600", mb: "1rem" }}>
+      <Typography
+        sx={{
+          fontFamily: "Nunito",
+          fontWeight: "600",
+          mb: "1rem",
+          fontSize: FONT_SIZE_XL,
+        }}
+      >
         Update Attorney Details
       </Typography>
       <Grid container sx={{ flexWrap: "wrap" }}>
@@ -58,9 +70,12 @@ export default function EditAttorneyDetails({
               style={{
                 display: "block",
                 fontFamily: "Nunito",
+                fontSize: FONT_SIZE_LARGE,
               }}
             >
-              {key}
+              {key === "attorneyFee"
+                ? "Attorney Fee"
+                : key?.charAt(0).toUpperCase() + key?.slice(1)}
             </label>
             <input
               type={key === "attorneyFee" ? "number" : "text"}
@@ -75,7 +90,8 @@ export default function EditAttorneyDetails({
                 border: "none",
                 outline: "none",
                 borderRadius: "5px",
-                width: "98%",
+                width: "96%",
+                fontSize: FONT_SIZE_LARGE,
               }}
             />
           </div>

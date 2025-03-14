@@ -16,7 +16,10 @@ export default function AttorneyDetail({
     { label: "Name", value: attorneyData?.name || "-" },
     { label: "Email", value: attorneyData?.email || "-" },
     { label: "SSN", value: attorneyData?.SSN || "-" },
-    { label: "Phone", value: attorneyData?.phone || "-" },
+    {
+      label: "Phone",
+      value: attorneyData?.phone ? `+1${attorneyData?.phone}` : "-",
+    },
     { label: "City", value: attorneyData?.city || "-" },
     {
       label: "Attorney Fee",
@@ -40,7 +43,11 @@ export default function AttorneyDetail({
     >
       <Grid
         container
-        sx={{ justifyContent: "space-between", alignItems: "center" }}
+        sx={{
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: "10px",
+        }}
       >
         <div style={{ display: "flex", marginTop: "10px", gap: "10px" }}>
           <span
@@ -52,24 +59,28 @@ export default function AttorneyDetail({
           >
             Attorney
           </span>
+          {attorneyData && (
+            <MuiModels
+              type="attorney"
+              show="showCreditorSync"
+              attorneyId={attorneyData?._id}
+              iconColor={Colors.BLACK}
+              caseData={caseData}
+              GetCaseDetails={GetCaseDetails}
+              height="22vh"
+            />
+          )}
+        </div>
+        {attorneyData && (
           <MuiModels
-            type="attorney"
-            show="showCreditorSync"
+            show="editAttorney"
+            data={attorneyData}
             attorneyId={attorneyData?._id}
-            iconColor={Colors.BLACK}
             caseData={caseData}
             GetCaseDetails={GetCaseDetails}
-            height="22vh"
+            getAttorneyData={getAttorneyData}
           />
-        </div>
-        <MuiModels
-          show="editAttorney"
-          data={attorneyData}
-          attorneyId={attorneyData?._id}
-          caseData={caseData}
-          GetCaseDetails={GetCaseDetails}
-          getAttorneyData={getAttorneyData}
-        />
+        )}
       </Grid>
       {attorneyData ? (
         <>
