@@ -230,18 +230,21 @@ export default function CaseById({
                       label="Creditor"
                       value="Creditor"
                     />
-                    <Tab
-                      sx={{
-                        fontWeight: "600",
-                        textTransform: "none",
-                        fontFamily: "Nunito",
-                        "&.Mui-selected": {
-                          color: value ? Colors.SKY_BLUE : "inherit",
-                        },
-                      }}
-                      label="Attorney"
-                      value="Attorney"
-                    />
+                    {attorneyData && (
+                      <Tab
+                        sx={{
+                          fontWeight: "600",
+                          textTransform: "none",
+                          fontFamily: "Nunito",
+                          "&.Mui-selected": {
+                            color: value ? Colors.SKY_BLUE : "inherit",
+                          },
+                        }}
+                        label="Lawsuit Details"
+                        value="Attorney"
+                      />
+                    )}
+
                     <Tab
                       sx={{
                         fontWeight: "600",
@@ -485,7 +488,7 @@ export default function CaseById({
                     caseData={caseData}
                     GetCaseDetails={GetCaseDetails}
                     getAttorneyData={getAttorneyData}
-                    attorneyData={attorneyData}
+                    allAttorneyData={allAttorneyData}
                   />
                 ) : (
                   <CaseFileCard
