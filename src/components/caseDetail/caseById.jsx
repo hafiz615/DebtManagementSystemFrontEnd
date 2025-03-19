@@ -331,6 +331,7 @@ export default function CaseById({
                         data={caseData}
                         GetCaseDetails={GetCaseDetails}
                         GetCasePaymentDetails={GetCasePaymentDetails}
+                        getAttorneyData={getAttorneyData}
                       />
                     </div>
                   )}
@@ -458,6 +459,7 @@ export default function CaseById({
                   />
                 ) : value === "Creditor" ? (
                   <CreditorsDetailCards
+                    accountsExist={caseData?.debtor?.accounts?.length > 0}
                     fetchCalls={fetchCalls}
                     verifiedSenders={verifiedSenders}
                     caseData={caseData}
@@ -485,6 +487,7 @@ export default function CaseById({
                   />
                 ) : value === "Attorney" ? (
                   <AttorneyDetail
+                    accountsExist={caseData?.debtor?.accounts?.length > 0}
                     caseData={caseData}
                     GetCaseDetails={GetCaseDetails}
                     getAttorneyData={getAttorneyData}
