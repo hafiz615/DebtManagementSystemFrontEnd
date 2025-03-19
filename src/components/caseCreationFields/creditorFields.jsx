@@ -83,6 +83,8 @@ export default function CreditorFields({
         item?.plaintiff_company ===
         thisCaseData?.creditor?.businessInformation?.companyName
       ) {
+        const newState = [...finalCaseData];
+
         setIsChecked((prev) => {
           const updated = [...prev];
           updated[caseIndex] = true;
@@ -119,9 +121,21 @@ export default function CreditorFields({
 
           return updated;
         });
+        setFinalCaseData(newState);
       }
     });
   }, []);
+
+  useEffect(() => {
+    setFinalCaseData((prevData) => {
+      const newState = [...prevData];
+      newState[caseIndex] = {
+        ...newState[caseIndex],
+        lawsuitExist: isChecked[caseIndex],
+      };
+      return newState;
+    });
+  }, [isChecked]);
 
   return (
     <>
@@ -695,9 +709,10 @@ export default function CreditorFields({
         <Switch
           checked={isChecked[caseIndex] || false}
           onChange={(e) => {
+            const isChecked = e.target.checked;
             setIsChecked((prev) => {
               const updated = [...prev];
-              updated[caseIndex] = e.target.checked;
+              updated[caseIndex] = isChecked;
               return updated;
             });
           }}
@@ -713,10 +728,12 @@ export default function CreditorFields({
       </Grid>
       {isChecked[caseIndex] && (
         <LawsuitFields
+          isChecked={isChecked}
           index={caseIndex}
           smallScreen={smallScreen}
           lawsuitFields={lawsuitFields}
           setLawsuitFields={setLawsuitFields}
+          setFinalCaseData={setFinalCaseData}
         />
       )}
       <Grid

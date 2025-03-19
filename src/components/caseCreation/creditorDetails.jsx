@@ -268,8 +268,6 @@ export default function CreditorDetails({
                 .replace(",", "")
             ) || 0,
           feePayment: "toPay",
-          lawsuitExist: isChecked[index] || false,
-          ...lawsuitFields[index],
         };
       });
     }
@@ -392,6 +390,7 @@ export default function CreditorDetails({
                   )}
 
                   <CreditorFields
+                    creditors={creditors}
                     thisCaseData={caseEntry}
                     handleCaseDataChange={handleCaseDataChange}
                     caseIndex={index}
