@@ -91,6 +91,7 @@ export default function AttorneyDetail({
       value: lawfirmData?.lawfirmFee ? `$${lawfirmData?.lawfirmFee}` : "$0",
     },
   ];
+
   return (
     <>
       <Grid
@@ -123,7 +124,7 @@ export default function AttorneyDetail({
                 fontFamily: "Nunito",
               }}
             >
-              Attorney
+              Creditor's Attorney
             </span>
             {attorneyData && (
               <MuiModels
@@ -355,7 +356,7 @@ export default function AttorneyDetail({
               fontFamily: "Nunito",
             }}
           >
-            Lawfirm
+            Law firm
           </span>
         </Grid>
         <div

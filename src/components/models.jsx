@@ -368,9 +368,7 @@ export default function MuiModels({
               handleOpen();
             }}
           >
-            <Sync
-              sx={{ color: Colors.DARK_GRAY, fontSize: iconSize || "16px" }}
-            />
+            <Sync sx={{ color: Colors.DARK_GRAY }} />
           </IconButton>
         </Tooltip>
       ) : show === "editAbout" ? (
@@ -636,7 +634,7 @@ export default function MuiModels({
         <TextButton
           buttonText={accountsExist ? "Update Bank Info" : "Add Bank Info"}
           height="2rem"
-          width="8rem"
+          width="10rem"
           onClick={handleOpen}
           disabled={disabled}
           backgroundColor={Colors.SKY_BLUE}

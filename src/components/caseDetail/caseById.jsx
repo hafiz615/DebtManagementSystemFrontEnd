@@ -449,6 +449,7 @@ export default function CaseById({
               >
                 {value === "Debtor" ? (
                   <DebtorDetailsCards
+                    accountsExist={caseData?.debtor?.accounts?.length > 0}
                     fetchCalls={fetchCalls}
                     verifiedSenders={verifiedSenders}
                     caseData={caseData}
@@ -459,7 +460,10 @@ export default function CaseById({
                   />
                 ) : value === "Creditor" ? (
                   <CreditorsDetailCards
-                    accountsExist={caseData?.debtor?.accounts?.length > 0}
+                    accountsExist={
+                      caseData?.creditor?.paynoteSourceVerified &&
+                      caseData?.creditor?.paynoteUserFound
+                    }
                     fetchCalls={fetchCalls}
                     verifiedSenders={verifiedSenders}
                     caseData={caseData}
@@ -487,7 +491,10 @@ export default function CaseById({
                   />
                 ) : value === "Attorney" ? (
                   <AttorneyDetail
-                    accountsExist={caseData?.debtor?.accounts?.length > 0}
+                    accountsExist={
+                      allAttorneyData?.attorney?.paynoteSourceVerified &&
+                      allAttorneyData?.attorney?.paynoteUserFound
+                    }
                     caseData={caseData}
                     GetCaseDetails={GetCaseDetails}
                     getAttorneyData={getAttorneyData}
