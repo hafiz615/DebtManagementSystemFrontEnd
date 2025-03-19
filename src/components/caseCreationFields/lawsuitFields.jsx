@@ -46,7 +46,7 @@ export default function LawsuitFields({
       </Typography>
       <Grid container item xs={12}>
         <PaymentsTextFields
-          type="number"
+          type="text"
           label="Balance*"
           placeHolderValue="Enter Balance"
           width={smallScreen ? "100%" : "97%"}
@@ -203,7 +203,7 @@ export default function LawsuitFields({
           }
         />
         <PaymentsTextFields
-          type="number"
+          type="text"
           label="Phone*"
           placeHolderValue="Enter Phone Number"
           width={smallScreen ? "100%" : "97%"}
@@ -247,7 +247,7 @@ export default function LawsuitFields({
           }
         />
         <PaymentsTextFields
-          type="number"
+          type="text"
           label="SSN*"
           placeHolderValue="Enter SSN"
           width={smallScreen ? "100%" : "97%"}

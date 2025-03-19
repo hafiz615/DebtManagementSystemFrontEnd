@@ -32,7 +32,6 @@ export default function CreditorDetails({
   errors,
   setErrors,
   hideComponents,
-  lawsuitExtractedData,
 }) {
   const [digitsList, setDigitsList] = useState(
     finalCaseData?.map((caseEntry) => [caseEntry?.creditor?.aggression]) || [0]
