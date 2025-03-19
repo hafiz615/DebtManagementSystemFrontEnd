@@ -8,6 +8,7 @@ import { formatDateString, getTruncatedText } from "../../common";
 import ScrollbarStyles from "../customScroll";
 
 export default function AttorneyDetail({
+  accountsExist,
   caseData,
   GetCaseDetails,
   allAttorneyData,
@@ -231,6 +232,7 @@ export default function AttorneyDetail({
             </div>
             <Grid container xs={12} sx={{ justifyContent: "center" }}>
               <MuiModels
+                accountsExist={accountsExist}
                 type="attorney"
                 show="paynoteForm"
                 button="paynoteForm"

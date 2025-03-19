@@ -64,6 +64,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function CreditorsDetailCards({
+  accountsExist,
   caseData,
   GetCaseDetails,
   GetLogsById,
@@ -304,6 +305,7 @@ export default function CreditorsDetailCards({
           }}
         >
           <MuiModels
+            accountsExist={accountsExist}
             type="creditor"
             show="paynoteForm"
             button="paynoteForm"

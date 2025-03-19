@@ -174,6 +174,7 @@ export default function MuiModels({
   type,
   attorneyId,
   getAttorneyData,
+  accountsExist,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -633,7 +634,7 @@ export default function MuiModels({
         />
       ) : button === "paynoteForm" ? (
         <TextButton
-          buttonText="Add Bank Info"
+          buttonText={accountsExist ? "Update Bank Info" : "Add Bank Info"}
           height="2rem"
           width="8rem"
           onClick={handleOpen}
@@ -1050,6 +1051,7 @@ export default function MuiModels({
               setSelectedOption={setSelectedOption}
               strategy={strategy}
               commission={commission}
+              getAttorneyData={getAttorneyData}
             />
           ) : show === "attorneyPaymentPlan" ? (
             <AttorneyPaymentPlan
@@ -1111,6 +1113,7 @@ export default function MuiModels({
             />
           ) : show === "paynoteForm" ? (
             <PaynoteForm
+              accountsExist={accountsExist}
               type={type}
               attorneyId={attorneyId}
               handleClose={handleClose}

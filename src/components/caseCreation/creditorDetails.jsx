@@ -32,10 +32,37 @@ export default function CreditorDetails({
   errors,
   setErrors,
   hideComponents,
+  lawsuitExtractedData,
 }) {
   const [digitsList, setDigitsList] = useState(
     finalCaseData?.map((caseEntry) => [caseEntry?.creditor?.aggression]) || [0]
   );
+  const [isChecked, setIsChecked] = useState([]);
+  const [lawsuitFields, setLawsuitFields] = useState([
+    {
+      lawsuit: {
+        balance: "",
+        document_date: "",
+      },
+      lawfirm: {
+        lawfirmCompanyName: "",
+        email: "",
+        phone: "",
+        address: "",
+        city: "",
+        state: "",
+        EIN: "",
+      },
+      attorney: {
+        attorney_name: "",
+        attorney_telephone: "",
+        attorney_address: "",
+        attorney_city: "",
+        attorney_SSN: "",
+        attorney_state: "",
+      },
+    },
+  ]);
 
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const handleSearchChange = (value, index) => {
@@ -136,6 +163,7 @@ export default function CreditorDetails({
       paidAmount: 0,
       remaining: 0,
       feePayment: "toPay",
+      lawsuitExist: false,
     };
 
     setFinalCaseData([...finalCaseData, newCreditorData]);
@@ -150,7 +178,6 @@ export default function CreditorDetails({
 
   useEffect(() => {
     let processedData;
-
     if (creditors?.length === 0) {
       processedData = [
         {
@@ -185,10 +212,11 @@ export default function CreditorDetails({
           paidAmount: 0,
           remaining: 0,
           feePayment: "toPay",
+          lawsuitExist: false,
         },
       ];
     } else {
-      processedData = creditors?.map((creditor) => {
+      processedData = creditors?.map((creditor, index) => {
         let mappedEntry = Object.entries(
           debtorCaseData?.creditorNames?.mapped_data || {}
         )?.find(([key, value]) => {
@@ -241,6 +269,8 @@ export default function CreditorDetails({
                 .replace(",", "")
             ) || 0,
           feePayment: "toPay",
+          lawsuitExist: isChecked[index] || false,
+          ...lawsuitFields[index],
         };
       });
     }
@@ -375,6 +405,10 @@ export default function CreditorDetails({
                     }
                     errors={errors}
                     setErrors={setErrors}
+                    lawsuitFields={lawsuitFields}
+                    setLawsuitFields={setLawsuitFields}
+                    isChecked={isChecked}
+                    setIsChecked={setIsChecked}
                   />
                 </Grid>
               </Grid>

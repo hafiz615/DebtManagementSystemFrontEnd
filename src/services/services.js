@@ -2038,3 +2038,14 @@ export const UpdateAttorneyDetail = async (payload, id) => {
     return error;
   }
 };
+export const UpdateACHDetails = async (payload, id, type) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/payment/updateACHDetails/${id}?type=${type}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
