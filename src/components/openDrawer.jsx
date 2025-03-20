@@ -26,6 +26,7 @@ import {
   Handyman,
   Mail,
   Sms,
+  KeyboardVoice,
 } from "@mui/icons-material";
 
 import ListItemText from "@mui/material/ListItemText";
@@ -143,6 +144,9 @@ export default function PersistentDrawerLeft({ children }) {
         case "Pipelines":
           navigate("/pipelines");
           break;
+        case "Voicemail":
+          navigate("/voicemail");
+          break;
         case "Mailbox":
           navigate("/inbox");
           break;
@@ -160,6 +164,7 @@ export default function PersistentDrawerLeft({ children }) {
   const menuItems = [
     { text: "Pipelines", icon: <Handyman /> },
     { text: "Settings", icon: <Settings /> },
+    { text: "Voicemail", icon: <KeyboardVoice /> },
     { text: "Mailbox", icon: <Mail /> },
     { text: "Sms", icon: <Sms /> },
   ];

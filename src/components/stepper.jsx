@@ -594,7 +594,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           localStorage.setItem("route", "list-details");
           navigate(`/client/list-details/${res?.data?.data[0]?.debtor}`);
           setDebtorCaseData(res?.data?.data);
-          // setActiveStep(activeStep + 1);
         } else {
           const errorMessage = res?.response?.data?.message;
           showToast(errorMessage, "error");
@@ -631,6 +630,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     window.scrollTo(0, 0);
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
+
   const clearDebtor = () => {
     setDebtorOwnDetails({
       BasicFullName: "",
@@ -664,6 +664,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       },
     ]);
   };
+
   const handleReset = () => {
     if (activeStep === 0) {
       setFiles([]);
@@ -694,6 +695,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       emailValid: "",
     });
   };
+
   const resetAll = () => {
     setFiles([]);
     setSelectedFiles([]);
@@ -835,23 +837,21 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
 
         <React.Fragment>
           {activeStep === 0 ? (
-            <>
-              <FileUploadComponent
-                files={files}
-                setFiles={setFiles}
-                selectedFiles={selectedFiles}
-                setSelectedFiles={setSelectedFiles}
-                otherFiles={otherFiles}
-                setOtherFiles={setOtherFiles}
-                lawsuitFiles={lawsuitFiles}
-                setLawsuitFiles={setLawsuitFiles}
-                setInputKey={setInputKey}
-                inputKey={inputKey}
-                loading={loading}
-                progress={progress}
-                setProgress={setProgress}
-              />
-            </>
+            <FileUploadComponent
+              files={files}
+              setFiles={setFiles}
+              selectedFiles={selectedFiles}
+              setSelectedFiles={setSelectedFiles}
+              otherFiles={otherFiles}
+              setOtherFiles={setOtherFiles}
+              lawsuitFiles={lawsuitFiles}
+              setLawsuitFiles={setLawsuitFiles}
+              setInputKey={setInputKey}
+              inputKey={inputKey}
+              loading={loading}
+              progress={progress}
+              setProgress={setProgress}
+            />
           ) : activeStep === 1 ? (
             <DebtorDetails
               debtorOwnDetails={debtorOwnDetails}
@@ -902,37 +902,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               setErrors={setErrors}
               lawsuitExtractedData={lawsuitExtractedData}
             />
-          ) : activeStep === 3 ? (
-            <PaymentDetails
-              totalReceivable={totalReceivable}
-              setTotalReceivable={setTotalReceivable}
-              setFeePayment={setFeePayment}
-              feePayment={feePayment}
-              paidAmount={paidAmount}
-              setPaidAmount={setPaidAmount}
-              lastPaymentDate={lastPaymentDate}
-              setLastPaymentDate={setLastPaymentDate}
-              newDataList={newDataList}
-              setNewDataList={setNewDataList}
-              totalAmount={totalAmount}
-              remainingAmount={remainingAmount}
-            />
-          ) : activeStep === 4 ? (
-            ""
           ) : (
-            // <PreviewDetails
-            //   debtorOwnDetails={debtorOwnDetails}
-            //   creditorBasicsInfo={creditorBasicsInfo}
-            //   creditorBusinessDetails={creditorBusinessDetails}
-            //   newDataList={newDataList}
-            //   totalReceivable={totalReceivable}
-            //   feePayment={feePayment}
-            //   paidAmount={paidAmount}
-            //   remainingAmount={remainingAmount}
-            //   status={status}
-            //   fundedDate={fundedDate}
-            //   CreditorNotes={CreditorNotes}
-            // />
             ""
           )}
           <Grid

@@ -28,6 +28,7 @@ import { Device } from "@twilio/voice-sdk";
 import IncomingCall from "./components/incomingCall";
 import SmsPage from "./pages/smsPage";
 import DialPad from "./components/dialPad";
+import VoiceMailPage from "./pages/voicemailPage";
 
 function App() {
   const [incomingCall, setIncomingCall] = useState(null);
@@ -270,7 +271,15 @@ function App() {
             </Protected>
           }
         />
-
+        <Route
+          exact
+          path="/voicemail"
+          element={
+            <Protected>
+              <VoiceMailPage />
+            </Protected>
+          }
+        />
         <Route
           exact
           path="/sms"
