@@ -2,14 +2,26 @@ import React from "react";
 import { Grid, Typography } from "@mui/material";
 import PaymentsTextFields from "../caseTextField";
 import { Colors } from "../../config/default";
+import { isEmailValid } from "../../common";
 
 export default function LawsuitFields({
+  isChecked,
   index,
   smallScreen,
   lawsuitFields,
   setLawsuitFields,
+  setFinalCaseData,
 }) {
   const handleFieldChange = (field, section) => (e) => {
+    setFinalCaseData((prevData) => {
+      const newState = [...prevData];
+      newState[index] = {
+        ...newState[index],
+        lawsuitExist: isChecked[index],
+        ...lawsuitFields[index],
+      };
+      return newState;
+    });
     setLawsuitFields((prevFields) =>
       prevFields.map((item, i) =>
         i === index
@@ -108,6 +120,11 @@ export default function LawsuitFields({
               ? "2px solid transparent"
               : "2px solid red"
           }
+          error={
+            !isEmailValid(lawsuitFields?.[index]?.lawfirm?.email)
+              ? "Email is not valid"
+              : ""
+          }
         />
         <PaymentsTextFields
           type="text"
@@ -158,6 +175,11 @@ export default function LawsuitFields({
           width={smallScreen ? "100%" : "97%"}
           value={lawsuitFields?.[index]?.lawfirm?.EIN}
           onChangeFunction={handleFieldChange("EIN", "lawfirm")}
+          error={
+            lawsuitFields?.[index]?.lawfirm?.EIN?.length !== 9
+              ? "EIN must be 9 digits"
+              : ""
+          }
         />
       </Grid>
       <Typography
@@ -225,6 +247,11 @@ export default function LawsuitFields({
           width={smallScreen ? "100%" : "97%"}
           value={lawsuitFields?.[index]?.attorney?.attorney_SSN}
           onChangeFunction={handleFieldChange("attorney_SSN", "attorney")}
+          error={
+            lawsuitFields?.[index]?.attorney?.attorney_SSN?.length !== 9
+              ? "SSN must be 9 digits"
+              : ""
+          }
         />
         <PaymentsTextFields
           type="text"
