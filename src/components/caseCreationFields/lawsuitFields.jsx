@@ -73,7 +73,7 @@ export default function LawsuitFields({
         <PaymentsTextFields
           width={smallScreen ? "100%" : "97%"}
           type="date"
-          label="Document Date"
+          label="Document Date*"
           placeHolderValue="00/00/00"
           value={lawsuitFields?.[index]?.lawsuit?.document_date}
           onChangeFunction={handleFieldChange("document_date", "lawsuit")}
@@ -89,6 +89,7 @@ export default function LawsuitFields({
           fontFamily: "Nunito",
           marginLeft: "1rem",
           fontWeight: "600",
+          mt: "1rem",
         }}
       >
         Law Firm
@@ -145,55 +146,35 @@ export default function LawsuitFields({
         />
         <PaymentsTextFields
           type="text"
-          label="Address*"
+          label="Address"
           placeHolderValue="Enter Address"
           width={smallScreen ? "100%" : "97%"}
           value={lawsuitFields?.[index]?.lawfirm?.address}
           onChangeFunction={handleFieldChange("address", "lawfirm")}
-          border={
-            lawsuitFields?.[index]?.lawfirm?.address
-              ? "2px solid transparent"
-              : "2px solid red"
-          }
         />
         <PaymentsTextFields
           type="text"
-          label="City*"
+          label="City"
           placeHolderValue="Enter City"
           width={smallScreen ? "100%" : "97%"}
           value={lawsuitFields?.[index]?.lawfirm?.city}
           onChangeFunction={handleFieldChange("city", "lawfirm")}
-          border={
-            lawsuitFields?.[index]?.lawfirm?.city
-              ? "2px solid transparent"
-              : "2px solid red"
-          }
         />
         <PaymentsTextFields
           type="text"
-          label="State*"
+          label="State"
           placeHolderValue="Enter State"
           width={smallScreen ? "100%" : "97%"}
           value={lawsuitFields?.[index]?.lawfirm?.state}
           onChangeFunction={handleFieldChange("state", "lawfirm")}
-          border={
-            lawsuitFields?.[index]?.lawfirm?.state
-              ? "2px solid transparent"
-              : "2px solid red"
-          }
         />
         <PaymentsTextFields
           type="text"
-          label="EIN*"
+          label="EIN"
           placeHolderValue="Enter EIN"
           width={smallScreen ? "100%" : "97%"}
           value={lawsuitFields?.[index]?.lawfirm?.EIN}
           onChangeFunction={handleFieldChange("EIN", "lawfirm")}
-          border={
-            lawsuitFields?.[index]?.lawfirm?.EIN
-              ? "2px solid transparent"
-              : "2px solid red"
-          }
           error={
             lawsuitFields?.[index]?.lawfirm?.EIN?.length !== 9
               ? "EIN must be 9 digits"
@@ -206,6 +187,7 @@ export default function LawsuitFields({
           fontFamily: "Nunito",
           marginLeft: "1rem",
           fontWeight: "600",
+          mt: "1rem",
         }}
       >
         Attorney
@@ -244,42 +226,27 @@ export default function LawsuitFields({
         />
         <PaymentsTextFields
           type="text"
-          label="Address*"
+          label="Address"
           placeHolderValue="Enter Address"
           width={smallScreen ? "100%" : "97%"}
           value={lawsuitFields?.[index]?.attorney?.attorney_address}
           onChangeFunction={handleFieldChange("attorney_address", "attorney")}
-          border={
-            lawsuitFields?.[index]?.attorney?.attorney_address
-              ? "2px solid transparent"
-              : "2px solid red"
-          }
         />
         <PaymentsTextFields
           type="text"
-          label="City*"
+          label="City"
           placeHolderValue="Enter City"
           width={smallScreen ? "100%" : "97%"}
           value={lawsuitFields?.[index]?.attorney?.attorney_city}
           onChangeFunction={handleFieldChange("attorney_city", "attorney")}
-          border={
-            lawsuitFields?.[index]?.attorney?.attorney_city
-              ? "2px solid transparent"
-              : "2px solid red"
-          }
         />
         <PaymentsTextFields
           type="text"
-          label="SSN*"
+          label="SSN"
           placeHolderValue="Enter SSN"
           width={smallScreen ? "100%" : "97%"}
           value={lawsuitFields?.[index]?.attorney?.attorney_SSN}
           onChangeFunction={handleFieldChange("attorney_SSN", "attorney")}
-          border={
-            lawsuitFields?.[index]?.attorney?.attorney_SSN
-              ? "2px solid transparent"
-              : "2px solid red"
-          }
           error={
             lawsuitFields?.[index]?.attorney?.attorney_SSN?.length !== 9
               ? "SSN must be 9 digits"
@@ -288,16 +255,11 @@ export default function LawsuitFields({
         />
         <PaymentsTextFields
           type="text"
-          label="State*"
+          label="State"
           placeHolderValue="Enter State"
           width={smallScreen ? "100%" : "97%"}
           value={lawsuitFields?.[index]?.attorney?.attorney_state}
           onChangeFunction={handleFieldChange("attorney_state", "attorney")}
-          border={
-            lawsuitFields?.[index]?.attorney?.attorney_state
-              ? "2px solid transparent"
-              : "2px solid red"
-          }
         />
       </Grid>
     </Grid>
