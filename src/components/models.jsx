@@ -72,6 +72,8 @@ import SeeCheckDetails from "./caseDetail/seeCheckDetails";
 import ClientSync from "./caseDetail/ClientSync";
 import AttorneyPaymentPlan from "./attorneyPaymentPlan";
 import EditAttorneyDetails from "./editAttorneyDetails";
+import CreateSignature from "./settingsScreen/createSignature";
+import CreateSignatures from "./settingsScreen/createSignature";
 
 export default function MuiModels({
   buttonName,
@@ -174,6 +176,9 @@ export default function MuiModels({
   type,
   attorneyId,
   getAttorneyData,
+  GetAllSignaturesData,
+  editSignature,
+  signatureData,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -297,6 +302,21 @@ export default function MuiModels({
               color: Colors.DIM_LIGHT_GRAY,
               cursor: "pointer",
               fontSize: "13px",
+            }}
+          />
+        </IconButton>
+      ) : show === "editSignature" ? (
+        <IconButton
+          sx={{ display: "flex", alignItems: "center" }}
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <Edit
+            sx={{
+              color: Colors.DIM_LIGHT_GRAY,
+              cursor: "pointer",
+              fontSize: "1.3rem",
             }}
           />
         </IconButton>
@@ -688,6 +708,15 @@ export default function MuiModels({
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
         />
+      ) : buttonName === "createSignature" ? (
+        <TextButton
+          buttonText="Create Signature"
+          height="2.5rem"
+          width="10rem"
+          onClick={handleOpen}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
       ) : show === "createRole" ? (
         <TextButton
           buttonText={extraSmallScreen ? <Add /> : "Create Role"}
@@ -1027,6 +1056,13 @@ export default function MuiModels({
               paymentData={paymentData}
               debtorId={debtorId}
               to={to}
+            />
+          ) : show === "createSignature" || show === "editSignature" ? (
+            <CreateSignatures
+              handleClose={handleClose}
+              GetAllSignaturesData={GetAllSignaturesData}
+              editSignature={editSignature}
+              signatureData={signatureData}
             />
           ) : show === "uploadFile" ? (
             <UploadFilePopup

@@ -33,6 +33,7 @@ import {
   CreateSmsDraft,
   DeleteDraft,
   GetCustomVariable,
+  GetUserActiveSignature,
   SaveAsDraft,
   SendEmailSmsCase,
   UpdateDraft,
@@ -171,10 +172,13 @@ export default function SendEmailCase({
   const [selectedSmsTemplates, setSelectedSmsTemplates] = useState("");
   const [sendFrom, setSendFrom] = useState(replyCheck ? to || "" : "");
   const [selectedValue, setSelectedValue] = useState(to || "");
+
   const [subject, setSubject] = useState(emailSubject || "");
+
   const [preview, setPreview] = useState(
     replyCheck ? `<p></p><p></p>${content}` : content || ""
   );
+
   const [fromNumber, setFromNumber] = useState(
     to ||
       parseInt(
@@ -192,6 +196,17 @@ export default function SendEmailCase({
   const [existingFiles, setExistingFiles] = useState(attachment || []);
   const [removedFiles, setRemovedFiles] = useState([]);
   const { showToast } = useToast();
+
+  const GetUserActiveSignatures = async () => {
+    const res = await GetUserActiveSignature();
+    if (res?.status === 200) {
+      setPreview(res?.data?.data?.signature || "");
+    }
+  };
+
+  useEffect(() => {
+    GetUserActiveSignatures();
+  }, []);
 
   const getVariableAndEvents = async () => {
     const resVariable = await GetCustomVariable();
@@ -1117,9 +1132,9 @@ export default function SendEmailCase({
               style={{ margin: "0px !important" }}
               apiKey={TEXT_EDITOR_KEY}
               init={{
-                menubar: "false",
+                menubar: false,
                 toolbar:
-                  "formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat",
+                  "formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify | numlist bullist outdent indent | removeformat",
                 height: 250,
               }}
               value={preview}

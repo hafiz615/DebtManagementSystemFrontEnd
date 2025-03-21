@@ -72,6 +72,7 @@ export default function Prompt({
   getAllInboxData,
   task,
   setActivePreview,
+  handleSignatureDelete,
 }) {
   const { showToast } = useToast();
   const [open, setOpen] = React.useState(false);
@@ -247,6 +248,8 @@ export default function Prompt({
       await deleteCustomField();
     } else if (handleDelete) {
       await handleDelete();
+    } else if (handleSignatureDelete) {
+      await handleSignatureDelete();
     } else if (deleting === "delete template") {
       await deleteTemplate();
     } else if (deleting === "Delete Tasks") {
