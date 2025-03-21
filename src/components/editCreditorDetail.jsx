@@ -30,6 +30,33 @@ export default function EditCreditorDetail({
     [caseData?.creditor?.aggression] || [0]
   );
   const [loading, setLoading] = useState(false);
+  const [isChecked, setIsChecked] = useState([]);
+  const [lawsuitFields, setLawsuitFields] = useState([
+    {
+      lawsuit: {
+        balance: "",
+        document_date: "",
+      },
+      lawfirm: {
+        lawfirmCompanyName: "",
+        email: "",
+        phone: "",
+        address: "",
+        city: "",
+        state: "",
+        EIN: "",
+      },
+      attorney: {
+        attorney_name: "",
+        attorney_telephone: "",
+        attorney_address: "",
+        attorney_city: "",
+        attorney_SSN: "",
+        attorney_state: "",
+      },
+    },
+  ]);
+
   const handleCaseDataChange = (index, fieldPath, value) => {
     const newState = [...finalCaseData];
     const updateField = (obj, path, val) => {
@@ -187,6 +214,10 @@ export default function EditCreditorDetail({
           setDigits={(newDigits) => handleDigitsChange(index, newDigits)}
           errors={errors}
           setErrors={setErrors}
+          lawsuitFields={lawsuitFields}
+          setLawsuitFields={setLawsuitFields}
+          isChecked={isChecked}
+          setIsChecked={setIsChecked}
         />
       ))}
       <Grid
