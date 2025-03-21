@@ -393,7 +393,7 @@ export default function DebtorDetailsCards({
                 width: "35%",
               }}
             >
-              Street Adress
+              Street Address
             </Typography>
             <Typography
               sx={{
