@@ -22,6 +22,8 @@ import TransactionAccordion from "./transactionAccordion";
 import BulkMainAccordion from "./bulkMainAccordion";
 import ServiceFeeAccordion from "./serviceFeeAccordion";
 import LegalFeeAccordion from "./legalFeeAccordion";
+import SignaturDetails from "./signatureDetails";
+import SignatureDetails from "./signatureDetails";
 
 export default function SettingsScreen() {
   const navigate = useNavigate();
@@ -126,6 +128,7 @@ export default function SettingsScreen() {
         }}
       >
         <BulkMainAccordion />
+
         <SettingsAccordion
           retryInterval={retryInterval}
           authorizationInterval={authorizationInterval}
@@ -133,6 +136,8 @@ export default function SettingsScreen() {
           setAuthorizationInterval={setAuthorizationInterval}
           loading={loading}
         />
+
+        <SignatureDetails />
         <ServiceFeeAccordion />
         <LegalFeeAccordion />
         {role === "Super User" && <TransactionAccordion />}
