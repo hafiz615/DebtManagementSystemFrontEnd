@@ -767,6 +767,27 @@ function Sms() {
                                 ?.from || "-"}
                             </Typography>
                           </div>
+                          {activeTab === "Received" && (
+                            <div
+                              style={{
+                                display: "flex",
+                                gap: "10px",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  ...boldTextStyling,
+                                }}
+                              >
+                                Sender Name:
+                              </Typography>
+                              <Typography sx={fontStyling}>
+                                {inboxData?.[activeInbox]?.[activePreview?.id]
+                                  ?.senderName || "-"}
+                              </Typography>
+                            </div>
+                          )}
+
                           <div>
                             {inboxData?.[activeInbox]?.[activePreview?.id]
                               ?.creditorCompanyName && (

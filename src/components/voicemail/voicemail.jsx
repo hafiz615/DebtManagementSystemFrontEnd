@@ -208,6 +208,21 @@ function VoiceMail() {
           >
             <CircularProgress sx={{ color: Colors.SKY_BLUE }} size={70} />
           </Grid>
+        ) : voiceMailData?.length === 0 ? (
+          <Grid
+            container
+            sx={{
+              height: "100%",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography
+              sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
+            >
+              No Voice Mail Exists
+            </Typography>
+          </Grid>
         ) : (
           <Grid>
             <div

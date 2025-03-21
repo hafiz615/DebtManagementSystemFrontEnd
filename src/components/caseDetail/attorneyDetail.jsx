@@ -231,17 +231,6 @@ export default function AttorneyDetail({
                 </Tooltip>
               </div>
             </div>
-            <Grid container xs={12} sx={{ justifyContent: "center" }}>
-              <MuiModels
-                accountsExist={accountsExist}
-                type="attorney"
-                show="paynoteForm"
-                button="paynoteForm"
-                width="55vw"
-                attorneyId={attorneyData?._id}
-                caseData={caseData}
-              />
-            </Grid>
           </>
         )}
       </Grid>
@@ -356,8 +345,17 @@ export default function AttorneyDetail({
               fontFamily: "Nunito",
             }}
           >
-            Law firm
+            Client's Law Firm
           </span>
+          <MuiModels
+            accountsExist={accountsExist}
+            type="attorney"
+            show="paynoteForm"
+            button="paynoteForm"
+            width="55vw"
+            attorneyId={attorneyData?._id}
+            caseData={caseData}
+          />
         </Grid>
         <div
           style={{
