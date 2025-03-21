@@ -199,8 +199,11 @@ export default function SendEmailCase({
 
   const GetUserActiveSignatures = async () => {
     const res = await GetUserActiveSignature();
+
     if (res?.status === 200) {
-      setPreview(res?.data?.data?.signature || "");
+      setPreview(
+        "<p><br></p><p><br></p><p><br></p>" + (res?.data?.data?.signature || "")
+      );
     }
   };
 

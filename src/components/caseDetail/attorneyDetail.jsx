@@ -8,6 +8,7 @@ import { formatDateString, getTruncatedText } from "../../common";
 import ScrollbarStyles from "../customScroll";
 
 export default function AttorneyDetail({
+  accountsExist,
   caseData,
   GetCaseDetails,
   allAttorneyData,
@@ -90,6 +91,7 @@ export default function AttorneyDetail({
       value: lawfirmData?.lawfirmFee ? `$${lawfirmData?.lawfirmFee}` : "$0",
     },
   ];
+
   return (
     <>
       <Grid
@@ -122,7 +124,7 @@ export default function AttorneyDetail({
                 fontFamily: "Nunito",
               }}
             >
-              Attorney
+              Creditor's Attorney
             </span>
             {attorneyData && (
               <MuiModels
@@ -229,16 +231,6 @@ export default function AttorneyDetail({
                 </Tooltip>
               </div>
             </div>
-            <Grid container xs={12} sx={{ justifyContent: "center" }}>
-              <MuiModels
-                type="attorney"
-                show="paynoteForm"
-                button="paynoteForm"
-                width="55vw"
-                attorneyId={attorneyData?._id}
-                caseData={caseData}
-              />
-            </Grid>
           </>
         )}
       </Grid>
@@ -353,8 +345,17 @@ export default function AttorneyDetail({
               fontFamily: "Nunito",
             }}
           >
-            Lawfirm
+            Client's Law Firm
           </span>
+          <MuiModels
+            accountsExist={accountsExist}
+            type="attorney"
+            show="paynoteForm"
+            button="paynoteForm"
+            width="55vw"
+            attorneyId={attorneyData?._id}
+            caseData={caseData}
+          />
         </Grid>
         <div
           style={{

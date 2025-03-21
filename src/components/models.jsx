@@ -179,6 +179,7 @@ export default function MuiModels({
   GetAllSignaturesData,
   editSignature,
   signatureData,
+  accountsExist,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -387,9 +388,7 @@ export default function MuiModels({
               handleOpen();
             }}
           >
-            <Sync
-              sx={{ color: Colors.DARK_GRAY, fontSize: iconSize || "16px" }}
-            />
+            <Sync sx={{ color: Colors.DARK_GRAY }} />
           </IconButton>
         </Tooltip>
       ) : show === "editAbout" ? (
@@ -653,9 +652,9 @@ export default function MuiModels({
         />
       ) : button === "paynoteForm" ? (
         <TextButton
-          buttonText="Add Bank Info"
+          buttonText={accountsExist ? "Update Bank Info" : "Add Bank Info"}
           height="2rem"
-          width="8rem"
+          width="10rem"
           onClick={handleOpen}
           disabled={disabled}
           backgroundColor={Colors.SKY_BLUE}
@@ -1086,6 +1085,7 @@ export default function MuiModels({
               setSelectedOption={setSelectedOption}
               strategy={strategy}
               commission={commission}
+              getAttorneyData={getAttorneyData}
             />
           ) : show === "attorneyPaymentPlan" ? (
             <AttorneyPaymentPlan
@@ -1147,6 +1147,7 @@ export default function MuiModels({
             />
           ) : show === "paynoteForm" ? (
             <PaynoteForm
+              accountsExist={accountsExist}
               type={type}
               attorneyId={attorneyId}
               handleClose={handleClose}

@@ -2099,3 +2099,21 @@ export const DeleteSignature = async (id) => {
     return error;
   }
 };
+export const UpdateACHDetails = async (payload, id, type) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/payment/updateACHDetails/${id}?type=${type}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetVoiceMails = async () => {
+  try {
+    return await axios.get(BASE_URL + `/v1/call/getVoiceMails`, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};

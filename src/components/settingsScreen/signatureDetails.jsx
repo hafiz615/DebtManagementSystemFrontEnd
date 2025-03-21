@@ -89,21 +89,21 @@ function SignatureDetails() {
     }
   };
 
-  // const stripHtml = (html) => {
-  //   if (!html) return "";
-  //   const doc = new DOMParser().parseFromString(html, "text/html");
-  //   return doc.body.textContent || "";
-  // };
-  const stripHtmlButKeepFormatting = (html) => {
+  const stripHtml = (html) => {
     if (!html) return "";
-
-    return html
-      .replace(/<(\/)?(b|strong|i|em)>/g, "[$1$2]") // Preserve bold and italic formatting
-      .replace(/<\/?[^>]+(>|$)/g, "") // Remove all other HTML tags
-      .replace(/\[\/?(b|strong|i|em)\]/g, "<$1>") // Restore allowed tags
-      .replace(/\s+/g, " ") // Remove extra spaces
-      .trim();
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    return doc.body.textContent || "";
   };
+  // const stripHtmlButKeepFormatting = (html) => {
+  //   if (!html) return "";
+
+  //   return html
+  //     .replace(/<(\/)?(b|strong|i|em)>/g, "[$1$2]") // Preserve bold and italic formatting
+  //     .replace(/<\/?[^>]+(>|$)/g, "") // Remove all other HTML tags
+  //     .replace(/\[\/?(b|strong|i|em)\]/g, "<$1>") // Restore allowed tags
+  //     .replace(/\s+/g, " ") // Remove extra spaces
+  //     .trim();
+  // };
 
   return (
     <StyledAccordion>
@@ -152,7 +152,7 @@ function SignatureDetails() {
                 }}
               >
                 <Tooltip title={signature?.signature || ""} arrow>
-                  {/* <Typography
+                  <Typography
                     sx={{
                       flexGrow: 1,
                       fontSize: "14px",
@@ -168,8 +168,8 @@ function SignatureDetails() {
                     {stripHtml(signature?.signature)?.length > 200
                       ? `${stripHtml(signature.signature).slice(0, 200)}...`
                       : stripHtml(signature.signature)}
-                  </Typography> */}
-                  <Typography
+                  </Typography>
+                  {/* <Typography
                     sx={{
                       flexGrow: 1,
                       fontSize: "14px",
@@ -190,19 +190,21 @@ function SignatureDetails() {
                             ).slice(0, 200)}...`
                           : stripHtmlButKeepFormatting(signature.signature),
                     }}
-                  />
+                  /> */}
                 </Tooltip>
 
                 <Box
                   sx={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
                 >
-                  <Switch
-                    checked={signature?.active}
-                    onChange={() =>
-                      toggleActiveStatus(signature?._id, signature?.active)
-                    }
-                    color="primary"
-                  />
+                  <Tooltip title={"Activate Signature"} arrow>
+                    <Switch
+                      checked={signature?.active}
+                      onChange={() =>
+                        toggleActiveStatus(signature?._id, signature?.active)
+                      }
+                      color="primary"
+                    />
+                  </Tooltip>
 
                   <MuiModels
                     show="editSignature"
@@ -215,11 +217,8 @@ function SignatureDetails() {
                   <Prompt
                     heading="Delete Signature"
                     text="Are you sure you want to delete this signature?"
-                    handleSignatureDelete={() => handleDelete(signature._id)}
+                    handleSignatureDelete={() => handleDelete(signature?._id)}
                   />
-                  {/* <IconButton onClick={() => handleDelete(signature?._id)}>
-                    <DeleteIcon color="error" />
-                  </IconButton> */}
                 </Box>
               </Box>
             ))
