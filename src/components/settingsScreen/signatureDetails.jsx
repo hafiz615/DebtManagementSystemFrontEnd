@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import DeleteIcon from "@mui/icons-material/Delete";
 import ScrollbarStyles from "../customScroll";
 import { Colors } from "../../config/default";
 import {
@@ -9,7 +8,6 @@ import {
   AccordionDetails,
   styled,
   Box,
-  IconButton,
   Typography,
   Switch,
   Tooltip,
@@ -166,8 +164,8 @@ function SignatureDetails() {
                     }}
                   >
                     {stripHtml(signature?.signature)?.length > 200
-                      ? `${stripHtml(signature.signature).slice(0, 200)}...`
-                      : stripHtml(signature.signature)}
+                      ? `${stripHtml(signature?.signature).slice(0, 200)}...`
+                      : stripHtml(signature?.signature)}
                   </Typography>
                   {/* <Typography
                     sx={{
