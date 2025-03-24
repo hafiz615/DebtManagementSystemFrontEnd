@@ -26,6 +26,8 @@ import ScrollbarStyles from "../customScroll";
 import { formatDateString } from "../../common";
 import { Close, Description, ReplayOutlined } from "@mui/icons-material";
 import axios from "axios";
+import MuiModels from "../models";
+import Prompt from "../prompt";
 
 const headingFontStyling = {
   fontFamily: "Nunito",
@@ -118,8 +120,10 @@ function VoiceMail() {
     }
   };
 
-  const getVoiceMails = async () => {
-    setMainLoading(true);
+  const getVoiceMails = async (loadingPrompt) => {
+    if (!loadingPrompt) {
+      setMainLoading(true);
+    }
     const res = await GetVoiceMails();
     if (res?.status === 200) {
       setVoiceMailData(res?.data?.data);
@@ -256,6 +260,7 @@ function VoiceMail() {
               sx={{
                 height: "calc( 70vh - 3.5rem )",
                 overflowY: "auto",
+                padding: "10px 0px",
                 ...ScrollbarStyles,
               }}
             >
@@ -325,6 +330,14 @@ function VoiceMail() {
                         )}
                       </IconButton>
                     </Tooltip>
+                    <MuiModels show="saveCallInCase" data={item} />
+                    <Prompt
+                      item={item?._id}
+                      text="Are you sure you want to delete this voicemail?"
+                      iconSize="1.5rem"
+                      deleting="deleteVoiceMesssage"
+                      getVoiceMails={getVoiceMails}
+                    />
                   </div>
                   {showTranscript[item?._id] && (
                     <>
