@@ -2117,3 +2117,13 @@ export const GetVoiceMails = async () => {
     return error;
   }
 };
+export const DeleteVoiceMessage = async (id) => {
+  try {
+    return await axios.delete(
+      BASE_URL + `/v1/call/deleteCall/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
