@@ -21,6 +21,7 @@ import {
   DeleteSmsDraft,
   InboxStatus,
   TaskStatus,
+  DeleteVoiceMessage,
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import TextButton from "./button";
@@ -73,6 +74,7 @@ export default function Prompt({
   task,
   setActivePreview,
   handleSignatureDelete,
+  getVoiceMails,
 }) {
   const { showToast } = useToast();
   const [open, setOpen] = React.useState(false);
@@ -221,6 +223,13 @@ export default function Prompt({
     }
   };
 
+  const deleteVoiceMessage = async () => {
+    const res = await DeleteVoiceMessage(item);
+    if (res?.status === 200) {
+      getVoiceMails(true);
+    }
+  };
+
   const handleCompleteStatus = async () => {
     if (task) {
       const res = await TaskStatus(item);
@@ -268,6 +277,8 @@ export default function Prompt({
       await handleCompleteStatus();
     } else if (deleting === "deleteSmsDraft") {
       await deleteSmsDraft();
+    } else if (deleting === "deleteVoiceMesssage") {
+      await deleteVoiceMessage();
     } else if (deleteRole) {
       await deleteRole();
     } else {

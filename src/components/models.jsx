@@ -37,6 +37,7 @@ import {
   Phone,
   Sync,
   CompareArrows,
+  Save,
 } from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
@@ -74,6 +75,7 @@ import AttorneyPaymentPlan from "./attorneyPaymentPlan";
 import EditAttorneyDetails from "./editAttorneyDetails";
 import CreateSignature from "./settingsScreen/createSignature";
 import CreateSignatures from "./settingsScreen/createSignature";
+import SaveVoiceCase from "./saveVoiceCase";
 
 export default function MuiModels({
   buttonName,
@@ -389,6 +391,17 @@ export default function MuiModels({
             }}
           >
             <Sync sx={{ color: Colors.DARK_GRAY }} />
+          </IconButton>
+        </Tooltip>
+      ) : show === "saveCallInCase" ? (
+        <Tooltip title="save voice message in a case" placement="top">
+          <IconButton
+            disabled={disabled}
+            onClick={() => {
+              handleOpen();
+            }}
+          >
+            <Save sx={{ color: Colors.SKY_BLUE }} />
           </IconButton>
         </Tooltip>
       ) : show === "editAbout" ? (
@@ -1243,6 +1256,8 @@ export default function MuiModels({
               getAttorneyData={getAttorneyData}
               handleClose={handleClose}
             />
+          ) : show === "saveCallInCase" ? (
+            <SaveVoiceCase handleClose={handleClose} data={data} />
           ) : (
             ""
           )}
