@@ -241,7 +241,7 @@ export default function ListTable({
                       Retry
                     </StyledTableCell>
                   )}
-                {arrayName === "successCaptures" && (
+                {/* {arrayName === "successCaptures" && (
                   <StyledTableCell
                     align="left"
                     sx={{
@@ -252,7 +252,7 @@ export default function ListTable({
                   >
                     Send Payment
                   </StyledTableCell>
-                )}
+                )} */}
               </TableRow>
             </TableHead>
             {loading ? (
@@ -454,7 +454,7 @@ export default function ListTable({
                     )}
 
                     {/* Handle special case for successCaptures */}
-                    {arrayName === "successCaptures" && (
+                    {/* {arrayName === "successCaptures" && (
                       <StyledTableCell
                         align="left"
                         sx={{
@@ -494,7 +494,7 @@ export default function ListTable({
                           </span>
                         </Tooltip>
                       </StyledTableCell>
-                    )}
+                    )} */}
                   </StyledTableRow>
                 ))}
               </TableBody>
