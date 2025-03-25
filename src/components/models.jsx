@@ -76,6 +76,7 @@ import EditAttorneyDetails from "./editAttorneyDetails";
 import CreateSignature from "./settingsScreen/createSignature";
 import CreateSignatures from "./settingsScreen/createSignature";
 import SaveVoiceCase from "./saveVoiceCase";
+import EditLawfirmDetails from "./editLawfirmDetails";
 
 export default function MuiModels({
   buttonName,
@@ -182,6 +183,7 @@ export default function MuiModels({
   editSignature,
   signatureData,
   accountsExist,
+  lawfirmId,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -438,7 +440,9 @@ export default function MuiModels({
             sx={{ fontSize: "16px", color: Colors.WHITE, cursor: "pointer" }}
           />
         </IconButton>
-      ) : show === "editStatus" || show === "editAttorney" ? (
+      ) : show === "editStatus" ||
+        show === "editAttorney" ||
+        show === "editLawfirm" ? (
         <IconButton
           onClick={() => {
             handleOpen();
@@ -1251,13 +1255,18 @@ export default function MuiModels({
             <EditAttorneyDetails
               data={data}
               attorneyId={attorneyId}
-              caseData={caseData}
-              GetCaseDetails={GetCaseDetails}
               getAttorneyData={getAttorneyData}
               handleClose={handleClose}
             />
           ) : show === "saveCallInCase" ? (
             <SaveVoiceCase handleClose={handleClose} data={data} />
+          ) : show === "editLawfirm" ? (
+            <EditLawfirmDetails
+              data={data}
+              lawfirmId={lawfirmId}
+              getAttorneyData={getAttorneyData}
+              handleClose={handleClose}
+            />
           ) : (
             ""
           )}

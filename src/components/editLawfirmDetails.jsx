@@ -2,25 +2,28 @@ import React, { useState } from "react";
 import { Colors } from "../config/default";
 import { Grid, Typography } from "@mui/material";
 import TextButton from "./button";
-import { UpdateAttorneyDetail } from "../services/services";
+import {
+  UpdateAttorneyDetail,
+  UpdateLawfirmDetails,
+} from "../services/services";
 import { useToast } from "../toast/toastContext";
 import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../constants/appConstants";
 
-export default function EditAttorneyDetails({
+export default function EditLawfirmDetails({
   data,
-  attorneyId,
+  lawfirmId,
   getAttorneyData,
   handleClose,
 }) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: data?.name || "",
+    lawfirmCompanyName: data?.lawfirmCompanyName || "",
     email: data?.email || "",
-    SSN: data?.SSN || "",
-    phone: data?.phone || "",
     city: data?.city || "",
-    attorneyFee: data?.attorneyFee || "0",
+    state: data?.state || "",
+    phone: data?.phone || "",
     address: data?.address || "",
+    lawfirmFee: data?.lawfirmFee || 0,
   });
   const { showToast } = useToast();
 
@@ -35,9 +38,15 @@ export default function EditAttorneyDetails({
   const handleUpdate = async () => {
     setLoading(true);
     const payload = {
-      ...formData,
+      lawfirmCompanyName: formData?.lawfirmCompanyName || "",
+      email: formData?.email || "",
+      city: formData?.city || "",
+      state: formData?.state || "",
+      phone: formData?.phone || "",
+      address: formData?.address || "",
+      lawfirmFee: parseInt(formData?.lawfirmFee) || 0,
     };
-    const res = await UpdateAttorneyDetail(payload, attorneyId);
+    const res = await UpdateLawfirmDetails(payload, lawfirmId);
     if (res?.status === 200) {
       showToast(res?.data?.message, "success");
       getAttorneyData();
@@ -59,7 +68,7 @@ export default function EditAttorneyDetails({
           fontSize: FONT_SIZE_XL,
         }}
       >
-        Update Attorney Details
+        Update Lawfirm Details
       </Typography>
       <Grid container sx={{ flexWrap: "wrap" }}>
         {Object.entries(formData)?.map(([key, value]) => (
@@ -71,12 +80,12 @@ export default function EditAttorneyDetails({
                 fontSize: FONT_SIZE_LARGE,
               }}
             >
-              {key === "attorneyFee"
-                ? "Attorney Fee"
+              {key === "lawfirmCompanyName"
+                ? "Lawfirm Company Name"
                 : key?.charAt(0).toUpperCase() + key?.slice(1)}
             </label>
             <input
-              type={key === "attorneyFee" ? "number" : "text"}
+              type={key === "lawfirmFee" ? "number" : "text"}
               name={key}
               value={value}
               onChange={handleChange}
