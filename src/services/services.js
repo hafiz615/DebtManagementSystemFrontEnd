@@ -1922,7 +1922,7 @@ export const TaskStatus = async (id, payload, type) => {
     return error;
   }
 };
-export const InboxStatus = async (id, payload) => {
+export const InboxStatus = async (id, payload, type) => {
   try {
     return await axios.put(
       BASE_URL + `/v1/inbox/inboxStatus/${id}?task=false&undo=${type}`,

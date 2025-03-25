@@ -48,6 +48,7 @@ import Prompt from "./prompt";
 import ThreadMessages from "./threadMessages";
 import { setCounts } from "../redux/action/action";
 import CheckIcon from "@mui/icons-material/Check";
+import UndoIcon from "@mui/icons-material/Undo";
 import { useToast } from "../toast/toastContext";
 
 const inputStyling = {
@@ -390,7 +391,6 @@ function Inbox() {
   const callInboxStatusApi = async (id, type) => {
     const payload = {};
     const res = await InboxStatus(id, payload, type);
-
     if (res?.status === 200) {
       getAllInboxData(false, false);
       setActivePreview({ id: 0, active: false });
@@ -402,9 +402,7 @@ function Inbox() {
 
   const handleCompleteInboxStatus = async (id) => {
     setInboxUndoStates((prev) => ({ ...prev, [id]: true }));
-
     if (inboxTimeouts[id]) clearTimeout(inboxTimeouts[id]);
-
     const timeout = setTimeout(async () => {
       setInboxUndoStates((prev) => ({ ...prev, [id]: false }));
       await callInboxStatusApi(id, false);
@@ -916,26 +914,15 @@ function Inbox() {
                                       </IconButton>
                                     </Tooltip>
                                   </div>
-                                  {activeMainTab !== "Completed" && (
-                                    <div>
-                                      {/* <Prompt
-                                        text={`Are you sure you want to add this mail into complete list?`}
-                                        item={
-                                          inboxData?.[activeInbox]?.[
-                                            activePreview?.id
-                                          ]?._id
-                                        }
-                                        deleting="markAsComplete"
-                                        getAllInboxData={getAllInboxData}
-                                        setActivePreview={setActivePreview}
-                                      /> */}
+                                  <div>
+                                    {activeMainTab !== "Completed" && (
                                       <div>
                                         {inboxUndoStates[
                                           inboxData?.[activeInbox]?.[
                                             activePreview?.id
                                           ]?._id
                                         ] ? (
-                                          <span
+                                          <IconButton
                                             onClick={(e) => {
                                               e.stopPropagation();
                                               handleUndoInbox(
@@ -944,16 +931,15 @@ function Inbox() {
                                                 ]?._id
                                               );
                                             }}
-                                            style={{
-                                              color: "blue",
-                                              cursor: "pointer",
-                                              width: "5rem",
-                                              fontFamily: "Nunito",
-                                              fontSize: 16,
-                                            }}
                                           >
-                                            UNDO
-                                          </span>
+                                            <UndoIcon
+                                              style={{
+                                                color: "blue",
+                                                fontSize: 24,
+                                                cursor: "pointer",
+                                              }}
+                                            />
+                                          </IconButton>
                                         ) : (
                                           <IconButton
                                             onClick={(e) => {
@@ -975,8 +961,8 @@ function Inbox() {
                                           </IconButton>
                                         )}
                                       </div>
-                                    </div>
-                                  )}
+                                    )}
+                                  </div>
 
                                   {inboxData?.[activeInbox]?.[activePreview?.id]
                                     ?.type === "received" && (
@@ -1523,21 +1509,20 @@ function Inbox() {
 
                           <div key={tasks?._id}>
                             {undoStates[tasks?._id] ? (
-                              <span
+                              <IconButton
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleUndo(tasks?._id);
                                 }}
-                                style={{
-                                  color: "blue",
-                                  cursor: "pointer",
-                                  width: "5rem",
-                                  fontFamily: "Nunito",
-                                  fontSize: 16,
-                                }}
                               >
-                                UNDO
-                              </span>
+                                <UndoIcon
+                                  style={{
+                                    color: "blue",
+                                    fontSize: 24,
+                                    cursor: "pointer",
+                                  }}
+                                />
+                              </IconButton>
                             ) : (
                               <IconButton
                                 onClick={(e) => {
