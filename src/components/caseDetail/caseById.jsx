@@ -121,7 +121,7 @@ export default function CaseById({
     if (res?.status === 200) {
       setAllAttorneyData(res?.data?.data);
       setAttorneyData(res?.data?.data ? res?.data?.data?.attorney : "");
-      setAttorneyIsChecked(res?.data?.data?.lawSuit?.attorneyPaymentsProceed);
+      setAttorneyIsChecked(res?.data?.data?.lawSuit?.paymentsProceed);
     }
   };
 

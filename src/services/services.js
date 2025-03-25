@@ -2127,3 +2127,14 @@ export const DeleteVoiceMessage = async (id) => {
     return error;
   }
 };
+export const UpdateLawfirmDetails = async (payload, id) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/lawfirm/updateLawfirm/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

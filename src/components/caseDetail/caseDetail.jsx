@@ -337,7 +337,7 @@ function CaseDetail() {
 
   const handleAttorneyToggle = async (check) => {
     setAttorneyIsChecked(check);
-    const res = await PausePayments(id, check, "", "attorney");
+    const res = await PausePayments(id, check, "", "lawfirm");
     if (res?.status === 200) {
       showToast(res?.data?.message, "success");
     } else if (res?.response?.status === 400) {
