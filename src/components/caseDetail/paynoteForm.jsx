@@ -8,10 +8,16 @@ import Dropdown from "../dropdown";
 import { handleNumberInput } from "../../common";
 import { encrypt } from "n-krypta";
 import { useToast } from "../../toast/toastContext";
-import { AddCreditorAccount } from "../../services/services";
+import { AddCreditorAccount, UpdateACHDetails } from "../../services/services";
 import { REACT_APP_SECURITY_KEY } from "../../constants/appConstants";
 
-function PaynoteForm({ type, handleClose, caseData, attorneyId }) {
+function PaynoteForm({
+  type,
+  handleClose,
+  caseData,
+  attorneyId,
+  accountsExist,
+}) {
   const [errors, setErrors] = useState({});
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -92,7 +98,33 @@ function PaynoteForm({ type, handleClose, caseData, attorneyId }) {
     };
     const addCreditorAccount = await AddCreditorAccount(
       finalData,
-      type === "attorney" ? attorneyId : creditorId,
+      type === "lawfirm" ? attorneyId : creditorId,
+      type
+    );
+    if (addCreditorAccount?.status === 200) {
+      showToast(addCreditorAccount?.data?.message, "success");
+      handleClose();
+    } else {
+      showToast(addCreditorAccount?.response?.data?.message, "error");
+    }
+    setLoading(false);
+  };
+
+  const handleUpdate = async () => {
+    setLoading(true);
+    const data = {
+      number: paynoteForm?.number,
+      routing: paynoteForm?.routing,
+      type: selectedValue,
+      bank: paynoteForm?.bank,
+    };
+    const encryptedData = encrypt(data, REACT_APP_SECURITY_KEY);
+    const finalData = {
+      data: encryptedData,
+    };
+    const addCreditorAccount = await UpdateACHDetails(
+      finalData,
+      type === "lawfirm" ? attorneyId : creditorId,
       type
     );
     if (addCreditorAccount?.status === 200) {
@@ -220,7 +252,7 @@ function PaynoteForm({ type, handleClose, caseData, attorneyId }) {
           height="2rem"
           width="8rem"
           marginRight="1rem"
-          onClick={handleSubmit}
+          onClick={accountsExist ? handleUpdate : handleSubmit}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
           loading={loading}

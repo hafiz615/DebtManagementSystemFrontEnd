@@ -194,6 +194,8 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     paymentType: "",
   });
 
+  const [lawsuitExtractedData, setLawsuitExtractedData] = useState([]);
+
   const disableButton =
     // (activeStep === 0 && files?.length === 0) ||
     // (activeStep === 1 &&
@@ -340,8 +342,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         ? response?.DebtorInfo["Debtor's Address"]
         : "",
     });
-
-    // setStatus(debtorData?.basicInformation?.status);
     setDebtorBusinessDetails({
       businessCompanyName: response?.BusinessInfo
         ? response?.BusinessInfo["Business Legal Name"]
@@ -402,12 +402,9 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     setDebtorBusinessDetails({
       businessCompanyName: debtorData?.businessInformation?.companyName || "",
       businessEinNumber: debtorData?.businessInformation?.EIN || "",
-      // businessCategory: debtorData?.businessInformation?.businessCategory || "",
-      // businessDescription: debtorData?.businessInformation?.description || "",
       businessState: debtorData?.businessInformation?.state || "",
       businessCity: debtorData?.businessInformation?.city || "",
       businessZipCode: debtorData?.businessInformation?.zipCode || "",
-      // businessPhoneNumber: debtorData?.businessInformation?.phone || "",
       businessAddress: debtorData?.businessInformation?.address || "",
     });
     if (!isEmpty(debtorData?.contacts)) {
@@ -417,10 +414,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           title: contact?.title || "",
           phone: contact?.phone || "",
           email: contact?.email || "",
-          // state: contact?.state || "",
-          // city: contact?.city || "",
-          // zipCode: contact?.zipCode || "",
-          // relationWithDebtor: contact?.relationWithDebtor || "",
         }))
       );
     } else {
@@ -430,10 +423,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           title: "",
           phone: "",
           email: "",
-          // state: "",
-          // city: "",
-          // zipCode: "",
-          // relationWithDebtor: "",
         },
       ]);
     }
@@ -448,7 +437,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       if (getCreditorDataInSearch?.status === 200) {
         const data = getCreditorDataInSearch?.data?.data;
         setFilteredArray(data);
-        // Update fields based on the selected search result and index
       }
     }
   };
@@ -556,18 +544,11 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
             companyName: debtorBusinessDetails?.businessCompanyName,
             EIN: debtorBusinessDetails?.businessEinNumber,
             businessCategory: businessType,
-            // description: debtorBusinessDetails?.businessDescription,
             state: debtorBusinessDetails?.businessState,
             city: debtorBusinessDetails?.businessCity,
             zipCode: debtorBusinessDetails?.businessZipCode,
-            // phone: debtorBusinessDetails?.businessPhoneNumber
-            //   ? debtorBusinessDetails?.businessPhoneNumber.startsWith("+1")
-            //     ? debtorBusinessDetails?.businessPhoneNumber.slice(2)
-            //     : debtorBusinessDetails?.businessPhoneNumber
-            //   : "",
             address: debtorBusinessDetails?.businessAddress,
           },
-          // profitMargin: Number(profitMargin) || 20,
           contacts: debtorContacts,
           paymentToken: connectPayment?.paymentToken,
           paymentType: connectPayment?.paymentType,
@@ -580,6 +561,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         const res = await CreateDebtor(params);
         if (res?.status === 200) {
           showToast(res?.data?.message, "success");
+          setLawsuitExtractedData(res?.data?.data?.debtor?.lawsuitFields);
           setDebtorCaseData(res?.data?.data);
           setActiveStep(activeStep + 1);
         } else {
@@ -612,7 +594,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
           localStorage.setItem("route", "list-details");
           navigate(`/client/list-details/${res?.data?.data[0]?.debtor}`);
           setDebtorCaseData(res?.data?.data);
-          // setActiveStep(activeStep + 1);
         } else {
           const errorMessage = res?.response?.data?.message;
           showToast(errorMessage, "error");
@@ -649,6 +630,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     window.scrollTo(0, 0);
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
+
   const clearDebtor = () => {
     setDebtorOwnDetails({
       BasicFullName: "",
@@ -665,11 +647,9 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       businessCompanyName: "",
       businessEinNumber: "",
       businessCategory: "",
-      // businessDescription: "",
       businessState: "",
       businessCity: "",
       businessZipCode: "",
-      // businessPhoneNumber: "",
       businessAddress: "",
     });
     setWalletId("");
@@ -681,13 +661,10 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
         title: "",
         phone: "",
         email: "",
-        // state: "",
-        // city: "",
-        // zipCode: "",
-        // relationWithDebtor: "",
       },
     ]);
   };
+
   const handleReset = () => {
     if (activeStep === 0) {
       setFiles([]);
@@ -718,6 +695,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       emailValid: "",
     });
   };
+
   const resetAll = () => {
     setFiles([]);
     setSelectedFiles([]);
@@ -859,23 +837,21 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
 
         <React.Fragment>
           {activeStep === 0 ? (
-            <>
-              <FileUploadComponent
-                files={files}
-                setFiles={setFiles}
-                selectedFiles={selectedFiles}
-                setSelectedFiles={setSelectedFiles}
-                otherFiles={otherFiles}
-                setOtherFiles={setOtherFiles}
-                lawsuitFiles={lawsuitFiles}
-                setLawsuitFiles={setLawsuitFiles}
-                setInputKey={setInputKey}
-                inputKey={inputKey}
-                loading={loading}
-                progress={progress}
-                setProgress={setProgress}
-              />
-            </>
+            <FileUploadComponent
+              files={files}
+              setFiles={setFiles}
+              selectedFiles={selectedFiles}
+              setSelectedFiles={setSelectedFiles}
+              otherFiles={otherFiles}
+              setOtherFiles={setOtherFiles}
+              lawsuitFiles={lawsuitFiles}
+              setLawsuitFiles={setLawsuitFiles}
+              setInputKey={setInputKey}
+              inputKey={inputKey}
+              loading={loading}
+              progress={progress}
+              setProgress={setProgress}
+            />
           ) : activeStep === 1 ? (
             <DebtorDetails
               debtorOwnDetails={debtorOwnDetails}
@@ -924,38 +900,9 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
               setFilteredArray={setFilteredArray}
               errors={errors}
               setErrors={setErrors}
+              lawsuitExtractedData={lawsuitExtractedData}
             />
-          ) : activeStep === 3 ? (
-            <PaymentDetails
-              totalReceivable={totalReceivable}
-              setTotalReceivable={setTotalReceivable}
-              setFeePayment={setFeePayment}
-              feePayment={feePayment}
-              paidAmount={paidAmount}
-              setPaidAmount={setPaidAmount}
-              lastPaymentDate={lastPaymentDate}
-              setLastPaymentDate={setLastPaymentDate}
-              newDataList={newDataList}
-              setNewDataList={setNewDataList}
-              totalAmount={totalAmount}
-              remainingAmount={remainingAmount}
-            />
-          ) : activeStep === 4 ? (
-            ""
           ) : (
-            // <PreviewDetails
-            //   debtorOwnDetails={debtorOwnDetails}
-            //   creditorBasicsInfo={creditorBasicsInfo}
-            //   creditorBusinessDetails={creditorBusinessDetails}
-            //   newDataList={newDataList}
-            //   totalReceivable={totalReceivable}
-            //   feePayment={feePayment}
-            //   paidAmount={paidAmount}
-            //   remainingAmount={remainingAmount}
-            //   status={status}
-            //   fundedDate={fundedDate}
-            //   CreditorNotes={CreditorNotes}
-            // />
             ""
           )}
           <Grid

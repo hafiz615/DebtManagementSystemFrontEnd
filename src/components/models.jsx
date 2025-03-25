@@ -37,6 +37,7 @@ import {
   Phone,
   Sync,
   CompareArrows,
+  Save,
 } from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
@@ -72,6 +73,10 @@ import SeeCheckDetails from "./caseDetail/seeCheckDetails";
 import ClientSync from "./caseDetail/ClientSync";
 import AttorneyPaymentPlan from "./attorneyPaymentPlan";
 import EditAttorneyDetails from "./editAttorneyDetails";
+import CreateSignature from "./settingsScreen/createSignature";
+import CreateSignatures from "./settingsScreen/createSignature";
+import SaveVoiceCase from "./saveVoiceCase";
+import EditLawfirmDetails from "./editLawfirmDetails";
 
 export default function MuiModels({
   buttonName,
@@ -174,6 +179,11 @@ export default function MuiModels({
   type,
   attorneyId,
   getAttorneyData,
+  GetAllSignaturesData,
+  editSignature,
+  signatureData,
+  accountsExist,
+  lawfirmId,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -300,6 +310,21 @@ export default function MuiModels({
             }}
           />
         </IconButton>
+      ) : show === "editSignature" ? (
+        <IconButton
+          sx={{ display: "flex", alignItems: "center" }}
+          onClick={() => {
+            handleOpen();
+          }}
+        >
+          <Edit
+            sx={{
+              color: Colors.DIM_LIGHT_GRAY,
+              cursor: "pointer",
+              fontSize: "1.3rem",
+            }}
+          />
+        </IconButton>
       ) : show === "editCreditorContacts" ? (
         <IconButton
           sx={{ display: "flex", alignItems: "center" }}
@@ -367,9 +392,18 @@ export default function MuiModels({
               handleOpen();
             }}
           >
-            <Sync
-              sx={{ color: Colors.DARK_GRAY, fontSize: iconSize || "16px" }}
-            />
+            <Sync sx={{ color: Colors.DARK_GRAY }} />
+          </IconButton>
+        </Tooltip>
+      ) : show === "saveCallInCase" ? (
+        <Tooltip title="save voice message in a case" placement="top">
+          <IconButton
+            disabled={disabled}
+            onClick={() => {
+              handleOpen();
+            }}
+          >
+            <Save sx={{ color: Colors.SKY_BLUE }} />
           </IconButton>
         </Tooltip>
       ) : show === "editAbout" ? (
@@ -406,7 +440,9 @@ export default function MuiModels({
             sx={{ fontSize: "16px", color: Colors.WHITE, cursor: "pointer" }}
           />
         </IconButton>
-      ) : show === "editStatus" || show === "editAttorney" ? (
+      ) : show === "editStatus" ||
+        show === "editAttorney" ||
+        show === "editLawfirm" ? (
         <IconButton
           onClick={() => {
             handleOpen();
@@ -633,9 +669,9 @@ export default function MuiModels({
         />
       ) : button === "paynoteForm" ? (
         <TextButton
-          buttonText="Add Bank Info"
+          buttonText={accountsExist ? "Update Bank Info" : "Add Bank Info"}
           height="2rem"
-          width="8rem"
+          width="10rem"
           onClick={handleOpen}
           disabled={disabled}
           backgroundColor={Colors.SKY_BLUE}
@@ -684,6 +720,15 @@ export default function MuiModels({
           buttonText="Send SMS"
           height="2.5rem"
           width="9rem"
+          onClick={handleOpen}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
+      ) : buttonName === "createSignature" ? (
+        <TextButton
+          buttonText="Create Signature"
+          height="2.5rem"
+          width="10rem"
           onClick={handleOpen}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
@@ -1028,6 +1073,13 @@ export default function MuiModels({
               debtorId={debtorId}
               to={to}
             />
+          ) : show === "createSignature" || show === "editSignature" ? (
+            <CreateSignatures
+              handleClose={handleClose}
+              GetAllSignaturesData={GetAllSignaturesData}
+              editSignature={editSignature}
+              signatureData={signatureData}
+            />
           ) : show === "uploadFile" ? (
             <UploadFilePopup
               handleClose={handleClose}
@@ -1050,6 +1102,7 @@ export default function MuiModels({
               setSelectedOption={setSelectedOption}
               strategy={strategy}
               commission={commission}
+              getAttorneyData={getAttorneyData}
             />
           ) : show === "attorneyPaymentPlan" ? (
             <AttorneyPaymentPlan
@@ -1111,6 +1164,7 @@ export default function MuiModels({
             />
           ) : show === "paynoteForm" ? (
             <PaynoteForm
+              accountsExist={accountsExist}
               type={type}
               attorneyId={attorneyId}
               handleClose={handleClose}
@@ -1201,8 +1255,15 @@ export default function MuiModels({
             <EditAttorneyDetails
               data={data}
               attorneyId={attorneyId}
-              caseData={caseData}
-              GetCaseDetails={GetCaseDetails}
+              getAttorneyData={getAttorneyData}
+              handleClose={handleClose}
+            />
+          ) : show === "saveCallInCase" ? (
+            <SaveVoiceCase handleClose={handleClose} data={data} />
+          ) : show === "editLawfirm" ? (
+            <EditLawfirmDetails
+              data={data}
+              lawfirmId={lawfirmId}
               getAttorneyData={getAttorneyData}
               handleClose={handleClose}
             />

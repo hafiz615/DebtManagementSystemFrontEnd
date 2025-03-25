@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
-import { Grid, Box, TextField, Slider } from "@mui/material";
+import { Grid, Box, TextField, Slider, Switch } from "@mui/material";
 import { Colors } from "../../config/default";
 import PaymentsTextFields from "../caseTextField";
 import AmountTextField from "../amountTextField";
@@ -11,6 +11,7 @@ import PaymentFields from "../caseCreationFields/paymentFields";
 import Autocomplete from "@mui/material/Autocomplete";
 import { handleNumberInput } from "../../common";
 import Dropdown from "../dropdown";
+import LawsuitFields from "./lawsuitFields";
 
 export default function CreditorFields({
   debtorCaseData,
@@ -24,6 +25,10 @@ export default function CreditorFields({
   errors,
   businessErrors,
   showErrors,
+  lawsuitFields,
+  setLawsuitFields,
+  isChecked,
+  setIsChecked,
 }) {
   const debtTypes = [
     { label: "MCA", value: "MCA" },
@@ -47,9 +52,6 @@ export default function CreditorFields({
   );
 
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
-  const [nameTitleMapping, setNameTitleMapping] = useState(
-    swapKeysAndValues(debtorCaseData?.creditorNames?.mapped_data || {})
-  );
 
   useEffect(() => {
     const validationCodeString = digits;
@@ -65,7 +67,8 @@ export default function CreditorFields({
   };
 
   const today = new Date().toISOString().split("T")[0];
-  React.useEffect(() => {
+
+  useEffect(() => {
     handleCaseDataChange(caseIndex, "creditor.accountTitle", accountTitle);
   }, [accountTitle]);
   const hasError = (field) => {
@@ -73,6 +76,66 @@ export default function CreditorFields({
       (error) => error?.index === caseIndex && error?.field === field
     );
   };
+
+  useEffect(() => {
+    debtorCaseData?.debtor?.lawsuitFields?.forEach((item) => {
+      if (
+        item?.plaintiff_company ===
+        thisCaseData?.creditor?.businessInformation?.companyName
+      ) {
+        const newState = [...finalCaseData];
+
+        setIsChecked((prev) => {
+          const updated = [...prev];
+          updated[caseIndex] = true;
+          return updated;
+        });
+        setLawsuitFields((prev) => {
+          const updated = [...prev];
+          if (caseIndex >= updated.length) {
+            updated.length = caseIndex + 1;
+          }
+          updated[caseIndex] = {
+            lawsuit: {
+              balance: item?.Balance || "",
+              document_date: item?.document_date || "",
+            },
+            lawfirm: {
+              lawfirmCompanyName: item?.lawfirmCompanyName || "",
+              email: item?.email || "",
+              phone: item?.phone || "",
+              address: item?.address || "",
+              city: item?.city || "",
+              state: item?.state || "",
+              EIN: item?.EIN || "",
+            },
+            attorney: {
+              attorney_name: item?.attorney_name || "",
+              attorney_telephone: item?.attorney_telephone || "",
+              attorney_address: item?.attorney_address || "",
+              attorney_city: item?.attorney_city || "",
+              attorney_SSN: item?.attorney_SSN || "",
+              attorney_state: item?.attorney_state || "",
+            },
+          };
+
+          return updated;
+        });
+        setFinalCaseData(newState);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    setFinalCaseData((prevData) => {
+      const newState = [...prevData];
+      newState[caseIndex] = {
+        ...newState[caseIndex],
+        lawsuitExist: isChecked[caseIndex],
+      };
+      return newState;
+    });
+  }, [isChecked]);
 
   return (
     <>
@@ -93,7 +156,6 @@ export default function CreditorFields({
             justifyContent: "space-between",
             borderRadius: "10px",
             backgroundColor: Colors.WHITE,
-            height: { xl: "420px", xs: "max-content" },
           }}
         >
           <div>
@@ -126,30 +188,7 @@ export default function CreditorFields({
                     : "1px solid transparent"
                 }
               />
-              {/* <PaymentsTextFields
-                type="text"
-                label="Debt Types*"
-                placeHolderValue="Enter Debt Type"
-                width={smallScreen ? "100%" : "97%"}
-                value={
-                  thisCaseData?.creditor?.businessInformation?.businessCategory
-                }
-                onChangeFunction={(e) =>
-                  handleCaseDataChange(
-                    caseIndex,
-                    "creditor.businessInformation.businessCategory",
-                    e.target.value
-                  )
-                }
-                border={
-                  thisCaseData?.creditor?.businessInformation
-                    ?.businessCategory === ""
-                    ? "2px solid red"
-                    : "auto" && hasError("businessCategory") && showErrors
-                    ? "2px solid red"
-                    : "1px solid transparent"
-                }
-              /> */}
+
               <Grid item xs={12} md={3.9}>
                 <Typography
                   sx={{
@@ -658,6 +697,45 @@ export default function CreditorFields({
         businessErrors={businessErrors}
         showErrors={showErrors}
       />
+      <Grid
+        container
+        item
+        xs={12}
+        sx={{ padding: "1rem", alignItems: "center", mb: "1rem" }}
+      >
+        <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
+          Lawsuit Fields
+        </Typography>
+        <Switch
+          checked={isChecked[caseIndex] || false}
+          onChange={(e) => {
+            const isChecked = e.target.checked;
+            setIsChecked((prev) => {
+              const updated = [...prev];
+              updated[caseIndex] = isChecked;
+              return updated;
+            });
+          }}
+          sx={{
+            "& .MuiSwitch-switchBase.Mui-checked": {
+              color: Colors.SKY_BLUE,
+            },
+            "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+              backgroundColor: Colors.SKY_BLUE,
+            },
+          }}
+        />
+      </Grid>
+      {isChecked[caseIndex] && (
+        <LawsuitFields
+          isChecked={isChecked}
+          index={caseIndex}
+          smallScreen={smallScreen}
+          lawsuitFields={lawsuitFields}
+          setLawsuitFields={setLawsuitFields}
+          setFinalCaseData={setFinalCaseData}
+        />
+      )}
       <Grid
         item
         xs={12}

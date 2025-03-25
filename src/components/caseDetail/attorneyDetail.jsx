@@ -8,6 +8,7 @@ import { formatDateString, getTruncatedText } from "../../common";
 import ScrollbarStyles from "../customScroll";
 
 export default function AttorneyDetail({
+  accountsExist,
   caseData,
   GetCaseDetails,
   allAttorneyData,
@@ -90,6 +91,7 @@ export default function AttorneyDetail({
       value: lawfirmData?.lawfirmFee ? `$${lawfirmData?.lawfirmFee}` : "$0",
     },
   ];
+
   return (
     <>
       <Grid
@@ -122,19 +124,8 @@ export default function AttorneyDetail({
                 fontFamily: "Nunito",
               }}
             >
-              Attorney
+              Creditor's Attorney
             </span>
-            {attorneyData && (
-              <MuiModels
-                type="attorney"
-                show="showCreditorSync"
-                attorneyId={attorneyData?._id}
-                iconColor={Colors.BLACK}
-                caseData={caseData}
-                GetCaseDetails={GetCaseDetails}
-                height="22vh"
-              />
-            )}
           </div>
           {attorneyData && (
             <MuiModels
@@ -229,16 +220,6 @@ export default function AttorneyDetail({
                 </Tooltip>
               </div>
             </div>
-            <Grid container xs={12} sx={{ justifyContent: "center" }}>
-              <MuiModels
-                type="attorney"
-                show="paynoteForm"
-                button="paynoteForm"
-                width="55vw"
-                attorneyId={attorneyData?._id}
-                caseData={caseData}
-              />
-            </Grid>
           </>
         )}
       </Grid>
@@ -353,8 +334,34 @@ export default function AttorneyDetail({
               fontFamily: "Nunito",
             }}
           >
-            Lawfirm
+            Client's Law Firm
           </span>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <MuiModels
+              type="lawfirm"
+              show="showCreditorSync"
+              attorneyId={allAttorneyData?.lawfirm?._id}
+              iconColor={Colors.BLACK}
+              caseData={caseData}
+              GetCaseDetails={GetCaseDetails}
+              height="22vh"
+            />
+            <MuiModels
+              show="editLawfirm"
+              data={allAttorneyData?.lawfirm}
+              lawfirmId={allAttorneyData?.lawfirm?._id}
+              getAttorneyData={getAttorneyData}
+            />
+            <MuiModels
+              accountsExist={accountsExist}
+              type="lawfirm"
+              show="paynoteForm"
+              button="paynoteForm"
+              width="55vw"
+              attorneyId={allAttorneyData?.lawfirm?._id}
+              caseData={caseData}
+            />
+          </div>
         </Grid>
         <div
           style={{

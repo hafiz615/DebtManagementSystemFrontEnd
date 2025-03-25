@@ -37,7 +37,7 @@ function CreditorSync({ attorneyId, handleClose, caseData, type }) {
   const GetCreditorPaynoteSync = async () => {
     setPaynoteSyncloading(true);
     const GetCreditorPaynoteSyncRes = await GetCreditorSyncEmail(
-      type === "attorney" ? attorneyId : creditorId,
+      type === "lawfirm" ? attorneyId : creditorId,
       type
     );
     if (GetCreditorPaynoteSyncRes?.status === 200) {
@@ -57,7 +57,7 @@ function CreditorSync({ attorneyId, handleClose, caseData, type }) {
     const params = { email: email };
     const AddSyncPaynoteCreditorEmailRes = await SyncPaynoteCreditor(
       params,
-      type === "attorney" ? attorneyId : creditorId,
+      type === "lawfirm" ? attorneyId : creditorId,
       type
     );
     if (AddSyncPaynoteCreditorEmailRes?.status === 200) {

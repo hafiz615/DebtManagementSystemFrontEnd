@@ -2038,3 +2038,103 @@ export const UpdateAttorneyDetail = async (payload, id) => {
     return error;
   }
 };
+export const CreateSignature = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/user/addSignature`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetAllSignatures = async () => {
+  try {
+    return await axios.get(BASE_URL + `/v1/user/getSignatures`, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+export const GetUserActiveSignature = async () => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/user/getUserActiveSignature`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const UpdateSignatureStatus = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/user/updateSignatureStatus/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateSignatureData = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/user/updateSignature/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const DeleteSignature = async (id) => {
+  try {
+    return await axios.delete(
+      BASE_URL + `/v1/user/deleteSignature/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateACHDetails = async (payload, id, type) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/payment/updateACHDetails/${id}?type=${type}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetVoiceMails = async () => {
+  try {
+    return await axios.get(BASE_URL + `/v1/call/getVoiceMails`, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+export const DeleteVoiceMessage = async (id) => {
+  try {
+    return await axios.delete(
+      BASE_URL + `/v1/call/deleteCall/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateLawfirmDetails = async (payload, id) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/lawfirm/updateLawfirm/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

@@ -8,7 +8,14 @@ import {
   Typography,
   IconButton,
 } from "@mui/material";
-import { Search, ChevronLeft, NavigateNext, Phone } from "@mui/icons-material";
+import {
+  Search,
+  ChevronLeft,
+  NavigateNext,
+  Phone,
+  Info,
+  Verified,
+} from "@mui/icons-material";
 import { useToast } from "../../toast/toastContext";
 
 import { Colors } from "../../config/default";
@@ -62,6 +69,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function DebtorDetailsCards({
+  accountsExist,
   caseData,
   GetCaseDetails,
   caseDataId,
@@ -224,6 +232,26 @@ export default function DebtorDetailsCards({
               justifyContent: "end",
             }}
           >
+            <Tooltip
+              placement="top"
+              title={
+                accountExist
+                  ? "Client Account Exist"
+                  : "No Account Added For This Client"
+              }
+            >
+              <IconButton>
+                {accountExist ? (
+                  <Verified sx={{ color: "green" }} />
+                ) : (
+                  <Info
+                    sx={{
+                      color: Colors.ORANGE_COLOR,
+                    }}
+                  />
+                )}
+              </IconButton>
+            </Tooltip>
             <MuiModels
               show="showClientSync"
               iconColor={Colors.BLACK}
@@ -365,7 +393,7 @@ export default function DebtorDetailsCards({
                 width: "35%",
               }}
             >
-              Street Adress
+              Street Address
             </Typography>
             <Typography
               sx={{

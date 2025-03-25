@@ -33,6 +33,7 @@ export default function PaymentPopup({
   closePopup,
   commission,
   setPaymentChanged,
+  getAttorneyData,
 }) {
   const [feePayment, setFeePayment] = useState(data?.feePayment || "toPay");
   const [totalAmount, setTotalAmount] = useState();
@@ -84,6 +85,7 @@ export default function PaymentPopup({
       showToast(resCaseUpdate?.data?.message, "success");
       GetCaseDetails && GetCaseDetails(id);
       GetCasePaymentDetails && GetCasePaymentDetails(id);
+      getAttorneyData && getAttorneyData();
       handleClose();
       closePopup && closePopup();
     } else {

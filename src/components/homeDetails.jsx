@@ -22,6 +22,7 @@ function HomeDetails() {
   const smallScreen = useMediaQuery("(min-width:315px) and (max-width:760px)");
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
   const [homeData, setHomeData] = useState({});
+
   const [loading, setLoading] = useState(false);
   const [paginationRows, setPaginationRows] = useState({
     failedAuthorizations: "5",
@@ -317,6 +318,7 @@ function HomeDetails() {
             ? true
             : false
         }
+        homeData={homeData}
         currentPage={currentPage[data?.key]}
         setCurrentPage={(page) => handlePageChange(data?.key, page)}
         tableHeading={data?.heading}

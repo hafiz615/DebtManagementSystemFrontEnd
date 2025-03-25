@@ -152,18 +152,32 @@ function TransactionRow({
               item?.captured === "Success" &&
               !hideTransferPayment ? (
                 <Box sx={{ cursor: "pointer" }}>
-                  <IconButton
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      sendPaymentCreditor(item?.id);
-                    }}
-                  >
-                    <Paid
-                      sx={{
-                        color: Colors.SKY_BLUE,
-                      }}
-                    />
-                  </IconButton>
+                  <Tooltip title={item?.status || "No status available"} arrow>
+                    <span>
+                      <IconButton
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          sendPaymentCreditor(item?.id);
+                        }}
+                        disabled={item?.status === "Success"}
+                        sx={{
+                          cursor:
+                            item?.status === "Success"
+                              ? "not-allowed"
+                              : "pointer",
+                        }}
+                      >
+                        <Paid
+                          sx={{
+                            color:
+                              item?.status === "Success"
+                                ? "gray"
+                                : Colors.SKY_BLUE,
+                          }}
+                        />
+                      </IconButton>
+                    </span>
+                  </Tooltip>
                 </Box>
               ) : (
                 <p
