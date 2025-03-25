@@ -36,9 +36,10 @@ import {
   GetAllInbox,
   GetAllNotifications,
   GetAllSenders,
-  GetAllUsers,
   GetNotificationTemplates,
   GetUsers,
+  InboxStatus,
+  TaskStatus,
 } from "../services/services";
 import { formatDateString } from "../common";
 import { useNavigate } from "react-router-dom";
@@ -46,6 +47,8 @@ import Dropdown from "./dropdown";
 import Prompt from "./prompt";
 import ThreadMessages from "./threadMessages";
 import { setCounts } from "../redux/action/action";
+import CheckIcon from "@mui/icons-material/Check";
+import { useToast } from "../toast/toastContext";
 
 const inputStyling = {
   width: "100%",
@@ -105,6 +108,7 @@ function Inbox() {
     id: 0,
     active: false,
   });
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { smsCount, emailCount } = useSelector((state) => state.counts);
@@ -344,6 +348,75 @@ function Inbox() {
         );
       })
     );
+  };
+
+  const [undoStates, setUndoStates] = useState({}); // Tracks undo state per item
+  const [timeouts, setTimeouts] = useState({}); // Tracks timeouts per item
+
+  const callTaskStatusApi = async (id, type) => {
+    const payload = {};
+    const res = await TaskStatus(id, payload, type);
+
+    if (res?.status === 200) {
+      getAllTasks(false, false);
+      showToast(res?.data?.message, "success");
+    } else {
+      showToast(res?.response?.data?.message || "Error", "error");
+    }
+  };
+
+  const handleCompleteStatus = async (id) => {
+    setUndoStates((prev) => ({ ...prev, [id]: true }));
+
+    if (timeouts[id]) clearTimeout(timeouts[id]);
+
+    const timeout = setTimeout(async () => {
+      setUndoStates((prev) => ({ ...prev, [id]: false }));
+      await callTaskStatusApi(id, false);
+    }, 5000);
+
+    setTimeouts((prev) => ({ ...prev, [id]: timeout }));
+  };
+
+  const handleUndo = async (id) => {
+    if (timeouts[id]) clearTimeout(timeouts[id]);
+    setUndoStates((prev) => ({ ...prev, [id]: false }));
+    await callTaskStatusApi(id, true);
+  };
+
+  // INBOX STATUS
+  const [inboxUndoStates, setInboxUndoStates] = useState({});
+  const [inboxTimeouts, setInboxTimeouts] = useState({});
+  const callInboxStatusApi = async (id, type) => {
+    const payload = {};
+    const res = await InboxStatus(id, payload, type);
+
+    if (res?.status === 200) {
+      getAllInboxData(false, false);
+      setActivePreview({ id: 0, active: false });
+      showToast(res?.data?.message, "success");
+    } else {
+      showToast(res?.response?.data?.message || "Error", "error");
+    }
+  };
+
+  const handleCompleteInboxStatus = async (id) => {
+    setInboxUndoStates((prev) => ({ ...prev, [id]: true }));
+
+    if (inboxTimeouts[id]) clearTimeout(inboxTimeouts[id]);
+
+    const timeout = setTimeout(async () => {
+      setInboxUndoStates((prev) => ({ ...prev, [id]: false }));
+      await callInboxStatusApi(id, false);
+    }, 5000);
+
+    setInboxTimeouts((prev) => ({ ...prev, [id]: timeout }));
+  };
+
+  const handleUndoInbox = async (id) => {
+    if (inboxTimeouts[id]) clearTimeout(inboxTimeouts[id]);
+    setInboxUndoStates((prev) => ({ ...prev, [id]: false }));
+    await callInboxStatusApi(id, true);
   };
 
   return (
@@ -845,7 +918,7 @@ function Inbox() {
                                   </div>
                                   {activeMainTab !== "Completed" && (
                                     <div>
-                                      <Prompt
+                                      {/* <Prompt
                                         text={`Are you sure you want to add this mail into complete list?`}
                                         item={
                                           inboxData?.[activeInbox]?.[
@@ -855,7 +928,53 @@ function Inbox() {
                                         deleting="markAsComplete"
                                         getAllInboxData={getAllInboxData}
                                         setActivePreview={setActivePreview}
-                                      />
+                                      /> */}
+                                      <div>
+                                        {inboxUndoStates[
+                                          inboxData?.[activeInbox]?.[
+                                            activePreview?.id
+                                          ]?._id
+                                        ] ? (
+                                          <span
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              handleUndoInbox(
+                                                inboxData?.[activeInbox]?.[
+                                                  activePreview?.id
+                                                ]?._id
+                                              );
+                                            }}
+                                            style={{
+                                              color: "blue",
+                                              cursor: "pointer",
+                                              width: "5rem",
+                                              fontFamily: "Nunito",
+                                              fontSize: 16,
+                                            }}
+                                          >
+                                            UNDO
+                                          </span>
+                                        ) : (
+                                          <IconButton
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              handleCompleteInboxStatus(
+                                                inboxData?.[activeInbox]?.[
+                                                  activePreview?.id
+                                                ]?._id
+                                              );
+                                            }}
+                                          >
+                                            <CheckIcon
+                                              style={{
+                                                color: "gray",
+                                                fontSize: 24,
+                                                cursor: "pointer",
+                                              }}
+                                            />
+                                          </IconButton>
+                                        )}
+                                      </div>
                                     </div>
                                   )}
 
@@ -1362,7 +1481,13 @@ function Inbox() {
                     setExpandedMessages
                   )}
                 </Grid>
-                <Grid xs={9.5} sx={{ overflowY: "auto", ...ScrollbarStyles }}>
+                <Grid
+                  xs={9.5}
+                  sx={{
+                    overflowY: "auto",
+                    ...ScrollbarStyles,
+                  }}
+                >
                   {alltasks[selectedUser]?.map((tasks) => (
                     <CardContent
                       onClick={() => navigateToCaseDetail(tasks?.caseId)}
@@ -1388,13 +1513,48 @@ function Inbox() {
                           </Typography>
                         </div>
                         <div>
-                          <Prompt
+                          {/* <Prompt
                             text={`Are you sure you want to add this task into complete list?`}
                             item={tasks?._id}
                             deleting="markAsComplete"
                             task={true}
                             getAllInboxData={getAllTasks}
-                          />
+                          /> */}
+
+                          <div key={tasks?._id}>
+                            {undoStates[tasks?._id] ? (
+                              <span
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleUndo(tasks?._id);
+                                }}
+                                style={{
+                                  color: "blue",
+                                  cursor: "pointer",
+                                  width: "5rem",
+                                  fontFamily: "Nunito",
+                                  fontSize: 16,
+                                }}
+                              >
+                                UNDO
+                              </span>
+                            ) : (
+                              <IconButton
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleCompleteStatus(tasks?._id);
+                                }}
+                              >
+                                <CheckIcon
+                                  style={{
+                                    color: "gray",
+                                    fontSize: 24,
+                                    cursor: "pointer",
+                                  }}
+                                />
+                              </IconButton>
+                            )}
+                          </div>
                         </div>
                       </div>
                       <div style={{ display: "flex", gap: "10px" }}>
