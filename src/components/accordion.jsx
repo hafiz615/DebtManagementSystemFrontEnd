@@ -20,14 +20,6 @@ import {
   FONT_SIZE_XL,
 } from "../constants/appConstants";
 
-const headers = [
-  "Name",
-  "Due Date",
-  "Amount",
-  "Payment Type",
-  "Failure Reason",
-];
-
 export default function AccordionUsage({
   tableHeading,
   arrayName,
@@ -44,11 +36,22 @@ export default function AccordionUsage({
   paginationRows,
   setPaginationRows,
   successFulPaymentTrue,
+  homeData,
 }) {
+  const headers = [
+    "Name",
+    arrayName === "creditorUpcomingPayments" ? "Client" : "",
+    "Due Date",
+    "Amount",
+    "Payment Type",
+    "Failure Reason",
+  ];
+
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
   );
   const [rows, setRows] = useState([]);
+
   useEffect(() => {
     const generatedData = rowArray?.map((item, index) => ({
       caseId: item?.caseId || item?.debtorId,
@@ -58,6 +61,8 @@ export default function AccordionUsage({
         arrayName === "creditorUpcomingPayments"
           ? item?.creditorName
           : item?.debtorName || "-",
+      debtorName:
+        arrayName === "creditorUpcomingPayments" ? item?.debtorName : "" || "-",
       dueDate: new Date(item?.dueDate).toLocaleDateString() || "-",
       amount: formatDollarAmount(item?.amount),
       transactionType: item?.transactionType || "-",
@@ -65,12 +70,14 @@ export default function AccordionUsage({
         arrayName === "failedAuthorizations"
           ? item?.failedReasonAuthorization || "-"
           : item?.failedReasonCaptured || "-",
+      status: item.status || "-",
     }));
 
     if (!isEqual(generatedData, rowArray)) {
       setRows(generatedData);
     }
   }, [rowArray]);
+
   const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
     padding: theme.spacing(0),
   }));
@@ -215,6 +222,7 @@ export default function AccordionUsage({
           accordionHeight="40vh"
           paginationRows={paginationRows}
           setPaginationRows={setPaginationRows}
+          homeData={homeData}
         />
       </AccordionDetails>
     </Accordion>

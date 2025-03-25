@@ -35,6 +35,7 @@ import { isEmpty } from "lodash";
 import Dropdown from "./dropdown";
 import ScrollbarStyles from "././customScroll";
 import { AddIcCallOutlined, Paid } from "@mui/icons-material";
+import { Tooltip } from "@mui/material";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -99,6 +100,7 @@ export default function ListTable({
   requiredLinkIcons,
   getLinks,
   handleModalClose,
+  homeData,
 }) {
   const mediumScreen = useMediaQuery(
     "(min-width:300px) and (max-width:1150px)"
@@ -239,7 +241,7 @@ export default function ListTable({
                       Retry
                     </StyledTableCell>
                   )}
-                {arrayName === "successCaptures" && (
+                {/* {arrayName === "successCaptures" && (
                   <StyledTableCell
                     align="left"
                     sx={{
@@ -250,7 +252,7 @@ export default function ListTable({
                   >
                     Send Payment
                   </StyledTableCell>
-                )}
+                )} */}
               </TableRow>
             </TableHead>
             {loading ? (
@@ -302,6 +304,15 @@ export default function ListTable({
                         ([key]) =>
                           key !== "id" &&
                           key !== "caseId" &&
+                          (arrayName === "creditorUpcomingPayments" ||
+                          arrayName === "failedAuthorizations" ||
+                          arrayName === "failedCaptures" ||
+                          arrayName === "successAuthorizations" ||
+                          arrayName === "successCaptures" ||
+                          arrayName === "successPayments" ||
+                          arrayName === "upcomingPayments"
+                            ? key !== "status"
+                            : true) &&
                           (arrayName === "upcomingPayments" ||
                           arrayName === "creditorUpcomingPayments"
                             ? key !== "transactionType"
@@ -443,7 +454,7 @@ export default function ListTable({
                     )}
 
                     {/* Handle special case for successCaptures */}
-                    {arrayName === "successCaptures" && (
+                    {/* {arrayName === "successCaptures" && (
                       <StyledTableCell
                         align="left"
                         sx={{
@@ -455,16 +466,35 @@ export default function ListTable({
                           paddingRight: "0.5rem !important",
                         }}
                       >
-                        <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            sendPaymentCreditor(row?.id);
-                          }}
+                        <Tooltip
+                          title={row?.status || "No status available"}
+                          arrow
                         >
-                          <Paid sx={{ color: Colors.SKY_BLUE }} />
-                        </IconButton>
+                          <span>
+                            <IconButton
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                sendPaymentCreditor(row?.id);
+                              }}
+                              disabled={
+                                arrayName === "successCaptures" &&
+                                row?.status === "Success"
+                              }
+                            >
+                              <Paid
+                                sx={{
+                                  color:
+                                    arrayName === "successCaptures" &&
+                                    row?.status === "Success"
+                                      ? "gray"
+                                      : Colors.SKY_BLUE,
+                                }}
+                              />
+                            </IconButton>
+                          </span>
+                        </Tooltip>
                       </StyledTableCell>
-                    )}
+                    )} */}
                   </StyledTableRow>
                 ))}
               </TableBody>
