@@ -14,6 +14,7 @@ import Dropdown from "../dropdown";
 import LawsuitFields from "./lawsuitFields";
 
 export default function CreditorFields({
+  creditors,
   debtorCaseData,
   thisCaseData,
   handleCaseDataChange,
@@ -136,6 +137,22 @@ export default function CreditorFields({
       return newState;
     });
   }, [isChecked]);
+
+  useEffect(() => {
+    setFinalCaseData((prevData) => {
+      const newState = [...prevData];
+      newState[caseIndex] = {
+        ...newState[caseIndex],
+        lawsuitExist: isChecked[caseIndex] ? isChecked[caseIndex] : false,
+      };
+      return newState;
+    });
+    setIsChecked((prev) => {
+      const updated = [...prev];
+      updated[caseIndex] = isChecked[caseIndex] ? isChecked[caseIndex] : false;
+      return updated;
+    });
+  }, [creditors]);
 
   return (
     <>
@@ -709,10 +726,9 @@ export default function CreditorFields({
         <Switch
           checked={isChecked[caseIndex] || false}
           onChange={(e) => {
-            const isChecked = e.target.checked;
             setIsChecked((prev) => {
               const updated = [...prev];
-              updated[caseIndex] = isChecked;
+              updated[caseIndex] = e.target.checked;
               return updated;
             });
           }}
@@ -728,7 +744,6 @@ export default function CreditorFields({
       </Grid>
       {isChecked[caseIndex] && (
         <LawsuitFields
-          isChecked={isChecked}
           index={caseIndex}
           smallScreen={smallScreen}
           lawsuitFields={lawsuitFields}

@@ -268,6 +268,7 @@ export default function CreditorDetails({
                 .replace(",", "")
             ) || 0,
           feePayment: "toPay",
+          lawsuitExist: false,
         };
       });
     }
