@@ -5,7 +5,6 @@ import { Colors } from "../../config/default";
 import { isEmailValid } from "../../common";
 
 export default function LawsuitFields({
-  isChecked,
   index,
   smallScreen,
   lawsuitFields,
@@ -17,7 +16,6 @@ export default function LawsuitFields({
       const newState = [...prevData];
       newState[index] = {
         ...newState[index],
-        lawsuitExist: isChecked[index],
         ...lawsuitFields[index],
       };
       return newState;

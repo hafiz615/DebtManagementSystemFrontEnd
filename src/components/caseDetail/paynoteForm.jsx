@@ -98,7 +98,7 @@ function PaynoteForm({
     };
     const addCreditorAccount = await AddCreditorAccount(
       finalData,
-      type === "attorney" ? attorneyId : creditorId,
+      type === "lawfirm" ? attorneyId : creditorId,
       type
     );
     if (addCreditorAccount?.status === 200) {
@@ -124,7 +124,7 @@ function PaynoteForm({
     };
     const addCreditorAccount = await UpdateACHDetails(
       finalData,
-      type === "attorney" ? attorneyId : creditorId,
+      type === "lawfirm" ? attorneyId : creditorId,
       type
     );
     if (addCreditorAccount?.status === 200) {
