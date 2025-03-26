@@ -397,6 +397,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     setBankSatementUrl(debtorData?.bankStatementDocuments || []);
     setMcaUrl(debtorData?.mcaDocuments || []);
     setOtherFileUrl(debtorData?.otherDocuments || []);
+    setLawsuitUrl(debtorData?.lawsuitDocuments || []);
     setStatus(debtorData?.basicInformation?.status);
     setBusinessType(debtorData?.businessInformation?.businessCategory || "");
     setDebtorBusinessDetails({
