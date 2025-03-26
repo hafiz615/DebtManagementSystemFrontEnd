@@ -1910,10 +1910,11 @@ export const GetCreditorsFromDebtorId = async (debtorId) => {
     return error;
   }
 };
-export const InboxStatus = async (id, payload) => {
+
+export const TaskStatus = async (id, payload, type) => {
   try {
     return await axios.put(
-      BASE_URL + `/v1/inbox/inboxStatus/${id}`,
+      BASE_URL + `/v1/inbox/inboxStatus/${id}?task=true&undo=${type}`,
       payload,
       setHeaders()
     );
@@ -1921,10 +1922,10 @@ export const InboxStatus = async (id, payload) => {
     return error;
   }
 };
-export const TaskStatus = async (id, payload) => {
+export const InboxStatus = async (id, payload, type) => {
   try {
     return await axios.put(
-      BASE_URL + `/v1/inbox/inboxStatus/${id}?task=true`,
+      BASE_URL + `/v1/inbox/inboxStatus/${id}?task=false&undo=${type}`,
       payload,
       setHeaders()
     );
