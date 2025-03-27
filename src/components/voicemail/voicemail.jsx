@@ -24,10 +24,16 @@ import { Colors } from "../../config/default";
 import { CallSummary, GetVoiceMails } from "../../services/services";
 import ScrollbarStyles from "../customScroll";
 import { formatDateString } from "../../common";
-import { Close, Description, ReplayOutlined } from "@mui/icons-material";
+import {
+  Close,
+  Description,
+  RemoveRedEye,
+  ReplayOutlined,
+} from "@mui/icons-material";
 import axios from "axios";
 import MuiModels from "../models";
 import Prompt from "../prompt";
+import { useNavigate } from "react-router-dom";
 
 const headingFontStyling = {
   fontFamily: "Nunito",
@@ -55,6 +61,7 @@ function VoiceMail() {
   const [sentences, setSentences] = useState({});
   const [summary, setSummary] = useState({});
   const [loading, setLoading] = useState({});
+  const navigate = useNavigate();
 
   const fetchSentences = async (id, url, username, password, maxRetries) => {
     setLoading((prev) => ({
@@ -134,6 +141,11 @@ function VoiceMail() {
   useEffect(() => {
     getVoiceMails();
   }, []);
+
+  const moveToCaseDetail = (id) => {
+    localStorage.setItem("route", "all-cases");
+    navigate(`/all-cases/${id}`);
+  };
 
   return (
     <Grid
@@ -330,7 +342,12 @@ function VoiceMail() {
                         )}
                       </IconButton>
                     </Tooltip>
-                    <MuiModels show="saveCallInCase" data={item} />
+                    <MuiModels
+                      disabled={item?.caseId}
+                      show="saveCallInCase"
+                      data={item}
+                      getVoiceMails={getVoiceMails}
+                    />
                     <Prompt
                       item={item?._id}
                       text="Are you sure you want to delete this voicemail?"
@@ -338,6 +355,14 @@ function VoiceMail() {
                       deleting="deleteVoiceMesssage"
                       getVoiceMails={getVoiceMails}
                     />
+                    <Tooltip placement="top" title="View case detail">
+                      <IconButton
+                        disabled={!item?.caseId}
+                        onClick={() => moveToCaseDetail(item?.caseId)}
+                      >
+                        <RemoveRedEye />
+                      </IconButton>
+                    </Tooltip>
                   </div>
                   {showTranscript[item?._id] && (
                     <>

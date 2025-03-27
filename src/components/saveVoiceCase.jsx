@@ -17,7 +17,7 @@ import { Colors } from "../config/default";
 import { GetAllUserCases, UpdateCallByCase } from "../services/services";
 import { useToast } from "../toast/toastContext";
 
-export default function SaveVoiceCase({ handleClose, data }) {
+export default function SaveVoiceCase({ getVoiceMails, handleClose, data }) {
   const [selectedCase, setSelectedCase] = useState();
   const [selected, setSelected] = useState([]);
   const [allCases, setAllCases] = useState([]);
@@ -62,6 +62,7 @@ export default function SaveVoiceCase({ handleClose, data }) {
     const res = await UpdateCallByCase(payload, data?.callSid);
     if (res?.status === 200) {
       showToast(res?.data?.message, "success");
+      getVoiceMails(true);
       handleClose();
     } else {
       const errorMessage = res?.response?.data?.message;
