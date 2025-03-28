@@ -180,7 +180,7 @@ export default function LawsuitFields({
           }
         />
         <PaymentsTextFields
-          type="text"
+          type="number"
           label="Lawfirm Fee"
           placeHolderValue="Enter Lawfirm Fee"
           width={smallScreen ? "100%" : "97%"}
