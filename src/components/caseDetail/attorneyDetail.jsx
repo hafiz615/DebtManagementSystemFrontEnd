@@ -88,7 +88,9 @@ export default function AttorneyDetail({
 
     {
       label: "Lawfirm Fee",
-      value: lawfirmData?.lawfirmFee ? `$${lawfirmData?.lawfirmFee}` : "$0",
+      value: lawfirmData?.monthly_subscription_fee
+        ? `$${lawfirmData?.monthly_subscription_fee}`
+        : "$0",
     },
   ];
 
