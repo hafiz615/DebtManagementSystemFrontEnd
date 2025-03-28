@@ -197,19 +197,42 @@ export default function SendEmailCase({
   const [removedFiles, setRemovedFiles] = useState([]);
   const { showToast } = useToast();
 
+  const [signature, setSignature] = useState("");
+
   const GetUserActiveSignatures = async () => {
     const res = await GetUserActiveSignature();
-
     if (res?.status === 200) {
-      setPreview(
-        "<p><br></p><p><br></p><p><br></p>" + (res?.data?.data?.signature || "")
+      const userSignature = res?.data?.data?.signature || "";
+      setSignature(userSignature);
+      setPreview((prev) =>
+        prev.includes(userSignature)
+          ? prev
+          : `<p><br></p><p><br></p>${userSignature}`
       );
     }
   };
 
   useEffect(() => {
-    GetUserActiveSignatures();
-  }, []);
+    console.log(headerName, "header");
+    if (!headerName) GetUserActiveSignatures();
+  }, [headerName]);
+
+  const updatePreview = (newContent) => {
+    setPreview((prevContent) => {
+      // Check if the preview contains the signature
+      if (prevContent.includes(signature)) {
+        // Separate content from the signature
+        const contentWithoutSignature = prevContent
+          .replace(signature, "")
+          .trim();
+        return `${contentWithoutSignature}\n\n${newContent}\n\n${signature}`;
+      } else {
+        // If signature is removed, just add new content
+        const contentWithoutSignature = prevContent.trim();
+        return `${contentWithoutSignature}\n\n${newContent}\n\n`;
+      }
+    });
+  };
 
   const getVariableAndEvents = async () => {
     const resVariable = await GetCustomVariable();
@@ -232,20 +255,54 @@ export default function SendEmailCase({
     setSelectedCategory(category);
   };
 
+  // useEffect(() => {
+  //   const selectedTemplate = bulkEmailTemplates?.find((template) => {
+  //     if (template?.name === selectedEmailTemplates) {
+  //       setPreview((prevContent) => prevContent + template?.content);
+  //     }
+  //   });
+  // }, [selectedEmailTemplates]);
+  useEffect(() => {
+    const selectedTemplate = bulkEmailTemplates?.find(
+      (template) => template?.name === selectedEmailTemplates
+    );
+    if (selectedTemplate) {
+      updatePreview(selectedTemplate?.content);
+    }
+  }, [selectedEmailTemplates]);
+
+  // Handle variable insertion
   const handleMenuClick = (action, selectedCategory) => {
     setSubMenuAnchorEl(null);
     setAnchorEl(null);
     if (action) {
       const newContent = `{{${selectedCategory}.${action}}}`;
-      setPreview((prevContent) => {
-        if (prevContent.endsWith("</p>")) {
-          return prevContent.replace(/<\/p>$/, newContent + "</p>");
-        } else {
-          return prevContent + newContent;
-        }
-      });
+      updatePreview(newContent);
     }
   };
+
+  useEffect(() => {
+    const selectedTemplate = bulkSmsTemplates?.find((template) => {
+      if (template?.name === selectedSmsTemplates) {
+        setPreview((prevContent) => prevContent + template?.content);
+      }
+    });
+  }, [selectedSmsTemplates]);
+
+  // const handleMenuClick = (action, selectedCategory) => {
+  //   setSubMenuAnchorEl(null);
+  //   setAnchorEl(null);
+  //   if (action) {
+  //     const newContent = `{{${selectedCategory}.${action}}}`;
+  //     setPreview((prevContent) => {
+  //       if (prevContent.endsWith("</p>")) {
+  //         return prevContent.replace(/<\/p>$/, newContent + "</p>");
+  //       } else {
+  //         return prevContent + newContent;
+  //       }
+  //     });
+  //   }
+  // };
 
   const handleInputChange = (e) => {
     const value = e.target.value;
@@ -285,22 +342,6 @@ export default function SendEmailCase({
     label: item?.name,
     value: item?.name,
   }));
-
-  useEffect(() => {
-    const selectedTemplate = bulkEmailTemplates?.find((template) => {
-      if (template?.name === selectedEmailTemplates) {
-        setPreview((prevContent) => prevContent + template?.content);
-      }
-    });
-  }, [selectedEmailTemplates]);
-
-  useEffect(() => {
-    const selectedTemplate = bulkSmsTemplates?.find((template) => {
-      if (template?.name === selectedSmsTemplates) {
-        setPreview((prevContent) => prevContent + template?.content);
-      }
-    });
-  }, [selectedSmsTemplates]);
 
   const deleteDraft = async () => {
     if (headerName) {
