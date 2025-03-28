@@ -153,15 +153,15 @@ export default function ListTable({
       );
     }
   };
-  const sendPaymentCreditor = async (id) => {
-    const sendPaymentRes = await SendPayment(id);
-    if (sendPaymentRes?.status === 200) {
-      showToast(sendPaymentRes?.data?.message, "success");
-    } else {
-      const errorMessage = sendPaymentRes?.response?.data?.message;
-      showToast(errorMessage, "error");
-    }
-  };
+  // const sendPaymentCreditor = async (id) => {
+  //   const sendPaymentRes = await SendPayment(id);
+  //   if (sendPaymentRes?.status === 200) {
+  //     showToast(sendPaymentRes?.data?.message, "success");
+  //   } else {
+  //     const errorMessage = sendPaymentRes?.response?.data?.message;
+  //     showToast(errorMessage, "error");
+  //   }
+  // };
   const rowsOptions = [
     { label: "5", value: "5" },
     { label: "15", value: "15" },
