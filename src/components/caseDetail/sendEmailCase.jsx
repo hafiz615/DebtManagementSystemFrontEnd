@@ -205,9 +205,7 @@ export default function SendEmailCase({
       const userSignature = res?.data?.data?.signature || "";
       setSignature(userSignature);
       setPreview((prev) =>
-        prev.includes(userSignature)
-          ? prev
-          : `<p><br></p><p><br></p>${userSignature}`
+        prev.includes(userSignature) ? prev : `${userSignature}`
       );
     }
   };
