@@ -51,6 +51,7 @@ export default function CreditorDetails({
         city: "",
         state: "",
         EIN: "",
+        monthly_subscription_fee: "",
       },
       attorney: {
         attorney_name: "",
