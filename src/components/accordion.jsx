@@ -60,9 +60,9 @@ export default function AccordionUsage({
         arrayName === "successPayments" ||
         arrayName === "creditorUpcomingPayments"
           ? item?.creditorName
-          : item?.debtorName || "-",
+          : item?.debtorName || "",
       debtorName:
-        arrayName === "creditorUpcomingPayments" ? item?.debtorName : "" || "-",
+        arrayName === "creditorUpcomingPayments" ? item?.debtorName : "" || "",
       dueDate: new Date(item?.dueDate).toLocaleDateString() || "-",
       amount: formatDollarAmount(item?.amount),
       transactionType: item?.transactionType || "-",

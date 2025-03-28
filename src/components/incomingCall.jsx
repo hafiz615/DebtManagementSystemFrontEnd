@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
 import CallIcon from "@mui/icons-material/Call";
 import CallEndIcon from "@mui/icons-material/CallEnd";
-import { Button, Grid, Box, Typography, Fade, Checkbox } from "@mui/material";
+import {
+  Button,
+  Grid,
+  Box,
+  Typography,
+  Fade,
+  Checkbox,
+  IconButton,
+} from "@mui/material";
 import { Colors } from "../config/default";
 import TextButton from "./button";
 import { UpdateCallByCase } from "../services/services";
@@ -9,6 +17,7 @@ import { useToast } from "../toast/toastContext";
 import { FONT_SIZE_LARGE, FONT_SIZE_MEDIUM } from "../constants/appConstants";
 import ScrollbarStyles from "./customScroll";
 import AppLogo from "../../src/assets/FC White.png";
+import { KeyboardVoice, MicOff } from "@mui/icons-material";
 
 export default function IncomingCall({
   incomingCall,
@@ -27,6 +36,7 @@ export default function IncomingCall({
 }) {
   const [selected, setSelected] = useState([]);
   const [selectedCase, setSelectedCase] = useState();
+  const [muted, setMuted] = useState(false);
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
 
@@ -67,6 +77,7 @@ export default function IncomingCall({
       clearInterval(callInterval);
       setCallInterval(null);
       setCaseMenuActive(false);
+      setMuted(false);
     }
   };
 
@@ -76,6 +87,7 @@ export default function IncomingCall({
       clearInterval(callInterval);
       setCallInterval(null);
       setCallDuration(0);
+      setMuted(false);
       if (!callerName) {
         setCaseMenuActive(true);
       } else if (!callerName?.caseId && callerName?.debtorId) {
@@ -86,6 +98,16 @@ export default function IncomingCall({
         setCaseMenuActive(false);
         setIsModalOpen(false);
       }
+    }
+  };
+
+  const muteCall = () => {
+    if (!muted && incomingCall) {
+      incomingCall.mute(true);
+      setMuted(true);
+    } else {
+      incomingCall.mute(false);
+      setMuted(false);
     }
   };
 
@@ -268,30 +290,37 @@ export default function IncomingCall({
                 {incomingCall?.parameters?.From?.replace(/^client:/, "")}
               </Typography>
               {callInterval ? (
-                <Box>
-                  <Typography
-                    variant="body1"
-                    sx={{ mb: 3, fontFamily: "Nunito" }}
-                  >
-                    {formatDuration(callDuration)}
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    onClick={endCall}
-                    sx={{
-                      fontFamily: "Nunito",
-                      borderRadius: "10px",
-                      backgroundColor: Colors.ORANGE_COLOR,
-                      textTransform: "none",
-                      "&:hover": {
-                        background: Colors.ORANGE_COLOR,
-                      },
-                    }}
-                    startIcon={<CallEndIcon />}
-                  >
-                    End Call
-                  </Button>
-                </Box>
+                <>
+                  <Box>
+                    <IconButton onClick={muteCall}>
+                      {muted ? <MicOff /> : <KeyboardVoice />}
+                    </IconButton>
+                  </Box>
+                  <Box>
+                    <Typography
+                      variant="body1"
+                      sx={{ mb: 3, fontFamily: "Nunito" }}
+                    >
+                      {formatDuration(callDuration)}
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      onClick={endCall}
+                      sx={{
+                        fontFamily: "Nunito",
+                        borderRadius: "10px",
+                        backgroundColor: Colors.ORANGE_COLOR,
+                        textTransform: "none",
+                        "&:hover": {
+                          background: Colors.ORANGE_COLOR,
+                        },
+                      }}
+                      startIcon={<CallEndIcon />}
+                    >
+                      End Call
+                    </Button>
+                  </Box>
+                </>
               ) : (
                 <Grid
                   xs={12}

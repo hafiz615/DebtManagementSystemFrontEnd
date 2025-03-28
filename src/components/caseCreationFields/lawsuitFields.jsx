@@ -179,6 +179,17 @@ export default function LawsuitFields({
               : ""
           }
         />
+        <PaymentsTextFields
+          type="number"
+          label="Lawfirm Fee"
+          placeHolderValue="Enter Lawfirm Fee"
+          width={smallScreen ? "100%" : "97%"}
+          value={lawsuitFields?.[index]?.lawfirm?.monthly_subscription_fee}
+          onChangeFunction={handleFieldChange(
+            "monthly_subscription_fee",
+            "lawfirm"
+          )}
+        />
       </Grid>
       <Typography
         sx={{

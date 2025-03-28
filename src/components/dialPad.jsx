@@ -8,7 +8,7 @@ import "react-phone-input-2/lib/style.css";
 import { GetCallToken } from "../services/services";
 import { Device } from "@twilio/voice-sdk";
 import { useDispatch, useSelector } from "react-redux";
-import { Close } from "@mui/icons-material";
+import { Close, KeyboardVoice, MicOff } from "@mui/icons-material";
 import { FONT_SIZE_LARGE } from "../constants/appConstants";
 import { setDialState } from "../redux/action/action";
 
@@ -25,6 +25,7 @@ const DialPad = () => {
   const [timer, setTimer] = useState(null);
   const [device, setDevice] = useState(null);
   const [call, setCall] = useState(null);
+  const [muted, setMuted] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -83,6 +84,7 @@ const DialPad = () => {
       );
       setIsCalling(false);
       setStartTimer(false);
+      setMuted(false);
     });
 
     newCall.on("cancel", () => {
@@ -94,6 +96,7 @@ const DialPad = () => {
       );
       setIsCalling(false);
       setStartTimer(false);
+      setMuted(false);
     });
   };
 
@@ -105,6 +108,7 @@ const DialPad = () => {
       clearInterval(timer);
       setTimer(null);
       setStartTimer(false);
+      setMuted(false);
       dispatch(
         setDialState({
           isModalOpen: false,
@@ -114,9 +118,18 @@ const DialPad = () => {
     fetchCalls && fetchCalls();
   };
 
+  const muteCall = () => {
+    if (!muted && call) {
+      call.mute(true);
+      setMuted(true);
+    } else {
+      call.mute(false);
+      setMuted(false);
+    }
+  };
+
   useEffect(() => {
     startupClient();
-
     return () => {
       if (timer) {
         clearInterval(timer);
@@ -234,16 +247,24 @@ const DialPad = () => {
                 Call
               </Button>
             ) : (
-              <Button
-                variant="contained"
-                color="error"
-                sx={{ borderRadius: "10px", fontFamily: "Nunito" }}
-                startIcon={<CallEndIcon />}
-                onClick={endCall}
-                fullWidth
-              >
-                End Call
-              </Button>
+              <>
+                <Box>
+                  <IconButton onClick={muteCall}>
+                    {muted ? <MicOff /> : <KeyboardVoice />}
+                  </IconButton>
+                </Box>
+
+                <Button
+                  variant="contained"
+                  color="error"
+                  sx={{ borderRadius: "10px", fontFamily: "Nunito" }}
+                  startIcon={<CallEndIcon />}
+                  onClick={endCall}
+                  fullWidth
+                >
+                  End Call
+                </Button>
+              </>
             )}
           </Box>
         </Box>

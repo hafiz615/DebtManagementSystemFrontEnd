@@ -23,7 +23,7 @@ export default function EditLawfirmDetails({
     state: data?.state || "",
     phone: data?.phone || "",
     address: data?.address || "",
-    lawfirmFee: data?.lawfirmFee || 0,
+    monthly_subscription_fee: parseInt(data?.lawfirmFee) || 0,
   });
   const { showToast } = useToast();
 
@@ -44,7 +44,8 @@ export default function EditLawfirmDetails({
       state: formData?.state || "",
       phone: formData?.phone || "",
       address: formData?.address || "",
-      lawfirmFee: parseInt(formData?.lawfirmFee) || 0,
+      monthly_subscription_fee:
+        parseInt(formData?.monthly_subscription_fee) || 0,
     };
     const res = await UpdateLawfirmDetails(payload, lawfirmId);
     if (res?.status === 200) {
@@ -82,10 +83,12 @@ export default function EditLawfirmDetails({
             >
               {key === "lawfirmCompanyName"
                 ? "Lawfirm Company Name"
+                : key === "monthly_subscription_fee"
+                ? "Lawfirm Fee"
                 : key?.charAt(0).toUpperCase() + key?.slice(1)}
             </label>
             <input
-              type={key === "lawfirmFee" ? "number" : "text"}
+              type={key === "monthly_subscription_fee" ? "number" : "text"}
               name={key}
               value={value}
               onChange={handleChange}

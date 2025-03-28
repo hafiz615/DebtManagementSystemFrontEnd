@@ -184,6 +184,7 @@ export default function MuiModels({
   signatureData,
   accountsExist,
   lawfirmId,
+  getVoiceMails,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -403,7 +404,7 @@ export default function MuiModels({
               handleOpen();
             }}
           >
-            <Save sx={{ color: Colors.SKY_BLUE }} />
+            <Save />
           </IconButton>
         </Tooltip>
       ) : show === "editAbout" ? (
@@ -1259,7 +1260,11 @@ export default function MuiModels({
               handleClose={handleClose}
             />
           ) : show === "saveCallInCase" ? (
-            <SaveVoiceCase handleClose={handleClose} data={data} />
+            <SaveVoiceCase
+              getVoiceMails={getVoiceMails}
+              handleClose={handleClose}
+              data={data}
+            />
           ) : show === "editLawfirm" ? (
             <EditLawfirmDetails
               data={data}

@@ -109,6 +109,7 @@ export default function CreditorFields({
               city: item?.city || "",
               state: item?.state || "",
               EIN: item?.EIN || "",
+              monthly_subscription_fee: item?.monthly_subscription_fee || "",
             },
             attorney: {
               attorney_name: item?.attorney_name || "",

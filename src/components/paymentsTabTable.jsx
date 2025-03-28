@@ -150,7 +150,7 @@ export default function PaymentTabsTable({
           id: item?.id,
           name:
             mainTabValue === 1 ? item?.creditorName : item?.debtorName || "-",
-          debtorName: item?.debtorName || "",
+          debtorName: mainTabValue === 1 ? item?.debtorName : "" || "",
           tryDate:
             (item?.rescheduled &&
               new Date(item?.rescheduled)?.toLocaleDateString()) ||

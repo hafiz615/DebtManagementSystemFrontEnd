@@ -92,16 +92,6 @@ function SignatureDetails() {
     const doc = new DOMParser().parseFromString(html, "text/html");
     return doc.body.textContent || "";
   };
-  // const stripHtmlButKeepFormatting = (html) => {
-  //   if (!html) return "";
-
-  //   return html
-  //     .replace(/<(\/)?(b|strong|i|em)>/g, "[$1$2]") // Preserve bold and italic formatting
-  //     .replace(/<\/?[^>]+(>|$)/g, "") // Remove all other HTML tags
-  //     .replace(/\[\/?(b|strong|i|em)\]/g, "<$1>") // Restore allowed tags
-  //     .replace(/\s+/g, " ") // Remove extra spaces
-  //     .trim();
-  // };
 
   return (
     <StyledAccordion>
@@ -167,34 +157,19 @@ function SignatureDetails() {
                       ? `${stripHtml(signature?.signature).slice(0, 200)}...`
                       : stripHtml(signature?.signature)}
                   </Typography>
-                  {/* <Typography
-                    sx={{
-                      flexGrow: 1,
-                      fontSize: "14px",
-                      color: Colors.BLACK,
-                      fontFamily: "Nunito",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      maxWidth: "62rem",
-                      display: "block",
-                    }}
-                    dangerouslySetInnerHTML={{
-                      __html:
-                        stripHtmlButKeepFormatting(signature?.signature)
-                          .length > 200
-                          ? `${stripHtmlButKeepFormatting(
-                              signature.signature
-                            ).slice(0, 200)}...`
-                          : stripHtmlButKeepFormatting(signature.signature),
-                    }}
-                  /> */}
                 </Tooltip>
 
                 <Box
                   sx={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
                 >
-                  <Tooltip title={"Activate Signature"} arrow>
+                  <Tooltip
+                    title={
+                      signature?.active
+                        ? "Deactivate Signature"
+                        : "Activate Signature"
+                    }
+                    arrow
+                  >
                     <Switch
                       checked={signature?.active}
                       onChange={() =>

@@ -18,8 +18,6 @@ export default function EditDebtorDetail({
   setConnectPayment,
   data,
   showFields,
-  showComponent,
-  setShowComponent,
 }) {
   const { id } = useParams();
   const { showToast } = useToast();
@@ -69,7 +67,6 @@ export default function EditDebtorDetail({
       debtorBusinessInfo?.EIN ||
       parseString(debtorBusinessInfo?.["Business EIN Number"]) ||
       "",
-    // businessDescription: debtorBusinessInfo?.description || "",
     businessState:
       debtorBusinessInfo?.state ||
       debtorBusinessInfo?.["Business State Name"] ||
@@ -82,10 +79,6 @@ export default function EditDebtorDetail({
       debtorBusinessInfo?.zipCode ||
       debtorBusinessInfo?.["Business Zip code"] ||
       "",
-    // businessPhoneNumber:
-    //   debtorBusinessInfo?.phone ||
-    //   phoneNumberFormat(debtorBusinessInfo?.["Business Phone Number"]) ||
-    //   "",
     businessAddress:
       debtorBusinessInfo?.address ||
       debtorBusinessInfo?.["Business Street Address"] ||
@@ -192,29 +185,6 @@ export default function EditDebtorDetail({
     }
   }, [data, caseData, debtorBusinessDetails, debtorOwnDetails, showFields]);
 
-  const [isFormValid, setIsFormValid] = useState(false);
-  // const validateForm = () => {
-  //   const ownDetailsValid = Object.values(debtorOwnDetails).every(
-  //     (value) => value !== ""
-  //   );
-  //   const businessDetailsValid = Object.entries(debtorBusinessDetails).every(
-  //     ([key, value]) => key === "businessDescription" || value !== ""
-  //   );
-  //   const noErrors = Object.values(errors).every((error) => error === "");
-  //   const isWeeklyBudgetValid = debtorOwnDetails.BasicWeeklyBudget > 0; // Check if weekly budget is greater than 0
-  //   return (
-  //     ownDetailsValid &&
-  //     businessDetailsValid &&
-  //     noErrors &&
-  //     status !== "" &&
-  //     isWeeklyBudgetValid
-  //   );
-  // };
-
-  // useEffect(() => {
-  //   setIsFormValid(validateForm());
-  // }, [debtorOwnDetails, debtorBusinessDetails, errors, status]);
-
   const updateDebtorById = async () => {
     setLoading(true);
     const params = {
@@ -248,13 +218,8 @@ export default function EditDebtorDetail({
 
     const updateDebtor = await UpdateDebtor(caseData?._id || data?._id, params);
     if (updateDebtor?.status === 200) {
-      showToast(updateDebtor?.data?.message, "success");
-      if (showFields) {
-        setShowComponent(true);
-      } else {
-        handleClose();
-      }
-
+      showToast("Client Updated Successfully", "success");
+      handleClose();
       GetCaseDetails(id);
     } else {
       showToast(
@@ -263,9 +228,6 @@ export default function EditDebtorDetail({
       );
     }
     setLoading(false);
-  };
-  const showCreditor = () => {
-    setShowComponent(false);
   };
 
   return (
@@ -437,7 +399,6 @@ export default function EditDebtorDetail({
                 height="2rem"
                 width="8rem"
                 marginRight="1rem"
-                // disabled={!isFormValid}
                 onClick={updateDebtorById}
                 backgroundColor={Colors.SKY_BLUE}
                 hoverColor={Colors.SKY_BLUE}
@@ -448,7 +409,6 @@ export default function EditDebtorDetail({
                 height="2rem"
                 width="8rem"
                 marginTop={smallScreen ? "1rem" : "auto"}
-                onClick={showCreditor}
                 backgroundColor={Colors.ORANGE_COLOR}
                 hoverColor={Colors.ORANGE_COLOR}
               />

@@ -230,20 +230,20 @@ export default function Prompt({
     }
   };
 
-  const handleCompleteStatus = async () => {
-    if (task) {
-      const res = await TaskStatus(item);
-      if (res?.status === 200) {
-        getAllInboxData(false, false);
-      }
-    } else {
-      const res = await InboxStatus(item);
-      if (res?.status === 200) {
-        getAllInboxData(false, false);
-        setActivePreview({ id: 0, active: false });
-      }
-    }
-  };
+  // const handleCompleteStatus = async () => {
+  //   if (task) {
+  //     const res = await TaskStatus(item);
+  //     if (res?.status === 200) {
+  //       getAllInboxData(false, false);
+  //     }
+  //   } else {
+  //     const res = await InboxStatus(item);
+  //     if (res?.status === 200) {
+  //       getAllInboxData(false, false);
+  //       setActivePreview({ id: 0, active: false });
+  //     }
+  //   }
+  // };
 
   const handleConfirm = async (event) => {
     event.stopPropagation();
@@ -273,9 +273,11 @@ export default function Prompt({
       await deleteCheckIds();
     } else if (deleting === "deleteDraft") {
       await deleteDraft();
-    } else if (deleting === "markAsComplete") {
-      await handleCompleteStatus();
-    } else if (deleting === "deleteSmsDraft") {
+    }
+    //  else if (deleting === "markAsComplete") {
+    //   await handleCompleteStatus();
+    // }
+    else if (deleting === "deleteSmsDraft") {
       await deleteSmsDraft();
     } else if (deleting === "deleteVoiceMesssage") {
       await deleteVoiceMessage();
