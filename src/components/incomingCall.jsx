@@ -77,6 +77,7 @@ export default function IncomingCall({
       clearInterval(callInterval);
       setCallInterval(null);
       setCaseMenuActive(false);
+      setMuted(false);
     }
   };
 
@@ -86,6 +87,7 @@ export default function IncomingCall({
       clearInterval(callInterval);
       setCallInterval(null);
       setCallDuration(0);
+      setMuted(false);
       if (!callerName) {
         setCaseMenuActive(true);
       } else if (!callerName?.caseId && callerName?.debtorId) {

@@ -23,7 +23,7 @@ export default function EditLawfirmDetails({
     state: data?.state || "",
     phone: data?.phone || "",
     address: data?.address || "",
-    monthly_subscription_fee: data?.monthly_subscription_fee || 0,
+    monthly_subscription_fee: parseInt(data?.lawfirmFee) || 0,
   });
   const { showToast } = useToast();
 
