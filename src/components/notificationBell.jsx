@@ -16,9 +16,12 @@ import {
   DialogContent,
   DialogActions,
   Checkbox,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import InfoIcon from "@mui/icons-material/Info";
+import SearchIcon from "@mui/icons-material/Search";
 import { io } from "socket.io-client";
 import { Colors } from "../config/default";
 import ScrollbarStyles from "./customScroll";
@@ -41,12 +44,15 @@ import { useToast } from "../toast/toastContext";
 import TextButton from "./button";
 import { useDispatch, useSelector } from "react-redux";
 import { setCounts } from "../redux/action/action";
+import { Visibility } from "@mui/icons-material";
 
 const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [creditors, setCreditors] = useState([]);
   const [allCases, setAllCases] = useState([]);
+  const [filteredCases, setFilteredCases] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
   const [unknownCase, setUnknownCase] = useState(false);
   const [socket, setSocket] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -79,6 +85,7 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
   const handleCancel = () => {
     setOpenDialog(false);
     setUnknownCase(false);
+    setSearchTerm("");
   };
 
   const handleChange = async (event, newValue) => {
@@ -142,6 +149,7 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
   const handleClose = () => {
     setAnchorEl(null);
     setUnknownCase(false);
+    setSearchTerm("");
   };
 
   const getDebtorCases = async (debtorId) => {
@@ -158,6 +166,7 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
     const res = await GetAllUserCases();
     if (res?.status == 200) {
       setAllCases(res?.data?.data);
+      setFilteredCases(res?.data?.data);
     }
   };
 
@@ -183,8 +192,9 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
       }
       setLoading(false);
       setUnknownCase(false);
+      setSearchTerm("");
     }
-    setSaveNotificationLoading(true);
+    setSaveNotificationLoading(false);
   };
 
   const handleNotificationClick = async (
@@ -217,6 +227,25 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
       localStorage.setItem("route", "all-cases");
       navigate(`/all-cases/${caseId}`);
     }
+  };
+
+  const handleSearch = (e) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+
+    if (term.trim() === "") {
+      setFilteredCases(allCases);
+      return;
+    }
+
+    const filteredResults = {};
+    Object.keys(allCases).forEach((companyName) => {
+      if (companyName.toLowerCase().includes(term.toLowerCase())) {
+        filteredResults[companyName] = allCases[companyName];
+      }
+    });
+
+    setFilteredCases(filteredResults);
   };
 
   const open = Boolean(anchorEl);
@@ -324,13 +353,15 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
                     flexDirection: "column",
                   }}
                   onClick={() =>
-                    handleNotificationClick(
-                      notification?.caseId,
-                      notification?._id,
-                      notification?.inboxId,
-                      notification?.debtorId,
-                      notification?.isLinked
-                    )
+                    value === 0
+                      ? handleNotificationClick(
+                          notification?.caseId,
+                          notification?._id,
+                          notification?.inboxId,
+                          notification?.debtorId,
+                          notification?.isLinked
+                        )
+                      : null
                   }
                   key={index}
                   divider
@@ -343,9 +374,32 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
                     }}
                   >
                     <Typography
-                      sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
+                      sx={{
+                        fontFamily: "Nunito",
+                        fontSize: FONT_SIZE_LARGE,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        width: "100%",
+                      }}
                     >
                       {notification?.text}
+                      {value !== 0 && (
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleNotificationClick(
+                              notification?.caseId,
+                              notification?._id,
+                              notification?.inboxId,
+                              notification?.debtorId,
+                              notification?.isLinked
+                            );
+                          }}
+                        >
+                          <Visibility />
+                        </IconButton>
+                      )}
                     </Typography>
                     <div style={{ display: "flex", gap: "3px" }}>
                       {notification?.debtorId &&
@@ -415,6 +469,31 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
             }}
           >
             Save Sms in the respective case
+            {/* Search Input Field */}
+            <TextField
+              fullWidth
+              size="small"
+              placeholder="Search client company..."
+              value={searchTerm}
+              onChange={handleSearch}
+              sx={{
+                mt: 2,
+                mb: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  "&.Mui-focused fieldset": {
+                    borderColor: Colors.SKY_BLUE,
+                  },
+                },
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon sx={{ color: Colors.SKY_BLUE }} />
+                  </InputAdornment>
+                ),
+              }}
+            />
             {!unknownCase && (
               <Typography
                 sx={{
@@ -471,27 +550,54 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
                 >
                   Client Company Name
                 </Typography>
-                {Object.keys(allCases)?.map((item, index) => (
-                  <Box key={index} display="flex" alignItems="center">
-                    <Checkbox
-                      checked={selectedCase === item}
-                      onChange={() => handleCaseCheckboxChange(item)}
-                      size="small"
-                      sx={{
-                        "& .MuiSvgIcon-root": { fontSize: "22px" },
-                        color: Colors.DIM_LIGHT_GRAY,
-                        "&.Mui-checked": {
-                          color: Colors.SKY_BLUE,
-                        },
-                      }}
-                    />
+
+                {/* Filtered Client List */}
+                <Box
+                  sx={{
+                    maxHeight: "300px",
+                    overflowY: "auto",
+                    ...ScrollbarStyles,
+                  }}
+                >
+                  {Object.keys(filteredCases)?.length > 0 ? (
+                    Object.keys(filteredCases)?.map((item, index) => (
+                      <Box key={index} display="flex" alignItems="center">
+                        <Checkbox
+                          checked={selectedCase === item}
+                          onChange={() => handleCaseCheckboxChange(item)}
+                          size="small"
+                          sx={{
+                            "& .MuiSvgIcon-root": { fontSize: "22px" },
+                            color: Colors.DIM_LIGHT_GRAY,
+                            "&.Mui-checked": {
+                              color: Colors.SKY_BLUE,
+                            },
+                          }}
+                        />
+                        <Typography
+                          sx={{
+                            fontFamily: "Nunito",
+                            fontSize: FONT_SIZE_MEDIUM,
+                          }}
+                        >
+                          {item}
+                        </Typography>
+                      </Box>
+                    ))
+                  ) : (
                     <Typography
-                      sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_MEDIUM }}
+                      sx={{
+                        fontFamily: "Nunito",
+                        fontSize: FONT_SIZE_MEDIUM,
+                        textAlign: "center",
+                        color: Colors.DIM_LIGHT_GRAY,
+                        mt: 2,
+                      }}
                     >
-                      {item}
+                      No matching companies found
                     </Typography>
-                  </Box>
-                ))}
+                  )}
+                </Box>
               </div>
               <div style={{ width: "48%" }}>
                 <Typography
