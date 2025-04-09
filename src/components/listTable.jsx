@@ -101,6 +101,7 @@ export default function ListTable({
   getLinks,
   handleModalClose,
   homeData,
+  getCreditorUpcomingPayments,
 }) {
   const mediumScreen = useMediaQuery(
     "(min-width:300px) and (max-width:1150px)"
@@ -450,6 +451,30 @@ export default function ListTable({
                             showPayment={true}
                           />
                         )}
+                      </StyledTableCell>
+                    )}
+                    {(arrayName === "creditorUpcomingPayments" ||
+                      arrayName === "upcomingPayments") && (
+                      <StyledTableCell
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          zIndex: 999,
+                        }}
+                      >
+                        <MuiModels
+                          show="updateUpcomingPaymentDate"
+                          transactionId={row?.id}
+                          selectedDueDate={row?.dueDate}
+                          caseData={row?.caseId}
+                          GetCasePaymentDetails={() => {
+                            if (arrayName === "upcomingPayments") {
+                              return getHomeData("default", 1, 5, true, true);
+                            } else {
+                              return getCreditorUpcomingPayments(1, 5);
+                            }
+                          }}
+                        />
                       </StyledTableCell>
                     )}
 
