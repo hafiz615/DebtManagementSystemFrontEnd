@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { isEmpty } from "lodash";
 import { useParams } from "react-router-dom";
 import { Colors } from "../config/default";
-import { Typography, Box, IconButton, Checkbox, Tooltip } from "@mui/material";
+import { Typography, Box, IconButton, Tooltip } from "@mui/material";
 import { formatDollarAmount } from "../common";
 import { useToast } from "../toast/toastContext";
 import Prompt from "./prompt";
@@ -31,13 +31,11 @@ function TransactionRow({
     const day = date.getDate();
     const month = date.getMonth() + 1;
     const year = date.getFullYear();
-
     return `${month}/${day}/${year}`;
   };
 
-  const capitalizeFirstLetter = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  };
+  const capitalizeFirstLetter = (string) =>
+    string.charAt(0).toUpperCase() + string.slice(1);
 
   const handleRetry = async (item) => {
     let response;
@@ -72,14 +70,15 @@ function TransactionRow({
     fontSize: "13px",
     fontFamily: "Nunito",
     fontWeight: "500",
-    width: "20%",
+    width: "10%",
     margin: "0px 0px",
   };
+
   const typographyStyleUpcoming = {
     fontSize: "13px",
     fontFamily: "Nunito",
     fontWeight: "500",
-    width: "20%",
+    width: "10%",
     margin: "5px 0px",
   };
 
@@ -258,6 +257,20 @@ function TransactionRow({
                 </p>
               )}
             </p>
+
+            {heading === "Upcoming" ? (
+              <p style={typographyStyle}>
+                <MuiModels
+                  show="updateUpcomingPaymentDate"
+                  transactionId={item?.id}
+                  selectedDueDate={item?.dueDate}
+                  caseData={caseData}
+                  GetCasePaymentDetails={GetCasePaymentDetails}
+                />
+              </p>
+            ) : (
+              "-"
+            )}
           </div>
         );
       })}

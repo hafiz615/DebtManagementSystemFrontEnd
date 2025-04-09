@@ -2139,3 +2139,14 @@ export const UpdateLawfirmDetails = async (payload, id) => {
     return error;
   }
 };
+export const UpdatePaymentDate = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/payment/updatePaymentDate/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
