@@ -15,6 +15,7 @@ export default function EditCreditorDetail({
   caseData,
   GetCaseDetails,
   getAllRanges,
+  getAttorneyData,
 }) {
   const { PHONE_NO_CHARACTERS, PHONE_NO_ERROR } = PhoneValidation;
   const { id } = useParams();
@@ -179,6 +180,7 @@ export default function EditCreditorDetail({
       handleClose();
       GetCaseDetails(id);
       getAllRanges && getAllRanges([], false);
+      getAttorneyData();
     } else {
       showToast(
         updateCreditor?.response?.data?.message ||
