@@ -6,6 +6,10 @@ import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import { formatDateString, getTruncatedText } from "../../common";
 import ScrollbarStyles from "../customScroll";
+import {
+  FONT_SIZE_MEDIUM,
+  FONT_SIZE_SMALL,
+} from "../../constants/appConstants";
 
 export default function AttorneyDetail({
   accountsExist,
@@ -14,9 +18,9 @@ export default function AttorneyDetail({
   allAttorneyData,
   getAttorneyData,
 }) {
-  const attorneyData = allAttorneyData?.attorney;
-  const lawsuitData = allAttorneyData?.lawSuit;
-  const lawfirmData = allAttorneyData?.lawfirm;
+  const attorneyData = allAttorneyData?.attorney || "";
+  const lawsuitData = allAttorneyData?.lawSuit || "";
+  const lawfirmData = allAttorneyData?.lawfirm || "";
 
   const attorneyFields = [
     { label: "Name", value: attorneyData?.name || "-" },
@@ -138,7 +142,7 @@ export default function AttorneyDetail({
             />
           )}
         </Grid>
-        {attorneyData && (
+        {attorneyData ? (
           <>
             <div
               style={{
@@ -221,6 +225,22 @@ export default function AttorneyDetail({
               </div>
             </div>
           </>
+        ) : (
+          <Grid
+            item
+            container
+            xs={12}
+            sx={{
+              height: "18vh",
+              alignItems: "center",
+              justifyContent: "center",
+              fontFamily: "Nunito",
+              fontSize: FONT_SIZE_MEDIUM,
+              color: Colors.DARK_GRAY,
+            }}
+          >
+            No creditor's attorney Exists
+          </Grid>
         )}
       </Grid>
       <Grid
@@ -256,53 +276,71 @@ export default function AttorneyDetail({
             Lawsuit
           </span>
         </Grid>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            width: "100%",
-            flexWrap: "wrap",
-          }}
-        >
-          {lawsuitFields?.map(({ label, value }, index) => (
-            <div
-              key={index}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginBottom: "8px",
-                width: "98%",
-              }}
-            >
-              <Typography
-                sx={{
-                  fontSize: "13px",
-                  fontFamily: "Nunito",
-                  fontWeight: "700",
-                  color: Colors.DARK_GRAY,
-                  width: "45%",
+        {lawsuitData ? (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              width: "100%",
+              flexWrap: "wrap",
+            }}
+          >
+            {lawsuitFields?.map(({ label, value }, index) => (
+              <div
+                key={index}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: "8px",
+                  width: "98%",
                 }}
               >
-                {label}
-              </Typography>
-
-              <Tooltip placement="top" title={value}>
                 <Typography
                   sx={{
                     fontSize: "13px",
-                    color: Colors.DIM_LIGHT_GRAY,
                     fontFamily: "Nunito",
-                    fontWeight: "500",
-                    textAlign: "right",
-                    wordBreak: "break-word",
+                    fontWeight: "700",
+                    color: Colors.DARK_GRAY,
+                    width: "45%",
                   }}
                 >
-                  {getTruncatedText(value, 18)}
+                  {label}
                 </Typography>
-              </Tooltip>
-            </div>
-          ))}
-        </div>
+
+                <Tooltip placement="top" title={value}>
+                  <Typography
+                    sx={{
+                      fontSize: "13px",
+                      color: Colors.DIM_LIGHT_GRAY,
+                      fontFamily: "Nunito",
+                      fontWeight: "500",
+                      textAlign: "right",
+                      wordBreak: "break-word",
+                    }}
+                  >
+                    {getTruncatedText(value, 18)}
+                  </Typography>
+                </Tooltip>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <Grid
+            item
+            container
+            xs={12}
+            sx={{
+              height: "18vh",
+              alignItems: "center",
+              justifyContent: "center",
+              fontFamily: "Nunito",
+              fontSize: FONT_SIZE_MEDIUM,
+              color: Colors.DARK_GRAY,
+            }}
+          >
+            No lawsuit Exists
+          </Grid>
+        )}
       </Grid>
       <Grid
         item

@@ -77,6 +77,7 @@ import CreateSignature from "./settingsScreen/createSignature";
 import CreateSignatures from "./settingsScreen/createSignature";
 import SaveVoiceCase from "./saveVoiceCase";
 import EditLawfirmDetails from "./editLawfirmDetails";
+import SelectLawfirm from "./caseDetail/selectLawfirm";
 
 export default function MuiModels({
   buttonName,
@@ -836,6 +837,17 @@ export default function MuiModels({
           hoverColor={Colors.SKY_BLUE}
           onClick={handleOpen}
         />
+      ) : show === "selectLawfirm" ? (
+        <TextButton
+          buttonText="Select Lawfirm"
+          boxShadow="none"
+          height="2.5rem"
+          width="10rem"
+          backgroundColor={Colors.SKY_BLUE}
+          fontColor={Colors.WHITE}
+          hoverColor={Colors.SKY_BLUE}
+          onClick={handleOpen}
+        />
       ) : (
         <Button onClick={handleOpen}>{buttonName}</Button>
       )}
@@ -901,6 +913,7 @@ export default function MuiModels({
               GetCaseDetails={GetCaseDetails}
               maxHeight={maxHeight}
               getAllRanges={getAllRanges}
+              getAttorneyData={getAttorneyData}
             />
           ) : show === "editAbout" ? (
             <EditAbout
@@ -1271,6 +1284,12 @@ export default function MuiModels({
               lawfirmId={lawfirmId}
               getAttorneyData={getAttorneyData}
               handleClose={handleClose}
+            />
+          ) : show === "selectLawfirm" ? (
+            <SelectLawfirm
+              caseData={caseData}
+              handleClose={handleClose}
+              getAttorneyData={getAttorneyData}
             />
           ) : (
             ""
