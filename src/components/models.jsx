@@ -78,6 +78,8 @@ import CreateSignatures from "./settingsScreen/createSignature";
 import SaveVoiceCase from "./saveVoiceCase";
 import EditLawfirmDetails from "./editLawfirmDetails";
 import SelectLawfirm from "./caseDetail/selectLawfirm";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import ShowUpdateDate from "./caseDetail/showUpdateDate";
 
 export default function MuiModels({
   buttonName,
@@ -186,6 +188,8 @@ export default function MuiModels({
   accountsExist,
   lawfirmId,
   getVoiceMails,
+  updatePaymentDate,
+  selectedDueDate,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -327,6 +331,24 @@ export default function MuiModels({
             }}
           />
         </IconButton>
+      ) : show === "updateUpcomingPaymentDate" ? (
+        <Tooltip title="Update Date" placement="top-start">
+          <IconButton
+            sx={{ display: "flex", alignItems: "center" }}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpen();
+            }}
+          >
+            <CalendarMonthIcon
+              sx={{
+                color: Colors.DIM_LIGHT_GRAY,
+                cursor: "pointer",
+                fontSize: "1.3rem",
+              }}
+            />
+          </IconButton>
+        </Tooltip>
       ) : show === "editCreditorContacts" ? (
         <IconButton
           sx={{ display: "flex", alignItems: "center" }}
@@ -1284,6 +1306,14 @@ export default function MuiModels({
               lawfirmId={lawfirmId}
               getAttorneyData={getAttorneyData}
               handleClose={handleClose}
+            />
+          ) : show === "updateUpcomingPaymentDate" ? (
+            <ShowUpdateDate
+              handleClose={handleClose}
+              transactionId={transactionId}
+              selectedDueDate={selectedDueDate}
+              caseData={caseData}
+              GetCasePaymentDetails={GetCasePaymentDetails}
             />
           ) : show === "selectLawfirm" ? (
             <SelectLawfirm

@@ -5,6 +5,7 @@ import {
   Divider,
   CircularProgress,
   IconButton,
+  Box,
 } from "@mui/material";
 import { Close, ExpandMore, ExpandLess } from "@mui/icons-material";
 import {
@@ -85,6 +86,16 @@ function GetTransactionDetails({
 
   return (
     <>
+      <Box
+        sx={{
+          cursor: "pointer",
+          display: "flex",
+          justifyContent: "end",
+          marginBottom: "1rem",
+        }}
+      >
+        <Close onClick={handleClose} />
+      </Box>
       {relatedPaymentsLoading ? (
         <Grid
           item
@@ -93,7 +104,7 @@ function GetTransactionDetails({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            height: "30vh",
+            height: "25vh",
           }}
         >
           <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
@@ -106,7 +117,7 @@ function GetTransactionDetails({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            height: "30vh",
+            height: "25vh",
           }}
         >
           <Typography
