@@ -2168,3 +2168,10 @@ export const UpdatePaymentDate = async (id, payload) => {
     return error;
   }
 };
+export const GetCheckoutToken = async (id) => {
+  try {
+    return await axios.get(BASE_URL + `/v1/debtor/getToken/${id}`);
+  } catch (error) {
+    return error;
+  }
+};
