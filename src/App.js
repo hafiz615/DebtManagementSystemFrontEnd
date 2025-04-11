@@ -29,6 +29,8 @@ import IncomingCall from "./components/incomingCall";
 import SmsPage from "./pages/smsPage";
 import DialPad from "./components/dialPad";
 import VoiceMailPage from "./pages/voicemailPage";
+import PaymentCheckout from "./pages/paymentCheckout";
+import Thankyou from "./pages/thankyou";
 
 function App() {
   const [incomingCall, setIncomingCall] = useState(null);
@@ -280,6 +282,8 @@ function App() {
             </Protected>
           }
         />
+        <Route exact path="/checkout/:id" element={<PaymentCheckout />} />
+        <Route exact path="/thankyou" element={<Thankyou />} />
         <Route
           exact
           path="/sms"
