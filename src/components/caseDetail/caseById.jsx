@@ -373,11 +373,11 @@ export default function CaseById({
                           />
                         </Grid>
                       </Grid>
-                      <MuiModels
+                      {/* <MuiModels
                         show="selectLawfirm"
                         caseData={caseData}
                         getAttorneyData={getAttorneyData}
-                      />
+                      /> */}
                     </>
                   )}
                   {value === "Attorney" && allAttorneyData && (
