@@ -127,6 +127,7 @@ export default function TransactionDetails({
             <p style={typographyHeadingStyle}>Send Payment</p>
             <p style={typographyHeadingStyle}>Retry Transaction</p>
             <p style={typographyHeadingStyle}>Revert Transaction</p>
+            <p style={typographyHeadingStyle}>Update Date</p>
           </div>
           <Grid container item xs={12}>
             <TransactionRow

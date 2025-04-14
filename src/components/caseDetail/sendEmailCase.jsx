@@ -211,7 +211,6 @@ export default function SendEmailCase({
   };
 
   useEffect(() => {
-    console.log(headerName, "header");
     if (!headerName) GetUserActiveSignatures();
   }, [headerName]);
 

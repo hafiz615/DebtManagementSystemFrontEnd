@@ -325,6 +325,7 @@ function HomeDetails() {
         paymentNumber={data?.number}
         rowArray={homeData[data?.key]}
         getHomeData={getHomeData}
+        getCreditorUpcomingPayments={getCreditorUpcomingPayments}
         showFailureReason={
           data?.heading !== "Client Upcoming Payments" &&
           data?.heading !== "Client Successful Captures" &&

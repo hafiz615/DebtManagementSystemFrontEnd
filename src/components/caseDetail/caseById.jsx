@@ -119,7 +119,7 @@ export default function CaseById({
   const getAttorneyData = async () => {
     const res = await GetLawsuitDetails(caseData?._id);
     if (res?.status === 200) {
-      setAllAttorneyData(res?.data?.data);
+      setAllAttorneyData(res?.data?.data || "");
       setAttorneyData(res?.data?.data ? res?.data?.data?.attorney : "");
       setAttorneyIsChecked(res?.data?.data?.lawSuit?.paymentsProceed);
     }
@@ -230,7 +230,7 @@ export default function CaseById({
                       label="Creditor"
                       value="Creditor"
                     />
-                    {attorneyData && (
+                    {allAttorneyData && (
                       <Tab
                         sx={{
                           fontWeight: "600",
@@ -336,44 +336,51 @@ export default function CaseById({
                     </div>
                   )}
                   {value === "Creditor" && (
-                    <Grid
-                      sx={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        borderRadius: "10px",
-                        padding: "10px",
-                      }}
-                    >
-                      <Grid item sx={{ mr: 1 }}>
-                        <Typography
-                          sx={{
-                            fontFamily: "Nunito",
-                            fontSize: FONT_SIZE_LARGE,
-                          }}
-                        >
-                          Creditor Funds transfer
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Switch
-                          checked={isChecked}
-                          onChange={(e) =>
-                            handleCreditorToggle(e.target.checked, "creditor")
-                          }
-                          sx={{
-                            "& .MuiSwitch-switchBase.Mui-checked": {
-                              color: Colors.SKY_BLUE,
-                            },
-                            "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
-                              {
-                                backgroundColor: Colors.SKY_BLUE,
+                    <>
+                      <Grid
+                        sx={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          borderRadius: "10px",
+                          padding: "10px",
+                        }}
+                      >
+                        <Grid item sx={{ mr: 1 }}>
+                          <Typography
+                            sx={{
+                              fontFamily: "Nunito",
+                              fontSize: FONT_SIZE_LARGE,
+                            }}
+                          >
+                            Creditor Funds transfer
+                          </Typography>
+                        </Grid>
+                        <Grid item>
+                          <Switch
+                            checked={isChecked}
+                            onChange={(e) =>
+                              handleCreditorToggle(e.target.checked, "creditor")
+                            }
+                            sx={{
+                              "& .MuiSwitch-switchBase.Mui-checked": {
+                                color: Colors.SKY_BLUE,
                               },
-                          }}
-                        />
+                              "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
+                                {
+                                  backgroundColor: Colors.SKY_BLUE,
+                                },
+                            }}
+                          />
+                        </Grid>
                       </Grid>
-                    </Grid>
+                      {/* <MuiModels
+                        show="selectLawfirm"
+                        caseData={caseData}
+                        getAttorneyData={getAttorneyData}
+                      /> */}
+                    </>
                   )}
-                  {value === "Attorney" && attorneyData && (
+                  {value === "Attorney" && allAttorneyData && (
                     <div
                       style={{
                         display: "flex",
@@ -471,6 +478,7 @@ export default function CaseById({
                     caseDataId={id}
                     GetLogsById={GetLogsById}
                     getAllRanges={getAllRanges}
+                    getAttorneyData={getAttorneyData}
                     cc={cc}
                   />
                 ) : value === "Other Creditors" ? (

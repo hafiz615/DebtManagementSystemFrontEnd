@@ -16,9 +16,12 @@ import {
   DialogContent,
   DialogActions,
   Checkbox,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import InfoIcon from "@mui/icons-material/Info";
+import SearchIcon from "@mui/icons-material/Search";
 import { io } from "socket.io-client";
 import { Colors } from "../config/default";
 import ScrollbarStyles from "./customScroll";
@@ -41,12 +44,17 @@ import { useToast } from "../toast/toastContext";
 import TextButton from "./button";
 import { useDispatch, useSelector } from "react-redux";
 import { setCounts } from "../redux/action/action";
+import { Visibility } from "@mui/icons-material";
 
 const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [creditors, setCreditors] = useState([]);
   const [allCases, setAllCases] = useState([]);
+  const [filteredCases, setFilteredCases] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [caseId, setCaseId] = useState("");
+  const [smsMessage, setSmsMessage] = useState("");
   const [unknownCase, setUnknownCase] = useState(false);
   const [socket, setSocket] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -79,13 +87,16 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
   const handleCancel = () => {
     setOpenDialog(false);
     setUnknownCase(false);
+    setSearchTerm("");
+    setCaseId("");
+    setSmsMessage("");
   };
 
   const handleChange = async (event, newValue) => {
     setValue(newValue);
     setLoading(true);
     const payload = {
-      type: newValue === 0 ? "EMAIL" : "SMS",
+      type: newValue === 0 ? "EMAIL" : newValue === 1 ? "SMS" : "TASK",
     };
     const res = await GetAllNotifications(payload);
     if (res?.status === 200) {
@@ -129,7 +140,7 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
     setLoading(true);
     setAnchorEl(event.currentTarget);
     const payload = {
-      type: value === 0 ? "EMAIL" : "SMS",
+      type: value === 0 ? "EMAIL" : value === 1 ? "SMS" : "TASK",
     };
     const res = await GetAllNotifications(payload);
     if (res?.status === 200) {
@@ -142,6 +153,7 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
   const handleClose = () => {
     setAnchorEl(null);
     setUnknownCase(false);
+    setSearchTerm("");
   };
 
   const getDebtorCases = async (debtorId) => {
@@ -158,6 +170,7 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
     const res = await GetAllUserCases();
     if (res?.status == 200) {
       setAllCases(res?.data?.data);
+      setFilteredCases(res?.data?.data);
     }
   };
 
@@ -171,6 +184,8 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
     const res = await saveCaseDetailNotification(payload);
     if (res?.status === 200) {
       showToast(res?.data?.message, "success");
+      setCaseId("");
+      setSmsMessage("");
       setOpenDialog(false);
       setLoading(true);
       const payload = {
@@ -183,8 +198,9 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
       }
       setLoading(false);
       setUnknownCase(false);
+      setSearchTerm("");
     }
-    setSaveNotificationLoading(true);
+    setSaveNotificationLoading(false);
   };
 
   const handleNotificationClick = async (
@@ -192,9 +208,10 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
     id,
     inboxId,
     debtorId,
-    isLinked
+    isLinked,
+    message
   ) => {
-    if (caseId) {
+    if (value !== 1 && caseId) {
       await MarkAsReadNotifications(id);
       localStorage.setItem("route", "all-cases");
       navigate(`/all-cases/${caseId}`);
@@ -204,19 +221,49 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
       localStorage.setItem("route", "list-details");
       navigate(`/client/list-details/${debtorId}`);
     } else if (debtorId && !caseId && !isLinked) {
-      getDebtorCases(debtorId);
+      getAllCases();
       setNotificationId(id);
       setInboxId(inboxId);
+      setSmsMessage(message?.text);
     } else if (!caseId && !debtorId) {
       await MarkAsReadNotifications(id);
       getAllCases();
       setNotificationId(id);
       setInboxId(inboxId);
-    } else {
+      setSmsMessage(message?.text);
+    } else if (value === 1) {
       await MarkAsReadNotifications(id);
-      localStorage.setItem("route", "all-cases");
-      navigate(`/all-cases/${caseId}`);
+      getAllCases();
+      setNotificationId(id);
+      setInboxId(inboxId);
+      setCaseId(caseId);
+      setSmsMessage(message?.text);
     }
+  };
+
+  const viewCaseDetail = () => {
+    localStorage.setItem("route", "all-cases");
+    navigate(`/all-cases/${caseId}`);
+    setAnchorEl(false);
+  };
+
+  const handleSearch = (e) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+
+    if (term.trim() === "") {
+      setFilteredCases(allCases);
+      return;
+    }
+
+    const filteredResults = {};
+    Object.keys(allCases).forEach((companyName) => {
+      if (companyName.toLowerCase().includes(term.toLowerCase())) {
+        filteredResults[companyName] = allCases[companyName];
+      }
+    });
+
+    setFilteredCases(filteredResults);
   };
 
   const open = Boolean(anchorEl);
@@ -285,6 +332,15 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
               }}
               label="SMS"
             />
+            <Tab
+              sx={{
+                textTransform: "none",
+                fontSize: FONT_SIZE_MEDIUM,
+                color: Colors.SKY_BLUE,
+                "&.Mui-selected": { color: Colors.SKY_BLUE },
+              }}
+              label="Tasks"
+            />
           </Tabs>
         </Box>
 
@@ -324,13 +380,15 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
                     flexDirection: "column",
                   }}
                   onClick={() =>
-                    handleNotificationClick(
-                      notification?.caseId,
-                      notification?._id,
-                      notification?.inboxId,
-                      notification?.debtorId,
-                      notification?.isLinked
-                    )
+                    value !== 1
+                      ? handleNotificationClick(
+                          notification?.caseId,
+                          notification?._id,
+                          notification?.inboxId?._id,
+                          notification?.debtorId,
+                          notification?.isLinked
+                        )
+                      : null
                   }
                   key={index}
                   divider
@@ -343,9 +401,33 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
                     }}
                   >
                     <Typography
-                      sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
+                      sx={{
+                        fontFamily: "Nunito",
+                        fontSize: FONT_SIZE_LARGE,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        width: "100%",
+                      }}
                     >
                       {notification?.text}
+                      {value === 1 && (
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleNotificationClick(
+                              notification?.caseId,
+                              notification?._id,
+                              notification?.inboxId?._id,
+                              notification?.debtorId,
+                              notification?.isLinked,
+                              notification?.inboxId
+                            );
+                          }}
+                        >
+                          <Visibility />
+                        </IconButton>
+                      )}
                     </Typography>
                     <div style={{ display: "flex", gap: "3px" }}>
                       {notification?.debtorId &&
@@ -397,7 +479,7 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
             "& .MuiDialog-paper": {
               padding: "10px",
               borderRadius: "10px",
-              height: "50vh",
+              height: caseId ? "auto" : "60vh",
               maxWidth: "45vw",
               minWidth: "45vw",
               overflowY: "auto",
@@ -407,148 +489,217 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
           open={openDialog}
           onClose={() => setOpenDialog(false)}
         >
-          <DialogTitle
-            sx={{
-              fontFamily: "Nunito",
-              fontSize: FONT_SIZE_LARGE,
-              fontWeight: "600",
-            }}
-          >
-            Save Sms in the respective case
-            {!unknownCase && (
+          <DialogTitle>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                width: "100%",
+                justifyContent: "space-between",
+              }}
+            >
               <Typography
                 sx={{
                   fontFamily: "Nunito",
                   fontSize: FONT_SIZE_LARGE,
                   fontWeight: "600",
-                  mt: "10px",
                 }}
               >
-                {Object.keys(creditors)[0]}
+                {`Save ${
+                  value === 0 ? "Email" : value === 1 ? "Sms" : "Task"
+                } in the respective case`}
               </Typography>
+              <TextButton
+                buttonText="View Case"
+                height="2rem"
+                width="8rem"
+                disabled={!caseId}
+                onClick={viewCaseDetail}
+                backgroundColor={Colors.SKY_BLUE}
+                hoverColor={Colors.SKY_BLUE}
+              />
+            </div>
+            {smsMessage && (
+              <>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontSize: FONT_SIZE_LARGE,
+                    mt: "10px",
+                    width: "100%",
+                    fontWeight: 600,
+                  }}
+                >
+                  Text :
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontSize: FONT_SIZE_LARGE,
+                    mb: "10px",
+                    width: "100%",
+                  }}
+                >
+                  {smsMessage}
+                </Typography>
+              </>
+            )}
+
+            {!caseId && (
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Search client company..."
+                value={searchTerm}
+                onChange={handleSearch}
+                sx={{
+                  mt: 2,
+                  mb: 2,
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                    "&.Mui-focused fieldset": {
+                      borderColor: Colors.SKY_BLUE,
+                    },
+                  },
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon sx={{ color: Colors.SKY_BLUE }} />
+                    </InputAdornment>
+                  ),
+                }}
+              />
             )}
           </DialogTitle>
-          {!unknownCase ? (
-            <DialogContent>
-              {creditors[Object.keys(creditors)[0]]?.map((item, index) => (
-                <Box key={index} display="flex" alignItems="center">
-                  <Checkbox
-                    checked={selected?.includes(item?.caseId)}
-                    onChange={() => handleCheckboxChange(item?.caseId)}
-                    size="small"
-                    sx={{
-                      "& .MuiSvgIcon-root": { fontSize: "22px" },
-                      color: Colors.DIM_LIGHT_GRAY,
-                      "&.Mui-checked": {
-                        color: Colors.SKY_BLUE,
-                      },
-                    }}
-                  />
+          {!caseId && (
+            <>
+              <DialogContent
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  width: "100%",
+                }}
+              >
+                <div style={{ width: "48%" }}>
                   <Typography
-                    sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_MEDIUM }}
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontSize: FONT_SIZE_LARGE,
+                      mb: "10px",
+                      fontWeight: "600",
+                    }}
                   >
-                    {item?.creditorCompanyName}
+                    Client Company Name
                   </Typography>
-                </Box>
-              ))}
-            </DialogContent>
-          ) : (
-            <DialogContent
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                width: "100%",
-              }}
-            >
-              <div style={{ width: "48%" }}>
-                <Typography
-                  sx={{
-                    fontFamily: "Nunito",
-                    fontSize: FONT_SIZE_LARGE,
-                    mb: "10px",
-                    fontWeight: "600",
-                  }}
-                >
-                  Client Company Name
-                </Typography>
-                {Object.keys(allCases)?.map((item, index) => (
-                  <Box key={index} display="flex" alignItems="center">
-                    <Checkbox
-                      checked={selectedCase === item}
-                      onChange={() => handleCaseCheckboxChange(item)}
-                      size="small"
-                      sx={{
-                        "& .MuiSvgIcon-root": { fontSize: "22px" },
-                        color: Colors.DIM_LIGHT_GRAY,
-                        "&.Mui-checked": {
-                          color: Colors.SKY_BLUE,
-                        },
-                      }}
-                    />
-                    <Typography
-                      sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_MEDIUM }}
-                    >
-                      {item}
-                    </Typography>
+                  <Box
+                    sx={{
+                      maxHeight: "90%",
+                      overflowY: "auto",
+                      ...ScrollbarStyles,
+                    }}
+                  >
+                    {Object.keys(filteredCases)?.length > 0 ? (
+                      Object.keys(filteredCases)?.map((item, index) => (
+                        <Box key={index} display="flex" alignItems="center">
+                          <Checkbox
+                            checked={selectedCase === item}
+                            onChange={() => handleCaseCheckboxChange(item)}
+                            size="small"
+                            sx={{
+                              "& .MuiSvgIcon-root": { fontSize: "22px" },
+                              color: Colors.DIM_LIGHT_GRAY,
+                              "&.Mui-checked": {
+                                color: Colors.SKY_BLUE,
+                              },
+                            }}
+                          />
+                          <Typography
+                            sx={{
+                              fontFamily: "Nunito",
+                              fontSize: FONT_SIZE_MEDIUM,
+                            }}
+                          >
+                            {item}
+                          </Typography>
+                        </Box>
+                      ))
+                    ) : (
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontSize: FONT_SIZE_MEDIUM,
+                          textAlign: "center",
+                          color: Colors.DIM_LIGHT_GRAY,
+                          mt: 2,
+                        }}
+                      >
+                        No matching companies found
+                      </Typography>
+                    )}
                   </Box>
-                ))}
-              </div>
-              <div style={{ width: "48%" }}>
-                <Typography
-                  sx={{
-                    fontFamily: "Nunito",
-                    fontSize: FONT_SIZE_LARGE,
-                    mb: "10px",
-                    fontWeight: "600",
-                  }}
-                >
-                  Creditor Company Name
-                </Typography>
-                {allCases?.[selectedCase]?.map((item, index) => (
-                  <Box key={index} display="flex" alignItems="center">
-                    <Checkbox
-                      checked={selected?.includes(item?.caseId)}
-                      onChange={() => handleCheckboxChange(item?.caseId)}
-                      size="small"
-                      sx={{
-                        "& .MuiSvgIcon-root": { fontSize: "22px" },
-                        color: Colors.DIM_LIGHT_GRAY,
-                        "&.Mui-checked": {
-                          color: Colors.SKY_BLUE,
-                        },
-                      }}
-                    />
-                    <Typography
-                      sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_MEDIUM }}
-                    >
-                      {item?.creditorCompanyName}
-                    </Typography>
-                  </Box>
-                ))}
-              </div>
-            </DialogContent>
-          )}
+                </div>
 
-          <DialogActions>
-            <TextButton
-              buttonText="Cancel"
-              height="2rem"
-              width="8rem"
-              onClick={handleCancel}
-              backgroundColor={Colors.ORANGE_COLOR}
-              hoverColor={Colors.ORANGE_COLOR}
-            />
-            <TextButton
-              buttonText="Save"
-              height="2rem"
-              width="8rem"
-              disabled={!selected?.length > 0}
-              loading={saveNotificationLoading}
-              onClick={saveCaseNotification}
-              backgroundColor={Colors.SKY_BLUE}
-              hoverColor={Colors.SKY_BLUE}
-            />
-          </DialogActions>
+                <div style={{ width: "48%" }}>
+                  <Typography
+                    sx={{
+                      fontFamily: "Nunito",
+                      fontSize: FONT_SIZE_LARGE,
+                      mb: "10px",
+                      fontWeight: "600",
+                    }}
+                  >
+                    Creditor Company Name
+                  </Typography>
+                  {allCases?.[selectedCase]?.map((item, index) => (
+                    <Box key={index} display="flex" alignItems="center">
+                      <Checkbox
+                        checked={selected?.includes(item?.caseId)}
+                        onChange={() => handleCheckboxChange(item?.caseId)}
+                        size="small"
+                        sx={{
+                          "& .MuiSvgIcon-root": { fontSize: "22px" },
+                          color: Colors.DIM_LIGHT_GRAY,
+                          "&.Mui-checked": {
+                            color: Colors.SKY_BLUE,
+                          },
+                        }}
+                      />
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontSize: FONT_SIZE_MEDIUM,
+                        }}
+                      >
+                        {item?.creditorCompanyName}
+                      </Typography>
+                    </Box>
+                  ))}
+                </div>
+              </DialogContent>
+
+              <DialogActions>
+                <TextButton
+                  buttonText="Cancel"
+                  height="2rem"
+                  width="8rem"
+                  onClick={handleCancel}
+                  backgroundColor={Colors.ORANGE_COLOR}
+                  hoverColor={Colors.ORANGE_COLOR}
+                />
+                <TextButton
+                  buttonText="Save"
+                  height="2rem"
+                  width="8rem"
+                  disabled={!selected?.length > 0}
+                  loading={saveNotificationLoading}
+                  onClick={saveCaseNotification}
+                  backgroundColor={Colors.SKY_BLUE}
+                  hoverColor={Colors.SKY_BLUE}
+                />
+              </DialogActions>
+            </>
+          )}
         </Dialog>
       </Popover>
     </div>

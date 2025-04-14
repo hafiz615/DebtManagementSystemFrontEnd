@@ -55,7 +55,7 @@ export default function CustomTextField({
           width: width
             ? width
             : smallScreen
-            ? "22rem "
+            ? "20rem "
             : largeScreen
             ? "20rem"
             : "",

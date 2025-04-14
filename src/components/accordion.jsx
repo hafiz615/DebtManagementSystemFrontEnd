@@ -37,6 +37,7 @@ export default function AccordionUsage({
   setPaginationRows,
   successFulPaymentTrue,
   homeData,
+  getCreditorUpcomingPayments,
 }) {
   const headers = [
     "Name",
@@ -46,6 +47,12 @@ export default function AccordionUsage({
     "Payment Type",
     "Failure Reason",
   ];
+  if (
+    arrayName === "creditorUpcomingPayments" ||
+    arrayName === "upcomingPayments"
+  ) {
+    headers.push("Update Date");
+  }
 
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
@@ -55,7 +62,7 @@ export default function AccordionUsage({
   useEffect(() => {
     const generatedData = rowArray?.map((item, index) => ({
       caseId: item?.caseId || item?.debtorId,
-      id: item?._id,
+      id: item?._id || item?.id,
       name:
         arrayName === "successPayments" ||
         arrayName === "creditorUpcomingPayments"
@@ -223,6 +230,7 @@ export default function AccordionUsage({
           paginationRows={paginationRows}
           setPaginationRows={setPaginationRows}
           homeData={homeData}
+          getCreditorUpcomingPayments={getCreditorUpcomingPayments}
         />
       </AccordionDetails>
     </Accordion>

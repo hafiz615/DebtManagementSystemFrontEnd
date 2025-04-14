@@ -2139,3 +2139,39 @@ export const UpdateLawfirmDetails = async (payload, id) => {
     return error;
   }
 };
+export const GetLawfirm = async () => {
+  try {
+    return await axios.get(BASE_URL + `/v1/lawfirm/getLawfirms`, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};
+export const AssignLawfirmToCase = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/lawfirm/assignLawfirmToCase/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdatePaymentDate = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/payment/updatePaymentDate/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetCheckoutToken = async (id) => {
+  try {
+    return await axios.get(BASE_URL + `/v1/debtor/getToken/${id}`);
+  } catch (error) {
+    return error;
+  }
+};

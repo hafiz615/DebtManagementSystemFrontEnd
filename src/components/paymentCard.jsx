@@ -108,9 +108,7 @@ function PaymentCardDetails({
       });
     }
   }, [type, paymentGateway]);
-  // useEffect(() => {
-  //   setType("cc");
-  // }, [paymentGateway]);
+
   return (
     <Grid item sx={{ zIndex: "1" }}>
       <ToggleButtonGroup

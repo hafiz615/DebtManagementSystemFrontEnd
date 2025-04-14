@@ -77,6 +77,9 @@ import CreateSignature from "./settingsScreen/createSignature";
 import CreateSignatures from "./settingsScreen/createSignature";
 import SaveVoiceCase from "./saveVoiceCase";
 import EditLawfirmDetails from "./editLawfirmDetails";
+import SelectLawfirm from "./caseDetail/selectLawfirm";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import ShowUpdateDate from "./caseDetail/showUpdateDate";
 
 export default function MuiModels({
   buttonName,
@@ -185,6 +188,8 @@ export default function MuiModels({
   accountsExist,
   lawfirmId,
   getVoiceMails,
+  updatePaymentDate,
+  selectedDueDate,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -326,6 +331,24 @@ export default function MuiModels({
             }}
           />
         </IconButton>
+      ) : show === "updateUpcomingPaymentDate" ? (
+        <Tooltip title="Update Date" placement="top-start">
+          <IconButton
+            sx={{ display: "flex", alignItems: "center" }}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpen();
+            }}
+          >
+            <CalendarMonthIcon
+              sx={{
+                color: Colors.DIM_LIGHT_GRAY,
+                cursor: "pointer",
+                fontSize: "1.3rem",
+              }}
+            />
+          </IconButton>
+        </Tooltip>
       ) : show === "editCreditorContacts" ? (
         <IconButton
           sx={{ display: "flex", alignItems: "center" }}
@@ -836,6 +859,17 @@ export default function MuiModels({
           hoverColor={Colors.SKY_BLUE}
           onClick={handleOpen}
         />
+      ) : show === "selectLawfirm" ? (
+        <TextButton
+          buttonText="Select Lawfirm"
+          boxShadow="none"
+          height="2.5rem"
+          width="10rem"
+          backgroundColor={Colors.SKY_BLUE}
+          fontColor={Colors.WHITE}
+          hoverColor={Colors.SKY_BLUE}
+          onClick={handleOpen}
+        />
       ) : (
         <Button onClick={handleOpen}>{buttonName}</Button>
       )}
@@ -901,6 +935,7 @@ export default function MuiModels({
               GetCaseDetails={GetCaseDetails}
               maxHeight={maxHeight}
               getAllRanges={getAllRanges}
+              getAttorneyData={getAttorneyData}
             />
           ) : show === "editAbout" ? (
             <EditAbout
@@ -1271,6 +1306,20 @@ export default function MuiModels({
               lawfirmId={lawfirmId}
               getAttorneyData={getAttorneyData}
               handleClose={handleClose}
+            />
+          ) : show === "updateUpcomingPaymentDate" ? (
+            <ShowUpdateDate
+              handleClose={handleClose}
+              transactionId={transactionId}
+              selectedDueDate={selectedDueDate}
+              caseData={caseData}
+              GetCasePaymentDetails={GetCasePaymentDetails}
+            />
+          ) : show === "selectLawfirm" ? (
+            <SelectLawfirm
+              caseData={caseData}
+              handleClose={handleClose}
+              getAttorneyData={getAttorneyData}
             />
           ) : (
             ""

@@ -72,6 +72,7 @@ export default function CreditorsDetailCards({
   fetchCalls,
   getAllRanges,
   cc,
+  getAttorneyData,
 }) {
   const [searchText, setSearchText] = useState("");
   const [startIndex, setStartIndex] = useState(0);
@@ -194,6 +195,7 @@ export default function CreditorsDetailCards({
                 caseData={caseData}
                 GetCaseDetails={GetCaseDetails}
                 getAllRanges={getAllRanges}
+                getAttorneyData={getAttorneyData}
               />
             </div>
           </div>
