@@ -8,7 +8,14 @@ import { handleDeleteFile } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 import Prompt from "../prompt";
 
-function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
+function CaseFileCard({
+  caseData,
+  GetCaseDetails,
+  caseDataId,
+  lawfirmCancelPlan,
+  lawfirmIntervals,
+  getAttorneyData,
+}) {
   const [url, setUrl] = useState("");
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -176,6 +183,9 @@ function CaseFileCard({ caseData, GetCaseDetails, caseDataId }) {
             show="uploadFile"
             height="max-content"
             GetCaseDetails={GetCaseDetails}
+            lawfirmCancelPlan={lawfirmCancelPlan}
+            lawfirmIntervals={lawfirmIntervals}
+            getAttorneyData={getAttorneyData}
           />
         </Box>
       </div>
