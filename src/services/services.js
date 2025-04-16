@@ -945,10 +945,11 @@ export const DeleteTasks = async (id) => {
   }
 };
 
-export const AddDocumentToDebtor = async (id, payload) => {
+export const AddDocumentToDebtor = async (id, payload, lawfirmPlan) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/debtor/addDocumentsToDebtor/${id}`,
+      BASE_URL +
+        `/v1/debtor/addDocumentsToDebtor/${id}?lawfirmCancelPlan=${lawfirmPlan}`,
       payload,
       setHeaders()
     );
@@ -2171,6 +2172,28 @@ export const UpdatePaymentDate = async (id, payload) => {
 export const GetCheckoutToken = async (id) => {
   try {
     return await axios.get(BASE_URL + `/v1/debtor/getToken/${id}`);
+  } catch (error) {
+    return error;
+  }
+};
+export const AddAttorney = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/lawfirm/addAttorney/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateLawsuit = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/lawfirm/updateLawsuit/${id}`,
+      payload,
+      setHeaders()
+    );
   } catch (error) {
     return error;
   }

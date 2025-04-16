@@ -6,10 +6,7 @@ import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import { formatDateString, getTruncatedText } from "../../common";
 import ScrollbarStyles from "../customScroll";
-import {
-  FONT_SIZE_MEDIUM,
-  FONT_SIZE_SMALL,
-} from "../../constants/appConstants";
+import { FONT_SIZE_MEDIUM } from "../../constants/appConstants";
 
 export default function AttorneyDetail({
   accountsExist,
@@ -31,10 +28,6 @@ export default function AttorneyDetail({
       value: attorneyData?.phone ? `+1${attorneyData?.phone}` : "-",
     },
     { label: "City", value: attorneyData?.city || "-" },
-    {
-      label: "Attorney Fee",
-      value: attorneyData?.attorneyFee ? `$${attorneyData?.attorneyFee}` : "$0",
-    },
   ];
 
   const lawsuitFields = [
@@ -44,14 +37,11 @@ export default function AttorneyDetail({
     },
     {
       label: "lawsuit Date",
-      value: formatDateString(lawsuitData?.lawsuitDate) || "-",
+      value: lawsuitData?.lawsuitDate
+        ? formatDateString(lawsuitData?.lawsuitDate)
+        : "-",
     },
-    {
-      label: "Lawsuit Paid Amount",
-      value: lawsuitData?.lawsuitPaidAmount
-        ? `$${lawsuitData?.lawsuitPaidAmount}`
-        : "$0",
-    },
+
     {
       label: "Total Balance",
       value: lawsuitData?.balance ? `$${lawsuitData?.balance}` : "$0",
@@ -117,10 +107,17 @@ export default function AttorneyDetail({
           sx={{
             justifyContent: "space-between",
             alignItems: "center",
+            mt: "10px",
             mb: "10px",
           }}
         >
-          <div style={{ display: "flex", marginTop: "10px", gap: "10px" }}>
+          <div
+            style={{
+              display: "flex",
+              marginTop: "10px",
+              gap: "10px",
+            }}
+          >
             <span
               style={{
                 fontWeight: "600",
@@ -131,13 +128,19 @@ export default function AttorneyDetail({
               Creditor's Attorney
             </span>
           </div>
-          {attorneyData && (
+          {attorneyData ? (
             <MuiModels
               show="editAttorney"
               data={attorneyData}
               attorneyId={attorneyData?._id}
               caseData={caseData}
               GetCaseDetails={GetCaseDetails}
+              getAttorneyData={getAttorneyData}
+            />
+          ) : (
+            <MuiModels
+              show="addAttorneyDetails"
+              caseId={caseData?._id}
               getAttorneyData={getAttorneyData}
             />
           )}
@@ -275,6 +278,12 @@ export default function AttorneyDetail({
           >
             Lawsuit
           </span>
+          <MuiModels
+            show="editLawsuit"
+            data={allAttorneyData?.lawSuit}
+            caseId={caseData?._id}
+            getAttorneyData={getAttorneyData}
+          />
         </Grid>
         {lawsuitData ? (
           <div
@@ -318,7 +327,7 @@ export default function AttorneyDetail({
                       wordBreak: "break-word",
                     }}
                   >
-                    {getTruncatedText(value, 18)}
+                    {getTruncatedText(value, 19)}
                   </Typography>
                 </Tooltip>
               </div>
