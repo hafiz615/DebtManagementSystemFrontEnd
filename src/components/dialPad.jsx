@@ -1,18 +1,36 @@
 import React, { useState, useEffect } from "react";
-import { Button, Grid, Box, Typography, IconButton, Fade } from "@mui/material";
+import { v4 as uuidv4 } from "uuid";
+import {
+  Button,
+  Grid,
+  Box,
+  Typography,
+  IconButton,
+  Fade,
+  Tooltip,
+  Modal,
+} from "@mui/material";
+import { useToast } from "../toast/toastContext";
 import CallIcon from "@mui/icons-material/Call";
 import CallEndIcon from "@mui/icons-material/CallEnd";
 import { Colors } from "../config/default";
 import ReactPhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { GetCallToken } from "../services/services";
+import {
+  CreateParticipant,
+  GetCallToken,
+  GetAllParticipant,
+} from "../services/services";
 import { Device } from "@twilio/voice-sdk";
 import { useDispatch, useSelector } from "react-redux";
 import { Close, KeyboardVoice, MicOff } from "@mui/icons-material";
 import { FONT_SIZE_LARGE } from "../constants/appConstants";
 import { setDialState } from "../redux/action/action";
+import AddIcon from "@mui/icons-material/Add";
+import AddAnotherPerson from "./caseDetail/addAnotherPerson";
 
 const DialPad = () => {
+  const { showToast } = useToast();
   const phoneNumberState = useSelector((state) => state?.dial?.phoneNumber);
   const caseId = useSelector((state) => state?.dial?.caseId);
   const modalState = useSelector((state) => state?.dial?.isModalOpen);
@@ -26,7 +44,10 @@ const DialPad = () => {
   const [device, setDevice] = useState(null);
   const [call, setCall] = useState(null);
   const [muted, setMuted] = useState(false);
+
   const dispatch = useDispatch();
+
+  const [openAddModal, setOpenAddModal] = useState(false);
 
   useEffect(() => {
     setPhoneNumber(phoneNumberState);
@@ -57,6 +78,35 @@ const DialPad = () => {
     );
   };
 
+  const [conferenceRoomData, setConferenceRoomData] = useState();
+  const [participants, setParticipants] = useState([]);
+  useEffect(() => {
+    const generatedConferenceName = `conf-${uuidv4()}`;
+    setConferenceRoomData(generatedConferenceName);
+  }, []);
+
+  const getAllParticipant = async () => {
+    const params = {
+      conferenceRoom: conferenceRoomData,
+    };
+    const res = await GetAllParticipant(params);
+    setParticipants(res?.data?.data?.participants);
+  };
+
+  const createParticipant = async (phoneNumber) => {
+    const params = {
+      to: phoneNumber,
+      conferenceRoom: conferenceRoomData,
+    };
+    const res = await CreateParticipant(params);
+    if (res?.status === 201) {
+      showToast(res?.data?.message, "success");
+    } else {
+      const errorMessage = res?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+  };
+
   const makeOutgoingCall = async () => {
     if (!device || !phoneNumber) {
       return;
@@ -66,11 +116,13 @@ const DialPad = () => {
       record: true,
       CaseId: caseId,
       email: userEmail,
+      ConferenceName: conferenceRoomData,
     };
     setIsCalling(true);
     const newCall = await device.connect({ params });
     setCall(newCall);
     newCall.on("accept", () => {
+      createParticipant(phoneNumber);
       setIsCalling(false);
       setStartTimer(true);
     });
@@ -85,6 +137,7 @@ const DialPad = () => {
       setIsCalling(false);
       setStartTimer(false);
       setMuted(false);
+      setOpenAddModal(false);
     });
 
     newCall.on("cancel", () => {
@@ -97,6 +150,7 @@ const DialPad = () => {
       setIsCalling(false);
       setStartTimer(false);
       setMuted(false);
+      setOpenAddModal(false);
     });
   };
 
@@ -146,129 +200,179 @@ const DialPad = () => {
 
   return (
     modalState && (
-      <Fade in={modalState}>
-        <Box
-          sx={{
-            position: "fixed",
-            bottom: "2%",
-            right: "1%",
-            width: 300,
-            bgcolor: Colors.lIGHT_PURPLE,
-            borderRadius: "10px",
-            boxShadow: 24,
-            p: 2,
-            border: `2px solid ${Colors.SKY_BLUE}`,
-            textAlign: "center",
-            zIndex: 1300,
-            pointerEvents: "auto",
-          }}
-        >
+      <>
+        <Fade in={modalState}>
           <Box
             sx={{
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
+              position: "fixed",
+              bottom: "2%",
+              right: "1%",
+              width: 300,
+              bgcolor: Colors.lIGHT_PURPLE,
+              borderRadius: "10px",
+              boxShadow: 24,
+              p: 2,
+              border: `2px solid ${Colors.SKY_BLUE}`,
+              textAlign: "center",
+              zIndex: 1300,
+              pointerEvents: "auto",
             }}
           >
-            <Typography sx={textStyling}>Dial Pad</Typography>
-            {!isCalling && !startTimer && (
-              <IconButton onClick={handleClose}>
-                <Close />
-              </IconButton>
-            )}
-          </Box>
-          <Box>
-            <Typography
-              sx={{ fontSize: "16px", fontFamily: "Nunito", mb: "10px" }}
-              gutterBottom
-              textAlign="center"
+            <Box
+              sx={{
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
             >
-              {isCalling
-                ? `Calling...`
-                : startTimer
-                ? "Ringing..."
-                : "Dial or Enter a Phone Number"}
-            </Typography>
-
-            <Box sx={{ mb: 2 }}>
-              <ReactPhoneInput
-                country={"us"}
-                value={phoneNumber}
-                onChange={setPhoneNumber}
-                inputStyle={{
-                  padding: "1rem 3rem",
-                  width: "100%",
-                  fontSize: "16px",
-                  borderRadius: "5px",
-                  border: "1px solid #ccc",
-                  fontFamily: "Nunito",
-                }}
-              />
+              <Typography sx={textStyling}>Dial Pad</Typography>
+              {!isCalling && !startTimer && (
+                <IconButton onClick={handleClose}>
+                  <Close />
+                </IconButton>
+              )}
             </Box>
-
-            <Box sx={{ mb: 2 }}>
-              <Grid container spacing={1}>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, "*", 0, "#"]?.map((num) => (
-                  <Grid item xs={4} key={num}>
-                    <Button
-                      variant="outlined"
-                      fullWidth
-                      sx={{
-                        fontFamily: "Nunito",
-                        height: 40,
-                        borderColor: Colors.SKY_BLUE,
-                        color: Colors.SKY_BLUE,
-                      }}
-                      onClick={() => setPhoneNumber((prev) => prev + num)}
-                    >
-                      {num}
-                    </Button>
-                  </Grid>
-                ))}
-              </Grid>
-            </Box>
-
-            {!isCalling && !startTimer ? (
-              <Button
-                variant="contained"
-                sx={{
-                  backgroundColor: Colors.SKY_BLUE,
-                  borderRadius: "10px",
-                  fontFamily: "Nunito",
-                  "&:hover": {
-                    background: Colors.SKY_BLUE,
-                  },
-                }}
-                startIcon={<CallIcon />}
-                onClick={makeOutgoingCall}
-                fullWidth
+            <Box>
+              <Typography
+                sx={{ fontSize: "16px", fontFamily: "Nunito", mb: "10px" }}
+                gutterBottom
+                textAlign="center"
               >
-                Call
-              </Button>
-            ) : (
-              <>
-                <Box>
-                  <IconButton onClick={muteCall}>
-                    {muted ? <MicOff /> : <KeyboardVoice />}
-                  </IconButton>
-                </Box>
+                {isCalling
+                  ? `Calling...`
+                  : startTimer
+                  ? "Ringing..."
+                  : "Dial or Enter a Phone Number"}
+              </Typography>
 
+              <Box sx={{ mb: 2 }}>
+                <ReactPhoneInput
+                  country={"us"}
+                  value={phoneNumber}
+                  onChange={setPhoneNumber}
+                  inputStyle={{
+                    padding: "1rem 3rem",
+                    width: "100%",
+                    fontSize: "16px",
+                    borderRadius: "5px",
+                    border: "1px solid #ccc",
+                    fontFamily: "Nunito",
+                  }}
+                />
+              </Box>
+
+              <Box sx={{ mb: 2 }}>
+                <Grid container spacing={1}>
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, "*", 0, "#"]?.map((num) => (
+                    <Grid item xs={4} key={num}>
+                      <Button
+                        variant="outlined"
+                        fullWidth
+                        sx={{
+                          fontFamily: "Nunito",
+                          height: 40,
+                          borderColor: Colors.SKY_BLUE,
+                          color: Colors.SKY_BLUE,
+                        }}
+                        onClick={() => setPhoneNumber((prev) => prev + num)}
+                      >
+                        {num}
+                      </Button>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Box>
+
+              {!isCalling && !startTimer ? (
                 <Button
                   variant="contained"
-                  color="error"
-                  sx={{ borderRadius: "10px", fontFamily: "Nunito" }}
-                  startIcon={<CallEndIcon />}
-                  onClick={endCall}
+                  sx={{
+                    backgroundColor: Colors.SKY_BLUE,
+                    borderRadius: "10px",
+                    fontFamily: "Nunito",
+                    "&:hover": {
+                      background: Colors.SKY_BLUE,
+                    },
+                  }}
+                  startIcon={<CallIcon />}
+                  onClick={makeOutgoingCall}
                   fullWidth
                 >
-                  End Call
+                  Call
                 </Button>
-              </>
-            )}
+              ) : (
+                <>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginBottom: ".5rem",
+                    }}
+                  >
+                    <IconButton onClick={muteCall}>
+                      {muted ? <MicOff /> : <KeyboardVoice />}
+                    </IconButton>
+                    <Tooltip title="Add Another Person" placement="top-start">
+                      <IconButton
+                        sx={{ display: "flex", alignItems: "center" }}
+                        onClick={() => setOpenAddModal(true)}
+                      >
+                        <AddIcon
+                          sx={{
+                            color: Colors.DARK_GRAY,
+                            cursor: "pointer",
+                            fontSize: "18px",
+                          }}
+                        />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+
+                  <Button
+                    variant="contained"
+                    color="error"
+                    sx={{ borderRadius: "10px", fontFamily: "Nunito" }}
+                    startIcon={<CallEndIcon />}
+                    onClick={endCall}
+                    fullWidth
+                  >
+                    End Call
+                  </Button>
+                </>
+              )}
+            </Box>
           </Box>
-        </Box>
-      </Fade>
+        </Fade>
+
+        {openAddModal && (
+          <Box
+            sx={{
+              position: "fixed",
+              bottom: "2%",
+              right: "calc(350px - 1%)",
+              width: 350,
+              bgcolor: Colors.lIGHT_PURPLE,
+              borderRadius: "10px",
+              boxShadow: 24,
+              p: 2,
+              border: `2px solid ${Colors.SKY_BLUE}`,
+              textAlign: "center",
+              zIndex: 1300,
+              pointerEvents: "auto",
+            }}
+          >
+            <AddAnotherPerson
+              handleClose={() => setOpenAddModal(false)}
+              conferenceRoomData={conferenceRoomData}
+              participants={participants}
+              setParticipants={setParticipants}
+              getAllParticipant={getAllParticipant}
+            />
+          </Box>
+        )}
+      </>
     )
   );
 };

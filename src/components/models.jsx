@@ -82,6 +82,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import ShowUpdateDate from "./caseDetail/showUpdateDate";
 import EditLawsuitDetails from "./caseDetail/editLawsuit";
 import AddAttorneyDetails from "./caseDetail/addAttorneyDetails";
+import AddAnotherPerson from "./caseDetail/addAnotherPerson";
 
 export default function MuiModels({
   buttonName,
@@ -290,6 +291,23 @@ export default function MuiModels({
             }}
           />
         </IconButton>
+      ) : show === "addAnOtherPerson" ? (
+        <Tooltip title="Add Another Person" placement="top-start">
+          <IconButton
+            sx={{ display: "flex", alignItems: "center" }}
+            onClick={() => {
+              handleOpen();
+            }}
+          >
+            <AddIcon
+              sx={{
+                color: Colors.DARK_GRAY,
+                cursor: "pointer",
+                fontSize: "18px",
+              }}
+            />
+          </IconButton>
+        </Tooltip>
       ) : buttonIcon === "settlementRangeReload" ? (
         <IconButton
           sx={{ display: "flex", alignItems: "center" }}
@@ -1346,6 +1364,8 @@ export default function MuiModels({
               handleClose={handleClose}
               getAttorneyData={getAttorneyData}
             />
+          ) : show === "addAnOtherPerson" ? (
+            <AddAnotherPerson handleClose={handleClose} />
           ) : (
             ""
           )}
