@@ -120,7 +120,7 @@ export default function BulkMainAccordion() {
   }, []);
 
   return (
-    <StyledAccordion defaultExpanded>
+    <StyledAccordion>
       <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
         Bulk Upload
       </StyledAccordionSummary>
