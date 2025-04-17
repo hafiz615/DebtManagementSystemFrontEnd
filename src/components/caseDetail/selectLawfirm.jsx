@@ -11,6 +11,7 @@ export default function SelectLawfirm({
   caseData,
   handleClose,
   getAttorneyData,
+  GetCaseDetails,
 }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -38,6 +39,7 @@ export default function SelectLawfirm({
     if (res?.data?.data) {
       showToast(res?.data?.message, "success");
       getAttorneyData();
+      GetCaseDetails(caseData?._id);
       handleClose();
     }
     setButtonLoading(false);

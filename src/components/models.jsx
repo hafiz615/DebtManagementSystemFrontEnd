@@ -1337,6 +1337,7 @@ export default function MuiModels({
               caseData={caseData}
               handleClose={handleClose}
               getAttorneyData={getAttorneyData}
+              GetCaseDetails={GetCaseDetails}
             />
           ) : show === "addAttorneyDetails" ? (
             <AddAttorneyDetails

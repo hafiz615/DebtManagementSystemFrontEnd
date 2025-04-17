@@ -378,6 +378,7 @@ export default function CaseById({
                           show="selectLawfirm"
                           caseData={caseData}
                           getAttorneyData={getAttorneyData}
+                          GetCaseDetails={GetCaseDetails}
                         />
                       )}
                     </>

@@ -138,17 +138,18 @@ function UploadFilePopup({
           params.otherDocuments = result?.data?.data;
         }
       }
-      uploadFileWithSignedUrl();
+      uploadFileWithSignedUrl(false);
     }
   };
 
-  const uploadFileWithSignedUrl = async () => {
-    const addDebtor = await AddDocumentToDebtor(id, params, lawfirmPlan);
+  const uploadFileWithSignedUrl = async (plan) => {
+    const addDebtor = await AddDocumentToDebtor(id, params, plan);
     if (addDebtor?.status === 200) {
       showToast(addDebtor?.data?.message, "success");
       handleClose();
       GetCaseDetails(id);
       getAttorneyData();
+      setModel(false);
     } else {
       showToast(addDebtor?.response?.data?.message, "error");
     }
@@ -156,8 +157,33 @@ function UploadFilePopup({
   };
 
   const handleCancelPlan = async () => {
-    setModel(false);
     setLawfirmPlan(true);
+    setLoading(true);
+    if (bankFiles?.length > 0) {
+      const result = await UploadFiles(bankFiles);
+      if (result?.status === 200) {
+        params.bankStatementDocuments = result?.data?.data;
+      }
+    }
+    if (mcaFiles?.length > 0) {
+      const result = await UploadFiles(mcaFiles);
+      if (result?.status === 200) {
+        params.mcaDocuments = result?.data?.data;
+      }
+    }
+    if (lawsuitFiles?.length > 0) {
+      const result = await UploadFiles(lawsuitFiles);
+      if (result?.status === 200) {
+        params.lawsuitDocuments = result?.data?.data;
+      }
+    }
+    if (otherFiles?.length > 0) {
+      const result = await UploadFiles(otherFiles);
+      if (result?.status === 200) {
+        params.otherDocuments = result?.data?.data;
+      }
+    }
+    uploadFileWithSignedUrl(true);
   };
 
   return (
@@ -188,7 +214,7 @@ function UploadFilePopup({
               fontWeight: 600,
             }}
           >
-            Do you want to continue with this plan or cancel plan?
+            Do you want to continue with existing lawfirm plan?
           </Typography>
           <Grid
             container
@@ -286,7 +312,6 @@ function UploadFilePopup({
               onClick={() => setModel(false)}
               backgroundColor={Colors.SKY_BLUE}
               hoverColor={Colors.SKY_BLUE}
-              loading={loading}
             />
             <TextButton
               buttonText="Cancel Plan"
