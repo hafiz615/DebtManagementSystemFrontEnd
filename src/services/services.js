@@ -2175,3 +2175,46 @@ export const GetCheckoutToken = async (id) => {
     return error;
   }
 };
+export const CreateParticipant = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + "/v1/call/conference/add-participant",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetAllParticipant = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + "/v1/call/conference/getAllTheParticipants",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateParticipants = async (payload) => {
+  try {
+    return await axios.patch(
+      BASE_URL + "/v1/call/updateConferenceParticipant",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const DeleteParticipants = async (payload) => {
+  try {
+    const url = BASE_URL + "/v1/call/conference/removeParticipant";
+    const headers = setHeaders();
+    return await axios.delete(url, { ...headers, data: payload });
+  } catch (error) {
+    return error;
+  }
+};

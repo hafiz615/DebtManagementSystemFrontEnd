@@ -75,6 +75,7 @@ export default function Prompt({
   setActivePreview,
   handleSignatureDelete,
   getVoiceMails,
+  handleDeleteParticipant,
 }) {
   const { showToast } = useToast();
   const [open, setOpen] = React.useState(false);
@@ -261,6 +262,8 @@ export default function Prompt({
       await handleSignatureDelete();
     } else if (deleting === "delete template") {
       await deleteTemplate();
+    } else if (deleting === "Removing Participant") {
+      await handleDeleteParticipant();
     } else if (deleting === "Delete Tasks") {
       await deleteTasks();
     } else if (deleting === "Delete User") {
