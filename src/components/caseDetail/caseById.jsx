@@ -373,11 +373,14 @@ export default function CaseById({
                           />
                         </Grid>
                       </Grid>
-                      {/* <MuiModels
-                        show="selectLawfirm"
-                        caseData={caseData}
-                        getAttorneyData={getAttorneyData}
-                      /> */}
+                      {!allAttorneyData?.lawfirm && (
+                        <MuiModels
+                          show="selectLawfirm"
+                          caseData={caseData}
+                          getAttorneyData={getAttorneyData}
+                          GetCaseDetails={GetCaseDetails}
+                        />
+                      )}
                     </>
                   )}
                   {value === "Attorney" && allAttorneyData && (
@@ -513,6 +516,12 @@ export default function CaseById({
                     caseData={caseData}
                     caseDataId={id}
                     GetCaseDetails={GetCaseDetails}
+                    lawfirmCancelPlan={
+                      caseData?.dummyLawsuitExist &&
+                      allAttorneyData?.lawSuit?.intervals?.length > 0
+                    }
+                    lawfirmIntervals={allAttorneyData?.lawSuit?.intervals}
+                    getAttorneyData={getAttorneyData}
                   />
                 )}
               </Grid>

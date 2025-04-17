@@ -945,10 +945,11 @@ export const DeleteTasks = async (id) => {
   }
 };
 
-export const AddDocumentToDebtor = async (id, payload) => {
+export const AddDocumentToDebtor = async (id, payload, lawfirmPlan) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/debtor/addDocumentsToDebtor/${id}`,
+      BASE_URL +
+        `/v1/debtor/addDocumentsToDebtor/${id}?lawfirmCancelPlan=${lawfirmPlan}`,
       payload,
       setHeaders()
     );
@@ -2214,6 +2215,38 @@ export const DeleteParticipants = async (payload) => {
     const url = BASE_URL + "/v1/call/conference/removeParticipant";
     const headers = setHeaders();
     return await axios.delete(url, { ...headers, data: payload });
+  } catch (error) {
+    return error;
+  }
+};
+export const AddAttorney = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/lawfirm/addAttorney/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateLawsuit = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/lawfirm/updateLawsuit/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const SyncLawsuit = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/lawfirm/syncLawsuitData/${id}`,
+      setHeaders()
+    );
   } catch (error) {
     return error;
   }

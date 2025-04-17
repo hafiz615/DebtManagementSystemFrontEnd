@@ -80,6 +80,8 @@ import EditLawfirmDetails from "./editLawfirmDetails";
 import SelectLawfirm from "./caseDetail/selectLawfirm";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import ShowUpdateDate from "./caseDetail/showUpdateDate";
+import EditLawsuitDetails from "./caseDetail/editLawsuit";
+import AddAttorneyDetails from "./caseDetail/addAttorneyDetails";
 import AddAnotherPerson from "./caseDetail/addAnotherPerson";
 
 export default function MuiModels({
@@ -191,6 +193,8 @@ export default function MuiModels({
   getVoiceMails,
   updatePaymentDate,
   selectedDueDate,
+  lawfirmCancelPlan,
+  lawfirmIntervals,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -416,7 +420,8 @@ export default function MuiModels({
             sx={{
               cursor: "pointer",
               color: Colors.DARK_GRAY,
-              fontSize: iconSize || "16px",
+              fontSize: iconSize || "24px",
+              mt: "4px",
             }}
           />
         </Tooltip>
@@ -458,7 +463,9 @@ export default function MuiModels({
             sx={{ color: Colors.WHITE, fontSize: iconSize || "16px" }}
           />
         </IconButton>
-      ) : show === "addCase" || show === "uploadFile" ? (
+      ) : show === "addCase" ||
+        show === "uploadFile" ||
+        show === "addAttorneyDetails" ? (
         <IconButton
           onClick={() => {
             handleOpen();
@@ -484,7 +491,8 @@ export default function MuiModels({
         </IconButton>
       ) : show === "editStatus" ||
         show === "editAttorney" ||
-        show === "editLawfirm" ? (
+        show === "editLawfirm" ||
+        show === "editLawsuit" ? (
         <IconButton
           onClick={() => {
             handleOpen();
@@ -1138,6 +1146,9 @@ export default function MuiModels({
             <UploadFilePopup
               handleClose={handleClose}
               GetCaseDetails={GetCaseDetails}
+              lawfirmCancelPlan={lawfirmCancelPlan}
+              lawfirmIntervals={lawfirmIntervals}
+              getAttorneyData={getAttorneyData}
             />
           ) : show === "payments" ? (
             <PaymentsPopup
@@ -1325,6 +1336,13 @@ export default function MuiModels({
               getAttorneyData={getAttorneyData}
               handleClose={handleClose}
             />
+          ) : show === "editLawsuit" ? (
+            <EditLawsuitDetails
+              data={data}
+              caseId={caseId}
+              getAttorneyData={getAttorneyData}
+              handleClose={handleClose}
+            />
           ) : show === "updateUpcomingPaymentDate" ? (
             <ShowUpdateDate
               handleClose={handleClose}
@@ -1336,6 +1354,13 @@ export default function MuiModels({
           ) : show === "selectLawfirm" ? (
             <SelectLawfirm
               caseData={caseData}
+              handleClose={handleClose}
+              getAttorneyData={getAttorneyData}
+              GetCaseDetails={GetCaseDetails}
+            />
+          ) : show === "addAttorneyDetails" ? (
+            <AddAttorneyDetails
+              caseId={caseId}
               handleClose={handleClose}
               getAttorneyData={getAttorneyData}
             />
