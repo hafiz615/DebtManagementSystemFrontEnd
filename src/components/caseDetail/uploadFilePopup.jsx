@@ -206,16 +206,28 @@ function UploadFilePopup({
             p: "1rem",
           }}
         >
-          <Typography
-            sx={{
-              m: "10px 0px",
-              fontFamily: "Nunito",
-              fontSize: FONT_SIZE_XL,
-              fontWeight: 600,
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: "1rem",
             }}
           >
-            Do you want to continue with existing lawfirm plan?
-          </Typography>
+            <Typography
+              sx={{
+                m: "10px 0px",
+                fontFamily: "Nunito",
+                fontSize: FONT_SIZE_XL,
+                fontWeight: 600,
+              }}
+            >
+              Do you want to continue with existing lawfirm plan?
+            </Typography>
+            <IconButton onClick={() => setModel(false)}>
+              <Close />
+            </IconButton>
+          </div>
           <Grid
             container
             item
@@ -305,14 +317,6 @@ function UploadFilePopup({
             xs={12}
             sx={{ justifyContent: "flex-end", gap: "10px", mt: "1rem" }}
           >
-            <TextButton
-              buttonText="Continue"
-              height="2rem"
-              width="8rem"
-              onClick={() => setModel(false)}
-              backgroundColor={Colors.SKY_BLUE}
-              hoverColor={Colors.SKY_BLUE}
-            />
             <TextButton
               buttonText="Cancel Plan"
               height="2rem"

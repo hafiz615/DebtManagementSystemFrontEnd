@@ -2198,3 +2198,13 @@ export const UpdateLawsuit = async (id, payload) => {
     return error;
   }
 };
+export const SyncLawsuit = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/lawfirm/syncLawsuitData/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

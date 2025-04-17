@@ -402,7 +402,8 @@ export default function MuiModels({
             sx={{
               cursor: "pointer",
               color: Colors.DARK_GRAY,
-              fontSize: iconSize || "16px",
+              fontSize: iconSize || "24px",
+              mt: "4px",
             }}
           />
         </Tooltip>

@@ -1,12 +1,15 @@
 import React from "react";
 
-import { Grid, Tooltip, Typography } from "@mui/material";
+import { Grid, IconButton, Tooltip, Typography } from "@mui/material";
 
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import { formatDateString, getTruncatedText } from "../../common";
 import ScrollbarStyles from "../customScroll";
 import { FONT_SIZE_MEDIUM } from "../../constants/appConstants";
+import { Sync } from "@mui/icons-material";
+import { SyncLawsuit } from "../../services/services";
+import { useToast } from "../../toast/toastContext";
 
 export default function AttorneyDetail({
   accountsExist,
@@ -18,6 +21,11 @@ export default function AttorneyDetail({
   const attorneyData = allAttorneyData?.attorney || "";
   const lawsuitData = allAttorneyData?.lawSuit || "";
   const lawfirmData = allAttorneyData?.lawfirm || "";
+  const { showToast } = useToast();
+
+  const showSync =
+    caseData?.debtor?.lawsuitFields ||
+    caseData?.debtor?.lawsuitFields?.length !== 0;
 
   const attorneyFields = [
     { label: "Name", value: attorneyData?.name || "-" },
@@ -85,6 +93,17 @@ export default function AttorneyDetail({
       value: lawfirmData?.lawfirmFee ? `$${lawfirmData?.lawfirmFee}` : "$0",
     },
   ];
+
+  const handleLawsuitSync = async () => {
+    const res = await SyncLawsuit(caseData?._id);
+    if (res?.status === 200) {
+      showToast(res?.data?.message, "success");
+      getAttorneyData();
+    } else {
+      const errorMessage = res?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+  };
 
   return (
     <>
@@ -278,12 +297,19 @@ export default function AttorneyDetail({
           >
             Lawsuit
           </span>
-          <MuiModels
-            show="editLawsuit"
-            data={allAttorneyData?.lawSuit}
-            caseId={caseData?._id}
-            getAttorneyData={getAttorneyData}
-          />
+          <div style={{ display: "flex", alignItems: "center" }}>
+            {showSync && (
+              <IconButton onClick={handleLawsuitSync}>
+                <Sync />
+              </IconButton>
+            )}
+            <MuiModels
+              show="editLawsuit"
+              data={allAttorneyData?.lawSuit}
+              caseId={caseData?._id}
+              getAttorneyData={getAttorneyData}
+            />
+          </div>
         </Grid>
         {lawsuitData ? (
           <div
