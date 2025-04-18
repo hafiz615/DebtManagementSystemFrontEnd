@@ -7,7 +7,7 @@ import MuiModels from "../models";
 import { formatDateString, getTruncatedText } from "../../common";
 import ScrollbarStyles from "../customScroll";
 import { FONT_SIZE_MEDIUM } from "../../constants/appConstants";
-import { Sync } from "@mui/icons-material";
+import { Info, Sync } from "@mui/icons-material";
 import { SyncLawsuit } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
 
@@ -293,10 +293,22 @@ export default function AttorneyDetail({
               fontWeight: "600",
               fontSize: "13px",
               fontFamily: "Nunito",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
             }}
           >
             Lawsuit
+            {showSync && (
+              <Tooltip
+                title="your existing data could be override by sync call"
+                placement="top"
+              >
+                <Info sx={{ cursor: "pointer", color: Colors.YELLOW }} />
+              </Tooltip>
+            )}
           </span>
+
           <div style={{ display: "flex", alignItems: "center" }}>
             {showSync && (
               <IconButton onClick={handleLawsuitSync}>

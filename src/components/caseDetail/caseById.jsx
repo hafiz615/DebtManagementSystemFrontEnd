@@ -293,11 +293,24 @@ export default function CaseById({
                   onClick={(e) => e.stopPropagation()}
                 >
                   {value === "Debtor" && (
-                    <MuiModels
-                      show="debtorPaymentPlan"
-                      caseData={caseData}
-                      GetCaseDetails={GetCaseDetails}
-                    />
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "10px",
+                        alignItems: "center",
+                      }}
+                    >
+                      <MuiModels
+                        show="debtorPayments"
+                        caseData={caseData}
+                        GetCaseDetails={GetCaseDetails}
+                      />
+                      <MuiModels
+                        show="debtorPaymentPlan"
+                        caseData={caseData}
+                        GetCaseDetails={GetCaseDetails}
+                      />
+                    </div>
                   )}
                   {value === "Transactions" && (
                     <div style={{ display: "flex", gap: "1rem" }}>

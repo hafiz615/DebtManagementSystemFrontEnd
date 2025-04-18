@@ -83,6 +83,7 @@ import ShowUpdateDate from "./caseDetail/showUpdateDate";
 import EditLawsuitDetails from "./caseDetail/editLawsuit";
 import AddAttorneyDetails from "./caseDetail/addAttorneyDetails";
 import AddAnotherPerson from "./caseDetail/addAnotherPerson";
+import DebtorPayments from "./debtorPayments";
 
 export default function MuiModels({
   buttonName,
@@ -639,6 +640,16 @@ export default function MuiModels({
       ) : show === "AddPayments" ? (
         <TextButton
           buttonText="Manual Payments"
+          height="2.5rem"
+          width="10rem"
+          onClick={handleOpen}
+          disabled={disabled}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
+      ) : show === "debtorPayments" ? (
+        <TextButton
+          buttonText="Pause Payments"
           height="2.5rem"
           width="10rem"
           onClick={handleOpen}
@@ -1366,6 +1377,12 @@ export default function MuiModels({
             />
           ) : show === "addAnOtherPerson" ? (
             <AddAnotherPerson handleClose={handleClose} />
+          ) : show === "debtorPayments" ? (
+            <DebtorPayments
+              handleClose={handleClose}
+              caseData={caseData}
+              GetCaseDetails={GetCaseDetails}
+            />
           ) : (
             ""
           )}
