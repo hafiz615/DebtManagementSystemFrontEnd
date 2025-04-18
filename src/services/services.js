@@ -2251,3 +2251,24 @@ export const SyncLawsuit = async (id) => {
     return error;
   }
 };
+export const GetDebtorPayments = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/debtor/getDebtorPayments/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const PauseDebtorPayments = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/pauseDebtorPayments/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
