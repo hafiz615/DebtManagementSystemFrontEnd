@@ -27,7 +27,8 @@ import { useToast } from "../toast/toastContext";
 import TextButton from "./button";
 import { IconButton, Tooltip } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { Delete, Done } from "@mui/icons-material";
+import { CallEnd, Delete, Done } from "@mui/icons-material";
+import CallEndIcon from "@mui/icons-material/CallEnd";
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiPaper-root": {
@@ -321,6 +322,15 @@ export default function Prompt({
               fontSize: "20px",
             }}
           />
+        ) : handleDeleteParticipant ? (
+          <Tooltip title="Remove Participant" placement="top">
+            <CallEnd
+              sx={{
+                color: Colors.ORANGE_COLOR,
+                fontSize: "20px",
+              }}
+            />
+          </Tooltip>
         ) : (
           <DeleteForeverOutlinedIcon
             sx={{
