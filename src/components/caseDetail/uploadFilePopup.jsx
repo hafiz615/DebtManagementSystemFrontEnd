@@ -28,6 +28,7 @@ function UploadFilePopup({
   const [lawsuitFiles, setLawsuitFiles] = useState([]);
   const [otherFiles, setOtherFiles] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [continueLoading, setContinueLoading] = useState(false);
   const [lawfirmPlan, setLawfirmPlan] = useState(!lawfirmCancelPlan || false);
   const [model, setModel] = useState(false);
   const { id } = useParams();
@@ -154,11 +155,16 @@ function UploadFilePopup({
       showToast(addDebtor?.response?.data?.message, "error");
     }
     setLoading(false);
+    setContinueLoading(false);
   };
 
-  const handleCancelPlan = async () => {
+  const handleCancelPlan = async (plan) => {
     setLawfirmPlan(true);
-    setLoading(true);
+    if (plan) {
+      setLoading(true);
+    } else {
+      setContinueLoading(true);
+    }
     if (bankFiles?.length > 0) {
       const result = await UploadFiles(bankFiles);
       if (result?.status === 200) {
@@ -183,7 +189,7 @@ function UploadFilePopup({
         params.otherDocuments = result?.data?.data;
       }
     }
-    uploadFileWithSignedUrl(true);
+    uploadFileWithSignedUrl(plan);
   };
 
   return (
@@ -318,10 +324,19 @@ function UploadFilePopup({
             sx={{ justifyContent: "flex-end", gap: "10px", mt: "1rem" }}
           >
             <TextButton
+              buttonText="Continue"
+              height="2rem"
+              width="8rem"
+              onClick={() => handleCancelPlan(false)}
+              backgroundColor={Colors.SKY_BLUE}
+              hoverColor={Colors.SKY_BLUE}
+              loading={continueLoading}
+            />
+            <TextButton
               buttonText="Cancel Plan"
               height="2rem"
               width="8rem"
-              onClick={handleCancelPlan}
+              onClick={() => handleCancelPlan(true)}
               backgroundColor={Colors.ORANGE_COLOR}
               hoverColor={Colors.ORANGE_COLOR}
               loading={loading}
