@@ -2251,3 +2251,14 @@ export const SyncLawsuit = async (id) => {
     return error;
   }
 };
+
+export const GetAllUsersNumbers = async () => {
+  try {
+    return await axios.get(
+      BASE_URL + "/v1/call/getAllUserNumbers",
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
