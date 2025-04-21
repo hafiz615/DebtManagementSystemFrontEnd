@@ -111,7 +111,7 @@ export default function TransactionDetails({
               borderBottom: `1px solid ${Colors.BLACK}`,
               width: "100%",
               marginBottom: "10px",
-              position: "sticky",
+              // position: "sticky",
               top: 0,
               backgroundColor: "white",
               zIndex: 1,

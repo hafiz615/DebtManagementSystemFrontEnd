@@ -641,7 +641,7 @@ export default function MuiModels({
         <TextButton
           buttonText="Manual Payments"
           height="2.5rem"
-          width="10rem"
+          width="9.5rem"
           onClick={handleOpen}
           disabled={disabled}
           backgroundColor={Colors.SKY_BLUE}
@@ -671,7 +671,7 @@ export default function MuiModels({
         <TextButton
           buttonText="Bounce Payments"
           height="2.5rem"
-          width="10rem"
+          width="9.5rem"
           onClick={handleOpen}
           disabled={disabled}
           backgroundColor={Colors.SKY_BLUE}
@@ -879,7 +879,7 @@ export default function MuiModels({
           buttonText="Choose Plan"
           boxShadow="none"
           height="2.5rem"
-          width="9rem"
+          width="7.5rem"
           backgroundColor={Colors.SKY_BLUE}
           fontColor={Colors.WHITE}
           hoverColor={Colors.SKY_BLUE}
