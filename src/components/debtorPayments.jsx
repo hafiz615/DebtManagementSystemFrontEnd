@@ -21,7 +21,7 @@ import {
 } from "@mui/icons-material";
 import { GetDebtorPayments, PauseDebtorPayments } from "../services/services";
 import { formatDateString } from "../common";
-import { FONT_SIZE_LARGE } from "../constants/appConstants";
+import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../constants/appConstants";
 import ScrollbarStyles from "./customScroll";
 import { useToast } from "../toast/toastContext";
 
@@ -39,6 +39,7 @@ export default function DebtorPayments({
   const [amountLoading, setAmountLoading] = useState(false);
   const [openAmountModal, setOpenAmountModal] = useState(false);
   const [openDateModal, setOpenDateModal] = useState(false);
+  const [error, setError] = useState(false);
 
   const { showToast } = useToast();
 
@@ -217,8 +218,31 @@ export default function DebtorPayments({
             placeholder="Date"
             type="date"
             value={date}
-            onChange={(e) => setDate(e.target.value)}
+            onChange={(e) => {
+              const selectedDate = new Date(e.target.value);
+              const day = selectedDate.getDay();
+              if (day === 0 || day === 6) {
+                setError(true);
+                setDate("");
+              } else {
+                setDate(e.target.value);
+                setError(false);
+              }
+            }}
           />
+          {error && (
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontSize: FONT_SIZE_SMALL,
+                mt: "10px",
+                color: Colors.ORANGE_COLOR,
+              }}
+            >
+              Weekends are not allowed. Please select a weekday.
+            </Typography>
+          )}
+
           <Typography
             sx={{
               fontFamily: "Nunito",
@@ -263,6 +287,7 @@ export default function DebtorPayments({
               height="2rem"
               width="8rem"
               onClick={handleDateUpdate}
+              disabled={error}
               loading={amountLoading}
               backgroundColor={Colors.SKY_BLUE}
               hoverColor={Colors.SKY_BLUE}
