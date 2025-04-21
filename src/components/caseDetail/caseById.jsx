@@ -313,7 +313,7 @@ export default function CaseById({
                     </div>
                   )}
                   {value === "Transactions" && (
-                    <div style={{ display: "flex", gap: "1rem" }}>
+                    <div style={{ display: "flex", gap: ".5rem" }}>
                       <MuiModels
                         show="AddPayments"
                         width="55vw"
