@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Grid, Box, Typography, Button, IconButton } from "@mui/material";
+import { Grid, Box, Typography, IconButton, Modal } from "@mui/material";
 import UploadIcon from "@mui/icons-material/Upload";
 import { styles } from "../caseCreation/FileUploadComponent/FileUploadComponent.styles";
 import {
@@ -10,19 +10,27 @@ import {
 } from "@mui/icons-material";
 import { Colors } from "../../config/default";
 import TextButton from "../button";
-import { isEmpty } from "lodash";
 import { AddDocumentToDebtor, UploadFiles } from "../../services/services";
 import { useParams } from "react-router-dom";
 import { useToast } from "../../toast/toastContext";
-import { FONT_SIZE_LARGE } from "../../constants/appConstants";
+import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../../constants/appConstants";
 
-function UploadFilePopup({ handleClose, GetCaseDetails }) {
+function UploadFilePopup({
+  handleClose,
+  GetCaseDetails,
+  lawfirmCancelPlan,
+  lawfirmIntervals,
+  getAttorneyData,
+}) {
   const { showToast } = useToast();
   const [bankFiles, setBankFiles] = useState([]);
   const [mcaFiles, setMcaFiles] = useState([]);
   const [lawsuitFiles, setLawsuitFiles] = useState([]);
   const [otherFiles, setOtherFiles] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [continueLoading, setContinueLoading] = useState(false);
+  const [lawfirmPlan, setLawfirmPlan] = useState(!lawfirmCancelPlan || false);
+  const [model, setModel] = useState(false);
   const { id } = useParams();
 
   const handleDropForUploadBankFiles = async (acceptedFiles) => {
@@ -99,10 +107,64 @@ function UploadFilePopup({ handleClose, GetCaseDetails }) {
     bankStatementDocuments: [],
     mcaDocuments: [],
     otherDocuments: [],
+    lawsuitDocuments: [],
   };
 
   const handleUpload = async () => {
-    setLoading(true);
+    if (!lawfirmPlan && lawsuitFiles?.length > 0) {
+      setModel(true);
+    } else {
+      setLoading(true);
+      if (bankFiles?.length > 0) {
+        const result = await UploadFiles(bankFiles);
+        if (result?.status === 200) {
+          params.bankStatementDocuments = result?.data?.data;
+        }
+      }
+      if (mcaFiles?.length > 0) {
+        const result = await UploadFiles(mcaFiles);
+        if (result?.status === 200) {
+          params.mcaDocuments = result?.data?.data;
+        }
+      }
+      if (lawsuitFiles?.length > 0) {
+        const result = await UploadFiles(lawsuitFiles);
+        if (result?.status === 200) {
+          params.lawsuitDocuments = result?.data?.data;
+        }
+      }
+      if (otherFiles?.length > 0) {
+        const result = await UploadFiles(otherFiles);
+        if (result?.status === 200) {
+          params.otherDocuments = result?.data?.data;
+        }
+      }
+      uploadFileWithSignedUrl(false);
+    }
+  };
+
+  const uploadFileWithSignedUrl = async (plan) => {
+    const addDebtor = await AddDocumentToDebtor(id, params, plan);
+    if (addDebtor?.status === 200) {
+      showToast(addDebtor?.data?.message, "success");
+      handleClose();
+      GetCaseDetails(id);
+      getAttorneyData();
+      setModel(false);
+    } else {
+      showToast(addDebtor?.response?.data?.message, "error");
+    }
+    setLoading(false);
+    setContinueLoading(false);
+  };
+
+  const handleCancelPlan = async (plan) => {
+    setLawfirmPlan(true);
+    if (plan) {
+      setLoading(true);
+    } else {
+      setContinueLoading(true);
+    }
     if (bankFiles?.length > 0) {
       const result = await UploadFiles(bankFiles);
       if (result?.status === 200) {
@@ -127,23 +189,161 @@ function UploadFilePopup({ handleClose, GetCaseDetails }) {
         params.otherDocuments = result?.data?.data;
       }
     }
-    uploadFileWithSignedUrl();
-  };
-
-  const uploadFileWithSignedUrl = async () => {
-    const addDebtor = await AddDocumentToDebtor(id, params);
-    if (addDebtor?.status === 200) {
-      showToast(addDebtor?.data?.message, "success");
-      handleClose();
-      GetCaseDetails(id);
-    } else {
-      showToast(addDebtor?.response?.data?.message, "error");
-    }
-    setLoading(false);
+    uploadFileWithSignedUrl(plan);
   };
 
   return (
     <Grid container>
+      <Modal
+        open={model}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 500,
+            bgcolor: "background.paper",
+            borderRadius: 2,
+            boxShadow: 24,
+            p: "1rem",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: "1rem",
+            }}
+          >
+            <Typography
+              sx={{
+                m: "10px 0px",
+                fontFamily: "Nunito",
+                fontSize: FONT_SIZE_XL,
+                fontWeight: 600,
+              }}
+            >
+              Do you want to continue with existing lawfirm plan?
+            </Typography>
+            <IconButton onClick={() => setModel(false)}>
+              <Close />
+            </IconButton>
+          </div>
+          <Grid
+            container
+            item
+            xs={12}
+            sx={{
+              justifyContent: "space-between",
+              bgcolor: Colors.PURPLE,
+              p: "6px 10px",
+              borderRadius: "10px",
+              mb: 1,
+            }}
+          >
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontSize: FONT_SIZE_LARGE,
+                fontWeight: "bold",
+                color: "black",
+              }}
+            >
+              Amount
+            </Typography>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontSize: FONT_SIZE_LARGE,
+                fontWeight: "bold",
+                color: "black",
+              }}
+            >
+              Time Period
+            </Typography>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontSize: FONT_SIZE_LARGE,
+                fontWeight: "bold",
+                color: "black",
+              }}
+            >
+              Frequency
+            </Typography>
+          </Grid>
+          {lawfirmIntervals?.map((item) => (
+            <Grid
+              container
+              item
+              xs={12}
+              sx={{
+                justifyContent: "space-between",
+                bgcolor: Colors.lIGHT_PURPLE,
+                p: "6px 10px",
+                borderRadius: "10px",
+                mb: 1,
+              }}
+            >
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontSize: FONT_SIZE_LARGE,
+                }}
+              >
+                {item?.amount}$
+              </Typography>
+
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontSize: FONT_SIZE_LARGE,
+                }}
+              >
+                {item?.timePeriod}
+              </Typography>
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontSize: FONT_SIZE_LARGE,
+                }}
+              >
+                {item?.frequency}
+              </Typography>
+            </Grid>
+          ))}
+          <Grid
+            item
+            container
+            xs={12}
+            sx={{ justifyContent: "flex-end", gap: "10px", mt: "1rem" }}
+          >
+            <TextButton
+              buttonText="Continue"
+              height="2rem"
+              width="8rem"
+              onClick={() => handleCancelPlan(false)}
+              backgroundColor={Colors.SKY_BLUE}
+              hoverColor={Colors.SKY_BLUE}
+              loading={continueLoading}
+            />
+            <TextButton
+              buttonText="Cancel Plan"
+              height="2rem"
+              width="8rem"
+              onClick={() => handleCancelPlan(true)}
+              backgroundColor={Colors.ORANGE_COLOR}
+              hoverColor={Colors.ORANGE_COLOR}
+              loading={loading}
+            />
+          </Grid>
+        </Box>
+      </Modal>
       <Box
         sx={{
           cursor: "pointer",

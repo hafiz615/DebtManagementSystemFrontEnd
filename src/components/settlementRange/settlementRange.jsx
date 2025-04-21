@@ -240,6 +240,7 @@ export default function SettlementRange({
   const [justificationLoading, setJustificationLoading] = useState(false);
   const [setShow, setSetShow] = useState(false);
   const [transactionKey, setTransactionKey] = useState();
+  const [selectedMonth, setSelectedMonth] = useState("");
   const [colorScheme] = useState("Tableau10");
   const [justificationValue, setJustificationValue] = useState(
     "justification_gemini"
@@ -870,17 +871,35 @@ export default function SettlementRange({
     (checked) => checked
   );
 
-  const countData =
-    scores &&
-    scores?.Scores?.top_payees?.map((item, i) => {
-      const label = Object.keys(item)[0];
-      const value = Object.values(item)[0];
-      return {
-        id: i,
-        value: value,
-        label: label,
-      };
-    });
+  const topPayees = scores?.Scores?.top_payees;
+  const isArray = Array.isArray(topPayees);
+  const topPayeesKeys = isArray
+    ? {}
+    : Object.keys(scores?.Scores?.top_payees || {});
+
+  const countData = isArray
+    ? topPayees?.map((item, i) => {
+        const label = Object.keys(item)[0];
+        const value = Object.values(item)[0];
+        return {
+          id: i,
+          value: value,
+          label: label,
+        };
+      })
+    : topPayees?.[selectedMonth || topPayeesKeys[0]]?.map((item, i) => {
+        const label = Object.keys(item)[0];
+        const value = Object.values(item)[0];
+        return {
+          id: i,
+          value: value,
+          label: label,
+        };
+      });
+
+  const handleMonthChange = (e) => {
+    setSelectedMonth(e.target.value);
+  };
 
   const formatCurrencyValue = (value) => {
     if (value === null || value === undefined) return "--";
@@ -986,7 +1005,11 @@ export default function SettlementRange({
           {transactionKey && (
             <TransactionHistory
               transactionKey={transactionKey}
-              data={scores?.Scores?.transaction_history}
+              data={
+                scores?.Scores?.transaction_history?.[
+                  selectedMonth || topPayeesKeys[0]
+                ]
+              }
             />
           )}
         </Box>
@@ -1529,6 +1552,57 @@ export default function SettlementRange({
                             backgroundColor: Colors.BG_LIGHT_GRAY,
                           }}
                         >
+                          {isArray ? (
+                            <Typography
+                              sx={{
+                                fontFamily: "Nunito",
+                                fontSize: FONT_SIZE_LARGE,
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "10px",
+                              }}
+                            >
+                              <InfoIcon
+                                sx={{ color: Colors.YELLOW, fontSize: "24px" }}
+                              />
+                              Hard reload to get the latest changes
+                            </Typography>
+                          ) : (
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+                                alignItems: "center",
+                              }}
+                            >
+                              <label
+                                style={{
+                                  fontFamily: "Nunito",
+                                  marginRight: "10px",
+                                  fontSize: FONT_SIZE_LARGE,
+                                  fontWeight: 600,
+                                }}
+                              >
+                                Select Month:
+                              </label>
+                              <select
+                                value={selectedMonth}
+                                onChange={handleMonthChange}
+                                style={{
+                                  padding: "10px 1rem",
+                                  borderRadius: "10px",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                {topPayeesKeys?.map((key) => (
+                                  <option key={key} value={key}>
+                                    {key}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          )}
+
                           <Grid
                             sx={{
                               position: "relative",

@@ -23,6 +23,7 @@ import {
   GetAllUserCases,
   GetCallerName,
   GetCallSid,
+  GetCallToken,
 } from "./services/services";
 import { Device } from "@twilio/voice-sdk";
 import IncomingCall from "./components/incomingCall";
@@ -108,6 +109,14 @@ function App() {
         setCallDuration(0);
         setCallerName("");
       });
+    });
+    twilioDevice.on("tokenWillExpire", async () => {
+      const twilioTokenResponse = await GetCallToken();
+      if (twilioTokenResponse?.status === 200) {
+        let twilioToken = twilioTokenResponse.data.data.token;
+        localStorage.setItem("twilioToken", twilioToken);
+        twilioDevice.updateToken(token);
+      }
     });
   };
 

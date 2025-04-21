@@ -945,10 +945,11 @@ export const DeleteTasks = async (id) => {
   }
 };
 
-export const AddDocumentToDebtor = async (id, payload) => {
+export const AddDocumentToDebtor = async (id, payload, lawfirmPlan) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/debtor/addDocumentsToDebtor/${id}`,
+      BASE_URL +
+        `/v1/debtor/addDocumentsToDebtor/${id}?lawfirmCancelPlan=${lawfirmPlan}`,
       payload,
       setHeaders()
     );
@@ -2171,6 +2172,113 @@ export const UpdatePaymentDate = async (id, payload) => {
 export const GetCheckoutToken = async (id) => {
   try {
     return await axios.get(BASE_URL + `/v1/debtor/getToken/${id}`);
+  } catch (error) {
+    return error;
+  }
+};
+export const CreateParticipant = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + "/v1/call/conference/add-participant",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetAllParticipant = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + "/v1/call/conference/getAllTheParticipants",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateParticipants = async (payload) => {
+  try {
+    return await axios.patch(
+      BASE_URL + "/v1/call/updateConferenceParticipant",
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const DeleteParticipants = async (payload) => {
+  try {
+    const url = BASE_URL + "/v1/call/conference/removeParticipant";
+    const headers = setHeaders();
+    return await axios.delete(url, { ...headers, data: payload });
+  } catch (error) {
+    return error;
+  }
+};
+export const AddAttorney = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/lawfirm/addAttorney/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateLawsuit = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/lawfirm/updateLawsuit/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const SyncLawsuit = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/lawfirm/syncLawsuitData/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetDebtorPayments = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/debtor/getDebtorPayments/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const PauseDebtorPayments = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/pauseDebtorPayments/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetAllUsersNumbers = async () => {
+  try {
+    return await axios.get(
+      BASE_URL + "/v1/call/getAllUserNumbers",
+      setHeaders()
+    );
   } catch (error) {
     return error;
   }

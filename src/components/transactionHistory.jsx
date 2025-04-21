@@ -14,7 +14,7 @@ export default function TransactionHistory({ transactionKey, data }) {
           fontWeight: "700",
         }}
       >
-        Transaction History (Last Two Months)
+        Transaction History
       </Typography>
       <Divider sx={{ mb: "1rem" }} />
       {data ? (

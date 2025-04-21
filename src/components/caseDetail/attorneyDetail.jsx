@@ -1,15 +1,15 @@
 import React from "react";
 
-import { Grid, Tooltip, Typography } from "@mui/material";
+import { Grid, IconButton, Tooltip, Typography } from "@mui/material";
 
 import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import { formatDateString, getTruncatedText } from "../../common";
 import ScrollbarStyles from "../customScroll";
-import {
-  FONT_SIZE_MEDIUM,
-  FONT_SIZE_SMALL,
-} from "../../constants/appConstants";
+import { FONT_SIZE_MEDIUM } from "../../constants/appConstants";
+import { Info, Sync } from "@mui/icons-material";
+import { SyncLawsuit } from "../../services/services";
+import { useToast } from "../../toast/toastContext";
 
 export default function AttorneyDetail({
   accountsExist,
@@ -21,6 +21,11 @@ export default function AttorneyDetail({
   const attorneyData = allAttorneyData?.attorney || "";
   const lawsuitData = allAttorneyData?.lawSuit || "";
   const lawfirmData = allAttorneyData?.lawfirm || "";
+  const { showToast } = useToast();
+
+  const showSync =
+    caseData?.debtor?.lawsuitFields ||
+    caseData?.debtor?.lawsuitFields?.length !== 0;
 
   const attorneyFields = [
     { label: "Name", value: attorneyData?.name || "-" },
@@ -31,10 +36,6 @@ export default function AttorneyDetail({
       value: attorneyData?.phone ? `+1${attorneyData?.phone}` : "-",
     },
     { label: "City", value: attorneyData?.city || "-" },
-    {
-      label: "Attorney Fee",
-      value: attorneyData?.attorneyFee ? `$${attorneyData?.attorneyFee}` : "$0",
-    },
   ];
 
   const lawsuitFields = [
@@ -44,14 +45,11 @@ export default function AttorneyDetail({
     },
     {
       label: "lawsuit Date",
-      value: formatDateString(lawsuitData?.lawsuitDate) || "-",
+      value: lawsuitData?.lawsuitDate
+        ? formatDateString(lawsuitData?.lawsuitDate)
+        : "-",
     },
-    {
-      label: "Lawsuit Paid Amount",
-      value: lawsuitData?.lawsuitPaidAmount
-        ? `$${lawsuitData?.lawsuitPaidAmount}`
-        : "$0",
-    },
+
     {
       label: "Total Balance",
       value: lawsuitData?.balance ? `$${lawsuitData?.balance}` : "$0",
@@ -96,6 +94,17 @@ export default function AttorneyDetail({
     },
   ];
 
+  const handleLawsuitSync = async () => {
+    const res = await SyncLawsuit(caseData?._id);
+    if (res?.status === 200) {
+      showToast(res?.data?.message, "success");
+      getAttorneyData();
+    } else {
+      const errorMessage = res?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+  };
+
   return (
     <>
       <Grid
@@ -117,10 +126,17 @@ export default function AttorneyDetail({
           sx={{
             justifyContent: "space-between",
             alignItems: "center",
+            mt: "10px",
             mb: "10px",
           }}
         >
-          <div style={{ display: "flex", marginTop: "10px", gap: "10px" }}>
+          <div
+            style={{
+              display: "flex",
+              marginTop: "10px",
+              gap: "10px",
+            }}
+          >
             <span
               style={{
                 fontWeight: "600",
@@ -131,13 +147,19 @@ export default function AttorneyDetail({
               Creditor's Attorney
             </span>
           </div>
-          {attorneyData && (
+          {attorneyData ? (
             <MuiModels
               show="editAttorney"
               data={attorneyData}
               attorneyId={attorneyData?._id}
               caseData={caseData}
               GetCaseDetails={GetCaseDetails}
+              getAttorneyData={getAttorneyData}
+            />
+          ) : (
+            <MuiModels
+              show="addAttorneyDetails"
+              caseId={caseData?._id}
               getAttorneyData={getAttorneyData}
             />
           )}
@@ -271,10 +293,35 @@ export default function AttorneyDetail({
               fontWeight: "600",
               fontSize: "13px",
               fontFamily: "Nunito",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
             }}
           >
             Lawsuit
+            {showSync && (
+              <Tooltip
+                title="your existing data could be override by sync call"
+                placement="top"
+              >
+                <Info sx={{ cursor: "pointer", color: Colors.YELLOW }} />
+              </Tooltip>
+            )}
           </span>
+
+          <div style={{ display: "flex", alignItems: "center" }}>
+            {showSync && (
+              <IconButton onClick={handleLawsuitSync}>
+                <Sync />
+              </IconButton>
+            )}
+            <MuiModels
+              show="editLawsuit"
+              data={allAttorneyData?.lawSuit}
+              caseId={caseData?._id}
+              getAttorneyData={getAttorneyData}
+            />
+          </div>
         </Grid>
         {lawsuitData ? (
           <div
@@ -318,7 +365,7 @@ export default function AttorneyDetail({
                       wordBreak: "break-word",
                     }}
                   >
-                    {getTruncatedText(value, 18)}
+                    {getTruncatedText(value, 19)}
                   </Typography>
                 </Tooltip>
               </div>

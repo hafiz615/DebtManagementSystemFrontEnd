@@ -293,14 +293,27 @@ export default function CaseById({
                   onClick={(e) => e.stopPropagation()}
                 >
                   {value === "Debtor" && (
-                    <MuiModels
-                      show="debtorPaymentPlan"
-                      caseData={caseData}
-                      GetCaseDetails={GetCaseDetails}
-                    />
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "10px",
+                        alignItems: "center",
+                      }}
+                    >
+                      <MuiModels
+                        show="debtorPayments"
+                        caseData={caseData}
+                        GetCaseDetails={GetCaseDetails}
+                      />
+                      <MuiModels
+                        show="debtorPaymentPlan"
+                        caseData={caseData}
+                        GetCaseDetails={GetCaseDetails}
+                      />
+                    </div>
                   )}
                   {value === "Transactions" && (
-                    <div style={{ display: "flex", gap: "1rem" }}>
+                    <div style={{ display: "flex", gap: ".5rem" }}>
                       <MuiModels
                         show="AddPayments"
                         width="55vw"
@@ -373,11 +386,14 @@ export default function CaseById({
                           />
                         </Grid>
                       </Grid>
-                      {/* <MuiModels
-                        show="selectLawfirm"
-                        caseData={caseData}
-                        getAttorneyData={getAttorneyData}
-                      /> */}
+                      {!allAttorneyData?.lawfirm && (
+                        <MuiModels
+                          show="selectLawfirm"
+                          caseData={caseData}
+                          getAttorneyData={getAttorneyData}
+                          GetCaseDetails={GetCaseDetails}
+                        />
+                      )}
                     </>
                   )}
                   {value === "Attorney" && allAttorneyData && (
@@ -513,6 +529,12 @@ export default function CaseById({
                     caseData={caseData}
                     caseDataId={id}
                     GetCaseDetails={GetCaseDetails}
+                    lawfirmCancelPlan={
+                      caseData?.dummyLawsuitExist &&
+                      allAttorneyData?.lawSuit?.intervals?.length > 0
+                    }
+                    lawfirmIntervals={allAttorneyData?.lawSuit?.intervals}
+                    getAttorneyData={getAttorneyData}
                   />
                 )}
               </Grid>

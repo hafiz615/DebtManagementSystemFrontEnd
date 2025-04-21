@@ -9,14 +9,16 @@ import {
   Fade,
   Checkbox,
   IconButton,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import { Colors } from "../config/default";
 import TextButton from "./button";
 import { UpdateCallByCase } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import { FONT_SIZE_LARGE, FONT_SIZE_MEDIUM } from "../constants/appConstants";
 import ScrollbarStyles from "./customScroll";
-import AppLogo from "../../src/assets/FC White.png";
 import { KeyboardVoice, MicOff } from "@mui/icons-material";
 
 export default function IncomingCall({
@@ -38,7 +40,12 @@ export default function IncomingCall({
   const [selectedCase, setSelectedCase] = useState();
   const [muted, setMuted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(""); // <-- Added for search
   const { showToast } = useToast();
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value.toLowerCase());
+  };
 
   const handleCaseCheckboxChange = (debtor) => {
     setSelectedCase(debtor);
@@ -132,6 +139,10 @@ export default function IncomingCall({
     setSelected([]);
   }, [selectedCase]);
 
+  const filteredClientCompanies = Object.keys(allCases).filter((client) =>
+    client.toLowerCase().includes(searchTerm)
+  );
+
   return (
     isModalOpen && (
       <Fade in={isModalOpen}>
@@ -150,7 +161,6 @@ export default function IncomingCall({
             zIndex: 1300,
             pointerEvents: "auto",
             animation: "blink-border 1s infinite alternate",
-
             "@keyframes blink-border": {
               "0%": { borderColor: Colors.SKY_BLUE },
               "100%": { borderColor: Colors.BG_LIGHT_GRAY },
@@ -163,6 +173,31 @@ export default function IncomingCall({
                 Save Call Log
               </Typography>
 
+              {/* 🔍 Search Field */}
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Search client company..."
+                value={searchTerm}
+                onChange={handleSearch}
+                sx={{
+                  mt: 2,
+                  mb: 2,
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                    "&.Mui-focused fieldset": {
+                      borderColor: Colors.SKY_BLUE,
+                    },
+                  },
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon sx={{ color: Colors.SKY_BLUE }} />
+                    </InputAdornment>
+                  ),
+                }}
+              />
               <Grid
                 sx={{
                   display: "flex",
@@ -184,31 +219,47 @@ export default function IncomingCall({
                   >
                     Client Company Name
                   </Typography>
-                  {Object.keys(allCases)?.map((item, index) => (
-                    <Box key={index} display="flex" alignItems="center">
-                      <Checkbox
-                        checked={selectedCase === item}
-                        onChange={() => handleCaseCheckboxChange(item)}
-                        size="small"
-                        sx={{
-                          "& .MuiSvgIcon-root": { fontSize: "22px" },
-                          color: Colors.DIM_LIGHT_GRAY,
-                          "&.Mui-checked": {
-                            color: Colors.SKY_BLUE,
-                          },
-                        }}
-                      />
-                      <Typography
-                        sx={{
-                          fontFamily: "Nunito",
-                          fontSize: FONT_SIZE_MEDIUM,
-                        }}
-                      >
-                        {item}
-                      </Typography>
-                    </Box>
-                  ))}
+
+                  {filteredClientCompanies?.length > 0 ? (
+                    filteredClientCompanies.map((item, index) => (
+                      <Box key={index} display="flex" alignItems="center">
+                        <Checkbox
+                          checked={selectedCase === item}
+                          onChange={() => handleCaseCheckboxChange(item)}
+                          size="small"
+                          sx={{
+                            "& .MuiSvgIcon-root": { fontSize: "22px" },
+                            color: Colors.DIM_LIGHT_GRAY,
+                            "&.Mui-checked": {
+                              color: Colors.SKY_BLUE,
+                            },
+                          }}
+                        />
+                        <Typography
+                          sx={{
+                            fontFamily: "Nunito",
+                            fontSize: FONT_SIZE_MEDIUM,
+                          }}
+                        >
+                          {item}
+                        </Typography>
+                      </Box>
+                    ))
+                  ) : (
+                    <Typography
+                      sx={{
+                        fontFamily: "Nunito",
+                        fontSize: FONT_SIZE_MEDIUM,
+                        textAlign: "center",
+                        color: Colors.DIM_LIGHT_GRAY,
+                        mt: 2,
+                      }}
+                    >
+                      No matching companies found
+                    </Typography>
+                  )}
                 </div>
+
                 <div style={{ width: "48%" }}>
                   <Typography
                     sx={{

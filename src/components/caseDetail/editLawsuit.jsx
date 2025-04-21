@@ -1,25 +1,21 @@
 import React, { useState } from "react";
-import { Colors } from "../config/default";
+import { Colors } from "../../config/default";
 import { Grid, Typography } from "@mui/material";
-import TextButton from "./button";
-import { UpdateAttorneyDetail } from "../services/services";
-import { useToast } from "../toast/toastContext";
-import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../constants/appConstants";
+import TextButton from "./../button";
+import { UpdateLawfirmDetails, UpdateLawsuit } from "../../services/services";
+import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../../constants/appConstants";
+import { useToast } from "../../toast/toastContext";
 
-export default function EditAttorneyDetails({
+export default function EditLawsuitDetails({
   data,
-  attorneyId,
+  caseId,
   getAttorneyData,
   handleClose,
 }) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: data?.name || "",
-    email: data?.email || "",
-    SSN: data?.SSN || "",
-    phone: data?.phone || "",
-    city: data?.city || "",
-    address: data?.address || "",
+    balance: data?.balance || "0",
+    lawsuitDate: data?.lawsuitDate ? data?.lawsuitDate.split("T")[0] : "",
   });
   const { showToast } = useToast();
 
@@ -34,9 +30,10 @@ export default function EditAttorneyDetails({
   const handleUpdate = async () => {
     setLoading(true);
     const payload = {
-      ...formData,
+      lawsuitDate: formData?.lawsuitDate || "",
+      balance: parseInt(formData?.balance) || 0,
     };
-    const res = await UpdateAttorneyDetail(payload, attorneyId);
+    const res = await UpdateLawsuit(caseId, payload);
     if (res?.status === 200) {
       showToast(res?.data?.message, "success");
       getAttorneyData();
@@ -58,7 +55,7 @@ export default function EditAttorneyDetails({
           fontSize: FONT_SIZE_XL,
         }}
       >
-        Update Attorney Details
+        Update Lawsuit Details
       </Typography>
       <Grid container sx={{ flexWrap: "wrap" }}>
         {Object.entries(formData)?.map(([key, value]) => (
@@ -70,10 +67,12 @@ export default function EditAttorneyDetails({
                 fontSize: FONT_SIZE_LARGE,
               }}
             >
-              {key?.charAt(0).toUpperCase() + key?.slice(1)}
+              {key === "lawsuitDate"
+                ? "Lawsuit Date"
+                : key?.charAt(0).toUpperCase() + key?.slice(1)}
             </label>
             <input
-              type={"text"}
+              type={key === "lawsuitDate" ? "date" : "text"}
               name={key}
               value={value}
               onChange={handleChange}

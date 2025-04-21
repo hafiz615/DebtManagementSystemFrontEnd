@@ -774,21 +774,11 @@ export function formatDateString(isoDateStr) {
     year: "2-digit",
     month: "short",
     day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
     hour12: true,
   };
 
   const formattedDate = date.toLocaleDateString("en-US", options);
-  const formattedTime = date.toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-  });
-
-  const [month, day, year] = formattedDate.split(" ");
-
-  return `${day} ${month},${year} at ${formattedTime}`;
+  return `${formattedDate}`;
 }
 
 export const isPhoneNumber = (value) => {
