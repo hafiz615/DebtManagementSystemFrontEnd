@@ -12,6 +12,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useSelector } from "react-redux";
 import NotificationsBell from "./notificationBell";
 import MissedCalls from "./missedCalls";
+import { Device } from "@twilio/voice-sdk";
 
 export default function NavBar({ onClick }) {
   const navigate = useNavigate();
@@ -36,13 +37,19 @@ export default function NavBar({ onClick }) {
     localStorage.clear();
     sessionStorage.clear();
   };
+
   const handleLogout = async () => {
     const response = await Logout();
     if (response.status === 200) {
       localStorage.clear();
       navigate("/");
     }
-
+    if (window.twilioDevice) {
+      window.twilioDevice.disconnectAll();
+      window.twilioDevice.removeAllListeners();
+      window.twilioDevice.destroy();
+      window.twilioDevice = null;
+    }
     clearAllCache();
     deleteAllCookies();
   };
