@@ -1005,7 +1005,11 @@ export default function SettlementRange({
           {transactionKey && (
             <TransactionHistory
               transactionKey={transactionKey}
-              data={scores?.Scores?.transaction_history}
+              data={
+                scores?.Scores?.transaction_history?.[
+                  selectedMonth || topPayeesKeys[0]
+                ]
+              }
             />
           )}
         </Box>
