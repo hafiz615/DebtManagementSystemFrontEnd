@@ -140,8 +140,14 @@ function AddAnotherPerson({
 
   return (
     <>
-      <h3 style={{ marginBottom: "1rem", fontWeight: "bold" }}>
-        Add Person to Call
+      <h3
+        style={{
+          marginBottom: "1rem",
+          fontWeight: "bold",
+          fontFamily: "Nunito",
+        }}
+      >
+        Add Participant To Call
       </h3>
       <div
         style={{
@@ -205,17 +211,9 @@ function AddAnotherPerson({
         }}
       >
         <TextButton
-          buttonText="Cancel"
+          buttonText="Add Participant"
           height="2rem"
-          width="8rem"
-          onClick={handleClose}
-          backgroundColor={Colors.ORANGE_COLOR}
-          hoverColor={Colors.ORANGE_COLOR}
-        />
-        <TextButton
-          buttonText="Add"
-          height="2rem"
-          width="8rem"
+          width="12rem"
           onClick={createParticipant}
           loading={buttonLoading}
           backgroundColor={Colors.SKY_BLUE}
@@ -223,7 +221,7 @@ function AddAnotherPerson({
         />
       </div>
 
-      <div style={{ marginTop: "2rem" }}>
+      <div style={{ marginTop: "1.5rem" }}>
         <h4 style={{ marginBottom: "1rem", fontFamily: "Nunito" }}>
           Users in Call
         </h4>
