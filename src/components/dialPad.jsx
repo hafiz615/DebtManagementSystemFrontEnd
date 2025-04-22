@@ -27,6 +27,8 @@ import { Close, KeyboardVoice, MicOff } from "@mui/icons-material";
 import { FONT_SIZE_LARGE } from "../constants/appConstants";
 import { setDialState } from "../redux/action/action";
 import AddIcon from "@mui/icons-material/Add";
+import OpenInFullIcon from "@mui/icons-material/OpenInFull";
+import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 import AddAnotherPerson from "./caseDetail/addAnotherPerson";
 
 const DialPad = () => {
@@ -48,6 +50,11 @@ const DialPad = () => {
   const dispatch = useDispatch();
 
   const [openAddModal, setOpenAddModal] = useState(false);
+  const [isAddModalMinimized, setIsAddModalMinimized] = useState(false);
+
+  useEffect(() => {
+    setOpenAddModal(true);
+  }, []);
 
   useEffect(() => {
     setPhoneNumber(phoneNumberState);
@@ -138,6 +145,7 @@ const DialPad = () => {
       setStartTimer(false);
       setMuted(false);
       setOpenAddModal(false);
+      setIsAddModalMinimized(false);
     });
 
     newCall.on("cancel", () => {
@@ -151,6 +159,7 @@ const DialPad = () => {
       setStartTimer(false);
       setMuted(false);
       setOpenAddModal(false);
+      setIsAddModalMinimized(false);
     });
   };
 
@@ -314,20 +323,6 @@ const DialPad = () => {
                     <IconButton onClick={muteCall}>
                       {muted ? <MicOff /> : <KeyboardVoice />}
                     </IconButton>
-                    <Tooltip title="Add Another Person" placement="top-start">
-                      <IconButton
-                        sx={{ display: "flex", alignItems: "center" }}
-                        onClick={() => setOpenAddModal(true)}
-                      >
-                        <AddIcon
-                          sx={{
-                            color: Colors.DARK_GRAY,
-                            cursor: "pointer",
-                            fontSize: "18px",
-                          }}
-                        />
-                      </IconButton>
-                    </Tooltip>
                   </Box>
 
                   <Button
@@ -346,23 +341,65 @@ const DialPad = () => {
           </Box>
         </Fade>
 
-        {openAddModal && (
+        <Box
+          sx={{
+            position: "fixed",
+            bottom: "2%",
+            right: "calc(350px - 1%)",
+            width: isAddModalMinimized ? 250 : 350,
+            height: isAddModalMinimized ? 70 : "auto",
+            bgcolor: Colors.lIGHT_PURPLE,
+            borderRadius: "10px",
+            boxShadow: 24,
+            p: 2,
+            border: `2px solid ${Colors.SKY_BLUE}`,
+            textAlign: "center",
+            zIndex: 1300,
+            pointerEvents: "auto",
+            overflow: "hidden",
+          }}
+        >
           <Box
             sx={{
-              position: "fixed",
-              bottom: "2%",
-              right: "calc(350px - 1%)",
-              width: 350,
-              bgcolor: Colors.lIGHT_PURPLE,
-              borderRadius: "10px",
-              boxShadow: 24,
-              p: 2,
-              border: `2px solid ${Colors.SKY_BLUE}`,
-              textAlign: "center",
-              zIndex: 1300,
-              pointerEvents: "auto",
+              display: "flex",
+              justifyContent: isAddModalMinimized
+                ? "space-between"
+                : "flex-end",
+              alignItems: "center",
             }}
           >
+            {isAddModalMinimized ? (
+              <Typography sx={{ fontWeight: 600 }}>Add Participants</Typography>
+            ) : (
+              ""
+            )}
+
+            <Box>
+              <Tooltip
+                title={
+                  isAddModalMinimized ? "Maximize Screen" : "Minimize Screen"
+                }
+                placement="top-start"
+              >
+                <IconButton
+                  onClick={() => setIsAddModalMinimized((prev) => !prev)}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {isAddModalMinimized ? (
+                    <OpenInFullIcon />
+                  ) : (
+                    <CloseFullscreenIcon />
+                  )}
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Box>
+
+          {!isAddModalMinimized && (
             <AddAnotherPerson
               handleClose={() => setOpenAddModal(false)}
               conferenceRoomData={conferenceRoomData}
@@ -370,8 +407,8 @@ const DialPad = () => {
               setParticipants={setParticipants}
               getAllParticipant={getAllParticipant}
             />
-          </Box>
-        )}
+          )}
+        </Box>
       </>
     )
   );
