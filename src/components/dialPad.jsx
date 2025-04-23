@@ -24,12 +24,13 @@ import {
 import { Device } from "@twilio/voice-sdk";
 import { useDispatch, useSelector } from "react-redux";
 import { Close, KeyboardVoice, MicOff } from "@mui/icons-material";
-import { FONT_SIZE_LARGE } from "../constants/appConstants";
+import { FONT_SIZE_LARGE, baseUrl } from "../constants/appConstants";
 import { setDialState } from "../redux/action/action";
 import AddIcon from "@mui/icons-material/Add";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 import AddAnotherPerson from "./caseDetail/addAnotherPerson";
+import { io } from "socket.io-client";
 
 const DialPad = () => {
   const { showToast } = useToast();
@@ -86,24 +87,28 @@ const DialPad = () => {
   };
 
   const [conferenceRoomData, setConferenceRoomData] = useState();
+  const [conferenceSid, setConferenceSid] = useState("");
+
   const [participants, setParticipants] = useState([]);
+  const [socket, setSocket] = useState(null);
+  const BASE_URL = baseUrl();
+  const updatedBaseUrl = BASE_URL?.replace(/\/api$/, "");
+
   useEffect(() => {
     const generatedConferenceName = `conf-${uuidv4()}`;
     setConferenceRoomData(generatedConferenceName);
   }, []);
 
-  const getAllParticipant = async () => {
-    const params = {
-      conferenceRoom: conferenceRoomData,
-    };
+  const getAllParticipant = async (conferenceSid) => {
+    const params = { conferenceSid };
     const res = await GetAllParticipant(params);
     setParticipants(res?.data?.data?.participants);
   };
 
-  const createParticipant = async (phoneNumber) => {
+  const createParticipant = async (phoneNumber, conferenceSid) => {
     const params = {
       to: phoneNumber,
-      conferenceRoom: conferenceRoomData,
+      conferenceSid,
     };
     const res = await CreateParticipant(params);
     if (res?.status === 201) {
@@ -113,6 +118,33 @@ const DialPad = () => {
       showToast(errorMessage, "error");
     }
   };
+
+  useEffect(() => {
+    const socketInstance = io(updatedBaseUrl);
+    setSocket(socketInstance);
+
+    socketInstance.on("conferenceEvent", async (arg) => {
+      const conferenceSid = arg?.conferenceSid;
+      const eventType = arg?.event;
+      const sequenceNumber = arg?.sequenceNumber;
+
+      if (conferenceSid) {
+        setConferenceSid(conferenceSid);
+        await getAllParticipant(conferenceSid);
+        if (eventType === "participant-join" && sequenceNumber === "1") {
+          if (phoneNumber) {
+            await createParticipant(phoneNumber, conferenceSid);
+          } else {
+            showToast("Phone number is not set", "error");
+          }
+        }
+      }
+    });
+
+    return () => {
+      socketInstance.disconnect();
+    };
+  }, [phoneNumber]);
 
   const makeOutgoingCall = async () => {
     if (!device || !phoneNumber) {
@@ -129,7 +161,6 @@ const DialPad = () => {
     const newCall = await device.connect({ params });
     setCall(newCall);
     newCall.on("accept", () => {
-      createParticipant(phoneNumber);
       setIsCalling(false);
       setStartTimer(true);
     });
@@ -406,6 +437,7 @@ const DialPad = () => {
               participants={participants}
               setParticipants={setParticipants}
               getAllParticipant={getAllParticipant}
+              conferenceSid={conferenceSid}
             />
           )}
         </Box>

@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { Colors } from "../../config/default";
 import TextButton from "../button";
 import { useToast } from "../../toast/toastContext";
 import { Mic, MicOff, PauseCircle, PlayCircle } from "@mui/icons-material";
-import { Box, IconButton, Tooltip } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import {
   CreateParticipant,
   DeleteParticipants,
@@ -15,24 +14,11 @@ import {
 } from "../../services/services";
 import Prompt from "../prompt";
 
-function AddAnotherPerson({
-  handleClose,
-  conferenceRoomData,
-  participants,
-  getAllParticipant,
-}) {
+function AddAnotherPerson({ participants, getAllParticipant, conferenceSid }) {
   const { showToast } = useToast();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [buttonLoading, setButtonLoading] = useState(false);
   const [userNumbers, setUsersNumbers] = useState([]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      getAllParticipant();
-    }, 2500);
-
-    return () => clearInterval(interval);
-  }, []);
 
   const getAllUsersNumber = async () => {
     const res = await GetAllUsersNumbers();
@@ -45,13 +31,13 @@ function AddAnotherPerson({
   const createParticipant = async () => {
     const params = {
       to: phoneNumber,
-      conferenceRoom: conferenceRoomData,
+      conferenceSid: conferenceSid,
     };
     setButtonLoading(true);
     const res = await CreateParticipant(params);
     if (res?.status === 201) {
       showToast(res?.data?.message, "success");
-      getAllParticipant();
+      // getAllParticipant();
     } else {
       const errorMessage = res?.response?.data?.message;
       showToast(errorMessage, "error");
@@ -75,7 +61,7 @@ function AddAnotherPerson({
     const res = await UpdateParticipants(params);
     if (res?.status === 200) {
       showToast(res?.data?.message || "Participant updated", "success");
-      getAllParticipant();
+      // getAllParticipant();
     } else {
       const errorMessage =
         res?.response?.data?.message || "Failed to update participant";
@@ -107,7 +93,7 @@ function AddAnotherPerson({
         res?.data?.message || "Participant hold status updated",
         "success"
       );
-      getAllParticipant();
+      // getAllParticipant(conferenceSid);
     } else {
       const errorMessage =
         res?.response?.data?.message || "Failed to update hold status";
@@ -129,7 +115,7 @@ function AddAnotherPerson({
     const deletion = await DeleteParticipants(params);
     if (deletion?.status === 200) {
       showToast(deletion?.data?.message, "success");
-      getAllParticipant();
+      // getAllParticipant(conferenceSid);
     } else {
       showToast(
         deletion?.response?.data?.message || deletion?.data?.message,
@@ -218,6 +204,7 @@ function AddAnotherPerson({
           loading={buttonLoading}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
+          disabled={phoneNumber?.replace(/\D/g, "")?.length < 2}
         />
       </div>
 
