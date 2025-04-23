@@ -14,11 +14,12 @@ import {
 } from "../../services/services";
 import Prompt from "../prompt";
 
-function AddAnotherPerson({ participants, getAllParticipant, conferenceSid }) {
+function AddAnotherPerson({ participants, conferenceSid }) {
   const { showToast } = useToast();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [buttonLoading, setButtonLoading] = useState(false);
   const [userNumbers, setUsersNumbers] = useState([]);
+  console.log(participants, "paaa");
 
   const getAllUsersNumber = async () => {
     const res = await GetAllUsersNumbers();
@@ -236,7 +237,7 @@ function AddAnotherPerson({ participants, getAllParticipant, conferenceSid }) {
               </tr>
             </thead>
             <tbody>
-              {participants && participants.length !== 1 ? (
+              {participants && participants?.length > 1 ? (
                 participants
                   ?.filter(
                     (participant) =>

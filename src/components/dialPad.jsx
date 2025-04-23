@@ -247,6 +247,7 @@ const DialPad = () => {
               position: "fixed",
               bottom: "2%",
               right: "1%",
+              border: "5px solid red",
               width: 300,
               bgcolor: Colors.lIGHT_PURPLE,
               borderRadius: "10px",
