@@ -19,7 +19,6 @@ function AddAnotherPerson({ participants, conferenceSid }) {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [buttonLoading, setButtonLoading] = useState(false);
   const [userNumbers, setUsersNumbers] = useState([]);
-  console.log(participants, "paaa");
 
   const getAllUsersNumber = async () => {
     const res = await GetAllUsersNumbers();
@@ -38,7 +37,6 @@ function AddAnotherPerson({ participants, conferenceSid }) {
     const res = await CreateParticipant(params);
     if (res?.status === 201) {
       showToast(res?.data?.message, "success");
-      // getAllParticipant();
     } else {
       const errorMessage = res?.response?.data?.message;
       showToast(errorMessage, "error");
@@ -62,7 +60,6 @@ function AddAnotherPerson({ participants, conferenceSid }) {
     const res = await UpdateParticipants(params);
     if (res?.status === 200) {
       showToast(res?.data?.message || "Participant updated", "success");
-      // getAllParticipant();
     } else {
       const errorMessage =
         res?.response?.data?.message || "Failed to update participant";
@@ -94,7 +91,6 @@ function AddAnotherPerson({ participants, conferenceSid }) {
         res?.data?.message || "Participant hold status updated",
         "success"
       );
-      // getAllParticipant(conferenceSid);
     } else {
       const errorMessage =
         res?.response?.data?.message || "Failed to update hold status";
@@ -116,7 +112,6 @@ function AddAnotherPerson({ participants, conferenceSid }) {
     const deletion = await DeleteParticipants(params);
     if (deletion?.status === 200) {
       showToast(deletion?.data?.message, "success");
-      // getAllParticipant(conferenceSid);
     } else {
       showToast(
         deletion?.response?.data?.message || deletion?.data?.message,

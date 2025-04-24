@@ -86,18 +86,12 @@ const DialPad = () => {
     );
   };
 
-  const [conferenceRoomData, setConferenceRoomData] = useState();
   const [conferenceSid, setConferenceSid] = useState("");
-
   const [participants, setParticipants] = useState([]);
   const [socket, setSocket] = useState(null);
   const BASE_URL = baseUrl();
   const updatedBaseUrl = BASE_URL?.replace(/\/api$/, "");
-
-  useEffect(() => {
-    const generatedConferenceName = `conf-${uuidv4()}`;
-    setConferenceRoomData(generatedConferenceName);
-  }, []);
+  const participantCountRef = useRef(0);
 
   const getAllParticipant = async (conferenceSid) => {
     const params = { conferenceSid };
@@ -150,6 +144,7 @@ const DialPad = () => {
     if (!device || !phoneNumber) {
       return;
     }
+    const conferenceRoomData = `conf-${uuidv4()}`;
     const params = {
       To: `+${phoneNumber}`,
       record: true,
@@ -434,7 +429,7 @@ const DialPad = () => {
           {!isAddModalMinimized && (
             <AddAnotherPerson
               handleClose={() => setOpenAddModal(false)}
-              conferenceRoomData={conferenceRoomData}
+              // conferenceRoomData={conferenceRoomData}
               participants={participants}
               setParticipants={setParticipants}
               getAllParticipant={getAllParticipant}
