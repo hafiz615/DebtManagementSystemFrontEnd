@@ -14,12 +14,11 @@ import {
 } from "../../services/services";
 import Prompt from "../prompt";
 
-function AddAnotherPerson({ participants, conferenceSid }) {
+function AddAnotherPerson({ participants, conferenceSid, endCall }) {
   const { showToast } = useToast();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [buttonLoading, setButtonLoading] = useState(false);
   const [userNumbers, setUsersNumbers] = useState([]);
-  console.log(participants, "paaa");
 
   const getAllUsersNumber = async () => {
     const res = await GetAllUsersNumbers();
@@ -38,7 +37,6 @@ function AddAnotherPerson({ participants, conferenceSid }) {
     const res = await CreateParticipant(params);
     if (res?.status === 201) {
       showToast(res?.data?.message, "success");
-      // getAllParticipant();
     } else {
       const errorMessage = res?.response?.data?.message;
       showToast(errorMessage, "error");
@@ -62,7 +60,6 @@ function AddAnotherPerson({ participants, conferenceSid }) {
     const res = await UpdateParticipants(params);
     if (res?.status === 200) {
       showToast(res?.data?.message || "Participant updated", "success");
-      // getAllParticipant();
     } else {
       const errorMessage =
         res?.response?.data?.message || "Failed to update participant";
@@ -94,14 +91,13 @@ function AddAnotherPerson({ participants, conferenceSid }) {
         res?.data?.message || "Participant hold status updated",
         "success"
       );
-      // getAllParticipant(conferenceSid);
     } else {
       const errorMessage =
         res?.response?.data?.message || "Failed to update hold status";
       showToast(errorMessage, "error");
     }
   };
-  const deleteParticipant = async (index) => {
+  const deleteParticipant = async (index, length) => {
     const participant = participants[index];
     if (!participant?.callSid || !participant?.conferenceSid) {
       showToast("Missing participant data", "error");
@@ -116,7 +112,9 @@ function AddAnotherPerson({ participants, conferenceSid }) {
     const deletion = await DeleteParticipants(params);
     if (deletion?.status === 200) {
       showToast(deletion?.data?.message, "success");
-      // getAllParticipant(conferenceSid);
+      if (length === 2) {
+        endCall();
+      }
     } else {
       showToast(
         deletion?.response?.data?.message || deletion?.data?.message,
@@ -278,7 +276,7 @@ function AddAnotherPerson({ participants, conferenceSid }) {
                           text="Are you sure you want to remove participant?"
                           iconSize="1.3rem"
                           handleDeleteParticipant={() =>
-                            deleteParticipant(index)
+                            deleteParticipant(index, participants?.length)
                           }
                         />
                       </td>
