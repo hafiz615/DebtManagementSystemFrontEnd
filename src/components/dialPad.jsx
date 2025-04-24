@@ -91,7 +91,6 @@ const DialPad = () => {
   const [socket, setSocket] = useState(null);
   const BASE_URL = baseUrl();
   const updatedBaseUrl = BASE_URL?.replace(/\/api$/, "");
-  const participantCountRef = useRef(0);
 
   const getAllParticipant = async (conferenceSid) => {
     const params = { conferenceSid };
@@ -188,7 +187,6 @@ const DialPad = () => {
       setIsAddModalMinimized(false);
     });
   };
-
   const endCall = () => {
     if (call) {
       call.disconnect();
@@ -429,11 +427,11 @@ const DialPad = () => {
           {!isAddModalMinimized && (
             <AddAnotherPerson
               handleClose={() => setOpenAddModal(false)}
-              // conferenceRoomData={conferenceRoomData}
               participants={participants}
               setParticipants={setParticipants}
               getAllParticipant={getAllParticipant}
               conferenceSid={conferenceSid}
+              endCall={endCall}
             />
           )}
         </Box>

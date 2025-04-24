@@ -14,7 +14,7 @@ import {
 } from "../../services/services";
 import Prompt from "../prompt";
 
-function AddAnotherPerson({ participants, conferenceSid }) {
+function AddAnotherPerson({ participants, conferenceSid, endCall }) {
   const { showToast } = useToast();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [buttonLoading, setButtonLoading] = useState(false);
@@ -97,7 +97,7 @@ function AddAnotherPerson({ participants, conferenceSid }) {
       showToast(errorMessage, "error");
     }
   };
-  const deleteParticipant = async (index) => {
+  const deleteParticipant = async (index, length) => {
     const participant = participants[index];
     if (!participant?.callSid || !participant?.conferenceSid) {
       showToast("Missing participant data", "error");
@@ -112,6 +112,9 @@ function AddAnotherPerson({ participants, conferenceSid }) {
     const deletion = await DeleteParticipants(params);
     if (deletion?.status === 200) {
       showToast(deletion?.data?.message, "success");
+      if (length === 2) {
+        endCall();
+      }
     } else {
       showToast(
         deletion?.response?.data?.message || deletion?.data?.message,
@@ -273,7 +276,7 @@ function AddAnotherPerson({ participants, conferenceSid }) {
                           text="Are you sure you want to remove participant?"
                           iconSize="1.3rem"
                           handleDeleteParticipant={() =>
-                            deleteParticipant(index)
+                            deleteParticipant(index, participants?.length)
                           }
                         />
                       </td>
