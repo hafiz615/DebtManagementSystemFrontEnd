@@ -80,7 +80,7 @@ export default function PaymentFields({
               marginLeft: "1rem",
             }}
           >
-            Total Receivable
+            Payback Amount
           </Typography>
           <AmountTextField
             value={parseInt(thisCaseData?.totalDebt?.toFixed(2))}

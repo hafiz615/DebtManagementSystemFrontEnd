@@ -499,7 +499,7 @@ export default function BasicCard({
                   marginLeft: { xs: "0", sm: "2rem" },
                 }}
               >
-                Total Receivable
+                Payback Amount
                 <span style={{ marginLeft: "1rem" }}>
                   {formatDollarAmount(totalReceivable) || "-"}
                 </span>

@@ -145,7 +145,7 @@ export default function CreditorsDetailCards({
       <Grid
         item
         xs={12}
-        lg={3}
+        lg={3.8}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",
@@ -319,7 +319,7 @@ export default function CreditorsDetailCards({
       <Grid
         item
         xs={12}
-        lg={3}
+        lg={4}
         sx={{
           backgroundColor: Colors.WHITE,
           borderRadius: "10px",
@@ -348,7 +348,7 @@ export default function CreditorsDetailCards({
               caseData?.creditor?.businessInformation?.businessCategory || "--",
           },
           {
-            label: "Account Title",
+            label: "Name in Bank Account",
             value: caseData?.creditor?.accountTitle || "--",
           },
         ]?.map((item, index) => (
@@ -388,94 +388,7 @@ export default function CreditorsDetailCards({
           </div>
         ))}
       </Grid>
-      <Grid
-        item
-        xs={12}
-        lg={1.5}
-        sx={{
-          backgroundColor: Colors.WHITE,
-          borderRadius: "10px",
-          padding: "0px 10px",
-          height: "14rem",
-          marginBottom: ".5rem",
-        }}
-      >
-        <p
-          style={{
-            fontSize: "13px",
-            fontFamily: "Nunito",
-            fontWeight: "700",
-            color: Colors.BLACK,
-          }}
-        >
-          Historical Data
-        </p>
-        <p
-          style={{
-            fontSize: "13px",
-            fontFamily: "Nunito",
-            fontWeight: "700",
-            color: Colors.DARK_GRAY,
-          }}
-        >
-          Months to Pay off
-        </p>
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          <Typography
-            style={{
-              fontSize: "13px",
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              color: Colors.DIM_LIGHT_GRAY,
-            }}
-          >
-            Min
-          </Typography>
-          <Typography
-            style={{
-              fontSize: "11px",
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              color: Colors.DIM_LIGHT_GRAY,
-            }}
-          >
-            {caseData?.creditor?.historicalRange?.minimum || "-"}
-          </Typography>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          <Typography
-            style={{
-              fontSize: "13px",
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              color: Colors.DIM_LIGHT_GRAY,
-            }}
-          >
-            Max
-          </Typography>
-          <Typography
-            style={{
-              fontSize: "13px",
-              fontFamily: "Nunito",
-              fontWeight: "500",
-              color: Colors.DIM_LIGHT_GRAY,
-            }}
-          >
-            {caseData?.creditor?.historicalRange?.maximum || "-"}
-          </Typography>
-        </div>
-      </Grid>
       <Grid
         item
         xs={12}
