@@ -2251,10 +2251,10 @@ export const SyncLawsuit = async (id) => {
     return error;
   }
 };
-export const GetDebtorPayments = async (id) => {
+export const GetDebtorPayments = async (id, page) => {
   try {
     return await axios.get(
-      BASE_URL + `/v1/debtor/getDebtorPayments/${id}`,
+      BASE_URL + `/v1/debtor/getDebtorPayments/${id}?page=${page}&limit=5`,
       setHeaders()
     );
   } catch (error) {

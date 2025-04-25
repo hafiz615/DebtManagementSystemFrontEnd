@@ -14,6 +14,8 @@ import {
   Switch,
 } from "@mui/material";
 import {
+  ArrowBackIosNew,
+  ArrowForwardIos,
   Close,
   DateRangeOutlined,
   Edit,
@@ -25,7 +27,11 @@ import {
   PauseDebtorPayments,
 } from "../services/services";
 import { formatDateString } from "../common";
-import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../constants/appConstants";
+import {
+  FONT_SIZE_LARGE,
+  FONT_SIZE_SMALL,
+  FONT_SIZE_XL,
+} from "../constants/appConstants";
 import ScrollbarStyles from "./customScroll";
 import { useToast } from "../toast/toastContext";
 
@@ -54,6 +60,8 @@ export default function DebtorPayments({
   const [amount, setAmount] = useState();
   const [total, setTotal] = useState();
   const [date, setDate] = useState();
+  const [totalPage, setTotalPage] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
   const [paymentId, setPaymentId] = useState();
   const [isChecked, setIsChecked] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -62,6 +70,7 @@ export default function DebtorPayments({
   const [openDateModal, setOpenDateModal] = useState(false);
   const [openNegotiateModal, setOpenNegotiateModal] = useState(false);
   const [error, setError] = useState(false);
+  const totalPages = Math.ceil(totalPage / 5);
 
   const { showToast } = useToast();
 
@@ -85,9 +94,10 @@ export default function DebtorPayments({
     if (!noLoading) {
       setLoading(true);
     }
-    const res = await GetDebtorPayments(caseData?.debtor?._id);
+    const res = await GetDebtorPayments(caseData?.debtor?._id, currentPage);
     if (res?.status === 200) {
-      setData(res?.data?.data);
+      setData(res?.data?.data?.payments);
+      setTotalPage(res?.data?.data?.totalCount);
     }
     setLoading(false);
   };
@@ -164,6 +174,10 @@ export default function DebtorPayments({
   useEffect(() => {
     getDebtorPayments();
   }, []);
+
+  useEffect(() => {
+    getDebtorPayments(true);
+  }, [currentPage]);
 
   return (
     <div>
@@ -601,6 +615,38 @@ export default function DebtorPayments({
               </div>
             ))}
           </Grid>
+          <Grid>
+            <Grid
+              container
+              item
+              sx={{ justifyContent: "flex-end", mb: "10px" }}
+            >
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <IconButton
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  <ArrowBackIosNew
+                    sx={{ fontSize: FONT_SIZE_XL, color: Colors.BLACK }}
+                  />
+                </IconButton>
+                <Typography
+                  sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
+                >
+                  {`${currentPage} of ${totalPages}`}
+                </Typography>
+                <IconButton
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  <ArrowForwardIos
+                    sx={{ fontSize: FONT_SIZE_XL, color: Colors.BLACK }}
+                  />
+                </IconButton>
+              </div>
+            </Grid>
+          </Grid>
+
           <Grid container item sx={{ justifyContent: "flex-end" }}>
             <TextButton
               buttonText="Re Negotiate"
