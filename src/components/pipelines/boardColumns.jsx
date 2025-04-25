@@ -38,7 +38,7 @@ const BoardColumns = ({
       return true;
     }
     return users.some((user) =>
-      caseItem?.caseOwner.toLowerCase()?.includes(user?.toLowerCase())
+      caseItem?.negotiator.toLowerCase()?.includes(user?.toLowerCase())
     );
   });
 

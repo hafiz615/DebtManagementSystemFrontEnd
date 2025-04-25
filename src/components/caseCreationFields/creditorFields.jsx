@@ -251,7 +251,7 @@ export default function CreditorFields({
                       color: Colors.DARK_GRAY,
                     }}
                   >
-                    Account Title*
+                    Name in Bank Account*
                   </Typography>
                   <Autocomplete
                     sx={{
@@ -309,7 +309,7 @@ export default function CreditorFields({
                           )
                         }
                         {...params}
-                        placeholder="Account Title"
+                        placeholder="Name in Bank Account"
                         variant="standard"
                         sx={{
                           paddingLeft: "2%",
@@ -346,8 +346,8 @@ export default function CreditorFields({
               ) : (
                 <PaymentsTextFields
                   type="Account Title"
-                  label="Account Title*"
-                  placeHolderValue="Enter Account Title"
+                  label="Name in Bank Account*"
+                  placeHolderValue="Enter Name in Bank Account"
                   width="100%"
                   value={thisCaseData?.creditor?.accountTitle}
                   onChangeFunction={(e) =>
@@ -537,94 +537,6 @@ export default function CreditorFields({
                 : "1px solid transparent"
             }
           />
-        </Grid>
-
-        <Grid item xs={12} md={7} lg={8}>
-          <Typography sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
-            Months to Pay off
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <Typography
-                sx={{
-                  fontFamily: "Nunito",
-                  fontWeight: "500",
-                  color: Colors.DARK_GRAY,
-                  marginLeft: "1rem",
-                }}
-              >
-                Minimum
-              </Typography>
-              <input
-                style={{
-                  border:
-                    hasError("historicalRange.minimum") && showErrors
-                      ? "2px solid red"
-                      : "none",
-                  outline: "none",
-                  backgroundColor: Colors.BG_LIGHT_GRAY,
-                  color: Colors.DIM_LIGHT_GRAY,
-                  height: "2.5rem",
-                  width: "100%",
-                  paddingLeft: "1rem",
-                  borderRadius: "5px",
-                  display: "flex",
-                  fontFamily: "Nunito",
-                  justifyContent: "center",
-                }}
-                placeholder="Minimum"
-                value={thisCaseData?.creditor?.historicalRange?.minimum || ""}
-                onChange={(e) =>
-                  handleCaseDataChange(
-                    caseIndex,
-                    "creditor.historicalRange.minimum",
-                    parseFloat(e.target.value)
-                  )
-                }
-                onKeyDown={handleNumberInput}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <Typography
-                sx={{
-                  fontFamily: "Nunito",
-                  fontWeight: "500",
-                  color: Colors.DARK_GRAY,
-                  marginLeft: "1rem",
-                }}
-              >
-                Maximum
-              </Typography>
-              <input
-                style={{
-                  border:
-                    hasError("historicalRange.maximum") && showErrors
-                      ? "2px solid red"
-                      : "none",
-                  outline: "none",
-                  backgroundColor: Colors.BG_LIGHT_GRAY,
-                  color: Colors.DIM_LIGHT_GRAY,
-                  height: "2.5rem",
-                  width: "100%",
-                  paddingLeft: "1rem",
-                  borderRadius: "5px",
-                  display: "flex",
-                  fontFamily: "Nunito",
-                  justifyContent: "center",
-                }}
-                placeholder="Maximum"
-                value={thisCaseData?.creditor?.historicalRange?.maximum || ""}
-                onChange={(e) =>
-                  handleCaseDataChange(
-                    caseIndex,
-                    "creditor.historicalRange.maximum",
-                    parseFloat(e.target.value)
-                  )
-                }
-                onKeyDown={handleNumberInput}
-              />
-            </Grid>
-          </Grid>
         </Grid>
       </Grid>
       <Grid container style={{ padding: "1rem" }}>

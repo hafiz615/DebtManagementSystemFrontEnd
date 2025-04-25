@@ -2272,11 +2272,20 @@ export const PauseDebtorPayments = async (id, payload) => {
     return error;
   }
 };
-
 export const GetAllUsersNumbers = async () => {
   try {
     return await axios.get(
       BASE_URL + "/v1/call/getAllUserNumbers",
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const CancelAllDebtorPaymentPlan = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/payment/cancelAllDebtorPaymentPlan/${id}`,
       setHeaders()
     );
   } catch (error) {

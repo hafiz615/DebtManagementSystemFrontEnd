@@ -19,11 +19,31 @@ import {
   Edit,
   KeyboardDoubleArrowDown,
 } from "@mui/icons-material";
-import { GetDebtorPayments, PauseDebtorPayments } from "../services/services";
+import {
+  CancelAllDebtorPaymentPlan,
+  GetDebtorPayments,
+  PauseDebtorPayments,
+} from "../services/services";
 import { formatDateString } from "../common";
 import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../constants/appConstants";
 import ScrollbarStyles from "./customScroll";
 import { useToast } from "../toast/toastContext";
+
+const labelStyles = {
+  fontFamily: "Nunito",
+  fontSize: FONT_SIZE_LARGE,
+  fontWeight: 600,
+};
+
+const labels = [
+  { text: "Amount", width: "15%" },
+  { text: "Date", width: "15%" },
+  { text: "Time Period", width: "15%" },
+  { text: "Service Fee", width: "15%" },
+  { text: "Legal Fee", width: "15%" },
+  { text: "Commission", width: "15%" },
+  { text: "Actions" },
+];
 
 export default function DebtorPayments({
   handleClose,
@@ -32,6 +52,7 @@ export default function DebtorPayments({
 }) {
   const [data, setData] = useState();
   const [amount, setAmount] = useState();
+  const [total, setTotal] = useState();
   const [date, setDate] = useState();
   const [paymentId, setPaymentId] = useState();
   const [isChecked, setIsChecked] = useState(false);
@@ -39,11 +60,13 @@ export default function DebtorPayments({
   const [amountLoading, setAmountLoading] = useState(false);
   const [openAmountModal, setOpenAmountModal] = useState(false);
   const [openDateModal, setOpenDateModal] = useState(false);
+  const [openNegotiateModal, setOpenNegotiateModal] = useState(false);
   const [error, setError] = useState(false);
 
   const { showToast } = useToast();
 
   const handleAmountModalOpen = (item) => {
+    setTotal(item?.total);
     setOpenAmountModal(true);
     setAmount(item?.amount);
     setPaymentId(item?._id);
@@ -72,6 +95,8 @@ export default function DebtorPayments({
   const moveToLast = async (id) => {
     const payload = {
       paymentId: id,
+      endDate: null,
+      amount: null,
     };
     const res = await PauseDebtorPayments(caseData?.debtor?._id, payload);
     if (res?.status === 200) {
@@ -88,6 +113,7 @@ export default function DebtorPayments({
     const payload = {
       paymentId: paymentId,
       amount: amount,
+      endDate: null,
     };
     const res = await PauseDebtorPayments(caseData?.debtor?._id, payload);
     if (res?.status === 200) {
@@ -105,6 +131,8 @@ export default function DebtorPayments({
     setAmountLoading(true);
     const payload = {
       endDate: date,
+      amount: null,
+      paymentId: null,
     };
     if (!isChecked) {
       payload.paymentId = paymentId;
@@ -119,6 +147,18 @@ export default function DebtorPayments({
       showToast(errorMessage, "error");
     }
     setAmountLoading(false);
+  };
+
+  const handleReNegotiate = async () => {
+    const res = await CancelAllDebtorPaymentPlan(caseData?.debtor?._id);
+    if (res?.status === 200) {
+      showToast(res?.data?.message, "success");
+      handleClose();
+      GetCaseDetails(caseData?._id);
+    } else {
+      const errorMessage = res?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
   };
 
   useEffect(() => {
@@ -141,6 +181,15 @@ export default function DebtorPayments({
           Update Amount
         </DialogTitle>
         <DialogContent>
+          <Typography
+            sx={{
+              fontFamily: "Nunito",
+              fontSize: FONT_SIZE_LARGE,
+              color: Colors.SKY_BLUE,
+            }}
+          >
+            Total: {total ? `$${total}` : "$0"}
+          </Typography>
           <input
             min={0}
             style={{
@@ -159,6 +208,19 @@ export default function DebtorPayments({
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
           />
+
+          {total > amount && (
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontSize: FONT_SIZE_SMALL,
+                mt: "10px",
+                color: Colors.ORANGE_COLOR,
+              }}
+            >
+              Amount cannot be less than total.
+            </Typography>
+          )}
         </DialogContent>
         <DialogActions>
           <div
@@ -182,6 +244,7 @@ export default function DebtorPayments({
               height="2rem"
               width="8rem"
               onClick={handleAmountUpdate}
+              disabled={total > amount}
               loading={amountLoading}
               backgroundColor={Colors.SKY_BLUE}
               hoverColor={Colors.SKY_BLUE}
@@ -295,18 +358,69 @@ export default function DebtorPayments({
           </div>
         </DialogActions>
       </Dialog>
+      <Dialog
+        open={openNegotiateModal}
+        PaperProps={{
+          sx: {
+            borderRadius: "16px",
+            padding: "5px",
+            width: 400,
+          },
+        }}
+      >
+        <DialogTitle sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
+          Renegotiate
+        </DialogTitle>
+        <DialogContent>
+          <Typography
+            sx={{
+              fontFamily: "Nunito",
+              fontSize: FONT_SIZE_LARGE,
+            }}
+          >
+            Are you sure you want to renegotiate?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <div
+            style={{
+              marginTop: "1rem",
+              gap: "1em",
+              display: "flex",
+              justifyContent: "right",
+            }}
+          >
+            <TextButton
+              buttonText="Cancel"
+              height="2rem"
+              width="8rem"
+              onClick={() => setOpenNegotiateModal(false)}
+              backgroundColor={Colors.ORANGE_COLOR}
+              hoverColor={Colors.ORANGE_COLOR}
+            />
+            <TextButton
+              buttonText="Confirm"
+              height="2rem"
+              width="8rem"
+              onClick={handleReNegotiate}
+              backgroundColor={Colors.SKY_BLUE}
+              hoverColor={Colors.SKY_BLUE}
+            />
+          </div>
+        </DialogActions>
+      </Dialog>
       {loading ? (
         <Grid
           container
           sx={{
             justifyContent: "center",
             alignItems: "center",
-            height: "35vh",
+            height: "37vh",
           }}
         >
           <CircularProgress sx={{ color: Colors.SKY_BLUE }} />
         </Grid>
-      ) : data?.payments?.length === 0 ? (
+      ) : data?.length === 0 ? (
         <>
           <div
             style={{
@@ -326,7 +440,7 @@ export default function DebtorPayments({
             sx={{
               justifyContent: "center",
               alignItems: "center",
-              height: "32vh",
+              height: "35vh",
             }}
           >
             <Typography
@@ -360,59 +474,28 @@ export default function DebtorPayments({
               width: "100%",
               height: "2.5rem",
               alignItems: "center",
-              marginBottom: "10px",
-              padding: "0px 10px",
+              marginBottom: 10,
+              padding: "0 10px",
             }}
           >
-            <Typography
-              sx={{
-                fontFamily: "Nunito",
-                fontSize: FONT_SIZE_LARGE,
-                width: "30%",
-                fontWeight: "600",
-              }}
-            >
-              Amount
-            </Typography>
-            <Typography
-              sx={{
-                fontFamily: "Nunito",
-                fontSize: FONT_SIZE_LARGE,
-                width: "25%",
-                fontWeight: "600",
-              }}
-            >
-              Date
-            </Typography>
-            <Typography
-              sx={{
-                fontFamily: "Nunito",
-                fontSize: FONT_SIZE_LARGE,
-                width: "32%",
-                fontWeight: "600",
-              }}
-            >
-              Time Period
-            </Typography>
-            <Typography
-              sx={{
-                fontFamily: "Nunito",
-                fontSize: FONT_SIZE_LARGE,
-                fontWeight: "600",
-              }}
-            >
-              Actions
-            </Typography>
+            {labels.map(({ text, width }) => (
+              <Typography
+                key={text}
+                sx={{ ...labelStyles, ...(width && { width }) }}
+              >
+                {text}
+              </Typography>
+            ))}
           </div>
           <Grid
             sx={{
-              height: "30vh",
+              height: "35vh",
               overflowY: "auto",
               ...ScrollbarStyles,
               p: "0px 10px",
             }}
           >
-            {data?.payments?.map((item, index) => (
+            {data?.map((item, index) => (
               <div
                 style={{
                   display: "flex",
@@ -430,6 +513,7 @@ export default function DebtorPayments({
                   sx={{
                     fontFamily: "Nunito",
                     fontSize: FONT_SIZE_LARGE,
+                    width: "10%",
                   }}
                 >
                   ${item?.amount?.toFixed(2)}
@@ -438,6 +522,7 @@ export default function DebtorPayments({
                   sx={{
                     fontFamily: "Nunito",
                     fontSize: FONT_SIZE_LARGE,
+                    width: "13%",
                   }}
                 >
                   {formatDateString(item?.dueDate)}
@@ -446,19 +531,51 @@ export default function DebtorPayments({
                   sx={{
                     fontFamily: "Nunito",
                     fontSize: FONT_SIZE_LARGE,
+                    width: "12%",
                   }}
                 >
                   {item?.timePeriod}
                 </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontSize: FONT_SIZE_LARGE,
+                    width: "12%",
+                  }}
+                >
+                  ${item?.serviceFee?.toFixed(2)}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontSize: FONT_SIZE_LARGE,
+                    width: "11%",
+                  }}
+                >
+                  ${item?.legalFee?.toFixed(2)}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontSize: FONT_SIZE_LARGE,
+                    width: "10%",
+                  }}
+                >
+                  ${item?.commissionFee?.toFixed(2)}
+                </Typography>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <Tooltip title="Update Amount" placement="top">
                     <IconButton onClick={() => handleAmountModalOpen(item)}>
-                      <Edit sx={{ fontSize: "20px" }} />
+                      <Edit
+                        sx={{ color: Colors.DARK_GRAY, fontSize: "20px" }}
+                      />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Update Date" placement="top">
                     <IconButton onClick={() => handleDateModalOpen(item)}>
-                      <DateRangeOutlined sx={{ fontSize: "20px" }} />
+                      <DateRangeOutlined
+                        sx={{ color: Colors.SKY_BLUE, fontSize: "20px" }}
+                      />
                     </IconButton>
                   </Tooltip>
                   <Tooltip
@@ -466,15 +583,33 @@ export default function DebtorPayments({
                     placement="top"
                   >
                     <IconButton
-                      disabled={index === data?.payments?.length - 1}
+                      disabled={index === data?.length - 1}
                       onClick={() => moveToLast(item?._id)}
                     >
-                      <KeyboardDoubleArrowDown sx={{ fontSize: "20px" }} />
+                      <KeyboardDoubleArrowDown
+                        sx={{
+                          color:
+                            index === data?.length - 1
+                              ? Colors.DIM_LIGHT_GRAY
+                              : Colors.ORANGE_COLOR,
+                          fontSize: "20px",
+                        }}
+                      />
                     </IconButton>
                   </Tooltip>
                 </div>
               </div>
             ))}
+          </Grid>
+          <Grid container item sx={{ justifyContent: "flex-end" }}>
+            <TextButton
+              buttonText="Re Negotiate"
+              height="2rem"
+              width="8rem"
+              onClick={() => setOpenNegotiateModal(true)}
+              backgroundColor={Colors.ORANGE_COLOR}
+              hoverColor={Colors.ORANGE_COLOR}
+            />
           </Grid>
         </>
       )}
