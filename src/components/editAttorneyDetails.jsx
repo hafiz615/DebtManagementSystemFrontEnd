@@ -16,10 +16,8 @@ export default function EditAttorneyDetails({
   const [formData, setFormData] = useState({
     name: data?.name || "",
     email: data?.email || "",
-    SSN: data?.SSN || "",
     phone: data?.phone || "",
     city: data?.city || "",
-    address: data?.address || "",
   });
   const { showToast } = useToast();
 

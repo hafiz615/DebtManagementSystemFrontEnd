@@ -1842,7 +1842,7 @@ export default function SettlementRange({
                         "Monthly Budget":
                           "Your profit before making any debt payments.",
                         "Purchased Percentage":
-                          "The percentage of the loan amount that has been repaid.",
+                          "The percentage of the Contract Amount that has been repaid.",
                         "Current Payment Amount":
                           "The initial amount borrowed before any repayments.",
                         "Payment Frequency": "Payment Frequency.",

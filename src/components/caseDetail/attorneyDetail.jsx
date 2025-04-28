@@ -30,7 +30,6 @@ export default function AttorneyDetail({
   const attorneyFields = [
     { label: "Name", value: attorneyData?.name || "-" },
     { label: "Email", value: attorneyData?.email || "-" },
-    { label: "SSN", value: attorneyData?.SSN || "-" },
     {
       label: "Phone",
       value: attorneyData?.phone ? `+1${attorneyData?.phone}` : "-",
@@ -82,10 +81,6 @@ export default function AttorneyDetail({
     {
       label: "Phone",
       value: lawfirmData?.phone ? `+1${lawfirmData?.phone}` : "-",
-    },
-    {
-      label: "Address",
-      value: lawfirmData?.address || "-",
     },
 
     {
@@ -181,7 +176,7 @@ export default function AttorneyDetail({
                     display: "flex",
                     justifyContent: "space-between",
                     marginBottom: "8px",
-                    width: "48%",
+                    width: "100%",
                   }}
                 >
                   <Typography
@@ -212,39 +207,6 @@ export default function AttorneyDetail({
                   </Tooltip>
                 </div>
               ))}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginBottom: "8px",
-                  width: "100%",
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontSize: "13px",
-                    fontFamily: "Nunito",
-                    fontWeight: "700",
-                    color: Colors.DARK_GRAY,
-                  }}
-                >
-                  Address
-                </Typography>
-                <Tooltip placement="top" title={attorneyData?.address || "-"}>
-                  <Typography
-                    sx={{
-                      fontSize: "13px",
-                      color: Colors.DIM_LIGHT_GRAY,
-                      fontFamily: "Nunito",
-                      fontWeight: "500",
-                      textAlign: "right",
-                      wordBreak: "break-word",
-                    }}
-                  >
-                    {attorneyData?.address || "-"}
-                  </Typography>
-                </Tooltip>
-              </div>
             </div>
           </>
         ) : (
@@ -298,7 +260,7 @@ export default function AttorneyDetail({
               gap: "10px",
             }}
           >
-            Lawsuit
+            Client's Lawsuit
             {showSync && (
               <Tooltip
                 title="your existing data could be override by sync call"
