@@ -57,6 +57,7 @@ export default function DebtorPayments({
   handleClose,
   caseData,
   GetCaseDetails,
+  GetCasePaymentDetails,
 }) {
   const [data, setData] = useState();
   const [amount, setAmount] = useState();
@@ -129,6 +130,7 @@ export default function DebtorPayments({
     if (res?.status === 200) {
       getDebtorPayments(true);
       showToast(res?.data?.message, "success");
+      setOpenMoveModal(false);
     } else {
       const errorMessage = res?.response?.data?.message;
       showToast(errorMessage, "error");
@@ -183,6 +185,7 @@ export default function DebtorPayments({
       showToast(res?.data?.message, "success");
       handleClose();
       GetCaseDetails(caseData?._id);
+      GetCasePaymentDetails(caseData?._id);
     } else {
       const errorMessage = res?.response?.data?.message;
       showToast(errorMessage, "error");
