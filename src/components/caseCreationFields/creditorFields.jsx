@@ -556,7 +556,7 @@ export default function CreditorFields({
                 color: Colors.DARK_GRAY,
               }}
             >
-              Loan Amount*
+              Contract Amount*
             </Typography>
             <AmountTextField
               width={smallScreen ? "100%" : "97%"}

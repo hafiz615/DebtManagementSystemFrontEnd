@@ -101,7 +101,7 @@ export default function PaymentFields({
             }
           />
         </Grid>
-        <Grid item xs={12} md={4} lg={3}>
+        {/* <Grid item xs={12} md={4} lg={3}>
           <Tooltip
             title="Current balance will be calculated based on total receivable - cuurent amount"
             placement="top"
@@ -135,7 +135,7 @@ export default function PaymentFields({
               }
             />
           </Tooltip>
-        </Grid>
+        </Grid> */}
         <Grid item xs={12} md={4} lg={3}>
           <Tooltip
             title="Current balance will be calculated based on total receivable - paid amount"

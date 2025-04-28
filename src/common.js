@@ -579,7 +579,7 @@ const generatePDF = (data, lumpSumpData, checkboxState) => {
 
     const creditorsSummary = [
       [
-        "Total Loan Amount",
+        "Total Contract Amount",
         `$${creditorsContractDetailsSum?.loanAmount?.toLocaleString() || 0}`,
       ],
       [

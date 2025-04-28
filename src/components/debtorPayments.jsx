@@ -19,6 +19,7 @@ import {
   Close,
   DateRangeOutlined,
   Edit,
+  Info,
   KeyboardDoubleArrowDown,
 } from "@mui/icons-material";
 import {
@@ -42,13 +43,14 @@ const labelStyles = {
 };
 
 const labels = [
-  { text: "Amount", width: "15%" },
-  { text: "Date", width: "15%" },
-  { text: "Time Period", width: "15%" },
-  { text: "Service Fee", width: "15%" },
-  { text: "Legal Fee", width: "15%" },
-  { text: "Commission", width: "15%" },
-  { text: "Actions" },
+  { text: "Amount", width: "12.5%" },
+  { text: "Date", width: "12.5%" },
+  { text: "Time Period", width: "12.5%" },
+  { text: "Service Fee", width: "12.5%" },
+  { text: "Legal Fee", width: "12.5%" },
+  { text: "Commission", width: "12.5%" },
+  { text: "Creditor Payments", width: "15%" },
+  { text: "Actions", width: "9%" },
 ];
 
 export default function DebtorPayments({
@@ -66,9 +68,13 @@ export default function DebtorPayments({
   const [isChecked, setIsChecked] = useState(false);
   const [loading, setLoading] = useState(false);
   const [amountLoading, setAmountLoading] = useState(false);
+  const [moveLoading, setMoveLoading] = useState(false);
   const [openAmountModal, setOpenAmountModal] = useState(false);
   const [openDateModal, setOpenDateModal] = useState(false);
+  const [openMoveModal, setOpenMoveModal] = useState(false);
   const [openNegotiateModal, setOpenNegotiateModal] = useState(false);
+  const [openCreditor, setOpenCreditor] = useState(false);
+  const [creditorData, setCreditorData] = useState(false);
   const [error, setError] = useState(false);
   const totalPages = Math.ceil(totalPage / 5);
 
@@ -87,6 +93,16 @@ export default function DebtorPayments({
     setPaymentId(item?._id);
   };
 
+  const handleMoveModalOpen = (item) => {
+    setOpenMoveModal(true);
+    setPaymentId(item?._id);
+  };
+
+  const handleCreditorModalOpen = (item) => {
+    setCreditorData(item);
+    setOpenCreditor(true);
+  };
+
   const handleAmountModalClose = () => setOpenAmountModal(false);
   const handleDateModalClose = () => setOpenDateModal(false);
 
@@ -102,9 +118,10 @@ export default function DebtorPayments({
     setLoading(false);
   };
 
-  const moveToLast = async (id) => {
+  const moveToLast = async () => {
+    setMoveLoading(true);
     const payload = {
-      paymentId: id,
+      paymentId: paymentId,
       endDate: null,
       amount: null,
     };
@@ -116,6 +133,7 @@ export default function DebtorPayments({
       const errorMessage = res?.response?.data?.message;
       showToast(errorMessage, "error");
     }
+    setMoveLoading(false);
   };
 
   const handleAmountUpdate = async () => {
@@ -423,6 +441,144 @@ export default function DebtorPayments({
           </div>
         </DialogActions>
       </Dialog>
+      <Dialog
+        open={openMoveModal}
+        PaperProps={{
+          sx: {
+            borderRadius: "16px",
+            padding: "5px",
+            width: 400,
+          },
+        }}
+      >
+        <DialogTitle sx={{ fontFamily: "Nunito", fontWeight: "600" }}>
+          Move Payment To The Last
+        </DialogTitle>
+        <DialogContent>
+          <Typography
+            sx={{
+              fontFamily: "Nunito",
+              fontSize: FONT_SIZE_LARGE,
+            }}
+          >
+            Are you sure you want to move this payment to the last?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <div
+            style={{
+              marginTop: "1rem",
+              gap: "1em",
+              display: "flex",
+              justifyContent: "right",
+            }}
+          >
+            <TextButton
+              buttonText="Cancel"
+              height="2rem"
+              width="8rem"
+              onClick={() => setOpenMoveModal(false)}
+              backgroundColor={Colors.ORANGE_COLOR}
+              hoverColor={Colors.ORANGE_COLOR}
+            />
+            <TextButton
+              buttonText="Confirm"
+              height="2rem"
+              width="8rem"
+              onClick={moveToLast}
+              loading={moveLoading}
+              backgroundColor={Colors.SKY_BLUE}
+              hoverColor={Colors.SKY_BLUE}
+            />
+          </div>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={openCreditor}
+        PaperProps={{
+          sx: {
+            borderRadius: "16px",
+            padding: "5px",
+            width: 400,
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Typography
+            sx={{
+              fontFamily: "Nunito",
+              fontSize: "1.25rem",
+              fontWeight: "600",
+            }}
+          >
+            Creditor Payments
+          </Typography>
+          <IconButton onClick={() => setOpenCreditor(false)}>
+            <Close />
+          </IconButton>
+        </DialogTitle>
+
+        <DialogContent>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontSize: FONT_SIZE_LARGE,
+                fontWeight: "600",
+              }}
+            >
+              Creditor Name
+            </Typography>
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontSize: FONT_SIZE_LARGE,
+                fontWeight: "600",
+              }}
+            >
+              Amount
+            </Typography>
+          </div>
+          {creditorData?.creditorPayments?.map((item) => (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontSize: FONT_SIZE_LARGE,
+                }}
+              >
+                {item?.creditorName}
+              </Typography>
+              <Typography
+                sx={{
+                  fontFamily: "Nunito",
+                  fontSize: FONT_SIZE_LARGE,
+                }}
+              >
+                ${item?.amount?.toFixed(2)}
+              </Typography>
+            </div>
+          ))}
+        </DialogContent>
+      </Dialog>
       {loading ? (
         <Grid
           container
@@ -488,8 +644,9 @@ export default function DebtorPayments({
               width: "100%",
               height: "2.5rem",
               alignItems: "center",
+              justifyContent: "space-between",
               marginBottom: 10,
-              padding: "0 10px",
+              padding: "0 1rem",
             }}
           >
             {labels.map(({ text, width }) => (
@@ -527,7 +684,7 @@ export default function DebtorPayments({
                   sx={{
                     fontFamily: "Nunito",
                     fontSize: FONT_SIZE_LARGE,
-                    width: "10%",
+                    width: "14%",
                   }}
                 >
                   ${item?.amount?.toFixed(2)}
@@ -536,7 +693,7 @@ export default function DebtorPayments({
                   sx={{
                     fontFamily: "Nunito",
                     fontSize: FONT_SIZE_LARGE,
-                    width: "13%",
+                    width: "14%",
                   }}
                 >
                   {formatDateString(item?.dueDate)}
@@ -545,7 +702,7 @@ export default function DebtorPayments({
                   sx={{
                     fontFamily: "Nunito",
                     fontSize: FONT_SIZE_LARGE,
-                    width: "12%",
+                    width: "14%",
                   }}
                 >
                   {item?.timePeriod}
@@ -554,7 +711,8 @@ export default function DebtorPayments({
                   sx={{
                     fontFamily: "Nunito",
                     fontSize: FONT_SIZE_LARGE,
-                    width: "12%",
+                    width: "14%",
+                    color: "#888888",
                   }}
                 >
                   ${item?.serviceFee?.toFixed(2)}
@@ -563,7 +721,8 @@ export default function DebtorPayments({
                   sx={{
                     fontFamily: "Nunito",
                     fontSize: FONT_SIZE_LARGE,
-                    width: "11%",
+                    width: "14%",
+                    color: "#888888",
                   }}
                 >
                   ${item?.legalFee?.toFixed(2)}
@@ -572,10 +731,27 @@ export default function DebtorPayments({
                   sx={{
                     fontFamily: "Nunito",
                     fontSize: FONT_SIZE_LARGE,
-                    width: "10%",
+                    width: "14%",
+                    color: "#888888",
                   }}
                 >
                   ${item?.commissionFee?.toFixed(2)}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: "Nunito",
+                    fontSize: FONT_SIZE_LARGE,
+                    display: "flex",
+                    alignItems: "center",
+                    width: "14%",
+                  }}
+                >
+                  ${item?.creditorsAmount?.toFixed(2)}
+                  <Tooltip title="Click for more details" placement="top">
+                    <IconButton onClick={() => handleCreditorModalOpen(item)}>
+                      <Info sx={{ color: Colors.SKY_BLUE }} />
+                    </IconButton>
+                  </Tooltip>
                 </Typography>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <Tooltip title="Update Amount" placement="top">
@@ -596,16 +772,10 @@ export default function DebtorPayments({
                     title="Move this payment to the last"
                     placement="top"
                   >
-                    <IconButton
-                      disabled={index === data?.length - 1}
-                      onClick={() => moveToLast(item?._id)}
-                    >
+                    <IconButton onClick={() => handleMoveModalOpen(item)}>
                       <KeyboardDoubleArrowDown
                         sx={{
-                          color:
-                            index === data?.length - 1
-                              ? Colors.DIM_LIGHT_GRAY
-                              : Colors.ORANGE_COLOR,
+                          color: Colors.ORANGE_COLOR,
                           fontSize: "20px",
                         }}
                       />
