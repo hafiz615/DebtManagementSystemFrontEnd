@@ -305,6 +305,7 @@ export default function CaseById({
                         show="debtorPayments"
                         caseData={caseData}
                         GetCaseDetails={GetCaseDetails}
+                        GetCasePaymentDetails={GetCasePaymentDetails}
                       />
                       <MuiModels
                         show="debtorPaymentPlan"
