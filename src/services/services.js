@@ -2292,3 +2292,14 @@ export const CancelAllDebtorPaymentPlan = async (id) => {
     return error;
   }
 };
+export const GetTopPayees = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/getTopPayees/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
