@@ -344,8 +344,8 @@ export default function CaseById({
                         show="payments"
                         remainingAmount={
                           caseData?.settledAmount === 0
-                            ? caseData?.remaining.toString()
-                            : caseData?.settledAmount.toString()
+                            ? caseData?.remaining?.toString()
+                            : caseData?.settledAmount?.toString()
                         }
                         data={caseData}
                         GetCaseDetails={GetCaseDetails}
