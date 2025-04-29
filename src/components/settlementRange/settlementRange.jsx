@@ -20,6 +20,10 @@ import {
   Checkbox,
   Modal,
   Divider,
+  FormControl,
+  Select,
+  MenuItem,
+  ListItemText,
 } from "@mui/material";
 import { PieChart } from "@mui/x-charts";
 
@@ -42,6 +46,7 @@ import {
   GetLumpSumJustifications,
   GetFullProfitSettlement,
   GetPaymentIntervals,
+  GetTopPayees,
 } from "../../services/services";
 
 import {
@@ -60,7 +65,6 @@ import TransactionHistory from "../transactionHistory";
 import CashFlowPercentage from "./cashFlowPercentage";
 import MCAByMonthAccordion from "../settlementRange/mcaByMonthAccordion";
 import SendEmail from "../sendEmail";
-import ProfitMarginPerMonth from "./profitMarginPerMonth";
 import AggregatedSummaryAccordion from "../aggregatedSummaryAccordion";
 
 const AntTabs = styled(Tabs)({
@@ -211,8 +215,6 @@ export default function SettlementRange({
   selectedCreditorDetails,
   caseData,
   mcaByMonth,
-  setMcaByMonth,
-
   to,
   payableAmount,
   selectedCreditor,
@@ -240,21 +242,20 @@ export default function SettlementRange({
   const [justificationLoading, setJustificationLoading] = useState(false);
   const [setShow, setSetShow] = useState(false);
   const [transactionKey, setTransactionKey] = useState();
-  const [selectedMonth, setSelectedMonth] = useState("");
   const [colorScheme] = useState("Tableau10");
   const [justificationValue, setJustificationValue] = useState(
     "justification_gemini"
   );
   const [selectedOption, setSelectedOption] = useState("percentageReceivable");
-  const [checked, setChecked] = useState(false);
-  const profitMarginPerMonthData = allData?.profitMarginPerMonth;
+  const [topPayeeMonths, setTopPayeeMonths] = useState([]);
+  const [selectedMonths, setSelectedMonths] = useState([]);
+  const [countData, setCountData] = useState([]);
+  const [transactionHistory, setTransactionHistory] = useState();
+  const [openMultiSelect, setOpenMultiSelect] = useState(false);
 
   const creditorNamesTabs = allCreditorNames;
   const popUpDebtorData = allData?.debtor;
   const drawerOpen = useSelector((state) => state.drawer.open);
-  const extraSmallScreen = useMediaQuery(
-    "(min-width:300px) and (max-width:900px)"
-  );
   const scrollRef = useRef(null);
   const widthStyling = drawerOpen
     ? "calc(100vw - 250px - 4rem)"
@@ -284,6 +285,26 @@ export default function SettlementRange({
     });
   };
 
+  const handleMonthChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+
+    const selected = typeof value === "string" ? value.split(",") : value;
+    if (selected.includes("Select All")) {
+      setSelectedMonths(topPayeeMonths);
+    } else if (
+      !selected.includes("Select All") &&
+      selectedMonths.includes("Select All")
+    ) {
+      setSelectedMonths([selected[0]]);
+    } else if (selected.length === 0) {
+      return;
+    } else {
+      setSelectedMonths(selected);
+    }
+  };
+
   const tabs = ["Fixed Amount", "Lump Sum", "Percentage Receivable"];
   const recommendations = ["recommendation 1"];
   const strat3Recommendations = ["recommendation 1"];
@@ -296,6 +317,7 @@ export default function SettlementRange({
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
+
   const handleOptionTabChange = (event, newValue) => {
     setOptuonValue(newValue);
   };
@@ -588,9 +610,53 @@ export default function SettlementRange({
     setJustificationLoading(false);
   };
 
+  const getTopPayeeByMonth = async () => {
+    setOpenMultiSelect(false);
+    const cleanedMonths = selectedMonths?.filter(
+      (month) => month !== "Select All"
+    );
+    const payload = {
+      months: cleanedMonths || [],
+    };
+    const res = await GetTopPayees(caseData?.debtor?._id, payload);
+    if (res?.status === 200) {
+      setCountData(
+        res?.data?.data?.top_payees?.map((item, i) => {
+          const label = Object.keys(item)[0];
+          const value = Object.values(item)[0];
+          return {
+            id: i,
+            value: value,
+            label: label,
+          };
+        })
+      );
+      setTransactionHistory(res?.data?.data?.transaction_history);
+    }
+  };
+
+  const getTopPayeeMonths = async () => {
+    const payload = {
+      months: [],
+    };
+    const res = await GetTopPayees(caseData?.debtor?._id, payload);
+    if (res?.status === 200) {
+      setTopPayeeMonths([
+        "Select All",
+        ...(res?.data?.data?.months_list || []),
+      ]);
+      setSelectedMonths(res?.data?.data?.months_list || []);
+    }
+  };
+
   useEffect(() => {
     getIntervals();
   }, [paymentChanged]);
+
+  useEffect(() => {
+    getTopPayeeByMonth();
+    getTopPayeeMonths();
+  }, [caseData]);
 
   useEffect(() => {
     getAllSummary();
@@ -641,7 +707,7 @@ export default function SettlementRange({
     },
 
     {
-      label: "Total Receivable",
+      label: "Payback Amount",
       value: selectedCreditorDetails?.contractDetails?.payable_amount || "--",
       formatCurrency: true,
       key: "payable_amount",
@@ -771,7 +837,7 @@ export default function SettlementRange({
     { key: "creditorName", heading: "Creditors", width: "11%" },
     { key: "purchasePrice", heading: "Purchase Price", width: "11%" },
     { key: "fundedAmount", heading: "Net Funded Amount", width: "11%" },
-    { key: "paybackAmount", heading: "Total Receivable", width: "11%" },
+    { key: "paybackAmount", heading: "Payback Amount", width: "11%" },
     { key: "payableAmount", heading: "Current Balance", width: "11%" },
     { key: "breakEvenPoint", heading: "Break Even Point", width: "11%" },
     {
@@ -870,36 +936,6 @@ export default function SettlementRange({
   const isAnyChecked = Object.values(checkboxStates)?.some(
     (checked) => checked
   );
-
-  const topPayees = scores?.Scores?.top_payees;
-  const isArray = Array.isArray(topPayees);
-  const topPayeesKeys = isArray
-    ? {}
-    : Object.keys(scores?.Scores?.top_payees || {});
-
-  const countData = isArray
-    ? topPayees?.map((item, i) => {
-        const label = Object.keys(item)[0];
-        const value = Object.values(item)[0];
-        return {
-          id: i,
-          value: value,
-          label: label,
-        };
-      })
-    : topPayees?.[selectedMonth || topPayeesKeys[0]]?.map((item, i) => {
-        const label = Object.keys(item)[0];
-        const value = Object.values(item)[0];
-        return {
-          id: i,
-          value: value,
-          label: label,
-        };
-      });
-
-  const handleMonthChange = (e) => {
-    setSelectedMonth(e.target.value);
-  };
 
   const formatCurrencyValue = (value) => {
     if (value === null || value === undefined) return "--";
@@ -1005,11 +1041,7 @@ export default function SettlementRange({
           {transactionKey && (
             <TransactionHistory
               transactionKey={transactionKey}
-              data={
-                scores?.Scores?.transaction_history?.[
-                  selectedMonth || topPayeesKeys[0]
-                ]
-              }
+              data={transactionHistory}
             />
           )}
         </Box>
@@ -1207,11 +1239,6 @@ export default function SettlementRange({
           <Grid item xs={12} sx={{ mt: "1rem" }}>
             <MCAByMonthAccordion mcaByMonth={mcaByMonth} />
           </Grid>
-          {/* <Grid item xs={12} sx={{ mt: "1rem" }}>
-              <ProfitMarginPerMonth
-                profitMarginPerMonthData={profitMarginPerMonthData}
-              />
-            </Grid> */}
 
           {showEmailAgreement && (
             <Grid
@@ -1245,112 +1272,6 @@ export default function SettlementRange({
           )}
 
           <Grid container item xs={12} sx={{ gap: "2%", mt: "1rem" }}>
-            {/* <GridItem
-              key="Monthly Profit Excluding Payments"
-              title="Monthly Profit Excluding Payments"
-              tooltip="Monthly profit by not making the creditor payments."
-              value={
-                optionValue === 1
-                  ? apiData?.option_2_stats?.true_profit
-                    ? `$${new Intl.NumberFormat()?.format(
-                        apiData?.option_2_stats?.true_profit
-                      )}`
-                    : "No Data"
-                  : apiData?.true_profit
-                  ? `$${formatAmountValue(apiData?.true_profit)}`
-                  : "No Data"
-              }
-              rawValue={apiData?.true_profit}
-            /> */}
-
-            {/* <GridItem
-              key="Profitability"
-              title="Profitability Excluding Payments"
-              tooltip="Measure of how much profit your business makes after expenses."
-              value={
-                optionValue === 1
-                  ? apiData?.option_2_stats?.profitability
-                    ? `${new Intl.NumberFormat()?.format(
-                        apiData?.option_2_stats?.profitability
-                      )}%`
-                    : "No Data"
-                  : apiData?.profitability
-                  ? `${new Intl.NumberFormat()?.format(
-                      apiData?.profitability
-                    )}%`
-                  : "No Data"
-              }
-              rawValue={apiData?.profitability}
-            /> */}
-            {/* <GridItem
-              key="Monthly Profit Including Payments"
-              title="Monthly Profit Including Payments"
-              tooltip="Monthly profit after making the creditor payments."
-              value={
-                optionValue === 1
-                  ? apiData?.option_2_stats?.weekly_profit
-                    ? `$${new Intl.NumberFormat()?.format(
-                        apiData?.option_2_stats?.weekly_profit
-                      )}`
-                    : "No Data"
-                  : apiData?.weekly_profit
-                  ? `$${formatAmountValue(apiData?.weekly_profit)}`
-                  : "No Data"
-              }
-              rawValue={apiData?.weekly_profit}
-            /> */}
-            {/* <GridItem
-              key="Profitability Including Payments"
-              title="Profitability Including payments"
-              tooltip="Profitability Including the creditor Payment"
-              value={
-                optionValue === 1
-                  ? apiData?.option_2_stats
-                      ?.profitability_without_creditor_payments
-                    ? `${new Intl.NumberFormat()?.format(
-                        apiData?.option_2_stats
-                          ?.profitability_without_creditor_payments
-                      )}%`
-                    : "No Data"
-                  : apiData?.profitability_without_creditor_payments
-                  ? `${new Intl.NumberFormat()?.format(
-                      apiData?.profitability_without_creditor_payments
-                    )}%`
-                  : "No Data"
-              }
-              rawValue={apiData?.profitability_without_creditor_payments}
-            /> */}
-            {/* <GridItem
-              key="Monthly True Revenue"
-              title="Monthly True Revenue"
-              tooltip="Total revenue earned by the business each monthly."
-              value={
-                optionValue === 1
-                  ? apiData?.option_2_stats?.weekly_true_revenue
-                    ? `$${new Intl.NumberFormat()?.format(
-                        apiData?.option_2_stats?.weekly_true_revenue
-                      )}`
-                    : "No Data"
-                  : apiData?.weekly_true_revenue
-                  ? `$${formatAmountValue(apiData?.weekly_true_revenue)}`
-                  : "No Data"
-              }
-              rawValue={apiData?.weekly_true_revenue}
-            /> */}
-
-            {/* {strategyTab === 0 && (
-              <GridItem
-                key="Monthly Receivable Commission"
-                title="Monthly Receivable Commission"
-                tooltip="Monthly payment Which we receive."
-                value={
-                  allData?.maxProfitCommission
-                    ? `$${formatAmountValue(allData?.maxProfitCommission)}`
-                    : "No Data"
-                }
-                rawValue={allData?.maxProfitCommission}
-              />
-            )} */}
             {strategyTab === 1 && (
               <GridItem
                 key="Total Commission"
@@ -1552,56 +1473,79 @@ export default function SettlementRange({
                             backgroundColor: Colors.BG_LIGHT_GRAY,
                           }}
                         >
-                          {isArray ? (
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
                             <Typography
                               sx={{
                                 fontFamily: "Nunito",
-                                fontSize: FONT_SIZE_LARGE,
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "10px",
+                                fontSize: FONT_SIZE_XL,
+                                fontWeight: 600,
                               }}
                             >
-                              <InfoIcon
-                                sx={{ color: Colors.YELLOW, fontSize: "24px" }}
-                              />
-                              Hard reload to get the latest changes
+                              Select Months:
                             </Typography>
-                          ) : (
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "flex-end",
-                                alignItems: "center",
-                              }}
-                            >
-                              <label
-                                style={{
-                                  fontFamily: "Nunito",
-                                  marginRight: "10px",
-                                  fontSize: FONT_SIZE_LARGE,
-                                  fontWeight: 600,
-                                }}
-                              >
-                                Select Month:
-                              </label>
-                              <select
-                                value={selectedMonth}
+                            <FormControl sx={{ width: "14rem" }}>
+                              <Select
+                                labelId="multi-months-label"
+                                multiple
+                                open={openMultiSelect}
+                                value={selectedMonths}
+                                onOpen={() => setOpenMultiSelect(true)}
+                                onClose={() => setOpenMultiSelect(false)}
                                 onChange={handleMonthChange}
-                                style={{
-                                  padding: "10px 1rem",
-                                  borderRadius: "10px",
-                                  cursor: "pointer",
-                                }}
+                                placeholder="Select Month"
+                                renderValue={(selected) => selected.join(", ")}
                               >
-                                {topPayeesKeys?.map((key) => (
-                                  <option key={key} value={key}>
-                                    {key}
-                                  </option>
+                                {topPayeeMonths?.map((month) => (
+                                  <MenuItem key={month} value={month}>
+                                    <Checkbox
+                                      checked={
+                                        selectedMonths.indexOf(month) > -1
+                                      }
+                                      sx={{
+                                        "& .MuiSvgIcon-root": {
+                                          fontSize: "22px",
+                                        },
+                                        color: Colors.DIM_LIGHT_GRAY,
+                                        "&.Mui-checked": {
+                                          color: Colors.SKY_BLUE,
+                                        },
+                                      }}
+                                    />
+                                    <ListItemText
+                                      sx={{
+                                        fontFamily: "Nunito",
+                                        fontSize: FONT_SIZE_LARGE,
+                                      }}
+                                      primary={month}
+                                    />
+                                  </MenuItem>
                                 ))}
-                              </select>
-                            </div>
-                          )}
+                                <div
+                                  style={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    marginTop: "10px",
+                                  }}
+                                >
+                                  <TextButton
+                                    buttonText="Save"
+                                    height="2rem"
+                                    width="90%"
+                                    onClick={getTopPayeeByMonth}
+                                    backgroundColor={Colors.SKY_BLUE}
+                                    hoverColor={Colors.SKY_BLUE}
+                                  />
+                                </div>
+                              </Select>
+                            </FormControl>
+                          </div>
 
                           <Grid
                             sx={{
@@ -1834,8 +1778,7 @@ export default function SettlementRange({
                           "This is the amount being paid for the Receivables Purchased Amount.",
                         "Net Funded Amount":
                           "This is the net amount being paid after deduction of applicable fees, if any.",
-                        "Total Receivable":
-                          " This is the amount of Receivables.",
+                        "Payback Amount": " This is the amount of Receivables.",
                         "Break Even":
                           "1.2x of Net Funded Amount Minus Amount Paid Back.",
                         "Current Balance":
@@ -1843,7 +1786,7 @@ export default function SettlementRange({
                         "Monthly Budget":
                           "Your profit before making any debt payments.",
                         "Purchased Percentage":
-                          "The percentage of the loan amount that has been repaid.",
+                          "The percentage of the Contract Amount that has been repaid.",
                         "Current Payment Amount":
                           "The initial amount borrowed before any repayments.",
                         "Payment Frequency": "Payment Frequency.",

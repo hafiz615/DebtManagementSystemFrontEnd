@@ -301,9 +301,11 @@ export default function CaseById({
                       }}
                     >
                       <MuiModels
+                        width="65vw"
                         show="debtorPayments"
                         caseData={caseData}
                         GetCaseDetails={GetCaseDetails}
+                        GetCasePaymentDetails={GetCasePaymentDetails}
                       />
                       <MuiModels
                         show="debtorPaymentPlan"
