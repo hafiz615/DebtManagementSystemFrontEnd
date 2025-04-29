@@ -179,6 +179,39 @@ export default function PaymentFields({
           </Tooltip>
         </Grid>
         <Grid item xs={12} md={4} lg={3}>
+          <Tooltip title="Settlement Amount" placement="top">
+            <Typography
+              sx={{
+                fontFamily: "Nunito",
+                fontWeight: "500",
+                color: Colors.DARK_GRAY,
+                marginLeft: "1rem",
+              }}
+            >
+              Settled Amount
+            </Typography>
+
+            <AmountTextField
+              value={parseInt(thisCaseData?.settledAmount?.toFixed(2))}
+              onChange={(e) =>
+                handleCaseDataChange(
+                  caseIndex,
+                  "settledAmount",
+                  parseFloat(e.target.value)
+                )
+              }
+              onKeyDown={handleNumberInput}
+              border={
+                thisCaseData?.settledAmount === 0
+                  ? "2px solid red"
+                  : "auto" && hasError("settledAmount") && showErrors
+                  ? "2px solid red"
+                  : "none !important"
+              }
+            />
+          </Tooltip>
+        </Grid>
+        <Grid item xs={12} md={4} lg={3}>
           <Typography
             sx={{
               fontFamily: "Nunito",
