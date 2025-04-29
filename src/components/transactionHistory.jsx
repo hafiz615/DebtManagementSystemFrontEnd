@@ -3,6 +3,7 @@ import { Typography, Divider } from "@mui/material";
 import TransactionHistoryTable from "./transactionHistoryTable";
 
 export default function TransactionHistory({ transactionKey, data }) {
+  console.log(data);
   return (
     <>
       <Typography
