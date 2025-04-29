@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
   Button,
@@ -20,6 +20,8 @@ import {
   CreateParticipant,
   GetCallToken,
   GetAllParticipant,
+  EndConference,
+  GetAllUsersNumbers,
 } from "../services/services";
 import { Device } from "@twilio/voice-sdk";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,8 +29,6 @@ import { Close, KeyboardVoice, MicOff } from "@mui/icons-material";
 import { FONT_SIZE_LARGE, baseUrl } from "../constants/appConstants";
 import { setDialState } from "../redux/action/action";
 import AddIcon from "@mui/icons-material/Add";
-import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 import AddAnotherPerson from "./caseDetail/addAnotherPerson";
 import { io } from "socket.io-client";
 
@@ -51,16 +51,11 @@ const DialPad = () => {
 
   const dispatch = useDispatch();
 
-  const [openAddModal, setOpenAddModal] = useState(false);
-  const [isAddModalMinimized, setIsAddModalMinimized] = useState(false);
-
   useEffect(() => {
-    setOpenAddModal(true);
-  }, []);
-
-  useEffect(() => {
-    setPhoneNumber(phoneNumberState);
-  }, [phoneNumberState]);
+    if (modalState) {
+      setPhoneNumber(phoneNumberState || "");
+    }
+  }, [modalState, phoneNumberState]);
 
   const initializeDevice = (token) => {
     const twilioDevice = new Device(token, {
@@ -86,12 +81,24 @@ const DialPad = () => {
       })
     );
   };
+  const [userNumbers, setUsersNumbers] = useState([]);
+
+  const getAllUsersNumber = async () => {
+    const res = await GetAllUsersNumbers();
+    setUsersNumbers(res?.data?.data);
+  };
+  useEffect(() => {
+    getAllUsersNumber();
+  }, []);
+
+  const [openAddModal, setOpenAddModal] = useState(false);
 
   const [conferenceSid, setConferenceSid] = useState("");
   const [participants, setParticipants] = useState([]);
   const [socket, setSocket] = useState(null);
   const BASE_URL = baseUrl();
   const updatedBaseUrl = BASE_URL?.replace(/\/api$/, "");
+  const countRef = useRef(0);
 
   const getAllParticipant = async (conferenceSid) => {
     const params = { conferenceSid };
@@ -118,13 +125,37 @@ const DialPad = () => {
     setSocket(socketInstance);
 
     socketInstance.on("conferenceEvent", async (arg) => {
+      const callStatus = arg?.callStatus;
       const conferenceSid = arg?.conferenceSid;
       const eventType = arg?.event;
       const sequenceNumber = arg?.sequenceNumber;
 
       if (conferenceSid) {
         setConferenceSid(conferenceSid);
-        await getAllParticipant(conferenceSid);
+        getAllParticipant(conferenceSid);
+
+        if (eventType === "participant-join") {
+          countRef.current += 1;
+          if (countRef.current === 2) {
+            setOpenAddModal(true);
+          }
+        }
+
+        if (eventType === "participant-leave") {
+          countRef.current -= 1;
+          if (countRef.current === 1) {
+            deleteConferenceCall(conferenceSid);
+          }
+        }
+
+        if (
+          (countRef.current === 0 && callStatus === "busy") ||
+          callStatus === "no-answer"
+        ) {
+          countRef.current -= 1;
+          deleteConferenceCall(conferenceSid);
+        }
+
         if (eventType === "participant-join" && sequenceNumber === "1") {
           if (phoneNumber) {
             await createParticipant(phoneNumber, conferenceSid);
@@ -138,9 +169,10 @@ const DialPad = () => {
     return () => {
       socketInstance.disconnect();
     };
-  }, [phoneNumber]);
+  }, [phoneNumber, phoneNumberState]);
 
   const makeOutgoingCall = async () => {
+    countRef.current = 0;
     if (!device || !phoneNumber) {
       return;
     }
@@ -171,7 +203,6 @@ const DialPad = () => {
       setStartTimer(false);
       setMuted(false);
       setOpenAddModal(false);
-      setIsAddModalMinimized(false);
     });
 
     newCall.on("cancel", () => {
@@ -185,12 +216,34 @@ const DialPad = () => {
       setStartTimer(false);
       setMuted(false);
       setOpenAddModal(false);
-      setIsAddModalMinimized(false);
     });
   };
+
   const endCall = () => {
     if (call) {
       call.disconnect();
+      setIsCalling(false);
+      setCall(null);
+      clearInterval(timer);
+      setTimer(null);
+      setStartTimer(false);
+      setMuted(false);
+      deleteConferenceCall(conferenceSid);
+      dispatch(
+        setDialState({
+          isModalOpen: false,
+        })
+      );
+    }
+    fetchCalls && fetchCalls();
+  };
+
+  const deleteConferenceCall = async (conferenceSid) => {
+    const payload = {
+      conferenceSid: conferenceSid,
+    };
+    const res = await EndConference(payload);
+    if (res?.status === 200) {
       setIsCalling(false);
       setCall(null);
       clearInterval(timer);
@@ -203,18 +256,17 @@ const DialPad = () => {
         })
       );
     }
-    fetchCalls && fetchCalls();
   };
 
-  const muteCall = () => {
-    if (!muted && call) {
-      call.mute(true);
-      setMuted(true);
-    } else {
-      call.mute(false);
-      setMuted(false);
-    }
-  };
+  // const muteCall = () => {
+  //   if (!muted && call) {
+  //     call.mute(true);
+  //     setMuted(true);
+  //   } else {
+  //     call.mute(false);
+  //     setMuted(false);
+  //   }
+  // };
 
   useEffect(() => {
     startupClient();
@@ -346,9 +398,16 @@ const DialPad = () => {
                       marginBottom: ".5rem",
                     }}
                   >
-                    <IconButton onClick={muteCall}>
+                    {/* <IconButton onClick={muteCall}>
                       {muted ? <MicOff /> : <KeyboardVoice />}
-                    </IconButton>
+                    </IconButton> */}
+                    {openAddModal && (
+                      <Tooltip title="Add Participant" placement="top-start">
+                        <IconButton onClick={() => setOpenAddModal(true)}>
+                          <AddIcon />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                   </Box>
 
                   <Button
@@ -367,65 +426,25 @@ const DialPad = () => {
           </Box>
         </Fade>
 
-        <Box
-          sx={{
-            position: "fixed",
-            bottom: "2%",
-            right: "calc(350px - 1%)",
-            width: isAddModalMinimized ? 250 : 350,
-            height: isAddModalMinimized ? 70 : "auto",
-            bgcolor: Colors.lIGHT_PURPLE,
-            borderRadius: "10px",
-            boxShadow: 24,
-            p: 2,
-            border: `2px solid ${Colors.SKY_BLUE}`,
-            textAlign: "center",
-            zIndex: 1300,
-            pointerEvents: "auto",
-            overflow: "hidden",
-          }}
-        >
+        {openAddModal && (
           <Box
             sx={{
-              display: "flex",
-              justifyContent: isAddModalMinimized
-                ? "space-between"
-                : "flex-end",
-              alignItems: "center",
+              position: "fixed",
+              bottom: "2%",
+              right: "calc(350px - 1%)",
+              width: 350,
+              height: "auto",
+              bgcolor: Colors.lIGHT_PURPLE,
+              borderRadius: "10px",
+              boxShadow: 24,
+              p: 2,
+              border: `2px solid ${Colors.SKY_BLUE}`,
+              textAlign: "center",
+              zIndex: 1300,
+              pointerEvents: "auto",
+              overflow: "hidden",
             }}
           >
-            {isAddModalMinimized ? (
-              <Typography sx={{ fontWeight: 600 }}>Add Participants</Typography>
-            ) : (
-              ""
-            )}
-
-            <Box>
-              <Tooltip
-                title={
-                  isAddModalMinimized ? "Maximize Screen" : "Minimize Screen"
-                }
-                placement="top-start"
-              >
-                <IconButton
-                  onClick={() => setIsAddModalMinimized((prev) => !prev)}
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  {isAddModalMinimized ? (
-                    <OpenInFullIcon />
-                  ) : (
-                    <CloseFullscreenIcon />
-                  )}
-                </IconButton>
-              </Tooltip>
-            </Box>
-          </Box>
-
-          {!isAddModalMinimized && (
             <AddAnotherPerson
               handleClose={() => setOpenAddModal(false)}
               participants={participants}
@@ -433,9 +452,11 @@ const DialPad = () => {
               getAllParticipant={getAllParticipant}
               conferenceSid={conferenceSid}
               endCall={endCall}
+              userNumbers={userNumbers}
+              setUsersNumbers={setUsersNumbers}
             />
-          )}
-        </Box>
+          </Box>
+        )}
       </>
     )
   );

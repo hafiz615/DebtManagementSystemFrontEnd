@@ -2303,3 +2303,14 @@ export const GetTopPayees = async (id, payload) => {
     return error;
   }
 };
+export const EndConference = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/call/conference/completeConference`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
