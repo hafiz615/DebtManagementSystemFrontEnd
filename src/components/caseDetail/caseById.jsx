@@ -342,7 +342,11 @@ export default function CaseById({
                       <MuiModels
                         width="70vw"
                         show="payments"
-                        remainingAmount={caseData?.remaining.toString()}
+                        remainingAmount={
+                          caseData?.settledAmount === 0
+                            ? caseData?.remaining.toString()
+                            : caseData?.settledAmount.toString()
+                        }
                         data={caseData}
                         GetCaseDetails={GetCaseDetails}
                         GetCasePaymentDetails={GetCasePaymentDetails}

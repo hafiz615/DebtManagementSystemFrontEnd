@@ -151,6 +151,7 @@ export default function EditCreditorDetail({
           : "",
         contractDetails: caseData?.contractDetails,
         paidAmount: caseData?.paidAmount || 0,
+        settledAmount: caseData?.settledAmount || 0,
         remaining: parseInt(caseData?.remaining?.toFixed(2)) || 0,
         feePayment: caseData?.feePayment,
       },

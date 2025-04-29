@@ -159,6 +159,7 @@ export default function CreditorDetails({
       },
       status: "",
       totalDebt: 0,
+      settledAmount: 0,
       lastPaymentDate: "",
       paidAmount: 0,
       remaining: 0,
@@ -211,6 +212,7 @@ export default function CreditorDetails({
           },
           paidAmount: 0,
           remaining: 0,
+          settledAmount: 0,
           feePayment: "toPay",
           lawsuitExist: false,
         },
@@ -269,6 +271,7 @@ export default function CreditorDetails({
                 .replace(",", "")
             ) || 0,
           feePayment: "toPay",
+          settledAmount: 0,
           lawsuitExist: false,
         };
       });
