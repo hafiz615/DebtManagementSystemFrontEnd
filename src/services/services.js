@@ -2272,11 +2272,21 @@ export const PauseDebtorPayments = async (id, payload) => {
     return error;
   }
 };
-
 export const GetAllUsersNumbers = async () => {
   try {
     return await axios.get(
       BASE_URL + "/v1/call/getAllUserNumbers",
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const EndConference = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/call/conference/completeConference`,
+      payload,
       setHeaders()
     );
   } catch (error) {

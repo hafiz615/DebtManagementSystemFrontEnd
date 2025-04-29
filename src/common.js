@@ -780,6 +780,18 @@ export function formatDateString(isoDateStr) {
   const formattedDate = date.toLocaleDateString("en-US", options);
   return `${formattedDate}`;
 }
+export function formatDateCall(isoDateStr) {
+  const date = isoDateStr === "now" ? new Date() : new Date(isoDateStr);
+
+  const options = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour12: true,
+  };
+
+  return date.toLocaleDateString(undefined, options);
+}
 
 export const isPhoneNumber = (value) => {
   const phoneRegex = /^[0-9]{10,}$/;
