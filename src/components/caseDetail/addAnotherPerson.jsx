@@ -4,29 +4,46 @@ import "react-phone-input-2/lib/style.css";
 import { Colors } from "../../config/default";
 import TextButton from "../button";
 import { useToast } from "../../toast/toastContext";
-import { Mic, MicOff, PauseCircle, PlayCircle } from "@mui/icons-material";
-import { IconButton, Tooltip } from "@mui/material";
+import {
+  Close,
+  Mic,
+  MicOff,
+  PauseCircle,
+  PlayCircle,
+} from "@mui/icons-material";
+import { Box, IconButton, Tooltip } from "@mui/material";
 import {
   CreateParticipant,
   DeleteParticipants,
-  GetAllUsersNumbers,
   UpdateParticipants,
 } from "../../services/services";
 import Prompt from "../prompt";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
 
-function AddAnotherPerson({ participants, conferenceSid, endCall }) {
+function AddAnotherPerson({
+  participants,
+  conferenceSid,
+  handleClose,
+  userNumbers,
+}) {
   const { showToast } = useToast();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [buttonLoading, setButtonLoading] = useState(false);
-  const [userNumbers, setUsersNumbers] = useState([]);
+  // const [userNumbers, setUsersNumbers] = useState([]);
 
-  const getAllUsersNumber = async () => {
-    const res = await GetAllUsersNumbers();
-    setUsersNumbers(res?.data?.data);
-  };
-  useEffect(() => {
-    getAllUsersNumber();
-  }, []);
+  // const getAllUsersNumber = async () => {
+  //   const res = await GetAllUsersNumbers();
+  //   setUsersNumbers(res?.data?.data);
+  // };
+  // useEffect(() => {
+  //   getAllUsersNumber();
+  // }, []);
+  const options =
+    userNumbers?.map((user) => ({
+      label: `${user?.name} – ${user?.twilioNumber}`,
+      value: user?.twilioNumber,
+    })) || [];
 
   const createParticipant = async () => {
     const params = {
@@ -112,9 +129,6 @@ function AddAnotherPerson({ participants, conferenceSid, endCall }) {
     const deletion = await DeleteParticipants(params);
     if (deletion?.status === 200) {
       showToast(deletion?.data?.message, "success");
-      if (length === 2) {
-        endCall();
-      }
     } else {
       showToast(
         deletion?.response?.data?.message || deletion?.data?.message,
@@ -125,15 +139,29 @@ function AddAnotherPerson({ participants, conferenceSid, endCall }) {
 
   return (
     <>
-      <h3
-        style={{
-          marginBottom: "1rem",
-          fontWeight: "bold",
-          fontFamily: "Nunito",
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
-        Add Participant To Call
-      </h3>
+        <h3
+          style={{
+            marginBottom: "1rem",
+            fontWeight: "bold",
+            fontFamily: "Nunito",
+          }}
+        >
+          Add Participant To Call
+        </h3>
+        <Tooltip title="Close Popup" placement="top-start">
+          <IconButton onClick={handleClose}>
+            <Close />
+          </IconButton>
+        </Tooltip>
+      </Box>
+
       <div
         style={{
           display: "flex",
@@ -142,50 +170,41 @@ function AddAnotherPerson({ participants, conferenceSid, endCall }) {
           flexDirection: "column",
         }}
       >
-        <PhoneInput
-          country={"us"}
-          value={phoneNumber}
-          onChange={(phone) => setPhoneNumber("+" + phone)}
-          inputStyle={{ width: "100%" }}
+        <Autocomplete
+          freeSolo
+          disablePortal
+          options={options}
+          sx={{ width: "100%" }}
+          onChange={(event, selectedOption) => {
+            if (selectedOption?.value) {
+              setPhoneNumber(selectedOption?.value);
+            }
+          }}
+          onInputChange={(event, value, reason) => {
+            if (reason === "input") {
+              const digitsOnly = value.replace(/\D/g, "").slice(0, 12);
+              setPhoneNumber(digitsOnly);
+            }
+          }}
+          getOptionLabel={(option) =>
+            typeof option === "string" ? option : option.label
+          }
+          renderOption={(props, option) => <li {...props}>{option?.label}</li>}
+          inputValue={phoneNumber}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Select or type a number"
+              variant="outlined"
+              inputProps={{
+                ...params.inputProps,
+                maxLength: 12,
+                inputMode: "numeric", // mobile-friendly numeric keyboard
+                pattern: "[0-9]*", // restricts to numbers
+              }}
+            />
+          )}
         />
-        {userNumbers?.length > 0 && (
-          <div
-            style={{
-              width: "100%",
-              borderRadius: "4px",
-              maxHeight: "200px",
-              overflowY: "auto",
-            }}
-          >
-            {userNumbers?.length > 0 && (
-              <select
-                defaultValue=""
-                onChange={(e) => {
-                  const selectedNumber = e.target.value;
-                  if (selectedNumber) {
-                    setPhoneNumber(selectedNumber);
-                  }
-                }}
-                style={{
-                  width: "100%",
-                  padding: "0.5rem",
-                  borderRadius: "4px",
-                  fontFamily: "Nunito",
-                  fontSize: "1rem",
-                }}
-              >
-                <option value="" disabled>
-                  Select from saved numbers
-                </option>
-                {userNumbers?.map((user, index) => (
-                  <option key={index} value={user?.twilioNumber}>
-                    {user?.name} – {user?.twilioNumber}
-                  </option>
-                ))}
-              </select>
-            )}
-          </div>
-        )}
       </div>
       <div
         style={{
@@ -203,7 +222,9 @@ function AddAnotherPerson({ participants, conferenceSid, endCall }) {
           loading={buttonLoading}
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
-          disabled={phoneNumber?.replace(/\D/g, "")?.length < 2}
+          disabled={
+            phoneNumber === "+1" || phoneNumber.replace(/\D/g, "").length < 2
+          }
         />
       </div>
 
@@ -213,7 +234,7 @@ function AddAnotherPerson({ participants, conferenceSid, endCall }) {
         </h4>
         <div
           style={{
-            maxHeight: "200px", // Change as needed
+            maxHeight: "200px",
             overflowY: "auto",
             border: "1px solid #ccc",
             borderRadius: "6px",

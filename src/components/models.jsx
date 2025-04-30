@@ -1382,6 +1382,7 @@ export default function MuiModels({
               handleClose={handleClose}
               caseData={caseData}
               GetCaseDetails={GetCaseDetails}
+              GetCasePaymentDetails={GetCasePaymentDetails}
             />
           ) : (
             ""
