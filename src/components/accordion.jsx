@@ -53,6 +53,9 @@ export default function AccordionUsage({
   ) {
     headers.push("Update Date");
   }
+  if (arrayName === "upcomingPayments") {
+    headers.push("Acquire funds");
+  }
 
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
@@ -99,11 +102,11 @@ export default function AccordionUsage({
   };
   let backgroundColor;
   if (paymentNumber === "5") {
-    backgroundColor = Colors.ORANGE_COLOR; // Reddish color
+    backgroundColor = Colors.ORANGE_COLOR;
   } else if (paymentNumber === "4") {
-    backgroundColor = Colors.SKY_BLUE; // Bluish color
+    backgroundColor = Colors.SKY_BLUE;
   } else {
-    backgroundColor = "#7E909A"; // Grayish color
+    backgroundColor = "#7E909A";
   }
 
   const navigate = useNavigate();
