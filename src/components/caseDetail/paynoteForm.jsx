@@ -50,10 +50,10 @@ function PaynoteForm({
     }
 
     if (field === "number") {
-      if (value.length !== 15) {
+      if (value.length < 4 || value.length > 17) {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          number: "Account Number must be 15 digits",
+          number: "Bank Account must be between 4 and 17 characters.",
         }));
       } else {
         setErrors((prevErrors) => ({
