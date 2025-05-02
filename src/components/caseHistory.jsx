@@ -60,7 +60,16 @@ function CaseHistory({
           Creditor: item?.creditorName || item?.debtorName || "-",
           Pipeline: item?.pipeLineStatus || "-",
           lastDate: formatDate(item?.lastPaymentDate) || "-",
-          OutstandingDebt: formatDollarAmount(item?.outstandingDebt) || "-",
+          OutstandingDebt:
+            item?.settledAmount && item?.settledAmount >= 0
+              ? {
+                  value: formatDollarAmount(item?.settledAmount),
+                  isSettled: true,
+                }
+              : {
+                  value: formatDollarAmount(item?.outstandingDebt), // Unformatted
+                  isSettled: false,
+                },
           totalDebt: formatDollarAmount(item?.totalDebt) || "-",
           UpcomingDebt: formatDollarAmount(item?.upcomingPayment) || "-",
           upcomingDate: formatDate(item?.upcomingPaymentDate) || "-",
