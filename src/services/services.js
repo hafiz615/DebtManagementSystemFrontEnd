@@ -2314,3 +2314,13 @@ export const EndConference = async (payload) => {
     return error;
   }
 };
+export const GetInstantPayment = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/payment/getInstantPayment/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
