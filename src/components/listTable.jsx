@@ -35,7 +35,7 @@ import { isEmpty } from "lodash";
 import Dropdown from "./dropdown";
 import ScrollbarStyles from "././customScroll";
 import { AddIcCallOutlined, Paid } from "@mui/icons-material";
-import { Tooltip } from "@mui/material";
+import { Tooltip, colors } from "@mui/material";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -335,12 +335,29 @@ export default function ListTable({
                           {/* Truncate link if key is 'link', otherwise render value normally */}
                           {key === "link" && typeof value === "string" ? (
                             value?.length > 20 ? (
-                              <span title={value}>{`${value?.slice(
-                                0,
-                                mediumScreen ? 50 : 120
-                              )}...`}</span>
+                              <span title={value}>
+                                {`${value?.slice(
+                                  0,
+                                  mediumScreen ? 50 : 120
+                                )}...`}
+                              </span>
                             ) : (
                               value
+                            )
+                          ) : key === "OutstandingDebt" &&
+                            typeof value === "object" &&
+                            value !== null ? (
+                            value?.isSettled ? (
+                              <span
+                                style={{
+                                  color: Colors.SKY_BLUE,
+                                  fontWeight: "600",
+                                }}
+                              >
+                                {value?.value}
+                              </span>
+                            ) : (
+                              value.value
                             )
                           ) : typeof value === "object" && value !== null ? (
                             JSON.stringify(value)
