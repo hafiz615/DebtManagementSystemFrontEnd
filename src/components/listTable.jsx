@@ -154,15 +154,7 @@ export default function ListTable({
       );
     }
   };
-  // const sendPaymentCreditor = async (id) => {
-  //   const sendPaymentRes = await SendPayment(id);
-  //   if (sendPaymentRes?.status === 200) {
-  //     showToast(sendPaymentRes?.data?.message, "success");
-  //   } else {
-  //     const errorMessage = sendPaymentRes?.response?.data?.message;
-  //     showToast(errorMessage, "error");
-  //   }
-  // };
+
   const rowsOptions = [
     { label: "5", value: "5" },
     { label: "15", value: "15" },
@@ -420,8 +412,6 @@ export default function ListTable({
                         />
                       </StyledTableCell>
                     )}
-
-                    {/* Display requiredCustomFieldIcons */}
                     {requiredCustomFieldIcons && (
                       <StyledTableCell
                         sx={{
@@ -494,49 +484,16 @@ export default function ListTable({
                         />
                       </StyledTableCell>
                     )}
-
-                    {/* Handle special case for successCaptures */}
-                    {/* {arrayName === "successCaptures" && (
-                      <StyledTableCell
-                        align="left"
-                        sx={{
-                          fontWeight: "700",
-                          fontSize: {
-                            xs: FONT_SIZE_SMALL,
-                            sm: FONT_SIZE_LARGE,
-                          },
-                          paddingRight: "0.5rem !important",
-                        }}
-                      >
-                        <Tooltip
-                          title={row?.status || "No status available"}
-                          arrow
-                        >
-                          <span>
-                            <IconButton
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                sendPaymentCreditor(row?.id);
-                              }}
-                              disabled={
-                                arrayName === "successCaptures" &&
-                                row?.status === "Success"
-                              }
-                            >
-                              <Paid
-                                sx={{
-                                  color:
-                                    arrayName === "successCaptures" &&
-                                    row?.status === "Success"
-                                      ? "gray"
-                                      : Colors.SKY_BLUE,
-                                }}
-                              />
-                            </IconButton>
-                          </span>
-                        </Tooltip>
+                    {arrayName === "upcomingPayments" && (
+                      <StyledTableCell>
+                        <MuiModels
+                          width="40vw"
+                          show="instantPayment"
+                          transactionId={row?.id}
+                          GetCasePaymentDetails={getHomeData}
+                        />
                       </StyledTableCell>
-                    )} */}
+                    )}
                   </StyledTableRow>
                 ))}
               </TableBody>
