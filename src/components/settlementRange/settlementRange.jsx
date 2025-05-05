@@ -654,8 +654,10 @@ export default function SettlementRange({
   }, [paymentChanged]);
 
   useEffect(() => {
-    getTopPayeeByMonth();
-    getTopPayeeMonths();
+    if (caseData) {
+      getTopPayeeByMonth();
+      getTopPayeeMonths();
+    }
   }, [caseData]);
 
   useEffect(() => {
@@ -1400,218 +1402,212 @@ export default function SettlementRange({
                   cashFlowLoading={cashFlowLoading}
                   cashFlow={cashFlow}
                 />
+              </>
+            )}
 
-                <Grid
-                  item
-                  xs={12}
-                  sx={{
-                    backgroundColor: Colors.WHITE,
-                    borderRadius: "10px",
-                    mt: "1rem",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontWeight: "700",
-                      fontFamily: "Nunito",
-                      ml: "5%",
-                      mt: "1rem",
-                    }}
-                  >
-                    Top Payee
-                  </Typography>
-                  <Divider sx={{ m: "10px 0px" }} />
-                  <Grid
-                    container
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-around",
-                      alignItems: "center",
-                      height: "35vh",
-                      padding: "0px 15%",
-                      marginBottom: "1.5rem",
-                    }}
-                  >
-                    {countData ? (
-                      <>
-                        <div
-                          style={{
-                            width: "35%",
-                            height: "100%",
-                          }}
-                        >
-                          <PieChart
-                            series={[
-                              {
-                                id: countData,
-                                data: countData,
-                                cx: 100,
-                                cy: 120,
-                                highlightScope: {
-                                  faded: "global",
-                                  highlighted: "item",
-                                },
-                              },
-                            ]}
-                            onItemClick={handleItemClick}
-                            colors={categories[colorScheme]}
-                            slotProps={{
-                              legend: { hidden: true },
-                            }}
-                            width={315}
-                          />
-                        </div>
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            padding: "1em",
-                            height: "90%",
-                            width: "65%",
-                            overflowY: "scroll !important",
-                            borderRadius: "15px",
-                            backgroundColor: Colors.BG_LIGHT_GRAY,
-                          }}
-                        >
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                fontFamily: "Nunito",
-                                fontSize: FONT_SIZE_XL,
-                                fontWeight: 600,
-                              }}
-                            >
-                              Select Months:
-                            </Typography>
-                            <FormControl sx={{ width: "14rem" }}>
-                              <Select
-                                labelId="multi-months-label"
-                                multiple
-                                open={openMultiSelect}
-                                value={selectedMonths}
-                                onOpen={() => setOpenMultiSelect(true)}
-                                onClose={() => setOpenMultiSelect(false)}
-                                onChange={handleMonthChange}
-                                placeholder="Select Month"
-                                renderValue={(selected) => selected.join(", ")}
-                              >
-                                {topPayeeMonths?.map((month) => (
-                                  <MenuItem key={month} value={month}>
-                                    <Checkbox
-                                      checked={
-                                        selectedMonths.indexOf(month) > -1
-                                      }
-                                      sx={{
-                                        "& .MuiSvgIcon-root": {
-                                          fontSize: "22px",
-                                        },
-                                        color: Colors.DIM_LIGHT_GRAY,
-                                        "&.Mui-checked": {
-                                          color: Colors.SKY_BLUE,
-                                        },
-                                      }}
-                                    />
-                                    <ListItemText
-                                      sx={{
-                                        fontFamily: "Nunito",
-                                        fontSize: FONT_SIZE_LARGE,
-                                      }}
-                                      primary={month}
-                                    />
-                                  </MenuItem>
-                                ))}
-                                <div
-                                  style={{
-                                    width: "100%",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    marginTop: "10px",
-                                  }}
-                                >
-                                  <TextButton
-                                    buttonText="Save"
-                                    height="2rem"
-                                    width="90%"
-                                    onClick={getTopPayeeByMonth}
-                                    backgroundColor={Colors.SKY_BLUE}
-                                    hoverColor={Colors.SKY_BLUE}
-                                  />
-                                </div>
-                              </Select>
-                            </FormControl>
-                          </div>
-
-                          <Grid
-                            sx={{
-                              position: "relative",
-                              overflowY: "auto",
-                              ...ScrollbarStyles,
-                              height: "100%",
-                            }}
-                          >
-                            {countData?.map((item, index) => (
-                              <div
-                                key={index}
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  marginTop: ".5rem",
-                                }}
-                              >
-                                <div
-                                  style={{
-                                    width: "1rem",
-                                    height: "16px",
-                                    backgroundColor:
-                                      categories[colorScheme][item?.id],
-                                    marginRight: "5px",
-                                  }}
-                                />
-                                <Tooltip
-                                  title={item?.label}
-                                  placement="top"
-                                  arrow
-                                >
-                                  <span
-                                    style={{
-                                      fontSize: FONT_SIZE_MEDIUM,
-                                    }}
-                                  >
-                                    {item?.label}
-                                  </span>
-                                </Tooltip>
-                              </div>
-                            ))}
-                            <div
-                              style={{
-                                position: "absolute",
-                                bottom: 0,
-                                width: "100%",
-                              }}
-                            ></div>
-                          </Grid>
-                        </div>
-                      </>
-                    ) : (
+            <Grid
+              item
+              xs={12}
+              sx={{
+                backgroundColor: Colors.WHITE,
+                borderRadius: "10px",
+                mt: "1rem",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontWeight: "700",
+                  fontFamily: "Nunito",
+                  ml: "5%",
+                  mt: "1rem",
+                }}
+              >
+                Top Payee
+              </Typography>
+              <Divider sx={{ m: "10px 0px" }} />
+              <Grid
+                container
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-around",
+                  alignItems: "center",
+                  height: "35vh",
+                  padding: "0px 15%",
+                  marginBottom: "1.5rem",
+                }}
+              >
+                {countData ? (
+                  <>
+                    <div
+                      style={{
+                        width: "35%",
+                        height: "100%",
+                      }}
+                    >
+                      <PieChart
+                        series={[
+                          {
+                            id: countData,
+                            data: countData,
+                            cx: 100,
+                            cy: 120,
+                            highlightScope: {
+                              faded: "global",
+                              highlighted: "item",
+                            },
+                          },
+                        ]}
+                        onItemClick={handleItemClick}
+                        colors={categories[colorScheme]}
+                        slotProps={{
+                          legend: { hidden: true },
+                        }}
+                        width={315}
+                      />
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        padding: "1em",
+                        height: "90%",
+                        width: "65%",
+                        overflowY: "scroll !important",
+                        borderRadius: "15px",
+                        backgroundColor: Colors.BG_LIGHT_GRAY,
+                      }}
+                    >
                       <div
                         style={{
                           display: "flex",
+                          justifyContent: "space-between",
                           alignItems: "center",
                         }}
                       >
-                        No Data
+                        <Typography
+                          sx={{
+                            fontFamily: "Nunito",
+                            fontSize: FONT_SIZE_XL,
+                            fontWeight: 600,
+                          }}
+                        >
+                          Select Months:
+                        </Typography>
+                        <FormControl sx={{ width: "14rem" }}>
+                          <Select
+                            labelId="multi-months-label"
+                            multiple
+                            open={openMultiSelect}
+                            value={selectedMonths}
+                            onOpen={() => setOpenMultiSelect(true)}
+                            onClose={() => setOpenMultiSelect(false)}
+                            onChange={handleMonthChange}
+                            placeholder="Select Month"
+                            renderValue={(selected) => selected.join(", ")}
+                          >
+                            {topPayeeMonths?.map((month) => (
+                              <MenuItem key={month} value={month}>
+                                <Checkbox
+                                  checked={selectedMonths.indexOf(month) > -1}
+                                  sx={{
+                                    "& .MuiSvgIcon-root": {
+                                      fontSize: "22px",
+                                    },
+                                    color: Colors.DIM_LIGHT_GRAY,
+                                    "&.Mui-checked": {
+                                      color: Colors.SKY_BLUE,
+                                    },
+                                  }}
+                                />
+                                <ListItemText
+                                  sx={{
+                                    fontFamily: "Nunito",
+                                    fontSize: FONT_SIZE_LARGE,
+                                  }}
+                                  primary={month}
+                                />
+                              </MenuItem>
+                            ))}
+                            <div
+                              style={{
+                                width: "100%",
+                                display: "flex",
+                                justifyContent: "center",
+                                marginTop: "10px",
+                              }}
+                            >
+                              <TextButton
+                                buttonText="Save"
+                                height="2rem"
+                                width="90%"
+                                onClick={getTopPayeeByMonth}
+                                backgroundColor={Colors.SKY_BLUE}
+                                hoverColor={Colors.SKY_BLUE}
+                              />
+                            </div>
+                          </Select>
+                        </FormControl>
                       </div>
-                    )}
-                  </Grid>
-                </Grid>
-              </>
-            )}
+
+                      <Grid
+                        sx={{
+                          position: "relative",
+                          overflowY: "auto",
+                          ...ScrollbarStyles,
+                          height: "100%",
+                        }}
+                      >
+                        {countData?.map((item, index) => (
+                          <div
+                            key={index}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              marginTop: ".5rem",
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: "1rem",
+                                height: "16px",
+                                backgroundColor:
+                                  categories[colorScheme][item?.id],
+                                marginRight: "5px",
+                              }}
+                            />
+                            <Tooltip title={item?.label} placement="top" arrow>
+                              <span
+                                style={{
+                                  fontSize: FONT_SIZE_MEDIUM,
+                                }}
+                              >
+                                {item?.label}
+                              </span>
+                            </Tooltip>
+                          </div>
+                        ))}
+                        <div
+                          style={{
+                            position: "absolute",
+                            bottom: 0,
+                            width: "100%",
+                          }}
+                        ></div>
+                      </Grid>
+                    </div>
+                  </>
+                ) : (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    No Data
+                  </div>
+                )}
+              </Grid>
+            </Grid>
           </Grid>
 
           {scores?.message && (
