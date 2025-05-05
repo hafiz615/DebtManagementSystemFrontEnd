@@ -139,8 +139,12 @@ export default function CaseById({
   }, [currentCallPage]);
 
   useEffect(() => {
-    getAttorneyData();
-  }, []);
+    if (caseData) {
+      getAttorneyData();
+    }
+  }, [caseData]);
+
+  //condition for optimization
 
   return (
     <Grid item sx={{ marginTop: "1rem" }}>

@@ -35,7 +35,7 @@ import { isEmpty } from "lodash";
 import Dropdown from "./dropdown";
 import ScrollbarStyles from "././customScroll";
 import { AddIcCallOutlined, Paid } from "@mui/icons-material";
-import { Tooltip } from "@mui/material";
+import { Tooltip, colors } from "@mui/material";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -154,15 +154,7 @@ export default function ListTable({
       );
     }
   };
-  // const sendPaymentCreditor = async (id) => {
-  //   const sendPaymentRes = await SendPayment(id);
-  //   if (sendPaymentRes?.status === 200) {
-  //     showToast(sendPaymentRes?.data?.message, "success");
-  //   } else {
-  //     const errorMessage = sendPaymentRes?.response?.data?.message;
-  //     showToast(errorMessage, "error");
-  //   }
-  // };
+
   const rowsOptions = [
     { label: "5", value: "5" },
     { label: "15", value: "15" },
@@ -242,18 +234,6 @@ export default function ListTable({
                       Retry
                     </StyledTableCell>
                   )}
-                {/* {arrayName === "successCaptures" && (
-                  <StyledTableCell
-                    align="left"
-                    sx={{
-                      fontWeight: "700",
-                      fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
-                      paddingRight: "0.5rem !important",
-                    }}
-                  >
-                    Send Payment
-                  </StyledTableCell>
-                )} */}
               </TableRow>
             </TableHead>
             {loading ? (
@@ -335,12 +315,29 @@ export default function ListTable({
                           {/* Truncate link if key is 'link', otherwise render value normally */}
                           {key === "link" && typeof value === "string" ? (
                             value?.length > 20 ? (
-                              <span title={value}>{`${value?.slice(
-                                0,
-                                mediumScreen ? 50 : 120
-                              )}...`}</span>
+                              <span title={value}>
+                                {`${value?.slice(
+                                  0,
+                                  mediumScreen ? 50 : 120
+                                )}...`}
+                              </span>
                             ) : (
                               value
+                            )
+                          ) : key === "OutstandingDebt" &&
+                            typeof value === "object" &&
+                            value !== null ? (
+                            value?.isSettled ? (
+                              <span
+                                style={{
+                                  color: Colors.SKY_BLUE,
+                                  fontWeight: "600",
+                                }}
+                              >
+                                {value?.value}
+                              </span>
+                            ) : (
+                              value.value
                             )
                           ) : typeof value === "object" && value !== null ? (
                             JSON.stringify(value)
@@ -403,8 +400,6 @@ export default function ListTable({
                         />
                       </StyledTableCell>
                     )}
-
-                    {/* Display requiredCustomFieldIcons */}
                     {requiredCustomFieldIcons && (
                       <StyledTableCell
                         sx={{
@@ -477,49 +472,6 @@ export default function ListTable({
                         />
                       </StyledTableCell>
                     )}
-
-                    {/* Handle special case for successCaptures */}
-                    {/* {arrayName === "successCaptures" && (
-                      <StyledTableCell
-                        align="left"
-                        sx={{
-                          fontWeight: "700",
-                          fontSize: {
-                            xs: FONT_SIZE_SMALL,
-                            sm: FONT_SIZE_LARGE,
-                          },
-                          paddingRight: "0.5rem !important",
-                        }}
-                      >
-                        <Tooltip
-                          title={row?.status || "No status available"}
-                          arrow
-                        >
-                          <span>
-                            <IconButton
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                sendPaymentCreditor(row?.id);
-                              }}
-                              disabled={
-                                arrayName === "successCaptures" &&
-                                row?.status === "Success"
-                              }
-                            >
-                              <Paid
-                                sx={{
-                                  color:
-                                    arrayName === "successCaptures" &&
-                                    row?.status === "Success"
-                                      ? "gray"
-                                      : Colors.SKY_BLUE,
-                                }}
-                              />
-                            </IconButton>
-                          </span>
-                        </Tooltip>
-                      </StyledTableCell>
-                    )} */}
                   </StyledTableRow>
                 ))}
               </TableBody>

@@ -32,8 +32,6 @@ import PaymentCardDetails from "../paymentCard";
 import { AddDebtorAccount } from "../../services/services";
 import Dropdown from "../dropdown";
 import { isEmpty } from "lodash";
-import { type } from "@testing-library/user-event/dist/type";
-import DialPad from "../dialPad";
 import { useDispatch } from "react-redux";
 import { setDialState } from "../../redux/action/action";
 
@@ -253,6 +251,11 @@ export default function DebtorDetailsCards({
               </IconButton>
             </Tooltip>
             <MuiModels
+              width="40vw"
+              show="instantPayment"
+              debtorId={caseData?.debtor?._id}
+            />
+            <MuiModels
               show="showClientSync"
               iconColor={Colors.BLACK}
               caseData={caseData}
@@ -264,24 +267,7 @@ export default function DebtorDetailsCards({
                   : "Easypay direct"
               }
             />
-            <Dropdown
-              menuWidth="14rem"
-              menuItems={paymentGateways}
-              placeholder="Type"
-              backgroundColor={Colors.BG_LIGHT_GRAY}
-              hoverColor={Colors.BG_LIGHT_GRAY}
-              width="14rem"
-              selectedValue={selectedValue}
-              setSelectedValue={setSelectedValue}
-              fontSize="12px"
-              setType={setType}
-            />
-            <PaymentCardDetails
-              paymentGateway={selectedValue}
-              setConnectPayment={setConnectPayment}
-              type={type}
-              setType={setType}
-            />
+
             <MuiModels
               show="debtorDetail"
               button="create"
@@ -294,6 +280,35 @@ export default function DebtorDetailsCards({
               setConnectPayment={setConnectPayment}
             />
           </span>
+        </div>
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            gap: "5px",
+            marginBottom: "10px",
+          }}
+        >
+          <Dropdown
+            menuWidth="14rem"
+            menuItems={paymentGateways}
+            placeholder="Type"
+            backgroundColor={Colors.BG_LIGHT_GRAY}
+            hoverColor={Colors.BG_LIGHT_GRAY}
+            width="83%"
+            height="2.1rem"
+            selectedValue={selectedValue}
+            setSelectedValue={setSelectedValue}
+            fontSize="12px"
+            setType={setType}
+          />
+          <PaymentCardDetails
+            paymentGateway={selectedValue}
+            setConnectPayment={setConnectPayment}
+            type={type}
+            setType={setType}
+          />
         </div>
         <div
           style={{
@@ -311,7 +326,7 @@ export default function DebtorDetailsCards({
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
-                    width: "48%",
+                    width: "100%",
                     marginBottom: "8px",
                   }}
                 >
@@ -352,7 +367,7 @@ export default function DebtorDetailsCards({
                             wordBreak: "break-word",
                           }}
                         >
-                          {getTruncatedText(formatValue(value), 10) || "--"}
+                          {getTruncatedText(formatValue(value), 18) || "--"}
                         </Typography>
                       </Tooltip>
                     </div>
@@ -370,7 +385,7 @@ export default function DebtorDetailsCards({
                           wordBreak: "break-word",
                         }}
                       >
-                        {getTruncatedText(formatValue(value), 15) || "--"}
+                        {getTruncatedText(formatValue(value), 18) || "--"}
                       </Typography>
                     </Tooltip>
                   )}
@@ -382,6 +397,8 @@ export default function DebtorDetailsCards({
               display: "flex",
               flexWrap: "wrap",
               width: "100%",
+              justifyContent: "space-between",
+              marginBottom: "10px",
             }}
           >
             <Typography
@@ -390,7 +407,6 @@ export default function DebtorDetailsCards({
                 fontWeight: "700",
                 fontFamily: "Nunito",
                 color: Colors.DARK_GRAY,
-                width: "35%",
               }}
             >
               Street Address
@@ -403,7 +419,6 @@ export default function DebtorDetailsCards({
                 fontWeight: "500",
                 textAlign: "right",
                 flexWrap: "wrap",
-                maxWidth: "100%",
                 wordBreak: "break-word",
               }}
             >

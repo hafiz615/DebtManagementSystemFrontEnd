@@ -38,6 +38,7 @@ import {
   Sync,
   CompareArrows,
   Save,
+  Paid,
 } from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
@@ -84,6 +85,7 @@ import EditLawsuitDetails from "./caseDetail/editLawsuit";
 import AddAttorneyDetails from "./caseDetail/addAttorneyDetails";
 import AddAnotherPerson from "./caseDetail/addAnotherPerson";
 import DebtorPayments from "./debtorPayments";
+import InstantPayment from "./instantPayment";
 
 export default function MuiModels({
   buttonName,
@@ -409,7 +411,7 @@ export default function MuiModels({
           }}
         >
           <EditIcon
-            sx={{ color: Colors.DARK_GRAY, fontSize: iconSize || "16px" }}
+            sx={{ color: Colors.DARK_GRAY, fontSize: iconSize || "22px" }}
           />
         </IconButton>
       ) : show === "showCreditorSync" ? (
@@ -907,6 +909,17 @@ export default function MuiModels({
           hoverColor={Colors.SKY_BLUE}
           onClick={handleOpen}
         />
+      ) : show === "instantPayment" ? (
+        <Tooltip title="Acquire Client Funds" placement="top">
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpen();
+            }}
+          >
+            <Paid sx={{ color: Colors.SKY_BLUE }} />
+          </IconButton>
+        </Tooltip>
       ) : (
         <Button onClick={handleOpen}>{buttonName}</Button>
       )}
@@ -1384,6 +1397,8 @@ export default function MuiModels({
               GetCaseDetails={GetCaseDetails}
               GetCasePaymentDetails={GetCasePaymentDetails}
             />
+          ) : show === "instantPayment" ? (
+            <InstantPayment handleClose={handleClose} debtorId={debtorId} />
           ) : (
             ""
           )}
