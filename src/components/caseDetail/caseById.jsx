@@ -144,6 +144,8 @@ export default function CaseById({
     }
   }, [caseData]);
 
+  //condition for optimization
+
   return (
     <Grid item sx={{ marginTop: "1rem" }}>
       {loading || isEmpty(caseData) ? (
