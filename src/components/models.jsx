@@ -411,7 +411,7 @@ export default function MuiModels({
           }}
         >
           <EditIcon
-            sx={{ color: Colors.DARK_GRAY, fontSize: iconSize || "16px" }}
+            sx={{ color: Colors.DARK_GRAY, fontSize: iconSize || "22px" }}
           />
         </IconButton>
       ) : show === "showCreditorSync" ? (
@@ -910,14 +910,14 @@ export default function MuiModels({
           onClick={handleOpen}
         />
       ) : show === "instantPayment" ? (
-        <Tooltip title="Instant Payment" placement="top">
+        <Tooltip title="Acquire Client Funds" placement="top">
           <IconButton
             onClick={(e) => {
               e.stopPropagation();
               handleOpen();
             }}
           >
-            <Paid />
+            <Paid sx={{ color: Colors.SKY_BLUE }} />
           </IconButton>
         </Tooltip>
       ) : (
@@ -1398,11 +1398,7 @@ export default function MuiModels({
               GetCasePaymentDetails={GetCasePaymentDetails}
             />
           ) : show === "instantPayment" ? (
-            <InstantPayment
-              handleClose={handleClose}
-              transactionId={transactionId}
-              GetCasePaymentDetails={GetCasePaymentDetails}
-            />
+            <InstantPayment handleClose={handleClose} debtorId={debtorId} />
           ) : (
             ""
           )}

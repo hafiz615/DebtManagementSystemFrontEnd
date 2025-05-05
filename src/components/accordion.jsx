@@ -53,9 +53,6 @@ export default function AccordionUsage({
   ) {
     headers.push("Update Date");
   }
-  if (arrayName === "upcomingPayments") {
-    headers.push("Acquire funds");
-  }
 
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions

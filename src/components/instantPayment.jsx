@@ -6,21 +6,16 @@ import { Typography } from "@mui/material";
 import { FONT_SIZE_LARGE, FONT_SIZE_XXL } from "../constants/appConstants";
 import { useToast } from "../toast/toastContext";
 
-export default function InstantPayment({
-  handleClose,
-  transactionId,
-  GetCasePaymentDetails,
-}) {
+export default function InstantPayment({ handleClose, debtorId }) {
   const [loading, setLoading] = useState();
   const { showToast } = useToast();
 
   const handleConfirm = async (e) => {
     setLoading(true);
     e.stopPropagation();
-    const res = await GetInstantPayment(transactionId);
+    const res = await GetInstantPayment(debtorId);
     if (res?.status === 200) {
       showToast(res?.data?.message, "success");
-      GetCasePaymentDetails("default", 1, 5, true, true);
     } else {
       const errorMessage = res?.response?.data?.message;
       showToast(errorMessage, "error");
@@ -32,12 +27,12 @@ export default function InstantPayment({
       <Typography
         sx={{ fontSize: FONT_SIZE_XXL, fontFamily: "Nunito", fontWeight: 600 }}
       >
-        Acquire funds
+        Acquire Client funds
       </Typography>
       <Typography
-        sx={{ fontSize: FONT_SIZE_LARGE, fontFamily: "Nunito", m: "10px 0px" }}
+        sx={{ fontSize: FONT_SIZE_LARGE, fontFamily: "Nunito", m: "1rem 0px" }}
       >
-        Are you sure you want to capture this amount?
+        Are you sure you want to acquire client funds?
       </Typography>
       <div
         style={{

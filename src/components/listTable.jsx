@@ -234,18 +234,6 @@ export default function ListTable({
                       Retry
                     </StyledTableCell>
                   )}
-                {/* {arrayName === "successCaptures" && (
-                  <StyledTableCell
-                    align="left"
-                    sx={{
-                      fontWeight: "700",
-                      fontSize: { xs: FONT_SIZE_SMALL, sm: FONT_SIZE_LARGE },
-                      paddingRight: "0.5rem !important",
-                    }}
-                  >
-                    Send Payment
-                  </StyledTableCell>
-                )} */}
               </TableRow>
             </TableHead>
             {loading ? (
@@ -481,16 +469,6 @@ export default function ListTable({
                               return getCreditorUpcomingPayments(1, 5);
                             }
                           }}
-                        />
-                      </StyledTableCell>
-                    )}
-                    {arrayName === "upcomingPayments" && (
-                      <StyledTableCell>
-                        <MuiModels
-                          width="40vw"
-                          show="instantPayment"
-                          transactionId={row?.id}
-                          GetCasePaymentDetails={getHomeData}
                         />
                       </StyledTableCell>
                     )}
