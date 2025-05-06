@@ -271,7 +271,13 @@ function AddAnotherPerson({
                       <td
                         style={{ padding: "5px", display: "flex", gap: "1rem" }}
                       >
-                        <Tooltip title={participant?.muted ? "Unmute" : "Mute"}>
+                        <Tooltip
+                          title={
+                            participant?.muted
+                              ? "Unmute This User"
+                              : "Mute This User"
+                          }
+                        >
                           <IconButton onClick={() => toggleMute(index)}>
                             {participant?.muted ? (
                               <MicOff color="primary" />
@@ -281,7 +287,13 @@ function AddAnotherPerson({
                           </IconButton>
                         </Tooltip>
 
-                        <Tooltip title={participant?.hold ? "Unhold" : "Hold"}>
+                        <Tooltip
+                          title={
+                            participant?.hold
+                              ? "Unhold This User"
+                              : "Hold This User"
+                          }
+                        >
                           <IconButton onClick={() => toggleHold(index)}>
                             {participant?.hold ? (
                               <PlayCircle color="primary" />

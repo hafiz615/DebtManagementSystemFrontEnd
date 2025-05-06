@@ -258,15 +258,15 @@ const DialPad = () => {
     }
   };
 
-  // const muteCall = () => {
-  //   if (!muted && call) {
-  //     call.mute(true);
-  //     setMuted(true);
-  //   } else {
-  //     call.mute(false);
-  //     setMuted(false);
-  //   }
-  // };
+  const muteCall = () => {
+    if (!muted && call) {
+      call.mute(true);
+      setMuted(true);
+    } else {
+      call.mute(false);
+      setMuted(false);
+    }
+  };
 
   useEffect(() => {
     startupClient();
@@ -398,15 +398,18 @@ const DialPad = () => {
                       marginBottom: ".5rem",
                     }}
                   >
-                    {/* <IconButton onClick={muteCall}>
-                      {muted ? <MicOff /> : <KeyboardVoice />}
-                    </IconButton> */}
                     {openAddModal && (
-                      <Tooltip title="Add Participant" placement="top-start">
-                        <IconButton onClick={() => setOpenAddModal(true)}>
-                          <AddIcon />
+                      <>
+                        <IconButton onClick={muteCall}>
+                          {muted ? <MicOff /> : <KeyboardVoice />}
                         </IconButton>
-                      </Tooltip>
+
+                        <Tooltip title="Add Participant" placement="top-start">
+                          <IconButton onClick={() => setOpenAddModal(true)}>
+                            <AddIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </>
                     )}
                   </Box>
 
