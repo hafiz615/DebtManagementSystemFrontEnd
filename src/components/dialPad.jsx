@@ -401,7 +401,13 @@ const DialPad = () => {
                     {openAddModal && (
                       <>
                         <IconButton onClick={muteCall}>
-                          {muted ? <MicOff /> : <KeyboardVoice />}
+                          {muted ? (
+                            <Tooltip title="Mute" placement="top-start">
+                              <MicOff />
+                            </Tooltip>
+                          ) : (
+                            <KeyboardVoice />
+                          )}
                         </IconButton>
 
                         <Tooltip title="Add Participant" placement="top-start">
