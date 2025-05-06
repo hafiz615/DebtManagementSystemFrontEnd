@@ -29,7 +29,11 @@ import TaskAccordion from "./tasksAccordion";
 import CustomFieldsAccordion from "./customFieldsAccordion";
 import TextButton from "../button";
 import TimelineData from "./timelineData";
-import { FONT_SIZE_LARGE, FONT_SIZE_SMALL } from "../../constants/appConstants";
+import {
+  FONT_SIZE_LARGE,
+  FONT_SIZE_MEDIUM,
+  FONT_SIZE_SMALL,
+} from "../../constants/appConstants";
 import { isEmpty } from "lodash";
 import { GetCalls, GetLawsuitDetails } from "../../services/services";
 import SendEmailCase from "./sendEmailCase";
@@ -415,14 +419,14 @@ export default function CaseById({
                           display: "inline-flex",
                           alignItems: "center",
                           borderRadius: "10px",
-                          padding: "10px",
+                          // padding: "10px",
                         }}
                       >
-                        <Grid item sx={{ mr: 1 }}>
+                        <Grid item>
                           <Typography
                             sx={{
                               fontFamily: "Nunito",
-                              fontSize: FONT_SIZE_LARGE,
+                              fontSize: FONT_SIZE_MEDIUM,
                             }}
                           >
                             Attorney Funds transfer
@@ -455,6 +459,11 @@ export default function CaseById({
                         remainingAmount={allAttorneyData?.lawSuit?.balance?.toString()}
                         GetCaseDetails={GetCaseDetails}
                         getAttorneyData={getAttorneyData}
+                      />
+                      <MuiModels
+                        width="65vw"
+                        show="attorneyPayments"
+                        caseId={id}
                       />
                     </div>
                   )}

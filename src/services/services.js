@@ -2324,3 +2324,14 @@ export const GetInstantPayment = async (id) => {
     return error;
   }
 };
+export const GetCaseAttorneyPayments = async (id, page) => {
+  try {
+    return await axios.get(
+      BASE_URL +
+        `/v1/payment/getCaseAttorneyPayments/${id}?page=${page}&limit=10`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
