@@ -39,6 +39,7 @@ import {
   CompareArrows,
   Save,
   Paid,
+  Payments,
 } from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
@@ -86,6 +87,7 @@ import AddAttorneyDetails from "./caseDetail/addAttorneyDetails";
 import AddAnotherPerson from "./caseDetail/addAnotherPerson";
 import DebtorPayments from "./debtorPayments";
 import InstantPayment from "./instantPayment";
+import AttorneyPayments from "./caseDetail/attorneyPayments";
 
 export default function MuiModels({
   buttonName,
@@ -649,6 +651,16 @@ export default function MuiModels({
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
         />
+      ) : show === "attorneyPayments" ? (
+        <TextButton
+          buttonText="Attorney Payments"
+          height="2.5rem"
+          width="10rem"
+          onClick={handleOpen}
+          disabled={disabled}
+          backgroundColor={Colors.SKY_BLUE}
+          hoverColor={Colors.SKY_BLUE}
+        />
       ) : show === "debtorPayments" ? (
         <TextButton
           buttonText="Pause Payments"
@@ -1081,6 +1093,8 @@ export default function MuiModels({
               item={item}
               handleClose={handleClose}
             />
+          ) : show === "attorneyPayments" ? (
+            <AttorneyPayments handleClose={handleClose} caseId={caseId} />
           ) : show === "addPipeline" ? (
             <AddPipeline
               handleClose={handleClose}
