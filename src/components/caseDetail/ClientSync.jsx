@@ -33,7 +33,10 @@ function ClientSync({ handleClose, caseData, paymentPlatform }) {
 
   const GetClientEasyPaySync = async () => {
     setEasyPaySyncloading(true);
-    const GetClientEasyPaySyncRes = await GetClientSyncEmail(debtorId);
+    const GetClientEasyPaySyncRes = await GetClientSyncEmail(
+      debtorId,
+      paymentPlatform
+    );
     if (GetClientEasyPaySyncRes?.status === 200) {
       setEmail(GetClientEasyPaySyncRes?.data?.data);
     } else if (GetClientEasyPaySyncRes?.response?.status === 400) {
@@ -89,9 +92,14 @@ function ClientSync({ handleClose, caseData, paymentPlatform }) {
               Sync{" "}
               {paymentPlatform === "Seamlesschex merchant"
                 ? "Seamlesschex Merchant"
-                : "Easypay Direct"}{" "}
+                : paymentPlatform === "Easypay direct"
+                ? "Easypay Direct"
+                : paymentPlatform === "Paynote"
+                ? "Paynote"
+                : ""}{" "}
               Client
             </Typography>
+
             <Close onClick={handleClose} />
           </Box>
 
