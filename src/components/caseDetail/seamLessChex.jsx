@@ -6,8 +6,10 @@ import TextButton from "../button";
 import { Colors } from "../../config/default";
 import { handleNumberInput } from "../../common";
 import { useToast } from "../../toast/toastContext";
-import { GetBankInfo, TokenizeAccount } from "../../services/bankServices";
+import { GetBankInfo } from "../../services/bankServices";
 import { AddAccountSeamlessPaynote } from "../../services/services";
+import { encrypt } from "n-krypta";
+import { REACT_APP_SECURITY_KEY } from "../../constants/appConstants";
 
 function SeamLessChex({ setOpenDialog, debtorId }) {
   const [errors, setErrors] = useState({});
@@ -73,41 +75,28 @@ function SeamLessChex({ setOpenDialog, debtorId }) {
         setLoading(false);
         return;
       }
-      const tokenPayload = {
-        first_name: firstName,
-        last_name: lastName,
-        bank_account: number,
-        bank_routing: routing,
-        store: "fristChoice",
+
+      const dataToEncrypt = {
+        firstName,
+        lastName,
+        bankAccount: number,
+        bankRouting: routing,
       };
 
-      const tokenizeResponse = await TokenizeAccount(tokenPayload);
-      if (tokenizeResponse?.status === 200) {
-        const token = tokenizeResponse?.data?.tokenization?.token;
+      const encryptedData = encrypt(dataToEncrypt, REACT_APP_SECURITY_KEY);
 
-        if (token) {
-          const params = {
-            platform: "Seamlesschex",
-            data: token,
-            bank_routing: routing,
-          };
+      const params = {
+        data: encryptedData,
+        platform: "Seamlesschex",
+      };
 
-          const submitResponse = await AddAccountSeamlessPaynote(
-            params,
-            debtorId
-          );
-          if (submitResponse?.status === 200) {
-            showToast(submitResponse?.data?.message, "success");
-            setOpenDialog(false);
-          } else {
-            const errorMessage = submitResponse?.response?.data?.message;
-            showToast(errorMessage, "error");
-          }
-        } else {
-          showToast("Token not found in response", "error");
-        }
+      const submitResponse = await AddAccountSeamlessPaynote(params, debtorId);
+      if (submitResponse?.status === 200) {
+        showToast(submitResponse?.data?.message, "success");
+        setOpenDialog(false);
       } else {
-        showToast("Account tokenization failed", "error");
+        const errorMessage = submitResponse?.response?.data?.message;
+        showToast(errorMessage || "Failed to add account", "error");
       }
     } catch (error) {
       showToast("An unexpected error occurred", "error");
@@ -147,10 +136,7 @@ function SeamLessChex({ setOpenDialog, debtorId }) {
           container
           item
           xs={12}
-          sx={{
-            display: "flex",
-            justifyContent: "space-around",
-          }}
+          sx={{ display: "flex", justifyContent: "space-around" }}
         >
           <PaymentsTextFields
             type="text"
@@ -179,10 +165,7 @@ function SeamLessChex({ setOpenDialog, debtorId }) {
           container
           item
           xs={12}
-          sx={{
-            display: "flex",
-            justifyContent: "space-around",
-          }}
+          sx={{ display: "flex", justifyContent: "space-around" }}
         >
           <PaymentsTextFields
             type="number"
@@ -215,11 +198,7 @@ function SeamLessChex({ setOpenDialog, debtorId }) {
       </Grid>
 
       <Box
-        sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginTop: "2rem",
-        }}
+        sx={{ display: "flex", justifyContent: "flex-end", marginTop: "2rem" }}
       >
         <TextButton
           buttonText="SAVE"
