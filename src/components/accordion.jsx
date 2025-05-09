@@ -53,6 +53,9 @@ export default function AccordionUsage({
   ) {
     headers.push("Update Date");
   }
+  if (arrayName === "pendingCheckPayments") {
+    headers.push("Status");
+  }
 
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
