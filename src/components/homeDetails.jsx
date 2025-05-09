@@ -387,7 +387,7 @@ function HomeDetails() {
           data?.heading !== "Client Successful Authorizations" &&
           data?.heading !== "Creditor Successful Payments" &&
           data?.heading !== "Creditor Upcoming Payments" &&
-          data?.heading !== "Clients Upcoming Checks"
+          data?.heading !== "Client Upcoming Checks"
         }
         showDueDate={
           data?.heading !== "Client Successful Captures" &&
@@ -412,7 +412,7 @@ function HomeDetails() {
       data.heading === "Creditor Successful Payments" ||
       data.heading === "Client Successful Captures" ||
       data.heading === "Client Failed Captures" ||
-      data.heading === "Clients Upcoming Checks"
+      data.heading === "Client Upcoming Checks"
   );
 
   // const groupThree = accordionData?.filter(
