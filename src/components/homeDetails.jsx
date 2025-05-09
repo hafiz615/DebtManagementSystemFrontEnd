@@ -90,7 +90,7 @@ function HomeDetails() {
     },
     {
       key: "pendingCheckPayments",
-      heading: "Clients Upcoming Checks",
+      heading: "Client Upcoming Checks",
       number: "5",
     },
   ];
