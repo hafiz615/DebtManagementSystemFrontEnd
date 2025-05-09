@@ -34,6 +34,9 @@ import Dropdown from "../dropdown";
 import { isEmpty } from "lodash";
 import { useDispatch } from "react-redux";
 import { setDialState } from "../../redux/action/action";
+import { Dialog, DialogContent } from "@mui/material";
+import SeamLessChex from "./seamLessChex";
+import PaynoteFormClient from "./paynoteFormClient";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -67,7 +70,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function DebtorDetailsCards({
-  accountsExist,
   caseData,
   GetCaseDetails,
   caseDataId,
@@ -78,7 +80,6 @@ export default function DebtorDetailsCards({
 }) {
   const streetAdress = caseData?.debtor?.basicInformation;
   const [searchText, setSearchText] = useState("");
-  const [selectedValue, setSelectedValue] = useState("Seamless Chex Merchant");
   const [type, setType] = useState("cc");
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 2;
@@ -131,10 +132,13 @@ export default function DebtorDetailsCards({
   const filteredContacts = caseData?.debtor?.contacts?.filter((item) =>
     item?.name?.toLowerCase().includes(searchText.toLowerCase())
   );
+  const [selectedValue, setSelectedValue] = useState("Seamless Chex Merchant");
 
   const paymentGateways = [
     { label: "Seamless Chex Merchant", value: "Seamless Chex Merchant" },
     { label: "Easy Pay", value: "Easy Pay" },
+    { label: "Seamless Chex", value: "Seamless Chex" },
+    { label: "Paynote", value: "Paynote" },
   ];
   const [connectPayment, setConnectPayment] = useState({
     paymentToken: "",
@@ -144,6 +148,23 @@ export default function DebtorDetailsCards({
         ? "Seamlesschex merchant"
         : "Easypay direct",
   });
+  const [openDialog, setOpenDialog] = useState(false);
+  const [paynoteDialog, setPaynoteDialog] = useState(false);
+
+  const handleDropdownChange = (value) => {
+    setSelectedValue(value);
+    if (value === "Paynote") {
+      setPaynoteDialog(true);
+    } else {
+      setPaynoteDialog(false);
+    }
+
+    if (value === "Seamless Chex") {
+      setOpenDialog(true);
+    } else {
+      setOpenDialog(false);
+    }
+  };
 
   const debtorId = caseData?.debtor?._id;
   const accountExist = !isEmpty(caseData?.debtor?.accounts);
@@ -255,18 +276,24 @@ export default function DebtorDetailsCards({
               show="instantPayment"
               debtorId={caseData?.debtor?._id}
             />
-            <MuiModels
-              show="showClientSync"
-              iconColor={Colors.BLACK}
-              caseData={caseData}
-              GetCaseDetails={GetCaseDetails}
-              height="22vh"
-              paymentPlatform={
-                selectedValue === "Seamless Chex Merchant"
-                  ? "Seamlesschex merchant"
-                  : "Easypay direct"
-              }
-            />
+            {selectedValue !== "Seamless Chex" && (
+              <MuiModels
+                show="showClientSync"
+                iconColor={Colors.BLACK}
+                caseData={caseData}
+                GetCaseDetails={GetCaseDetails}
+                height="22vh"
+                paymentPlatform={
+                  selectedValue === "Seamless Chex Merchant"
+                    ? "Seamlesschex merchant"
+                    : selectedValue === "Easy Pay"
+                    ? "Easypay direct"
+                    : selectedValue === "Paynote"
+                    ? "Paynote"
+                    : ""
+                }
+              />
+            )}
 
             <MuiModels
               show="debtorDetail"
@@ -302,7 +329,46 @@ export default function DebtorDetailsCards({
             setSelectedValue={setSelectedValue}
             fontSize="12px"
             setType={setType}
+            onChange={handleDropdownChange}
           />
+
+          <Dialog
+            open={openDialog}
+            onClose={() => setOpenDialog(false)}
+            fullWidth
+            maxWidth="md"
+            PaperProps={{
+              style: {
+                borderRadius: "16px",
+                padding: "16px",
+              },
+            }}
+          >
+            <DialogContent sx={{ padding: "16px 24px" }}>
+              <SeamLessChex setOpenDialog={setOpenDialog} debtorId={debtorId} />
+            </DialogContent>
+          </Dialog>
+
+          <Dialog
+            open={paynoteDialog}
+            onClose={() => setPaynoteDialog(false)}
+            fullWidth
+            maxWidth="md"
+            PaperProps={{
+              style: {
+                borderRadius: "16px",
+                padding: "16px",
+              },
+            }}
+          >
+            <DialogContent sx={{ padding: "16px 24px" }}>
+              <PaynoteFormClient
+                setPaynoteDialog={setPaynoteDialog}
+                debtorId={debtorId}
+              />
+            </DialogContent>
+          </Dialog>
+
           <PaymentCardDetails
             paymentGateway={selectedValue}
             setConnectPayment={setConnectPayment}

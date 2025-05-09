@@ -435,7 +435,11 @@ export default function MuiModels({
           title={`Sync ${
             paymentPlatform === "Seamlesschex merchant"
               ? "Seamlesschex Merchant"
-              : "Easypay Direct"
+              : paymentPlatform === "Easypay direct"
+              ? "Easypay Direct"
+              : paymentPlatform === "Paynote"
+              ? "Paynote"
+              : ""
           } Client`}
           placement="top-end"
         >
