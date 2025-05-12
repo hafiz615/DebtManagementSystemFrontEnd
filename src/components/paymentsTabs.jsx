@@ -162,6 +162,16 @@ export default function PaymentsTabs({
               }}
               label="Upcoming Payments"
             />
+            <AntTab
+              sx={{
+                bgcolor: Colors.WHITE,
+                width: { xs: "30%", sm: "max-content" },
+                borderTopRightRadius: "10px",
+                fontWeight: "600",
+                height: "3.5rem",
+              }}
+              label="Clients Checks"
+            />
           </AntTabs>
         )}
         {mainTabValue === 1 && (
