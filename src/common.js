@@ -838,3 +838,10 @@ export const formatWeeklyBudget = (value) => {
     maximumFractionDigits: 2,
   });
 };
+export const formatAsDollarOnTable = (value) => {
+  if (value === undefined || value === null) {
+    return "--";
+  }
+  const fixedValue = Number(value).toFixed(2);
+  return `$${Number(fixedValue).toLocaleString()}`;
+};

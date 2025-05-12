@@ -289,7 +289,6 @@ export default function SettlementRange({
     const {
       target: { value },
     } = event;
-
     const selected = typeof value === "string" ? value.split(",") : value;
     if (selected.includes("Select All")) {
       setSelectedMonths(topPayeeMonths);
@@ -297,7 +296,7 @@ export default function SettlementRange({
       !selected.includes("Select All") &&
       selectedMonths.includes("Select All")
     ) {
-      setSelectedMonths([selected[0]]);
+      setSelectedMonths([topPayeeMonths[topPayeeMonths?.length - 1]]);
     } else if (selected.length === 0) {
       return;
     } else {
@@ -1503,7 +1502,30 @@ export default function SettlementRange({
                             onClose={() => setOpenMultiSelect(false)}
                             onChange={handleMonthChange}
                             placeholder="Select Month"
-                            renderValue={(selected) => selected.join(", ")}
+                            renderValue={(selected) => {
+                              const filtered = selected.filter(
+                                (value) => value !== "Select All"
+                              );
+                              return (
+                                <span
+                                  style={{
+                                    fontFamily: "Nunito",
+                                    fontSize: "14px",
+                                  }}
+                                >
+                                  {filtered.join(", ")}
+                                </span>
+                              );
+                            }}
+                            sx={{
+                              borderRadius: "8px",
+                              padding: "4px 8px",
+                              fontFamily: "Nunito",
+                              fontSize: "14px",
+                              "& .MuiSelect-select": {
+                                padding: "8px",
+                              },
+                            }}
                           >
                             {topPayeeMonths?.map((month) => (
                               <MenuItem key={month} value={month}>
@@ -1575,15 +1597,13 @@ export default function SettlementRange({
                                 marginRight: "5px",
                               }}
                             />
-                            <Tooltip title={item?.label} placement="top" arrow>
-                              <span
-                                style={{
-                                  fontSize: FONT_SIZE_MEDIUM,
-                                }}
-                              >
-                                {item?.label}
-                              </span>
-                            </Tooltip>
+                            <span
+                              style={{
+                                fontSize: FONT_SIZE_MEDIUM,
+                              }}
+                            >
+                              {item?.label}
+                            </span>
                           </div>
                         ))}
                         <div

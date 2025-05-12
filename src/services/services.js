@@ -1601,10 +1601,10 @@ export const SyncPaynoteCreditor = async (payload, id, type) => {
     return error;
   }
 };
-export const GetClientSyncEmail = async (id) => {
+export const GetClientSyncEmail = async (id, platform) => {
   try {
     return await axios.get(
-      BASE_URL + `/v1/debtor/getClientSyncEmail/${id}`,
+      BASE_URL + `/v1/debtor/getClientSyncEmail/${id}?platform=${platform}`,
       setHeaders()
     );
   } catch (error) {
@@ -1978,6 +1978,25 @@ export const GetCreditorSuccessfulPayment = async (
     return error;
   }
 };
+export const getClientPendingChecks = async (
+  count,
+  page,
+  limit,
+  search,
+  filters,
+  payload
+) => {
+  try {
+    return await axios.post(
+      BASE_URL +
+        `/v1/payment/getClientPendingChecks?days=${count}&page=${page}&limit=${limit}&search=${search}&filters=${filters}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
 export const GetCreditorUpcomingPayment = async (
   count,
   page,
@@ -2318,6 +2337,28 @@ export const GetInstantPayment = async (id) => {
   try {
     return await axios.get(
       BASE_URL + `/v1/payment/getInstantPayment/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetCaseAttorneyPayments = async (id, page) => {
+  try {
+    return await axios.get(
+      BASE_URL +
+        `/v1/payment/getCaseAttorneyPayments/${id}?page=${page}&limit=10`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const AddAccountSeamlessPaynote = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/payment/addAccount/${id}`,
+      payload,
       setHeaders()
     );
   } catch (error) {
