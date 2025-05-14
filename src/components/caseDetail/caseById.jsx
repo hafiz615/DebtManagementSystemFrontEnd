@@ -39,6 +39,7 @@ import { GetCalls, GetLawsuitDetails } from "../../services/services";
 import SendEmailCase from "./sendEmailCase";
 import AttorneyDetail from "./attorneyDetail";
 import OtherCreditors from "./otherCreditors";
+import PaymentsAccounts from "./paymentsAccounts";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -559,6 +560,11 @@ export default function CaseById({
               </Grid>
             </AccordionDetails>
           </Accordion>
+          <PaymentsAccounts
+            caseData={caseData?.debtor}
+            caseDataId={id}
+            GetCaseDetails={GetCaseDetails}
+          />
 
           <Grid container>
             <Grid item xs={12} md={3}>
