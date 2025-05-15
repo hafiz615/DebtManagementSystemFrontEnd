@@ -212,7 +212,11 @@ export default function PaymentSettlement({
                 placeholder="DD/MM/YYYY"
                 value={formatDateForInput(item?.startDate)}
                 onChange={(e) =>
-                  handleInputChange(index, "startDate", e.target.value)
+                  handleInputChange(
+                    index,
+                    "startDate",
+                    formatDateForInput(e.target.value)
+                  )
                 }
                 min={minDate}
                 style={{
