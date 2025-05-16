@@ -21,7 +21,6 @@ import { Colors } from "../../config/default";
 import MuiModels from "../models";
 import DebtorDetailsCards from "./debtorDetailCards";
 import CreditorsDetailCards from "./creditorsDetailCards";
-import TransactionDetails from "./transactionDetail";
 import CaseFileCard from "./caseFileCard";
 import AnalyticsAccordion from "./analyticsAccordion";
 import AboutAccordion from "./aboutAccordion";
@@ -39,6 +38,7 @@ import { GetCalls, GetLawsuitDetails } from "../../services/services";
 import SendEmailCase from "./sendEmailCase";
 import AttorneyDetail from "./attorneyDetail";
 import OtherCreditors from "./otherCreditors";
+import PaymentPlan from "./paymentPlan";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -103,10 +103,6 @@ export default function CaseById({
   handleCreditorToggle,
   handleAttorneyToggle,
   isChecked,
-  GetCasePaymentDetails,
-  currentPaymentPage,
-  setCurrentPaymentPage,
-  totalPaymentPage,
   showEmail,
   from,
   getAllRanges,
@@ -147,8 +143,6 @@ export default function CaseById({
       getAttorneyData();
     }
   }, [caseData]);
-
-  //condition for optimization
 
   return (
     <Grid item sx={{ marginTop: "1rem" }}>
@@ -277,18 +271,6 @@ export default function CaseById({
                       label="Files"
                       value="Files"
                     />
-                    <Tab
-                      sx={{
-                        fontWeight: "600",
-                        textTransform: "none",
-                        fontFamily: "Nunito",
-                        "&.Mui-selected": {
-                          color: value ? Colors.SKY_BLUE : "inherit",
-                        },
-                      }}
-                      label="Transactions"
-                      value="Transactions"
-                    />
                   </Tabs>
                 </Box>
                 <div
@@ -313,55 +295,10 @@ export default function CaseById({
                         show="debtorPayments"
                         caseData={caseData}
                         GetCaseDetails={GetCaseDetails}
-                        GetCasePaymentDetails={GetCasePaymentDetails}
-                      />
-                      <MuiModels
-                        show="debtorPaymentPlan"
-                        caseData={caseData}
-                        GetCaseDetails={GetCaseDetails}
                       />
                     </div>
                   )}
-                  {value === "Transactions" && (
-                    <div style={{ display: "flex", gap: ".5rem" }}>
-                      <MuiModels
-                        show="AddPayments"
-                        width="55vw"
-                        caseId={id}
-                        debtorId={caseData?.debtor?._id}
-                        GetCaseDetails={GetCaseDetails}
-                      />
-                      <MuiModels
-                        show="SeeCheckDetails"
-                        maxHeight="70vh"
-                        width="55vw"
-                        caseId={id}
-                        debtorId={caseData?.debtor?._id}
-                        caseData={caseData}
-                        GetCaseDetails={GetCaseDetails}
-                      />
-                      <MuiModels
-                        show="bouncePayments"
-                        maxHeight="70vh"
-                        caseId={id}
-                        debtorId={caseData?.debtor?._id}
-                        GetCaseDetails={GetCaseDetails}
-                      />
-                      <MuiModels
-                        width="70vw"
-                        show="payments"
-                        remainingAmount={
-                          caseData?.settledAmount === 0
-                            ? caseData?.remaining?.toString()
-                            : caseData?.settledAmount?.toString()
-                        }
-                        data={caseData}
-                        GetCaseDetails={GetCaseDetails}
-                        GetCasePaymentDetails={GetCasePaymentDetails}
-                        getAttorneyData={getAttorneyData}
-                      />
-                    </div>
-                  )}
+
                   {value === "Creditor" && (
                     <>
                       <Grid
@@ -399,6 +336,31 @@ export default function CaseById({
                             }}
                           />
                         </Grid>
+                        <div style={{ display: "flex", gap: ".5rem" }}>
+                          <MuiModels
+                            show="AddPayments"
+                            width="55vw"
+                            caseId={id}
+                            debtorId={caseData?.debtor?._id}
+                            GetCaseDetails={GetCaseDetails}
+                          />
+                          <MuiModels
+                            show="SeeCheckDetails"
+                            maxHeight="70vh"
+                            width="55vw"
+                            caseId={id}
+                            debtorId={caseData?.debtor?._id}
+                            caseData={caseData}
+                            GetCaseDetails={GetCaseDetails}
+                          />
+                          <MuiModels
+                            show="bouncePayments"
+                            maxHeight="70vh"
+                            caseId={id}
+                            debtorId={caseData?.debtor?._id}
+                            GetCaseDetails={GetCaseDetails}
+                          />
+                        </div>
                       </Grid>
                       {!allAttorneyData?.lawfirm && (
                         <MuiModels
@@ -520,17 +482,6 @@ export default function CaseById({
                   <OtherCreditors
                     caseData={caseData}
                     GetCaseDetails={GetCaseDetails}
-                  />
-                ) : value === "Transactions" ? (
-                  <TransactionDetails
-                    loading={isPaymentLoading}
-                    paymentDetails={paymentDetails}
-                    GetCasePaymentDetails={GetCasePaymentDetails}
-                    caseData={caseData}
-                    GetCaseDetails={GetCaseDetails}
-                    currentPaymentPage={currentPaymentPage}
-                    setCurrentPaymentPage={setCurrentPaymentPage}
-                    totalPaymentPage={totalPaymentPage}
                   />
                 ) : value === "Attorney" ? (
                   <AttorneyDetail

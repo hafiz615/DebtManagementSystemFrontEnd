@@ -12,6 +12,7 @@ import { Paid } from "@mui/icons-material";
 import MuiModels from "././models";
 
 function TransactionRow({
+  debtor,
   data,
   heading,
   GetCasePaymentDetails,
@@ -19,6 +20,7 @@ function TransactionRow({
   hideTransferPayment,
   caseData,
   GetCaseDetails,
+  getPaymentPlan,
 }) {
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
@@ -46,7 +48,7 @@ function TransactionRow({
     }
     if (response?.status === 200) {
       showToast(response?.data?.message, "success");
-      GetCasePaymentDetails && GetCasePaymentDetails(id);
+      GetCasePaymentDetails && GetCasePaymentDetails(true);
       getCommissionPayments && getCommissionPayments();
     } else {
       showToast(
@@ -67,7 +69,7 @@ function TransactionRow({
   };
 
   const typographyStyle = {
-    fontSize: "13px",
+    fontSize: "11px",
     fontFamily: "Nunito",
     fontWeight: "500",
     width: "10%",
@@ -91,7 +93,7 @@ function TransactionRow({
             fontWeight: "600",
             fontSize: "13px",
             fontFamily: "Nunito",
-            m: "0px 0px",
+            m: "1rem 0px",
           }}
         >
           {heading}
@@ -114,6 +116,7 @@ function TransactionRow({
               alignItems: "center",
               width: "100%",
               color: heading ? Colors.BLACK : colorScheme,
+              borderBottom: `1px solid #D3D3D3`,
             }}
           >
             <p style={typographyStyle}>{formatDate(item?.dueDate) || "-"}</p>
@@ -140,14 +143,17 @@ function TransactionRow({
                 <Tooltip title={item?.creditorName} placement="top">
                   <span>{item?.creditorName?.slice(0, 15)}...</span>
                 </Tooltip>
+              ) : debtor ? (
+                item?.fullName
               ) : (
-                item?.creditorName || "-"
+                item?.creditorName
               )}
             </p>
             <p style={typographyStyle}>{item?.transactionType || "-"}</p>
             <p style={typographyStyle}>{item?.paymentGateway || "-"}</p>
             <p style={typographyStyle}>
-              {item?.type === "capture" &&
+              {!debtor &&
+              item?.type === "capture" &&
               item?.captured === "Success" &&
               !hideTransferPayment ? (
                 <Box sx={{ cursor: "pointer" }}>
@@ -259,13 +265,21 @@ function TransactionRow({
             </p>
 
             {heading === "Upcoming" ? (
-              <p style={typographyStyle}>
+              <p style={{ ...typographyStyle, display: "flex" }}>
                 <MuiModels
-                  show="updateUpcomingPaymentDate"
-                  transactionId={item?.id}
-                  selectedDueDate={item?.dueDate}
+                  show="editPayment"
+                  width="30vw"
+                  data={item}
                   caseData={caseData}
                   GetCasePaymentDetails={GetCasePaymentDetails}
+                />
+                <MuiModels
+                  show="deletePayment"
+                  button="delete"
+                  width="30vw"
+                  transactionId={item?.id}
+                  GetCasePaymentDetails={GetCasePaymentDetails}
+                  getPaymentPlan={getPaymentPlan}
                 />
               </p>
             ) : (

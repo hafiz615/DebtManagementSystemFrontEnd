@@ -81,13 +81,14 @@ import SaveVoiceCase from "./saveVoiceCase";
 import EditLawfirmDetails from "./editLawfirmDetails";
 import SelectLawfirm from "./caseDetail/selectLawfirm";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import ShowUpdateDate from "./caseDetail/showUpdateDate";
 import EditLawsuitDetails from "./caseDetail/editLawsuit";
 import AddAttorneyDetails from "./caseDetail/addAttorneyDetails";
 import AddAnotherPerson from "./caseDetail/addAnotherPerson";
 import DebtorPayments from "./debtorPayments";
 import InstantPayment from "./instantPayment";
 import AttorneyPayments from "./caseDetail/attorneyPayments";
+import DeletePayment from "./deletePayment";
+import EditPayment from "./caseDetail/editPayment";
 
 export default function MuiModels({
   buttonName,
@@ -200,6 +201,7 @@ export default function MuiModels({
   selectedDueDate,
   lawfirmCancelPlan,
   lawfirmIntervals,
+  getPaymentPlan,
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -358,8 +360,8 @@ export default function MuiModels({
             }}
           />
         </IconButton>
-      ) : show === "updateUpcomingPaymentDate" ? (
-        <Tooltip title="Update Date" placement="top-start">
+      ) : show === "editPayment" ? (
+        <Tooltip title="Edit Payment" placement="top-start">
           <IconButton
             sx={{ display: "flex", alignItems: "center" }}
             onClick={(e) => {
@@ -367,11 +369,10 @@ export default function MuiModels({
               handleOpen();
             }}
           >
-            <CalendarMonthIcon
+            <Edit
               sx={{
-                color: Colors.DIM_LIGHT_GRAY,
+                color: Colors.BLACK,
                 cursor: "pointer",
-                fontSize: "1.3rem",
               }}
             />
           </IconButton>
@@ -488,6 +489,12 @@ export default function MuiModels({
         <IconButton onClick={() => handleOpen()} color="error">
           <Delete />
         </IconButton>
+      ) : show === "deletePayment" ? (
+        <Tooltip title="Delete Payment" placement="top">
+          <IconButton onClick={() => handleOpen()}>
+            <Delete sx={{ color: Colors.ORANGE_COLOR }} />
+          </IconButton>
+        </Tooltip>
       ) : show === "CaseCustomField" || buttonName === "payments" ? (
         <IconButton
           onClick={() => {
@@ -1385,11 +1392,10 @@ export default function MuiModels({
               getAttorneyData={getAttorneyData}
               handleClose={handleClose}
             />
-          ) : show === "updateUpcomingPaymentDate" ? (
-            <ShowUpdateDate
+          ) : show === "editPayment" ? (
+            <EditPayment
               handleClose={handleClose}
-              transactionId={transactionId}
-              selectedDueDate={selectedDueDate}
+              data={data}
               caseData={caseData}
               GetCasePaymentDetails={GetCasePaymentDetails}
             />
@@ -1417,6 +1423,13 @@ export default function MuiModels({
             />
           ) : show === "instantPayment" ? (
             <InstantPayment handleClose={handleClose} debtorId={debtorId} />
+          ) : show === "deletePayment" ? (
+            <DeletePayment
+              transactionId={transactionId}
+              GetCasePaymentDetails={GetCasePaymentDetails}
+              handleClose={handleClose}
+              getPaymentPlan={getPaymentPlan}
+            />
           ) : (
             ""
           )}

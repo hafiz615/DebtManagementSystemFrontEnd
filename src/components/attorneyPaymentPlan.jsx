@@ -3,18 +3,17 @@ import { useParams } from "react-router-dom";
 
 import { Box, Grid, IconButton, Typography } from "@mui/material";
 
-import PaymentDetails from "./caseCreation/paymentDetails";
 import TextButton from "./button";
 import { Colors } from "../config/default";
 import {
   AddAttorneyPaymentPlan,
   CancelAttorneyPaymentPlan,
-  CancelPaymentPlan,
 } from "../services/services";
 import { useToast } from "../toast/toastContext";
 import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../constants/appConstants";
 import DeletePrompt from "./deletePrompt";
 import { Close } from "@mui/icons-material";
+import PaymentSettlement from "./caseCreationFields/paymentSettlement";
 
 const lineStyle = {
   width: "100%",
@@ -233,7 +232,7 @@ export default function AttorneyPaymentPlan({
         <b> ${isNaN(totalAmount) ? 0 : totalAmount?.toFixed(2)}</b>
       </Typography>
 
-      <PaymentDetails
+      <PaymentSettlement
         remainingAmount={remaining || data?.remaining}
         newDataList={newDataList}
         setNewDataList={setNewDataList}
