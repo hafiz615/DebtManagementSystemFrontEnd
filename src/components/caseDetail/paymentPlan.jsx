@@ -235,7 +235,7 @@ export default function PaymentPlan({ caseData }) {
   const handleUpdateCommission = async () => {
     setCommissionLoading(true);
     const payload = {
-      commission: commission,
+      commission: parseInt(commission),
     };
     const response = await UpdateCommissionPercentage(
       data?.debtor?._id,
