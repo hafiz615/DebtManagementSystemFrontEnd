@@ -72,7 +72,7 @@ function TransactionRow({
     fontSize: "11px",
     fontFamily: "Nunito",
     fontWeight: "500",
-    width: "10%",
+    width: debtor ? "12%" : "10%",
     margin: "0px 0px",
   };
 
@@ -151,54 +151,58 @@ function TransactionRow({
             </p>
             <p style={typographyStyle}>{item?.transactionType || "-"}</p>
             <p style={typographyStyle}>{item?.paymentGateway || "-"}</p>
-            <p style={typographyStyle}>
-              {!debtor &&
-              item?.type === "capture" &&
-              item?.captured === "Success" &&
-              !hideTransferPayment ? (
-                <Box sx={{ cursor: "pointer" }}>
-                  <Tooltip title={item?.status || "No status available"} arrow>
-                    <span>
-                      <IconButton
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          sendPaymentCreditor(item?.id);
-                        }}
-                        disabled={item?.status === "Success"}
-                        sx={{
-                          cursor:
-                            item?.status === "Success"
-                              ? "not-allowed"
-                              : "pointer",
-                        }}
-                      >
-                        <Paid
-                          sx={{
-                            color:
-                              item?.status === "Success"
-                                ? "gray"
-                                : Colors.SKY_BLUE,
+            {!debtor && (
+              <p style={typographyStyle}>
+                {item?.type === "capture" &&
+                item?.captured === "Success" &&
+                !hideTransferPayment ? (
+                  <Box sx={{ cursor: "pointer" }}>
+                    <Tooltip
+                      title={item?.status || "No status available"}
+                      arrow
+                    >
+                      <span>
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            sendPaymentCreditor(item?.id);
                           }}
-                        />
-                      </IconButton>
-                    </span>
-                  </Tooltip>
-                </Box>
-              ) : (
-                <p
-                  style={{
-                    paddingLeft: "1rem",
-                    fontSize: "13px",
-                    fontFamily: "Nunito",
-                    fontWeight: "500",
-                    width: "20%",
-                    margin: "0px 0px",
-                  }}
-                >
-                  -
-                </p>
-              )}
-            </p>
+                          disabled={item?.status === "Success"}
+                          sx={{
+                            cursor:
+                              item?.status === "Success"
+                                ? "not-allowed"
+                                : "pointer",
+                          }}
+                        >
+                          <Paid
+                            sx={{
+                              color:
+                                item?.status === "Success"
+                                  ? "gray"
+                                  : Colors.SKY_BLUE,
+                            }}
+                          />
+                        </IconButton>
+                      </span>
+                    </Tooltip>
+                  </Box>
+                ) : (
+                  <p
+                    style={{
+                      paddingLeft: "1rem",
+                      fontSize: "13px",
+                      fontFamily: "Nunito",
+                      fontWeight: "500",
+                      width: "20%",
+                      margin: "0px 0px",
+                    }}
+                  >
+                    -
+                  </p>
+                )}
+              </p>
+            )}
             <p style={typographyStyle}>
               {(item?.type === "authorization" &&
                 item?.authorized === "Failed") ||

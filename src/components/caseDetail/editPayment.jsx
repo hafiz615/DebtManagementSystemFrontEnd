@@ -170,7 +170,16 @@ export default function EditPayment({
           setSelectedValue={setTimePeriod}
         />
       </Box>
-      <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+
+      <div
+        style={{
+          display: "flex",
+          gap: "10px",
+          marginTop: "1rem",
+          justifyContent: "space-between",
+          borderTop: "1px solid #E0E0E0",
+        }}
+      >
         <Typography
           sx={{
             fontFamily: "Nunito",
@@ -194,7 +203,14 @@ export default function EditPayment({
           }}
         />
       </div>
-      <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "10px",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
         <Typography
           sx={{
             fontFamily: "Nunito",
