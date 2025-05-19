@@ -21,6 +21,7 @@ export default function EditPayment({
   handleClose,
   data,
   GetCasePaymentDetails,
+  getPaymentPlan,
 }) {
   const { showToast } = useToast();
   const [date, setDate] = useState(
@@ -50,6 +51,7 @@ export default function EditPayment({
     if (res?.status === 200) {
       showToast(res?.data?.message, "success");
       GetCasePaymentDetails(true);
+      getPaymentPlan();
       handleClose();
     } else {
       const errorMessage = res?.response?.data?.message;
@@ -176,7 +178,7 @@ export default function EditPayment({
             mt: "10px",
           }}
         >
-          Whole Payment
+          Apply Changes On Whole Payment Plan For This Interval Only
         </Typography>
         <Switch
           size="medium"
@@ -200,7 +202,7 @@ export default function EditPayment({
             mt: "10px",
           }}
         >
-          Whole Interval
+          Apply Changes On All The Intervals
         </Typography>
         <Switch
           size="medium"

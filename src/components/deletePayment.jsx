@@ -55,7 +55,7 @@ export default function DeletePayment({
             mt: "10px",
           }}
         >
-          Delete Whole Payment
+          Delete Whole Payment Plan For This Interval Only
         </Typography>
         <Switch
           size="medium"
@@ -79,7 +79,7 @@ export default function DeletePayment({
             mt: "10px",
           }}
         >
-          Delete Whole Interval
+          Delete All The Intervals
         </Typography>
         <Switch
           size="medium"

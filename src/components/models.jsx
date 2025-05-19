@@ -40,6 +40,7 @@ import {
   Save,
   Paid,
   Payments,
+  CalendarMonth,
 } from "@mui/icons-material";
 import { Add } from "@mui/icons-material";
 import EditPipeline from "./settingsScreen/editPipeline";
@@ -89,6 +90,7 @@ import InstantPayment from "./instantPayment";
 import AttorneyPayments from "./caseDetail/attorneyPayments";
 import DeletePayment from "./deletePayment";
 import EditPayment from "./caseDetail/editPayment";
+import UpdateUpcomingDate from "./updatePaymentDate";
 
 export default function MuiModels({
   buttonName,
@@ -493,6 +495,17 @@ export default function MuiModels({
         <Tooltip title="Delete Payment" placement="top">
           <IconButton onClick={() => handleOpen()}>
             <Delete sx={{ color: Colors.ORANGE_COLOR }} />
+          </IconButton>
+        </Tooltip>
+      ) : show === "updateUpcomingPaymentDate" ? (
+        <Tooltip title="Update Date" placement="top">
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpen();
+            }}
+          >
+            <CalendarMonth sx={{ color: Colors.SKY_BLUE }} />
           </IconButton>
         </Tooltip>
       ) : show === "CaseCustomField" || buttonName === "payments" ? (
@@ -1398,6 +1411,7 @@ export default function MuiModels({
               data={data}
               caseData={caseData}
               GetCasePaymentDetails={GetCasePaymentDetails}
+              getPaymentPlan={getPaymentPlan}
             />
           ) : show === "selectLawfirm" ? (
             <SelectLawfirm
@@ -1429,6 +1443,13 @@ export default function MuiModels({
               GetCasePaymentDetails={GetCasePaymentDetails}
               handleClose={handleClose}
               getPaymentPlan={getPaymentPlan}
+            />
+          ) : show === "updateUpcomingPaymentDate" ? (
+            <UpdateUpcomingDate
+              handleClose={handleClose}
+              transactionId={transactionId}
+              GetCasePaymentDetails={GetCasePaymentDetails}
+              selectedDueDate={selectedDueDate}
             />
           ) : (
             ""

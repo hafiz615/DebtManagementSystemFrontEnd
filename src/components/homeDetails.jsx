@@ -416,10 +416,6 @@ function HomeDetails() {
       data.heading === "Client Upcoming Checks"
   );
 
-  // const groupThree = accordionData?.filter(
-  //   (data) => data.heading === "Creditor Upcoming Payments"
-  // );
-
   return (
     <Grid
       container
@@ -553,9 +549,6 @@ function HomeDetails() {
                 <Grid item xs={12} lg={5.9}>
                   {groupTwo?.map(renderAccordion)}
                 </Grid>
-                {/* <Grid item xs={12} lg={5.9}>
-                  {groupThree?.map(renderAccordion)}
-                </Grid> */}
               </Grid>
             </>
           </Grid>
