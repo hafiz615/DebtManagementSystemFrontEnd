@@ -272,6 +272,7 @@ function TransactionRow({
                   data={item}
                   caseData={caseData}
                   GetCasePaymentDetails={GetCasePaymentDetails}
+                  getPaymentPlan={getPaymentPlan}
                 />
                 <MuiModels
                   show="deletePayment"
