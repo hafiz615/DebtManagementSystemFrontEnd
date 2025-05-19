@@ -312,7 +312,6 @@ export default function ListTable({
                           }}
                           key={i}
                         >
-                          {/* Truncate link if key is 'link', otherwise render value normally */}
                           {key === "link" && typeof value === "string" ? (
                             value?.length > 20 ? (
                               <span title={value}>
@@ -460,8 +459,9 @@ export default function ListTable({
                         <MuiModels
                           show="updateUpcomingPaymentDate"
                           transactionId={row?.id}
+                          width="30vw"
                           selectedDueDate={row?.dueDate}
-                          caseData={row?.caseId}
+                          data={row?.caseId}
                           GetCasePaymentDetails={() => {
                             if (arrayName === "upcomingPayments") {
                               return getHomeData("default", 1, 5, true, true);

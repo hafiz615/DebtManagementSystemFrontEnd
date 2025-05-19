@@ -176,7 +176,7 @@ export default function EditPayment({
             mt: "10px",
           }}
         >
-          Whole Payment
+          Apply Changes On Whole Payment Plan For This Interval Only
         </Typography>
         <Switch
           size="medium"
@@ -200,7 +200,7 @@ export default function EditPayment({
             mt: "10px",
           }}
         >
-          Whole Interval
+          Apply Changes On All The Intervals
         </Typography>
         <Switch
           size="medium"
