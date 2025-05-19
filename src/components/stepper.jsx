@@ -20,7 +20,6 @@ import {
 } from "../constants/appConstants";
 import TextButton from "./button";
 import CreditorDetails from "./caseCreation/creditorDetails";
-import PaymentDetails from "./caseCreation/paymentDetails";
 import FileUploadComponent from "./caseCreation/FileUploadComponent/uploadFiles";
 import {
   CreateCreditorCase,

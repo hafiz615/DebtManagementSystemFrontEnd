@@ -4,18 +4,11 @@ import { Grid, CircularProgress, Typography, IconButton } from "@mui/material";
 import TransactionRow from "../transactionRow";
 
 import { Colors } from "../../config/default";
-import { isEmpty } from "lodash";
 import { ArrowLeft, ArrowRight } from "@mui/icons-material";
 import { FONT_SIZE_LARGE } from "../../constants/appConstants";
 
-const typographyHeadingStyle = {
-  fontSize: "13px",
-  fontFamily: "Nunito",
-  fontWeight: "600",
-  width: "20%",
-  margin: "5px 0px",
-};
 export default function TransactionDetails({
+  debtor,
   paymentDetails,
   loading,
   GetCasePaymentDetails,
@@ -26,28 +19,27 @@ export default function TransactionDetails({
   currentPaymentPage,
   setCurrentPaymentPage,
   totalPaymentPage,
+  getPaymentPlan,
 }) {
+  const typographyHeadingStyle = {
+    fontSize: "12px",
+    fontFamily: "Nunito",
+    fontWeight: "600",
+    width: "9.5%",
+    margin: "5px 0px",
+  };
   return (
     <Grid
       item
       xs={12}
       sx={{
+        position: "relative",
         backgroundColor: Colors.WHITE,
         borderRadius: "10px",
-        padding: "0px 10px",
-        height: "14rem",
         marginBottom: "0.5rem",
+        height: "auto",
       }}
     >
-      <p
-        style={{
-          fontWeight: "600",
-          fontSize: "13px",
-          fontFamily: "Nunito",
-        }}
-      >
-        Transactions
-      </p>
       {loading ? (
         <Grid
           container
@@ -57,12 +49,13 @@ export default function TransactionDetails({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            height: "13rem",
+            height: "10rem",
           }}
         >
-          <CircularProgress size={60} sx={{ color: Colors.SKY_BLUE }} />
+          <CircularProgress size={40} sx={{ color: Colors.SKY_BLUE }} />
         </Grid>
-      ) : isEmpty(paymentDetails) ? (
+      ) : paymentDetails?.transactions?.previous?.length === 0 &&
+        paymentDetails?.transactions?.upcomingPayments?.length === 0 ? (
         <Grid
           container
           item
@@ -71,7 +64,7 @@ export default function TransactionDetails({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            height: "8rem",
+            height: "10rem",
           }}
         >
           <Typography
@@ -81,37 +74,19 @@ export default function TransactionDetails({
               fontSize: "13px",
             }}
           >
-            No transactions data
+            Payment plan not available
           </Typography>
         </Grid>
       ) : (
-        <Grid
-          sx={{
-            height: "10rem",
-            overflowY: "auto",
-            "&::-webkit-scrollbar": {
-              width: "5px",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "#E5E5E5",
-              borderRadius: "8px",
-            },
-            "&::-webkit-scrollbar-track": {
-              backgroundColor: Colors.WHITE,
-              borderRadius: "8px",
-              marginTop: ".5rem",
-              marginBottom: ".5rem",
-            },
-          }}
-        >
+        <Grid sx={{ pb: "3rem", px: "16px" }}>
           <div
             style={{
               display: "flex",
               alignItems: "center",
+              justifyContent: "space-between",
               borderBottom: `1px solid ${Colors.BLACK}`,
               width: "100%",
               marginBottom: "10px",
-              // position: "sticky",
               top: 0,
               backgroundColor: "white",
               zIndex: 1,
@@ -120,25 +95,30 @@ export default function TransactionDetails({
           >
             <p style={typographyHeadingStyle}>Date</p>
             <p style={typographyHeadingStyle}>Amount</p>
-            <p style={typographyHeadingStyle}>Payment Status</p>
-            <p style={typographyHeadingStyle}>Creditor Name</p>
-            <p style={typographyHeadingStyle}>Payment Type</p>
-            <p style={typographyHeadingStyle}>Payment Gateway</p>
-            <p style={typographyHeadingStyle}>Send Payment</p>
+            <p style={typographyHeadingStyle}>Status</p>
+            <p style={typographyHeadingStyle}>
+              {debtor ? "Client Name" : "Creditor Name"}
+            </p>
+            <p style={typographyHeadingStyle}>Type</p>
+            <p style={typographyHeadingStyle}>Gateway</p>
+            {!debtor && <p style={typographyHeadingStyle}>Send Payment</p>}
             <p style={typographyHeadingStyle}>Retry Transaction</p>
             <p style={typographyHeadingStyle}>Revert Transaction</p>
-            <p style={typographyHeadingStyle}>Update Date</p>
+            <p style={typographyHeadingStyle}>Actions</p>
           </div>
           <Grid container item xs={12}>
             <TransactionRow
+              debtor={debtor}
               data={paymentDetails?.transactions?.previous}
               GetCasePaymentDetails={GetCasePaymentDetails}
               getCommissionPayments={getCommissionPayments}
               hideTransferPayment={hideTransferPayment}
               caseData={caseData}
               GetCaseDetails={GetCaseDetails}
+              getPaymentPlan={getPaymentPlan}
             />
             <TransactionRow
+              debtor={debtor}
               data={paymentDetails?.transactions?.upcomingPayments}
               heading="Upcoming"
               GetCasePaymentDetails={GetCasePaymentDetails}
@@ -146,6 +126,7 @@ export default function TransactionDetails({
               hideTransferPayment={hideTransferPayment}
               caseData={caseData}
               GetCaseDetails={GetCaseDetails}
+              getPaymentPlan={getPaymentPlan}
             />
           </Grid>
           <div
@@ -153,7 +134,7 @@ export default function TransactionDetails({
               display: "flex",
               alignItems: "center",
               position: "absolute",
-              bottom: -8,
+              bottom: 0,
               right: 10,
             }}
           >

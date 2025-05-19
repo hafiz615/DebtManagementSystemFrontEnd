@@ -1,18 +1,16 @@
-import { Close } from "@mui/icons-material";
-import { Box, Typography } from "@mui/material";
-import React, { useState } from "react";
-import TextButton from "../button";
-import { Colors } from "../../config/default";
+import { Box, Grid, Typography } from "@mui/material";
+import { useState } from "react";
 import dayjs from "dayjs";
-import { UpdatePaymentDate } from "../../services/services";
-import { useToast } from "../../toast/toastContext";
+import { UpdatePaymentDate } from "../services/services";
+import { useToast } from "../toast/toastContext";
+import TextButton from "./button";
+import { Colors } from "../config/default";
 
-export default function ShowUpdateDate({
+export default function UpdateUpcomingDate({
   handleClose,
   transactionId,
-  selectedDueDate,
-  caseData,
   GetCasePaymentDetails,
+  selectedDueDate,
 }) {
   const { showToast } = useToast();
   const [date, setDate] = useState(
@@ -31,7 +29,7 @@ export default function ShowUpdateDate({
     const res = await UpdatePaymentDate(transactionId, payload);
     if (res?.status === 200) {
       showToast(res?.data?.message, "success");
-      GetCasePaymentDetails(caseData._id);
+      GetCasePaymentDetails();
       handleClose();
     } else {
       const errorMessage = res?.response?.data?.message;
@@ -44,8 +42,7 @@ export default function ShowUpdateDate({
   const handleDateChange = (e) => {
     const selectedValue = e.target.value;
     const selectedDate = dayjs(selectedValue);
-    const dayOfWeek = selectedDate.day(); // 0 = Sunday, 6 = Saturday
-
+    const dayOfWeek = selectedDate.day();
     if (dayOfWeek === 0 || dayOfWeek === 6) {
       showToast("Weekends are not allowed. Please select a weekday.", "error");
       setIsWeekend(true);
@@ -75,12 +72,6 @@ export default function ShowUpdateDate({
         >
           Update Date
         </Typography>
-        <Close
-          onClick={(e) => {
-            e.stopPropagation();
-            handleClose();
-          }}
-        />
       </Box>
 
       <Box
@@ -118,9 +109,25 @@ export default function ShowUpdateDate({
             width: "100%",
           }}
         />
-
+      </Box>
+      <Grid
+        xs={12}
+        container
+        item
+        sx={{ justifyContent: "flex-end", mt: "10px", gap: "10px" }}
+      >
         <TextButton
-          buttonText={"Update"}
+          buttonText="Cancel"
+          height="2.5rem"
+          width="8rem"
+          onClick={(e) => {
+            handleClose(), e.stopPropagation();
+          }}
+          backgroundColor={Colors.ORANGE_COLOR}
+          hoverColor={Colors.ORANGE_COLOR}
+        />
+        <TextButton
+          buttonText="Update"
           height="2.5rem"
           width="8rem"
           onClick={handleUpdateDate}
@@ -129,7 +136,7 @@ export default function ShowUpdateDate({
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
         />
-      </Box>
+      </Grid>
     </>
   );
 }

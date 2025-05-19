@@ -439,10 +439,6 @@ function HomeDetails() {
       return (order[a?.heading] || 99) - (order[b?.heading] || 99);
     });
 
-  // const groupThree = accordionData?.filter(
-  //   (data) => data.heading === "Creditor Upcoming Payments"
-  // );
-
   return (
     <Grid
       container
