@@ -120,8 +120,8 @@ export default function PaymentPlan({ caseData }) {
   const calculateTotalAmount = (data) => {
     let total = 0;
     data.forEach((item) => {
-      const frequency = item.frequency || 1;
-      total += item.amount || 0 * frequency;
+      const frequency = item?.frequency || 1;
+      total += item?.amount === "" ? 0 : item?.amount * frequency;
     });
     return total;
   };

@@ -47,7 +47,14 @@ export default function DeletePayment({
       >
         Delete Payment
       </Typography>
-      <div style={{ display: "flex", gap: "10px" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "10px",
+          justifyContent: "space-between",
+          borderTop: "1px solid #E0E0E0",
+        }}
+      >
         <Typography
           sx={{
             fontFamily: "Nunito",
@@ -71,7 +78,14 @@ export default function DeletePayment({
           }}
         />
       </div>
-      <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "10px",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
         <Typography
           sx={{
             fontFamily: "Nunito",
