@@ -252,13 +252,6 @@ export default function SendEmailCase({
     setSelectedCategory(category);
   };
 
-  // useEffect(() => {
-  //   const selectedTemplate = bulkEmailTemplates?.find((template) => {
-  //     if (template?.name === selectedEmailTemplates) {
-  //       setPreview((prevContent) => prevContent + template?.content);
-  //     }
-  //   });
-  // }, [selectedEmailTemplates]);
   useEffect(() => {
     const selectedTemplate = bulkEmailTemplates?.find(
       (template) => template?.name === selectedEmailTemplates
@@ -268,7 +261,6 @@ export default function SendEmailCase({
     }
   }, [selectedEmailTemplates]);
 
-  // Handle variable insertion
   const handleMenuClick = (action, selectedCategory) => {
     setSubMenuAnchorEl(null);
     setAnchorEl(null);
@@ -285,21 +277,6 @@ export default function SendEmailCase({
       }
     });
   }, [selectedSmsTemplates]);
-
-  // const handleMenuClick = (action, selectedCategory) => {
-  //   setSubMenuAnchorEl(null);
-  //   setAnchorEl(null);
-  //   if (action) {
-  //     const newContent = `{{${selectedCategory}.${action}}}`;
-  //     setPreview((prevContent) => {
-  //       if (prevContent.endsWith("</p>")) {
-  //         return prevContent.replace(/<\/p>$/, newContent + "</p>");
-  //       } else {
-  //         return prevContent + newContent;
-  //       }
-  //     });
-  //   }
-  // };
 
   const handleInputChange = (e) => {
     const value = e.target.value;

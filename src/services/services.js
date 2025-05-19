@@ -1426,18 +1426,7 @@ export const GetAllTransactions = async (page) => {
     return error;
   }
 };
-export const GetAllInbox = async (search, filter, medium, payload, All) => {
-  try {
-    return await axios.post(
-      BASE_URL +
-        `/v1/inbox/getAllMessages?search=${search}&filter=${filter}&type=default&medium=${medium}&all=${All}`,
-      payload,
-      setHeaders()
-    );
-  } catch (error) {
-    return error;
-  }
-};
+
 export const GetAllNotifications = async (payload) => {
   try {
     return await axios.post(
@@ -2358,6 +2347,30 @@ export const AddAccountSeamlessPaynote = async (payload, id) => {
   try {
     return await axios.post(
       BASE_URL + `/v1/payment/addAccount/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetAllInbox = async (search, filter, medium, payload, All) => {
+  try {
+    return await axios.post(
+      BASE_URL +
+        `/v1/inbox/getAllMessages?search=${search}&filter=${filter}&type=default&medium=${medium}&all=${All}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const InboxData = async (search, filters, medium, payload, All) => {
+  try {
+    return await axios.post(
+      BASE_URL +
+        `/v1/inbox/getSms?search=${search}&filter=${filters}&medium=${medium}&all=${All}`,
       payload,
       setHeaders()
     );
