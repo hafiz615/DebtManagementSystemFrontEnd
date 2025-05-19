@@ -21,6 +21,7 @@ export default function EditPayment({
   handleClose,
   data,
   GetCasePaymentDetails,
+  getPaymentPlan,
 }) {
   const { showToast } = useToast();
   const [date, setDate] = useState(
@@ -50,6 +51,7 @@ export default function EditPayment({
     if (res?.status === 200) {
       showToast(res?.data?.message, "success");
       GetCasePaymentDetails(true);
+      getPaymentPlan();
       handleClose();
     } else {
       const errorMessage = res?.response?.data?.message;

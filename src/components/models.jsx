@@ -1411,6 +1411,7 @@ export default function MuiModels({
               data={data}
               caseData={caseData}
               GetCasePaymentDetails={GetCasePaymentDetails}
+              getPaymentPlan={getPaymentPlan}
             />
           ) : show === "selectLawfirm" ? (
             <SelectLawfirm
