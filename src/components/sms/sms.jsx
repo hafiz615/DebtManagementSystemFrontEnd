@@ -4,6 +4,7 @@ import { Colors } from "../../config/default";
 import {
   FONT_SIZE_LARGE,
   FONT_SIZE_MEDIUM,
+  FONT_SIZE_SMALL,
   FONT_SIZE_XL,
   PAGE_HEIGHT,
 } from "../../constants/appConstants";
@@ -18,6 +19,7 @@ import {
   CircularProgress,
   Menu,
   Tooltip,
+  TextField,
 } from "@mui/material";
 import SearchBar from "./../searchBar";
 import {
@@ -27,17 +29,33 @@ import {
 } from "@mui/icons-material";
 import TextButton from "./../button";
 import {
-  GetAllInbox,
+  CreateSmsDraft,
   GetAllNotifications,
   GetNotificationTemplates,
   GetUsers,
+  InboxData,
+  SendEmailSmsCase,
 } from "../../services/services";
-import { formatDateString } from "../../common";
-import { useNavigate } from "react-router-dom";
+import { formatDateString, handleNumberInput } from "../../common";
 import Dropdown from "../dropdown";
 import MuiModels from "../models";
 import Prompt from "../prompt";
 import { setCounts } from "../../redux/action/action";
+import moment from "moment-timezone";
+import styled from "styled-components";
+import { useToast } from "../../toast/toastContext";
+
+const StyledInput = styled.input`
+  font-family: "Nunito";
+  background-color: ${Colors.BG_LIGHT_GRAY};
+  height: 2.5rem;
+  color: ${Colors.DIM_LIGHT_GRAY};
+  padding-left: 1rem;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  width: 98%;
+`;
 
 const inputStyling = {
   width: "100%",
@@ -67,7 +85,9 @@ const fontStyling = {
 
 function Sms() {
   const role = useSelector((state) => state?.signIn?.signIn?.user?.role);
+
   const [inboxData, setInboxData] = useState();
+  const [draftData, setDraftData] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);
   const [creditorCompany, setCreditorCompany] = useState("");
@@ -76,37 +96,26 @@ function Sms() {
   const [negotiator, setNegotiator] = useState("");
   const [filterActive, setFilterActive] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [activeTab, setActiveTab] = useState("Sent");
+  const [activeTab, setActiveTab] = useState("Inbox");
   const [users, setUsers] = useState();
-  const [userSelected, setUserSelected] = useState();
+  const [userSelected, setUserSelected] = useState("");
   const [notificationTemplate, setNotificationTemplate] = useState();
   const [activeMainTab, setActiveMainTab] = useState("Primary");
   const [activePreview, setActivePreview] = useState({
     id: 0,
     active: false,
   });
+  const [draftLoading, setDraftLoading] = useState(false);
+  const [smsLoading, setSmsLoading] = useState(false);
   const open = Boolean(anchorEl);
-  const tabs = ["Sent", "Received", "Draft"];
-  const maintabs = ["All", "Primary", "Completed"];
-
-  const allTrue =
-    activeMainTab === "All"
-      ? "all"
-      : activeMainTab === "Completed"
-      ? "completed"
-      : "primary";
+  const tabs = ["Inbox", "Draft"];
+  const { showToast } = useToast();
 
   const containerRef = useRef(null);
   const dispatch = useDispatch();
   const { smsCount, emailCount } = useSelector((state) => state.counts);
 
   const disabled = caseCode || debtorCompany || creditorCompany || negotiator;
-  const activeInbox =
-    activeTab === "Sent"
-      ? "sent"
-      : activeTab === "Draft"
-      ? "draft"
-      : "received";
 
   const handleKeyPress = (e) => {
     setSearchText(e.target.value);
@@ -129,12 +138,18 @@ function Sms() {
         creditorCompanyName: creditorCompany || "",
         negotiatorName: negotiator || "",
       },
-      text: searchText,
+      text: searchText || "",
+      userId: "",
     };
-    const response = await GetAllInbox(search, filter, "SMS", payload, allTrue);
+    const medium = activeTab === "Draft" ? "draft" : "SMS";
+    const response = await InboxData(search, filter, medium, payload, false);
     if (response?.status === 200) {
       const data = response?.data?.data;
-      setInboxData(data);
+      if (activeTab === "Inbox") {
+        setInboxData(data);
+      } else {
+        setDraftData(data);
+      }
     }
     setLoading(false);
   };
@@ -183,7 +198,9 @@ function Sms() {
     getAllNotifications();
   }, []);
 
+  // Added effect to reload data when tab changes
   useEffect(() => {
+    getAllInboxData(false, false);
     setActivePreview({
       id: 0,
       active: false,
@@ -209,7 +226,51 @@ function Sms() {
     setDebtorCompany("");
     setCreditorCompany("");
     setNegotiator("");
-    getAllInboxData(true, false);
+    getAllInboxData(false, false);
+  };
+
+  const [preview, setPreview] = useState("");
+
+  const handleSend = async () => {
+    setSmsLoading(true);
+
+    const formData = new FormData();
+    formData.append("content", preview);
+    formData.append("from", inboxData?.from?.toString());
+    formData.append(
+      "sendTo",
+      inboxData?.allSms?.[activePreview?.id]?.to?.toString()
+    );
+    const res = await SendEmailSmsCase(inboxData?.caseId, "sms", formData);
+    if (res?.status === 201) {
+      getAllInboxData && getAllInboxData(false, false);
+      showToast(res?.data?.message, "success");
+      setPreview("");
+    } else {
+      const errorMessage = res?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setSmsLoading(false);
+  };
+
+  const handleSaveDraft = async () => {
+    setDraftLoading(true);
+    const payload = {
+      sendTo: inboxData?.allSms?.[activePreview?.id]?.to || "",
+      from: inboxData?.from || "",
+      content: preview || "",
+      caseId: inboxData?.allSms?.[activePreview?.id]?.caseId || "",
+    };
+    const res = await CreateSmsDraft(payload);
+    if (res?.status === 201) {
+      getAllInboxData && getAllInboxData(false, false);
+      showToast(res?.data?.message, "success");
+      setPreview("");
+    } else {
+      const errorMessage = res?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+    setDraftLoading(false);
   };
 
   const handleUserChange = async () => {
@@ -217,11 +278,17 @@ function Sms() {
     setLoading(true);
     const payload = {
       filter: {
-        userId: user?._id,
+        caseCode: "",
+        debtorCompanyName: "",
+        creditorCompanyName: "",
+        negotiatorName: "",
       },
       text: searchText,
+      userId: user?._id || "",
+      medium: activeTab === "Draft" ? "draft" : "",
     };
-    const response = await GetAllInbox(false, true, "SMS", payload, allTrue);
+    const medium = activeTab === "Draft" ? "draft" : "SMS";
+    const response = await InboxData(false, true, medium, payload, false);
     if (response?.status === 200) {
       const data = response?.data?.data;
       setInboxData(data);
@@ -403,57 +470,6 @@ function Sms() {
         spacing={2}
       >
         <Grid item xs={12}>
-          <Grid
-            container
-            item
-            xs={6}
-            lg={4}
-            sx={{
-              padding: "10px 20px",
-            }}
-          >
-            {maintabs?.map((tab) => (
-              <Tooltip
-                title={
-                  tab === "All"
-                    ? "View SMS For All Users"
-                    : "View SMS For Logged In User"
-                }
-                placement="top"
-              >
-                <Grid
-                  item
-                  xs={3}
-                  key={tab}
-                  onClick={() => setActiveMainTab(tab)}
-                  sx={{
-                    textAlign: "center",
-                    cursor: "pointer",
-                    padding: "10px",
-                    borderRadius: "10px",
-                    border:
-                      activeMainTab === tab
-                        ? `2px solid ${Colors.SKY_BLUE}`
-                        : "none",
-                    color: activeMainTab === tab ? Colors.SKY_BLUE : "inherit",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      textTransform: "none",
-                      fontFamily: "Nunito",
-                      fontWeight: "600",
-                      fontSize: FONT_SIZE_LARGE,
-                      color:
-                        activeMainTab === tab ? Colors.SKY_BLUE : "inherit",
-                    }}
-                  >
-                    {tab}
-                  </Typography>
-                </Grid>
-              </Tooltip>
-            ))}
-          </Grid>
           <Card
             sx={{
               display: "flex",
@@ -465,78 +481,84 @@ function Sms() {
               ...ScrollbarStyles,
             }}
           >
-            <Box
-              display="flex"
-              alignItems="center"
-              padding="10px"
-              sx={{
-                backgroundColor: Colors.lIGHT_PURPLE,
-                borderRadius: "8px",
-                justifyContent: "space-between",
-              }}
-            >
-              <Grid container item xs={4}>
-                {tabs?.map((tab) => (
-                  <Grid
-                    item
-                    xs={3}
-                    key={tab}
-                    onClick={() => setActiveTab(tab)}
-                    sx={{
-                      textAlign: "center",
-                      cursor: "pointer",
-                      padding: "10px",
-                      borderRadius: "10px",
-                      border:
-                        activeTab === tab
-                          ? `2px solid ${Colors.SKY_BLUE}`
-                          : "none",
-                      color: activeTab === tab ? Colors.SKY_BLUE : "inherit",
+            {!activePreview?.active && (
+              <Box
+                display="flex"
+                alignItems="center"
+                padding="10px"
+                sx={{
+                  backgroundColor: Colors.lIGHT_PURPLE,
+                  borderRadius: "8px",
+                  justifyContent: "space-between",
+                }}
+              >
+                <>
+                  <Grid container item xs={4}>
+                    {tabs?.map((tab) => (
+                      <Grid
+                        item
+                        xs={3}
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        sx={{
+                          textAlign: "center",
+                          cursor: "pointer",
+                          padding: "10px",
+                          borderRadius: "10px",
+                          border:
+                            activeTab === tab
+                              ? `2px solid ${Colors.SKY_BLUE}`
+                              : "none",
+                          color:
+                            activeTab === tab ? Colors.SKY_BLUE : "inherit",
+                        }}
+                      >
+                        <Typography
+                          sx={{
+                            textTransform: "none",
+                            fontFamily: "Nunito",
+                            fontWeight: "600",
+                            fontSize: FONT_SIZE_LARGE,
+                            color:
+                              activeTab === tab ? Colors.SKY_BLUE : "inherit",
+                          }}
+                        >
+                          {tab}
+                        </Typography>
+                      </Grid>
+                    ))}
+                  </Grid>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
                     }}
                   >
                     <Typography
-                      sx={{
-                        textTransform: "none",
-                        fontFamily: "Nunito",
-                        fontWeight: "600",
-                        fontSize: FONT_SIZE_LARGE,
-                        color: activeTab === tab ? Colors.SKY_BLUE : "inherit",
-                      }}
+                      sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
                     >
-                      {tab}
+                      Viewing Sms for:
                     </Typography>
-                  </Grid>
-                ))}
-              </Grid>
-              {activeMainTab !== "All" && (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                  }}
-                >
-                  <Typography
-                    sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
-                  >
-                    Viewing Sms for:
-                  </Typography>
-                  <Dropdown
-                    menuWidth="10rem"
-                    menuItems={users?.map((user) => ({
-                      label: user?.name,
-                      value: user?.name,
-                    }))}
-                    placeholder={inboxData?.userName}
-                    backgroundColor={Colors.BG_LIGHT_GRAY}
-                    hoverColor={Colors.BG_LIGHT_GRAY}
-                    width="10rem"
-                    selectedValue={userSelected}
-                    setSelectedValue={setUserSelected}
-                  />
-                </div>
-              )}
-            </Box>
+                    <Dropdown
+                      menuWidth="10rem"
+                      menuItems={users?.map((user) => ({
+                        label: user?.name,
+                        value: user?.name,
+                      }))}
+                      placeholder={inboxData?.userName}
+                      backgroundColor={Colors.BG_LIGHT_GRAY}
+                      hoverColor={Colors.BG_LIGHT_GRAY}
+                      width="10rem"
+                      selectedValue={userSelected}
+                      setSelectedValue={setUserSelected}
+                    />
+                  </div>
+                </>
+              </Box>
+            )}
+
             {loading ? (
               <Grid
                 item
@@ -553,338 +575,397 @@ function Sms() {
             ) : (
               <Box
                 flex={1}
-                ref={containerRef}
                 sx={{
-                  marginTop: "10px",
-                  padding: "10px",
-                  overflowY: "auto",
-                  ...ScrollbarStyles,
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
                 }}
               >
-                {inboxData?.[activeInbox]?.length === 0 ? (
-                  <Grid
-                    item
-                    xs={12}
-                    container
+                {/* Sticky Header */}
+                {activePreview?.active && (
+                  <Box
                     sx={{
-                      height: "100%",
+                      backgroundColor: Colors.lIGHT_PURPLE,
+                      padding: "1rem",
+                      borderRadius: "8px",
+                      display: "flex",
                       alignItems: "center",
-                      justifyContent: "center",
+                      gap: "2%",
+                      position: "sticky",
+                      top: 0,
+                      zIndex: 2,
                     }}
                   >
-                    <Typography sx={fontStyling}>
-                      Looks like you have'nt started a conversation yet
-                    </Typography>
-                  </Grid>
-                ) : (
-                  <>
-                    {activePreview?.active && (
-                      <Box
-                        display="flex"
-                        flexDirection="column"
-                        marginBottom="5px"
+                    <IconButton
+                      onClick={() => setActivePreview({ id: 0, active: false })}
+                    >
+                      <ArrowBack />
+                    </IconButton>
+                    <Box sx={{ display: "flex", flexDirection: "column" }}>
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontSize: FONT_SIZE_MEDIUM,
+                          fontWeight: 600,
+                        }}
                       >
-                        <div>
-                          <IconButton
-                            onClick={() =>
-                              setActivePreview({ id: 0, active: false })
-                            }
-                          >
-                            <ArrowBack />
-                          </IconButton>
-                        </div>
-                        <CardContent
-                          style={{
-                            backgroundColor: Colors.BG_LIGHT_GRAY,
-                            borderRadius: "8px",
-                            marginTop: "5px",
-                            padding: "10px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              justifyContent: "space-between",
-                            }}
-                          >
-                            <div
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "10px",
-                              }}
-                            >
-                              <Typography sx={boldTextStyling}>
-                                {`${
-                                  inboxData?.[activeInbox]?.[activePreview?.id]
-                                    ?.debtorCompanyName || "Composed"
-                                } ${"-"} ${formatDateString(
-                                  inboxData?.[activeInbox]?.[activePreview?.id]
-                                    ?.createdAt
-                                )} `}
-                              </Typography>
-                            </div>
-                            <div
-                              style={{
-                                display: "flex",
-                                gap: "10px",
-                              }}
-                            >
-                              {activeMainTab !== "Completed" && (
-                                <div>
-                                  <Prompt
-                                    text={`Are you sure you want to add this SMS into complete list?`}
-                                    item={
-                                      inboxData?.[activeInbox]?.[
-                                        activePreview?.id
-                                      ]?._id
-                                    }
-                                    deleting="markAsComplete"
-                                    getAllInboxData={getAllInboxData}
-                                    setActivePreview={setActivePreview}
-                                  />
-                                </div>
-                              )}
-                              {activeTab === "Draft" && (
-                                <div
-                                  style={{ display: "flex", height: "2rem" }}
-                                >
-                                  <MuiModels
-                                    show="sendEmailCase"
-                                    headerName={true}
-                                    from={
-                                      inboxData?.[activeInbox]?.[
-                                        activePreview?.id
-                                      ]?.to
-                                    }
-                                    to={
-                                      inboxData?.[activeInbox]?.[
-                                        activePreview?.id
-                                      ]?.from
-                                    }
-                                    content={
-                                      inboxData?.[activeInbox]?.[
-                                        activePreview?.id
-                                      ]?.text
-                                    }
-                                    buttonName="draft"
-                                    iconColor={Colors.BLACK}
-                                    maxHeight="78vh"
-                                    caseDataId={
-                                      inboxData?.[activeInbox]?.[
-                                        activePreview?.id
-                                      ]?.caseId
-                                    }
-                                    getAllInboxData={getAllInboxData}
-                                    updateDraft={true}
-                                    draftId={
-                                      inboxData?.[activeInbox]?.[
-                                        activePreview?.id
-                                      ]?._id
-                                    }
-                                    data={notificationTemplate}
-                                  />
-                                  <Prompt
-                                    text="Are you sure you want to remove this draft?"
-                                    item={
-                                      inboxData?.[activeInbox]?.[
-                                        activePreview?.id
-                                      ]?._id
-                                    }
-                                    deleting="deleteSmsDraft"
-                                    getAllInboxData={getAllInboxData}
-                                  />
-                                </div>
-                              )}
-                              {inboxData?.[activeInbox]?.[activePreview?.id]
-                                ?.type === "received" && (
-                                <>
-                                  <MuiModels
-                                    show="sendEmailCase"
-                                    replyButton={true}
-                                    headerName={true}
-                                    from={
-                                      inboxData?.[activeInbox]?.[
-                                        activePreview?.id
-                                      ]?.from
-                                    }
-                                    to={
-                                      inboxData?.[activeInbox]?.[
-                                        activePreview?.id
-                                      ]?.to
-                                    }
-                                    content={
-                                      inboxData?.[activeInbox]?.[
-                                        activePreview?.id
-                                      ]?.text
-                                    }
-                                    buttonName="sendEmailCase"
-                                    iconColor={Colors.BLACK}
-                                    maxHeight="78vh"
-                                    replyCheck={true}
-                                    caseDataId={
-                                      inboxData?.[activeInbox]?.[
-                                        activePreview?.id
-                                      ]?.caseId
-                                    }
-                                    getAllInboxData={getAllInboxData}
-                                    data={notificationTemplate}
-                                  />
-                                </>
-                              )}
-                            </div>
-                          </div>
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "10px",
-                            }}
-                          >
-                            <Typography sx={boldTextStyling}>To:</Typography>
+                        {inboxData?.allSms?.[activePreview?.id]?.data?.[0]
+                          ?.debtorCompanyName ||
+                          draftData?.allSms?.[activePreview?.id]
+                            ?.debtorCompanyName ||
+                          "Composed"}
+                      </Typography>
+                    </Box>
+                  </Box>
+                )}
 
-                            <Typography sx={fontStyling}>
-                              {inboxData?.[activeInbox]?.[activePreview?.id]
-                                ?.to || "-"}
-                            </Typography>
-                          </div>
-                          <div
-                            style={{
-                              display: "flex",
-                              gap: "10px",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                ...boldTextStyling,
-                              }}
-                            >
-                              From:
-                            </Typography>
-                            <Typography sx={fontStyling}>
-                              {inboxData?.[activeInbox]?.[activePreview?.id]
-                                ?.from || "-"}
-                            </Typography>
-                          </div>
-                          {activeTab === "Received" && (
-                            <div
-                              style={{
-                                display: "flex",
-                                gap: "10px",
-                              }}
-                            >
-                              <Typography
-                                sx={{
-                                  ...boldTextStyling,
+                {/* Scrollable Content */}
+                <Box
+                  ref={containerRef}
+                  sx={{
+                    flex: 1,
+                    overflowY: "auto",
+                    padding: "5px",
+                    ...ScrollbarStyles,
+                  }}
+                >
+                  {activePreview?.active &&
+                    (activeTab === "Inbox"
+                      ? (() => {
+                          const messages =
+                            inboxData?.allSms?.[activePreview?.id]?.data || [];
+                          const numbersArray = inboxData?.numbers || [];
+
+                          return messages.map((item, index) => {
+                            const isSameSender = numbersArray.includes(
+                              item?.from
+                            );
+
+                            const messageStyle = {
+                              backgroundColor: isSameSender
+                                ? Colors.SKY_BLUE
+                                : Colors.BG_LIGHT_GRAY,
+                              borderTopLeftRadius: "10px",
+                              borderTopRightRadius: "10px",
+                              borderBottomRightRadius: isSameSender
+                                ? "0px"
+                                : "10px",
+                              borderBottomLeftRadius: isSameSender
+                                ? "10px"
+                                : "0px",
+                              marginTop: "10px",
+                              padding: "12px",
+                              width: "50%",
+                              color: isSameSender ? Colors.WHITE : Colors.BLACK,
+                            };
+
+                            return (
+                              <div
+                                key={index}
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  alignItems: isSameSender
+                                    ? "flex-end"
+                                    : "flex-start",
                                 }}
                               >
-                                Sender Name:
-                              </Typography>
-                              <Typography sx={fontStyling}>
-                                {inboxData?.[activeInbox]?.[activePreview?.id]
-                                  ?.senderName || "-"}
-                              </Typography>
-                            </div>
-                          )}
-
-                          <div>
-                            {inboxData?.[activeInbox]?.[activePreview?.id]
-                              ?.creditorCompanyName && (
-                              <div style={{ display: "flex", gap: "10px" }}>
-                                <Typography sx={boldTextStyling}>
-                                  Creditor Company Name:
-                                </Typography>
-                                <Typography sx={fontStyling}>
-                                  {inboxData?.[activeInbox]?.[activePreview?.id]
-                                    ?.creditorCompanyName || "-"}
-                                </Typography>
+                                <CardContent style={messageStyle}>
+                                  <Typography sx={fontStyling}>
+                                    {item?.text || "-"}
+                                  </Typography>
+                                </CardContent>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: isSameSender
+                                      ? "flex-end"
+                                      : "flex-start",
+                                    width: "50%",
+                                    marginTop: "4px",
+                                  }}
+                                >
+                                  <Typography
+                                    sx={{
+                                      fontFamily: "Nunito",
+                                      fontSize: FONT_SIZE_SMALL,
+                                      m: "6px 0px",
+                                    }}
+                                  >
+                                    {item?.createdAt
+                                      ? moment(item.createdAt)
+                                          .tz("America/New_York")
+                                          .format("MM/DD/YYYY hh:mm A")
+                                      : "-"}
+                                  </Typography>
+                                </div>
                               </div>
-                            )}
-                            {inboxData?.[activeInbox]?.[activePreview?.id]
-                              ?.negotiatorName && (
-                              <div style={{ display: "flex", gap: "10px" }}>
-                                <Typography sx={boldTextStyling}>
-                                  Negotiator Name:
-                                </Typography>
-                                <Typography sx={fontStyling}>
-                                  {inboxData?.[activeInbox]?.[activePreview?.id]
-                                    ?.negotiatorName || "-"}
-                                </Typography>
-                              </div>
-                            )}
-                            <Typography sx={boldTextStyling}>
-                              Content:
-                            </Typography>
-                            <div>
-                              <Typography sx={fontStyling}>
-                                {inboxData?.[activeInbox]?.[activePreview?.id]
-                                  ?.text || "-"}
-                              </Typography>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Box>
-                    )}
-                    {inboxData?.[activeInbox]?.map((item, index) => (
-                      <Box
-                        key={index}
-                        display="flex"
-                        flexDirection="column"
-                        marginBottom="10px"
-                      >
-                        {!activePreview?.active && (
+                            );
+                          });
+                        })()
+                      : draftData?.allSms?.[activePreview?.id] && (
                           <CardContent
                             style={{
                               backgroundColor: Colors.BG_LIGHT_GRAY,
                               borderRadius: "8px",
                               marginTop: "5px",
                               padding: "10px",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => {
-                              setActivePreview({
-                                id: index,
-                                active: true,
-                              });
-                              if (containerRef.current) {
-                                containerRef.current.scrollTo({
-                                  top: 0,
-                                  behavior: "smooth",
-                                });
-                              }
                             }}
                           >
                             <div
                               style={{
-                                display: "flex",
-                                alignItems: "center",
                                 width: "100%",
+                                display: "flex",
                                 justifyContent: "space-between",
                               }}
                             >
-                              <Typography
-                                sx={{ ...boldTextStyling, width: "18%" }}
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "10px",
+                                }}
                               >
-                                {item?.debtorCompanyName || "Composed"}
+                                <Typography sx={boldTextStyling}>
+                                  {`${
+                                    draftData.allSms[activePreview.id]
+                                      ?.debtorCompanyName || "Composed"
+                                  } - ${formatDateString(
+                                    draftData.allSms[activePreview.id]
+                                      ?.createdAt
+                                  )}`}
+                                </Typography>
+                              </div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  gap: "10px",
+                                  height: "2rem",
+                                }}
+                              >
+                                <MuiModels
+                                  show="sendEmailCase"
+                                  headerName={true}
+                                  from={draftData.allSms[activePreview.id]?.to}
+                                  to={draftData.allSms[activePreview.id]?.from}
+                                  content={
+                                    draftData.allSms[activePreview.id]?.text
+                                  }
+                                  buttonName="draft"
+                                  iconColor={Colors.BLACK}
+                                  maxHeight="78vh"
+                                  caseDataId={
+                                    draftData.allSms[activePreview.id]?.caseId
+                                  }
+                                  getAllInboxData={getAllInboxData}
+                                  updateDraft={true}
+                                  draftId={
+                                    draftData.allSms[activePreview.id]?._id
+                                  }
+                                  data={notificationTemplate}
+                                />
+                                <Prompt
+                                  text="Are you sure you want to remove this draft?"
+                                  item={draftData.allSms[activePreview.id]?._id}
+                                  deleting="deleteSmsDraft"
+                                  getAllInboxData={getAllInboxData}
+                                />
+                              </div>
+                            </div>
+
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "10px",
+                              }}
+                            >
+                              <Typography sx={boldTextStyling}>To:</Typography>
+                              <Typography sx={fontStyling}>
+                                {draftData.allSms[activePreview.id]?.to || "-"}
                               </Typography>
-                              <Typography
-                                sx={{ ...boldTextStyling, width: "69%" }}
-                              >
-                                {item?.text}
+                            </div>
+
+                            <div style={{ display: "flex", gap: "10px" }}>
+                              <Typography sx={boldTextStyling}>
+                                From:
                               </Typography>
-                              <Typography
-                                sx={{ ...boldTextStyling, width: "10%" }}
-                              >
-                                {formatDateString(item?.createdAt)}
+                              <Typography sx={fontStyling}>
+                                {draftData.allSms[activePreview.id]?.from ||
+                                  "-"}
+                              </Typography>
+                            </div>
+
+                            <div>
+                              <Typography sx={boldTextStyling}>
+                                Content:
+                              </Typography>
+                              <Typography sx={fontStyling}>
+                                {draftData.allSms[activePreview.id]?.text ||
+                                  "-"}
                               </Typography>
                             </div>
                           </CardContent>
-                        )}
-                      </Box>
-                    ))}
-                  </>
-                )}
+                        ))}
+                  {activePreview?.active && activeTab !== "Draft" && (
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      gap={2}
+                      mt={2}
+                      sx={{
+                        backgroundColor: "#f8f8f8",
+                        padding: "10px",
+                        borderRadius: "10px",
+                        marginTop: "6rem",
+                      }}
+                    >
+                      <StyledInput
+                        type="text"
+                        placeholder="Write here...."
+                        value={preview}
+                        onChange={(e) => setPreview(e.target.value)}
+                      />
+                      <TextButton
+                        buttonText="Send"
+                        height="2rem"
+                        width="10%"
+                        fontColor={Colors.WHITE}
+                        loading={smsLoading}
+                        onClick={handleSend}
+                        backgroundColor={Colors.SKY_BLUE}
+                        hoverColor={Colors.SKY_BLUE}
+                        disabled={!preview.trim()}
+                      />
+                      <TextButton
+                        buttonText="Save As Draft"
+                        height="2rem"
+                        width="13rem"
+                        loading={draftLoading}
+                        fontColor={Colors.WHITE}
+                        onClick={handleSaveDraft}
+                        backgroundColor={Colors.SKY_BLUE}
+                        hoverColor={Colors.SKY_BLUE}
+                        disabled={!preview.trim()}
+                      />
+                    </Box>
+                  )}
+
+                  {/* Default List View if No Preview Active */}
+                  {!activePreview?.active &&
+                    (activeTab === "Inbox"
+                      ? inboxData &&
+                        Object.entries(inboxData?.allSms || {}).map(
+                          ([key, value]) => (
+                            <Box
+                              key={key}
+                              display="flex"
+                              flexDirection="column"
+                              marginBottom="10px"
+                            >
+                              <CardContent
+                                style={{
+                                  backgroundColor: Colors.BG_LIGHT_GRAY,
+                                  borderRadius: "8px",
+                                  marginTop: "5px",
+                                  padding: "10px",
+                                  cursor: "pointer",
+                                }}
+                                onClick={() => {
+                                  setActivePreview({ id: key, active: true });
+                                  if (containerRef.current) {
+                                    containerRef.current.scrollTo({
+                                      top: 0,
+                                      behavior: "smooth",
+                                    });
+                                  }
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    width: "100%",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <Typography
+                                    sx={{ ...boldTextStyling, width: "40%" }}
+                                  >
+                                    {value?.data?.[0]?.debtorCompanyName ||
+                                      "Composed"}
+                                  </Typography>
+                                  <Typography
+                                    sx={{ ...boldTextStyling, width: "50%" }}
+                                  >
+                                    {value?.data?.[0]?.creditorCompanyName ||
+                                      "Composed"}
+                                  </Typography>
+                                  <Typography
+                                    sx={{ ...boldTextStyling, width: "10%" }}
+                                  >
+                                    {formatDateString(
+                                      value?.data?.[0]?.createdAt
+                                    )}
+                                  </Typography>
+                                </div>
+                              </CardContent>
+                            </Box>
+                          )
+                        )
+                      : draftData?.allSms?.map((item, index) => (
+                          <Box
+                            key={item?._id || index}
+                            display="flex"
+                            flexDirection="column"
+                            marginBottom="10px"
+                          >
+                            <CardContent
+                              style={{
+                                backgroundColor: Colors.BG_LIGHT_GRAY,
+                                borderRadius: "8px",
+                                marginTop: "5px",
+                                padding: "10px",
+                                cursor: "pointer",
+                              }}
+                              onClick={() => {
+                                setActivePreview({ id: index, active: true });
+                                if (containerRef.current) {
+                                  containerRef.current.scrollTo({
+                                    top: 0,
+                                    behavior: "smooth",
+                                  });
+                                }
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  width: "100%",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <Typography
+                                  sx={{ ...boldTextStyling, width: "18%" }}
+                                >
+                                  {item?.debtorCompanyName || "Composed"}
+                                </Typography>
+                                <Typography
+                                  sx={{ ...boldTextStyling, width: "69%" }}
+                                >
+                                  {item?.text}
+                                </Typography>
+                                <Typography
+                                  sx={{ ...boldTextStyling, width: "10%" }}
+                                >
+                                  {formatDateString(item?.createdAt)}
+                                </Typography>
+                              </div>
+                            </CardContent>
+                          </Box>
+                        )))}
+                </Box>
               </Box>
             )}
           </Card>

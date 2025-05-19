@@ -254,6 +254,8 @@ export default function AuthorizationDetails() {
         arrayName = "failedCaptures";
       } else if (value === 4) {
         arrayName = "upcomingPayments";
+      } else if (value === 5) {
+        arrayName = "pendingCheckPayments";
       }
       const result = await GetHomePayments(
         count,
