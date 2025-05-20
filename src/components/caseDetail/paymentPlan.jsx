@@ -110,6 +110,11 @@ export default function PaymentPlan({ caseData }) {
               },
             ]
       );
+      if (activePayment === 1) {
+        setIsExempt(res?.data?.data?.debtor?.isExempt);
+      } else {
+        setIsExempt(res?.data?.data?.cases?.[activeIndex]?.isExempt);
+      }
       setCommission(res?.data?.data?.debtor?.commissionPercentage);
       setServiceFee(res?.data?.data?.debtor?.serviceFee);
       setLegalFee(res?.data?.data?.cases?.[activeIndex]?.legalFee);

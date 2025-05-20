@@ -187,7 +187,7 @@ export default function EditPayment({
             mt: "10px",
           }}
         >
-          Apply Changes On Whole Payment Plan For This Interval Only
+          Update Plan for This Interval
         </Typography>
         <Switch
           size="medium"
