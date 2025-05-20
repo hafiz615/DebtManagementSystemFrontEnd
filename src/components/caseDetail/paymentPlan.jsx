@@ -766,7 +766,7 @@ export default function PaymentPlan({ caseData }) {
                 }}
               >
                 Total amount after given interval:
-                <b> ${totalAmount}</b>
+                <b> ${isNaN(totalAmount) ? 0 : totalAmount}</b>
               </Typography>
             </div>
             {activePayment === 1 ? (
@@ -775,7 +775,7 @@ export default function PaymentPlan({ caseData }) {
                 remainingAmount={data?.debtor?.totalCommission}
                 newDataList={debtorDataList}
                 setNewDataList={setDebtorDataList}
-                totalAmount={9000}
+                totalAmount={calculateTotalAmount(debtorDataList)}
                 isExempt={isExempt}
                 setIsExempt={setIsExempt}
                 planExists={false}
@@ -790,7 +790,7 @@ export default function PaymentPlan({ caseData }) {
                 }
                 newDataList={creditorDataList}
                 setNewDataList={setCreditorDataList}
-                totalAmount={9000}
+                totalAmount={calculateTotalAmount(creditorDataList)}
                 isExempt={isExempt}
                 setIsExempt={setIsExempt}
                 planExists={false}
