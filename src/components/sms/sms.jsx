@@ -130,6 +130,7 @@ function Sms() {
   };
 
   const getAllInboxData = async (search, filter) => {
+    const user = users?.find((user) => user.name === userSelected);
     setLoading(true);
     const payload = {
       filter: {
@@ -139,10 +140,16 @@ function Sms() {
         negotiatorName: negotiator || "",
       },
       text: searchText || "",
-      userId: "",
+      userId: user?._id || "",
     };
     const medium = activeTab === "Draft" ? "draft" : "SMS";
-    const response = await InboxData(search, filter, medium, payload, false);
+    const response = await InboxData(
+      search,
+      filter,
+      medium,
+      payload,
+      userSelected === "All Users" ? true : false
+    );
     if (response?.status === 200) {
       const data = response?.data?.data;
       if (activeTab === "Inbox") {
@@ -156,8 +163,11 @@ function Sms() {
 
   const getAllUser = async () => {
     const users = await GetUsers();
+
     if (users?.status === 200) {
-      setUsers(users?.data?.data);
+      const userList = users?.data?.data || [];
+      const allUsersOption = { name: "All Users" };
+      setUsers([allUsersOption, ...userList]);
     }
   };
 
@@ -288,10 +298,20 @@ function Sms() {
       medium: activeTab === "Draft" ? "draft" : "",
     };
     const medium = activeTab === "Draft" ? "draft" : "SMS";
-    const response = await InboxData(false, true, medium, payload, false);
+    const response = await InboxData(
+      false,
+      false,
+      medium,
+      payload,
+      userSelected === "All Users" ? true : false
+    );
     if (response?.status === 200) {
       const data = response?.data?.data;
-      setInboxData(data);
+      if (activeTab === "Inbox") {
+        setInboxData(data);
+      } else {
+        setDraftData(data);
+      }
     }
     setLoading(false);
   };
@@ -499,7 +519,10 @@ function Sms() {
                         item
                         xs={3}
                         key={tab}
-                        onClick={() => setActiveTab(tab)}
+                        onClick={() => {
+                          setActiveTab(tab);
+                          // setUserSelected(users[0]?.name || "");
+                        }}
                         sx={{
                           textAlign: "center",
                           cursor: "pointer",
@@ -576,12 +599,12 @@ function Sms() {
               <Box
                 flex={1}
                 sx={{
-                  height: "100%",
+                  height: "80%",
                   display: "flex",
                   flexDirection: "column",
+                  position: "relative",
                 }}
               >
-                {/* Sticky Header */}
                 {activePreview?.active && (
                   <Box
                     sx={{
@@ -591,7 +614,6 @@ function Sms() {
                       display: "flex",
                       alignItems: "center",
                       gap: "2%",
-                      position: "sticky",
                       top: 0,
                       zIndex: 2,
                     }}
@@ -627,6 +649,7 @@ function Sms() {
                     overflowY: "auto",
                     padding: "5px",
                     ...ScrollbarStyles,
+                    marginBottom: "3rem",
                   }}
                 >
                   {activePreview?.active &&
@@ -636,7 +659,7 @@ function Sms() {
                             inboxData?.allSms?.[activePreview?.id]?.data || [];
                           const numbersArray = inboxData?.numbers || [];
 
-                          return messages.map((item, index) => {
+                          return messages?.map((item, index) => {
                             const isSameSender = numbersArray.includes(
                               item?.from
                             );
@@ -809,16 +832,19 @@ function Sms() {
                         ))}
                   {activePreview?.active && activeTab !== "Draft" && (
                     <Box
+                      sx={{
+                        position: "absolute",
+                        bottom: 0,
+                        borderRadius: "10px",
+                        zIndex: 1,
+                        width: "98%",
+
+                        paddingTop: ".2rem",
+                        backgroundColor: Colors.WHITE,
+                      }}
                       display="flex"
                       alignItems="center"
                       gap={2}
-                      mt={2}
-                      sx={{
-                        backgroundColor: "#f8f8f8",
-                        padding: "10px",
-                        borderRadius: "10px",
-                        marginTop: "6rem",
-                      }}
                     >
                       <StyledInput
                         type="text"
@@ -853,8 +879,9 @@ function Sms() {
 
                   {/* Default List View if No Preview Active */}
                   {!activePreview?.active &&
-                    (activeTab === "Inbox"
-                      ? inboxData &&
+                    (activeTab === "Inbox" ? (
+                      inboxData &&
+                      Object.keys(inboxData?.allSms || {}).length > 0 ? (
                         Object.entries(inboxData?.allSms || {}).map(
                           ([key, value]) => (
                             <Box
@@ -913,58 +940,89 @@ function Sms() {
                             </Box>
                           )
                         )
-                      : draftData?.allSms?.map((item, index) => (
-                          <Box
-                            key={item?._id || index}
-                            display="flex"
-                            flexDirection="column"
-                            marginBottom="10px"
+                      ) : (
+                        <Typography
+                          sx={{
+                            fontFamily: "Nunito",
+                            fontSize: FONT_SIZE_MEDIUM,
+                            m: "6px 0px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            height: "20vh",
+                          }}
+                        >
+                          Looks like you have'nt started a conversation yet
+                        </Typography>
+                      )
+                    ) : draftData?.allSms?.length > 0 ? (
+                      draftData.allSms.map((item, index) => (
+                        <Box
+                          key={item?._id || index}
+                          display="flex"
+                          flexDirection="column"
+                          marginBottom="10px"
+                        >
+                          <CardContent
+                            style={{
+                              backgroundColor: Colors.BG_LIGHT_GRAY,
+                              borderRadius: "8px",
+                              marginTop: "5px",
+                              padding: "10px",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              setActivePreview({ id: index, active: true });
+                              if (containerRef.current) {
+                                containerRef.current.scrollTo({
+                                  top: 0,
+                                  behavior: "smooth",
+                                });
+                              }
+                            }}
                           >
-                            <CardContent
+                            <div
                               style={{
-                                backgroundColor: Colors.BG_LIGHT_GRAY,
-                                borderRadius: "8px",
-                                marginTop: "5px",
-                                padding: "10px",
-                                cursor: "pointer",
-                              }}
-                              onClick={() => {
-                                setActivePreview({ id: index, active: true });
-                                if (containerRef.current) {
-                                  containerRef.current.scrollTo({
-                                    top: 0,
-                                    behavior: "smooth",
-                                  });
-                                }
+                                display: "flex",
+                                alignItems: "center",
+                                width: "100%",
+                                justifyContent: "space-between",
                               }}
                             >
-                              <div
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  width: "100%",
-                                  justifyContent: "space-between",
-                                }}
+                              <Typography
+                                sx={{ ...boldTextStyling, width: "18%" }}
                               >
-                                <Typography
-                                  sx={{ ...boldTextStyling, width: "18%" }}
-                                >
-                                  {item?.debtorCompanyName || "Composed"}
-                                </Typography>
-                                <Typography
-                                  sx={{ ...boldTextStyling, width: "69%" }}
-                                >
-                                  {item?.text}
-                                </Typography>
-                                <Typography
-                                  sx={{ ...boldTextStyling, width: "10%" }}
-                                >
-                                  {formatDateString(item?.createdAt)}
-                                </Typography>
-                              </div>
-                            </CardContent>
-                          </Box>
-                        )))}
+                                {item?.debtorCompanyName || "Composed"}
+                              </Typography>
+                              <Typography
+                                sx={{ ...boldTextStyling, width: "69%" }}
+                              >
+                                {item?.text}
+                              </Typography>
+                              <Typography
+                                sx={{ ...boldTextStyling, width: "10%" }}
+                              >
+                                {formatDateString(item?.createdAt)}
+                              </Typography>
+                            </div>
+                          </CardContent>
+                        </Box>
+                      ))
+                    ) : (
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontSize: FONT_SIZE_MEDIUM,
+                          m: "6px 0px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          height: "20vh",
+                        }}
+                      >
+                        Looks like you have'nt started a conversation yet
+                      </Typography>
+                    ))}
                 </Box>
               </Box>
             )}
