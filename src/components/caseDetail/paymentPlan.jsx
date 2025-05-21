@@ -31,6 +31,8 @@ import {
   UpdateServiceFee,
   UpdateLegalFee,
   GetClientPaymentById,
+  CancelPaymentPlan,
+  CancelDebtorPaymentPlan,
 } from "../../services/services";
 import { useEffect } from "react";
 import TransactionDetails from "./transactionDetail";
@@ -53,6 +55,8 @@ export default function PaymentPlan({ caseData }) {
   const [openDialogue, setOpenDialogue] = useState(false);
   const [openServiceDialogue, setOpenServiceDialogue] = useState(false);
   const [openLegalDialogue, setOpenLegalDialogue] = useState(false);
+  const [openRenegotiate, setOpenRenegotiate] = useState(false);
+  const [renegotiateLoading, setRenegotiateLoading] = useState(false);
   const [intervalCommission, setIntervalCommission] = useState([]);
   const [commission, setCommission] = useState(0);
   const [legalFee, setLegalFee] = useState(0);
@@ -291,6 +295,34 @@ export default function PaymentPlan({ caseData }) {
     setLegalFeeLoading(false);
   };
 
+  const handleRenegotiate = async () => {
+    setRenegotiateLoading(true);
+    if (activePayment === 1) {
+      const response = await CancelDebtorPaymentPlan(data?.debtor?._id);
+      if (response?.status === 200) {
+        showToast(response?.data?.message, "success");
+        getClientPaymentDetails();
+        getPaymentPlan();
+        setOpenRenegotiate(false);
+      } else {
+        const errorMessage = response?.response?.data?.message;
+        showToast(errorMessage, "error");
+      }
+    } else {
+      const response = await CancelPaymentPlan(tabs?.[activeIndex]?._id);
+      if (response?.status === 200) {
+        showToast(response?.data?.message, "success");
+        getCasePaymentDetails();
+        getPaymentPlan();
+        setOpenRenegotiate(false);
+      } else {
+        const errorMessage = response?.response?.data?.message;
+        showToast(errorMessage, "error");
+      }
+    }
+    setRenegotiateLoading(false);
+  };
+
   useEffect(() => {
     getPaymentPlan();
   }, [caseData]);
@@ -516,13 +548,6 @@ export default function PaymentPlan({ caseData }) {
           Update Legal Fee
         </DialogTitle>
         <DialogContent>
-          <Typography
-            sx={{
-              fontFamily: "Nunito",
-              fontSize: FONT_SIZE_LARGE,
-              color: Colors.SKY_BLUE,
-            }}
-          ></Typography>
           <input
             min={0}
             max={100}
@@ -566,6 +591,54 @@ export default function PaymentPlan({ caseData }) {
               width="8rem"
               onClick={handleUpdateLegalFee}
               loading={legalFeeLoading}
+              backgroundColor={Colors.SKY_BLUE}
+              hoverColor={Colors.SKY_BLUE}
+            />
+          </div>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={openRenegotiate}
+        PaperProps={{
+          sx: {
+            borderRadius: "16px",
+            padding: "5px",
+            width: 400,
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            fontFamily: "Nunito",
+            fontWeight: "600",
+            fontSize: FONT_SIZE_LARGE,
+          }}
+        >
+          Are you sure you want to renegotiate this payment plan?
+        </DialogTitle>
+        <DialogActions>
+          <div
+            style={{
+              marginTop: "1em",
+              gap: "1em",
+              display: "flex",
+              justifyContent: "right",
+            }}
+          >
+            <TextButton
+              buttonText="Cancel"
+              height="2rem"
+              width="8rem"
+              onClick={() => setOpenRenegotiate(false)}
+              backgroundColor={Colors.ORANGE_COLOR}
+              hoverColor={Colors.ORANGE_COLOR}
+            />
+            <TextButton
+              buttonText="Confirm"
+              height="2rem"
+              width="8rem"
+              onClick={handleRenegotiate}
+              loading={renegotiateLoading}
               backgroundColor={Colors.SKY_BLUE}
               hoverColor={Colors.SKY_BLUE}
             />
@@ -666,15 +739,32 @@ export default function PaymentPlan({ caseData }) {
                   ? "Client Payment plan"
                   : "Creditor Payment plan"}
               </Typography>
-              <TextButton
-                buttonText="Save"
-                height="2rem"
-                width="6rem"
-                onClick={handleSave}
-                loading={saveLoading}
-                backgroundColor={Colors.SKY_BLUE}
-                hoverColor={Colors.SKY_BLUE}
-              />
+              <div>
+                {((activePayment === 1 &&
+                  data?.debtor?.intervals?.length > 0) ||
+                  (activePayment !== 1 &&
+                    tabs?.[activeIndex]?.intervals?.length > 0)) && (
+                  <TextButton
+                    buttonText="Renegotiate"
+                    height="2rem"
+                    width="8rem"
+                    onClick={() => setOpenRenegotiate(true)}
+                    backgroundColor={Colors.ORANGE_COLOR}
+                    hoverColor={Colors.ORANGE_COLOR}
+                    marginRight="10px"
+                  />
+                )}
+
+                <TextButton
+                  buttonText="Save"
+                  height="2rem"
+                  width="6rem"
+                  onClick={handleSave}
+                  loading={saveLoading}
+                  backgroundColor={Colors.SKY_BLUE}
+                  hoverColor={Colors.SKY_BLUE}
+                />
+              </div>
             </div>
             <div
               style={{
