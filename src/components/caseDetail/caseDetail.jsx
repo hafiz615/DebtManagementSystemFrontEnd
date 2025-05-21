@@ -39,6 +39,7 @@ import CaseById from "./caseById.jsx";
 import SettlementRange from "../settlementRange/settlementRange.jsx";
 import { Download } from "@mui/icons-material";
 import { generatePdfFromApiData } from "../../common.js";
+import Transactions from "./transactions.jsx";
 
 const style = {
   position: "absolute",
@@ -98,10 +99,8 @@ function CaseDetail() {
   const loginUser = useSelector((state) => state?.signIn?.signIn?.user);
   const { AUTHORITY_TEXT } = UserListPage;
   const [loading, setLoading] = useState(false);
-  const [isPaymentLoading, setIsPaymentLoading] = useState(false);
   const [notesLoading, setNotesLoading] = useState(false);
   const [caseData, setCaseData] = useState({});
-  const [paymentDetails, setPaymentDetails] = useState({});
   const [addTaskModal, setAddTaskModal] = useState("");
   const [verifiedSenders, setVerified] = useState([]);
   const [caseHistoryTabs, setCaseHistoryTabs] = useState(0);
@@ -130,8 +129,6 @@ function CaseDetail() {
   const [cashFlowLoading, setCashFlowLoading] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [paymentData, setPaymentData] = useState();
-  const [currentPaymentPage, setCurrentPaymentPage] = useState(1);
-  const [totalPaymentPage, setTotalPaymentPage] = useState();
   const [statementSummariesLoading, setStatementSummariesLoading] =
     useState(false);
   const [aggregatedSummariesLoading, setAggregatedSummariesLoading] =
@@ -245,34 +242,6 @@ function CaseDetail() {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-  };
-
-  const GetCasePaymentDetails = async (rowId, load) => {
-    if (!load) {
-      setIsPaymentLoading(true);
-    }
-    const casePayment = await GetCasePaymentById(currentPaymentPage, rowId);
-    if (casePayment?.status === 200) {
-      let totalPreviousPage =
-        Math.ceil(casePayment?.data?.data?.transactions?.previousCount / 10) ||
-        0;
-      let totalUpcomingPage =
-        Math.ceil(casePayment?.data?.data?.transactions?.upcomingCount / 10) ||
-        0;
-      if (totalPreviousPage > totalUpcomingPage) {
-        setTotalPaymentPage(totalPreviousPage);
-      } else {
-        setTotalPaymentPage(totalUpcomingPage);
-      }
-      setPaymentDetails(casePayment?.data?.data);
-    } else if (
-      casePayment?.response?.status === 401 ||
-      casePayment?.response?.status === 403
-    ) {
-      localStorage.clear();
-      navigate("/");
-    }
-    setIsPaymentLoading(false);
   };
 
   const GetLogsById = async (id) => {
@@ -462,12 +431,7 @@ function CaseDetail() {
   useEffect(() => {
     getAllRanges([], false);
     GetCaseDetails(id);
-    GetCasePaymentDetails(id);
   }, [id]);
-
-  useEffect(() => {
-    GetCasePaymentDetails(id, true);
-  }, [currentPaymentPage]);
 
   const currentCreditor = allCreditorNames[tabValue];
 
@@ -645,6 +609,15 @@ function CaseDetail() {
           }}
           label="Case Detail"
         />
+        <AntTab
+          sx={{
+            bgcolor: Colors.WHITE,
+            width: "max-content",
+            fontWeight: "600",
+            height: "3.5rem",
+          }}
+          label="Transactions"
+        />
       </AntTabs>
 
       <Grid xs={12}>
@@ -728,8 +701,6 @@ function CaseDetail() {
             handleChange={handleChange}
             verifiedSenders={verifiedSenders}
             GetLogsById={GetLogsById}
-            isPaymentLoading={isPaymentLoading}
-            paymentDetails={paymentDetails}
             handleClose={handleClose}
             addTaskModal={addTaskModal}
             handleChangeModal={handleChangeModal}
@@ -739,15 +710,18 @@ function CaseDetail() {
             isChecked={isChecked}
             handleCreditorToggle={handleCreditorToggle}
             handleAttorneyToggle={handleAttorneyToggle}
-            GetCasePaymentDetails={GetCasePaymentDetails}
-            currentPaymentPage={currentPaymentPage}
-            setCurrentPaymentPage={setCurrentPaymentPage}
-            totalPaymentPage={totalPaymentPage}
             showEmail={showEmail}
             from={caseData?.creditor?.basicInformation?.email}
             getAllRanges={getAllRanges}
             handleCloseNotes={handleCloseNotes}
             cc={cc}
+          />
+        )}
+        {activeTab === 2 && (
+          <Transactions
+            caseData={caseData}
+            caseDataId={id}
+            GetCaseDetails={GetCaseDetails}
           />
         )}
       </Grid>

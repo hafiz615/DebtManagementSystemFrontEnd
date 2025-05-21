@@ -216,6 +216,7 @@ export default function Prompt({
     const res = await DeleteDraft(item);
     if (res?.status === 200) {
       getAllInboxData(false, false);
+      setActivePreview({ id: 0, active: false });
     }
   };
 
@@ -223,6 +224,8 @@ export default function Prompt({
     const res = await DeleteSmsDraft(item);
     if (res?.status === 200) {
       getAllInboxData(false, false);
+
+      setActivePreview({ id: 0, active: false });
     }
   };
 

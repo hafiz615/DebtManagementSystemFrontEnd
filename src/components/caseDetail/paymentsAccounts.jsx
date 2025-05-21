@@ -1,8 +1,5 @@
 import React from "react";
 import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
   Table,
   TableBody,
   TableCell,
@@ -113,92 +110,92 @@ export default function PaymentsAccounts({
   };
 
   return (
-    <Accordion sx={{ overflowX: "auto" }}>
-      <AccordionSummary
-        sx={styles.accordionSummary}
-        expandIcon={<ExpandMoreIcon sx={{ color: Colors.WHITE }} />}
-      >
-        Accounts
-      </AccordionSummary>
-      <AccordionDetails
-        sx={{ backgroundColor: Colors.BG_LIGHT_GRAY, fontFamily: "Nunito" }}
-      >
-        <TableContainer
-          component={Paper}
-          sx={{ maxHeight: 300, overflowY: "auto" }}
-        >
-          <Table stickyHeader sx={{ fontFamily: "Nunito" }}>
-            <TableHead>
-              <TableRow>
+    <TableContainer
+      component={Paper}
+      sx={{ maxHeight: 300, overflowY: "auto" }}
+    >
+      <Table stickyHeader sx={{ fontFamily: "Nunito" }}>
+        <TableHead>
+          <TableRow>
+            <TableCell sx={{ fontFamily: "Nunito" }}>
+              <strong>Customer Vault ID</strong>
+            </TableCell>
+            <TableCell sx={{ fontFamily: "Nunito" }}>
+              <strong>Account Type</strong>
+            </TableCell>
+            <TableCell sx={{ fontFamily: "Nunito" }}>
+              <strong>Customer Account</strong>
+            </TableCell>
+            <TableCell sx={{ fontFamily: "Nunito" }}>
+              <strong>Payment Type</strong>
+            </TableCell>
+            <TableCell sx={{ fontFamily: "Nunito" }}>
+              <strong>Platform</strong>
+            </TableCell>
+            <TableCell sx={{ fontFamily: "Nunito" }}>
+              <strong>Action</strong>
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {caseData?.accounts?.length > 0 ? (
+            caseData.accounts.map((acc, index) => (
+              <TableRow key={index}>
                 <TableCell sx={{ fontFamily: "Nunito" }}>
-                  <strong>Customer Vault ID</strong>
+                  {acc?.customerVaultId || "-"}
                 </TableCell>
                 <TableCell sx={{ fontFamily: "Nunito" }}>
-                  <strong>Account Type</strong>
+                  <Tooltip
+                    title={
+                      index === 0 ? "Primary Account" : "Secondary Account"
+                    }
+                    arrow
+                  >
+                    <Chip
+                      label={index === 0 ? "Primary" : "Secondary"}
+                      size="small"
+                      sx={{
+                        fontFamily: "Nunito",
+                        backgroundColor: index === 0 ? "#7353F0" : "#EA6A47",
+                        color: "#fff",
+                      }}
+                    />
+                  </Tooltip>
                 </TableCell>
                 <TableCell sx={{ fontFamily: "Nunito" }}>
-                  <strong>Customer Account</strong>
+                  {acc?.customerAccount
+                    ? decryptIfNeeded(acc?.customerAccount)
+                    : "-"}
                 </TableCell>
                 <TableCell sx={{ fontFamily: "Nunito" }}>
-                  <strong>Payment Type</strong>
+                  {acc?.paymentType || "-"}
                 </TableCell>
                 <TableCell sx={{ fontFamily: "Nunito" }}>
-                  <strong>Platform</strong>
+                  {acc?.platform || "-"}
                 </TableCell>
-                <TableCell sx={{ fontFamily: "Nunito" }}>
-                  <strong>Action</strong>
+                <TableCell>
+                  <Prompt
+                    text="Are you sure you want to delete this account?"
+                    iconSize="1.3rem"
+                    deleting="deleteAccount"
+                    handleDeleteAccount={() => handleDelete(index)}
+                  />
                 </TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {caseData?.accounts?.map((acc, index) => (
-                <TableRow key={index}>
-                  <TableCell sx={{ fontFamily: "Nunito" }}>
-                    {acc?.customerVaultId || "-"}
-                  </TableCell>
-                  <TableCell sx={{ fontFamily: "Nunito" }}>
-                    <Tooltip
-                      title={
-                        index === 0 ? "Primary Account" : "Secondary Account"
-                      }
-                      arrow
-                    >
-                      <Chip
-                        label={index === 0 ? "Primary" : "Secondary"}
-                        size="small"
-                        sx={{
-                          fontFamily: "Nunito",
-                          backgroundColor: index === 0 ? "#7353F0" : "#EA6A47",
-                          color: "#fff",
-                        }}
-                      />
-                    </Tooltip>
-                  </TableCell>
-                  <TableCell sx={{ fontFamily: "Nunito" }}>
-                    {acc?.customerAccount
-                      ? decryptIfNeeded(acc?.customerAccount)
-                      : "-"}
-                  </TableCell>
-                  <TableCell sx={{ fontFamily: "Nunito" }}>
-                    {acc?.paymentType || "-"}
-                  </TableCell>
-                  <TableCell sx={{ fontFamily: "Nunito" }}>
-                    {acc?.platform || "-"}
-                  </TableCell>
-                  <TableCell>
-                    <Prompt
-                      text="Are you sure you want to delete this account?"
-                      iconSize="1.3rem"
-                      deleting="deleteAccount"
-                      handleDeleteAccount={() => handleDelete(index)}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </AccordionDetails>
-    </Accordion>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell
+                colSpan={6}
+                align="center"
+                sx={{ fontFamily: "Nunito" }}
+              >
+                No account exists
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 }

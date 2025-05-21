@@ -10,6 +10,7 @@ import AmountTextField from "../amountTextField";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Hidden from "@mui/material/Hidden";
 import { FONT_SIZE_LARGE } from "../../constants/appConstants";
+import ScrollbarStyles from "../customScroll";
 
 const formatDateForInput = (date) => {
   if (!date) return "";
@@ -72,10 +73,10 @@ export default function PaymentSettlement({
     const lastItem = newDataList[newDataList.length - 1];
     const newItem = {
       amount: "",
-      timePeriod: "Custom",
+      timePeriod: "Weekly",
       startDate: calculateStartDate(
         lastItem,
-        lastItem?.timePeriod || "Custom",
+        lastItem?.timePeriod || "Weekly",
         lastItem?.frequency || 1
       ),
       frequency: 1,
@@ -123,7 +124,22 @@ export default function PaymentSettlement({
   const minDate = today.toISOString().split("T")[0];
 
   return (
-    <>
+    <Grid
+      container
+      item
+      xs={12}
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        border: "1px solid #EAEBEB",
+        padding: "1rem",
+        maxHeight: "30vh",
+        overflowY: "auto",
+        borderRadius: "10px",
+        marginTop: "1rem",
+        ...ScrollbarStyles,
+      }}
+    >
       <Grid container>
         {newDataList?.map((item, index) => (
           <Grid
@@ -302,6 +318,6 @@ export default function PaymentSettlement({
           </Grid>
         ))}
       </Grid>
-    </>
+    </Grid>
   );
 }
