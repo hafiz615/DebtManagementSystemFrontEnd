@@ -2453,3 +2453,16 @@ export const UpdatePayment = async (id, allPayment, allIntervals, payload) => {
     return error;
   }
 };
+export const DeleteDebtorAccount = async (id, payload) => {
+  try {
+    return await axios.delete(
+      BASE_URL + `/v1/debtor/deleteDebtorAccount/${id}`,
+      {
+        ...setHeaders(),
+        data: payload,
+      }
+    );
+  } catch (error) {
+    return error;
+  }
+};

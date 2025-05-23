@@ -717,7 +717,13 @@ function CaseDetail() {
             cc={cc}
           />
         )}
-        {activeTab === 2 && <Transactions caseData={caseData} />}
+        {activeTab === 2 && (
+          <Transactions
+            caseData={caseData}
+            caseDataId={id}
+            GetCaseDetails={GetCaseDetails}
+          />
+        )}
       </Grid>
     </Grid>
   );

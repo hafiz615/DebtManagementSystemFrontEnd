@@ -2,8 +2,9 @@ import { Box, Tab, Tabs } from "@mui/material";
 import React, { useState } from "react";
 import { Colors } from "../../config/default";
 import PaymentPlan from "./paymentPlan";
+import PaymentsAccounts from "./paymentsAccounts";
 
-export default function Transactions({ caseData }) {
+export default function Transactions({ caseData, caseDataId, GetCaseDetails }) {
   const [value, setValue] = useState("Create Plan");
 
   const handleChange = (event, newValue) => {
@@ -44,10 +45,32 @@ export default function Transactions({ caseData }) {
             label="Create Plan"
             value="Create Plan"
           />
+          <Tab
+            sx={{
+              fontWeight: "600",
+              textTransform: "none",
+              fontFamily: "Nunito",
+
+              "&.Mui-selected": {
+                color: value ? Colors.SKY_BLUE : "inherit",
+              },
+            }}
+            label="Accounts"
+            value="Accounts"
+          />
         </Tabs>
       </Box>
       <div style={{ height: "60vh" }}>
         {value === "Create Plan" ? <PaymentPlan caseData={caseData} /> : ""}
+        {value === "Accounts" ? (
+          <PaymentsAccounts
+            caseData={caseData?.debtor}
+            caseDataId={caseDataId}
+            GetCaseDetails={GetCaseDetails}
+          />
+        ) : (
+          ""
+        )}
       </div>
     </div>
   );

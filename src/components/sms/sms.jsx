@@ -521,7 +521,6 @@ function Sms() {
                         key={tab}
                         onClick={() => {
                           setActiveTab(tab);
-                          // setUserSelected(users[0]?.name || "");
                         }}
                         sx={{
                           textAlign: "center",
@@ -790,6 +789,7 @@ function Sms() {
                                 <Prompt
                                   text="Are you sure you want to remove this draft?"
                                   item={draftData.allSms[activePreview.id]?._id}
+                                  setActivePreview={setActivePreview}
                                   deleting="deleteSmsDraft"
                                   getAllInboxData={getAllInboxData}
                                 />

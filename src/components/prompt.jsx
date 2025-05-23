@@ -77,6 +77,7 @@ export default function Prompt({
   handleSignatureDelete,
   getVoiceMails,
   handleDeleteParticipant,
+  handleDeleteAccount,
 }) {
   const { showToast } = useToast();
   const [open, setOpen] = React.useState(false);
@@ -215,6 +216,7 @@ export default function Prompt({
     const res = await DeleteDraft(item);
     if (res?.status === 200) {
       getAllInboxData(false, false);
+      setActivePreview({ id: 0, active: false });
     }
   };
 
@@ -222,6 +224,8 @@ export default function Prompt({
     const res = await DeleteSmsDraft(item);
     if (res?.status === 200) {
       getAllInboxData(false, false);
+
+      setActivePreview({ id: 0, active: false });
     }
   };
 
@@ -277,11 +281,9 @@ export default function Prompt({
       await deleteCheckIds();
     } else if (deleting === "deleteDraft") {
       await deleteDraft();
-    }
-    //  else if (deleting === "markAsComplete") {
-    //   await handleCompleteStatus();
-    // }
-    else if (deleting === "deleteSmsDraft") {
+    } else if (deleting === "deleteAccount") {
+      await handleDeleteAccount();
+    } else if (deleting === "deleteSmsDraft") {
       await deleteSmsDraft();
     } else if (deleting === "deleteVoiceMesssage") {
       await deleteVoiceMessage();
