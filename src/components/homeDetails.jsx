@@ -400,25 +400,44 @@ function HomeDetails() {
     </Grid>
   );
 
-  const groupOne = accordionData?.filter(
-    (data) =>
-      data.heading === "Client Upcoming Payments" ||
-      data.heading === "Client Successful Authorizations" ||
-      data.heading === "Client Failed Authorizations" ||
-      data.heading === "Creditor Upcoming Payments"
-  );
+  const groupOne = accordionData
+    ?.filter((data) =>
+      [
+        "Client Upcoming Payments",
+        "Client Successful Authorizations",
+        "Client Failed Authorizations",
+        "Creditor Upcoming Payments",
+      ].includes(data?.heading)
+    )
+    ?.sort((a, b) => {
+      const order = {
+        "Client Upcoming Payments": 1,
+        "Client Successful Authorizations": 2,
+        "Client Upcoming Checks": 3,
+        "Client Failed Authorizations": 4,
+        "Creditor Upcoming Payments": 5,
+      };
+      return (order[a?.heading] || 99) - (order[b?.heading] || 99);
+    });
 
-  const groupTwo = accordionData?.filter(
-    (data) =>
-      data.heading === "Creditor Successful Payments" ||
-      data.heading === "Client Successful Captures" ||
-      data.heading === "Client Failed Captures" ||
-      data.heading === "Client Upcoming Checks"
-  );
-
-  // const groupThree = accordionData?.filter(
-  //   (data) => data.heading === "Creditor Upcoming Payments"
-  // );
+  const groupTwo = accordionData
+    ?.filter((data) =>
+      [
+        "Client Successful Captures",
+        "Client Failed Captures",
+        "Client Upcoming Checks",
+        "Creditor Successful Payments",
+      ].includes(data?.heading)
+    )
+    ?.sort((a, b) => {
+      const order = {
+        "Client Upcoming Checks": 1,
+        "Client Successful Captures": 2,
+        "Client Failed Captures": 3,
+        "Creditor Successful Payments": 4,
+      };
+      return (order[a?.heading] || 99) - (order[b?.heading] || 99);
+    });
 
   return (
     <Grid
@@ -553,9 +572,6 @@ function HomeDetails() {
                 <Grid item xs={12} lg={5.9}>
                   {groupTwo?.map(renderAccordion)}
                 </Grid>
-                {/* <Grid item xs={12} lg={5.9}>
-                  {groupThree?.map(renderAccordion)}
-                </Grid> */}
               </Grid>
             </>
           </Grid>

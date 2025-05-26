@@ -249,14 +249,13 @@ export const GetCaseById = async (id) => {
 export const GetCasePaymentById = async (page, id) => {
   try {
     return await axios.get(
-      BASE_URL + `/v1/payment/getCasePayments/${id}?page=${page}&limit=10`,
+      BASE_URL + `/v1/payment/getCasePayments/${id}?page=${page}&limit=15`,
       setHeaders()
     );
   } catch (error) {
     return error;
   }
 };
-
 export const GetAllClients = async ({
   search,
   filter,
@@ -1385,7 +1384,7 @@ export const PausePayments = async (id, pause, payload, type) => {
     return error;
   }
 };
-export const DebtorPaymentPlan = async (id, payload) => {
+export const ClientPaymentPlan = async (id, payload) => {
   try {
     return await axios.post(
       BASE_URL + `/v1/debtor/addPaymentPlan/${id}`,
@@ -1426,18 +1425,7 @@ export const GetAllTransactions = async (page) => {
     return error;
   }
 };
-export const GetAllInbox = async (search, filter, medium, payload, All) => {
-  try {
-    return await axios.post(
-      BASE_URL +
-        `/v1/inbox/getAllMessages?search=${search}&filter=${filter}&type=default&medium=${medium}&all=${All}`,
-      payload,
-      setHeaders()
-    );
-  } catch (error) {
-    return error;
-  }
-};
+
 export const GetAllNotifications = async (payload) => {
   try {
     return await axios.post(
@@ -2360,6 +2348,119 @@ export const AddAccountSeamlessPaynote = async (payload, id) => {
       BASE_URL + `/v1/payment/addAccount/${id}`,
       payload,
       setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetAllInbox = async (search, filter, medium, payload, All) => {
+  try {
+    return await axios.post(
+      BASE_URL +
+        `/v1/inbox/getAllMessages?search=${search}&filter=${filter}&type=default&medium=${medium}&all=${All}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const InboxData = async (search, filters, medium, payload, All) => {
+  try {
+    return await axios.post(
+      BASE_URL +
+        `/v1/inbox/getSms?search=${search}&filter=${filters}&medium=${medium}&all=${All}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetDebtorCreditorPaymentPlan = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/debtor/debtorCreditorPaymentPlanDetail/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateCommissionPercentage = async (id, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/updateCommision/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateServiceFee = async (id, payload) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/debtor/updateServiceFee/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdateLegalFee = async (id, payload) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/case/updateLegalFee/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const DeletePaymentPlan = async (id, allPayment, allIntervals) => {
+  try {
+    return await axios.delete(
+      BASE_URL +
+        `/v1/payment/deletePayment/${id}?allPayment=${allPayment}&allIntervals=${allIntervals}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetClientPaymentById = async (page, id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/payment/getClientPayments/${id}?page=${page}&limit=15`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const UpdatePayment = async (id, allPayment, allIntervals, payload) => {
+  try {
+    return await axios.post(
+      BASE_URL +
+        `/v1/payment/updatePayment/${id}?allPayment=${allPayment}&allIntervals=${allIntervals}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const DeleteDebtorAccount = async (id, payload) => {
+  try {
+    return await axios.delete(
+      BASE_URL + `/v1/debtor/deleteDebtorAccount/${id}`,
+      {
+        ...setHeaders(),
+        data: payload,
+      }
     );
   } catch (error) {
     return error;

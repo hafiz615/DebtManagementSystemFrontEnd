@@ -1244,6 +1244,9 @@ function Inbox() {
                                                   activePreview?.id
                                                 ]?._id
                                               }
+                                              setActivePreview={
+                                                setActivePreview
+                                              }
                                               deleting="deleteDraft"
                                               getAllInboxData={getAllInboxData}
                                             />
