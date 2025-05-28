@@ -11,13 +11,8 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import Hidden from "@mui/material/Hidden";
 import { FONT_SIZE_MEDIUM } from "../../constants/appConstants";
 
-const formatDateForInput = (date) => {
-  if (!date) return "";
-  const d = new Date(date);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+const formatDateForInput = (incomingDate) => {
+  return incomingDate?.split("T")[0];
 };
 
 export default function DebtorPaymentPlan({
