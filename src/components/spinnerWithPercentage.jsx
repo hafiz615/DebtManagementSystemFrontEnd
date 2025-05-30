@@ -64,7 +64,7 @@ function SpinnerWithPercentage({ value, color }) {
           color="text.secondary"
           sx={{ fontSize: "26px", fontWeight: "600", fontFamily: "Nunito" }}
         >
-          {`${Math.round(value)}%`}
+          {`${Math.round(value)}`}
         </Typography>
       </Box>
     </Box>

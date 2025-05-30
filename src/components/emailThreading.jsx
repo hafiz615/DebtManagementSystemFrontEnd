@@ -4,7 +4,7 @@ import { Colors } from "../config/default";
 
 const EmailThreading = ({ email }) => {
   const [showAll, setShowAll] = useState(false);
-  const thread = email?.thread || [];
+  const thread = email?.previousMessages || [];
 
   const visibleMessages = showAll ? thread : thread.slice(0, 2);
 
@@ -20,7 +20,6 @@ const EmailThreading = ({ email }) => {
             fontFamily: "Nunito",
           }}
         >
-          {/* Message Content Box */}
           <Box
             sx={{
               padding: "12px 16px",
@@ -39,7 +38,6 @@ const EmailThreading = ({ email }) => {
               zIndex: 1,
             }}
           >
-            {/* Vertical Threading Lines */}
             {index > 0 && (
               <>
                 {Array.from({ length: index }).map((_, lineIndex) => (
@@ -58,8 +56,6 @@ const EmailThreading = ({ email }) => {
                 ))}
               </>
             )}
-
-            {/* Sender and Time Header */}
             <Box
               sx={{
                 display: "flex",
@@ -77,7 +73,7 @@ const EmailThreading = ({ email }) => {
                   fontFamily: "Nunito",
                 }}
               >
-                {message.sender}
+                {message?.debtorCompanyName}
               </Typography>
               <Typography
                 variant="caption"
@@ -87,28 +83,30 @@ const EmailThreading = ({ email }) => {
                   fontFamily: "Nunito",
                 }}
               >
-                {message.time}
+                {message?.updatedAt &&
+                  new Date(message?.updatedAt).toLocaleString("en-US", {
+                    month: "numeric",
+                    day: "numeric",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                  })}
               </Typography>
             </Box>
-
-            {/* Message Content */}
-            <Typography
-              variant="body2"
-              sx={{
+            <span
+              style={{
                 whiteSpace: "pre-wrap",
                 color: "#000000",
                 lineHeight: 1.5,
                 fontSize: "0.875rem",
                 fontFamily: "Nunito",
               }}
-            >
-              {message.content}
-            </Typography>
+              dangerouslySetInnerHTML={{ __html: message?.textAsHtml }}
+            ></span>
           </Box>
         </Box>
       ))}
-
-      {/* Toggle Button */}
       {thread.length > 2 && (
         <Box
           sx={{
