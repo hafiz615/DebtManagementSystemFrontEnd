@@ -2466,3 +2466,24 @@ export const DeleteDebtorAccount = async (id, payload) => {
     return error;
   }
 };
+export const GetEmailData = async (payload, search, filter) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/email/threading?search=${search}&filter=${filter}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetEmailDataByThreadId = async (threadId) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/email/eachThreadingMails/${threadId}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
