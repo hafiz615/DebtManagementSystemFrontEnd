@@ -22,6 +22,7 @@ export default function PaymentsAccounts({
   caseData,
   GetCaseDetails,
   caseDataId,
+  accountsResponse,
 }) {
   const { showToast } = useToast();
 

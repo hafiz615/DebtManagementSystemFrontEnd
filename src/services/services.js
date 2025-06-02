@@ -2487,3 +2487,13 @@ export const GetEmailDataByThreadId = async (threadId) => {
     return error;
   }
 };
+export const GetDebtorAccounts = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/debtor/getDebtorAccounts/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

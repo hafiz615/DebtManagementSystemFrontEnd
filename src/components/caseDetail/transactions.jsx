@@ -4,7 +4,12 @@ import { Colors } from "../../config/default";
 import PaymentPlan from "./paymentPlan";
 import PaymentsAccounts from "./paymentsAccounts";
 
-export default function Transactions({ caseData, caseDataId, GetCaseDetails }) {
+export default function Transactions({
+  caseData,
+  caseDataId,
+  GetCaseDetails,
+  accountsResponse,
+}) {
   const [value, setValue] = useState("Create Plan");
 
   const handleChange = (event, newValue) => {
@@ -67,6 +72,7 @@ export default function Transactions({ caseData, caseDataId, GetCaseDetails }) {
             caseData={caseData?.debtor}
             caseDataId={caseDataId}
             GetCaseDetails={GetCaseDetails}
+            accountsResponse={accountsResponse}
           />
         ) : (
           ""

@@ -77,7 +77,9 @@ export default function DebtorDetailsCards({
   verifiedSenders,
   fetchCalls,
   cc,
+  accountsResponse,
 }) {
+  console.log(caseData, "case");
   const streetAdress = caseData?.debtor?.basicInformation;
   const [searchText, setSearchText] = useState("");
   const [type, setType] = useState("cc");
@@ -254,13 +256,13 @@ export default function DebtorDetailsCards({
             <Tooltip
               placement="top"
               title={
-                accountExist
+                accountsResponse
                   ? "Client Account Exist"
                   : "No Account Added For This Client"
               }
             >
               <IconButton>
-                {accountExist ? (
+                {accountsResponse ? (
                   <Verified sx={{ color: "green" }} />
                 ) : (
                   <Info
