@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Box,
   Button,
   CircularProgress,
   Dialog,
@@ -22,6 +23,7 @@ import DebtorPaymentPlan from "../paymentPlan/debtorPaymentPlan";
 import ScrollbarStyles from "../customScroll";
 import CreditorPaymentPlan from "../paymentPlan/creditorPaymentPlan";
 import ClientPaymentTable from "./clientPaymentTable";
+
 import {
   GetCasePaymentById,
   GetDebtorCreditorPaymentPlan,
@@ -33,11 +35,14 @@ import {
   GetClientPaymentById,
   CancelPaymentPlan,
   CancelDebtorPaymentPlan,
+  DeleteCasePriority,
+  UpdateCasePriority,
 } from "../../services/services";
 import { useEffect } from "react";
 import TransactionDetails from "./transactionDetail";
 import { useToast } from "../../toast/toastContext";
 import { Edit } from "@mui/icons-material";
+import { Select, MenuItem } from "@mui/material";
 
 export default function PaymentPlan({ caseData }) {
   const [data, setData] = useState();
@@ -60,6 +65,10 @@ export default function PaymentPlan({ caseData }) {
   const [intervalCommission, setIntervalCommission] = useState([]);
   const [commission, setCommission] = useState(0);
   const [legalFee, setLegalFee] = useState(0);
+
+  const [priorityBitMap, setPriorityBitMap] = useState({});
+  const [priorityError, setPriorityError] = useState("");
+
   const [serviceFee, setServiceFee] = useState(0);
   const [commissionLoading, setCommissionLoading] = useState(false);
   const [legalFeeLoading, setLegalFeeLoading] = useState(false);
@@ -81,12 +90,20 @@ export default function PaymentPlan({ caseData }) {
       frequency: 1,
     },
   ]);
+
   const { showToast } = useToast();
 
   const getPaymentPlan = async () => {
     setLoading(true);
     const res = await GetDebtorCreditorPaymentPlan(caseData?.debtor?._id);
     if (res?.status === 200) {
+      const cases = res?.data?.data?.cases;
+      const priorityBitMapFromAPI = {};
+      cases?.forEach((item, idx) => {
+        priorityBitMapFromAPI[idx] = item?.priority;
+      });
+
+      setPriorityBitMap(priorityBitMapFromAPI);
       setData(res?.data?.data);
       setTabs(res?.data?.data?.cases);
       setIntervalCommission(res?.data?.data?.commissions);
@@ -293,6 +310,37 @@ export default function PaymentPlan({ caseData }) {
       showToast(errorMessage, "error");
     }
     setLegalFeeLoading(false);
+  };
+
+  const handleUpdatePriorityBit = async (newPriorityBit, index) => {
+    const payload = {
+      priority: newPriorityBit,
+    };
+    const response = await UpdateCasePriority(
+      tabs?.[activeIndex]?._id,
+      payload
+    );
+    if (response?.status === 200) {
+      showToast(response?.data?.message, "success");
+      getPaymentPlan();
+    } else {
+      const errorMessage = response?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+  };
+  const handleDeletePriorityBit = async (index) => {
+    const response = await DeleteCasePriority(tabs?.[activeIndex]?._id);
+    if (response?.status === 200) {
+      showToast(response?.data?.message, "success");
+      setPriorityBitMap((prev) => {
+        const newMap = { ...prev };
+        delete newMap[index];
+        return newMap;
+      });
+    } else {
+      const errorMessage = response?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
   };
 
   const handleRenegotiate = async () => {
@@ -645,6 +693,7 @@ export default function PaymentPlan({ caseData }) {
           </div>
         </DialogActions>
       </Dialog>
+
       {loading ? (
         <Grid
           xs={12}
@@ -681,6 +730,7 @@ export default function PaymentPlan({ caseData }) {
               <Button
                 key={index}
                 sx={{
+                  position: "relative",
                   width: "100%",
                   border: `1px solid ${Colors.SKY_BLUE}`,
                   borderRadius: "10px",
@@ -706,6 +756,35 @@ export default function PaymentPlan({ caseData }) {
                   setActiveIndex(index - 1);
                 }}
               >
+                {item?._id !== 1 && (
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: -8,
+                      right: -8,
+                      width: 20,
+                      height: 20,
+                      borderRadius: "50%",
+                      backgroundColor:
+                        activePayment === item?._id
+                          ? Colors.WHITE
+                          : Colors.SKY_BLUE,
+                      color:
+                        activePayment === item?._id
+                          ? Colors.SKY_BLUE
+                          : Colors.WHITE,
+                      fontSize: "12px",
+                      fontWeight: "bold",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      border: `2px solid ${Colors.SKY_BLUE}`,
+                      zIndex: 1,
+                    }}
+                  >
+                    {priorityBitMap[index - 1] || "-"}
+                  </Box>
+                )}
                 {item?.creditor?.businessInformation?.companyName}
               </Button>
             ))}
@@ -858,6 +937,146 @@ export default function PaymentPlan({ caseData }) {
                 Total amount after given interval:
                 <b> ${isNaN(totalAmount) ? 0 : totalAmount}</b>
               </Typography>
+              {activePayment !== 1 &&
+                activeIndex !== null &&
+                (() => {
+                  const currentItem = tabs[activeIndex];
+
+                  return (
+                    <Typography
+                      sx={{
+                        fontSize: FONT_SIZE_MEDIUM,
+                        fontFamily: "Nunito",
+                        mt: "10px",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      Priority Bit:
+                      <Select
+                        value={priorityBitMap[activeIndex] || ""}
+                        onChange={(e) => {
+                          const newPriority = Number(e.target.value);
+
+                          // Check for duplicate
+                          const duplicateIndex = Object.entries(
+                            priorityBitMap
+                          ).find(
+                            ([key, value]) =>
+                              Number(key) !== activeIndex &&
+                              value === newPriority
+                          )?.[0];
+
+                          if (duplicateIndex !== undefined) {
+                            const duplicateItem =
+                              tabs[Number(duplicateIndex)]?.creditor
+                                ?.businessInformation?.companyName ||
+                              "another creditor";
+
+                            setPriorityError(
+                              `This priority is already assigned to ${duplicateItem}`
+                            );
+                            setTimeout(() => setPriorityError(""), 3000);
+                            return;
+                          }
+
+                          setPriorityBitMap((prev) => ({
+                            ...prev,
+                            [activeIndex]: newPriority,
+                          }));
+
+                          handleUpdatePriorityBit(newPriority, activeIndex);
+                        }}
+                        displayEmpty
+                        sx={{
+                          ml: 1,
+                          minWidth: 80,
+                          height: "32px",
+                          fontSize: "14px",
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor: priorityBitMap[activeIndex]
+                              ? "#7353F0"
+                              : "rgba(0,0,0,0.23)",
+                          },
+                          "&:hover .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "#7353F0",
+                          },
+                          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "#7353F0",
+                          },
+                        }}
+                      >
+                        {[...Array(tabs.length)].map((_, i) => {
+                          const priorityValue = i + 1;
+                          const isUsed =
+                            Object.values(priorityBitMap).includes(
+                              priorityValue
+                            ) && priorityBitMap[activeIndex] !== priorityValue;
+
+                          return (
+                            <MenuItem
+                              key={priorityValue}
+                              value={priorityValue}
+                              sx={{
+                                color: isUsed ? "#9e9e9e" : "#000000",
+                                fontStyle: isUsed ? "italic" : "normal",
+                                "&:hover": {
+                                  backgroundColor: "rgba(115, 83, 240, 0.1)",
+                                },
+                                "&.Mui-selected": {
+                                  backgroundColor: "rgba(115, 83, 240, 0.2)",
+                                  color: "#7353F0",
+                                },
+                              }}
+                            >
+                              {priorityValue} {isUsed ? "(Already Used)" : ""}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Typography
+                          onClick={() =>
+                            priorityBitMap[activeIndex] &&
+                            handleDeletePriorityBit(activeIndex)
+                          }
+                          sx={{
+                            color: Colors.ORANGE_COLOR,
+                            fontSize: "12px",
+                            fontWeight: "600",
+                            fontFamily: "Nunito",
+                            marginLeft: ".5rem",
+                            cursor: priorityBitMap[activeIndex]
+                              ? "pointer"
+                              : "not-allowed",
+                            opacity: priorityBitMap[activeIndex] ? 1 : 0.5,
+                            textDecoration: "underline",
+                          }}
+                        >
+                          Delete Priority
+                        </Typography>
+
+                        <span
+                          style={{
+                            color: Colors.ORANGE_COLOR,
+                            marginLeft: ".5rem",
+                            fontFamily: "Nunito",
+                            fontSize: "12px",
+                          }}
+                        >
+                          {priorityError
+                            ? priorityError
+                            : "Must Be Unique For Each Creditor"}
+                        </span>
+                      </div>
+                    </Typography>
+                  );
+                })()}
             </div>
             {activePayment === 1 ? (
               <DebtorPaymentPlan
