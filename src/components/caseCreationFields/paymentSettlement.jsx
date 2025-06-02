@@ -170,7 +170,7 @@ export default function PaymentSettlement({
                     parseInt(remainingAmount) !== parseInt(totalAmount) && (
                       <Typography
                         sx={{
-                          color: "red",
+                          color: Colors.ORANGE_COLOR,
                           fontSize: "10px",
                         }}
                       >
@@ -303,7 +303,7 @@ export default function PaymentSettlement({
                   parseInt(remainingAmount) !== parseInt(totalAmount) && (
                     <Typography
                       sx={{
-                        color: "red",
+                        color: Colors.ORANGE_COLOR,
                         fontSize: "10px",
                         width: "100%",
                       }}

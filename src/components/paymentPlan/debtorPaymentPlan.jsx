@@ -310,7 +310,7 @@ export default function DebtorPaymentPlan({
                 parseInt(remainingAmount) !== parseInt(totalAmount) && (
                   <Typography
                     sx={{
-                      color: "red",
+                      color: Colors.ORANGE_COLOR,
                       fontSize: "10px",
                       width: "100%",
                     }}
