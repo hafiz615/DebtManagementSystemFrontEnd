@@ -216,13 +216,6 @@ function CaseDetail() {
     setOpen(true);
   };
 
-  const GetDebtorAccountsData = async (id) => {
-    const accountsRes = await GetDebtorAccounts(id);
-    if (accountsRes?.status === 200) {
-      setAccountsResponse(accountsRes?.data?.data);
-    }
-  };
-
   const GetLogsById = async (id) => {
     const resLogs = await GetLogs(id);
     if (resLogs?.status === 200) {
@@ -235,7 +228,7 @@ function CaseDetail() {
     const caseDetails = await GetCaseById(rowId);
     if (caseDetails?.status === 200) {
       GetLogsById(rowId);
-      GetDebtorAccountsData(rowId);
+      GetDebtorAccountsData(caseDetails?.data?.data?.debtor?._id);
       setCaseData(caseDetails?.data?.data);
       setIsChecked(caseDetails?.data?.data?.creditorPaymentsProceed);
       dispatch(setCaseId(id));
@@ -255,6 +248,12 @@ function CaseDetail() {
       navigate("/");
     }
     setLoading(false);
+  };
+  const GetDebtorAccountsData = async (id) => {
+    const accountsRes = await GetDebtorAccounts(id);
+    if (accountsRes?.status === 200) {
+      setAccountsResponse(accountsRes?.data?.data);
+    }
   };
 
   const handleChange = (event, newValue) => {
@@ -726,6 +725,7 @@ function CaseDetail() {
             handleCloseNotes={handleCloseNotes}
             cc={cc}
             accountsResponse={accountsResponse}
+            GetDebtorAccounts={GetDebtorAccountsData}
           />
         )}
         {activeTab === 2 && (
@@ -734,6 +734,7 @@ function CaseDetail() {
             caseDataId={id}
             GetCaseDetails={GetCaseDetails}
             accountsResponse={accountsResponse}
+            GetDebtorAccounts={GetDebtorAccountsData}
           />
         )}
       </Grid>

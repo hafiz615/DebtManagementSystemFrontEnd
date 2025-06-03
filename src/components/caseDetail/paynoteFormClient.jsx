@@ -8,14 +8,10 @@ import Dropdown from "../dropdown";
 import { handleNumberInput } from "../../common";
 import { encrypt } from "n-krypta";
 import { useToast } from "../../toast/toastContext";
-import {
-  AddAccountSeamlessPaynote,
-  AddCreditorAccount,
-  UpdateACHDetails,
-} from "../../services/services";
+import { AddAccountSeamlessPaynote } from "../../services/services";
 import { REACT_APP_SECURITY_KEY } from "../../constants/appConstants";
 
-function PaynoteFormClient({ setPaynoteDialog, debtorId }) {
+function PaynoteFormClient({ setPaynoteDialog, debtorId, GetDebtorAccounts }) {
   const [errors, setErrors] = useState({});
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -100,6 +96,7 @@ function PaynoteFormClient({ setPaynoteDialog, debtorId }) {
     );
     if (addPaynoteClientAccount?.status === 200) {
       showToast(addPaynoteClientAccount?.data?.message, "success");
+      GetDebtorAccounts(debtorId);
       setPaynoteDialog(false);
     } else {
       showToast(addPaynoteClientAccount?.response?.data?.message, "error");
