@@ -2487,6 +2487,29 @@ export const GetEmailDataByThreadId = async (threadId) => {
     return error;
   }
 };
+
+export const DeleteCasePriority = async (id) => {
+  try {
+    return await axios.delete(
+      BASE_URL + `/v1/case/deleteCasePriority/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const UpdateCasePriority = async (id, payload) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/case/updateCasePriority/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
 export const GetDebtorAccounts = async (id) => {
   try {
     return await axios.get(
