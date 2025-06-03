@@ -9,6 +9,7 @@ export default function Transactions({
   caseDataId,
   GetCaseDetails,
   accountsResponse,
+  GetDebtorAccounts,
 }) {
   const [value, setValue] = useState("Create Plan");
 
@@ -73,6 +74,7 @@ export default function Transactions({
             caseDataId={caseDataId}
             GetCaseDetails={GetCaseDetails}
             accountsResponse={accountsResponse}
+            GetDebtorAccounts={GetDebtorAccounts}
           />
         ) : (
           ""

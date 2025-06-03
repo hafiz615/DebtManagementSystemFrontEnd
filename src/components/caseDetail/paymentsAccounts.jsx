@@ -22,6 +22,7 @@ export default function PaymentsAccounts({
   GetCaseDetails,
   caseDataId,
   accountsResponse,
+  GetDebtorAccounts,
 }) {
   const { showToast } = useToast();
 
@@ -58,7 +59,8 @@ export default function PaymentsAccounts({
     const response = await DeleteDebtorAccount(debtorId, payload);
     if (response?.status === 200) {
       showToast(response?.data?.message, "success");
-      GetCaseDetails(caseDataId);
+      // GetCaseDetails(caseDataId);
+      GetDebtorAccounts(debtorId);
     } else {
       const errorMessage = response?.response?.data?.message;
       showToast(errorMessage, "error");
