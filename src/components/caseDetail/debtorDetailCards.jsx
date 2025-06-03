@@ -77,6 +77,8 @@ export default function DebtorDetailsCards({
   verifiedSenders,
   fetchCalls,
   cc,
+  accountsResponse,
+  GetDebtorAccounts,
 }) {
   const streetAdress = caseData?.debtor?.basicInformation;
   const [searchText, setSearchText] = useState("");
@@ -167,23 +169,13 @@ export default function DebtorDetailsCards({
   };
 
   const debtorId = caseData?.debtor?._id;
-  const accountExist = !isEmpty(caseData?.debtor?.accounts);
-  useEffect(() => {
-    if (selectedValue === "Easy Pay" && accountExist) {
-      const firstCustomerVaultId =
-        caseData?.debtor?.accounts[0]?.customerVaultId;
-      showToast(
-        `Already synced on Easypay with this VaultID: ${firstCustomerVaultId}`,
-        "success"
-      );
-    }
-  }, [selectedValue]);
   const { showToast } = useToast();
   const addDebtorDetails = async () => {
     const params = connectPayment;
     const debtorAccountDetails = await AddDebtorAccount(params, debtorId);
     if (debtorAccountDetails?.status === 200) {
       showToast(debtorAccountDetails?.data?.message, "success");
+      GetDebtorAccounts(debtorId);
     } else if (debtorAccountDetails?.response?.status === 400) {
       const errorMessage = debtorAccountDetails?.response?.data?.message;
       showToast(errorMessage, "error");
@@ -254,13 +246,13 @@ export default function DebtorDetailsCards({
             <Tooltip
               placement="top"
               title={
-                accountExist
+                accountsResponse && accountsResponse?.length > 0
                   ? "Client Account Exist"
                   : "No Account Added For This Client"
               }
             >
               <IconButton>
-                {accountExist ? (
+                {accountsResponse && accountsResponse?.length > 0 ? (
                   <Verified sx={{ color: "green" }} />
                 ) : (
                   <Info
@@ -345,7 +337,11 @@ export default function DebtorDetailsCards({
             }}
           >
             <DialogContent sx={{ padding: "16px 24px" }}>
-              <SeamLessChex setOpenDialog={setOpenDialog} debtorId={debtorId} />
+              <SeamLessChex
+                setOpenDialog={setOpenDialog}
+                debtorId={debtorId}
+                GetDebtorAccounts={GetDebtorAccounts}
+              />
             </DialogContent>
           </Dialog>
 
@@ -365,6 +361,7 @@ export default function DebtorDetailsCards({
               <PaynoteFormClient
                 setPaynoteDialog={setPaynoteDialog}
                 debtorId={debtorId}
+                GetDebtorAccounts={GetDebtorAccounts}
               />
             </DialogContent>
           </Dialog>
