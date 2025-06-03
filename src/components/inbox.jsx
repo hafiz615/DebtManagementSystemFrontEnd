@@ -126,6 +126,7 @@ function Inbox() {
   const open = Boolean(anchorEl);
   const tabs = ["Inbox", "Tasks"];
   const disabled = caseCode || debtorCompany || creditorCompany || negotiator;
+  const sendEmailRef = useRef(null);
 
   const handleKeyPress = (e) => {
     setSearchText(e.target.value);
@@ -143,10 +144,10 @@ function Inbox() {
     setLoading(true);
     const payload = {
       filter: {
-        caseCode: "",
-        debtorCompanyName: "",
-        creditorCompanyName: "",
-        negotiatorName: "",
+        caseCode: caseCode || "",
+        debtorCompanyName: debtorCompany || "",
+        creditorCompanyName: creditorCompany || "",
+        negotiatorName: negotiator || "",
         userId: userData?._id,
       },
       text: searchText || "",
@@ -195,6 +196,23 @@ function Inbox() {
       status: "none",
     };
     await GetAllNotifications(payload);
+  };
+
+  const getAllCC = async () => {
+    const res = await GetAllCc();
+    if (res?.status === 200) {
+      setCc(res?.data?.data);
+    }
+  };
+
+  const getTypeIcon = (type) => {
+    if (type === "sent") {
+      return (
+        <MailOutline sx={{ fontSize: 16, color: Colors.SKY_BLUE, mr: 1 }} />
+      );
+    } else {
+      return <CallReceived sx={{ fontSize: 16, color: "#2e7d32", mr: 1 }} />;
+    }
   };
 
   useEffect(() => {
@@ -257,14 +275,6 @@ function Inbox() {
     }
     setLoading(false);
   };
-  const getAllCC = async () => {
-    const res = await GetAllCc();
-    if (res?.status === 200) {
-      setCc(res?.data?.data);
-    }
-  };
-
-  const sendEmailRef = useRef(null);
 
   const handleReplyClick = () => {
     setShowSendEmailCase(true);
@@ -282,16 +292,6 @@ function Inbox() {
       ...prev,
       [id]: !prev[id],
     }));
-  };
-
-  const getTypeIcon = (type) => {
-    if (type === "sent") {
-      return (
-        <MailOutline sx={{ fontSize: 16, color: Colors.SKY_BLUE, mr: 1 }} />
-      );
-    } else {
-      return <CallReceived sx={{ fontSize: 16, color: "#2e7d32", mr: 1 }} />;
-    }
   };
 
   const renderBox = (data, selectedUser, setSelectedUser) => {
@@ -526,7 +526,7 @@ function Inbox() {
                   height="2rem"
                   width="45%"
                   fontColor={Colors.BLACK}
-                  onClick={getAllInboxData}
+                  onClick={() => getAllInboxData(false, true)}
                   disabled={!disabled}
                   backgroundColor={Colors.BG_LIGHT_GRAY}
                   hoverColor={Colors.BG_LIGHT_GRAY}
