@@ -29,11 +29,7 @@ function TransactionRow({
   const { showToast } = useToast();
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    return `${month}/${day}/${year}`;
+    return dateString?.split("T")[0];
   };
 
   const capitalizeFirstLetter = (string) =>
