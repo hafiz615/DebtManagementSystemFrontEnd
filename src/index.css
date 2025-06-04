@@ -52,3 +52,6 @@ code {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
 }
+.email-html-content p {
+  margin: 0 0 0 0;
+}

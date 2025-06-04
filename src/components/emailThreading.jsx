@@ -18,6 +18,48 @@ const EmailThreading = ({ email }) => {
 
   return (
     <Box>
+      <div
+        style={{
+          display: "flex",
+          gap: "10px",
+          flexWrap: "wrap",
+        }}
+      >
+        {email?.attachments?.length > 0 &&
+          email?.attachments?.map((item) => (
+            <Grid
+              container
+              sx={{
+                display: "flex",
+                border: `1px solid ${Colors.SKY_BLUE}`,
+                width: "25%",
+                borderRadius: "10px",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "10px",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                "&:hover": {
+                  backgroundColor: Colors.lIGHT_PURPLE,
+                },
+              }}
+              onClick={() => handleShowFile(item?.url)}
+            >
+              <Typography
+                sx={{
+                  fontSize: "13px",
+                  fontFamily: "Nunito",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                }}
+              >
+                <Attachment sx={{ color: Colors.SKY_BLUE }} />{" "}
+                {item?.originalFileName}
+              </Typography>
+            </Grid>
+          ))}
+      </div>
       {visibleMessages.map((message, index) => (
         <Box
           key={index}
