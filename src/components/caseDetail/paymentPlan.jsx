@@ -838,6 +838,7 @@ export default function PaymentPlan({ caseData }) {
                   buttonText="Save"
                   height="2rem"
                   width="6rem"
+                  disabled={activePayment !== 1 && !priorityBitMap[activeIndex]}
                   onClick={handleSave}
                   loading={saveLoading}
                   backgroundColor={Colors.SKY_BLUE}
@@ -957,8 +958,6 @@ export default function PaymentPlan({ caseData }) {
                         value={priorityBitMap[activeIndex] || ""}
                         onChange={(e) => {
                           const newPriority = Number(e.target.value);
-
-                          // Check for duplicate
                           const duplicateIndex = Object.entries(
                             priorityBitMap
                           ).find(
@@ -972,7 +971,6 @@ export default function PaymentPlan({ caseData }) {
                               tabs[Number(duplicateIndex)]?.creditor
                                 ?.businessInformation?.companyName ||
                               "another creditor";
-
                             setPriorityError(
                               `This priority is already assigned to ${duplicateItem}`
                             );
@@ -1006,33 +1004,53 @@ export default function PaymentPlan({ caseData }) {
                           },
                         }}
                       >
-                        {[...Array(tabs.length)].map((_, i) => {
-                          const priorityValue = i + 1;
-                          const isUsed =
-                            Object.values(priorityBitMap).includes(
-                              priorityValue
-                            ) && priorityBitMap[activeIndex] !== priorityValue;
+                        {tabs?.length === 1 && activePayment !== 1 ? (
+                          <MenuItem
+                            key={1}
+                            value={1}
+                            sx={{
+                              color: "#000000",
+                              "&:hover": {
+                                backgroundColor: "rgba(115, 83, 240, 0.1)",
+                              },
+                              "&.Mui-selected": {
+                                backgroundColor: "rgba(115, 83, 240, 0.2)",
+                                color: "#7353F0",
+                              },
+                            }}
+                          >
+                            1
+                          </MenuItem>
+                        ) : (
+                          [...Array(tabs.length)]?.map((_, i) => {
+                            const priorityValue = i + 1;
+                            const isUsed =
+                              Object.values(priorityBitMap).includes(
+                                priorityValue
+                              ) &&
+                              priorityBitMap[activeIndex] !== priorityValue;
 
-                          return (
-                            <MenuItem
-                              key={priorityValue}
-                              value={priorityValue}
-                              sx={{
-                                color: isUsed ? "#9e9e9e" : "#000000",
-                                fontStyle: isUsed ? "italic" : "normal",
-                                "&:hover": {
-                                  backgroundColor: "rgba(115, 83, 240, 0.1)",
-                                },
-                                "&.Mui-selected": {
-                                  backgroundColor: "rgba(115, 83, 240, 0.2)",
-                                  color: "#7353F0",
-                                },
-                              }}
-                            >
-                              {priorityValue} {isUsed ? "(Already Used)" : ""}
-                            </MenuItem>
-                          );
-                        })}
+                            return (
+                              <MenuItem
+                                key={priorityValue}
+                                value={priorityValue}
+                                sx={{
+                                  color: isUsed ? "#9e9e9e" : "#000000",
+                                  fontStyle: isUsed ? "italic" : "normal",
+                                  "&:hover": {
+                                    backgroundColor: "rgba(115, 83, 240, 0.1)",
+                                  },
+                                  "&.Mui-selected": {
+                                    backgroundColor: "rgba(115, 83, 240, 0.2)",
+                                    color: "#7353F0",
+                                  },
+                                }}
+                              >
+                                {priorityValue} {isUsed ? "(Already Used)" : ""}
+                              </MenuItem>
+                            );
+                          })
+                        )}
                       </Select>
                       <div
                         style={{
