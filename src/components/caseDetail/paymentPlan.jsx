@@ -328,6 +328,7 @@ export default function PaymentPlan({ caseData }) {
       showToast(errorMessage, "error");
     }
   };
+
   const handleDeletePriorityBit = async (index) => {
     const response = await DeleteCasePriority(tabs?.[activeIndex]?._id);
     if (response?.status === 200) {
@@ -408,7 +409,7 @@ export default function PaymentPlan({ caseData }) {
       getCasePaymentDetails(false);
       setCurrentPaymentPage(1);
     }
-  }, [activePayment]);
+  }, [activePayment, caseData]);
 
   useEffect(() => {
     if (activePayment === 1) {

@@ -2466,10 +2466,13 @@ export const DeleteDebtorAccount = async (id, payload) => {
     return error;
   }
 };
-export const GetEmailData = async (payload, search, filter) => {
+export const GetEmailData = async (payload, search, filter, page, row) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/email/threading?search=${search}&filter=${filter}`,
+      BASE_URL +
+        `/v1/email/threading?search=${search}&filter=${filter}&page=${
+          page ? page : 1
+        }&limit=${row ? row : 10}`,
       payload,
       setHeaders()
     );
