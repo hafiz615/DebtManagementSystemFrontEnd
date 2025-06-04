@@ -97,6 +97,7 @@ const rowsOptions = [
   { label: "5", value: "5" },
   { label: "15", value: "15" },
   { label: "30", value: "30" },
+  { label: "50", value: "50" },
 ];
 
 function Inbox() {
@@ -154,6 +155,8 @@ function Inbox() {
   };
 
   const getAllInboxData = async (search, filter) => {
+    const user = users?.find((user) => user.name === userSelected);
+
     setLoading(true);
     const payload = {
       filter: {
@@ -161,7 +164,7 @@ function Inbox() {
         debtorCompanyName: debtorCompany || "",
         creditorCompanyName: creditorCompany || "",
         negotiatorName: negotiator || "",
-        userId: userData?._id,
+        userId: user?._id || userData?._id,
       },
       text: searchText || "",
     };
@@ -246,13 +249,13 @@ function Inbox() {
   }, []);
 
   useEffect(() => {
-    getAllInboxData(false, true);
+    getAllInboxData(true, true);
   }, [currentPage]);
 
   useEffect(() => {
     setCurrentPage(1);
-    getAllInboxData(false, true);
-  }, [paginationRows]);
+    getAllInboxData(true, true);
+  }, [paginationRows, searchText]);
 
   useEffect(() => {
     if (activeTab === "Tasks") {
@@ -289,21 +292,15 @@ function Inbox() {
     setLoading(true);
     const payload = {
       filter: {
-        caseCode: "",
-        debtorCompanyName: "",
-        creditorCompanyName: "",
-        negotiatorName: "",
+        caseCode: caseCode || "",
+        debtorCompanyName: debtorCompany || "",
+        creditorCompanyName: creditorCompany || "",
+        negotiatorName: negotiator || "",
         userId: user?._id,
       },
-      text: "",
+      text: searchText || "",
     };
-    const response = await GetEmailData(
-      payload,
-      false,
-      true,
-      1,
-      paginationRows
-    );
+    const response = await GetEmailData(payload, true, true, 1, paginationRows);
     if (response?.status === 200) {
       const data = response?.data?.data?.threads;
       const totalCount = response?.data?.data?.count;
@@ -483,7 +480,7 @@ function Inbox() {
             searchCheck={true}
             searchingText={searchText}
             handleKeyPress={handleKeyPress}
-            placeholder="Search..."
+            placeholder="Search by client company name or subject..."
           />
           <IconButton onClick={handleClick}>
             <FilterListOutlined
@@ -564,7 +561,13 @@ function Inbox() {
                   height="2rem"
                   width="45%"
                   fontColor={Colors.BLACK}
-                  onClick={() => getAllInboxData(false, true)}
+                  onClick={() => {
+                    if (currentPage === 1) {
+                      getAllInboxData(false, true);
+                    } else {
+                      setCurrentPage(1);
+                    }
+                  }}
                   disabled={!disabled}
                   backgroundColor={Colors.BG_LIGHT_GRAY}
                   hoverColor={Colors.BG_LIGHT_GRAY}
@@ -705,7 +708,7 @@ function Inbox() {
                       ...ScrollbarStyles,
                     }}
                   >
-                    {!inboxData ? (
+                    {!inboxData || inboxData?.length === 0 ? (
                       <Grid
                         item
                         xs={12}
