@@ -5,6 +5,7 @@ import { Colors } from "../config/default";
 import {
   FONT_SIZE_LARGE,
   FONT_SIZE_MEDIUM,
+  FONT_SIZE_SMALL,
   FONT_SIZE_XL,
   PAGE_HEIGHT,
 } from "../constants/appConstants";
@@ -28,6 +29,8 @@ import {
   ReplayOutlined,
   Email,
   Drafts,
+  ArrowForwardIos,
+  ArrowBackIosNew,
 } from "@mui/icons-material";
 import TextButton from "./button";
 import {
@@ -90,6 +93,12 @@ const fontStyling = {
   m: "6px 0px",
 };
 
+const rowsOptions = [
+  { label: "5", value: "5" },
+  { label: "15", value: "15" },
+  { label: "30", value: "30" },
+];
+
 function Inbox() {
   const userData = useSelector((state) => state?.signIn?.signIn?.user);
   const [inboxData, setInboxData] = useState();
@@ -118,6 +127,10 @@ function Inbox() {
   const [expandedEmails, setExpandedEmails] = useState({});
   const [showSendEmailCase, setShowSendEmailCase] = useState(false);
   const [threadMessages, setThreadMessages] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [paginationRows, setPaginationRows] = useState("15");
+  const [totalData, setTotalData] = useState();
+  const totalPages = Math.ceil(totalData / paginationRows);
 
   const { showToast } = useToast();
   const navigate = useNavigate();
@@ -152,10 +165,18 @@ function Inbox() {
       },
       text: searchText || "",
     };
-    const response = await GetEmailData(payload, search, filter);
+    const response = await GetEmailData(
+      payload,
+      search,
+      filter,
+      currentPage,
+      paginationRows
+    );
     if (response?.status === 200) {
-      const data = response?.data?.data;
+      const data = response?.data?.data?.threads;
+      const totalCount = response?.data?.data?.count;
       setInboxData(data);
+      setTotalData(totalCount);
     }
     setLoading(false);
   };
@@ -216,7 +237,6 @@ function Inbox() {
   };
 
   useEffect(() => {
-    getAllInboxData(false, true);
     getVerifiedIdentites();
     getAllTasks();
     getAllUser();
@@ -224,6 +244,15 @@ function Inbox() {
     getAllNotifications();
     getAllCC();
   }, []);
+
+  useEffect(() => {
+    getAllInboxData(false, true);
+  }, [currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+    getAllInboxData(false, true);
+  }, [paginationRows]);
 
   useEffect(() => {
     if (activeTab === "Tasks") {
@@ -247,7 +276,7 @@ function Inbox() {
     setDebtorCompany("");
     setCreditorCompany("");
     setNegotiator("");
-    getAllInboxData();
+    getAllInboxData(false, false);
   };
 
   const navigateToCaseDetail = (id) => {
@@ -268,10 +297,19 @@ function Inbox() {
       },
       text: "",
     };
-    const response = await GetEmailData(payload, false, true);
+    const response = await GetEmailData(
+      payload,
+      false,
+      true,
+      1,
+      paginationRows
+    );
     if (response?.status === 200) {
-      const data = response?.data?.data;
+      const data = response?.data?.data?.threads;
+      const totalCount = response?.data?.data?.count;
       setInboxData(data);
+      setTotalData(totalCount);
+      setCurrentPage(1);
     }
     setLoading(false);
   };
@@ -657,278 +695,141 @@ function Inbox() {
                   <CircularProgress size={70} sx={{ color: Colors.SKY_BLUE }} />
                 </Grid>
               ) : (
-                <Box
-                  flex={1}
-                  sx={{
-                    marginTop: "10px",
-                    padding: "10px",
-                    overflowY: "auto",
-                    ...ScrollbarStyles,
-                  }}
-                >
-                  {inboxData?.length === 0 ? (
-                    <Grid
-                      item
-                      xs={12}
-                      container
-                      sx={{
-                        height: "100%",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Typography sx={fontStyling}>
-                        Looks like you have'nt started a conversation yet
-                      </Typography>
-                    </Grid>
-                  ) : (
-                    <>
-                      {activePreview?.active ? (
-                        <Box
-                          display="flex"
-                          flexDirection="column"
-                          marginBottom="5px"
-                        >
-                          <div>
-                            <IconButton
-                              onClick={() => {
-                                setActivePreview({ id: 0, active: false }),
-                                  setExpandedEmails([]);
-                              }}
-                            >
-                              <ArrowBack />
-                            </IconButton>
-                          </div>
-                          <div
-                            initial={{
-                              opacity: 0,
-                            }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: 50 }}
-                            transition={{
-                              duration: 0.4,
-                              ease: "easeOut",
-                            }}
-                          >
+                <>
+                  <Box
+                    flex={1}
+                    sx={{
+                      marginTop: "10px",
+                      padding: "10px",
+                      overflowY: "auto",
+                      ...ScrollbarStyles,
+                    }}
+                  >
+                    {!inboxData ? (
+                      <Grid
+                        item
+                        xs={12}
+                        container
+                        sx={{
+                          height: "100%",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Typography sx={fontStyling}>
+                          Looks like you have'nt started a conversation yet
+                        </Typography>
+                      </Grid>
+                    ) : (
+                      <>
+                        {activePreview?.active ? (
+                          <>
                             <Box
-                              sx={{
-                                maxWidth: "100%",
-                                margin: "auto",
-                                p: 2,
-                              }}
+                              display="flex"
+                              flexDirection="column"
+                              marginBottom="5px"
                             >
-                              {/* Header */}
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "space-between",
-                                  mb: 2,
-                                  pl: 1,
+                              <div>
+                                <IconButton
+                                  onClick={() => {
+                                    setActivePreview({ id: 0, active: false }),
+                                      setExpandedEmails([]);
+                                  }}
+                                >
+                                  <ArrowBack />
+                                </IconButton>
+                              </div>
+                              <div
+                                initial={{
+                                  opacity: 0,
+                                }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 50 }}
+                                transition={{
+                                  duration: 0.4,
+                                  ease: "easeOut",
                                 }}
                               >
                                 <Box
                                   sx={{
-                                    display: "flex",
-                                    alignItems: "center",
+                                    maxWidth: "100%",
+                                    margin: "auto",
+                                    p: 2,
                                   }}
                                 >
-                                  <Mail
-                                    sx={{ mr: 1, color: Colors.SKY_BLUE }}
-                                  />
-                                  <Typography
-                                    variant="h6"
+                                  {/* Header */}
+                                  <Box
                                     sx={{
-                                      fontWeight: 600,
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "space-between",
+                                      mb: 2,
+                                      pl: 1,
+                                    }}
+                                  >
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                      <Mail
+                                        sx={{ mr: 1, color: Colors.SKY_BLUE }}
+                                      />
+                                      <Typography
+                                        variant="h6"
+                                        sx={{
+                                          fontWeight: 600,
+                                          fontFamily: "Nunito",
+                                        }}
+                                      >
+                                        {threadMessages?.previousMessages
+                                          ?.length > 0 &&
+                                          threadMessages?.previousMessages[0]
+                                            ?.subject}
+                                      </Typography>
+                                    </Box>
+                                  </Box>
+
+                                  <Paper
+                                    sx={{
+                                      border: "1px solid #e0e0e0",
                                       fontFamily: "Nunito",
                                     }}
                                   >
-                                    {threadMessages?.previousMessages?.length >
-                                      0 &&
-                                      threadMessages?.previousMessages[0]
-                                        ?.subject}
-                                  </Typography>
-                                </Box>
-                              </Box>
-
-                              <Paper
-                                sx={{
-                                  border: "1px solid #e0e0e0",
-                                  fontFamily: "Nunito",
-                                }}
-                              >
-                                {threadMessages?.previousMessages?.map(
-                                  (email, index) => (
-                                    <Box
-                                      key={index}
-                                      sx={{ fontFamily: "Nunito" }}
-                                    >
-                                      {!expandedEmails[email._id] ? (
+                                    {threadMessages?.previousMessages?.map(
+                                      (email, index) => (
                                         <Box
-                                          sx={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            p: 2,
-                                            cursor: "pointer",
-                                            "&:hover": {
-                                              backgroundColor: "#f5f5f5",
-                                            },
-                                            fontFamily: "Nunito",
-                                          }}
-                                          onClick={() => toggleEmail(email._id)}
+                                          key={index}
+                                          sx={{ fontFamily: "Nunito" }}
                                         >
-                                          <IconButton
-                                            size="small"
-                                            sx={{ mr: 1, p: 0.5 }}
-                                          >
-                                            <ChevronRight
-                                              sx={{ fontSize: 20 }}
-                                            />
-                                          </IconButton>
-                                          <Box
-                                            sx={{
-                                              flex: 1,
-                                              fontFamily: "Nunito",
-                                            }}
-                                          >
+                                          {!expandedEmails[email._id] ? (
                                             <Box
                                               sx={{
                                                 display: "flex",
                                                 alignItems: "center",
+                                                p: 2,
+                                                cursor: "pointer",
+                                                "&:hover": {
+                                                  backgroundColor: "#f5f5f5",
+                                                },
                                                 fontFamily: "Nunito",
                                               }}
+                                              onClick={() =>
+                                                toggleEmail(email._id)
+                                              }
                                             >
-                                              <Typography
-                                                variant="subtitle2"
-                                                sx={{
-                                                  fontWeight: 600,
-                                                  mr: 1,
-                                                  gap: ".5rem",
-                                                  display: "flex",
-                                                  alignItems: "center",
-                                                  fontFamily: "Nunito",
-                                                }}
+                                              <IconButton
+                                                size="small"
+                                                sx={{ mr: 1, p: 0.5 }}
                                               >
-                                                {email?.debtorCompanyName ||
-                                                  "Composed"}
-                                                {getTypeIcon(email?.type)}
-                                              </Typography>
-                                              <Typography
-                                                variant="body2"
-                                                color="text.secondary"
-                                                sx={{
-                                                  overflow: "hidden",
-                                                  textOverflow: "ellipsis",
-                                                  whiteSpace: "nowrap",
-                                                  fontFamily: "Nunito",
-                                                }}
-                                              >
-                                                -- {email?.subject}
-                                              </Typography>
-                                            </Box>
-                                          </Box>
-                                          <Typography
-                                            variant="caption"
-                                            color="text.secondary"
-                                            sx={{
-                                              mr: 2,
-                                              fontFamily: "Nunito",
-                                            }}
-                                          >
-                                            {email?.updatedAt &&
-                                              new Date(
-                                                email?.updatedAt
-                                              ).toLocaleString("en-US", {
-                                                month: "numeric",
-                                                day: "numeric",
-                                                year: "numeric",
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                                hour12: false,
-                                              })}
-                                          </Typography>
-                                        </Box>
-                                      ) : (
-                                        <Box
-                                          sx={{
-                                            fontFamily: "Nunito",
-                                          }}
-                                        >
-                                          <Box
-                                            sx={{
-                                              display: "flex",
-                                              alignItems: "center",
-                                              p: 2,
-                                              cursor: "pointer",
-                                              borderBottom: "1px solid #e0e0e0",
-                                              "&:hover": {
-                                                backgroundColor: "#f5f5f5",
-                                              },
-                                              fontFamily: "Nunito",
-                                            }}
-                                            onClick={() =>
-                                              toggleEmail(email._id)
-                                            }
-                                          >
-                                            <IconButton
-                                              size="small"
-                                              sx={{ mr: 1, p: 0.5 }}
-                                            >
-                                              <ExpandMore
-                                                sx={{ fontSize: 20 }}
-                                              />
-                                            </IconButton>
-                                            <Typography
-                                              variant="body2"
-                                              sx={{
-                                                flex: 1,
-                                                color: "text.secondary",
-                                                fontFamily: "Nunito",
-                                              }}
-                                            >
-                                              From:{" "}
-                                              <strong>
-                                                {email?.debtorCompanyName}
-                                              </strong>{" "}
-                                              &lt;{email?.from}&gt;
-                                            </Typography>
-                                            <Typography
-                                              variant="caption"
-                                              color="text.secondary"
-                                              sx={{
-                                                fontFamily: "Nunito",
-                                              }}
-                                            >
-                                              {email?.updatedAt &&
-                                                new Date(
-                                                  email?.updatedAt
-                                                ).toLocaleString("en-US", {
-                                                  month: "numeric",
-                                                  day: "numeric",
-                                                  year: "numeric",
-                                                  hour: "2-digit",
-                                                  minute: "2-digit",
-                                                  hour12: false,
-                                                })}
-                                            </Typography>
-                                          </Box>
-                                          <Box
-                                            sx={{
-                                              p: 2,
-                                              fontFamily: "Nunito",
-                                            }}
-                                          >
-                                            <Box
-                                              sx={{
-                                                display: "flex",
-                                                justifyContent: "space-between",
-                                                alignItems: "flex-start",
-                                                mb: 2,
-                                                fontFamily: "Nunito",
-                                              }}
-                                            >
+                                                <ChevronRight
+                                                  sx={{ fontSize: 20 }}
+                                                />
+                                              </IconButton>
                                               <Box
                                                 sx={{
+                                                  flex: 1,
                                                   fontFamily: "Nunito",
                                                 }}
                                               >
@@ -936,251 +837,482 @@ function Inbox() {
                                                   sx={{
                                                     display: "flex",
                                                     alignItems: "center",
-                                                    mb: 1,
+                                                    fontFamily: "Nunito",
                                                   }}
                                                 >
                                                   <Typography
-                                                    variant="body2"
-                                                    color="text.secondary"
-                                                    sx={{
-                                                      minWidth: "40px",
-                                                      mr: 1,
-                                                      fontFamily: "Nunito",
-                                                    }}
-                                                  >
-                                                    From:
-                                                  </Typography>
-                                                  <Typography
-                                                    variant="body2"
+                                                    variant="subtitle2"
                                                     sx={{
                                                       fontWeight: 600,
                                                       mr: 1,
+                                                      gap: ".5rem",
+                                                      display: "flex",
+                                                      alignItems: "center",
                                                       fontFamily: "Nunito",
                                                     }}
                                                   >
-                                                    {email?.debtorCompanyName}
+                                                    {email?.debtorCompanyName ||
+                                                      "Composed"}
+                                                    {getTypeIcon(email?.type)}
                                                   </Typography>
                                                   <Typography
                                                     variant="body2"
                                                     color="text.secondary"
                                                     sx={{
+                                                      overflow: "hidden",
+                                                      textOverflow: "ellipsis",
+                                                      whiteSpace: "nowrap",
                                                       fontFamily: "Nunito",
                                                     }}
                                                   >
-                                                    &lt;{email?.from}
-                                                    &gt;
-                                                  </Typography>
-                                                  <span
-                                                    style={{
-                                                      marginLeft: ".5rem",
-                                                      marginTop: "6px",
-                                                    }}
-                                                  >
-                                                    {email?.type === "sent" ? (
-                                                      <Drafts
-                                                        sx={{
-                                                          color:
-                                                            Colors.SKY_BLUE,
-                                                          fontSize: "16px",
-                                                        }}
-                                                      />
-                                                    ) : (
-                                                      getTypeIcon(email?.type)
-                                                    )}
-                                                  </span>
-                                                </Box>
-                                                <Box
-                                                  sx={{
-                                                    display: "flex",
-                                                    mb: 2,
-                                                  }}
-                                                >
-                                                  <Typography
-                                                    variant="body2"
-                                                    color="text.secondary"
-                                                    sx={{
-                                                      minWidth: "40px",
-                                                      mr: 1,
-                                                      fontFamily: "Nunito",
-                                                    }}
-                                                  >
-                                                    To:
-                                                  </Typography>
-                                                  <Typography
-                                                    variant="body2"
-                                                    color="primary.main"
-                                                    sx={{
-                                                      fontFamily: "Nunito",
-                                                    }}
-                                                  >
-                                                    {email?.to}
+                                                    -- {email?.subject}
                                                   </Typography>
                                                 </Box>
                                               </Box>
+                                              <Typography
+                                                variant="caption"
+                                                color="text.secondary"
+                                                sx={{
+                                                  mr: 2,
+                                                  fontFamily: "Nunito",
+                                                }}
+                                              >
+                                                {email?.updatedAt &&
+                                                  new Date(
+                                                    email?.updatedAt
+                                                  ).toLocaleString("en-US", {
+                                                    month: "numeric",
+                                                    day: "numeric",
+                                                    year: "numeric",
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                    hour12: false,
+                                                  })}
+                                              </Typography>
+                                            </Box>
+                                          ) : (
+                                            <Box
+                                              sx={{
+                                                fontFamily: "Nunito",
+                                              }}
+                                            >
                                               <Box
                                                 sx={{
                                                   display: "flex",
                                                   alignItems: "center",
-                                                  gap: 1,
+                                                  p: 2,
+                                                  cursor: "pointer",
+                                                  borderBottom:
+                                                    "1px solid #e0e0e0",
+                                                  "&:hover": {
+                                                    backgroundColor: "#f5f5f5",
+                                                  },
+                                                  fontFamily: "Nunito",
+                                                }}
+                                                onClick={() =>
+                                                  toggleEmail(email._id)
+                                                }
+                                              >
+                                                <IconButton
+                                                  size="small"
+                                                  sx={{ mr: 1, p: 0.5 }}
+                                                >
+                                                  <ExpandMore
+                                                    sx={{ fontSize: 20 }}
+                                                  />
+                                                </IconButton>
+                                                <Typography
+                                                  variant="body2"
+                                                  sx={{
+                                                    flex: 1,
+                                                    color: "text.secondary",
+                                                    fontFamily: "Nunito",
+                                                  }}
+                                                >
+                                                  From:{" "}
+                                                  <strong>
+                                                    {email?.debtorCompanyName}
+                                                  </strong>{" "}
+                                                  &lt;{email?.from}&gt;
+                                                </Typography>
+                                                <Typography
+                                                  variant="caption"
+                                                  color="text.secondary"
+                                                  sx={{
+                                                    fontFamily: "Nunito",
+                                                  }}
+                                                >
+                                                  {email?.updatedAt &&
+                                                    new Date(
+                                                      email?.updatedAt
+                                                    ).toLocaleString("en-US", {
+                                                      month: "numeric",
+                                                      day: "numeric",
+                                                      year: "numeric",
+                                                      hour: "2-digit",
+                                                      minute: "2-digit",
+                                                      hour12: false,
+                                                    })}
+                                                </Typography>
+                                              </Box>
+                                              <Box
+                                                sx={{
+                                                  p: 2,
+                                                  fontFamily: "Nunito",
                                                 }}
                                               >
-                                                <TextButton
-                                                  buttonText="REPLY"
-                                                  height="2rem"
-                                                  marginRight="1rem"
-                                                  width="6rem"
-                                                  onClick={handleReplyClick}
-                                                  backgroundColor={
-                                                    Colors.SKY_BLUE
-                                                  }
-                                                  hoverColor={Colors.SKY_BLUE}
-                                                />
+                                                <Box
+                                                  sx={{
+                                                    display: "flex",
+                                                    justifyContent:
+                                                      "space-between",
+                                                    alignItems: "flex-start",
+                                                    mb: 2,
+                                                    fontFamily: "Nunito",
+                                                  }}
+                                                >
+                                                  <Box
+                                                    sx={{
+                                                      fontFamily: "Nunito",
+                                                    }}
+                                                  >
+                                                    <Box
+                                                      sx={{
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        mb: 1,
+                                                      }}
+                                                    >
+                                                      <Typography
+                                                        variant="body2"
+                                                        color="text.secondary"
+                                                        sx={{
+                                                          minWidth: "40px",
+                                                          mr: 1,
+                                                          fontFamily: "Nunito",
+                                                        }}
+                                                      >
+                                                        From:
+                                                      </Typography>
+                                                      <Typography
+                                                        variant="body2"
+                                                        sx={{
+                                                          fontWeight: 600,
+                                                          mr: 1,
+                                                          fontFamily: "Nunito",
+                                                        }}
+                                                      >
+                                                        {
+                                                          email?.debtorCompanyName
+                                                        }
+                                                      </Typography>
+                                                      <Typography
+                                                        variant="body2"
+                                                        color="text.secondary"
+                                                        sx={{
+                                                          fontFamily: "Nunito",
+                                                        }}
+                                                      >
+                                                        &lt;{email?.from}
+                                                        &gt;
+                                                      </Typography>
+                                                      <span
+                                                        style={{
+                                                          marginLeft: ".5rem",
+                                                          marginTop: "6px",
+                                                        }}
+                                                      >
+                                                        {email?.type ===
+                                                        "sent" ? (
+                                                          <Drafts
+                                                            sx={{
+                                                              color:
+                                                                Colors.SKY_BLUE,
+                                                              fontSize: "16px",
+                                                            }}
+                                                          />
+                                                        ) : (
+                                                          getTypeIcon(
+                                                            email?.type
+                                                          )
+                                                        )}
+                                                      </span>
+                                                    </Box>
+                                                    <Box
+                                                      sx={{
+                                                        display: "flex",
+                                                        mb: 2,
+                                                      }}
+                                                    >
+                                                      <Typography
+                                                        variant="body2"
+                                                        color="text.secondary"
+                                                        sx={{
+                                                          minWidth: "40px",
+                                                          mr: 1,
+                                                          fontFamily: "Nunito",
+                                                        }}
+                                                      >
+                                                        To:
+                                                      </Typography>
+                                                      <Typography
+                                                        variant="body2"
+                                                        color="primary.main"
+                                                        sx={{
+                                                          fontFamily: "Nunito",
+                                                        }}
+                                                      >
+                                                        {email?.to}
+                                                      </Typography>
+                                                    </Box>
+                                                  </Box>
+                                                  <Box
+                                                    sx={{
+                                                      display: "flex",
+                                                      alignItems: "center",
+                                                      gap: 1,
+                                                    }}
+                                                  >
+                                                    <TextButton
+                                                      buttonText="REPLY"
+                                                      height="2rem"
+                                                      marginRight="1rem"
+                                                      width="6rem"
+                                                      onClick={handleReplyClick}
+                                                      backgroundColor={
+                                                        Colors.SKY_BLUE
+                                                      }
+                                                      hoverColor={
+                                                        Colors.SKY_BLUE
+                                                      }
+                                                    />
+                                                  </Box>
+                                                </Box>
+
+                                                <span
+                                                  style={{
+                                                    whiteSpace: "pre-wrap",
+                                                    color: "#424242",
+                                                    lineHeight: 1,
+                                                    fontSize: "14px",
+                                                    fontFamily: "Nunito",
+                                                  }}
+                                                  dangerouslySetInnerHTML={{
+                                                    __html: `<div style="margin: 0;"><style>p { margin: 0 0 4px 0; }</style>${email?.textAsHtml}</div>`,
+                                                  }}
+                                                ></span>
+
+                                                {showSendEmailCase && (
+                                                  <div
+                                                    ref={sendEmailRef}
+                                                    style={{
+                                                      padding: "12px 16px",
+                                                      margin: "8px 0",
+                                                      boxShadow:
+                                                        "0px 1px 3px rgba(0, 0, 0, 0.12)",
+                                                      borderRadius: "8px",
+                                                      backgroundColor:
+                                                        "#ffffff",
+                                                      border:
+                                                        "1px solid #d0d0d0",
+                                                      transition:
+                                                        "box-shadow 0.2s ease",
+                                                      "&:hover": {
+                                                        boxShadow:
+                                                          "0px 2px 8px rgba(0, 0, 0, 0.15)",
+                                                      },
+                                                      marginTop: "1rem",
+                                                    }}
+                                                  >
+                                                    <SendEmailCase
+                                                      from={email?.to}
+                                                      to={email?.from}
+                                                      content={
+                                                        email?.textAsHtml
+                                                      }
+                                                      data={
+                                                        notificationTemplate
+                                                      }
+                                                      // attachment={
+                                                      // }
+                                                      emailSubject={
+                                                        email?.subject
+                                                      }
+                                                      emailOrCompose={
+                                                        email?.caseId
+                                                          ? true
+                                                          : false
+                                                      }
+                                                      buttonName="sendEmailCase"
+                                                      iconColor={Colors.BLACK}
+                                                      maxHeight="78vh"
+                                                      replyCheck={true}
+                                                      caseDataId={email?.caseId}
+                                                      getAllInboxData={() =>
+                                                        handlePreviewClick(
+                                                          email?.threadId
+                                                        )
+                                                      }
+                                                      cc={email?.cc}
+                                                      threadId={email?.threadId}
+                                                      handleClose={
+                                                        handleCloseReply
+                                                      }
+                                                    />
+                                                  </div>
+                                                )}
+                                                <EmailThreading email={email} />
                                               </Box>
                                             </Box>
-
-                                            <span
-                                              style={{
-                                                whiteSpace: "pre-wrap",
-                                                color: "#424242",
-                                                lineHeight: 1,
-                                                fontSize: "14px",
-                                                fontFamily: "Nunito",
-                                              }}
-                                              dangerouslySetInnerHTML={{
-                                                __html: `<div style="margin: 0;"><style>p { margin: 0 0 4px 0; }</style>${email?.textAsHtml}</div>`,
-                                              }}
-                                            ></span>
-
-                                            {showSendEmailCase && (
-                                              <div
-                                                ref={sendEmailRef}
-                                                style={{
-                                                  padding: "12px 16px",
-                                                  margin: "8px 0",
-                                                  boxShadow:
-                                                    "0px 1px 3px rgba(0, 0, 0, 0.12)",
-                                                  borderRadius: "8px",
-                                                  backgroundColor: "#ffffff",
-                                                  border: "1px solid #d0d0d0",
-                                                  transition:
-                                                    "box-shadow 0.2s ease",
-                                                  "&:hover": {
-                                                    boxShadow:
-                                                      "0px 2px 8px rgba(0, 0, 0, 0.15)",
-                                                  },
-                                                  marginTop: "1rem",
-                                                }}
-                                              >
-                                                <SendEmailCase
-                                                  from={email?.to}
-                                                  to={email?.from}
-                                                  content={email?.textAsHtml}
-                                                  data={notificationTemplate}
-                                                  // attachment={
-                                                  // }
-                                                  emailSubject={email?.subject}
-                                                  emailOrCompose={
-                                                    email?.caseId ? true : false
-                                                  }
-                                                  buttonName="sendEmailCase"
-                                                  iconColor={Colors.BLACK}
-                                                  maxHeight="78vh"
-                                                  replyCheck={true}
-                                                  caseDataId={email?.caseId}
-                                                  getAllInboxData={() =>
-                                                    handlePreviewClick(
-                                                      email?.threadId
-                                                    )
-                                                  }
-                                                  cc={email?.cc}
-                                                  threadId={email?.threadId}
-                                                  handleClose={handleCloseReply}
-                                                />
-                                              </div>
-                                            )}
-                                            <EmailThreading email={email} />
-                                          </Box>
+                                          )}
                                         </Box>
-                                      )}
-                                    </Box>
-                                  )
-                                )}
-                              </Paper>
+                                      )
+                                    )}
+                                  </Paper>
+                                </Box>
+                              </div>
                             </Box>
-                          </div>
-                        </Box>
-                      ) : (
-                        inboxData?.map((item, index) => (
-                          <Box
-                            key={index}
-                            display="flex"
-                            flexDirection="column"
-                            marginBottom="10px"
-                          >
-                            <CardContent
-                              style={{
-                                backgroundColor: Colors.BG_LIGHT_GRAY,
-                                borderRadius: "8px",
-                                marginTop: "5px",
-                                padding: "10px",
-                                cursor: "pointer",
-                              }}
-                              onClick={() => {
-                                setActivePreview({
-                                  id: index,
-                                  active: true,
-                                });
-                                handlePreviewClick(item?.threadId);
-                              }}
+                          </>
+                        ) : (
+                          inboxData?.map((item, index) => (
+                            <Box
+                              key={index}
+                              display="flex"
+                              flexDirection="column"
+                              marginBottom="10px"
                             >
-                              <div
+                              <CardContent
                                 style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  width: "100%",
-                                  justifyContent: "space-between",
+                                  backgroundColor: Colors.BG_LIGHT_GRAY,
+                                  borderRadius: "8px",
+                                  marginTop: "5px",
+                                  padding: "10px",
+                                  cursor: "pointer",
+                                }}
+                                onClick={() => {
+                                  setActivePreview({
+                                    id: index,
+                                    active: true,
+                                  });
+                                  handlePreviewClick(item?.threadId);
                                 }}
                               >
-                                <Email
-                                  sx={{
-                                    color: Colors.SKY_BLUE,
-                                    fontSize: "20px",
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    width: "100%",
+                                    justifyContent: "space-between",
                                   }}
-                                />
-                                <Typography
-                                  sx={{ ...boldTextStyling, width: "18%" }}
                                 >
-                                  {item?.firstInboxMessage?.debtorCompanyName ||
-                                    "Composed"}
-                                </Typography>
-                                <Typography
-                                  sx={{ ...boldTextStyling, width: "69%" }}
-                                >
-                                  {item?.firstInboxMessage?.subject}
-                                </Typography>
-                                <Typography
-                                  sx={{ ...boldTextStyling, width: "10%" }}
-                                >
-                                  {item?.firstInboxMessage?.createdAt &&
-                                    new Date(
-                                      item.firstInboxMessage.createdAt
-                                    ).toLocaleString("en-US", {
-                                      month: "numeric",
-                                      day: "numeric",
-                                      year: "numeric",
-                                      hour: "2-digit",
-                                      minute: "2-digit",
-                                      hour12: false,
-                                    })}
-                                </Typography>
-                              </div>
-                            </CardContent>
-                          </Box>
-                        ))
-                      )}
-                    </>
-                  )}
-                </Box>
+                                  <Email
+                                    sx={{
+                                      color: Colors.SKY_BLUE,
+                                      fontSize: "20px",
+                                    }}
+                                  />
+                                  <Typography
+                                    sx={{ ...boldTextStyling, width: "18%" }}
+                                  >
+                                    {item?.firstInboxMessage
+                                      ?.debtorCompanyName || "Composed"}
+                                  </Typography>
+                                  <Typography
+                                    sx={{ ...boldTextStyling, width: "69%" }}
+                                  >
+                                    {item?.firstInboxMessage?.subject}
+                                  </Typography>
+                                  <Typography
+                                    sx={{ ...boldTextStyling, width: "10%" }}
+                                  >
+                                    {item?.firstInboxMessage?.createdAt &&
+                                      new Date(
+                                        item.firstInboxMessage.createdAt
+                                      ).toLocaleString("en-US", {
+                                        month: "numeric",
+                                        day: "numeric",
+                                        year: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        hour12: false,
+                                      })}
+                                  </Typography>
+                                </div>
+                              </CardContent>
+                            </Box>
+                          ))
+                        )}
+                      </>
+                    )}
+                  </Box>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                      margin: "10px 0px",
+                      gap: "20px",
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontFamily: "Nunito",
+                        fontSize: {
+                          xs: FONT_SIZE_SMALL,
+                          sm: FONT_SIZE_LARGE,
+                        },
+                      }}
+                    >
+                      Rows Per Page
+                    </Typography>
+                    <Dropdown
+                      menuWidth="3rem"
+                      menuItems={rowsOptions}
+                      placeholder="Type"
+                      backgroundColor={Colors.BG_LIGHT_GRAY}
+                      hoverColor={Colors.BG_LIGHT_GRAY}
+                      width="3rem"
+                      selectedValue={paginationRows}
+                      setSelectedValue={setPaginationRows}
+                    />
+                    <Typography
+                      sx={{
+                        fontFamily: "Nunito",
+                        fontSize: {
+                          xs: FONT_SIZE_SMALL,
+                          sm: FONT_SIZE_LARGE,
+                        },
+                      }}
+                    >
+                      {totalPages === 0
+                        ? 0
+                        : isNaN(totalPages)
+                        ? 0
+                        : currentPage}{" "}
+                      of {isNaN(totalPages) ? 0 : totalPages}
+                    </Typography>
+                    <IconButton
+                      onClick={() => setCurrentPage(currentPage - 1)}
+                      disabled={
+                        currentPage === 1 ||
+                        isNaN(totalPages) ||
+                        totalPages === 0
+                      }
+                    >
+                      <ArrowBackIosNew sx={{ fontSize: FONT_SIZE_XL }} />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => setCurrentPage(currentPage + 1)}
+                      disabled={
+                        currentPage === totalPages ||
+                        isNaN(totalPages) ||
+                        totalPages === 0
+                      }
+                    >
+                      <ArrowForwardIos sx={{ fontSize: FONT_SIZE_XL }} />
+                    </IconButton>
+                  </div>
+                </>
               )
             ) : (
               <Grid
