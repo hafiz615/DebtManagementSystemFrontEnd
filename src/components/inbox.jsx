@@ -1037,19 +1037,20 @@ function Inbox() {
                                                 />
                                               </Box>
                                             </Box>
+
                                             <span
                                               style={{
                                                 whiteSpace: "pre-wrap",
                                                 color: "#424242",
-                                                lineHeight: 1.6,
+                                                lineHeight: 1,
                                                 fontSize: "14px",
                                                 fontFamily: "Nunito",
                                               }}
                                               dangerouslySetInnerHTML={{
-                                                __html: email?.textAsHtml,
+                                                __html: `<div style="margin: 0;"><style>p { margin: 0 0 4px 0; }</style>${email?.textAsHtml}</div>`,
                                               }}
                                             ></span>
-                                            <EmailThreading email={email} />
+
                                             {showSendEmailCase && (
                                               <div
                                                 ref={sendEmailRef}
@@ -1097,6 +1098,7 @@ function Inbox() {
                                                 />
                                               </div>
                                             )}
+                                            <EmailThreading email={email} />
                                           </Box>
                                         </Box>
                                       )}
