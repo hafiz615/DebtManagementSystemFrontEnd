@@ -458,14 +458,16 @@ function Inbox() {
           >
             Mailbox
           </Typography>
-          <IconButton
-            onClick={() => {
-              getAllInboxData(false, true);
-              setUserSelected("");
-            }}
-          >
-            <ReplayOutlined />
-          </IconButton>
+          {!activePreview?.active && (
+            <IconButton
+              onClick={() => {
+                getAllInboxData(false, true);
+                setUserSelected("");
+              }}
+            >
+              <ReplayOutlined />
+            </IconButton>
+          )}
         </div>
 
         <div
@@ -854,8 +856,12 @@ function Inbox() {
                                                       fontFamily: "Nunito",
                                                     }}
                                                   >
-                                                    {email?.debtorCompanyName ||
-                                                      "Composed"}
+                                                    {email?.debtorCompanyName
+                                                      ? email?.debtorCompanyName
+                                                      : email?.type ===
+                                                        "received"
+                                                      ? "Received"
+                                                      : "Composed"}
                                                     {getTypeIcon(email?.type)}
                                                   </Typography>
                                                   <Typography
@@ -1128,16 +1134,17 @@ function Inbox() {
                                                     }}
                                                   >
                                                     <SendEmailCase
-                                                      from={email?.to}
-                                                      to={email?.from}
+                                                      from={email?.from}
+                                                      to={email?.to}
                                                       content={
                                                         email?.textAsHtml
                                                       }
                                                       data={
                                                         notificationTemplate
                                                       }
-                                                      // attachment={
-                                                      // }
+                                                      attachment={
+                                                        email?.attachments
+                                                      }
                                                       emailSubject={
                                                         email?.subject
                                                       }
@@ -1248,73 +1255,75 @@ function Inbox() {
                       </>
                     )}
                   </Box>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "flex-end",
-                      alignItems: "center",
-                      margin: "10px 0px",
-                      gap: "20px",
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        fontFamily: "Nunito",
-                        fontSize: {
-                          xs: FONT_SIZE_SMALL,
-                          sm: FONT_SIZE_LARGE,
-                        },
+                  {!activePreview?.active && (
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                        margin: "10px 0px",
+                        gap: "20px",
                       }}
                     >
-                      Rows Per Page
-                    </Typography>
-                    <Dropdown
-                      menuWidth="3rem"
-                      menuItems={rowsOptions}
-                      placeholder="Type"
-                      backgroundColor={Colors.BG_LIGHT_GRAY}
-                      hoverColor={Colors.BG_LIGHT_GRAY}
-                      width="3rem"
-                      selectedValue={paginationRows}
-                      setSelectedValue={setPaginationRows}
-                    />
-                    <Typography
-                      sx={{
-                        fontFamily: "Nunito",
-                        fontSize: {
-                          xs: FONT_SIZE_SMALL,
-                          sm: FONT_SIZE_LARGE,
-                        },
-                      }}
-                    >
-                      {totalPages === 0
-                        ? 0
-                        : isNaN(totalPages)
-                        ? 0
-                        : currentPage}{" "}
-                      of {isNaN(totalPages) ? 0 : totalPages}
-                    </Typography>
-                    <IconButton
-                      onClick={() => setCurrentPage(currentPage - 1)}
-                      disabled={
-                        currentPage === 1 ||
-                        isNaN(totalPages) ||
-                        totalPages === 0
-                      }
-                    >
-                      <ArrowBackIosNew sx={{ fontSize: FONT_SIZE_XL }} />
-                    </IconButton>
-                    <IconButton
-                      onClick={() => setCurrentPage(currentPage + 1)}
-                      disabled={
-                        currentPage === totalPages ||
-                        isNaN(totalPages) ||
-                        totalPages === 0
-                      }
-                    >
-                      <ArrowForwardIos sx={{ fontSize: FONT_SIZE_XL }} />
-                    </IconButton>
-                  </div>
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontSize: {
+                            xs: FONT_SIZE_SMALL,
+                            sm: FONT_SIZE_LARGE,
+                          },
+                        }}
+                      >
+                        Rows Per Page
+                      </Typography>
+                      <Dropdown
+                        menuWidth="3rem"
+                        menuItems={rowsOptions}
+                        placeholder="Type"
+                        backgroundColor={Colors.BG_LIGHT_GRAY}
+                        hoverColor={Colors.BG_LIGHT_GRAY}
+                        width="3rem"
+                        selectedValue={paginationRows}
+                        setSelectedValue={setPaginationRows}
+                      />
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontSize: {
+                            xs: FONT_SIZE_SMALL,
+                            sm: FONT_SIZE_LARGE,
+                          },
+                        }}
+                      >
+                        {totalPages === 0
+                          ? 0
+                          : isNaN(totalPages)
+                          ? 0
+                          : currentPage}{" "}
+                        of {isNaN(totalPages) ? 0 : totalPages}
+                      </Typography>
+                      <IconButton
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        disabled={
+                          currentPage === 1 ||
+                          isNaN(totalPages) ||
+                          totalPages === 0
+                        }
+                      >
+                        <ArrowBackIosNew sx={{ fontSize: FONT_SIZE_XL }} />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        disabled={
+                          currentPage === totalPages ||
+                          isNaN(totalPages) ||
+                          totalPages === 0
+                        }
+                      >
+                        <ArrowForwardIos sx={{ fontSize: FONT_SIZE_XL }} />
+                      </IconButton>
+                    </div>
+                  )}
                 </>
               )
             ) : (
