@@ -22,6 +22,7 @@ import {
   GetCaseById,
   GetCasePaymentById,
   GetDailyCashFlow,
+  GetDebtorAccounts,
   GetLogs,
   GetLumpSumAmount,
   GetMcaByMonth,
@@ -129,6 +130,7 @@ function CaseDetail() {
   const [cashFlowLoading, setCashFlowLoading] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [paymentData, setPaymentData] = useState();
+  const [accountsResponse, setAccountsResponse] = useState([]);
   const [statementSummariesLoading, setStatementSummariesLoading] =
     useState(false);
   const [aggregatedSummariesLoading, setAggregatedSummariesLoading] =
@@ -214,11 +216,19 @@ function CaseDetail() {
     setOpen(true);
   };
 
+  const GetLogsById = async (id) => {
+    const resLogs = await GetLogs(id);
+    if (resLogs?.status === 200) {
+      setLogs(resLogs?.data?.data);
+    }
+  };
+
   const GetCaseDetails = async (rowId) => {
     setLoading(true);
     const caseDetails = await GetCaseById(rowId);
     if (caseDetails?.status === 200) {
       GetLogsById(rowId);
+      GetDebtorAccountsData(caseDetails?.data?.data?.debtor?._id);
       setCaseData(caseDetails?.data?.data);
       setIsChecked(caseDetails?.data?.data?.creditorPaymentsProceed);
       dispatch(setCaseId(id));
@@ -239,16 +249,15 @@ function CaseDetail() {
     }
     setLoading(false);
   };
+  const GetDebtorAccountsData = async (id) => {
+    const accountsRes = await GetDebtorAccounts(id);
+    if (accountsRes?.status === 200) {
+      setAccountsResponse(accountsRes?.data?.data);
+    }
+  };
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-  };
-
-  const GetLogsById = async (id) => {
-    const resLogs = await GetLogs(id);
-    if (resLogs?.status === 200) {
-      setLogs(resLogs?.data?.data);
-    }
   };
 
   const handleChangeModal = (e) => {
@@ -715,6 +724,8 @@ function CaseDetail() {
             getAllRanges={getAllRanges}
             handleCloseNotes={handleCloseNotes}
             cc={cc}
+            accountsResponse={accountsResponse}
+            GetDebtorAccounts={GetDebtorAccountsData}
           />
         )}
         {activeTab === 2 && (
@@ -722,6 +733,8 @@ function CaseDetail() {
             caseData={caseData}
             caseDataId={id}
             GetCaseDetails={GetCaseDetails}
+            accountsResponse={accountsResponse}
+            GetDebtorAccounts={GetDebtorAccountsData}
           />
         )}
       </Grid>

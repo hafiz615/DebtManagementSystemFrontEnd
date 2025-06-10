@@ -11,7 +11,7 @@ import { AddAccountSeamlessPaynote } from "../../services/services";
 import { encrypt } from "n-krypta";
 import { REACT_APP_SECURITY_KEY } from "../../constants/appConstants";
 
-function SeamLessChex({ setOpenDialog, debtorId }) {
+function SeamLessChex({ setOpenDialog, debtorId, GetDebtorAccounts }) {
   const [errors, setErrors] = useState({});
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -93,6 +93,7 @@ function SeamLessChex({ setOpenDialog, debtorId }) {
       const submitResponse = await AddAccountSeamlessPaynote(params, debtorId);
       if (submitResponse?.status === 200) {
         showToast(submitResponse?.data?.message, "success");
+        GetDebtorAccounts(debtorId);
         setOpenDialog(false);
       } else {
         const errorMessage = submitResponse?.response?.data?.message;

@@ -108,6 +108,8 @@ export default function CaseById({
   getAllRanges,
   handleCloseNotes,
   cc,
+  accountsResponse,
+  GetDebtorAccounts,
 }) {
   const [callLogs, setCallLogs] = useState([]);
   const [currentCallPage, setCurrentCallPage] = useState(1);
@@ -461,6 +463,8 @@ export default function CaseById({
                     caseDataId={id}
                     GetLogsById={GetLogsById}
                     cc={cc}
+                    accountsResponse={accountsResponse}
+                    GetDebtorAccounts={GetDebtorAccounts}
                   />
                 ) : value === "Creditor" ? (
                   <CreditorsDetailCards

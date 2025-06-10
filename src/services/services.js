@@ -2466,3 +2466,60 @@ export const DeleteDebtorAccount = async (id, payload) => {
     return error;
   }
 };
+export const GetEmailData = async (payload, search, filter, page, row) => {
+  try {
+    return await axios.post(
+      BASE_URL +
+        `/v1/email/threading?search=${search}&filter=${filter}&page=${
+          page ? page : 1
+        }&limit=${row ? row : 10}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetEmailDataByThreadId = async (threadId) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/email/eachThreadingMails/${threadId}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const DeleteCasePriority = async (id) => {
+  try {
+    return await axios.delete(
+      BASE_URL + `/v1/case/deleteCasePriority/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const UpdateCasePriority = async (id, payload) => {
+  try {
+    return await axios.put(
+      BASE_URL + `/v1/case/updateCasePriority/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetDebtorAccounts = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/debtor/getDebtorAccounts/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

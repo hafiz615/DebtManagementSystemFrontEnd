@@ -296,73 +296,25 @@ export default function TimelineData({
                     isExpanded ? (
                       Object.entries(value)
                         ?.filter(([key]) => key !== "Action" && key !== "Time")
-                        ?.map(([key, value]) => (
-                          <Box key={key} sx={{ paddingLeft: "2.5rem" }}>
-                            {key === "Content" ? (
-                              <>
-                                <Typography
-                                  sx={{
-                                    fontSize: "13px",
-                                    fontFamily: "Nunito",
-                                    mb: "10px",
-                                    fontWeight: "700",
-                                  }}
-                                >
-                                  {key}:
-                                </Typography>
-                                <div
-                                  dangerouslySetInnerHTML={{
-                                    __html: value,
-                                  }}
-                                  style={{
-                                    fontSize: "13px",
-                                    fontFamily: "Nunito",
-                                    marginBottom: "10px",
-                                    width: "100%",
-                                    borderRadius: "10px",
-                                  }}
-                                />
-                              </>
-                            ) : key === "To" ? (
-                              <>
-                                <Typography
-                                  sx={{
-                                    fontSize: "13px",
-                                    fontFamily: "Nunito",
-                                    mb: "10px",
-                                  }}
-                                >
-                                  <strong>{key}:</strong>{" "}
-                                  {Array.isArray(value)
-                                    ? value.join(", ")
-                                    : value}
-                                </Typography>
-                              </>
-                            ) : key === "Notes" ? (
-                              <>
-                                <Typography
-                                  sx={{
-                                    fontSize: "13px",
-                                    fontFamily: "Nunito",
-                                    mb: "10px",
-                                    fontWeight: "700",
-                                  }}
-                                >
-                                  {key}:
-                                </Typography>
-                                <Typography
-                                  sx={{
-                                    fontSize: "13px",
-                                    fontFamily: "Nunito",
-                                    mb: "10px",
-                                  }}
-                                >
-                                  {value}
-                                </Typography>
-                              </>
-                            ) : key === "Attachments" ? (
-                              <>
-                                {value?.length > 0 && (
+                        ?.map(([key, value]) => {
+                          // Skip rendering "CC" if it's empty or undefined
+                          if (
+                            key === "CC" &&
+                            (!value ||
+                              (Array.isArray(value) && value.length === 0))
+                          ) {
+                            return null;
+                          }
+
+                          return (
+                            <Box
+                              key={key}
+                              sx={{
+                                paddingLeft: "2.5rem",
+                              }}
+                            >
+                              {key === "Content" ? (
+                                <>
                                   <Typography
                                     sx={{
                                       fontSize: "13px",
@@ -371,116 +323,183 @@ export default function TimelineData({
                                       fontWeight: "700",
                                     }}
                                   >
-                                    Attachments:
+                                    {key}:
                                   </Typography>
-                                )}
-
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    gap: "10px",
-                                    flexWrap: "wrap",
-                                  }}
-                                >
-                                  {value?.map((item) => (
-                                    <Grid
-                                      container
-                                      sx={{
-                                        display: "flex",
-                                        border: `1px solid ${Colors.SKY_BLUE}`,
-                                        width: "25%",
-                                        borderRadius: "10px",
-                                        justifyContent: "space-between",
-                                        alignItems: "center",
-                                        padding: "10px",
-                                        cursor: "pointer",
-                                        transition: "all 0.3s ease",
-                                        "&:hover": {
-                                          backgroundColor: Colors.lIGHT_PURPLE,
-                                        },
-                                      }}
-                                      onClick={() => handleShowFile(item?.url)}
-                                    >
-                                      <Typography
-                                        sx={{
-                                          fontSize: "13px",
-                                          fontFamily: "Nunito",
-                                          display: "flex",
-                                          alignItems: "center",
-                                          gap: "10px",
-                                        }}
-                                      >
-                                        <Attachment
-                                          sx={{ color: Colors.SKY_BLUE }}
-                                        />{" "}
-                                        {item?.originalFileName}
-                                      </Typography>
-                                    </Grid>
-                                  ))}
-                                </div>
-                                {showViewer && (
                                   <div
+                                    dangerouslySetInnerHTML={{
+                                      __html: value,
+                                    }}
                                     style={{
-                                      position: "fixed",
-                                      top: 0,
-                                      left: 0,
+                                      fontSize: "13px",
+                                      fontFamily: "Nunito",
+                                      marginBottom: "10px",
                                       width: "100%",
-                                      height: "100%",
-                                      backgroundColor: "rgba(0, 0, 0, 0.8)",
-                                      display: "flex",
-                                      flexDirection: "column",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                      zIndex: 1000,
-                                      padding: "1rem",
+                                      borderRadius: "10px",
+                                    }}
+                                  />
+                                </>
+                              ) : key === "To" ? (
+                                <>
+                                  <Typography
+                                    sx={{
+                                      fontSize: "13px",
+                                      fontFamily: "Nunito",
+                                      mb: "10px",
                                     }}
                                   >
-                                    <Button
-                                      onClick={() => setShowViewer(false)}
-                                      style={{
-                                        position: "fixed",
-                                        top: "5rem",
-                                        right: "1rem",
-                                        bottom: 0,
-                                        backgroundColor: "white",
-                                        border: "none",
-                                        borderRadius: "4px",
-                                        padding: "0.5rem",
-                                        cursor: "pointer",
-                                        zIndex: 1100,
-                                        height: "2rem",
+                                    <strong>{key}:</strong>{" "}
+                                    {Array.isArray(value)
+                                      ? value.join(", ")
+                                      : value}
+                                  </Typography>
+                                </>
+                              ) : key === "Notes" ? (
+                                <>
+                                  <Typography
+                                    sx={{
+                                      fontSize: "13px",
+                                      fontFamily: "Nunito",
+                                      mb: "10px",
+                                      fontWeight: "700",
+                                    }}
+                                  >
+                                    {key}:
+                                  </Typography>
+                                  <Typography
+                                    sx={{
+                                      fontSize: "13px",
+                                      fontFamily: "Nunito",
+                                      mb: "10px",
+                                    }}
+                                  >
+                                    {value}
+                                  </Typography>
+                                </>
+                              ) : key === "Attachments" ? (
+                                <>
+                                  {value?.length > 0 && (
+                                    <Typography
+                                      sx={{
+                                        fontSize: "13px",
+                                        fontFamily: "Nunito",
+                                        mb: "10px",
+                                        fontWeight: "700",
                                       }}
                                     >
-                                      Close
-                                    </Button>
-                                    <iframe
-                                      src={fileUrl}
+                                      Attachments:
+                                    </Typography>
+                                  )}
+
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      gap: "10px",
+                                      flexWrap: "wrap",
+                                    }}
+                                  >
+                                    {value?.map((item) => (
+                                      <Grid
+                                        container
+                                        sx={{
+                                          display: "flex",
+                                          border: `1px solid ${Colors.SKY_BLUE}`,
+                                          width: "25%",
+                                          borderRadius: "10px",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                          padding: "10px",
+                                          cursor: "pointer",
+                                          transition: "all 0.3s ease",
+                                          "&:hover": {
+                                            backgroundColor:
+                                              Colors.lIGHT_PURPLE,
+                                          },
+                                        }}
+                                        onClick={() =>
+                                          handleShowFile(item?.url)
+                                        }
+                                      >
+                                        <Typography
+                                          sx={{
+                                            fontSize: "13px",
+                                            fontFamily: "Nunito",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: "10px",
+                                          }}
+                                        >
+                                          <Attachment
+                                            sx={{ color: Colors.SKY_BLUE }}
+                                          />{" "}
+                                          {item?.originalFileName}
+                                        </Typography>
+                                      </Grid>
+                                    ))}
+                                  </div>
+                                  {showViewer && (
+                                    <div
                                       style={{
+                                        position: "fixed",
+                                        top: 0,
+                                        left: 0,
                                         width: "100%",
                                         height: "100%",
-                                        border: "none",
-                                        position: "relative",
+                                        backgroundColor: "rgba(0, 0, 0, 0.8)",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        zIndex: 1000,
+                                        padding: "1rem",
                                       }}
-                                    />
-                                  </div>
-                                )}
-                              </>
-                            ) : (
-                              <Typography
-                                sx={{
-                                  fontSize: "13px",
-                                  fontFamily: "Nunito",
-                                  mb: "10px",
-                                }}
-                              >
-                                <strong>{key}:</strong>{" "}
-                                {key === "Due Date" || key === "Time"
-                                  ? formatDate(value)
-                                  : value}
-                              </Typography>
-                            )}
-                          </Box>
-                        ))
+                                    >
+                                      <Button
+                                        onClick={() => setShowViewer(false)}
+                                        style={{
+                                          position: "fixed",
+                                          top: "5rem",
+                                          right: "1rem",
+                                          bottom: 0,
+                                          backgroundColor: "white",
+                                          border: "none",
+                                          borderRadius: "4px",
+                                          padding: "0.5rem",
+                                          cursor: "pointer",
+                                          zIndex: 1100,
+                                          height: "2rem",
+                                        }}
+                                      >
+                                        Close
+                                      </Button>
+                                      <iframe
+                                        src={fileUrl}
+                                        style={{
+                                          width: "100%",
+                                          height: "100%",
+                                          border: "none",
+                                          position: "relative",
+                                        }}
+                                      />
+                                    </div>
+                                  )}
+                                </>
+                              ) : (
+                                <Typography
+                                  sx={{
+                                    fontSize: "13px",
+                                    fontFamily: "Nunito",
+                                    mb: "10px",
+                                  }}
+                                >
+                                  <strong>{key}:</strong>{" "}
+                                  {key === "Due Date" || key === "Time"
+                                    ? formatDate(value)
+                                    : value}
+                                </Typography>
+                              )}
+                            </Box>
+                          );
+                        })
                     ) : (
                       <>
                         <Typography

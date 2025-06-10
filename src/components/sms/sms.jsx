@@ -496,7 +496,7 @@ function Sms() {
               flexDirection: "column",
               padding: "10px",
               borderRadius: "8px",
-              height: "65vh",
+              height: "70vh",
               overflowY: "auto",
               ...ScrollbarStyles,
             }}
