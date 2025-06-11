@@ -839,7 +839,7 @@ export default function PaymentPlan({ caseData }) {
                   buttonText="Save"
                   height="2rem"
                   width="6rem"
-                  disabled={activePayment !== 1 && !priorityBitMap[activeIndex]}
+                  // disabled={activePayment !== 1 && !priorityBitMap[activeIndex]}
                   onClick={handleSave}
                   loading={saveLoading}
                   backgroundColor={Colors.SKY_BLUE}
