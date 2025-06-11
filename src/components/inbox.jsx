@@ -1156,6 +1156,7 @@ function Inbox() {
                                                     <SendEmailCase
                                                       from={email?.from}
                                                       to={email?.to}
+                                                      emailType={email?.type}
                                                       content={
                                                         email?.textAsHtml
                                                       }
@@ -1191,6 +1192,7 @@ function Inbox() {
                                                     />
                                                   </div>
                                                 )}
+
                                                 <EmailThreading email={email} />
                                               </Box>
                                             </Box>
