@@ -154,12 +154,19 @@ export default function SendEmailCase({
   caseData,
   cc,
   ccData,
+  emailType,
 }) {
   const toPhoneClientNo = caseData?.debtor?.basicInformation?.phone;
   const [loading, setLoading] = useState(false);
   const [draftLoading, setDraftLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [sendTo, setSendTo] = useState(from || toPhoneClientNo || "");
+  const [sendTo, setSendTo] = useState(
+    emailType === "received"
+      ? from
+      : emailType === "sent"
+      ? to
+      : from || toPhoneClientNo || ""
+  );
   const [bulkEmail, setBulkEmail] = useState(data?.allEmails || []);
   const [selectedEmail, setSelectedEmail] = useState("");
   const [bulkEmailTemplates, setBulkEmailTemplates] = useState(
@@ -170,7 +177,9 @@ export default function SendEmailCase({
     data?.smsTemplates || []
   );
   const [selectedSmsTemplates, setSelectedSmsTemplates] = useState("");
-  const [sendFrom, setSendFrom] = useState(replyCheck ? to || "" : "");
+  const [sendFrom, setSendFrom] = useState(
+    emailType === "sent" ? from : replyCheck ? to || "" : ""
+  );
   const [selectedValue, setSelectedValue] = useState(to || "");
 
   const [subject, setSubject] = useState(emailSubject || "");
