@@ -806,7 +806,9 @@ function Inbox() {
                                       (email, index) => (
                                         <Box
                                           key={index}
-                                          sx={{ fontFamily: "Nunito" }}
+                                          sx={{
+                                            fontFamily: "Nunito",
+                                          }}
                                         >
                                           {!expandedEmails[email._id] ? (
                                             <Box
@@ -1098,9 +1100,13 @@ function Inbox() {
                                                   </Box>
                                                 </Box>
 
-                                                <span
+                                                {/* <span
                                                   style={{
-                                                    whiteSpace: "pre-wrap",
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    whiteSpace: "nowrap",
+                                                    fontFamily: "Nunito",
+                                                    // whiteSpace: "pre-wrap",
                                                     color: "#424242",
                                                     lineHeight: 1,
                                                     fontSize: "14px",
@@ -1109,7 +1115,21 @@ function Inbox() {
                                                   dangerouslySetInnerHTML={{
                                                     __html: `<div style="margin: 0;"><style>p { margin: 0 0 4px 0; }</style>${email?.textAsHtml}</div>`,
                                                   }}
-                                                ></span>
+                                                ></span> */}
+                                                <div
+                                                  style={{
+                                                    maxHeight: "150px", // or any desired height
+                                                    maxWidth: "100%", // ensure it doesn't overflow horizontally
+                                                    overflow: "auto", // enables scrollbars
+                                                    fontFamily: "Nunito",
+                                                    fontSize: "14px",
+                                                    color: "#424242",
+                                                    lineHeight: 1.4,
+                                                  }}
+                                                  dangerouslySetInnerHTML={{
+                                                    __html: `<div style="margin: 0;"><style>p { margin: 0 0 4px 0; word-break: break-word; }</style>${email?.textAsHtml}</div>`,
+                                                  }}
+                                                ></div>
 
                                                 {showSendEmailCase && (
                                                   <div
