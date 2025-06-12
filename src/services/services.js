@@ -2353,11 +2353,20 @@ export const AddAccountSeamlessPaynote = async (payload, id) => {
     return error;
   }
 };
-export const GetAllInbox = async (search, filter, medium, payload, All) => {
+export const GetAllInbox = async (
+  search,
+  filter,
+  medium,
+  payload,
+  All,
+  type
+) => {
   try {
     return await axios.post(
       BASE_URL +
-        `/v1/inbox/getAllMessages?search=${search}&filter=${filter}&type=default&medium=${medium}&all=${All}`,
+        `/v1/inbox/getAllMessages?search=${search}&filter=${filter}&type=${
+          type ? type : "default"
+        }&medium=${medium}&all=${All}`,
       payload,
       setHeaders()
     );
