@@ -428,6 +428,13 @@ export default function PaymentPlan({ caseData }) {
       getCasePaymentDetails(true);
     }
   }, [currentPaymentPage]);
+  const isAnyDebtorAmountInvalid = debtorDataList?.some(
+    (item) => item.amount === "" || item.amount === null || isNaN(item.amount)
+  );
+
+  const isAnyCreditorAmountInvalid = creditorDataList?.some(
+    (item) => item.amount === "" || item.amount === null || isNaN(item.amount)
+  );
 
   return (
     <Grid
@@ -834,12 +841,14 @@ export default function PaymentPlan({ caseData }) {
                     marginRight="10px"
                   />
                 )}
-
                 <TextButton
                   buttonText="Save"
                   height="2rem"
                   width="6rem"
-                  // disabled={activePayment !== 1 && !priorityBitMap[activeIndex]}
+                  disabled={
+                    isAnyDebtorAmountInvalid || isAnyCreditorAmountInvalid
+                    // (activePayment !== 1 && !priorityBitMap[activeIndex])
+                  }
                   onClick={handleSave}
                   loading={saveLoading}
                   backgroundColor={Colors.SKY_BLUE}

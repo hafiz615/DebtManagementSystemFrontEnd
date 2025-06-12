@@ -132,6 +132,7 @@ const smsTemplateStyling = {
 };
 
 export default function SendEmailCase({
+  buttonName,
   handleClose,
   headerName,
   caseDataId,
@@ -220,7 +221,9 @@ export default function SendEmailCase({
   };
 
   useEffect(() => {
-    if (!headerName) GetUserActiveSignatures();
+    if (!headerName && buttonName !== "draft") {
+      GetUserActiveSignatures();
+    }
   }, [headerName]);
 
   const updatePreview = (newContent) => {
