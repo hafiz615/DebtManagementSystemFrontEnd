@@ -252,7 +252,7 @@ function Sms() {
       inboxData?.allSms?.[activePreview?.id]?.to?.toString()
     );
     const res = await SendEmailSmsCase(inboxData?.caseId, "sms", formData);
-    if (res?.status === 201) {
+    if (res?.status === 200) {
       getAllInboxData && getAllInboxData(false, false);
       showToast(res?.data?.message, "success");
       setPreview("");
