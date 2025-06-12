@@ -299,7 +299,9 @@ function Inbox() {
   }, [activeTab]);
 
   useEffect(() => {
-    if (userSelected) {
+    if (activeTab === "Draft") {
+      handleDraftUserChange();
+    } else {
       handleUserChange();
     }
   }, [userSelected]);
@@ -338,6 +340,34 @@ function Inbox() {
       setTotalData(totalCount);
       setCurrentPage(1);
     }
+    setLoading(false);
+  };
+
+  const handleDraftUserChange = async () => {
+    const user = users?.find((user) => user.name === userSelected);
+    setLoading(true);
+    const payload = {
+      filter: {
+        caseCode: "",
+        debtorCompanyName: "",
+        creditorCompanyName: "",
+        negotiatorName: "",
+        userId: user?._id,
+      },
+      text: searchText || "",
+    };
+    const response = await GetAllInbox(
+      false,
+      true,
+      "EMAIL",
+      payload,
+      false,
+      "draft"
+    );
+    if (response?.status === 200) {
+      setDraftData(response?.data?.data?.draft);
+    }
+
     setLoading(false);
   };
 
