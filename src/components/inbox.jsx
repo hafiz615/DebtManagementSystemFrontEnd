@@ -614,7 +614,9 @@ function Inbox() {
             iconColor={Colors.BLACK}
             maxHeight="78vh"
             verifiedSenders={verifiedSenders}
-            getAllInboxData={() => getAllInboxData(false, true)}
+            getAllInboxData={() => {
+              getAllInboxData(false, true), getDraftData();
+            }}
             data={notificationTemplate}
             cc={cc}
           />
