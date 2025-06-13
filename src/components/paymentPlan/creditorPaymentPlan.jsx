@@ -94,7 +94,6 @@ export default function CreditorPaymentPlan({
   const [isInteracted, setIsInteracted] = useState(false);
 
   const handleInputChange = (index, field, value) => {
-    console.log("handle change creditor run");
     setIsInteracted(true);
     const updatedList = [...newDataList];
     updatedList[index][field] = value;
