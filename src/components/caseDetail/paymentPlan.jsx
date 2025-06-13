@@ -1131,7 +1131,9 @@ export default function PaymentPlan({ caseData }) {
                 totalAmount={calculateTotalAmount(creditorDataList)}
                 isExempt={isExempt}
                 setIsExempt={setIsExempt}
-                planExists={false}
+                planExists={
+                  tabs?.[activeIndex]?.intervals?.length > 0 ? true : false
+                }
               />
             )}
             <Typography
