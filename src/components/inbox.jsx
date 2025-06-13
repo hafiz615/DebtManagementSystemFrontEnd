@@ -319,25 +319,63 @@ function Inbox() {
 
   const handleUserChange = async () => {
     const user = users?.find((user) => user.name === userSelected);
+    if (activeTab === "Draft") {
+      handleDraftUserChange();
+    } else {
+      setLoading(true);
+      const payload = {
+        filter: {
+          caseCode: caseCode || "",
+          debtorCompanyName: debtorCompany || "",
+          creditorCompanyName: creditorCompany || "",
+          negotiatorName: negotiator || "",
+          userId: user?._id,
+        },
+        text: searchText || "",
+      };
+      const response = await GetEmailData(
+        payload,
+        true,
+        true,
+        1,
+        paginationRows
+      );
+      if (response?.status === 200) {
+        const data = response?.data?.data?.threads;
+        const totalCount = response?.data?.data?.count;
+        setInboxData(data);
+        setTotalData(totalCount);
+        setCurrentPage(1);
+      }
+    }
+    setLoading(false);
+  };
+
+  const handleDraftUserChange = async () => {
+    const user = users?.find((user) => user.name === userSelected);
     setLoading(true);
     const payload = {
       filter: {
-        caseCode: caseCode || "",
-        debtorCompanyName: debtorCompany || "",
-        creditorCompanyName: creditorCompany || "",
-        negotiatorName: negotiator || "",
+        caseCode: "",
+        debtorCompanyName: "",
+        creditorCompanyName: "",
+        negotiatorName: "",
         userId: user?._id,
       },
       text: searchText || "",
     };
-    const response = await GetEmailData(payload, true, true, 1, paginationRows);
+    const response = await GetAllInbox(
+      false,
+      true,
+      "EMAIL",
+      payload,
+      false,
+      "draft"
+    );
     if (response?.status === 200) {
-      const data = response?.data?.data?.threads;
-      const totalCount = response?.data?.data?.count;
-      setInboxData(data);
-      setTotalData(totalCount);
-      setCurrentPage(1);
+      setDraftData(response?.data?.data?.draft);
     }
+
     setLoading(false);
   };
 
@@ -614,7 +652,9 @@ function Inbox() {
             iconColor={Colors.BLACK}
             maxHeight="78vh"
             verifiedSenders={verifiedSenders}
-            getAllInboxData={() => getAllInboxData(false, true)}
+            getAllInboxData={() => {
+              getAllInboxData(false, true), getDraftData();
+            }}
             data={notificationTemplate}
             cc={cc}
           />
