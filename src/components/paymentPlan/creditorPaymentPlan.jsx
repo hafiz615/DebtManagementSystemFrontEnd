@@ -10,7 +10,6 @@ import AmountTextField from "../amountTextField";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Hidden from "@mui/material/Hidden";
 import { FONT_SIZE_MEDIUM } from "../../constants/appConstants";
-import ScrollbarStyles from "../customScroll";
 
 const formatDateForInput = (incomingDate) => {
   return incomingDate?.split("T")[0];
@@ -99,12 +98,14 @@ export default function CreditorPaymentPlan({
     const updatedList = [...newDataList];
     updatedList[index][field] = value;
 
-    for (let i = index; i < updatedList?.length - 1; i++) {
-      updatedList[i + 1].startDate = calculateStartDate(
-        updatedList[i],
-        updatedList[i]?.timePeriod,
-        updatedList[i]?.frequency
-      );
+    if (!planExists) {
+      for (let i = index; i < updatedList?.length - 1; i++) {
+        updatedList[i + 1].startDate = calculateStartDate(
+          updatedList[i],
+          updatedList[i]?.timePeriod,
+          updatedList[i]?.frequency
+        );
+      }
     }
 
     setNewDataList(updatedList);
@@ -261,12 +262,11 @@ export default function CreditorPaymentPlan({
                     width: "8rem",
                   }}
                 />
-                {!planExists && (
-                  <AddCircleIcon
-                    sx={{ color: Colors.SKY_BLUE, cursor: "pointer" }}
-                    onClick={handleAddNewData}
-                  />
-                )}
+
+                <AddCircleIcon
+                  sx={{ color: Colors.SKY_BLUE, cursor: "pointer" }}
+                  onClick={handleAddNewData}
+                />
 
                 {newDataList?.length > 1 && (
                   <>
