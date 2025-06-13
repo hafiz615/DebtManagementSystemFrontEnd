@@ -846,8 +846,9 @@ export default function PaymentPlan({ caseData }) {
                   height="2rem"
                   width="6rem"
                   disabled={
-                    isAnyDebtorAmountInvalid || isAnyCreditorAmountInvalid
-                    // (activePayment !== 1 && !priorityBitMap[activeIndex])
+                    activePayment === 1
+                      ? isAnyDebtorAmountInvalid
+                      : isAnyCreditorAmountInvalid
                   }
                   onClick={handleSave}
                   loading={saveLoading}
