@@ -59,6 +59,7 @@ function Phone({ user, caseId, phoneNumberState }) {
     if (!call) return;
     if (call.state === "destroy" || call.state === "hangup") {
       setCallActive(true);
+      handleClose();
     }
     console.log(call);
   }, [call?.state]);
