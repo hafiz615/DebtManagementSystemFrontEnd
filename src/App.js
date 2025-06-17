@@ -34,115 +34,115 @@ import PaymentCheckout from "./pages/paymentCheckout";
 import Thankyou from "./pages/thankyou";
 
 function App() {
-  const [incomingCall, setIncomingCall] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [callDuration, setCallDuration] = useState(0);
-  const [callInterval, setCallInterval] = useState(null);
-  const [allCases, setAllCases] = useState({});
-  const [callSid, setCallSid] = useState();
-  const [callerName, setCallerName] = useState();
-  const [caseMenuActive, setCaseMenuActive] = useState(false);
-  const [token, setToken] = useState(localStorage.getItem("twilioToken"));
-  const navigate = useNavigate();
+  // const [incomingCall, setIncomingCall] = useState(null);
+  // const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [callDuration, setCallDuration] = useState(0);
+  // const [callInterval, setCallInterval] = useState(null);
+  // const [allCases, setAllCases] = useState({});
+  // const [callSid, setCallSid] = useState();
+  // const [callerName, setCallerName] = useState();
+  // const [caseMenuActive, setCaseMenuActive] = useState(false);
+  // const [token, setToken] = useState(localStorage.getItem("twilioToken"));
+  // const navigate = useNavigate();
 
-  const getCreditorCompanies = async () => {
-    const res = await GetAllUserCases();
-    if (res?.status === 200) {
-      setAllCases(res?.data?.data);
-    }
-  };
+  // const getCreditorCompanies = async () => {
+  //   const res = await GetAllUserCases();
+  //   if (res?.status === 200) {
+  //     setAllCases(res?.data?.data);
+  //   }
+  // };
 
-  const getCallSID = async (callSid) => {
-    const SIDres = await GetCallSid(callSid);
-    if (SIDres?.status === 200) {
-      setCallSid(SIDres?.data?.data);
-    }
-  };
+  // const getCallSID = async (callSid) => {
+  //   const SIDres = await GetCallSid(callSid);
+  //   if (SIDres?.status === 200) {
+  //     setCallSid(SIDres?.data?.data);
+  //   }
+  // };
 
-  const getNameFromCall = async (from) => {
-    const payload = {
-      from: from?.replace(/^client:\+1/, ""),
-    };
-    const callerNameRes = await GetCallerName(payload);
-    if (callerNameRes?.status === 200) {
-      setCallerName(callerNameRes?.data?.data);
-      if (callerNameRes?.data?.data?.caseId) {
-        localStorage.setItem("route", "all-cases");
-        navigate(`/all-cases/${callerNameRes?.data?.data?.caseId}`);
-      }
-    }
-  };
+  // const getNameFromCall = async (from) => {
+  //   const payload = {
+  //     from: from?.replace(/^client:\+1/, ""),
+  //   };
+  //   const callerNameRes = await GetCallerName(payload);
+  //   if (callerNameRes?.status === 200) {
+  //     setCallerName(callerNameRes?.data?.data);
+  //     if (callerNameRes?.data?.data?.caseId) {
+  //       localStorage.setItem("route", "all-cases");
+  //       navigate(`/all-cases/${callerNameRes?.data?.data?.caseId}`);
+  //     }
+  //   }
+  // };
 
-  const initializeDevice = () => {
-    const token = localStorage.getItem("twilioToken") || "";
-    if (window.twilioDevice) {
-      window.twilioDevice.destroy();
-    }
-    const twilioDevice = new Device(token, {
-      logLevel: 1,
-      codecPreferences: ["opus", "pcmu"],
-    });
+  // const initializeDevice = () => {
+  //   const token = localStorage.getItem("twilioToken") || "";
+  //   if (window.twilioDevice) {
+  //     window.twilioDevice.destroy();
+  //   }
+  //   const twilioDevice = new Device(token, {
+  //     logLevel: 1,
+  //     codecPreferences: ["opus", "pcmu"],
+  //   });
 
-    twilioDevice.register();
-    window.twilioDevice = twilioDevice;
+  //   twilioDevice.register();
+  //   window.twilioDevice = twilioDevice;
 
-    twilioDevice.on("incoming", (incomingCall) => {
-      setCaseMenuActive(false);
-      setIncomingCall(incomingCall);
-      setIsModalOpen(true);
-      getCreditorCompanies();
-      getNameFromCall(incomingCall?.parameters?.From);
-      getCallSID(incomingCall?.parameters?.CallSid);
+  //   twilioDevice.on("incoming", (incomingCall) => {
+  //     setCaseMenuActive(false);
+  //     setIncomingCall(incomingCall);
+  //     setIsModalOpen(true);
+  //     getCreditorCompanies();
+  //     getNameFromCall(incomingCall?.parameters?.From);
+  //     getCallSID(incomingCall?.parameters?.CallSid);
 
-      incomingCall.on("disconnect", () => {
-        setIncomingCall(null);
-        setCallInterval(null);
-        setCallDuration(0);
-        setCaseMenuActive(true);
-        setCallerName("");
-      });
+  //     incomingCall.on("disconnect", () => {
+  //       setIncomingCall(null);
+  //       setCallInterval(null);
+  //       setCallDuration(0);
+  //       setCaseMenuActive(true);
+  //       setCallerName("");
+  //     });
 
-      incomingCall.on("cancel", () => {
-        setIncomingCall(null);
-        setIsModalOpen(false);
-        setCallInterval(null);
-        setCallDuration(0);
-        setCallerName("");
-      });
-    });
-    twilioDevice.on("tokenWillExpire", async () => {
-      const twilioTokenResponse = await GetCallToken();
-      if (twilioTokenResponse?.status === 200) {
-        let twilioToken = twilioTokenResponse.data.data.token;
-        localStorage.setItem("twilioToken", twilioToken);
-        twilioDevice.updateToken(token);
-      }
-    });
-  };
+  //     incomingCall.on("cancel", () => {
+  //       setIncomingCall(null);
+  //       setIsModalOpen(false);
+  //       setCallInterval(null);
+  //       setCallDuration(0);
+  //       setCallerName("");
+  //     });
+  //   });
+  //   twilioDevice.on("tokenWillExpire", async () => {
+  //     const twilioTokenResponse = await GetCallToken();
+  //     if (twilioTokenResponse?.status === 200) {
+  //       let twilioToken = twilioTokenResponse.data.data.token;
+  //       localStorage.setItem("twilioToken", twilioToken);
+  //       twilioDevice.updateToken(token);
+  //     }
+  //   });
+  // };
 
-  useEffect(() => {
-    const updateToken = () => {
-      const newToken = localStorage.getItem("twilioToken");
-      if (newToken !== token) {
-        setToken(newToken);
-      }
-    };
-    window.addEventListener("storage", updateToken);
-    const interval = setInterval(updateToken, 100);
-    return () => {
-      window.removeEventListener("storage", updateToken);
-      clearInterval(interval);
-    };
-  }, [token]);
+  // useEffect(() => {
+  //   const updateToken = () => {
+  //     const newToken = localStorage.getItem("twilioToken");
+  //     if (newToken !== token) {
+  //       setToken(newToken);
+  //     }
+  //   };
+  //   window.addEventListener("storage", updateToken);
+  //   const interval = setInterval(updateToken, 100);
+  //   return () => {
+  //     window.removeEventListener("storage", updateToken);
+  //     clearInterval(interval);
+  //   };
+  // }, [token]);
 
-  useEffect(() => {
-    if (token) {
-      initializeDevice();
-    }
-    return () => {
-      clearInterval(callInterval);
-    };
-  }, [token]);
+  // useEffect(() => {
+  //   if (token) {
+  //     initializeDevice();
+  //   }
+  //   return () => {
+  //     clearInterval(callInterval);
+  //   };
+  // }, [token]);
 
   return (
     <>
@@ -305,7 +305,7 @@ function App() {
 
         <Route exact path="/set-password" element={<VerifyProfilePage />} />
       </Routes>
-      {location.pathname !== "/" && (
+      {/* {location.pathname !== "/" && (
         <IncomingCall
           incomingCall={incomingCall}
           setIncomingCall={setIncomingCall}
@@ -321,7 +321,7 @@ function App() {
           setCaseMenuActive={setCaseMenuActive}
           callerName={callerName}
         />
-      )}
+      )} */}
       <DialPad />
     </>
   );
