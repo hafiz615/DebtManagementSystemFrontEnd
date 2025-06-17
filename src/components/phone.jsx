@@ -61,7 +61,6 @@ function Phone({ user, caseId, phoneNumberState }) {
       setCallActive(true);
       handleClose();
     }
-    console.log(call);
   }, [call?.state]);
 
   useEffect(() => {

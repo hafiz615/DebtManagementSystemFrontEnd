@@ -2532,3 +2532,10 @@ export const GetDebtorAccounts = async (id) => {
     return error;
   }
 };
+export const GetTelnyxToken = async () => {
+  try {
+    return await axios.get(BASE_URL + `/v1/call/telnyx/token`, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};

@@ -3,19 +3,28 @@ import { useSelector } from "react-redux";
 import { Colors } from "../config/default";
 import { TelnyxRTCProvider } from "@telnyx/react-client";
 import Phone from "./phone";
+import { GetTelnyxToken } from "../services/services";
+import { useEffect, useState } from "react";
 
 const DialPad = () => {
+  const [token, setToken] = useState();
   const modalState = useSelector((state) => state?.dial?.isModalOpen);
   const caseId = useSelector((state) => state?.dial?.caseId);
   const phoneNumberState = useSelector((state) => state?.dial?.phoneNumber);
   const user = useSelector((state) => state?.signIn?.signIn?.user);
 
-  const token =
-    "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0ZWxueXhfdGVsZXBob255IiwiZXhwIjoxNzUwMjI4OTY0LCJpYXQiOjE3NTAxNDI1NjQsImlzcyI6InRlbG55eF90ZWxlcGhvbnkiLCJqdGkiOiJmZGVkODRlYi1jNGU3LTRjYzQtYWUwZi1hMzk4MDUyYWM0NjgiLCJuYmYiOjE3NTAxNDI1NjMsInN1YiI6ImU4MWExMjI5LTMwYmYtNDBjMi04ZWIyLTk1NzQ4YzMzNzM0ZiIsInRlbF90b2tlbiI6IkE5elF1QVNhb3k1b3BxRVpZNGFMY3NPV0pHYnZNV3E4Njc1MXNKOG1IcFRtUVNDa0dYVHBlZUdQYjJfY3dWZHdBbWJQNzZ0dVc0U0RtTjNRcGc3ZWRwUzdfdlkzMFhDOEdCX1dpRV80dFNiUGNRUzc1NmNjMlpJaFpUdXFqVFdQUXNFRUtWd2xjNHpSUGlBeEVVV2hJMWNvIiwidHlwIjoiYWNjZXNzIn0.NXcGNpWsDAX3i6epgO14Qo0P13pu1Z0tCEZgG5DLFYsP07fmnS22i5HAlgPkk4rDQPJtySQbSu1UxshBx3S6_Q";
-
-  const credential = {
-    login_token: token,
+  const getToken = async () => {
+    const res = await GetTelnyxToken();
+    if (res?.status === 201) {
+      setToken(res?.data?.data);
+    }
   };
+
+  useEffect(() => {
+    if (modalState) {
+      getToken();
+    }
+  }, [modalState]);
 
   return (
     modalState && (
@@ -36,13 +45,15 @@ const DialPad = () => {
             pointerEvents: "auto",
           }}
         >
-          <TelnyxRTCProvider credential={credential}>
-            <Phone
-              user={user}
-              caseId={caseId}
-              phoneNumberState={phoneNumberState}
-            />
-          </TelnyxRTCProvider>
+          {token && (
+            <TelnyxRTCProvider credential={{ login_token: token }}>
+              <Phone
+                user={user}
+                caseId={caseId}
+                phoneNumberState={phoneNumberState}
+              />
+            </TelnyxRTCProvider>
+          )}
         </Box>
       </Fade>
     )
