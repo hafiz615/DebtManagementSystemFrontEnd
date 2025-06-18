@@ -241,8 +241,8 @@ export default function NotificationTemplatesTabs({
                       backgroundColor: "#E5E5E5",
                       padding: ".5rem",
                       marginTop: "3rem",
-                      // height: "6vh",
                       width: "100%",
+                      height: "55vh",
                       overflowY: "auto",
                       "&::-webkit-scrollbar": {
                         width: "10px",
@@ -264,6 +264,18 @@ export default function NotificationTemplatesTabs({
                         width: "100%",
                         height: "100%",
                         padding: "1rem",
+                        overflow: "auto",
+                        "&::-webkit-scrollbar": {
+                          width: "10px",
+                        },
+                        "&::-webkit-scrollbar-thumb": {
+                          backgroundColor: "#E5E5E5",
+                          borderRadius: "8px",
+                        },
+                        "&::-webkit-scrollbar-track": {
+                          backgroundColor: Colors.WHITE,
+                          borderRadius: "8px",
+                        },
                       }}
                     >
                       <Typography
@@ -394,6 +406,18 @@ export default function NotificationTemplatesTabs({
                         width: "100%",
                         height: "100%",
                         padding: "1rem",
+                        overflow: "auto",
+                        "&::-webkit-scrollbar": {
+                          width: "10px",
+                        },
+                        "&::-webkit-scrollbar-thumb": {
+                          backgroundColor: "#E5E5E5",
+                          borderRadius: "8px",
+                        },
+                        "&::-webkit-scrollbar-track": {
+                          backgroundColor: Colors.WHITE,
+                          borderRadius: "8px",
+                        },
                       }}
                     >
                       <Typography
