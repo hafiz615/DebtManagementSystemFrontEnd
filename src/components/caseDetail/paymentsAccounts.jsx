@@ -41,7 +41,7 @@ export default function PaymentsAccounts({
               Name: {parsed?.firstName || "-"} {parsed?.lastName || ""}
             </Typography>
             <Typography sx={{ fontFamily: "Nunito" }}>
-              Account: {parsed?.bankAccount || "-"}
+              Account: {parsed?.bankRouting || "-"}
             </Typography>
           </Box>
         );
