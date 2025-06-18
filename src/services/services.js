@@ -2539,3 +2539,10 @@ export const GetTelnyxToken = async () => {
     return error;
   }
 };
+export const GetTelnyxPhoneNumber = async () => {
+  try {
+    return await axios.get(BASE_URL + `/v1/call/telnyx/phoneNo`, setHeaders());
+  } catch (error) {
+    return error;
+  }
+};

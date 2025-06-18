@@ -7,7 +7,7 @@ import { Call, CallEnd, Close, Mic, MicOff } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import { setDialState } from "../redux/action/action";
 
-function Phone({ user, caseId, phoneNumberState }) {
+function Phone({ user, fromNumber, caseId, phoneNumberState }) {
   const [destination, setDestination] = useState(phoneNumberState || "");
   const [callActive, setCallActive] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
@@ -31,7 +31,7 @@ function Phone({ user, caseId, phoneNumberState }) {
           : `+${destination}`,
         audio: true,
         video: false,
-        callerNumber: "+14702030457",
+        callerNumber: fromNumber,
         clientState: `${caseId}-${user?._id}`,
       });
     } catch (err) {
