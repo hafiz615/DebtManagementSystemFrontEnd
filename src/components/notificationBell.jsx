@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import {
   Badge,
   IconButton,
@@ -45,6 +45,9 @@ import TextButton from "./button";
 import { useDispatch, useSelector } from "react-redux";
 import { setCounts } from "../redux/action/action";
 import { Visibility } from "@mui/icons-material";
+import emailSound from "../../src/assets/emailNotification.mp3";
+import smsSound from "../../src/assets/smsNotification.mp3";
+import taskSound from "../../src/assets/task.mp3";
 
 const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -118,14 +121,37 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
     }
   };
 
+  const emailAudioRef = useRef(new Audio(emailSound));
+  const smsAudioRef = useRef(new Audio(smsSound));
+  const taskAudioRef = useRef(new Audio(taskSound));
+
   useEffect(() => {
     const socketInstance = io(updatedBaseUrl);
     setSocket(socketInstance);
+
     socketInstance.on("notify", (arg) => {
       if (arg?.notification?.userId === user?._id) {
         setNotificationLength(arg?.notificationCount);
         showToast(arg?.notification?.text, "success");
         getNotificationsCount();
+
+        const type = arg?.notification?.type || arg?.type;
+
+        let soundToPlay = null;
+        if (type === "EMAIL") {
+          soundToPlay = new Audio(emailSound);
+        } else if (type === "SMS") {
+          soundToPlay = new Audio(smsSound);
+        } else if (type === "TASK") {
+          soundToPlay = new Audio(taskSound);
+        }
+
+        if (soundToPlay) {
+          soundToPlay.currentTime = 0;
+          soundToPlay
+            .play()
+            .catch((err) => console.warn(`Failed to play ${type} sound:`, err));
+        }
       }
     });
 
