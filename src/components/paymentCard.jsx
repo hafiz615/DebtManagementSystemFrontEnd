@@ -10,8 +10,15 @@ function PaymentCardDetails({
   type,
   setType,
 }) {
+  const [buttonsDisabled, setButtonsDisabled] = useState(false);
+
   useEffect(() => {
     if (paymentGateway !== "") {
+      setButtonsDisabled(true);
+      const timeout = setTimeout(() => {
+        setButtonsDisabled(false);
+      }, 3000);
+
       const scriptSrc =
         paymentGateway === "Easy Pay"
           ? "https://secure.easypaydirectgateway.com/token/Collect.js"
@@ -21,13 +28,14 @@ function PaymentCardDetails({
           ? "Qsugrp-m7EZre-Em45Cy-Gm7mH5"
           : "r4G87X-gVM2Pg-wj64h7-yB7EtR";
 
-      // Remove any existing script for the payment gateway
+      // Remove any existing script
       const existingScript = document.querySelector(
         `script[src*="Collect.js"]`
       );
       if (existingScript) {
         existingScript.remove();
       }
+
       if (customElements.get("apple-spinner")) {
         customElements.defineclone = Object.assign(
           Object.create(Object.getPrototypeOf(customElements)).define,
@@ -36,21 +44,20 @@ function PaymentCardDetails({
         customElements.define = (name, element) =>
           customElements.get(name) || customElements.defineclone(name, element);
       }
-      // Reload the script
+
       const script = document.createElement("script");
       script.src = scriptSrc;
       script.setAttribute("data-tokenization-key", dataKey);
       script.async = true;
 
       script.onload = () => {
-        // Reinitialize CollectJS after script loads
         if (window?.CollectJS) {
           window.CollectJS.configure({
             variant: "lightbox",
             callback: (token) => {
               setConnectPayment({
                 paymentToken: token?.token,
-                paymentType: type, // default to "cc" or adjust based on type
+                paymentType: type,
                 platform:
                   paymentGateway === "Seamless Chex Merchant"
                     ? "Seamlesschex merchant"
@@ -68,7 +75,7 @@ function PaymentCardDetails({
       document.body.appendChild(script);
 
       return () => {
-        // Cleanup CollectJS instance, but leave the script to avoid disruption
+        clearTimeout(timeout);
         if (window.CollectJS) {
           delete window.CollectJS;
         }
@@ -122,23 +129,31 @@ function PaymentCardDetails({
         <ToggleButton
           style={{
             fontFamily: "Nunito",
-            backgroundColor: Colors.VIOLET,
-            color: Colors.SKY_BLUE,
+            backgroundColor: buttonsDisabled
+              ? Colors.BG_LIGHT_GRAY
+              : Colors.VIOLET,
+            color: buttonsDisabled ? "#888" : Colors.SKY_BLUE,
             fontSize: "10px",
+            cursor: buttonsDisabled ? "not-allowed" : "pointer",
           }}
           value="cc"
-          // onClick={() => window.CollectJS?.startPaymentRequest()}
+          disabled={buttonsDisabled}
         >
           CC
         </ToggleButton>
+
         <ToggleButton
           style={{
             fontFamily: "Nunito",
-            color: Colors.SKY_BLUE,
+            backgroundColor: buttonsDisabled
+              ? Colors.BG_LIGHT_GRAY
+              : "transparent",
+            color: buttonsDisabled ? "#888" : Colors.SKY_BLUE,
             fontSize: "10px",
+            cursor: buttonsDisabled ? "not-allowed" : "pointer",
           }}
           value="ck"
-          // onClick={() => window.CollectJS?.startPaymentRequest()}
+          disabled={buttonsDisabled}
         >
           ACH
         </ToggleButton>

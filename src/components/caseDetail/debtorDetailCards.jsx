@@ -134,11 +134,11 @@ export default function DebtorDetailsCards({
   const filteredContacts = caseData?.debtor?.contacts?.filter((item) =>
     item?.name?.toLowerCase().includes(searchText.toLowerCase())
   );
-  const [selectedValue, setSelectedValue] = useState("Seamless Chex Merchant");
+  const [selectedValue, setSelectedValue] = useState("Easy Pay");
 
   const paymentGateways = [
-    { label: "Seamless Chex Merchant", value: "Seamless Chex Merchant" },
     { label: "Easy Pay", value: "Easy Pay" },
+    { label: "Seamless Chex Merchant", value: "Seamless Chex Merchant" },
     { label: "Seamless Chex", value: "Seamless Chex" },
     { label: "Paynote", value: "Paynote" },
   ];
