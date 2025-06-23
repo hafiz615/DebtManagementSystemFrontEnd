@@ -3,14 +3,13 @@ import { Audio, TelnyxRTCContext, useNotification } from "@telnyx/react-client";
 import { Box, Button, Grid, IconButton } from "@mui/material";
 import ReactPhoneInput from "react-phone-input-2";
 import { Colors } from "../config/default";
-import { Call, CallEnd, Close, Mic, MicOff } from "@mui/icons-material";
+import { Call, CallEnd, Close } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import { setDialState } from "../redux/action/action";
 
 function Phone({ user, fromNumber, caseId, phoneNumberState }) {
   const [destination, setDestination] = useState(phoneNumberState || "");
   const [callActive, setCallActive] = useState(true);
-  const [isMuted, setIsMuted] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
 
   const client = useContext(TelnyxRTCContext);
@@ -18,14 +17,15 @@ function Phone({ user, fromNumber, caseId, phoneNumberState }) {
   const dispatch = useDispatch();
   const timerRef = useRef(null);
 
+  const call = notification?.call;
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setCallActive(false);
-    if (!client) {
-      return;
-    }
+    if (!client) return;
+
     try {
-      const call = client.newCall({
+      client.newCall({
         destinationNumber: destination.startsWith("+")
           ? destination
           : `+${destination}`,
@@ -39,46 +39,25 @@ function Phone({ user, fromNumber, caseId, phoneNumberState }) {
     }
   };
 
-  const call = notification?.call;
-
   const handleClose = () => {
-    dispatch(
-      setDialState({
-        isModalOpen: false,
-      })
-    );
-  };
-
-  const toggleMute = () => {
-    const newMuteState = !isMuted;
-    setIsMuted(newMuteState);
-    call?.setAudioMuted(newMuteState);
+    dispatch(setDialState({ isModalOpen: false }));
   };
 
   useEffect(() => {
     if (!call) return;
-    if (call.state === "destroy" || call.state === "hangup") {
-      setCallActive(true);
-      handleClose();
-    }
-  }, [call?.state]);
-
-  useEffect(() => {
-    if (!call) return;
-
-    if (call?.state === "active") {
+    if (call.state === "active") {
       timerRef.current = setInterval(() => {
         setCallDuration((prev) => prev + 1);
       }, 1000);
     }
-    if (call?.state === "destroy") {
+    if (call.state === "destroy" || call.state === "hangup") {
       clearInterval(timerRef.current);
       setCallDuration(0);
+      setCallActive(true);
+      handleClose();
     }
 
-    return () => {
-      clearInterval(timerRef.current);
-    };
+    return () => clearInterval(timerRef.current);
   }, [call?.state]);
 
   const formatTime = (seconds) => {
@@ -104,6 +83,7 @@ function Phone({ user, fromNumber, caseId, phoneNumberState }) {
           <Close />
         </IconButton>
       </div>
+
       {call?.state === "active" && (
         <div style={{ fontFamily: "Nunito", marginBottom: "10px" }}>
           {formatTime(callDuration)}
@@ -128,7 +108,7 @@ function Phone({ user, fromNumber, caseId, phoneNumberState }) {
         </Box>
         <Box sx={{ mb: 2 }}>
           <Grid container spacing={1}>
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, "*", 0, "#"]?.map((num) => (
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, "*", 0, "#"].map((num) => (
               <Grid item xs={4} key={num}>
                 <Button
                   variant="outlined"
@@ -147,15 +127,12 @@ function Phone({ user, fromNumber, caseId, phoneNumberState }) {
             ))}
           </Grid>
         </Box>
+
         {callActive && (
           <IconButton type="submit" color="primary">
             <Call />
           </IconButton>
         )}
-
-        {/* <IconButton onClick={toggleMute}>
-          {isMuted ? <MicOff /> : <Mic />}
-        </IconButton> */}
 
         {call && call.state !== "destroy" && (
           <IconButton
