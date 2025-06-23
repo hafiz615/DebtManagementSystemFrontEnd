@@ -4,6 +4,7 @@ import { Audio, useNotification } from "@telnyx/react-client";
 import { Colors } from "../config/default";
 import { FONT_SIZE_LARGE } from "../constants/appConstants";
 import TextButton from "./button";
+import { useSelector } from "react-redux";
 
 // Styles
 const containerStyles = {
@@ -40,6 +41,7 @@ export default function IncomingCall() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [callActive, setCallActive] = useState(true);
   const [callDuration, setCallDuration] = useState(0);
+  const user = useSelector((state) => state?.signIn?.signIn?.user);
 
   const notification = useNotification();
   const call = notification?.call;
@@ -68,8 +70,10 @@ export default function IncomingCall() {
     if (!call) return;
 
     if (call.direction === "inbound") {
-      setIsModalOpen(true);
-      playRingtone();
+      if (`+${call?.options?.callerNumber}` === user?.twilioNo) {
+        setIsModalOpen(true);
+        playRingtone();
+      }
     }
 
     if (call.state === "active" && !timerRef.current) {

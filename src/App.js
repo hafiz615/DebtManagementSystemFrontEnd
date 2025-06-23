@@ -19,13 +19,6 @@ import PipelinesPage from "./pages/pipelinePage";
 import UpdateCase from "./pages/updateCase";
 import InboxPage from "./pages/inboxPage";
 import { useEffect, useState } from "react";
-import {
-  GetAllUserCases,
-  GetCallerName,
-  GetCallSid,
-  GetCallToken,
-} from "./services/services";
-import { Device } from "@twilio/voice-sdk";
 import IncomingCall from "./components/incomingCall";
 import SmsPage from "./pages/smsPage";
 import DialPad from "./components/dialPad";
@@ -33,8 +26,30 @@ import VoiceMailPage from "./pages/voicemailPage";
 import PaymentCheckout from "./pages/paymentCheckout";
 import Thankyou from "./pages/thankyou";
 import { TelnyxRTCProvider } from "@telnyx/react-client";
+import { GetTelnyxCredentials } from "./services/services";
+import { REACT_APP_SECURITY_KEY } from "./constants/appConstants";
+import { decrypt } from "n-krypta";
 
 function App() {
+  const [credential, setCredentials] = useState("");
+
+  const getCredentials = async () => {
+    const res = await GetTelnyxCredentials();
+    if (res?.status) {
+      const decrypted = decrypt(res?.data?.data, REACT_APP_SECURITY_KEY);
+      try {
+        const parsed = JSON.parse(JSON.stringify(decrypted));
+        setCredentials(parsed);
+      } catch (err) {
+        console.error("Credential parsing failed:", err);
+      }
+    }
+  };
+
+  useEffect(() => {
+    getCredentials();
+  }, []);
+
   return (
     <>
       <Routes>
@@ -196,13 +211,8 @@ function App() {
 
         <Route exact path="/set-password" element={<VerifyProfilePage />} />
       </Routes>
-      {location.pathname !== "/" && (
-        <TelnyxRTCProvider
-          credential={{
-            login: "DMSDev",
-            password: "12345!lumino",
-          }}
-        >
+      {credential && (
+        <TelnyxRTCProvider credential={credential}>
           <IncomingCall />
         </TelnyxRTCProvider>
       )}
