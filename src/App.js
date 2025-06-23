@@ -19,130 +19,36 @@ import PipelinesPage from "./pages/pipelinePage";
 import UpdateCase from "./pages/updateCase";
 import InboxPage from "./pages/inboxPage";
 import { useEffect, useState } from "react";
-import {
-  GetAllUserCases,
-  GetCallerName,
-  GetCallSid,
-  GetCallToken,
-} from "./services/services";
-import { Device } from "@twilio/voice-sdk";
 import IncomingCall from "./components/incomingCall";
 import SmsPage from "./pages/smsPage";
 import DialPad from "./components/dialPad";
 import VoiceMailPage from "./pages/voicemailPage";
 import PaymentCheckout from "./pages/paymentCheckout";
 import Thankyou from "./pages/thankyou";
+import { TelnyxRTCProvider } from "@telnyx/react-client";
+import { GetTelnyxCredentials } from "./services/services";
+import { REACT_APP_SECURITY_KEY } from "./constants/appConstants";
+import { decrypt } from "n-krypta";
 
 function App() {
-  // const [incomingCall, setIncomingCall] = useState(null);
-  // const [isModalOpen, setIsModalOpen] = useState(false);
-  // const [callDuration, setCallDuration] = useState(0);
-  // const [callInterval, setCallInterval] = useState(null);
-  // const [allCases, setAllCases] = useState({});
-  // const [callSid, setCallSid] = useState();
-  // const [callerName, setCallerName] = useState();
-  // const [caseMenuActive, setCaseMenuActive] = useState(false);
-  // const [token, setToken] = useState(localStorage.getItem("twilioToken"));
-  // const navigate = useNavigate();
+  const [credential, setCredentials] = useState("");
 
-  // const getCreditorCompanies = async () => {
-  //   const res = await GetAllUserCases();
-  //   if (res?.status === 200) {
-  //     setAllCases(res?.data?.data);
-  //   }
-  // };
+  const getCredentials = async () => {
+    const res = await GetTelnyxCredentials();
+    if (res?.status) {
+      const decrypted = decrypt(res?.data?.data, REACT_APP_SECURITY_KEY);
+      try {
+        const parsed = JSON.parse(JSON.stringify(decrypted));
+        setCredentials(parsed);
+      } catch (err) {
+        console.error("Credential parsing failed:", err);
+      }
+    }
+  };
 
-  // const getCallSID = async (callSid) => {
-  //   const SIDres = await GetCallSid(callSid);
-  //   if (SIDres?.status === 200) {
-  //     setCallSid(SIDres?.data?.data);
-  //   }
-  // };
-
-  // const getNameFromCall = async (from) => {
-  //   const payload = {
-  //     from: from?.replace(/^client:\+1/, ""),
-  //   };
-  //   const callerNameRes = await GetCallerName(payload);
-  //   if (callerNameRes?.status === 200) {
-  //     setCallerName(callerNameRes?.data?.data);
-  //     if (callerNameRes?.data?.data?.caseId) {
-  //       localStorage.setItem("route", "all-cases");
-  //       navigate(`/all-cases/${callerNameRes?.data?.data?.caseId}`);
-  //     }
-  //   }
-  // };
-
-  // const initializeDevice = () => {
-  //   const token = localStorage.getItem("twilioToken") || "";
-  //   if (window.twilioDevice) {
-  //     window.twilioDevice.destroy();
-  //   }
-  //   const twilioDevice = new Device(token, {
-  //     logLevel: 1,
-  //     codecPreferences: ["opus", "pcmu"],
-  //   });
-
-  //   twilioDevice.register();
-  //   window.twilioDevice = twilioDevice;
-
-  //   twilioDevice.on("incoming", (incomingCall) => {
-  //     setCaseMenuActive(false);
-  //     setIncomingCall(incomingCall);
-  //     setIsModalOpen(true);
-  //     getCreditorCompanies();
-  //     getNameFromCall(incomingCall?.parameters?.From);
-  //     getCallSID(incomingCall?.parameters?.CallSid);
-
-  //     incomingCall.on("disconnect", () => {
-  //       setIncomingCall(null);
-  //       setCallInterval(null);
-  //       setCallDuration(0);
-  //       setCaseMenuActive(true);
-  //       setCallerName("");
-  //     });
-
-  //     incomingCall.on("cancel", () => {
-  //       setIncomingCall(null);
-  //       setIsModalOpen(false);
-  //       setCallInterval(null);
-  //       setCallDuration(0);
-  //       setCallerName("");
-  //     });
-  //   });
-  //   twilioDevice.on("tokenWillExpire", async () => {
-  //     const twilioTokenResponse = await GetCallToken();
-  //     if (twilioTokenResponse?.status === 200) {
-  //       let twilioToken = twilioTokenResponse.data.data.token;
-  //       localStorage.setItem("twilioToken", twilioToken);
-  //       twilioDevice.updateToken(token);
-  //     }
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   const updateToken = () => {
-  //     const newToken = localStorage.getItem("twilioToken");
-  //     if (newToken !== token) {
-  //       setToken(newToken);
-  //     }
-  //   };
-  //   window.addEventListener("storage", updateToken);
-  //   const interval = setInterval(updateToken, 100);
-  //   return () => {
-  //     window.removeEventListener("storage", updateToken);
-  //     clearInterval(interval);
-  //   };
-  // }, [token]);
-
-  // useEffect(() => {
-  //   if (token) {
-  //     initializeDevice();
-  //   }
-  //   return () => {
-  //     clearInterval(callInterval);
-  //   };
-  // }, [token]);
+  useEffect(() => {
+    getCredentials();
+  }, []);
 
   return (
     <>
@@ -305,23 +211,11 @@ function App() {
 
         <Route exact path="/set-password" element={<VerifyProfilePage />} />
       </Routes>
-      {/* {location.pathname !== "/" && (
-        <IncomingCall
-          incomingCall={incomingCall}
-          setIncomingCall={setIncomingCall}
-          isModalOpen={isModalOpen}
-          setIsModalOpen={setIsModalOpen}
-          callDuration={callDuration}
-          setCallDuration={setCallDuration}
-          callInterval={callInterval}
-          setCallInterval={setCallInterval}
-          allCases={allCases}
-          callSid={callSid}
-          caseMenuActive={caseMenuActive}
-          setCaseMenuActive={setCaseMenuActive}
-          callerName={callerName}
-        />
-      )} */}
+      {credential && (
+        <TelnyxRTCProvider credential={credential}>
+          <IncomingCall />
+        </TelnyxRTCProvider>
+      )}
       <DialPad />
     </>
   );
