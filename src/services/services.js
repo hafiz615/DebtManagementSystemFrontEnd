@@ -2546,3 +2546,13 @@ export const GetTelnyxPhoneNumber = async () => {
     return error;
   }
 };
+export const GetTelnyxCredentials = async () => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/call/telnyx/encryptToken`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

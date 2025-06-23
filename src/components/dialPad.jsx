@@ -68,7 +68,11 @@ const DialPad = () => {
               <CircularProgress sx={{ color: Colors.SKY_BLUE }} size={40} />
             </Grid>
           ) : (
-            <TelnyxRTCProvider credential={{ login_token: token }}>
+            <TelnyxRTCProvider
+              credential={{
+                login_token: token,
+              }}
+            >
               <Phone
                 user={user}
                 fromNumber={fromNumber}
