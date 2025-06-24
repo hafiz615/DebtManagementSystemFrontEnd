@@ -2475,13 +2475,20 @@ export const DeleteDebtorAccount = async (id, payload) => {
     return error;
   }
 };
-export const GetEmailData = async (payload, search, filter, page, row) => {
+export const GetEmailData = async (
+  payload,
+  search,
+  filter,
+  page,
+  row,
+  completed
+) => {
   try {
     return await axios.post(
       BASE_URL +
         `/v1/email/threading?search=${search}&filter=${filter}&page=${
           page ? page : 1
-        }&limit=${row ? row : 10}`,
+        }&limit=${row ? row : 10}&completed=${completed}`,
       payload,
       setHeaders()
     );
@@ -2550,6 +2557,17 @@ export const GetTelnyxCredentials = async () => {
   try {
     return await axios.get(
       BASE_URL + `/v1/call/telnyx/encryptToken`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const threadsCompleted = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + "/v1/email/threadsCompleted",
+      payload,
       setHeaders()
     );
   } catch (error) {
