@@ -1657,118 +1657,109 @@ function Inbox() {
                             </>
                           ) : (
                             <Box>
-                              {inboxData?.map(
-                                (item, index) => (
-                                  console.log(item, "item"),
-                                  (
-                                    <Box
-                                      key={index}
-                                      display="flex"
-                                      flexDirection="column"
-                                      marginBottom="10px"
+                              {inboxData?.map((item, index) => (
+                                <Box
+                                  key={index}
+                                  display="flex"
+                                  flexDirection="column"
+                                  marginBottom="10px"
+                                >
+                                  <CardContent
+                                    style={{
+                                      backgroundColor: Colors.BG_LIGHT_GRAY,
+                                      borderRadius: "8px",
+                                      marginTop: "5px",
+                                      padding: "10px",
+                                      cursor: "pointer",
+                                    }}
+                                    onClick={() => {
+                                      setActivePreview({
+                                        id: index,
+                                        active: true,
+                                      });
+                                      handlePreviewClick(item?.threadId);
+                                    }}
+                                  >
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        width: "100%",
+                                      }}
                                     >
-                                      <CardContent
-                                        style={{
-                                          backgroundColor: Colors.BG_LIGHT_GRAY,
-                                          borderRadius: "8px",
-                                          marginTop: "5px",
-                                          padding: "10px",
-                                          cursor: "pointer",
-                                        }}
-                                        onClick={() => {
-                                          setActivePreview({
-                                            id: index,
-                                            active: true,
-                                          });
-                                          handlePreviewClick(item?.threadId);
+                                      {activeTab !== "Completed" && (
+                                        <Checkbox
+                                          checked={selectedThreadIds?.includes(
+                                            item?._id
+                                          )}
+                                          onClick={(e) => e.stopPropagation()}
+                                          onChange={() =>
+                                            handleCheckboxChange(item?._id)
+                                          }
+                                          sx={{
+                                            color: Colors.SKY_BLUE,
+                                            "&.Mui-checked": {
+                                              color: Colors.SKY_BLUE,
+                                            },
+                                          }}
+                                        />
+                                      )}
+
+                                      <Box
+                                        sx={{
+                                          marginLeft: ".5rem",
+                                          display: "flex",
+                                          alignItems: "center",
+                                          width: "100%",
+                                          justifyContent: "space-between",
                                         }}
                                       >
-                                        <div
-                                          style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            width: "100%",
+                                        <Email
+                                          sx={{
+                                            color: Colors.SKY_BLUE,
+                                            fontSize: "20px",
+                                          }}
+                                        />
+                                        <Typography
+                                          sx={{
+                                            ...boldTextStyling,
+                                            width: "18%",
                                           }}
                                         >
-                                          {activeTab !== "Completed" && (
-                                            <Checkbox
-                                              checked={selectedThreadIds?.includes(
-                                                item?._id
-                                              )}
-                                              onClick={(e) =>
-                                                e.stopPropagation()
-                                              }
-                                              onChange={() =>
-                                                handleCheckboxChange(item?._id)
-                                              }
-                                              sx={{
-                                                color: Colors.SKY_BLUE,
-                                                "&.Mui-checked": {
-                                                  color: Colors.SKY_BLUE,
-                                                },
-                                              }}
-                                            />
-                                          )}
-
-                                          <Box
-                                            sx={{
-                                              marginLeft: ".5rem",
-                                              display: "flex",
-                                              alignItems: "center",
-                                              width: "100%",
-                                              justifyContent: "space-between",
-                                            }}
-                                          >
-                                            <Email
-                                              sx={{
-                                                color: Colors.SKY_BLUE,
-                                                fontSize: "20px",
-                                              }}
-                                            />
-                                            <Typography
-                                              sx={{
-                                                ...boldTextStyling,
-                                                width: "18%",
-                                              }}
-                                            >
-                                              {item?.firstInboxMessage
-                                                ?.debtorCompanyName ||
-                                                "Composed"}
-                                            </Typography>
-                                            <Typography
-                                              sx={{
-                                                ...boldTextStyling,
-                                                width: "69%",
-                                              }}
-                                            >
-                                              {item?.firstInboxMessage?.subject}
-                                            </Typography>
-                                            <Typography
-                                              sx={{
-                                                ...boldTextStyling,
-                                                width: "10%",
-                                              }}
-                                            >
-                                              {item?.firstInboxMessage
-                                                ?.createdAt &&
-                                                new Date(
-                                                  item.firstInboxMessage.createdAt
-                                                ).toLocaleString("en-US", {
-                                                  month: "numeric",
-                                                  day: "numeric",
-                                                  year: "numeric",
-                                                  hour: "2-digit",
-                                                  minute: "2-digit",
-                                                  hour12: false,
-                                                })}
-                                            </Typography>
-                                          </Box>
-                                        </div>
-                                      </CardContent>
-                                    </Box>
-                                  )
-                                )
-                              )}
+                                          {item?.firstInboxMessage
+                                            ?.debtorCompanyName || "Composed"}
+                                        </Typography>
+                                        <Typography
+                                          sx={{
+                                            ...boldTextStyling,
+                                            width: "69%",
+                                          }}
+                                        >
+                                          {item?.firstInboxMessage?.subject}
+                                        </Typography>
+                                        <Typography
+                                          sx={{
+                                            ...boldTextStyling,
+                                            width: "10%",
+                                          }}
+                                        >
+                                          {item?.firstInboxMessage?.createdAt &&
+                                            new Date(
+                                              item.firstInboxMessage.createdAt
+                                            ).toLocaleString("en-US", {
+                                              month: "numeric",
+                                              day: "numeric",
+                                              year: "numeric",
+                                              hour: "2-digit",
+                                              minute: "2-digit",
+                                              hour12: false,
+                                            })}
+                                        </Typography>
+                                      </Box>
+                                    </div>
+                                  </CardContent>
+                                </Box>
+                              ))}
                             </Box>
                           )}
                         </>
