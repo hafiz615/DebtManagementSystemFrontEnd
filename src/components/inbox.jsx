@@ -21,6 +21,7 @@ import {
   Menu,
   Button,
   Checkbox,
+  LinearProgress,
 } from "@mui/material";
 import MuiModels from "./models";
 import SearchBar from "./searchBar";
@@ -138,6 +139,9 @@ function Inbox() {
   const [paginationRows, setPaginationRows] = useState("15");
   const [totalData, setTotalData] = useState();
   const [selectedThreadIds, setSelectedThreadIds] = useState([]);
+  const [isCompleting, setIsCompleting] = useState(false);
+  const [undoTriggered, setUndoTriggered] = useState(false);
+  const undoTimeoutRef = useRef(null);
   const totalPages = Math.ceil(totalData / paginationRows);
 
   const { showToast } = useToast();
@@ -145,7 +149,7 @@ function Inbox() {
   const dispatch = useDispatch();
   const { smsCount, emailCount } = useSelector((state) => state.counts);
   const open = Boolean(anchorEl);
-  const tabs = ["Inbox", "Draft", "Tasks", "Completed"];
+  const tabs = ["Inbox", "Draft", "Tasks", "Done"];
   const disabled = caseCode || debtorCompany || creditorCompany || negotiator;
   const sendEmailRef = useRef(null);
 
@@ -157,21 +161,37 @@ function Inbox() {
     );
   };
 
-  const handleMarkAsComplete = async () => {
-    const payload = {
-      threadIds: selectedThreadIds,
-    };
+  const handleMarkAsComplete = () => {
+    setIsCompleting(true);
+    setUndoTriggered(false);
 
-    const response = await threadsCompleted(payload);
-    if (response?.status === 200) {
-      showToast(response?.data?.message, "success");
-      getAllInboxData(true, true);
-      setSelectedThreadIds([]);
-    } else {
-      const errorMessage = response?.response?.data?.message;
-      showToast(errorMessage, "error");
-    }
+    undoTimeoutRef.current = setTimeout(async () => {
+      if (!undoTriggered) {
+        const payload = { threadIds: selectedThreadIds };
+        const response = await threadsCompleted(payload);
+
+        if (response?.status === 200) {
+          showToast(response?.data?.message, "success");
+          getAllInboxData(true, true);
+          setSelectedThreadIds([]);
+        } else {
+          const errorMessage = response?.response?.data?.message;
+          showToast(errorMessage, "error");
+        }
+      }
+      setIsCompleting(false);
+    }, 2000);
   };
+
+  const handleUndoCompleteMails = () => {
+    clearTimeout(undoTimeoutRef.current);
+    setUndoTriggered(true);
+    setIsCompleting(false);
+  };
+
+  useEffect(() => {
+    return () => clearTimeout(undoTimeoutRef.current);
+  }, []);
 
   const handleKeyPress = (e) => {
     setSearchText(e.target.value);
@@ -204,7 +224,7 @@ function Inbox() {
       filter,
       currentPage,
       paginationRows,
-      activeTab === "Completed" ? true : false
+      activeTab === "Done" ? true : false
     );
     if (response?.status === 200) {
       const data = response?.data?.data?.threads;
@@ -321,7 +341,7 @@ function Inbox() {
     if (activeTab === "Draft") {
       getDraftData();
     }
-    if (activeTab === "Completed") {
+    if (activeTab === "Done") {
       getAllInboxData(true, true);
     }
     if (activeTab === "Inbox") {
@@ -770,17 +790,59 @@ function Inbox() {
                     gap: "6px",
                   }}
                 >
-                  {selectedThreadIds?.length > 0 && (
-                    <Box display="flex" sx={{ marginRight: ".5rem" }}>
-                      <TextButton
-                        buttonText="Mark as Complete"
-                        height="2.5rem"
-                        onClick={handleMarkAsComplete}
-                        backgroundColor={Colors.SKY_BLUE}
-                        hoverColor={Colors.SKY_BLUE}
-                      />
+                  <>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      sx={{ marginRight: ".5rem" }}
+                    >
+                      {selectedThreadIds?.length > 0 && (
+                        <Button
+                          onClick={
+                            isCompleting
+                              ? handleUndoCompleteMails
+                              : handleMarkAsComplete
+                          }
+                          disabled={false}
+                          sx={{
+                            width: isCompleting ? "9rem" : "9rem",
+                            height: "2.5rem",
+                            background: isCompleting
+                              ? `linear-gradient(to left, #6C7172 50%, ${Colors.SKY_BLUE} 50%)`
+                              : Colors.SKY_BLUE,
+                            backgroundSize: "200% 100%",
+                            backgroundPosition: isCompleting
+                              ? "100% 0"
+                              : "0% 0",
+                            animation: isCompleting
+                              ? "sweepLeft 2s linear forwards"
+                              : "none",
+                            borderRadius: "10px",
+                            color: "#fff",
+                            fontFamily: "Nunito",
+                            overflow: "hidden",
+                            transition: "all 0.2s ease",
+                            "&:hover": {
+                              backgroundColor: Colors.SKY_BLUE,
+                            },
+                          }}
+                        >
+                          {isCompleting ? "UNDO" : "Mark As Done"}
+                        </Button>
+                      )}
+
+                      <style>{`
+    @keyframes sweepLeft {
+      from {
+        background-position: 100% 0;
+      }
+      to {
+        background-position: 0% 0;
+      }
+    }
+  `}</style>
                     </Box>
-                  )}
+                  </>
                   <Typography
                     sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
                   >
@@ -1687,7 +1749,7 @@ function Inbox() {
                                         width: "100%",
                                       }}
                                     >
-                                      {activeTab !== "Completed" && (
+                                      {activeTab !== "Done" && (
                                         <Checkbox
                                           checked={selectedThreadIds?.includes(
                                             item?._id
