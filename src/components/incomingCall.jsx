@@ -24,25 +24,6 @@ import {
 } from "../services/services";
 
 // Styles
-const containerStyles = {
-  position: "fixed",
-  bottom: "2%",
-  right: "1%",
-  width: 380,
-  bgcolor: Colors.lIGHT_PURPLE,
-  borderRadius: "10px",
-  boxShadow: 24,
-  p: 2,
-  border: `2px solid ${Colors.SKY_BLUE}`,
-  textAlign: "center",
-  zIndex: 1300,
-  pointerEvents: "auto",
-  animation: "blink-border 1s infinite alternate",
-  "@keyframes blink-border": {
-    "0%": { borderColor: Colors.SKY_BLUE },
-    "100%": { borderColor: Colors.BG_LIGHT_GRAY },
-  },
-};
 
 const boxStyling = {
   width: "100%",
@@ -73,6 +54,26 @@ export default function IncomingCall() {
   const call = notification?.call;
   const timerRef = useRef(null);
   const { showToast } = useToast();
+
+  const containerStyles = {
+    position: "fixed",
+    bottom: "2%",
+    right: "1%",
+    width: caseMenuActive ? 600 : 380,
+    bgcolor: Colors.lIGHT_PURPLE,
+    borderRadius: "10px",
+    boxShadow: 24,
+    p: 2,
+    border: `2px solid ${Colors.SKY_BLUE}`,
+    textAlign: "center",
+    zIndex: 1300,
+    pointerEvents: "auto",
+    animation: "blink-border 1s infinite alternate",
+    "@keyframes blink-border": {
+      "0%": { borderColor: Colors.SKY_BLUE },
+      "100%": { borderColor: Colors.BG_LIGHT_GRAY },
+    },
+  };
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value.toLowerCase());
@@ -107,8 +108,8 @@ export default function IncomingCall() {
       } else if (!data?.case && data?.debtors) {
         setCaseMenuActive(true);
       } else {
-        setCaseMenuActive(false);
         setIsModalOpen(false);
+        setCaseMenuActive(false);
         setSelectedCase();
         setSelected([]);
       }
@@ -186,10 +187,7 @@ export default function IncomingCall() {
       timerRef.current = null;
       setCallDuration(0);
       setCallActive(true);
-
-      if (call?.options?.callerNumber) {
-        getClientCreditorNumberDetail(call?.options?.callerNumber);
-      }
+      getClientCreditorNumberDetail(call?.options?.callerNumber);
     }
 
     return () => {
@@ -227,8 +225,8 @@ export default function IncomingCall() {
     const res = await UpdateCallByCase(payload, telnyxSessionId);
     if (res?.status === 200) {
       showToast(res?.data?.message, "success");
-      setCaseMenuActive(false);
       setIsModalOpen(false);
+      setCaseMenuActive(false);
       setSelectedCase();
       setSelected([]);
     } else {
@@ -257,8 +255,8 @@ export default function IncomingCall() {
               </Typography>
               <IconButton
                 onClick={() => {
-                  setCaseMenuActive(false);
                   setIsModalOpen(false);
+                  setCaseMenuActive(false);
                   setSelectedCase();
                   setSelected([]);
                 }}

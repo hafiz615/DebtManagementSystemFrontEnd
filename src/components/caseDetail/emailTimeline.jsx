@@ -3,10 +3,8 @@ import {
   Box,
   Card,
   IconButton,
-  Tooltip,
   Typography,
   Button,
-  Grid,
   Paper,
   CircularProgress,
 } from "@mui/material";
@@ -19,22 +17,14 @@ import {
   TimelineOppositeContent,
 } from "@mui/lab";
 import {
-  ArrowLeft,
-  ArrowRight,
-  Attachment,
-  CallOutlined,
   CallReceived,
   ChevronRight,
   Drafts,
   Email,
   ExpandMore,
   MailOutline,
-  NoteAlt,
-  Sms,
-  Work,
 } from "@mui/icons-material";
 import { Colors } from "../../config/default";
-import ConversationHistory from "../callHistory";
 import {
   FONT_SIZE_LARGE,
   FONT_SIZE_MEDIUM,
@@ -42,12 +32,10 @@ import {
 import TextButton from "../button";
 import SendEmailCase from "./sendEmailCase";
 import {
-  GetEmailDataByThreadId,
   GetEmailThreadById,
   GetNotificationTemplates,
 } from "../../services/services";
 import EmailThreading from "../emailThreading";
-import TimelineData from "./timelineData";
 
 export default function EmailTimeline({ caseData, creditorsTabs }) {
   const [showViewer, setShowViewer] = useState(false);
