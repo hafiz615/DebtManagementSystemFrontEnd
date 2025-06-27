@@ -2584,3 +2584,15 @@ export const FindClientCreditorNumber = async (number) => {
     return error;
   }
 };
+
+export const makePrimaryAccount = async (id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/debtor/makeAccountPrimary/${id}`,
+      {},
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
