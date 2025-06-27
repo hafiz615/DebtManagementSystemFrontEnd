@@ -2584,3 +2584,13 @@ export const FindClientCreditorNumber = async (number) => {
     return error;
   }
 };
+export const GetEmailThreadById = async (caseId) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/email/emailThreadingByCase/${caseId}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

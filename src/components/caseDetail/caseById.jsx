@@ -39,6 +39,7 @@ import SendEmailCase from "./sendEmailCase";
 import AttorneyDetail from "./attorneyDetail";
 import OtherCreditors from "./otherCreditors";
 import PaymentPlan from "./paymentPlan";
+import EmailTimeline from "./emailTimeline";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -736,7 +737,12 @@ export default function CaseById({
                 </Grid>
               )}
 
-              {caseHistoryTabs === 5 ? (
+              {caseHistoryTabs === 1 ? (
+                <EmailTimeline
+                  caseData={caseData}
+                  creditorsTabs={creditorsTabs}
+                />
+              ) : caseHistoryTabs === 5 ? (
                 <TimelineData
                   callLogs={callLogs}
                   id={id}
