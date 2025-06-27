@@ -11,10 +11,14 @@ import {
   Chip,
   Box,
   Typography,
+  Switch,
 } from "@mui/material";
 import { decrypt } from "n-krypta";
 import { REACT_APP_SECURITY_KEY } from "../../constants/appConstants";
-import { DeleteDebtorAccount } from "../../services/services";
+import {
+  DeleteDebtorAccount,
+  makePrimaryAccount,
+} from "../../services/services";
 import Prompt from "../prompt";
 import { useToast } from "../../toast/toastContext";
 
@@ -71,6 +75,17 @@ export default function PaymentsAccounts({
     }
   };
 
+  const handlePrimaryToggle = async (debtorId, accountId) => {
+    const response = await makePrimaryAccount(accountId);
+    if (response?.status === 200) {
+      showToast(response?.data?.message, "success");
+      GetDebtorAccounts(debtorId);
+    } else {
+      const errorMessage = response?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+  };
+
   return (
     <Box sx={textStyle}>
       <TableContainer
@@ -99,8 +114,8 @@ export default function PaymentsAccounts({
           </TableHead>
           <TableBody>
             {accountsResponse?.length > 0 ? (
-              accountsResponse.map((acc, index) => (
-                <TableRow key={acc._id}>
+              accountsResponse?.map((acc, index) => (
+                <TableRow key={acc?._id}>
                   <TableCell sx={textStyle}>
                     {decryptIfNeeded(acc?.vault)}
                   </TableCell>
@@ -127,6 +142,30 @@ export default function PaymentsAccounts({
                   </TableCell>
                   <TableCell sx={textStyle}>{acc?.platform || "-"}</TableCell>
                   <TableCell sx={textStyle}>
+                    <Tooltip
+                      title={
+                        acc?.platform?.toLowerCase() === "seamlesschex"
+                          ? "Seamlesschex cannot be set as Primary"
+                          : index === 0
+                          ? "Already primary"
+                          : ""
+                      }
+                    >
+                      <span>
+                        <Switch
+                          checked={index === 0}
+                          disabled={
+                            index === 0 ||
+                            acc?.platform?.toLowerCase() === "seamlesschex"
+                          }
+                          onChange={() =>
+                            handlePrimaryToggle(acc?.debtorId, acc?._id)
+                          }
+                          size="small"
+                          color="primary"
+                        />
+                      </span>
+                    </Tooltip>
                     <Prompt
                       text="Are you sure you want to delete this account?"
                       iconSize="1.3rem"
