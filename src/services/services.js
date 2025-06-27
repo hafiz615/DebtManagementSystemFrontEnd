@@ -2574,6 +2574,16 @@ export const threadsCompleted = async (payload) => {
     return error;
   }
 };
+export const FindClientCreditorNumber = async (number) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/call/debtorAndCaseId/${number}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
 
 export const makePrimaryAccount = async (id) => {
   try {
