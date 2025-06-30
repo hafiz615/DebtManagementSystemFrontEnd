@@ -34,7 +34,11 @@ import {
   FONT_SIZE_SMALL,
 } from "../../constants/appConstants";
 import { isEmpty } from "lodash";
-import { GetCalls, GetLawsuitDetails } from "../../services/services";
+import {
+  GetCalls,
+  GetEmailThreadById,
+  GetLawsuitDetails,
+} from "../../services/services";
 import SendEmailCase from "./sendEmailCase";
 import AttorneyDetail from "./attorneyDetail";
 import OtherCreditors from "./otherCreditors";
@@ -118,6 +122,9 @@ export default function CaseById({
   const [creditorsTabs, setCreditorsTabs] = useState("singleCreditor");
   const [attorneyData, setAttorneyData] = useState();
   const [allAttorneyData, setAllAttorneyData] = useState();
+  const [activePreview, setActivePreview] = useState(false);
+  const [threadData, setThreadData] = useState([]);
+  const [threadLoading, setThreadLoading] = useState([]);
 
   const getAttorneyData = async () => {
     const res = await GetLawsuitDetails(caseData?._id);
@@ -135,6 +142,18 @@ export default function CaseById({
       setCallLogs(res?.data?.data?.calls);
       setTotalCallPage(totalPage);
     }
+  };
+
+  const getThreadData = async () => {
+    setActivePreview(false);
+    setThreadLoading(true);
+    const caseId =
+      creditorsTabs === "singleCreditor"
+        ? caseData?._id
+        : caseData?.creditors[creditorsTabs]?._id;
+    const res = await GetEmailThreadById(caseId);
+    if (res?.status) setThreadData(res?.data?.data);
+    setThreadLoading(false);
   };
 
   useEffect(() => {
@@ -727,6 +746,7 @@ export default function CaseById({
                     headerName={false}
                     verifiedSenders={verifiedSenders}
                     GetLogsById={GetLogsById}
+                    getAllInboxData={getThreadData}
                     data={caseData}
                     caseDataId={id}
                     buttonName="sendEmailCase"
@@ -741,6 +761,12 @@ export default function CaseById({
                 <EmailTimeline
                   caseData={caseData}
                   creditorsTabs={creditorsTabs}
+                  getThreadData={getThreadData}
+                  activePreview={activePreview}
+                  setActivePreview={setActivePreview}
+                  threadData={threadData}
+                  loading={threadLoading}
+                  setLoading={setThreadLoading}
                 />
               ) : caseHistoryTabs === 5 ? (
                 <TimelineData
