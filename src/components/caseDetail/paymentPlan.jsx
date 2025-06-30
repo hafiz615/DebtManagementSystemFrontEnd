@@ -433,7 +433,11 @@ export default function PaymentPlan({ caseData }) {
   );
 
   const isAnyCreditorAmountInvalid = creditorDataList?.some(
-    (item) => item.amount === "" || item.amount === null || isNaN(item.amount)
+    (item) =>
+      item.amount === "" ||
+      item.amount === null ||
+      isNaN(item.amount) ||
+      !priorityBitMap[activeIndex]
   );
 
   return (
@@ -764,7 +768,7 @@ export default function PaymentPlan({ caseData }) {
                   setActiveIndex(index - 1);
                 }}
               >
-                {/* {item?._id !== 1 && (
+                {item?._id !== 1 && (
                   <Box
                     sx={{
                       position: "absolute",
@@ -792,7 +796,7 @@ export default function PaymentPlan({ caseData }) {
                   >
                     {priorityBitMap[index - 1] || "-"}
                   </Box>
-                )} */}
+                )}
                 {item?.creditor?.businessInformation?.companyName}
               </Button>
             ))}
@@ -949,7 +953,7 @@ export default function PaymentPlan({ caseData }) {
                 Total amount after given interval:
                 <b> ${isNaN(totalAmount) ? 0 : totalAmount}</b>
               </Typography>
-              {/* {activePayment !== 1 &&
+              {activePayment !== 1 &&
                 activeIndex !== null &&
                 (() => {
                   const currentItem = tabs[activeIndex];
@@ -1105,7 +1109,7 @@ export default function PaymentPlan({ caseData }) {
                       </div>
                     </Typography>
                   );
-                })()} */}
+                })()}
             </div>
             {activePayment === 1 ? (
               <DebtorPaymentPlan
