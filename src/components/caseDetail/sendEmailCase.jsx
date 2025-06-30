@@ -10,6 +10,7 @@ import {
   Tooltip,
   IconButton,
   TextField,
+  Autocomplete,
 } from "@mui/material";
 import {
   Select,
@@ -40,7 +41,7 @@ import {
   UpdateSmsDraft,
 } from "../../services/services";
 import { useToast } from "../../toast/toastContext";
-import { ArrowRight, Delete, ExpandMore } from "@mui/icons-material";
+import { ArrowRight, Delete, ExpandMore, Close } from "@mui/icons-material";
 import {
   handleNumberInput,
   isEmailValid,
@@ -314,10 +315,16 @@ export default function SendEmailCase({
         value: name,
       }));
 
-  const menuSendto = bulkEmail?.map((name) => ({
-    label: name,
-    value: name,
-  }));
+  const menuSendto = [
+    {
+      label: "Custom Email",
+      value: "Custom Email",
+    },
+    ...(bulkEmail?.map((name) => ({
+      label: name,
+      value: name,
+    })) || []),
+  ];
 
   const menuBulkTemplates = bulkEmailTemplates?.map((item) => ({
     label: item?.name,
@@ -360,7 +367,14 @@ export default function SendEmailCase({
       } else {
         formData.append("signedUrls", `[]`);
       }
-      formData.append("sendTo", compose || replyCheck ? sendTo : selectedEmail);
+      formData.append(
+        "sendTo",
+        compose || replyCheck
+          ? sendTo
+          : selectedEmail === "Custom Email"
+          ? sendTo
+          : selectedEmail
+      );
       formData.append("from", replyCheck ? sendFrom : selectedValue);
       formData.append("subject", subject);
       const ccString = JSON.stringify([
@@ -676,18 +690,50 @@ export default function SendEmailCase({
             />
           ) : (
             <>
-              <Dropdown
-                height="2.5rem"
-                menuItems={menuSendto}
-                menuWidth="11.7rem"
-                placeholder="Send to"
-                backgroundColor={Colors.BG_LIGHT_GRAY}
-                hoverColor={Colors.BG_LIGHT_GRAY}
-                width="98%"
-                selectedValue={selectedEmail}
-                setSelectedValue={setSelectedEmail}
-                emptyMessage=" Email Not Found"
-              />
+              {selectedEmail === "Custom Email" ? (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <StyledInput
+                    type="text"
+                    placeholder="Send To*"
+                    value={sendTo}
+                    onChange={(e) => setSendTo(e.target.value)}
+                    sx={{ flex: 1, height: "2.5rem" }}
+                  />
+                  <IconButton
+                    onClick={() => {
+                      setSelectedEmail("");
+                      setSendTo("");
+                    }}
+                  >
+                    <Close sx={{ fontSize: "1rem" }} />
+                  </IconButton>
+                </div>
+              ) : (
+                <Dropdown
+                  height="2.5rem"
+                  menuItems={menuSendto}
+                  menuWidth="11.7rem"
+                  placeholder="Send to"
+                  backgroundColor={Colors.BG_LIGHT_GRAY}
+                  hoverColor={Colors.BG_LIGHT_GRAY}
+                  width="98%"
+                  selectedValue={selectedEmail}
+                  setSelectedValue={(val) => {
+                    setSelectedEmail(val);
+                    if (val !== "Custom Email") {
+                      setSendTo(val);
+                    } else {
+                      setSendTo("");
+                    }
+                  }}
+                  emptyMessage=" Email Not Found"
+                />
+              )}
             </>
           )}
         </Grid>
