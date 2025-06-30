@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Badge,
   IconButton,
@@ -120,10 +120,6 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
       );
     }
   };
-
-  const emailAudioRef = useRef(new Audio(emailSound));
-  const smsAudioRef = useRef(new Audio(smsSound));
-  const taskAudioRef = useRef(new Audio(taskSound));
 
   useEffect(() => {
     const socketInstance = io(updatedBaseUrl);

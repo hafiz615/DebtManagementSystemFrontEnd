@@ -11,10 +11,14 @@ import {
   Chip,
   Box,
   Typography,
+  Switch,
 } from "@mui/material";
 import { decrypt } from "n-krypta";
 import { REACT_APP_SECURITY_KEY } from "../../constants/appConstants";
-import { DeleteDebtorAccount } from "../../services/services";
+import {
+  DeleteDebtorAccount,
+  makePrimaryAccount,
+} from "../../services/services";
 import Prompt from "../prompt";
 import { useToast } from "../../toast/toastContext";
 
@@ -26,8 +30,13 @@ export default function PaymentsAccounts({
 }) {
   const { showToast } = useToast();
 
+  const textStyle = {
+    fontFamily: "Nunito",
+    fontSize: "0.875rem",
+  };
+
   const decryptIfNeeded = (value) => {
-    if (!value) return <div>-</div>;
+    if (!value) return <div style={textStyle}>-</div>;
 
     try {
       const decrypted = decrypt(value, REACT_APP_SECURITY_KEY);
@@ -37,20 +46,20 @@ export default function PaymentsAccounts({
       if (typeof parsed === "object" && parsed !== null) {
         return (
           <Box>
-            <Typography sx={{ fontFamily: "Nunito" }}>
+            <Typography sx={textStyle}>
               Name: {parsed?.firstName || "-"} {parsed?.lastName || ""}
             </Typography>
-            <Typography sx={{ fontFamily: "Nunito" }}>
+            <Typography sx={textStyle}>
               Account: {parsed?.bankRouting || "-"}
             </Typography>
           </Box>
         );
       }
 
-      return <div>{parsed}</div>;
+      return <div style={textStyle}>{parsed}</div>;
     } catch (error) {
       console.error("Decryption error:", error);
-      return <div>{value}</div>;
+      return <div style={textStyle}>{value}</div>;
     }
   };
 
@@ -59,7 +68,17 @@ export default function PaymentsAccounts({
     const response = await DeleteDebtorAccount(debtorId, payload);
     if (response?.status === 200) {
       showToast(response?.data?.message, "success");
-      // GetCaseDetails(caseDataId);
+      GetDebtorAccounts(debtorId);
+    } else {
+      const errorMessage = response?.response?.data?.message;
+      showToast(errorMessage, "error");
+    }
+  };
+
+  const handlePrimaryToggle = async (debtorId, accountId) => {
+    const response = await makePrimaryAccount(accountId);
+    if (response?.status === 200) {
+      showToast(response?.data?.message, "success");
       GetDebtorAccounts(debtorId);
     } else {
       const errorMessage = response?.response?.data?.message;
@@ -68,7 +87,7 @@ export default function PaymentsAccounts({
   };
 
   return (
-    <Box sx={{ fontFamily: "Nunito" }}>
+    <Box sx={textStyle}>
       <TableContainer
         component={Paper}
         sx={{ maxHeight: 400, overflowY: "auto" }}
@@ -76,31 +95,31 @@ export default function PaymentsAccounts({
         <Table stickyHeader>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontFamily: "Nunito" }}>
+              <TableCell sx={textStyle}>
                 <strong>Customer Account</strong>
               </TableCell>
-              <TableCell sx={{ fontFamily: "Nunito" }}>
+              <TableCell sx={textStyle}>
                 <strong>Account Type</strong>
               </TableCell>
-              <TableCell sx={{ fontFamily: "Nunito" }}>
+              <TableCell sx={textStyle}>
                 <strong>Payment Type</strong>
               </TableCell>
-              <TableCell sx={{ fontFamily: "Nunito" }}>
+              <TableCell sx={textStyle}>
                 <strong>Platform</strong>
               </TableCell>
-              <TableCell sx={{ fontFamily: "Nunito" }}>
+              <TableCell sx={textStyle}>
                 <strong>Action</strong>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {accountsResponse?.length > 0 ? (
-              accountsResponse.map((acc, index) => (
-                <TableRow key={acc._id}>
-                  <TableCell sx={{ fontFamily: "Nunito" }}>
+              accountsResponse?.map((acc, index) => (
+                <TableRow key={acc?._id}>
+                  <TableCell sx={textStyle}>
                     {decryptIfNeeded(acc?.vault)}
                   </TableCell>
-                  <TableCell sx={{ fontFamily: "Nunito" }}>
+                  <TableCell sx={textStyle}>
                     <Tooltip
                       title={
                         index === 0 ? "Primary Account" : "Secondary Account"
@@ -111,20 +130,42 @@ export default function PaymentsAccounts({
                         label={index === 0 ? "Primary" : "Secondary"}
                         size="small"
                         sx={{
+                          ...textStyle,
                           backgroundColor: index === 0 ? "#7353F0" : "#EA6A47",
                           color: "#fff",
-                          fontFamily: "Nunito",
                         }}
                       />
                     </Tooltip>
                   </TableCell>
-                  <TableCell sx={{ fontFamily: "Nunito" }}>
+                  <TableCell sx={textStyle}>
                     {acc?.paymentType || "-"}
                   </TableCell>
-                  <TableCell sx={{ fontFamily: "Nunito" }}>
-                    {acc?.platform || "-"}
-                  </TableCell>
-                  <TableCell>
+                  <TableCell sx={textStyle}>{acc?.platform || "-"}</TableCell>
+                  <TableCell sx={textStyle}>
+                    <Tooltip
+                      title={
+                        acc?.platform?.toLowerCase() === "seamlesschex"
+                          ? "Seamlesschex cannot be set as Primary"
+                          : index === 0
+                          ? "Already primary"
+                          : ""
+                      }
+                    >
+                      <span>
+                        <Switch
+                          checked={index === 0}
+                          disabled={
+                            index === 0 ||
+                            acc?.platform?.toLowerCase() === "seamlesschex"
+                          }
+                          onChange={() =>
+                            handlePrimaryToggle(acc?.debtorId, acc?._id)
+                          }
+                          size="small"
+                          color="primary"
+                        />
+                      </span>
+                    </Tooltip>
                     <Prompt
                       text="Are you sure you want to delete this account?"
                       iconSize="1.3rem"
@@ -138,11 +179,7 @@ export default function PaymentsAccounts({
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={6}
-                  align="center"
-                  sx={{ fontFamily: "Nunito" }}
-                >
+                <TableCell colSpan={6} align="center" sx={textStyle}>
                   No account exists
                 </TableCell>
               </TableRow>

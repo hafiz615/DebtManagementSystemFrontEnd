@@ -20,6 +20,8 @@ import {
   CircularProgress,
   Menu,
   Button,
+  Checkbox,
+  LinearProgress,
 } from "@mui/material";
 import MuiModels from "./models";
 import SearchBar from "./searchBar";
@@ -44,6 +46,7 @@ import {
   GetNotificationTemplates,
   GetUsers,
   TaskStatus,
+  threadsCompleted,
 } from "../services/services";
 import { formatDateString } from "../common";
 import { useNavigate } from "react-router-dom";
@@ -62,6 +65,7 @@ import {
 } from "@mui/icons-material";
 import SendEmailCase from "./caseDetail/sendEmailCase";
 import Prompt from "./prompt";
+import { async } from "q";
 
 const inputStyling = {
   width: "100%",
@@ -134,6 +138,10 @@ function Inbox() {
   const [currentPage, setCurrentPage] = useState(1);
   const [paginationRows, setPaginationRows] = useState("15");
   const [totalData, setTotalData] = useState();
+  const [selectedThreadIds, setSelectedThreadIds] = useState([]);
+  const [isCompleting, setIsCompleting] = useState(false);
+  const [undoTriggered, setUndoTriggered] = useState(false);
+  const undoTimeoutRef = useRef(null);
   const totalPages = Math.ceil(totalData / paginationRows);
 
   const { showToast } = useToast();
@@ -141,9 +149,49 @@ function Inbox() {
   const dispatch = useDispatch();
   const { smsCount, emailCount } = useSelector((state) => state.counts);
   const open = Boolean(anchorEl);
-  const tabs = ["Inbox", "Draft", "Tasks"];
+  const tabs = ["Inbox", "Draft", "Tasks", "Done"];
   const disabled = caseCode || debtorCompany || creditorCompany || negotiator;
   const sendEmailRef = useRef(null);
+
+  const handleCheckboxChange = (threadId) => {
+    setSelectedThreadIds((prev) =>
+      prev.includes(threadId)
+        ? prev.filter((id) => id !== threadId)
+        : [...prev, threadId]
+    );
+  };
+
+  const handleMarkAsComplete = () => {
+    setIsCompleting(true);
+    setUndoTriggered(false);
+
+    undoTimeoutRef.current = setTimeout(async () => {
+      if (!undoTriggered) {
+        const payload = { threadIds: selectedThreadIds };
+        const response = await threadsCompleted(payload);
+
+        if (response?.status === 200) {
+          showToast(response?.data?.message, "success");
+          getAllInboxData(true, true);
+          setSelectedThreadIds([]);
+        } else {
+          const errorMessage = response?.response?.data?.message;
+          showToast(errorMessage, "error");
+        }
+      }
+      setIsCompleting(false);
+    }, 2000);
+  };
+
+  const handleUndoCompleteMails = () => {
+    clearTimeout(undoTimeoutRef.current);
+    setUndoTriggered(true);
+    setIsCompleting(false);
+  };
+
+  useEffect(() => {
+    return () => clearTimeout(undoTimeoutRef.current);
+  }, []);
 
   const handleKeyPress = (e) => {
     setSearchText(e.target.value);
@@ -175,7 +223,8 @@ function Inbox() {
       search,
       filter,
       currentPage,
-      paginationRows
+      paginationRows,
+      activeTab === "Done" ? true : false
     );
     if (response?.status === 200) {
       const data = response?.data?.data?.threads;
@@ -292,10 +341,17 @@ function Inbox() {
     if (activeTab === "Draft") {
       getDraftData();
     }
+    if (activeTab === "Done") {
+      getAllInboxData(true, true);
+    }
+    if (activeTab === "Inbox") {
+      getAllInboxData(true, true);
+    }
     setActivePreview({
       id: 0,
       active: false,
     });
+    setSelectedThreadIds([]);
   }, [activeTab]);
 
   useEffect(() => {
@@ -734,6 +790,59 @@ function Inbox() {
                     gap: "6px",
                   }}
                 >
+                  <>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      sx={{ marginRight: ".5rem" }}
+                    >
+                      {selectedThreadIds?.length > 0 && (
+                        <Button
+                          onClick={
+                            isCompleting
+                              ? handleUndoCompleteMails
+                              : handleMarkAsComplete
+                          }
+                          disabled={false}
+                          sx={{
+                            width: isCompleting ? "9rem" : "9rem",
+                            height: "2.5rem",
+                            background: isCompleting
+                              ? `linear-gradient(to left, #6C7172 50%, ${Colors.SKY_BLUE} 50%)`
+                              : Colors.SKY_BLUE,
+                            backgroundSize: "200% 100%",
+                            backgroundPosition: isCompleting
+                              ? "100% 0"
+                              : "0% 0",
+                            animation: isCompleting
+                              ? "sweepLeft 2s linear forwards"
+                              : "none",
+                            borderRadius: "10px",
+                            color: "#fff",
+                            fontFamily: "Nunito",
+                            overflow: "hidden",
+                            transition: "all 0.2s ease",
+                            "&:hover": {
+                              backgroundColor: Colors.SKY_BLUE,
+                            },
+                          }}
+                        >
+                          {isCompleting ? "UNDO" : "Mark As Done"}
+                        </Button>
+                      )}
+
+                      <style>{`
+    @keyframes sweepLeft {
+      from {
+        background-position: 100% 0;
+      }
+      to {
+        background-position: 0% 0;
+      }
+    }
+  `}</style>
+                    </Box>
+                  </>
                   <Typography
                     sx={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
                   >
@@ -1609,73 +1718,111 @@ function Inbox() {
                               </Box>
                             </>
                           ) : (
-                            inboxData?.map((item, index) => (
-                              <Box
-                                key={index}
-                                display="flex"
-                                flexDirection="column"
-                                marginBottom="10px"
-                              >
-                                <CardContent
-                                  style={{
-                                    backgroundColor: Colors.BG_LIGHT_GRAY,
-                                    borderRadius: "8px",
-                                    marginTop: "5px",
-                                    padding: "10px",
-                                    cursor: "pointer",
-                                  }}
-                                  onClick={() => {
-                                    setActivePreview({
-                                      id: index,
-                                      active: true,
-                                    });
-                                    handlePreviewClick(item?.threadId);
-                                  }}
+                            <Box>
+                              {inboxData?.map((item, index) => (
+                                <Box
+                                  key={index}
+                                  display="flex"
+                                  flexDirection="column"
+                                  marginBottom="10px"
                                 >
-                                  <div
+                                  <CardContent
                                     style={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      width: "100%",
-                                      justifyContent: "space-between",
+                                      backgroundColor: Colors.BG_LIGHT_GRAY,
+                                      borderRadius: "8px",
+                                      marginTop: "5px",
+                                      padding: "10px",
+                                      cursor: "pointer",
+                                    }}
+                                    onClick={() => {
+                                      setActivePreview({
+                                        id: index,
+                                        active: true,
+                                      });
+                                      handlePreviewClick(item?.threadId);
                                     }}
                                   >
-                                    <Email
-                                      sx={{
-                                        color: Colors.SKY_BLUE,
-                                        fontSize: "20px",
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        width: "100%",
                                       }}
-                                    />
-                                    <Typography
-                                      sx={{ ...boldTextStyling, width: "18%" }}
                                     >
-                                      {item?.firstInboxMessage
-                                        ?.debtorCompanyName || "Composed"}
-                                    </Typography>
-                                    <Typography
-                                      sx={{ ...boldTextStyling, width: "69%" }}
-                                    >
-                                      {item?.firstInboxMessage?.subject}
-                                    </Typography>
-                                    <Typography
-                                      sx={{ ...boldTextStyling, width: "10%" }}
-                                    >
-                                      {item?.firstInboxMessage?.createdAt &&
-                                        new Date(
-                                          item.firstInboxMessage.createdAt
-                                        ).toLocaleString("en-US", {
-                                          month: "numeric",
-                                          day: "numeric",
-                                          year: "numeric",
-                                          hour: "2-digit",
-                                          minute: "2-digit",
-                                          hour12: false,
-                                        })}
-                                    </Typography>
-                                  </div>
-                                </CardContent>
-                              </Box>
-                            ))
+                                      {activeTab !== "Done" && (
+                                        <Checkbox
+                                          checked={selectedThreadIds?.includes(
+                                            item?._id
+                                          )}
+                                          onClick={(e) => e.stopPropagation()}
+                                          onChange={() =>
+                                            handleCheckboxChange(item?._id)
+                                          }
+                                          sx={{
+                                            color: Colors.SKY_BLUE,
+                                            "&.Mui-checked": {
+                                              color: Colors.SKY_BLUE,
+                                            },
+                                          }}
+                                        />
+                                      )}
+
+                                      <Box
+                                        sx={{
+                                          marginLeft: ".5rem",
+                                          display: "flex",
+                                          alignItems: "center",
+                                          width: "100%",
+                                          justifyContent: "space-between",
+                                        }}
+                                      >
+                                        <Email
+                                          sx={{
+                                            color: Colors.SKY_BLUE,
+                                            fontSize: "20px",
+                                          }}
+                                        />
+                                        <Typography
+                                          sx={{
+                                            ...boldTextStyling,
+                                            width: "18%",
+                                          }}
+                                        >
+                                          {item?.firstInboxMessage
+                                            ?.debtorCompanyName || "Composed"}
+                                        </Typography>
+                                        <Typography
+                                          sx={{
+                                            ...boldTextStyling,
+                                            width: "69%",
+                                          }}
+                                        >
+                                          {item?.firstInboxMessage?.subject}
+                                        </Typography>
+                                        <Typography
+                                          sx={{
+                                            ...boldTextStyling,
+                                            width: "10%",
+                                          }}
+                                        >
+                                          {item?.firstInboxMessage?.createdAt &&
+                                            new Date(
+                                              item.firstInboxMessage.createdAt
+                                            ).toLocaleString("en-US", {
+                                              month: "numeric",
+                                              day: "numeric",
+                                              year: "numeric",
+                                              hour: "2-digit",
+                                              minute: "2-digit",
+                                              hour12: false,
+                                            })}
+                                        </Typography>
+                                      </Box>
+                                    </div>
+                                  </CardContent>
+                                </Box>
+                              ))}
+                            </Box>
                           )}
                         </>
                       )}
