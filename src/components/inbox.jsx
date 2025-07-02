@@ -161,12 +161,13 @@ function Inbox() {
     );
   };
 
+  const undoTriggeredRef = useRef(false);
   const handleMarkAsComplete = () => {
     setIsCompleting(true);
-    setUndoTriggered(false);
+    undoTriggeredRef.current = false; // reset on start
 
     undoTimeoutRef.current = setTimeout(async () => {
-      if (!undoTriggered) {
+      if (!undoTriggeredRef.current) {
         const payload = { threadIds: selectedThreadIds };
         const response = await threadsCompleted(payload);
 
@@ -185,7 +186,7 @@ function Inbox() {
 
   const handleUndoCompleteMails = () => {
     clearTimeout(undoTimeoutRef.current);
-    setUndoTriggered(true);
+    undoTriggeredRef.current = true;
     setIsCompleting(false);
   };
 
