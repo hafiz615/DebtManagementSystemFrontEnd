@@ -1180,7 +1180,7 @@ function Inbox() {
                                             year: "numeric",
                                             hour: "2-digit",
                                             minute: "2-digit",
-                                            hour12: false,
+                                            hour12: true,
                                           }
                                         )}
                                     </Typography>
@@ -1392,7 +1392,7 @@ function Inbox() {
                                                       year: "numeric",
                                                       hour: "2-digit",
                                                       minute: "2-digit",
-                                                      hour12: false,
+                                                      hour12: true,
                                                     })}
                                                 </Typography>
                                               </Box>
@@ -1460,7 +1460,7 @@ function Inbox() {
                                                           year: "numeric",
                                                           hour: "2-digit",
                                                           minute: "2-digit",
-                                                          hour12: false,
+                                                          hour12: true,
                                                         }
                                                       )}
                                                   </Typography>
@@ -1734,6 +1734,8 @@ function Inbox() {
                                       marginTop: "5px",
                                       padding: "10px",
                                       cursor: "pointer",
+                                      display: "flex",
+                                      width: "100%",
                                     }}
                                     onClick={() => {
                                       setActivePreview({
@@ -1743,14 +1745,8 @@ function Inbox() {
                                       handlePreviewClick(item?.threadId);
                                     }}
                                   >
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        width: "100%",
-                                      }}
-                                    >
-                                      {activeTab !== "Done" && (
+                                    {activeTab !== "Done" && (
+                                      <div style={{ width: "4%" }}>
                                         <Checkbox
                                           checked={selectedThreadIds?.includes(
                                             item?._id
@@ -1766,59 +1762,131 @@ function Inbox() {
                                             },
                                           }}
                                         />
-                                      )}
-
-                                      <Box
-                                        sx={{
-                                          marginLeft: ".5rem",
+                                      </div>
+                                    )}
+                                    <div style={{ width: "95%" }}>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          width: "100%",
+                                        }}
+                                      >
+                                        <div
+                                          style={{
+                                            display: "flex",
+                                            gap: "10px",
+                                          }}
+                                        >
+                                          <Typography
+                                            sx={{
+                                              color: Colors.BLACK,
+                                              fontFamily: "Nunito",
+                                              fontWeight: "bold",
+                                              fontSize: FONT_SIZE_MEDIUM,
+                                            }}
+                                          >
+                                            From:
+                                          </Typography>
+                                          <Typography
+                                            sx={{
+                                              color: Colors.SKY_BLUE,
+                                              fontFamily: "Nunito",
+                                              fontWeight: "bold",
+                                              fontSize: FONT_SIZE_MEDIUM,
+                                            }}
+                                          >
+                                            {item?.firstInboxMessage?.from}
+                                          </Typography>
+                                        </div>
+                                        <div
+                                          style={{
+                                            display: "flex",
+                                            gap: "10px",
+                                          }}
+                                        >
+                                          <Typography
+                                            sx={{
+                                              color: Colors.BLACK,
+                                              fontFamily: "Nunito",
+                                              fontWeight: "bold",
+                                              fontSize: FONT_SIZE_MEDIUM,
+                                            }}
+                                          >
+                                            To:
+                                          </Typography>
+                                          <Typography
+                                            sx={{
+                                              color: Colors.SKY_BLUE,
+                                              fontFamily: "Nunito",
+                                              fontWeight: "bold",
+                                              fontSize: FONT_SIZE_MEDIUM,
+                                            }}
+                                          >
+                                            {item?.firstInboxMessage?.to}
+                                          </Typography>
+                                        </div>
+                                      </div>
+                                      <div
+                                        style={{
                                           display: "flex",
                                           alignItems: "center",
                                           width: "100%",
-                                          justifyContent: "space-between",
                                         }}
                                       >
-                                        <Email
+                                        <Box
                                           sx={{
-                                            color: Colors.SKY_BLUE,
-                                            fontSize: "20px",
-                                          }}
-                                        />
-                                        <Typography
-                                          sx={{
-                                            ...boldTextStyling,
-                                            width: "18%",
+                                            marginLeft: ".5rem",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            width: "100%",
+                                            justifyContent: "space-between",
                                           }}
                                         >
-                                          {item?.firstInboxMessage
-                                            ?.debtorCompanyName || "Composed"}
-                                        </Typography>
-                                        <Typography
-                                          sx={{
-                                            ...boldTextStyling,
-                                            width: "69%",
-                                          }}
-                                        >
-                                          {item?.firstInboxMessage?.subject}
-                                        </Typography>
-                                        <Typography
-                                          sx={{
-                                            ...boldTextStyling,
-                                            width: "10%",
-                                          }}
-                                        >
-                                          {item?.firstInboxMessage?.createdAt &&
-                                            new Date(
-                                              item.firstInboxMessage.createdAt
-                                            ).toLocaleString("en-US", {
-                                              month: "numeric",
-                                              day: "numeric",
-                                              year: "numeric",
-                                              hour: "2-digit",
-                                              minute: "2-digit",
-                                              hour12: false,
-                                            })}
-                                        </Typography>
-                                      </Box>
+                                          <Email
+                                            sx={{
+                                              color: Colors.SKY_BLUE,
+                                              fontSize: "20px",
+                                            }}
+                                          />
+                                          <Typography
+                                            sx={{
+                                              ...boldTextStyling,
+                                              width: "18%",
+                                            }}
+                                          >
+                                            {item?.firstInboxMessage
+                                              ?.debtorCompanyName || "Composed"}
+                                          </Typography>
+                                          <Typography
+                                            sx={{
+                                              ...boldTextStyling,
+                                              width: "69%",
+                                            }}
+                                          >
+                                            {item?.firstInboxMessage?.subject}
+                                          </Typography>
+                                          <Typography
+                                            sx={{
+                                              ...boldTextStyling,
+                                              width: "10%",
+                                            }}
+                                          >
+                                            {item?.firstInboxMessage
+                                              ?.createdAt &&
+                                              new Date(
+                                                item.firstInboxMessage.createdAt
+                                              ).toLocaleString("en-US", {
+                                                month: "numeric",
+                                                day: "numeric",
+                                                year: "numeric",
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                                hour12: true,
+                                              })}
+                                          </Typography>
+                                        </Box>
+                                      </div>
                                     </div>
                                   </CardContent>
                                 </Box>

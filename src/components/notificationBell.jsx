@@ -131,7 +131,6 @@ const NotificationsBell = ({
 
     socketInstance.on("notify", (arg) => {
       if (arg?.notification?.userId === user?._id) {
-        console.log(arg);
         setNotificationLength(arg?.notificationCount);
         setMissedCallCount(arg?.missCallCount);
         showToast(arg?.notification?.text, "success");
