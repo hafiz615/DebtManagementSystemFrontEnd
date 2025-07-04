@@ -73,7 +73,7 @@ const formatDate = (date) =>
         year: "numeric",
         hour: "2-digit",
         minute: "2-digit",
-        hour12: false,
+        hour12: true,
       })
     : "";
 const getTypeIcon = (type) =>
@@ -200,6 +200,30 @@ export default function EmailTimeline({
                       handlePreviewClick(item?.threadId);
                     }}
                   >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        width: "100%",
+                      }}
+                    >
+                      <div style={{ display: "flex", gap: "10px" }}>
+                        <Typography sx={{ ...S.bold, color: Colors.BLACK }}>
+                          From:
+                        </Typography>
+                        <Typography sx={{ ...S.bold, color: Colors.SKY_BLUE }}>
+                          {item?.firstInboxMessage?.from}
+                        </Typography>
+                      </div>
+                      <div style={{ display: "flex", gap: "10px" }}>
+                        <Typography sx={{ ...S.bold, color: Colors.BLACK }}>
+                          To:
+                        </Typography>
+                        <Typography sx={{ ...S.bold, color: Colors.SKY_BLUE }}>
+                          {item?.firstInboxMessage?.to}
+                        </Typography>
+                      </div>
+                    </div>
                     <Box
                       sx={{
                         ...S.flex,
@@ -207,14 +231,29 @@ export default function EmailTimeline({
                         justifyContent: "space-between",
                       }}
                     >
-                      <Typography sx={{ ...S.bold, width: "18%" }}>
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontSize: FONT_SIZE_MEDIUM,
+                        }}
+                      >
                         {item?.firstInboxMessage?.debtorCompanyName ||
                           "Composed"}
                       </Typography>
-                      <Typography sx={{ ...S.bold, width: "69%" }}>
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontSize: FONT_SIZE_MEDIUM,
+                        }}
+                      >
                         {item?.firstInboxMessage?.subject}
                       </Typography>
-                      <Typography sx={{ ...S.bold, width: "10%" }}>
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontSize: FONT_SIZE_MEDIUM,
+                        }}
+                      >
                         {formatDate(item?.firstInboxMessage?.createdAt)}
                       </Typography>
                     </Box>
