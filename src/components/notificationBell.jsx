@@ -49,7 +49,11 @@ import emailSound from "../../src/assets/emailNotification.mp3";
 import smsSound from "../../src/assets/smsNotification.mp3";
 import taskSound from "../../src/assets/task.mp3";
 
-const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
+const NotificationsBell = ({
+  notificationsLength,
+  setNotificationLength,
+  setMissedCallCount,
+}) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [creditors, setCreditors] = useState([]);
@@ -127,7 +131,9 @@ const NotificationsBell = ({ notificationsLength, setNotificationLength }) => {
 
     socketInstance.on("notify", (arg) => {
       if (arg?.notification?.userId === user?._id) {
+        console.log(arg);
         setNotificationLength(arg?.notificationCount);
+        setMissedCallCount(arg?.missCallCount);
         showToast(arg?.notification?.text, "success");
         getNotificationsCount();
 
