@@ -316,10 +316,7 @@ function VoiceMail() {
                           borderRadius: "10px",
                         }}
                       >
-                        <source
-                          src={item?.callRecordingSid}
-                          type="audio/mpeg"
-                        />
+                        <source src={item?.voicemailUrl} type="audio/mpeg" />
                         Your browser does not support the audio element.
                       </audio>
                     </div>
