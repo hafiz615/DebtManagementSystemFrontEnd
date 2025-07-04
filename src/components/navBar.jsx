@@ -12,12 +12,12 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useSelector } from "react-redux";
 import NotificationsBell from "./notificationBell";
 import MissedCalls from "./missedCalls";
-import { Device } from "@twilio/voice-sdk";
 
 export default function NavBar({ onClick }) {
   const navigate = useNavigate();
   const drawerOpen = useSelector((state) => state.drawer.open);
   const [notificationsLength, setNotificationLength] = React.useState(0);
+  const [missedCallCount, setMissedCallCount] = React.useState(0);
 
   const deleteAllCookies = () => {
     const cookies = document.cookie.split(";");
@@ -112,10 +112,14 @@ export default function NavBar({ onClick }) {
                 justifyContent: "flex-end",
               }}
             >
-              <MissedCalls />
+              <MissedCalls
+                missedCallCount={missedCallCount}
+                setMissedCallCount={setMissedCallCount}
+              />
               <NotificationsBell
                 notificationsLength={notificationsLength}
                 setNotificationLength={setNotificationLength}
+                setMissedCallCount={setMissedCallCount}
               />
 
               <Tooltip title="logout" placement="top-end">
