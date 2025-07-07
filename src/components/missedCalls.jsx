@@ -146,7 +146,16 @@ const MissedCalls = ({ missedCallCount, setMissedCallCount }) => {
                         fontWeight: "600",
                       }}
                     >
-                      {missedCalls?.callId?.callStartTime}
+                      {new Date(
+                        missedCalls?.callId?.callStartTime
+                      ).toLocaleString("en-US", {
+                        month: "numeric",
+                        day: "numeric",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
                     </Typography>
                   </div>
 
