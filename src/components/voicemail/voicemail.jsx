@@ -224,7 +224,7 @@ function VoiceMail() {
           >
             <CircularProgress sx={{ color: Colors.SKY_BLUE }} size={70} />
           </Grid>
-        ) : voiceMailData?.length === 0 ? (
+        ) : voiceMailData?.voiceMails?.length === 0 ? (
           <Grid
             container
             sx={{
@@ -316,14 +316,11 @@ function VoiceMail() {
                           borderRadius: "10px",
                         }}
                       >
-                        <source
-                          src={item?.callRecordingSid}
-                          type="audio/mpeg"
-                        />
+                        <source src={item?.voicemailUrl} type="audio/mpeg" />
                         Your browser does not support the audio element.
                       </audio>
                     </div>
-                    <Tooltip
+                    {/* <Tooltip
                       title="View transcript and summary"
                       placement="top"
                     >
@@ -341,7 +338,7 @@ function VoiceMail() {
                           <Description sx={{ color: Colors.SKY_BLUE }} />
                         )}
                       </IconButton>
-                    </Tooltip>
+                    </Tooltip> */}
                     <MuiModels
                       disabled={item?.caseId}
                       show="saveCallInCase"

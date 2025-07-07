@@ -23,7 +23,7 @@ export default function AddTask({
 }) {
   const initialDueDate = data?.dueDate
     ? dayjs(data.dueDate).format("YYYY-MM-DD")
-    : "";
+    : dayjs().format("YYYY-MM-DD");
   const [loading, setLoading] = useState(false);
   const [userArray, setUserArray] = useState([]);
   const [caseOwnerId, setCaseOwnerId] = useState(data?.assigneeId || "");
@@ -291,7 +291,7 @@ export default function AddTask({
       </div>
       <div style={{ marginTop: "1.5em", float: "right" }}>
         <TextButton
-          buttonText={show === "editTask" ? "Edit" : "Save"}
+          buttonText={"Save"}
           height="2rem"
           width="8rem"
           onClick={handleTasksData}
