@@ -320,7 +320,7 @@ function VoiceMail() {
                         Your browser does not support the audio element.
                       </audio>
                     </div>
-                    <Tooltip
+                    {/* <Tooltip
                       title="View transcript and summary"
                       placement="top"
                     >
@@ -338,7 +338,7 @@ function VoiceMail() {
                           <Description sx={{ color: Colors.SKY_BLUE }} />
                         )}
                       </IconButton>
-                    </Tooltip>
+                    </Tooltip> */}
                     <MuiModels
                       disabled={item?.caseId}
                       show="saveCallInCase"
