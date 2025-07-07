@@ -224,7 +224,7 @@ function VoiceMail() {
           >
             <CircularProgress sx={{ color: Colors.SKY_BLUE }} size={70} />
           </Grid>
-        ) : voiceMailData?.length === 0 ? (
+        ) : voiceMailData?.voiceMails?.length === 0 ? (
           <Grid
             container
             sx={{
