@@ -69,7 +69,11 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
   ];
 
   const handleDateChange = (e) => setDate(e.target.value);
-  const handleReferenceId = (e) => setReferenceId(e.target.value) || "";
+  const handleReferenceId = (e) => {
+    const value = e.target.value;
+    const cleanedValue = value.replace(/[^a-zA-Z0-9 ]/g, "");
+    setReferenceId(cleanedValue);
+  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -124,15 +128,23 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
   };
 
   const handleCheckboxChange = (index, item) => {
-    setCheckboxStates((prevState) => ({
-      ...prevState,
-      [index]: !prevState[index],
-    }));
-    setCheckedPayments((prevItems) =>
-      checkboxStates[index]
-        ? prevItems?.filter((checkedItem) => checkedItem.id !== item._id)
-        : [...prevItems, item]
-    );
+    setCheckboxStates((prevState) => {
+      const newChecked = !prevState[index];
+      setCheckedPayments((prevItems) => {
+        if (newChecked) {
+          return [...prevItems, item];
+        } else {
+          return prevItems.filter(
+            (checkedItem) => checkedItem._id !== item._id
+          );
+        }
+      });
+
+      return {
+        ...prevState,
+        [index]: newChecked,
+      };
+    });
   };
 
   const getUpcommingPayments = async () => {
@@ -156,8 +168,19 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
   }, [amount, checkboxStates]);
 
   const formatCurrency = (value) => {
-    if (!value) return `$${new Intl.NumberFormat("en-US").format(0)}`;
-    return `$${new Intl.NumberFormat("en-US").format(value)}`;
+    if (value === "") return "";
+    const strValue = value.toString();
+    const parts = strValue.split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
+  };
+
+  const handleChange = (e) => {
+    const input = e.target.value.replace(/[^0-9.]/g, "");
+    const regex = /^\d*\.?\d{0,2}$/;
+    if (input === "" || regex.test(input)) {
+      setAmount(input);
+    }
   };
 
   const isFormValid = () => {
@@ -225,12 +248,15 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
           <input
             id="amount"
             type="text"
-            value={formatCurrency(amount)}
-            onChange={(e) =>
-              setAmount(Number(e.target.value.replace(/[^0-9]/g, "")))
-            }
-            placeholder="Enter Amount"
-            style={textFieldStyling}
+            value={amount ? `$${formatCurrency(amount)}` : ""}
+            onChange={handleChange}
+            placeholder="$0.00"
+            style={{
+              padding: "8px",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+              ...textFieldStyling,
+            }}
           />
         </div>
         <div style={{ width: "32%", display: "flex", flexDirection: "column" }}>
@@ -244,7 +270,11 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
             readOnly
             id="Selected Amount"
             type="text"
-            value={formatCurrency(totalSelectedAmount)}
+            value={
+              totalSelectedAmount
+                ? `$${formatCurrency(totalSelectedAmount)}`
+                : ""
+            }
             placeholder="Selected Amount"
             style={textFieldStyling}
           />
@@ -271,7 +301,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
             readOnly
             id="commission"
             type="text"
-            value={formatCurrency(commission)}
+            value={commission ? `$${formatCurrency(commission)}` : ""}
             placeholder="Commission"
             style={textFieldStyling}
           />
