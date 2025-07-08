@@ -32,6 +32,7 @@ import {
   FONT_SIZE_LARGE,
   FONT_SIZE_MEDIUM,
   FONT_SIZE_SMALL,
+  TEXT_EDITOR_KEY,
 } from "../../constants/appConstants";
 import { isEmpty } from "lodash";
 import {
@@ -44,6 +45,7 @@ import AttorneyDetail from "./attorneyDetail";
 import OtherCreditors from "./otherCreditors";
 import PaymentPlan from "./paymentPlan";
 import EmailTimeline from "./emailTimeline";
+import { Editor } from "@tinymce/tinymce-react";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -578,32 +580,34 @@ export default function CaseById({
                 >
                   <Box sx={style}>
                     <Typography
-                      id="modal-modal-title"
-                      variant="h6"
-                      component="h2"
-                      align="center"
+                      sx={{
+                        fontFamily: "Nunito",
+                        textAlign: "center",
+                        mb: "10px",
+                        fontWeight: "bold",
+                      }}
                     >
                       Add Case Notes
                     </Typography>
-                    <TextField
-                      fullWidth
-                      multiline
-                      rows={3}
-                      variant="outlined"
-                      margin="normal"
-                      name="notes"
-                      value={addTaskModal}
-                      onChange={handleChangeModal}
-                      sx={{
-                        backgroundColor: "white",
+
+                    <Editor
+                      style={{ margin: "0px !important" }}
+                      apiKey={TEXT_EDITOR_KEY}
+                      init={{
+                        menubar: "false",
+                        toolbar:
+                          "formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat",
+                        height: 250,
                       }}
-                      placeholder="Please enter case notes"
+                      value={addTaskModal}
+                      onEditorChange={(content) => handleChangeModal(content)}
                     />
                     <div
                       style={{
                         display: "flex",
                         justifyContent: "flex-end",
                         gap: "10px",
+                        marginTop: "1rem",
                       }}
                     >
                       <TextButton
