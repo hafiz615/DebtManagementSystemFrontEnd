@@ -260,8 +260,8 @@ function CaseDetail() {
     setValue(newValue);
   };
 
-  const handleChangeModal = (e) => {
-    setAddTaskModal(e.target.value);
+  const handleChangeModal = (content) => {
+    setAddTaskModal(content);
   };
 
   const handleClicked = async () => {
