@@ -134,8 +134,8 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
         if (newChecked) {
           return [...prevItems, item];
         } else {
-          return prevItems.filter(
-            (checkedItem) => checkedItem._id !== item._id
+          return prevItems?.filter(
+            (checkedItem) => checkedItem?._id !== item?._id
           );
         }
       });
