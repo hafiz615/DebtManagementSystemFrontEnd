@@ -5,6 +5,9 @@ import {
   Checkbox,
   CircularProgress,
   IconButton,
+  Tab,
+  Tabs,
+  styled,
 } from "@mui/material";
 import Button from "./button";
 import { Colors } from "../config/default";
@@ -40,10 +43,46 @@ const textFieldStyling = {
   width: "100%",
   fontFamily: "Nunito",
 };
+
+const AntTabs = styled(Tabs)({
+  borderBottom: "1px solid #e8e8e8",
+  "& .MuiTabs-indicator": {
+    backgroundColor: Colors.SKY_BLUE,
+  },
+});
+
+const AntTab = styled((props) => <Tab disableRipple {...props} />)(
+  ({ theme }) => ({
+    textTransform: "none",
+    minWidth: 0,
+    [theme.breakpoints.up("sm")]: {
+      minWidth: 0,
+      fontSize: "14px !important",
+    },
+    [theme.breakpoints.up("xs")]: {
+      fontSize: FONT_SIZE_SMALL,
+    },
+    fontWeight: "500",
+    color: Colors.DARK_GRAY,
+    fontFamily: ["Nunito"].join(","),
+    "&:hover": {
+      color: Colors.SKY_BLUE,
+      opacity: 1,
+    },
+    "&.Mui-selected": {
+      color: Colors.SKY_BLUE,
+      fontWeight: "500",
+    },
+    "&.Mui-focusVisible": {
+      backgroundColor: "#d1eaff",
+    },
+  })
+);
+
 function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
   const [selectedValue, setSelectedValue] = useState("Wire");
+  const [activeTab, setActiveTab] = useState("client");
   const [amount, setAmount] = useState();
-  const [commission, setCommission] = useState(0);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [referenceId, setReferenceId] = useState("");
   const [upcomingPayments, setUpcomingPayments] = useState([]);
@@ -58,9 +97,6 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
   const [currentPaymentPage, setCurrentPaymentPage] = useState(1);
   const [totalPaymentPage, setTotalPaymentPage] = useState();
   const { showToast } = useToast();
-  const totalSelectedAmount =
-    checkedPayments &&
-    checkedPayments?.reduce((sum, item) => sum + (item?.amount || 0), 0);
 
   const menuItems = [
     { label: "Wire", value: "Wire" },
@@ -69,10 +105,15 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
   ];
 
   const handleDateChange = (e) => setDate(e.target.value);
+
   const handleReferenceId = (e) => {
     const value = e.target.value;
     const cleanedValue = value.replace(/[^a-zA-Z0-9 ]/g, "");
     setReferenceId(cleanedValue);
+  };
+
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
   };
 
   const formatDate = (dateString) => {
@@ -89,7 +130,6 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
       debtorId: debtorId,
       transactionIds: checkedPayments?.map((item) => item?._id),
       amount: amount,
-      commission: parseFloat(commission?.toFixed(2)),
       transactionDate: date,
       referenceId: referenceId,
       transactionType: selectedValue,
@@ -104,7 +144,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
       };
       const encryptedData = encrypt(checkParams, REACT_APP_SECURITY_KEY);
       params.data = encryptedData;
-      const AddCheckPaymentRes = await AddCheckPayment(params);
+      const AddCheckPaymentRes = await AddCheckPayment(params, activeTab);
       if (AddCheckPaymentRes?.status === 200) {
         showToast(AddCheckPaymentRes?.data?.message, "success");
         handleClose();
@@ -114,7 +154,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
         showToast(errorMessage, "error");
       }
     } else {
-      const AddManualPaymentRes = await AddManualPayment(params);
+      const AddManualPaymentRes = await AddManualPayment(params, activeTab);
       if (AddManualPaymentRes?.status === 200) {
         showToast(AddManualPaymentRes?.data?.message, "success");
         handleClose();
@@ -130,15 +170,20 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
   const handleCheckboxChange = (index, item) => {
     setCheckboxStates((prevState) => {
       const newChecked = !prevState[index];
-      setCheckedPayments((prevItems) => {
-        if (newChecked) {
-          return [...prevItems, item];
-        } else {
-          return prevItems?.filter(
+
+      const updatedCheckedPayments = newChecked
+        ? [...checkedPayments, item]
+        : checkedPayments.filter(
             (checkedItem) => checkedItem?._id !== item?._id
           );
-        }
-      });
+
+      const totalAmount = updatedCheckedPayments.reduce(
+        (sum, payment) => sum + (Number(payment?.amount) || 0),
+        0
+      );
+
+      setCheckedPayments(updatedCheckedPayments);
+      setAmount(totalAmount);
 
       return {
         ...prevState,
@@ -149,7 +194,11 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
 
   const getUpcommingPayments = async () => {
     setLoadingPayments(true);
-    const res = await GetAllUpcomingPayments(currentPaymentPage, debtorId);
+    const res = await GetAllUpcomingPayments(
+      currentPaymentPage,
+      debtorId,
+      activeTab
+    );
     if (res?.status === 200) {
       let totalPage =
         Math.ceil(res?.data?.data?.transactions?.totalCount / 20) || 0;
@@ -161,11 +210,15 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
 
   useEffect(() => {
     getUpcommingPayments();
-  }, [currentPaymentPage]);
+  }, [currentPaymentPage, activeTab]);
 
   useEffect(() => {
-    setCommission(amount - totalSelectedAmount);
-  }, [amount, checkboxStates]);
+    setCheckedPayments([]);
+    setCheckboxStates({});
+    setAmount(0);
+    setReferenceId("");
+    setDate("");
+  }, [activeTab]);
 
   const formatCurrency = (value) => {
     if (value === "") return "";
@@ -187,7 +240,6 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
     return (
       upcomingPayments?.length > 0 &&
       amount &&
-      commission >= 0 &&
       date &&
       selectedValue &&
       referenceId?.trim() !== ""
@@ -238,7 +290,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
           justifyContent: "space-between",
         }}
       >
-        <div style={{ width: "32%", display: "flex", flexDirection: "column" }}>
+        <div style={{ width: "24%", display: "flex", flexDirection: "column" }}>
           <label
             htmlFor="amount"
             style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
@@ -259,63 +311,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
             }}
           />
         </div>
-        <div style={{ width: "32%", display: "flex", flexDirection: "column" }}>
-          <label
-            htmlFor="Selected Amount"
-            style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
-          >
-            Selected Amount
-          </label>
-          <input
-            readOnly
-            id="Selected Amount"
-            type="text"
-            value={
-              totalSelectedAmount
-                ? `$${formatCurrency(totalSelectedAmount)}`
-                : ""
-            }
-            placeholder="Selected Amount"
-            style={textFieldStyling}
-          />
-        </div>
-        <div style={{ width: "32%", display: "flex", flexDirection: "column" }}>
-          <label
-            htmlFor="commission"
-            style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
-          >
-            Commission*{" "}
-            {commission < 0 && (
-              <span
-                style={{
-                  fontFamily: "Nunito",
-                  color: Colors.ORANGE_COLOR,
-                  fontSize: FONT_SIZE_SMALL,
-                }}
-              >
-                (Commission cannot be In negative)
-              </span>
-            )}
-          </label>
-          <input
-            readOnly
-            id="commission"
-            type="text"
-            value={commission ? `$${formatCurrency(commission)}` : ""}
-            placeholder="Commission"
-            style={textFieldStyling}
-          />
-        </div>
-      </Grid>
-      <Grid
-        container
-        item
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-        }}
-      >
-        <div style={{ width: "32%", display: "flex", flexDirection: "column" }}>
+        <div style={{ width: "24%", display: "flex", flexDirection: "column" }}>
           <label
             htmlFor="referenceId"
             style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
@@ -331,7 +327,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
             style={textFieldStyling}
           />
         </div>
-        <div style={{ width: "32%", display: "flex", flexDirection: "column" }}>
+        <div style={{ width: "24%", display: "flex", flexDirection: "column" }}>
           <label
             htmlFor="date"
             style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
@@ -347,7 +343,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
             style={textFieldStyling}
           />
         </div>
-        <div style={{ width: "32%", display: "flex", flexDirection: "column" }}>
+        <div style={{ width: "24%", display: "flex", flexDirection: "column" }}>
           <label
             htmlFor="paymentType"
             style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
@@ -368,6 +364,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
           />
         </div>
       </Grid>
+
       <Grid
         container
         item
@@ -503,6 +500,38 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
           </>
         )}
       </Grid>
+      <AntTabs
+        value={activeTab}
+        onChange={handleTabChange}
+        aria-label="ant example"
+        variant="scrollable"
+        scrollButtons="auto"
+        sx={{
+          width: "100%",
+          borderTopLeftRadius: "10px",
+          borderTopRightRadius: "10px",
+        }}
+      >
+        <AntTab
+          sx={{
+            bgcolor: Colors.WHITE,
+            fontWeight: "600",
+            height: "3.5rem",
+          }}
+          label="Client"
+          value="client"
+        />
+
+        <AntTab
+          sx={{
+            bgcolor: Colors.WHITE,
+            fontWeight: "600",
+            height: "3.5rem",
+          }}
+          label="Creditor"
+          value="creditor"
+        />
+      </AntTabs>
 
       <Grid item xs={12} sx={{ mb: "1rem" }}>
         {loadingPayments ? (
