@@ -93,11 +93,9 @@ export default function EmailTimeline({
   loading,
   setLoading,
 }) {
-  const [fileUrl, setFileUrl] = useState();
   const [threadMessages, setThreadMessages] = useState([]);
   const [expandedEmails, setExpandedEmails] = useState({});
   const [notificationTemplate, setNotificationTemplate] = useState();
-  const [showViewer, setShowViewer] = useState(false);
   const [showSendEmailCase, setShowSendEmailCase] = useState(false);
   const sendEmailRef = useRef(null);
 
@@ -509,52 +507,6 @@ export default function EmailTimeline({
               </TimelineItem>
             ))}
       </Timeline>
-      {showViewer && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.8)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            padding: "1rem",
-          }}
-        >
-          <Button
-            onClick={() => setShowViewer(false)}
-            style={{
-              position: "fixed",
-              top: "5rem",
-              right: "1rem",
-              bottom: 0,
-              backgroundColor: "white",
-              border: "none",
-              borderRadius: "4px",
-              padding: "0.5rem",
-              cursor: "pointer",
-              zIndex: 1100,
-              height: "2rem",
-            }}
-          >
-            Close
-          </Button>
-          <iframe
-            src={fileUrl}
-            style={{
-              width: "100%",
-              height: "100%",
-              border: "none",
-              position: "relative",
-            }}
-          />
-        </div>
-      )}
     </>
   );
 }

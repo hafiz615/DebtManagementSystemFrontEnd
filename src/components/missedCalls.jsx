@@ -12,7 +12,7 @@ import {
 import { Colors } from "../config/default";
 import ScrollbarStyles from "./customScroll";
 import { useNavigate } from "react-router-dom";
-import { FONT_SIZE_LARGE } from "../constants/appConstants";
+import { FONT_SIZE_LARGE, FONT_SIZE_MEDIUM } from "../constants/appConstants";
 import { GetMissedCalls } from "../services/services";
 import PhoneMissedIcon from "@mui/icons-material/PhoneMissed";
 import { formatDateString, truncateText } from "../common";
@@ -142,7 +142,7 @@ const MissedCalls = ({ missedCallCount, setMissedCallCount }) => {
                     <Typography
                       sx={{
                         fontFamily: "Nunito",
-                        fontSize: FONT_SIZE_LARGE,
+                        fontSize: FONT_SIZE_MEDIUM,
                         fontWeight: "600",
                       }}
                     >
@@ -172,26 +172,39 @@ const MissedCalls = ({ missedCallCount, setMissedCallCount }) => {
                         sx={{
                           fontFamily: "Nunito",
                           fontSize: FONT_SIZE_LARGE,
+                          fontWeight: "600",
                         }}
                       >
                         <Tooltip title={"Call From"} placement="top-end">
-                          {missedCalls?.callId?.callFrom}
+                          {truncateText(missedCalls?.callId?.calleeName, 15) ||
+                            "--"}
                         </Tooltip>
                       </Typography>
                       <Typography
                         sx={{
                           fontFamily: "Nunito",
                           fontSize: FONT_SIZE_LARGE,
-                          fontWeight: "600",
                         }}
                       >
-                        <Tooltip title={"Caller Name"} placement="top-end">
-                          {truncateText(missedCalls?.callId?.callerName, 15) ||
-                            "--"}
+                        <Tooltip title={"Call From"} placement="top-end">
+                          {missedCalls?.callId?.callFrom}
                         </Tooltip>
                       </Typography>
                     </div>
                     <div>
+                      <Typography
+                        sx={{
+                          fontFamily: "Nunito",
+                          fontSize: FONT_SIZE_LARGE,
+                          fontWeight: "600",
+                          textAlign: "right",
+                        }}
+                      >
+                        <Tooltip title={"Call To"} placement="top-end">
+                          {truncateText(missedCalls?.callId?.callerName, 15) ||
+                            "--"}
+                        </Tooltip>
+                      </Typography>
                       <Typography
                         sx={{
                           fontFamily: "Nunito",
