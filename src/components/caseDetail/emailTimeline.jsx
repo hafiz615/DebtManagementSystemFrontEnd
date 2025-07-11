@@ -291,44 +291,85 @@ export default function EmailTimeline({
                           <ChevronRight sx={{ fontSize: 20 }} />
                         </IconButton>
                         <Box sx={{ flex: 1, ...S.nunito }}>
-                          <Box sx={S.flex}>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              width: "100%",
+                            }}
+                          >
+                            <div style={{ display: "flex", gap: "10px" }}>
+                              <Typography
+                                sx={{ ...S.bold, color: Colors.BLACK }}
+                              >
+                                From:
+                              </Typography>
+                              <Typography
+                                sx={{ ...S.bold, color: Colors.SKY_BLUE }}
+                              >
+                                {email?.from}
+                              </Typography>
+                            </div>
+                            <div style={{ display: "flex", gap: "10px" }}>
+                              <Typography
+                                sx={{ ...S.bold, color: Colors.BLACK }}
+                              >
+                                To:
+                              </Typography>
+                              <Typography
+                                sx={{ ...S.bold, color: Colors.SKY_BLUE }}
+                              >
+                                {email?.to}
+                              </Typography>
+                            </div>
+                          </div>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              width: "100%",
+                            }}
+                          >
+                            <div style={{ display: "flex" }}>
+                              <Typography
+                                variant="subtitle2"
+                                sx={{
+                                  fontWeight: 600,
+                                  mr: 1,
+                                  gap: ".5rem",
+                                  ...S.flex,
+                                  ...S.nunito,
+                                }}
+                              >
+                                {email?.creditorCompanyName
+                                  ? email?.creditorCompanyName
+                                  : email?.type === "received"
+                                  ? "Received"
+                                  : "Composed"}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                                sx={{
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                  ...S.nunito,
+                                }}
+                              >
+                                -- {email?.subject}
+                              </Typography>
+                            </div>
+
                             <Typography
-                              variant="subtitle2"
-                              sx={{
-                                fontWeight: 600,
-                                mr: 1,
-                                gap: ".5rem",
-                                ...S.flex,
-                                ...S.nunito,
-                              }}
-                            >
-                              {email?.creditorCompanyName
-                                ? email?.creditorCompanyName
-                                : email?.type === "received"
-                                ? "Received"
-                                : "Composed"}
-                            </Typography>
-                            <Typography
-                              variant="body2"
+                              variant="caption"
                               color="text.secondary"
-                              sx={{
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                whiteSpace: "nowrap",
-                                ...S.nunito,
-                              }}
+                              sx={{ ...S.nunito }}
                             >
-                              -- {email?.subject}
+                              {formatDate(email?.updatedAt)}
                             </Typography>
                           </Box>
                         </Box>
-                        <Typography
-                          variant="caption"
-                          color="text.secondary"
-                          sx={{ mr: 2, ...S.nunito }}
-                        >
-                          {formatDate(email?.updatedAt)}
-                        </Typography>
                       </Box>
                     ) : (
                       <Box sx={S.nunito}>
