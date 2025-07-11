@@ -20,6 +20,7 @@ export default function TransactionDetails({
   setCurrentPaymentPage,
   totalPaymentPage,
   getPaymentPlan,
+  accountsResponse,
 }) {
   const typographyHeadingStyle = {
     fontSize: "12px",
@@ -116,6 +117,7 @@ export default function TransactionDetails({
               caseData={caseData}
               GetCaseDetails={GetCaseDetails}
               getPaymentPlan={getPaymentPlan}
+              accountsResponse={accountsResponse}
             />
             <TransactionRow
               debtor={debtor}
@@ -127,6 +129,7 @@ export default function TransactionDetails({
               caseData={caseData}
               GetCaseDetails={GetCaseDetails}
               getPaymentPlan={getPaymentPlan}
+              accountsResponse={accountsResponse}
             />
           </Grid>
           <div
