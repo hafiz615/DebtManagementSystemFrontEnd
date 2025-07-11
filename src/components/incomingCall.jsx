@@ -42,6 +42,7 @@ export default function IncomingCall() {
   const [callDuration, setCallDuration] = useState(0);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [callerName, setCallerName] = useState("");
   const [allCases, setAllCases] = useState({});
   const [selected, setSelected] = useState([]);
   const [selectedCase, setSelectedCase] = useState();
@@ -116,6 +117,14 @@ export default function IncomingCall() {
     }
   };
 
+  const getCallerName = async (number) => {
+    const res = await FindClientCreditorNumber(number);
+    if (res?.status === 200) {
+      const data = res?.data?.data;
+      setCallerName(data?.name);
+    }
+  };
+
   const playRingtone = () => {
     const audio = document.getElementById("ringtone");
     if (audio) {
@@ -169,6 +178,7 @@ export default function IncomingCall() {
       !isModalOpen &&
       !hasRejected
     ) {
+      getCallerName(call?.options?.callerNumber);
       setCaseMenuActive(false);
       playRingtone();
       setIsModalOpen(true);
@@ -417,9 +427,7 @@ export default function IncomingCall() {
                 {formatTime(callDuration)}
               </Typography>
             )}
-            <Typography sx={nameNumberStyle}>
-              {call?.options?.remoteCallerName || "Unknown Caller"}
-            </Typography>
+            <Typography sx={nameNumberStyle}>{callerName || "--"}</Typography>
             <Typography sx={nameNumberStyle}>
               {call?.options?.remoteCallerNumber?.startsWith("+1")
                 ? call.options.remoteCallerNumber

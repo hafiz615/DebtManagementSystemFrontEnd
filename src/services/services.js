@@ -1677,7 +1677,7 @@ export const GetRelatedPayments = async (id) => {
 export const AddCheckPayment = async (payload, type) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/seemlesschex/createCheck&type=${type}`,
+      BASE_URL + `/v1/seemlesschex/createCheck?type=${type}`,
       payload,
       setHeaders()
     );
