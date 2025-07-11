@@ -529,10 +529,11 @@ export const Logout = async () => {
   }
 };
 
-export const RetryAuth = async (id) => {
+export const RetryAuth = async (id, payload) => {
   try {
-    return await axios.get(
+    return await axios.post(
       BASE_URL + `/v1/debtor/retryAuth/${id}`,
+      payload,
       setHeaders()
     );
   } catch (error) {
@@ -540,10 +541,11 @@ export const RetryAuth = async (id) => {
   }
 };
 
-export const RetryCapture = async (id) => {
+export const RetryCapture = async (id, payload) => {
   try {
-    return await axios.get(
+    return await axios.post(
       BASE_URL + `/v1/debtor/retryCapture/${id}`,
+      payload,
       setHeaders()
     );
   } catch (error) {
