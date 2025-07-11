@@ -178,7 +178,7 @@ export default function IncomingCall() {
       !isModalOpen &&
       !hasRejected
     ) {
-      getCallerName(call?.options?.callerNumber);
+      getCallerName(call?.options?.remoteCallerNumber);
       setCaseMenuActive(false);
       playRingtone();
       setIsModalOpen(true);
@@ -197,7 +197,7 @@ export default function IncomingCall() {
       timerRef.current = null;
       setCallDuration(0);
       setCallActive(true);
-      getClientCreditorNumberDetail(call?.options?.callerNumber);
+      getClientCreditorNumberDetail(call?.options?.remoteCallerNumber);
     }
 
     return () => {

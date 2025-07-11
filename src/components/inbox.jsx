@@ -1334,67 +1334,150 @@ function Inbox() {
                                                     fontFamily: "Nunito",
                                                   }}
                                                 >
+                                                  <div
+                                                    style={{
+                                                      display: "flex",
+                                                      justifyContent:
+                                                        "space-between",
+                                                      width: "100%",
+                                                      marginBottom: "10px",
+                                                    }}
+                                                  >
+                                                    <div
+                                                      style={{
+                                                        display: "flex",
+                                                        gap: "10px",
+                                                      }}
+                                                    >
+                                                      <Typography
+                                                        sx={{
+                                                          fontWeight: "bold",
+                                                          color: Colors.BLACK,
+                                                          fontFamily: "Nunito",
+                                                          fontSize:
+                                                            FONT_SIZE_MEDIUM,
+                                                        }}
+                                                      >
+                                                        From:
+                                                      </Typography>
+                                                      <Typography
+                                                        sx={{
+                                                          fontWeight: "bold",
+                                                          color:
+                                                            Colors.SKY_BLUE,
+                                                          fontFamily: "Nunito",
+                                                          fontSize:
+                                                            FONT_SIZE_MEDIUM,
+                                                        }}
+                                                      >
+                                                        {email?.from}
+                                                      </Typography>
+                                                    </div>
+                                                    <div
+                                                      style={{
+                                                        display: "flex",
+                                                        gap: "10px",
+                                                      }}
+                                                    >
+                                                      <Typography
+                                                        sx={{
+                                                          fontWeight: "bold",
+                                                          color: Colors.BLACK,
+                                                          fontFamily: "Nunito",
+                                                          fontSize:
+                                                            FONT_SIZE_MEDIUM,
+                                                        }}
+                                                      >
+                                                        To:
+                                                      </Typography>
+                                                      <Typography
+                                                        sx={{
+                                                          fontWeight: "bold",
+                                                          color:
+                                                            Colors.SKY_BLUE,
+                                                          fontFamily: "Nunito",
+                                                          fontSize:
+                                                            FONT_SIZE_MEDIUM,
+                                                        }}
+                                                      >
+                                                        {email?.to}
+                                                      </Typography>
+                                                    </div>
+                                                  </div>
                                                   <Box
                                                     sx={{
                                                       display: "flex",
                                                       alignItems: "center",
                                                       fontFamily: "Nunito",
+                                                      justifyContent:
+                                                        "space-between",
+                                                      width: "100%",
                                                     }}
                                                   >
-                                                    <Typography
-                                                      variant="subtitle2"
-                                                      sx={{
-                                                        fontWeight: 600,
-                                                        mr: 1,
-                                                        gap: ".5rem",
+                                                    <div
+                                                      style={{
                                                         display: "flex",
-                                                        alignItems: "center",
-                                                        fontFamily: "Nunito",
                                                       }}
                                                     >
-                                                      {email?.debtorCompanyName
-                                                        ? email?.debtorCompanyName
-                                                        : email?.type ===
-                                                          "received"
-                                                        ? "Received"
-                                                        : "Composed"}
-                                                      {getTypeIcon(email?.type)}
-                                                    </Typography>
+                                                      <Typography
+                                                        variant="subtitle2"
+                                                        sx={{
+                                                          fontWeight: 600,
+                                                          mr: 1,
+                                                          gap: ".5rem",
+                                                          display: "flex",
+                                                          alignItems: "center",
+                                                          fontFamily: "Nunito",
+                                                        }}
+                                                      >
+                                                        {email?.debtorCompanyName
+                                                          ? email?.debtorCompanyName
+                                                          : email?.type ===
+                                                            "received"
+                                                          ? "Received"
+                                                          : "Composed"}
+                                                        {getTypeIcon(
+                                                          email?.type
+                                                        )}
+                                                      </Typography>
+                                                      <Typography
+                                                        variant="body2"
+                                                        color="text.secondary"
+                                                        sx={{
+                                                          overflow: "hidden",
+                                                          textOverflow:
+                                                            "ellipsis",
+                                                          whiteSpace: "nowrap",
+                                                          fontFamily: "Nunito",
+                                                        }}
+                                                      >
+                                                        -- {email?.subject}
+                                                      </Typography>
+                                                    </div>
                                                     <Typography
-                                                      variant="body2"
+                                                      variant="caption"
                                                       color="text.secondary"
                                                       sx={{
-                                                        overflow: "hidden",
-                                                        textOverflow:
-                                                          "ellipsis",
-                                                        whiteSpace: "nowrap",
                                                         fontFamily: "Nunito",
                                                       }}
                                                     >
-                                                      -- {email?.subject}
+                                                      {email?.updatedAt &&
+                                                        new Date(
+                                                          email?.updatedAt
+                                                        ).toLocaleString(
+                                                          "en-US",
+                                                          {
+                                                            month: "numeric",
+                                                            day: "numeric",
+                                                            year: "numeric",
+                                                            hour: "2-digit",
+                                                            minute: "2-digit",
+                                                            hour12: true,
+                                                          }
+                                                        )}
                                                     </Typography>
                                                   </Box>
                                                 </Box>
-                                                <Typography
-                                                  variant="caption"
-                                                  color="text.secondary"
-                                                  sx={{
-                                                    mr: 2,
-                                                    fontFamily: "Nunito",
-                                                  }}
-                                                >
-                                                  {email?.updatedAt &&
-                                                    new Date(
-                                                      email?.updatedAt
-                                                    ).toLocaleString("en-US", {
-                                                      month: "numeric",
-                                                      day: "numeric",
-                                                      year: "numeric",
-                                                      hour: "2-digit",
-                                                      minute: "2-digit",
-                                                      hour12: true,
-                                                    })}
-                                                </Typography>
                                               </Box>
                                             ) : (
                                               <Box
