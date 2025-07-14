@@ -24,7 +24,12 @@ import { Colors } from "../config/default";
 import MuiModels from "./models";
 import Prompt from "./prompt";
 import { useToast } from "../toast/toastContext";
-import { RetryAuth, RetryCapture, SendPayment } from "../services/services";
+import {
+  GetDebtorAccounts,
+  RetryAuth,
+  RetryCapture,
+  SendPayment,
+} from "../services/services";
 import {
   FONT_SIZE_LARGE,
   FONT_SIZE_SMALL,
@@ -36,6 +41,10 @@ import Dropdown from "./dropdown";
 import ScrollbarStyles from "././customScroll";
 import { AddIcCallOutlined, Paid } from "@mui/icons-material";
 import { Tooltip, colors } from "@mui/material";
+import RetryPayments from "./caseDetail/retryPayments";
+import { useState } from "react";
+import { useEffect } from "react";
+import RetryAuthCapture from "./retryAuthCapture";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -135,7 +144,7 @@ export default function ListTable({
     let result;
     if (arrayName === "failedAuthorizations") {
       result = await RetryAuth(id);
-    } else if (arrayName === "failedPayments") {
+    } else if (arrayName === "failedCaptures") {
       result = await RetryCapture(id);
     }
     if (result?.status === 200) {
@@ -222,7 +231,7 @@ export default function ListTable({
                 )}
                 {generalPermissions?.retryPayment &&
                   (arrayName === "failedAuthorizations" ||
-                    arrayName === "failedPayments") && (
+                    arrayName === "failedCaptures") && (
                     <StyledTableCell
                       align="left"
                       sx={{
@@ -293,6 +302,16 @@ export default function ListTable({
                           arrayName === "successPayments" ||
                           arrayName === "upcomingPayments"
                             ? key !== "status"
+                            : true) &&
+                          (arrayName === "creditorUpcomingPayments" ||
+                          arrayName === "failedAuthorizations" ||
+                          arrayName === "failedCaptures" ||
+                          arrayName === "successAuthorizations" ||
+                          arrayName === "successCaptures" ||
+                          arrayName === "successPayments" ||
+                          arrayName === "upcomingPayments" ||
+                          arrayName === "pendingCheckPayments"
+                            ? key !== "debtorId"
                             : true) &&
                           (arrayName === "upcomingPayments" ||
                           arrayName === "creditorUpcomingPayments"
@@ -428,7 +447,7 @@ export default function ListTable({
                     )}
 
                     {(arrayName === "failedAuthorizations" ||
-                      arrayName === "failedPayments") && (
+                      arrayName === "failedCaptures") && (
                       <StyledTableCell
                         sx={{
                           display: "flex",
@@ -437,13 +456,19 @@ export default function ListTable({
                         }}
                       >
                         {generalPermissions?.retryPayment && (
-                          <Prompt
-                            heading="Retry"
-                            text={`Are you sure you want to Retry?`}
-                            handlePayment={handlePayment}
-                            item={row?.id}
-                            showPayment={true}
-                          />
+                          <>
+                            <span
+                              style={{ display: "inline-block" }}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <RetryAuthCapture
+                                itemRow={row?.id}
+                                debtorId={row?.debtorId}
+                                getHomeData={getHomeData}
+                                arrayName={arrayName}
+                              />
+                            </span>
+                          </>
                         )}
                       </StyledTableCell>
                     )}

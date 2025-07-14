@@ -80,7 +80,8 @@ export default function AccordionUsage({
         arrayName === "failedAuthorizations"
           ? item?.failedReasonAuthorization || "-"
           : item?.failedReasonCaptured || "-",
-      status: item.status || "-",
+      status: item?.status || "-",
+      debtorId: item?.debtorId || "-",
     }));
 
     if (!isEqual(generatedData, rowArray)) {

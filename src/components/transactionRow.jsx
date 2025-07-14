@@ -1,15 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import { isEmpty } from "lodash";
 import { useParams } from "react-router-dom";
 import { Colors } from "../config/default";
 import { Typography, Box, IconButton, Tooltip } from "@mui/material";
+import {} from "@mui/material";
+
 import { formatDollarAmount } from "../common";
 import { useToast } from "../toast/toastContext";
 import Prompt from "./prompt";
-import { RetryAuth, RetryCapture, SendPayment } from "../services/services";
+import { SendPayment } from "../services/services";
 import { useSelector } from "react-redux";
 import { Paid } from "@mui/icons-material";
 import MuiModels from "././models";
+import RetryPayments from "./caseDetail/retryPayments";
 
 function TransactionRow({
   debtor,
@@ -21,6 +24,7 @@ function TransactionRow({
   caseData,
   GetCaseDetails,
   getPaymentPlan,
+  accountsResponse,
 }) {
   const generalPermissions = useSelector(
     (state) => state?.permissions?.permissions?.generalPermissions
@@ -34,25 +38,6 @@ function TransactionRow({
 
   const capitalizeFirstLetter = (string) =>
     string.charAt(0).toUpperCase() + string.slice(1);
-
-  const handleRetry = async (item) => {
-    let response;
-    if (item?.type === "authorization" && item?.authorized === "Failed") {
-      response = await RetryAuth(item?.id);
-    } else if (item?.type === "capture" && item?.captured === "Failed") {
-      response = await RetryCapture(item?.id);
-    }
-    if (response?.status === 200) {
-      showToast(response?.data?.message, "success");
-      GetCasePaymentDetails && GetCasePaymentDetails(true);
-      getCommissionPayments && getCommissionPayments();
-    } else {
-      showToast(
-        response?.response?.data?.message || response?.response?.data?.message,
-        "error"
-      );
-    }
-  };
 
   const sendPaymentCreditor = async (id) => {
     const sendPaymentRes = await SendPayment(id);
@@ -214,13 +199,14 @@ function TransactionRow({
                   }}
                 >
                   {generalPermissions?.retryPayment && (
-                    <Prompt
-                      heading="Retry"
-                      text={`Are you sure you want to Retry?`}
-                      handleRetry={handleRetry}
-                      item={item}
-                      show={true}
-                    />
+                    <>
+                      <RetryPayments
+                        accountsResponse={accountsResponse}
+                        item={item}
+                        GetCasePaymentDetails={GetCasePaymentDetails}
+                        getCommissionPayments={getCommissionPayments}
+                      />
+                    </>
                   )}
                 </Box>
               ) : (

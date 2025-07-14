@@ -529,10 +529,11 @@ export const Logout = async () => {
   }
 };
 
-export const RetryAuth = async (id) => {
+export const RetryAuth = async (id, payload) => {
   try {
-    return await axios.get(
+    return await axios.post(
       BASE_URL + `/v1/debtor/retryAuth/${id}`,
+      payload,
       setHeaders()
     );
   } catch (error) {
@@ -540,10 +541,11 @@ export const RetryAuth = async (id) => {
   }
 };
 
-export const RetryCapture = async (id) => {
+export const RetryCapture = async (id, payload) => {
   try {
-    return await axios.get(
+    return await axios.post(
       BASE_URL + `/v1/debtor/retryCapture/${id}`,
+      payload,
       setHeaders()
     );
   } catch (error) {
@@ -1515,10 +1517,10 @@ export const GetAllCasesTasks = async (id) => {
     return error;
   }
 };
-export const AddManualPayment = async (payload) => {
+export const AddManualPayment = async (payload, type) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/debtor/addManualPayment`,
+      BASE_URL + `/v1/debtor/addManualPayment?type=${type}`,
       payload,
       setHeaders()
     );
@@ -1549,11 +1551,11 @@ export const handleDeleteFile = async (itemKey, caseDataId, type) => {
     return error;
   }
 };
-export const GetAllUpcomingPayments = async (page, id) => {
+export const GetAllUpcomingPayments = async (page, id, type) => {
   try {
     return await axios.get(
       BASE_URL +
-        `/v1/payment/getAllUpcomingPayments/${id}?page=${page}&limit=10`,
+        `/v1/payment/getAllUpcomingPayments/${id}?page=${page}&limit=10&type=${type}`,
       setHeaders()
     );
   } catch (error) {
@@ -1674,10 +1676,10 @@ export const GetRelatedPayments = async (id) => {
     return error;
   }
 };
-export const AddCheckPayment = async (payload) => {
+export const AddCheckPayment = async (payload, type) => {
   try {
     return await axios.post(
-      BASE_URL + "/v1/seemlesschex/createCheck",
+      BASE_URL + `/v1/seemlesschex/createCheck?type=${type}`,
       payload,
       setHeaders()
     );

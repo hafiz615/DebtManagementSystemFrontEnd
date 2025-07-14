@@ -67,7 +67,14 @@ export default function Transactions({
         </Tabs>
       </Box>
       <div style={{ height: "60vh" }}>
-        {value === "Create Plan" ? <PaymentPlan caseData={caseData} /> : ""}
+        {value === "Create Plan" ? (
+          <PaymentPlan
+            caseData={caseData}
+            accountsResponse={accountsResponse}
+          />
+        ) : (
+          ""
+        )}
         {value === "Accounts" ? (
           <PaymentsAccounts
             caseData={caseData?.debtor}

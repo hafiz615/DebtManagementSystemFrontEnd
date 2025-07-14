@@ -23,8 +23,6 @@ import Prompt from "../prompt";
 import { useToast } from "../../toast/toastContext";
 
 export default function PaymentsAccounts({
-  GetCaseDetails,
-  caseDataId,
   accountsResponse,
   GetDebtorAccounts,
 }) {

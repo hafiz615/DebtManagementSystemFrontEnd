@@ -44,7 +44,7 @@ import { useToast } from "../../toast/toastContext";
 import { Edit } from "@mui/icons-material";
 import { Select, MenuItem } from "@mui/material";
 
-export default function PaymentPlan({ caseData }) {
+export default function PaymentPlan({ caseData, accountsResponse }) {
   const [data, setData] = useState();
   const [tabs, setTabs] = useState([]);
   const [activePayment, setActivePayment] = useState(1);
@@ -1165,6 +1165,7 @@ export default function PaymentPlan({ caseData }) {
               setCurrentPaymentPage={setCurrentPaymentPage}
               totalPaymentPage={totalPaymentPage}
               getPaymentPlan={getPaymentPlan}
+              accountsResponse={accountsResponse}
             />
           </Grid>
         </>
