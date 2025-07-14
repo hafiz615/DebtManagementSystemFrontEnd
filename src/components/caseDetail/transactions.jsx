@@ -1,8 +1,10 @@
+import React, { useState, useEffect } from "react";
 import { Box, Tab, Tabs } from "@mui/material";
-import React, { useState } from "react";
 import { Colors } from "../../config/default";
 import PaymentPlan from "./paymentPlan";
 import PaymentsAccounts from "./paymentsAccounts";
+import AnalyticsAccordion from "./analyticsAccordion";
+import { GetCasePaymentsAnalytics } from "../../services/services";
 
 export default function Transactions({
   caseData,
@@ -10,8 +12,20 @@ export default function Transactions({
   GetCaseDetails,
   accountsResponse,
   GetDebtorAccounts,
+  loading,
 }) {
+  const debtorId = caseData?.debtor?._id;
   const [value, setValue] = useState("Create Plan");
+  const [paymentDetails, setPaymentDetails] = useState();
+
+  const GetCasePaymentsAnalyticsData = async () => {
+    const res = await GetCasePaymentsAnalytics(debtorId);
+    setPaymentDetails(res?.data?.data);
+  };
+
+  useEffect(() => {
+    GetCasePaymentsAnalyticsData();
+  }, []);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -61,6 +75,19 @@ export default function Transactions({
                 color: value ? Colors.SKY_BLUE : "inherit",
               },
             }}
+            label="Analytics"
+            value="Analytics"
+          />
+          <Tab
+            sx={{
+              fontWeight: "600",
+              textTransform: "none",
+              fontFamily: "Nunito",
+
+              "&.Mui-selected": {
+                color: value ? Colors.SKY_BLUE : "inherit",
+              },
+            }}
             label="Accounts"
             value="Accounts"
           />
@@ -71,6 +98,14 @@ export default function Transactions({
           <PaymentPlan
             caseData={caseData}
             accountsResponse={accountsResponse}
+          />
+        ) : (
+          ""
+        )}
+        {value === "Analytics" ? (
+          <AnalyticsAccordion
+            loading={loading}
+            paymentDetails={paymentDetails}
           />
         ) : (
           ""

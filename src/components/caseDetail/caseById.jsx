@@ -99,8 +99,6 @@ export default function CaseById({
   handleChange,
   verifiedSenders,
   GetLogsById,
-  isPaymentLoading,
-  paymentDetails,
   handleClose,
   addTaskModal,
   handleChangeModal,
@@ -539,10 +537,6 @@ export default function CaseById({
 
           <Grid container>
             <Grid item xs={12} md={3}>
-              <AnalyticsAccordion
-                loading={isPaymentLoading}
-                paymentDetails={paymentDetails}
-              />
               {/* <FinancialAccordion />
               <SettlementAccordion /> */}
               <AboutAccordion
