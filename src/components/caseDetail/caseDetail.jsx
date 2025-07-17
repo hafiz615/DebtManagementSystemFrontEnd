@@ -159,12 +159,12 @@ function CaseDetail() {
   }, []);
   const handleShowEmail = () => {
     if (!showEmail) {
-      setShowEmail(true); // Make the component visible
+      setShowEmail(true);
       setTimeout(() => {
-        scrollToComponent("targetComponent"); // Ensure scrolling happens after the component is rendered
+        scrollToComponent("targetComponent");
       }, 0);
     } else {
-      scrollToComponent("targetComponent"); // Scroll to the component if it is already visible
+      scrollToComponent("targetComponent");
     }
   };
 

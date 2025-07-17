@@ -51,7 +51,7 @@ export default function AnalyticsPanel({ loading, paymentDetails }) {
         sx={{
           fontFamily: "Nunito",
           fontWeight: "700",
-          color: Colors.SKY_BLUE,
+          color: Colors.BLACK,
           mb: 3,
         }}
       >

@@ -765,6 +765,7 @@ export default function CaseById({
                   threadData={threadData}
                   loading={threadLoading}
                   setLoading={setThreadLoading}
+                  cc={cc}
                 />
               ) : caseHistoryTabs === 5 ? (
                 <TimelineData

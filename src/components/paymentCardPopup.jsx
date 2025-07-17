@@ -295,7 +295,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
             htmlFor="amount"
             style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
           >
-            Total Amount*
+            Total Commission*
           </label>
           <input
             id="amount"
