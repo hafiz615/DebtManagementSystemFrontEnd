@@ -1,5 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Grid, Box, Typography, Tooltip, IconButton } from "@mui/material";
+import {
+  Grid,
+  Box,
+  Typography,
+  Tooltip,
+  IconButton,
+  Chip,
+} from "@mui/material";
 import { useToast } from "../toast/toastContext";
 import { Colors } from "../config/default";
 import TextButton from "./button";
@@ -127,7 +134,7 @@ export default function SendEmail({
       from: selectedValue,
       subject: subject,
       content: preview,
-      cc: [...selectedValues, ...manualEmails],
+      cc: [...selectedValues],
     };
     const resEmail = await SendSettlementEmail(payload, caseId);
     if (resEmail?.status === 200) {
@@ -210,12 +217,14 @@ export default function SendEmail({
   };
 
   const handleAddEmail = () => {
+    const trimmedEmail = newEmail.trim();
     if (
-      newEmail &&
-      isEmailValid(newEmail) &&
-      !manualEmails?.includes(newEmail)
+      trimmedEmail &&
+      isEmailValid(trimmedEmail) &&
+      !manualEmails.includes(trimmedEmail)
     ) {
-      setManualEmails([...manualEmails, newEmail]);
+      setManualEmails((prev) => [...prev, trimmedEmail]);
+      setSelectedValues((prev) => [...prev, trimmedEmail]);
       setNewEmail("");
     }
   };
@@ -226,10 +235,6 @@ export default function SendEmail({
     isEmailValid(newEmail) &&
     !manualEmails?.includes(newEmail)
   );
-
-  const handleRemoveManualEmail = (email) => {
-    setManualEmails(manualEmails?.filter((item) => item !== email));
-  };
 
   return (
     <div style={{ width: "100%" }}>
@@ -324,42 +329,94 @@ export default function SendEmail({
 
         <div style={{ width: "48%" }}>
           <FormControl
-            fullWidth
             sx={{
               fontFamily: "Nunito",
               width: "100%",
               backgroundColor: "#f5f5f5",
               borderRadius: "5px",
               "& .MuiOutlinedInput-notchedOutline": { border: "none" },
-              "& .MuiSelect-select": { padding: "10px" },
+              "& .MuiSelect-select": {
+                padding: "6px 10px",
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "6px",
+                minHeight: "30px",
+                alignItems: "flex-start",
+              },
             }}
           >
             <Select
               value={selectedKey}
               onChange={handleKeyChange}
               displayEmpty
-              sx={{ fontFamily: "Nunito", color: Colors.DARK_GRAY }}
+              renderValue={() => {
+                if (!selectedValues || selectedValues?.length === 0) {
+                  return (
+                    <Box
+                      style={{
+                        color: Colors.DARK_GRAY,
+                        fontFamily: "Nunito",
+                        fontSize: "0.875rem",
+                        textAlign: "center",
+                        marginTop: ".3rem",
+                      }}
+                    >
+                      Select CC
+                    </Box>
+                  );
+                }
+
+                return (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: 0.5,
+                      maxHeight: "4rem",
+                      overflowY: "auto",
+                      ...ScrollbarStyles,
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {selectedValues.map((email) => (
+                      <Box
+                        key={email}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Chip
+                          label={email}
+                          onDelete={() => handleCheckboxChange(email)}
+                          sx={{
+                            fontFamily: "Nunito",
+                            backgroundColor: Colors.VIOLET,
+                            color: Colors.DARK_GRAY,
+                          }}
+                        />
+                      </Box>
+                    ))}
+                  </Box>
+                );
+              }}
+              sx={{
+                fontFamily: "Nunito",
+                color: Colors.DARK_GRAY,
+              }}
+              MenuProps={{
+                PaperProps: {
+                  sx: {
+                    maxHeight: 200,
+                    overflowY: "auto",
+                  },
+                },
+              }}
             >
-              <MenuItem
-                sx={{ fontFamily: "Nunito", color: Colors.DARK_GRAY }}
-                disabled
-                value=""
-              >
-                Select CC
+              <MenuItem disabled value="">
+                <em>Select CC</em>
               </MenuItem>
-              <MenuItem
-                value="Custom"
-                sx={{ fontFamily: "Nunito", color: Colors.DARK_GRAY }}
-              >
-                Custom Email
-              </MenuItem>{" "}
-              {/* Custom Email Item */}
-              {Object?.keys(cc)?.map((key) => (
-                <MenuItem
-                  key={key}
-                  value={key}
-                  sx={{ fontFamily: "Nunito", color: Colors.DARK_GRAY }}
-                >
+              <MenuItem value="Custom">Custom Email</MenuItem>
+              {Object.keys(cc).map((key) => (
+                <MenuItem key={key} value={key}>
                   {key}
                 </MenuItem>
               ))}
@@ -410,27 +467,6 @@ export default function SendEmail({
                 >
                   Add Email
                 </Button>
-                {manualEmails?.map((email, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      marginTop: "5px",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Typography>{email}</Typography>
-                    <Button
-                      onClick={() => handleRemoveManualEmail(email)}
-                      size="small"
-                      color="error"
-                      sx={{ fontFamily: "Nunito" }}
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                ))}
               </div>
             </FormGroup>
           )}
@@ -441,16 +477,69 @@ export default function SendEmail({
                 marginTop: "10px",
                 padding: "10px",
                 borderRadius: "5px",
-                overflowY: "auto",
-                ...ScrollbarStyles,
                 border: "1px solid #ddd",
+                ...ScrollbarStyles,
               }}
             >
-              <div
-                style={{
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: "8px",
+                }}
+              >
+                <Typography sx={{ fontFamily: "Nunito", fontWeight: 600 }}>
+                  Emails
+                </Typography>
+
+                <Box>
+                  <button
+                    style={{
+                      fontFamily: "Nunito",
+                      backgroundColor: Colors.VIOLET,
+                      color: Colors.SKY_BLUE,
+                      fontWeight: 600,
+                      border: "1px solid #ccc",
+                      borderRadius: "4px",
+                      padding: "4px 10px",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => {
+                      const emails = cc[selectedKey];
+                      const areAllSelected = emails?.every((email) =>
+                        selectedValues?.includes(email)
+                      );
+
+                      if (areAllSelected) {
+                        const filtered = selectedValues?.filter(
+                          (email) => !emails?.includes(email)
+                        );
+                        setSelectedValues(filtered);
+                      } else {
+                        const merged = [
+                          ...new Set([...selectedValues, ...emails]),
+                        ];
+                        setSelectedValues(merged);
+                      }
+                    }}
+                  >
+                    {cc[selectedKey]?.every((email) =>
+                      selectedValues?.includes(email)
+                    )
+                      ? "UNSELECT All"
+                      : "SELECT ALL"}
+                  </button>
+                </Box>
+              </Box>
+
+              <Box
+                sx={{
                   display: "flex",
                   flexDirection: "column",
-                  maxHeight: "15rem",
+                  maxHeight: "80px",
+                  overflowY: "auto",
+                  ...ScrollbarStyles,
                 }}
               >
                 {cc[selectedKey]?.length > 0 ? (
@@ -459,17 +548,24 @@ export default function SendEmail({
                       key={email}
                       control={
                         <Checkbox
-                          checked={selectedValues.includes(email)}
+                          checked={selectedValues?.includes(email)}
                           onChange={() => handleCheckboxChange(email)}
+                          sx={{
+                            color: Colors.SKY_BLUE,
+                            "&.Mui-checked": {
+                              color: Colors.SKY_BLUE,
+                            },
+                          }}
                         />
                       }
                       label={email}
+                      sx={{ fontFamily: "Nunito" }}
                     />
                   ))
                 ) : (
                   <Typography color="textSecondary">No email exists</Typography>
                 )}
-              </div>
+              </Box>
             </FormGroup>
           )}
         </div>

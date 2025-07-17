@@ -18,7 +18,6 @@ function PaynoteForm({
   attorneyId,
   accountsExist,
 }) {
-  console.log(caseData, "case");
   const [errors, setErrors] = useState({});
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -125,7 +124,7 @@ function PaynoteForm({
     };
     const addCreditorAccount = await UpdateACHDetails(
       finalData,
-      type === "lawfirm" ? attorneyId : creditorId,
+      type === "lawfirm" ? attorneyId : caseId,
       type
     );
     if (addCreditorAccount?.status === 200) {
