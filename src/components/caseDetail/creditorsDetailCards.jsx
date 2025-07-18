@@ -74,6 +74,7 @@ export default function CreditorsDetailCards({
   cc,
   getAttorneyData,
 }) {
+  console.log(caseData, "caseData");
   const [searchText, setSearchText] = useState("");
   const [startIndex, setStartIndex] = useState(0);
   const dispatch = useDispatch();
@@ -237,7 +238,7 @@ export default function CreditorsDetailCards({
                   <Tooltip
                     placement="top"
                     title={
-                      caseData?.creditor?.paynoteUserFound
+                      caseData?.paynoteUserFound
                         ? "Verified with Paynote"
                         : "--"
                     }

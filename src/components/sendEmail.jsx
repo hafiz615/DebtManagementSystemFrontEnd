@@ -6,6 +6,7 @@ import {
   Tooltip,
   IconButton,
   Chip,
+  ClickAwayListener,
 } from "@mui/material";
 import { useToast } from "../toast/toastContext";
 import { Colors } from "../config/default";
@@ -93,6 +94,7 @@ export default function SendEmail({
   to,
   cc,
 }) {
+  const selectRef = useRef(null);
   const [sendTo, setSendTo] = useState(to || "");
   const [sendFrom, setSendFrom] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
@@ -328,246 +330,278 @@ export default function SendEmail({
         />
 
         <div style={{ width: "48%" }}>
-          <FormControl
-            sx={{
-              fontFamily: "Nunito",
-              width: "100%",
-              backgroundColor: "#f5f5f5",
-              borderRadius: "5px",
-              "& .MuiOutlinedInput-notchedOutline": { border: "none" },
-              "& .MuiSelect-select": {
-                padding: "6px 10px",
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "6px",
-                minHeight: "30px",
-                alignItems: "flex-start",
-              },
-            }}
-          >
-            <Select
-              value={selectedKey}
-              onChange={handleKeyChange}
-              displayEmpty
-              renderValue={() => {
-                if (!selectedValues || selectedValues?.length === 0) {
-                  return (
-                    <Box
-                      style={{
-                        color: Colors.DARK_GRAY,
-                        fontFamily: "Nunito",
-                        fontSize: "0.875rem",
-                        textAlign: "center",
-                        marginTop: ".3rem",
-                      }}
-                    >
-                      Select CC
-                    </Box>
-                  );
-                }
-
-                return (
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexWrap: "wrap",
-                      gap: 0.5,
-                      maxHeight: "4rem",
-                      overflowY: "auto",
-                      ...ScrollbarStyles,
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {selectedValues.map((email) => (
-                      <Box
-                        key={email}
-                        onMouseDown={(e) => e.stopPropagation()}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Chip
-                          label={email}
-                          onDelete={() => handleCheckboxChange(email)}
-                          sx={{
-                            fontFamily: "Nunito",
-                            backgroundColor: Colors.VIOLET,
-                            color: Colors.DARK_GRAY,
-                          }}
-                        />
-                      </Box>
-                    ))}
-                  </Box>
-                );
-              }}
+          <Box sx={{ position: "relative", width: "100%" }} ref={selectRef}>
+            <FormControl
               sx={{
                 fontFamily: "Nunito",
-                color: Colors.DARK_GRAY,
-              }}
-              MenuProps={{
-                PaperProps: {
-                  sx: {
-                    maxHeight: 200,
-                    overflowY: "auto",
-                  },
+                width: "98%",
+                backgroundColor: "#f5f5f5",
+                borderRadius: "5px",
+                "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+                "& .MuiSelect-select": {
+                  padding: "6px 10px",
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "6px",
+                  minHeight: "30px",
+                  alignItems: "flex-start",
                 },
               }}
             >
-              <MenuItem disabled value="">
-                <em>Select CC</em>
-              </MenuItem>
-              <MenuItem value="Custom">Custom Email</MenuItem>
-              {Object.keys(cc).map((key) => (
-                <MenuItem key={key} value={key}>
-                  {key}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+              <Select
+                value={selectedKey}
+                onChange={handleKeyChange}
+                displayEmpty
+                renderValue={() => {
+                  if (!selectedValues || selectedValues?.length === 0) {
+                    return (
+                      <Box
+                        style={{
+                          color: Colors.DARK_GRAY,
+                          fontFamily: "Nunito",
+                          fontSize: "0.875rem",
+                          textAlign: "center",
+                          marginTop: ".3rem",
+                        }}
+                      >
+                        Select CC
+                      </Box>
+                    );
+                  }
 
-          {selectedKey === "Custom" && (
-            <FormGroup
-              sx={{
-                marginTop: "10px",
-                padding: "10px",
-                borderRadius: "5px",
-                overflowY: "auto",
-                border: "1px solid #ddd",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  maxHeight: "15rem",
+                  return (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: 0.5,
+                        maxHeight: "4rem",
+                        overflowY: "auto",
+                        ...ScrollbarStyles,
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {selectedValues.map((email) => (
+                        <Box
+                          key={email}
+                          onMouseDown={(e) => e.stopPropagation()}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Chip
+                            label={email}
+                            onDelete={() => handleCheckboxChange(email)}
+                            sx={{
+                              fontFamily: "Nunito",
+                              backgroundColor: Colors.VIOLET,
+                              color: Colors.DARK_GRAY,
+                            }}
+                          />
+                        </Box>
+                      ))}
+                    </Box>
+                  );
+                }}
+                sx={{
+                  fontFamily: "Nunito",
+                  color: Colors.DARK_GRAY,
+                }}
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      maxHeight: 200,
+                      overflowY: "auto",
+                    },
+                  },
                 }}
               >
-                <TextField
-                  value={newEmail}
-                  onChange={(e) => setNewEmail(e.target.value)}
-                  placeholder="Enter email"
-                  size="small"
+                <MenuItem disabled value="">
+                  <em>Select CC</em>
+                </MenuItem>
+                <MenuItem value="Custom">Custom Email</MenuItem>
+                {Object.keys(cc).map((key) => (
+                  <MenuItem key={key} value={key}>
+                    {key}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            {selectedKey === "Custom" && (
+              <ClickAwayListener
+                onClickAway={() => {
+                  setSelectedKey("");
+                }}
+              >
+                <FormGroup
                   sx={{
                     marginTop: "10px",
-                    color: Colors.DARK_GRAY,
-                    fontFamily: "Nunito",
+                    padding: "10px",
+                    borderRadius: "5px",
+                    overflowY: "auto",
+                    border: "1px solid #ddd",
                   }}
-                />
-                <Button
-                  onClick={handleAddEmail}
-                  sx={{
-                    marginTop: "5px",
-                    backgroundColor: Colors.SKY_BLUE,
-                    "&:hover": {
-                      background: Colors.SKY_BLUE,
-                      border: "none",
-                    },
-                    fontFamily: "Nunito",
-                  }}
-                  disabled={isButtonDisabled}
-                  variant="contained"
                 >
-                  Add Email
-                </Button>
-              </div>
-            </FormGroup>
-          )}
-
-          {selectedKey && selectedKey !== "Custom" && (
-            <FormGroup
-              sx={{
-                marginTop: "10px",
-                padding: "10px",
-                borderRadius: "5px",
-                border: "1px solid #ddd",
-                ...ScrollbarStyles,
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: "8px",
-                }}
-              >
-                <Typography sx={{ fontFamily: "Nunito", fontWeight: 600 }}>
-                  Emails
-                </Typography>
-
-                <Box>
-                  <button
+                  <div
                     style={{
-                      fontFamily: "Nunito",
-                      backgroundColor: Colors.VIOLET,
-                      color: Colors.SKY_BLUE,
-                      fontWeight: 600,
-                      border: "1px solid #ccc",
-                      borderRadius: "4px",
-                      padding: "4px 10px",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => {
-                      const emails = cc[selectedKey];
-                      const areAllSelected = emails?.every((email) =>
-                        selectedValues?.includes(email)
-                      );
-
-                      if (areAllSelected) {
-                        const filtered = selectedValues?.filter(
-                          (email) => !emails?.includes(email)
-                        );
-                        setSelectedValues(filtered);
-                      } else {
-                        const merged = [
-                          ...new Set([...selectedValues, ...emails]),
-                        ];
-                        setSelectedValues(merged);
-                      }
+                      display: "flex",
+                      flexDirection: "column",
+                      maxHeight: "15rem",
                     }}
                   >
-                    {cc[selectedKey]?.every((email) =>
-                      selectedValues?.includes(email)
-                    )
-                      ? "UNSELECT All"
-                      : "SELECT ALL"}
-                  </button>
-                </Box>
-              </Box>
+                    <TextField
+                      value={newEmail}
+                      onChange={(e) => setNewEmail(e.target.value)}
+                      placeholder="Enter email"
+                      size="small"
+                      sx={{
+                        marginTop: "10px",
+                        color: Colors.DARK_GRAY,
+                        fontFamily: "Nunito",
+                      }}
+                    />
+                    <Button
+                      onClick={handleAddEmail}
+                      sx={{
+                        marginTop: "5px",
+                        backgroundColor: Colors.SKY_BLUE,
+                        "&:hover": {
+                          background: Colors.SKY_BLUE,
+                          border: "none",
+                        },
+                        fontFamily: "Nunito",
+                      }}
+                      disabled={isButtonDisabled}
+                      variant="contained"
+                    >
+                      Add Email
+                    </Button>
+                  </div>
+                </FormGroup>
+              </ClickAwayListener>
+            )}
 
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  maxHeight: "80px",
-                  overflowY: "auto",
-                  ...ScrollbarStyles,
+            {selectedKey && selectedKey !== "Custom" && (
+              <ClickAwayListener
+                onClickAway={() => {
+                  setSelectedKey("");
                 }}
               >
-                {cc[selectedKey]?.length > 0 ? (
-                  cc[selectedKey]?.map((email) => (
-                    <FormControlLabel
-                      key={email}
-                      control={
-                        <Checkbox
-                          checked={selectedValues?.includes(email)}
-                          onChange={() => handleCheckboxChange(email)}
-                          sx={{
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: "100%",
+                    left: 0,
+                    width: "98%",
+                    backgroundColor: "#fff",
+                    zIndex: 1000,
+                    boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                    marginTop: "4px",
+                  }}
+                >
+                  <FormGroup
+                    sx={{
+                      padding: "10px",
+                      borderRadius: "5px",
+                      border: "1px solid #ddd",
+                      ...ScrollbarStyles,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: "8px",
+                      }}
+                    >
+                      <Typography
+                        sx={{ fontFamily: "Nunito", fontWeight: 600 }}
+                      >
+                        Emails
+                      </Typography>
+
+                      <Box>
+                        <button
+                          style={{
+                            fontFamily: "Nunito",
+                            backgroundColor: Colors.VIOLET,
                             color: Colors.SKY_BLUE,
-                            "&.Mui-checked": {
-                              color: Colors.SKY_BLUE,
-                            },
+                            fontWeight: 600,
+                            border: "1px solid #ccc",
+                            borderRadius: "4px",
+                            padding: "4px 10px",
+                            cursor: "pointer",
                           }}
-                        />
-                      }
-                      label={email}
-                      sx={{ fontFamily: "Nunito" }}
-                    />
-                  ))
-                ) : (
-                  <Typography color="textSecondary">No email exists</Typography>
-                )}
-              </Box>
-            </FormGroup>
-          )}
+                          onClick={() => {
+                            const emails = cc[selectedKey];
+                            const areAllSelected = emails?.every((email) =>
+                              selectedValues?.includes(email)
+                            );
+
+                            if (areAllSelected) {
+                              const filtered = selectedValues?.filter(
+                                (email) => !emails?.includes(email)
+                              );
+                              setSelectedValues(filtered);
+                            } else {
+                              const merged = [
+                                ...new Set([...selectedValues, ...emails]),
+                              ];
+                              setSelectedValues(merged);
+                            }
+                          }}
+                        >
+                          {cc[selectedKey]?.every((email) =>
+                            selectedValues?.includes(email)
+                          )
+                            ? "UNSELECT All"
+                            : "SELECT ALL"}
+                        </button>
+                      </Box>
+                    </Box>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        maxHeight: "80px",
+                        overflowY: "auto",
+                        ...ScrollbarStyles,
+                      }}
+                    >
+                      {cc[selectedKey]?.length > 0 ? (
+                        cc[selectedKey]?.map((email) => (
+                          <FormControlLabel
+                            key={email}
+                            control={
+                              <Checkbox
+                                checked={selectedValues?.includes(email)}
+                                onChange={() => handleCheckboxChange(email)}
+                                sx={{
+                                  color: Colors.SKY_BLUE,
+                                  "&.Mui-checked": {
+                                    color: Colors.SKY_BLUE,
+                                  },
+                                }}
+                              />
+                            }
+                            label={email}
+                            sx={{ fontFamily: "Nunito" }}
+                          />
+                        ))
+                      ) : (
+                        <Typography color="textSecondary">
+                          No email exists
+                        </Typography>
+                      )}
+                    </Box>
+                  </FormGroup>
+                </Box>
+              </ClickAwayListener>
+            )}
+          </Box>
         </div>
       </div>
 
