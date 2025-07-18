@@ -103,7 +103,8 @@ const NotificationsBell = ({
     };
     const res = await GetAllNotifications(payload);
     if (res?.status === 200) {
-      setNotificationLength(0);
+      setNotificationLength(res?.data?.data?.notificationCount?.count);
+
       setNotifications(res?.data?.data);
     }
     setLoading(false);
@@ -165,7 +166,7 @@ const NotificationsBell = ({
     };
     const res = await GetAllNotifications(payload);
     if (res?.status === 200) {
-      setNotificationLength(0);
+      setNotificationLength(res?.data?.data?.notificationCount?.count);
       setNotifications(res?.data?.data);
     }
     setLoading(false);
@@ -204,7 +205,6 @@ const NotificationsBell = ({
       };
       const resNotification = await GetAllNotifications(payload);
       if (resNotification?.status === 200) {
-        setNotificationLength(0);
         setNotifications(resNotification?.data?.data);
       }
       setLoading(false);

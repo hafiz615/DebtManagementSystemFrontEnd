@@ -94,7 +94,6 @@ export default function EmailTimeline({
   setLoading,
   cc,
 }) {
-  console.log(cc, "cc");
   const [threadMessages, setThreadMessages] = useState([]);
   const [expandedEmails, setExpandedEmails] = useState({});
   const [notificationTemplate, setNotificationTemplate] = useState();
