@@ -56,14 +56,11 @@ const NotificationsBell = ({
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notifications, setNotifications] = useState([]);
-  const [creditors, setCreditors] = useState([]);
   const [allCases, setAllCases] = useState([]);
   const [filteredCases, setFilteredCases] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
   const [caseId, setCaseId] = useState("");
   const [smsMessage, setSmsMessage] = useState("");
-  const [unknownCase, setUnknownCase] = useState(false);
-  const [socket, setSocket] = useState(null);
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState(0);
   const [openDialog, setOpenDialog] = useState(false);
@@ -93,7 +90,6 @@ const NotificationsBell = ({
 
   const handleCancel = () => {
     setOpenDialog(false);
-    setUnknownCase(false);
     setSearchTerm("");
     setCaseId("");
     setSmsMessage("");
@@ -107,7 +103,8 @@ const NotificationsBell = ({
     };
     const res = await GetAllNotifications(payload);
     if (res?.status === 200) {
-      setNotificationLength(0);
+      setNotificationLength(res?.data?.data?.notificationCount?.count);
+
       setNotifications(res?.data?.data);
     }
     setLoading(false);
@@ -127,8 +124,6 @@ const NotificationsBell = ({
 
   useEffect(() => {
     const socketInstance = io(updatedBaseUrl);
-    setSocket(socketInstance);
-
     socketInstance.on("notify", (arg) => {
       if (arg?.notification?.userId === user?._id) {
         setNotificationLength(arg?.notificationCount);
@@ -171,7 +166,7 @@ const NotificationsBell = ({
     };
     const res = await GetAllNotifications(payload);
     if (res?.status === 200) {
-      setNotificationLength(0);
+      setNotificationLength(res?.data?.data?.notificationCount?.count);
       setNotifications(res?.data?.data);
     }
     setLoading(false);
@@ -179,21 +174,11 @@ const NotificationsBell = ({
 
   const handleClose = () => {
     setAnchorEl(null);
-    setUnknownCase(false);
     setSearchTerm("");
-  };
-
-  const getDebtorCases = async (debtorId) => {
-    setOpenDialog(true);
-    const res = await GetCreditorsFromDebtorId(debtorId);
-    if (res?.status == 200) {
-      setCreditors(res?.data?.data);
-    }
   };
 
   const getAllCases = async () => {
     setOpenDialog(true);
-    setUnknownCase(true);
     const res = await GetAllUserCases();
     if (res?.status == 200) {
       setAllCases(res?.data?.data);
@@ -220,11 +205,9 @@ const NotificationsBell = ({
       };
       const resNotification = await GetAllNotifications(payload);
       if (resNotification?.status === 200) {
-        setNotificationLength(0);
         setNotifications(resNotification?.data?.data);
       }
       setLoading(false);
-      setUnknownCase(false);
       setSearchTerm("");
     }
     setSaveNotificationLoading(false);
@@ -348,7 +331,16 @@ const NotificationsBell = ({
                 color: Colors.SKY_BLUE,
                 "&.Mui-selected": { color: Colors.SKY_BLUE },
               }}
-              label="Email"
+              label={
+                <Badge
+                  badgeContent={notifications?.notificationCount?.emailCount}
+                  color="error"
+                  overlap="rectangular"
+                  sx={{ "& .MuiBadge-badge": { top: 6, right: -6 } }}
+                >
+                  <Box sx={{ pr: 1 }}>Email</Box>
+                </Badge>
+              }
             />
             <Tab
               sx={{
@@ -357,7 +349,16 @@ const NotificationsBell = ({
                 color: Colors.SKY_BLUE,
                 "&.Mui-selected": { color: Colors.SKY_BLUE },
               }}
-              label="SMS"
+              label={
+                <Badge
+                  badgeContent={notifications?.notificationCount?.smsCount}
+                  color="error"
+                  overlap="rectangular"
+                  sx={{ "& .MuiBadge-badge": { top: 6, right: -6 } }}
+                >
+                  <Box sx={{ pr: 1 }}>SMS</Box>
+                </Badge>
+              }
             />
             <Tab
               sx={{
@@ -366,7 +367,16 @@ const NotificationsBell = ({
                 color: Colors.SKY_BLUE,
                 "&.Mui-selected": { color: Colors.SKY_BLUE },
               }}
-              label="Tasks"
+              label={
+                <Badge
+                  badgeContent={notifications?.notificationCount?.taskCount}
+                  color="error"
+                  overlap="rectangular"
+                  sx={{ "& .MuiBadge-badge": { top: 6, right: -6 } }}
+                >
+                  <Box sx={{ pr: 1 }}>Tasks</Box>
+                </Badge>
+              }
             />
           </Tabs>
         </Box>
@@ -396,8 +406,8 @@ const NotificationsBell = ({
               ...ScrollbarStyles,
             }}
           >
-            {notifications?.length > 0 ? (
-              notifications?.map((notification, index) => (
+            {notifications?.notifications?.length > 0 ? (
+              notifications?.notifications?.map((notification, index) => (
                 <ListItem
                   sx={{
                     cursor: "pointer",

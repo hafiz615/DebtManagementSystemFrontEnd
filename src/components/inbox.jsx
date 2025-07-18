@@ -65,7 +65,6 @@ import {
 } from "@mui/icons-material";
 import SendEmailCase from "./caseDetail/sendEmailCase";
 import Prompt from "./prompt";
-import { async } from "q";
 
 const inputStyling = {
   width: "100%",
@@ -1776,7 +1775,7 @@ function Inbox() {
                                                             email?.threadId
                                                           )
                                                         }
-                                                        cc={email?.cc}
+                                                        cc={cc}
                                                         threadId={
                                                           email?.threadId
                                                         }

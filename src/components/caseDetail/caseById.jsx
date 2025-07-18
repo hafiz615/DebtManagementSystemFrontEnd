@@ -99,8 +99,6 @@ export default function CaseById({
   handleChange,
   verifiedSenders,
   GetLogsById,
-  isPaymentLoading,
-  paymentDetails,
   handleClose,
   addTaskModal,
   handleChangeModal,
@@ -491,8 +489,8 @@ export default function CaseById({
                 ) : value === "Creditor" ? (
                   <CreditorsDetailCards
                     accountsExist={
-                      caseData?.creditor?.paynoteSourceVerified &&
-                      caseData?.creditor?.paynoteUserFound
+                      caseData?.paynoteSourceVerified &&
+                      caseData?.paynoteUserFound
                     }
                     fetchCalls={fetchCalls}
                     verifiedSenders={verifiedSenders}
@@ -539,10 +537,6 @@ export default function CaseById({
 
           <Grid container>
             <Grid item xs={12} md={3}>
-              <AnalyticsAccordion
-                loading={isPaymentLoading}
-                paymentDetails={paymentDetails}
-              />
               {/* <FinancialAccordion />
               <SettlementAccordion /> */}
               <AboutAccordion
@@ -771,6 +765,7 @@ export default function CaseById({
                   threadData={threadData}
                   loading={threadLoading}
                   setLoading={setThreadLoading}
+                  cc={cc}
                 />
               ) : caseHistoryTabs === 5 ? (
                 <TimelineData

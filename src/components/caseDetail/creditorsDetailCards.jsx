@@ -179,7 +179,7 @@ export default function CreditorsDetailCards({
               }}
             >
               <MuiModels
-                type="creditor"
+                type="case"
                 show="showCreditorSync"
                 iconColor={Colors.BLACK}
                 caseData={caseData}
@@ -237,7 +237,7 @@ export default function CreditorsDetailCards({
                   <Tooltip
                     placement="top"
                     title={
-                      caseData?.creditor?.paynoteUserFound
+                      caseData?.paynoteUserFound
                         ? "Verified with Paynote"
                         : "--"
                     }
@@ -308,7 +308,7 @@ export default function CreditorsDetailCards({
         >
           <MuiModels
             accountsExist={accountsExist}
-            type="creditor"
+            type="case"
             show="paynoteForm"
             button="paynoteForm"
             width="55vw"

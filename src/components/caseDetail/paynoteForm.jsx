@@ -81,7 +81,7 @@ function PaynoteForm({
     setIsButtonDisabled(!(allFieldsFilled && !hasErrors));
   }, [paynoteForm, errors, selectedValue]);
 
-  const creditorId = caseData?.creditor?._id;
+  const caseId = caseData?._id;
   // const { encrypt } = require("n-krypta");
 
   const handleSubmit = async () => {
@@ -98,7 +98,7 @@ function PaynoteForm({
     };
     const addCreditorAccount = await AddCreditorAccount(
       finalData,
-      type === "lawfirm" ? attorneyId : creditorId,
+      type === "lawfirm" ? attorneyId : caseId,
       type
     );
     if (addCreditorAccount?.status === 200) {
@@ -124,7 +124,7 @@ function PaynoteForm({
     };
     const addCreditorAccount = await UpdateACHDetails(
       finalData,
-      type === "lawfirm" ? attorneyId : creditorId,
+      type === "lawfirm" ? attorneyId : caseId,
       type
     );
     if (addCreditorAccount?.status === 200) {

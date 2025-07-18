@@ -2605,3 +2605,13 @@ export const GetEmailThreadById = async (caseId) => {
     return error;
   }
 };
+export const GetCasePaymentsAnalytics = async (id) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/payment/getCasePaymentsAnalytics/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};

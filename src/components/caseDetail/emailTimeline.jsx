@@ -92,6 +92,7 @@ export default function EmailTimeline({
   threadData,
   loading,
   setLoading,
+  cc,
 }) {
   const [threadMessages, setThreadMessages] = useState([]);
   const [expandedEmails, setExpandedEmails] = useState({});
@@ -533,7 +534,8 @@ export default function EmailTimeline({
                                 replyCheck={true}
                                 caseDataId={email?.caseId}
                                 getAllInboxData={getThreadData}
-                                cc={email?.cc?.length > 0 ? email?.cc : []}
+                                // cc={email?.cc?.length > 0 ? email?.cc : []}
+                                cc={cc}
                                 threadId={email?.threadId}
                                 handleClose={() => setShowSendEmailCase(false)}
                               />
