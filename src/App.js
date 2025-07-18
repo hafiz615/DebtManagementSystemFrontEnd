@@ -39,6 +39,7 @@ function App() {
       const decrypted = decrypt(res?.data?.data, REACT_APP_SECURITY_KEY);
       try {
         const parsed = JSON.parse(JSON.stringify(decrypted));
+
         setCredentials(parsed);
       } catch (err) {
         console.error("Credential parsing failed:", err);
@@ -211,8 +212,14 @@ function App() {
 
         <Route exact path="/set-password" element={<VerifyProfilePage />} />
       </Routes>
-      {credential && (
-        <TelnyxRTCProvider credential={credential}>
+      {credential?.login && credential?.password && (
+        <TelnyxRTCProvider
+          key={credential.login}
+          credential={{
+            login: credential.login,
+            password: credential.password,
+          }}
+        >
           <IncomingCall />
         </TelnyxRTCProvider>
       )}
