@@ -489,8 +489,8 @@ export default function CaseById({
                 ) : value === "Creditor" ? (
                   <CreditorsDetailCards
                     accountsExist={
-                      caseData?.creditor?.paynoteSourceVerified &&
-                      caseData?.creditor?.paynoteUserFound
+                      caseData?.paynoteSourceVerified &&
+                      caseData?.paynoteUserFound
                     }
                     fetchCalls={fetchCalls}
                     verifiedSenders={verifiedSenders}

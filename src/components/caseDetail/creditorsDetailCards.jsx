@@ -237,7 +237,7 @@ export default function CreditorsDetailCards({
                   <Tooltip
                     placement="top"
                     title={
-                      caseData?.creditor?.paynoteUserFound
+                      caseData?.paynoteUserFound
                         ? "Verified with Paynote"
                         : "--"
                     }
