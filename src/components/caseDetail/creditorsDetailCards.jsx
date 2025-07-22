@@ -398,27 +398,26 @@ export default function CreditorsDetailCards({
           borderRadius: "10px",
           padding: "0px 10px",
           height: "14rem",
-          marginBottom: ".5rem",
+          marginBottom: "0.5rem",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         <Grid
           container
-          item
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
+          justifyContent="space-between"
+          alignItems="center"
+          sx={{ paddingTop: "0.5rem" }}
         >
-          <p
-            style={{
-              fontWeight: "600",
+          <Typography
+            sx={{
+              fontWeight: 600,
               fontSize: "13px",
               fontFamily: "Nunito",
             }}
           >
             Contacts
-          </p>
+          </Typography>
           <MuiModels
             show="creditorContacts"
             caseData={caseData}
@@ -426,7 +425,7 @@ export default function CreditorsDetailCards({
             width="70vw"
           />
         </Grid>
-        <Grid container item sx={{ marginBottom: "0.5rem" }}>
+        <Grid container sx={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}>
           <SearchContainer
             sx={{
               width: "100%",
@@ -448,38 +447,28 @@ export default function CreditorsDetailCards({
             />
           </SearchContainer>
         </Grid>
-        <Box
-          style={{
-            height: "10rem",
-            overflowY: "auto",
-            ...ScrollbarStyles,
-          }}
-        >
+        <Box>
           <Grid
-            item
-            xs={12}
+            container
             sx={{
-              display: "flex",
-              justifyContent: "space-between",
               backgroundColor: Colors.SKY_BLUE,
               color: Colors.WHITE,
-              paddingRight: ".4rem",
-              paddingLeft: ".4rem",
               borderRadius: ".4rem",
               height: "2rem",
+              padding: "0 0.4rem",
               alignItems: "center",
             }}
           >
             <Grid item xs={4}>
-              <span style={{ fontSize: "11px" }}>Name</span>
+              <Typography sx={{ fontSize: "11px" }}>Name</Typography>
             </Grid>
             <Grid item xs={4} sx={griRelationdStyle}>
-              <span style={{ fontSize: "11px", marginRight: "1rem" }}>
-                Relation
-              </span>
+              <Typography sx={{ fontSize: "11px", marginRight: "1rem" }}>
+                Phone
+              </Typography>
             </Grid>
             <Grid item xs={4} sx={gridActionStyle}>
-              <span style={{ fontSize: "11px" }}>Action</span>
+              <Typography sx={{ fontSize: "11px" }}>Action</Typography>
             </Grid>
           </Grid>
           <Box
@@ -489,70 +478,82 @@ export default function CreditorsDetailCards({
               ...ScrollbarStyles,
             }}
           >
-            {paginatedContacts?.map((item, index) => (
-              <Grid
-                item
-                xs={12}
-                key={index}
+            {paginatedContacts && paginatedContacts.length > 0 ? (
+              paginatedContacts?.map((item, index) => (
+                <Grid
+                  item
+                  xs={12}
+                  key={index}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    backgroundColor:
+                      index % 2 === 0
+                        ? Colors.WHITE
+                        : "rgba(85, 148, 242, 0.06)",
+                    "&:hover": {
+                      backgroundColor: Colors.BG_LIGHT_GRAY,
+                    },
+                    cursor: "pointer",
+                    paddingRight: ".4rem",
+                    paddingLeft: ".4rem",
+                    height: "2rem",
+                    alignItems: "center",
+                  }}
+                >
+                  <Grid item xs={4}>
+                    <span style={cellStyle}>{item?.name || "-"}</span>
+                  </Grid>
+                  <Grid item xs={4} sx={griRelationdStyle}>
+                    <span style={cellStyle}>{item?.phone || "-"}</span>
+                  </Grid>
+                  <Grid item xs={4} sx={gridActionStyle}>
+                    <span style={cellStyle}>
+                      <MuiModels
+                        show="sendEmailCase"
+                        buttonName="sendEmail"
+                        iconColor={Colors.BLACK}
+                        maxHeight="78vh"
+                        GetLogsById={GetLogsById}
+                        caseDataId={caseData?._id}
+                        data={caseData}
+                        verifiedSenders={verifiedSenders}
+                        cc={cc}
+                      />
+                      <MuiModels
+                        show="sendEmailCase"
+                        buttonName="sendSms"
+                        headerName={true}
+                        iconColor={Colors.BLACK}
+                        maxHeight="78vh"
+                        caseDataId={caseData?._id}
+                        GetLogsById={GetLogsById}
+                        data={caseData}
+                      />
+                      <MuiModels
+                        show="editCreditorContacts"
+                        caseData={caseData}
+                        item={item}
+                        GetCaseDetails={GetCaseDetails}
+                        width="70vw"
+                      />
+                    </span>
+                  </Grid>
+                </Grid>
+              ))
+            ) : (
+              <Typography
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  backgroundColor:
-                    index % 2 === 0 ? Colors.WHITE : "rgba(85, 148, 242, 0.06)",
-                  "&:hover": {
-                    backgroundColor: Colors.BG_LIGHT_GRAY,
-                  },
-                  cursor: "pointer",
-                  paddingRight: ".4rem",
-                  paddingLeft: ".4rem",
-                  height: "2rem",
-                  alignItems: "center",
+                  textAlign: "center",
+                  padding: "1rem",
+                  color: Colors.GREY,
+                  fontFamily: "Nunito",
+                  fontSize: ".8rem",
                 }}
               >
-                <Grid item xs={4}>
-                  <span style={cellStyle}>{item?.name || "-"}</span>
-                </Grid>
-                <Grid item xs={4} sx={griRelationdStyle}>
-                  <span style={cellStyle}>
-                    {item?.relationWithDebtor ||
-                      item?.relationWithCreditor ||
-                      "-"}
-                  </span>
-                </Grid>
-                <Grid item xs={4} sx={gridActionStyle}>
-                  <span style={cellStyle}>
-                    <MuiModels
-                      show="sendEmailCase"
-                      buttonName="sendEmail"
-                      iconColor={Colors.BLACK}
-                      maxHeight="78vh"
-                      GetLogsById={GetLogsById}
-                      caseDataId={caseData?._id}
-                      data={caseData}
-                      verifiedSenders={verifiedSenders}
-                      cc={cc}
-                    />
-                    <MuiModels
-                      show="sendEmailCase"
-                      buttonName="sendSms"
-                      headerName={true}
-                      iconColor={Colors.BLACK}
-                      maxHeight="78vh"
-                      caseDataId={caseData?._id}
-                      GetLogsById={GetLogsById}
-                      data={caseData}
-                    />
-                    <MuiModels
-                      show="editCreditorContacts"
-                      caseData={caseData}
-                      item={item}
-                      GetCaseDetails={GetCaseDetails}
-                      width="70vw"
-                    />
-                  </span>
-                </Grid>
-              </Grid>
-            ))}
+                No Creditor Contacts Exist
+              </Typography>
+            )}
 
             {filteredContacts?.length > itemsPerPage && (
               <div

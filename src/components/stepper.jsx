@@ -85,7 +85,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
   const contacts = !isEmpty(caseData?.debtor?.contacts)
     ? caseData?.debtor?.contacts?.map((contact) => ({
         name: contact?.name || "",
-        title: contact?.title || "",
         phone: contact?.phone
           ? contact?.phone.startsWith("+1")
             ? contact?.phone.slice(2)
@@ -96,7 +95,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     : [
         {
           name: "",
-          title: "",
           phone: "",
           email: "",
         },
@@ -411,7 +409,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       setDebtorContactDetails(
         debtorData?.contacts?.map((contact) => ({
           name: contact?.name || "",
-          title: contact?.title || "",
           phone: contact?.phone || "",
           email: contact?.email || "",
         }))
@@ -420,7 +417,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
       setDebtorContactDetails([
         {
           name: "",
-          title: "",
           phone: "",
           email: "",
         },
@@ -658,7 +654,6 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     setDebtorContactDetails([
       {
         name: "",
-        title: "",
         phone: "",
         email: "",
       },
