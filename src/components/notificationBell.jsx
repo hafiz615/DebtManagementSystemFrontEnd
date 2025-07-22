@@ -333,7 +333,9 @@ const NotificationsBell = ({
               }}
               label={
                 <Badge
-                  badgeContent={notifications?.notificationCount?.emailCount}
+                  badgeContent={
+                    notifications?.notificationCount?.emailNotificationCount
+                  }
                   color="error"
                   overlap="rectangular"
                   sx={{ "& .MuiBadge-badge": { top: 6, right: -6 } }}
@@ -351,7 +353,9 @@ const NotificationsBell = ({
               }}
               label={
                 <Badge
-                  badgeContent={notifications?.notificationCount?.smsCount}
+                  badgeContent={
+                    notifications?.notificationCount?.smsNotificationCount
+                  }
                   color="error"
                   overlap="rectangular"
                   sx={{ "& .MuiBadge-badge": { top: 6, right: -6 } }}
@@ -369,7 +373,9 @@ const NotificationsBell = ({
               }}
               label={
                 <Badge
-                  badgeContent={notifications?.notificationCount?.taskCount}
+                  badgeContent={
+                    notifications?.notificationCount?.taskNotificationCount
+                  }
                   color="error"
                   overlap="rectangular"
                   sx={{ "& .MuiBadge-badge": { top: 6, right: -6 } }}
