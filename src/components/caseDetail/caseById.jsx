@@ -360,13 +360,6 @@ export default function CaseById({
                         </Grid>
                         <div style={{ display: "flex", gap: ".5rem" }}>
                           <MuiModels
-                            show="AddPayments"
-                            width="55vw"
-                            caseId={id}
-                            debtorId={caseData?.debtor?._id}
-                            GetCaseDetails={GetCaseDetails}
-                          />
-                          <MuiModels
                             show="SeeCheckDetails"
                             maxHeight="70vh"
                             width="55vw"

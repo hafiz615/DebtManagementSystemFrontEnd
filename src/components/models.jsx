@@ -665,16 +665,6 @@ export default function MuiModels({
             sx={{ fontSize: "16px", color: Colors.WHITE, cursor: "pointer" }}
           />
         </IconButton>
-      ) : show === "AddPayments" ? (
-        <TextButton
-          buttonText="Manual Payments"
-          height="2.5rem"
-          width="9.5rem"
-          onClick={handleOpen}
-          disabled={disabled}
-          backgroundColor={Colors.SKY_BLUE}
-          hoverColor={Colors.SKY_BLUE}
-        />
       ) : show === "attorneyPayments" ? (
         <TextButton
           buttonText="Attorney Payments"
@@ -1286,13 +1276,6 @@ export default function MuiModels({
               attorneyId={attorneyId}
               handleClose={handleClose}
               caseData={caseData}
-            />
-          ) : show === "AddPayments" ? (
-            <PaymentCardPopup
-              handleClose={handleClose}
-              caseId={caseId}
-              debtorId={debtorId}
-              GetCaseDetails={GetCaseDetails}
             />
           ) : show === "extractFiles" ? (
             <ExtractFieldPopup
