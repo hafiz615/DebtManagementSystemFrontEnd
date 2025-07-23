@@ -375,13 +375,6 @@ export default function CaseById({
                             caseData={caseData}
                             GetCaseDetails={GetCaseDetails}
                           />
-                          <MuiModels
-                            show="bouncePayments"
-                            maxHeight="70vh"
-                            caseId={id}
-                            debtorId={caseData?.debtor?._id}
-                            GetCaseDetails={GetCaseDetails}
-                          />
                         </div>
                       </Grid>
                       {!allAttorneyData?.lawfirm && (
@@ -537,8 +530,6 @@ export default function CaseById({
 
           <Grid container>
             <Grid item xs={12} md={3}>
-              {/* <FinancialAccordion />
-              <SettlementAccordion /> */}
               <AboutAccordion
                 caseDetails={caseData}
                 GetCaseDetails={GetCaseDetails}

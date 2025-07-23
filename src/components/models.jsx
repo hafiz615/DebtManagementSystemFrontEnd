@@ -705,16 +705,6 @@ export default function MuiModels({
           backgroundColor={Colors.SKY_BLUE}
           hoverColor={Colors.SKY_BLUE}
         />
-      ) : show === "bouncePayments" ? (
-        <TextButton
-          buttonText="Bounce Payments"
-          height="2.5rem"
-          width="9.5rem"
-          onClick={handleOpen}
-          disabled={disabled}
-          backgroundColor={Colors.SKY_BLUE}
-          hoverColor={Colors.SKY_BLUE}
-        />
       ) : button === "delete" ? (
         <IconButton
           onClick={() => {
@@ -1304,8 +1294,6 @@ export default function MuiModels({
               debtorId={debtorId}
               GetCaseDetails={GetCaseDetails}
             />
-          ) : show === "bouncePayments" ? (
-            <BouncePayments handleClose={handleClose} debtorId={debtorId} />
           ) : show === "extractFiles" ? (
             <ExtractFieldPopup
               selectedFiles={selectedFiles}
