@@ -1517,10 +1517,10 @@ export const GetAllCasesTasks = async (id) => {
     return error;
   }
 };
-export const AddManualPayment = async (payload, type) => {
+export const AddManualPayment = async (payload) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/debtor/addManualPayment?type=${type}`,
+      BASE_URL + `/v1/debtor/addManualPayment`,
       payload,
       setHeaders()
     );
@@ -1676,10 +1676,10 @@ export const GetRelatedPayments = async (id) => {
     return error;
   }
 };
-export const AddCheckPayment = async (payload, type) => {
+export const AddCheckPayment = async (payload) => {
   try {
     return await axios.post(
-      BASE_URL + `/v1/seemlesschex/createCheck?type=${type}`,
+      BASE_URL + `/v1/seemlesschex/createCheck`,
       payload,
       setHeaders()
     );

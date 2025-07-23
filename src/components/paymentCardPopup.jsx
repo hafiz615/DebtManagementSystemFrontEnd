@@ -144,7 +144,7 @@ function PaymentCardPopup({ debtorId, caseId, GetCaseDetails }) {
       };
       const encryptedData = encrypt(checkParams, REACT_APP_SECURITY_KEY);
       params.data = encryptedData;
-      const AddCheckPaymentRes = await AddCheckPayment(params, activeTab);
+      const AddCheckPaymentRes = await AddCheckPayment(params);
       if (AddCheckPaymentRes?.status === 200) {
         showToast(AddCheckPaymentRes?.data?.message, "success");
         GetCaseDetails(caseId);
@@ -153,7 +153,7 @@ function PaymentCardPopup({ debtorId, caseId, GetCaseDetails }) {
         showToast(errorMessage, "error");
       }
     } else {
-      const AddManualPaymentRes = await AddManualPayment(params, activeTab);
+      const AddManualPaymentRes = await AddManualPayment(params);
       if (AddManualPaymentRes?.status === 200) {
         showToast(AddManualPaymentRes?.data?.message, "success");
         GetCaseDetails(caseId);
@@ -175,13 +175,7 @@ function PaymentCardPopup({ debtorId, caseId, GetCaseDetails }) {
             (checkedItem) => checkedItem?._id !== item?._id
           );
 
-      const totalAmount = updatedCheckedPayments.reduce(
-        (sum, payment) => sum + (Number(payment?.amount) || 0),
-        0
-      );
-
       setCheckedPayments(updatedCheckedPayments);
-      setAmount(totalAmount);
 
       return {
         ...prevState,
@@ -209,14 +203,6 @@ function PaymentCardPopup({ debtorId, caseId, GetCaseDetails }) {
   useEffect(() => {
     getUpcommingPayments();
   }, [currentPaymentPage, activeTab]);
-
-  useEffect(() => {
-    setCheckedPayments([]);
-    setCheckboxStates({});
-    setAmount(0);
-    setReferenceId("");
-    setDate("");
-  }, [activeTab]);
 
   const formatCurrency = (value) => {
     if (value === "") return "";
@@ -300,7 +286,7 @@ function PaymentCardPopup({ debtorId, caseId, GetCaseDetails }) {
             htmlFor="amount"
             style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
           >
-            Total Commission*
+            Amount*
           </label>
           <input
             id="amount"
@@ -588,8 +574,10 @@ function PaymentCardPopup({ debtorId, caseId, GetCaseDetails }) {
                     }}
                   >
                     <Checkbox
-                      checked={checkboxStates[index] || false}
-                      onChange={() => handleCheckboxChange(index, payments)}
+                      checked={checkboxStates[payments?._id] || false}
+                      onChange={() =>
+                        handleCheckboxChange(payments?._id, payments)
+                      }
                       sx={{
                         color: Colors.SKY_BLUE,
                         "&.Mui-checked": {
