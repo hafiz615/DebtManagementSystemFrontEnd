@@ -665,16 +665,6 @@ export default function MuiModels({
             sx={{ fontSize: "16px", color: Colors.WHITE, cursor: "pointer" }}
           />
         </IconButton>
-      ) : show === "AddPayments" ? (
-        <TextButton
-          buttonText="Manual Payments"
-          height="2.5rem"
-          width="9.5rem"
-          onClick={handleOpen}
-          disabled={disabled}
-          backgroundColor={Colors.SKY_BLUE}
-          hoverColor={Colors.SKY_BLUE}
-        />
       ) : show === "attorneyPayments" ? (
         <TextButton
           buttonText="Attorney Payments"
@@ -700,16 +690,6 @@ export default function MuiModels({
           buttonText="Check Details"
           height="2.5rem"
           width="8rem"
-          onClick={handleOpen}
-          disabled={disabled}
-          backgroundColor={Colors.SKY_BLUE}
-          hoverColor={Colors.SKY_BLUE}
-        />
-      ) : show === "bouncePayments" ? (
-        <TextButton
-          buttonText="Bounce Payments"
-          height="2.5rem"
-          width="9.5rem"
           onClick={handleOpen}
           disabled={disabled}
           backgroundColor={Colors.SKY_BLUE}
@@ -1297,15 +1277,6 @@ export default function MuiModels({
               handleClose={handleClose}
               caseData={caseData}
             />
-          ) : show === "AddPayments" ? (
-            <PaymentCardPopup
-              handleClose={handleClose}
-              caseId={caseId}
-              debtorId={debtorId}
-              GetCaseDetails={GetCaseDetails}
-            />
-          ) : show === "bouncePayments" ? (
-            <BouncePayments handleClose={handleClose} debtorId={debtorId} />
           ) : show === "extractFiles" ? (
             <ExtractFieldPopup
               selectedFiles={selectedFiles}

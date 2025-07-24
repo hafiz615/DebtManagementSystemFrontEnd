@@ -39,11 +39,11 @@ export default function AnalyticsPanel({ loading, paymentDetails }) {
 
   return (
     <Paper
-      elevation={3}
       sx={{
         p: 4,
         backgroundColor: Colors.WHITE,
         mb: 3,
+        boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
       }}
     >
       <Typography

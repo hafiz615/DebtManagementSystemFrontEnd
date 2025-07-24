@@ -5,6 +5,8 @@ import PaymentPlan from "./paymentPlan";
 import PaymentsAccounts from "./paymentsAccounts";
 import AnalyticsAccordion from "./analyticsAccordion";
 import { GetCasePaymentsAnalytics } from "../../services/services";
+import BouncePayments from "./bouncePayments";
+import PaymentCardPopup from "../paymentCardPopup";
 
 export default function Transactions({
   caseData,
@@ -91,6 +93,32 @@ export default function Transactions({
             label="Accounts"
             value="Accounts"
           />
+          <Tab
+            sx={{
+              fontWeight: "600",
+              textTransform: "none",
+              fontFamily: "Nunito",
+
+              "&.Mui-selected": {
+                color: value ? Colors.SKY_BLUE : "inherit",
+              },
+            }}
+            label="Manual Payments"
+            value="manualPayments"
+          />
+          <Tab
+            sx={{
+              fontWeight: "600",
+              textTransform: "none",
+              fontFamily: "Nunito",
+
+              "&.Mui-selected": {
+                color: value ? Colors.SKY_BLUE : "inherit",
+              },
+            }}
+            label="Bounce Payments"
+            value="bouncePayments"
+          />
         </Tabs>
       </Box>
       <div style={{ height: "60vh" }}>
@@ -118,6 +146,20 @@ export default function Transactions({
             accountsResponse={accountsResponse}
             GetDebtorAccounts={GetDebtorAccounts}
           />
+        ) : (
+          ""
+        )}
+        {value === "manualPayments" ? (
+          <PaymentCardPopup
+            caseId={caseDataId}
+            debtorId={debtorId}
+            GetCaseDetails={GetCaseDetails}
+          />
+        ) : (
+          ""
+        )}
+        {value === "bouncePayments" ? (
+          <BouncePayments debtorId={debtorId} />
         ) : (
           ""
         )}

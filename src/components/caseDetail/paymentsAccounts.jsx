@@ -88,7 +88,11 @@ export default function PaymentsAccounts({
     <Box sx={textStyle}>
       <TableContainer
         component={Paper}
-        sx={{ maxHeight: 400, overflowY: "auto" }}
+        sx={{
+          maxHeight: 400,
+          overflowY: "auto",
+          boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+        }}
       >
         <Table stickyHeader>
           <TableHead>

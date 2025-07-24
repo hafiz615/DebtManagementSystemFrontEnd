@@ -452,6 +452,7 @@ export default function PaymentPlan({ caseData, accountsResponse }) {
         height: "60vh",
         marginBottom: "0.5rem",
         justifyContent: "space-between",
+        boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
       }}
     >
       <Dialog

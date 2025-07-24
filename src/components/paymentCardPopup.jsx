@@ -79,7 +79,7 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
   })
 );
 
-function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
+function PaymentCardPopup({ debtorId, caseId, GetCaseDetails }) {
   const [selectedValue, setSelectedValue] = useState("Wire");
   const [activeTab, setActiveTab] = useState("client");
   const [amount, setAmount] = useState();
@@ -147,7 +147,6 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
       const AddCheckPaymentRes = await AddCheckPayment(params);
       if (AddCheckPaymentRes?.status === 200) {
         showToast(AddCheckPaymentRes?.data?.message, "success");
-        handleClose();
         GetCaseDetails(caseId);
       } else if (AddCheckPaymentRes?.response?.status === 400) {
         const errorMessage = AddCheckPaymentRes?.response?.data?.message;
@@ -157,7 +156,6 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
       const AddManualPaymentRes = await AddManualPayment(params);
       if (AddManualPaymentRes?.status === 200) {
         showToast(AddManualPaymentRes?.data?.message, "success");
-        handleClose();
         GetCaseDetails(caseId);
       } else if (AddManualPaymentRes?.response?.status === 400) {
         const errorMessage = AddManualPaymentRes?.response?.data?.message;
@@ -250,13 +248,21 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
   };
 
   return (
-    <Grid item xs={12}>
+    <Grid
+      item
+      xs={12}
+      sx={{
+        backgroundColor: Colors.WHITE,
+        borderBottomLeftRadius: "5px",
+        borderBottomRightRadius: "5px",
+        boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+        padding: "1.5rem",
+      }}
+    >
       <Grid
         item
         sx={{
           display: "flex",
-          justifyContent: "space-between",
-          cursor: "pointer",
         }}
       >
         <Typography
@@ -265,7 +271,6 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
         >
           Payment Details
         </Typography>
-        <Close onClick={handleClose} />
       </Grid>
       <Grid
         xs={12}
@@ -302,7 +307,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
             htmlFor="referenceId"
             style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
           >
-            Reference ID {selectedValue === "Check" ? "" : "*"}
+            Reference ID{selectedValue === "Check" ? "" : "*"}
           </label>
           <input
             id="referenceId"
