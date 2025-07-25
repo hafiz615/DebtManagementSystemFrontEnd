@@ -360,26 +360,12 @@ export default function CaseById({
                         </Grid>
                         <div style={{ display: "flex", gap: ".5rem" }}>
                           <MuiModels
-                            show="AddPayments"
-                            width="55vw"
-                            caseId={id}
-                            debtorId={caseData?.debtor?._id}
-                            GetCaseDetails={GetCaseDetails}
-                          />
-                          <MuiModels
                             show="SeeCheckDetails"
                             maxHeight="70vh"
                             width="55vw"
                             caseId={id}
                             debtorId={caseData?.debtor?._id}
                             caseData={caseData}
-                            GetCaseDetails={GetCaseDetails}
-                          />
-                          <MuiModels
-                            show="bouncePayments"
-                            maxHeight="70vh"
-                            caseId={id}
-                            debtorId={caseData?.debtor?._id}
                             GetCaseDetails={GetCaseDetails}
                           />
                         </div>
@@ -537,8 +523,6 @@ export default function CaseById({
 
           <Grid container>
             <Grid item xs={12} md={3}>
-              {/* <FinancialAccordion />
-              <SettlementAccordion /> */}
               <AboutAccordion
                 caseDetails={caseData}
                 GetCaseDetails={GetCaseDetails}

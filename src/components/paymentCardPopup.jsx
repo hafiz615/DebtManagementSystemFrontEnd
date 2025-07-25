@@ -79,7 +79,7 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(
   })
 );
 
-function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
+function PaymentCardPopup({ debtorId, caseId, GetCaseDetails }) {
   const [selectedValue, setSelectedValue] = useState("Wire");
   const [activeTab, setActiveTab] = useState("client");
   const [amount, setAmount] = useState();
@@ -144,20 +144,18 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
       };
       const encryptedData = encrypt(checkParams, REACT_APP_SECURITY_KEY);
       params.data = encryptedData;
-      const AddCheckPaymentRes = await AddCheckPayment(params, activeTab);
+      const AddCheckPaymentRes = await AddCheckPayment(params);
       if (AddCheckPaymentRes?.status === 200) {
         showToast(AddCheckPaymentRes?.data?.message, "success");
-        handleClose();
         GetCaseDetails(caseId);
       } else if (AddCheckPaymentRes?.response?.status === 400) {
         const errorMessage = AddCheckPaymentRes?.response?.data?.message;
         showToast(errorMessage, "error");
       }
     } else {
-      const AddManualPaymentRes = await AddManualPayment(params, activeTab);
+      const AddManualPaymentRes = await AddManualPayment(params);
       if (AddManualPaymentRes?.status === 200) {
         showToast(AddManualPaymentRes?.data?.message, "success");
-        handleClose();
         GetCaseDetails(caseId);
       } else if (AddManualPaymentRes?.response?.status === 400) {
         const errorMessage = AddManualPaymentRes?.response?.data?.message;
@@ -177,13 +175,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
             (checkedItem) => checkedItem?._id !== item?._id
           );
 
-      const totalAmount = updatedCheckedPayments.reduce(
-        (sum, payment) => sum + (Number(payment?.amount) || 0),
-        0
-      );
-
       setCheckedPayments(updatedCheckedPayments);
-      setAmount(totalAmount);
 
       return {
         ...prevState,
@@ -211,14 +203,6 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
   useEffect(() => {
     getUpcommingPayments();
   }, [currentPaymentPage, activeTab]);
-
-  useEffect(() => {
-    setCheckedPayments([]);
-    setCheckboxStates({});
-    setAmount(0);
-    setReferenceId("");
-    setDate("");
-  }, [activeTab]);
 
   const formatCurrency = (value) => {
     if (value === "") return "";
@@ -264,13 +248,21 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
   };
 
   return (
-    <Grid item xs={12}>
+    <Grid
+      item
+      xs={12}
+      sx={{
+        backgroundColor: Colors.WHITE,
+        borderBottomLeftRadius: "5px",
+        borderBottomRightRadius: "5px",
+        boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+        padding: "1.5rem",
+      }}
+    >
       <Grid
         item
         sx={{
           display: "flex",
-          justifyContent: "space-between",
-          cursor: "pointer",
         }}
       >
         <Typography
@@ -279,7 +271,6 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
         >
           Payment Details
         </Typography>
-        <Close onClick={handleClose} />
       </Grid>
       <Grid
         xs={12}
@@ -295,7 +286,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
             htmlFor="amount"
             style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
           >
-            Total Commission*
+            Amount*
           </label>
           <input
             id="amount"
@@ -316,7 +307,7 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
             htmlFor="referenceId"
             style={{ fontFamily: "Nunito", fontSize: FONT_SIZE_LARGE }}
           >
-            Reference ID {selectedValue === "Check" ? "" : "*"}
+            Reference ID{selectedValue === "Check" ? "" : "*"}
           </label>
           <input
             id="referenceId"
@@ -583,8 +574,10 @@ function PaymentCardPopup({ debtorId, caseId, handleClose, GetCaseDetails }) {
                     }}
                   >
                     <Checkbox
-                      checked={checkboxStates[index] || false}
-                      onChange={() => handleCheckboxChange(index, payments)}
+                      checked={checkboxStates[payments?._id] || false}
+                      onChange={() =>
+                        handleCheckboxChange(payments?._id, payments)
+                      }
                       sx={{
                         color: Colors.SKY_BLUE,
                         "&.Mui-checked": {

@@ -182,7 +182,6 @@ export default function DebtorFields({
   const handleAddNewContact = () => {
     const newContact = {
       name: "",
-      title: "",
       phone: "",
       email: "",
     };
@@ -724,33 +723,6 @@ export default function DebtorFields({
             }
             onKeyDown={handleNumberInput}
           />
-          {/* <PaymentsTextFields
-            type="text"
-            label="Phone #*"
-            placeHolderValue="Enter Phone Number"
-            width="100%"
-            value={
-              debtorBusinessDetails?.businessPhoneNumber
-                ? debtorBusinessDetails.businessPhoneNumber.startsWith("+1")
-                  ? debtorBusinessDetails.businessPhoneNumber.slice(2)
-                  : debtorBusinessDetails.businessPhoneNumber
-                : ""
-            }
-            border={
-              debtorBusinessDetails?.businessPhoneNumber === "" ||
-              debtorBusinessDetails?.businessPhoneNumber === undefined
-                ? "2px solid red"
-                : "auto" && misMatches?.businessPhoneNumber && showFieldError
-                ? "2px solid red"
-                : "1px solid transparent"
-            }
-            onChangeFunction={(e) => {
-              const numericValue = e.target.value.replace(/\D/g, "");
-              businessInfoInputChange("businessPhoneNumber", numericValue);
-            }}
-            error={errors?.businessPhone}
-            onKeyDown={handleNumberInput}
-          /> */}
         </Grid>
       </Grid>
 
@@ -833,19 +805,9 @@ export default function DebtorFields({
                       />
                       <PaymentsTextFields
                         type="text"
-                        label="Title"
-                        placeHolderValue="Enter Title"
-                        width={smallScreen ? "100%" : "97%"}
-                        value={item?.title}
-                        onChangeFunction={(e) =>
-                          handleInputChange(index, "title", e.target.value)
-                        }
-                      />
-                      <PaymentsTextFields
-                        type="text"
                         label="Phone #"
                         placeHolderValue="Enter Phone Number"
-                        width="100%"
+                        width={smallScreen ? "100%" : "97%"}
                         value={
                           item?.phone
                             ? item?.phone.startsWith("+1")
@@ -875,77 +837,7 @@ export default function DebtorFields({
                         }
                         error={emailContactError?.[`email${index}`]}
                       />
-                      {/* <PaymentsTextFields
-                        type="text"
-                        label="State (Optional)"
-                        placeHolderValue="Enter State"
-                        width={smallScreen ? "100%" : "97%"}
-                        value={item?.state}
-                        onChangeFunction={(e) =>
-                          handleInputChange(index, "state", e.target.value)
-                        }
-                      /> */}
-                      {/* <PaymentsTextFields
-                        label="City (Optional)"
-                        placeHolderValue="Enter City"
-                        width={smallScreen ? "100%" : "97%"}
-                        value={item?.city}
-                        onChangeFunction={(e) =>
-                          handleInputChange(index, "city", e.target.value)
-                        }
-                      /> */}
-                      {/* <PaymentsTextFields
-                        type="number"
-                        label="Zip Code (Optional)"
-                        placeHolderValue="Enter Zip Code"
-                        width={smallScreen ? "100%" : "97%"}
-                        value={item?.zipCode}
-                        onChangeFunction={(e) =>
-                          handleInputChange(index, "zipCode", e.target.value)
-                        }
-                        onKeyDown={handleNumberInput}
-                      /> */}
                     </Grid>
-                    {/* <Grid
-                      container
-                      item
-                      xs={12}
-                      md={4}
-                      sx={{ flexDirection: "column" }}
-                    >
-                      <Typography
-                        sx={{
-                          fontWeight: "500",
-                          fontFamily: "Nunito",
-                          marginLeft: "1rem",
-                          color: Colors.DARK_GRAY,
-                        }}
-                      >
-                        Relation with Client(Optional)
-                      </Typography>
-                      <input
-                        type="text"
-                        placeholder="Relation"
-                        value={item?.relationWithDebtor}
-                        onChange={(e) =>
-                          handleInputChange(
-                            index,
-                            "relationWithDebtor",
-                            e.target.value
-                          )
-                        }
-                        style={{
-                          backgroundColor: Colors.BG_LIGHT_GRAY,
-                          height: "2.5rem",
-                          color: Colors.DIM_LIGHT_GRAY,
-                          paddingLeft: "1rem",
-                          border: "none",
-                          outline: "none",
-                          borderRadius: "5px",
-                          width: smallScreen ? "100%" : "97%",
-                        }}
-                      />
-                    </Grid> */}
                   </Grid>
                   <hr></hr>
                 </>
