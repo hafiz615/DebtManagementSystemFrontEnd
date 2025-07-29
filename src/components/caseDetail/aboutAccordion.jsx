@@ -46,7 +46,9 @@ export default function AboutAccordion({ caseDetails, GetCaseDetails }) {
     { name: "Negotiator", value: caseDetails?.negotiator || "-" },
     {
       name: "Contract Date",
-      value: formatDate(caseDetails?.creditor?.lastFundedDate) || "-",
+      value: caseDetails?.creditor?.lastFundedDate
+        ? formatDate(caseDetails?.creditor?.lastFundedDate)
+        : "-",
     },
     {
       name: "Contract Amount",
