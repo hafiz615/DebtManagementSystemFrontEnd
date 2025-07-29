@@ -170,7 +170,7 @@ export default function DebtorContacts({
         <Grid container sx={{ justifyContent: "flex-end", marginTop: "1rem" }}>
           <TextButton
             buttonText={
-              show === "EditDebtor" || show === "EditCreditor" ? "Edit" : "Add"
+              show === "EditDebtor" || show === "EditCreditor" ? "Save" : "Add"
             }
             height="2rem"
             width="6rem"
