@@ -193,7 +193,7 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
               height: "29vh",
             }}
           >
-            <CircularProgress size={90} sx={{ color: Colors.SKY_BLUE }} />
+            <CircularProgress size={50} sx={{ color: Colors.SKY_BLUE }} />
           </Grid>
         ) : (
           <>
@@ -234,7 +234,7 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
                       <MenuItem
                         key={pipeline?.pipeline}
                         onClick={(event) =>
-                          handleOpenSubMenu(event, pipeline?.pipeline)
+                          handleOpenSubMenu(event, pipeline?._id)
                         }
                         sx={{
                           display: "flex",
@@ -272,8 +272,7 @@ export default function EditAbout({ handleClose, data, GetCaseDetails }) {
                       {selectedCategory &&
                         pipelineStatus
                           ?.find(
-                            (pipeline) =>
-                              pipeline?.pipeline === selectedCategory
+                            (pipeline) => pipeline?._id === selectedCategory
                           )
                           ?.status?.map((status, index) => (
                             <div
