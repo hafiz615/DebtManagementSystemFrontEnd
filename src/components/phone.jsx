@@ -68,6 +68,14 @@ function Phone({ user, fromNumber, caseId, phoneNumberState }) {
     return `${mins}:${secs}`;
   };
 
+  const sendDTMF = (digit) => {
+    if (call?.sendDigits) {
+      call.sendDigits(digit);
+    } else {
+      console.warn("No active call to send DTMF");
+    }
+  };
+
   return (
     <div>
       <div
@@ -119,7 +127,10 @@ function Phone({ user, fromNumber, caseId, phoneNumberState }) {
                     borderColor: Colors.SKY_BLUE,
                     color: Colors.SKY_BLUE,
                   }}
-                  onClick={() => setDestination((prev) => prev + num)}
+                  onClick={() => {
+                    setDestination((prev) => prev + num);
+                    sendDTMF(num);
+                  }}
                 >
                   {num}
                 </Button>
