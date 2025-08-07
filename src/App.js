@@ -212,9 +212,8 @@ function App() {
 
         <Route exact path="/set-password" element={<VerifyProfilePage />} />
       </Routes>
-      {credential?.login && credential?.password && (
+      {credential && (
         <TelnyxRTCProvider
-          key={credential.login}
           credential={{
             login: credential.login,
             password: credential.password,
