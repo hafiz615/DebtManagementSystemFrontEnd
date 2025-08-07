@@ -2362,10 +2362,7 @@ export const GetAllInbox = async (
 ) => {
   try {
     return await axios.post(
-      BASE_URL +
-        `/v1/inbox/getAllMessages?search=${search}&filter=${filter}&type=${
-          type ? type : "default"
-        }&medium=${medium}&all=${All}`,
+      BASE_URL + `/v1/inbox/getAllMessages?search=${search}&filter=${filter}`,
       payload,
       setHeaders()
     );

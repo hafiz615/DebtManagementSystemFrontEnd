@@ -140,7 +140,6 @@ function Inbox() {
   const [totalData, setTotalData] = useState();
   const [selectedThreadIds, setSelectedThreadIds] = useState([]);
   const [isCompleting, setIsCompleting] = useState(false);
-  const [undoTriggered, setUndoTriggered] = useState(false);
   const undoTimeoutRef = useRef(null);
   const totalPages = Math.ceil(totalData / paginationRows);
 
@@ -217,7 +216,7 @@ function Inbox() {
         debtorCompanyName: debtorCompany || "",
         creditorCompanyName: creditorCompany || "",
         negotiatorName: negotiator || "",
-        userId: user?._id || userData?._id,
+        userId: user?._id || "",
       },
       text: searchText || "",
     };
