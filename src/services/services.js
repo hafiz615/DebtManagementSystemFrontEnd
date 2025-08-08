@@ -2612,3 +2612,15 @@ export const GetCasePaymentsAnalytics = async (id) => {
     return error;
   }
 };
+
+export const AddCreditorNote = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/creditor/addNote/${id}`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
