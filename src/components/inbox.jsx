@@ -364,6 +364,7 @@ function Inbox() {
   }, [userSelected]);
 
   const handleClear = async () => {
+    setAnchorEl(false);
     setDebtorCompany("");
     setFromFilter("");
     setToFilter("");
@@ -703,6 +704,7 @@ function Inbox() {
                   fontColor={Colors.BLACK}
                   onClick={() => {
                     if (currentPage === 1) {
+                      setAnchorEl(false);
                       getAllInboxData(false, true);
                     } else {
                       setCurrentPage(1);
