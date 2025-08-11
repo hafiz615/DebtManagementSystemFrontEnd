@@ -5,6 +5,7 @@ import {
   AccordionSummary,
   AccordionDetails,
   Grid,
+  Tooltip,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Colors } from "../../config/default";
@@ -14,16 +15,62 @@ import { AddCreditorNote } from "../../services/services";
 import { formatDollarAmount } from "../../common";
 import debounce from "lodash.debounce";
 
-export default function OtherCreditorsAccordion({ caseData }) {
+// Style Constants
+const S = {
+  accordion: {
+    boxShadow: "none",
+    marginBottom: "10px",
+    borderRadius: "1rem !important",
+    backgroundColor: Colors.WHITE,
+  },
+  summary: {
+    height: "20px",
+    backgroundColor: Colors.SKY_BLUE,
+    borderRadius: "1rem",
+  },
+  expandIcon: { color: Colors.WHITE },
+  headerContainer: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  title: { color: Colors.WHITE, fontFamily: "Nunito", fontWeight: "700" },
+  details: {
+    backgroundColor: Colors.WHITE,
+    boxShadow: "0 2px 5px -3px rgba(0, 0, 0, 0.5)",
+    borderBottomLeftRadius: "10px",
+    borderBottomRightRadius: "10px",
+  },
+  gridContainer: { justifyContent: "space-between", mb: "10px" },
+  labelText: {
+    fontSize: "11px",
+    fontFamily: "Nunito",
+    color: Colors.DARK_GRAY,
+    fontWeight: "700",
+  },
+  valueText: {
+    fontSize: "11px",
+    fontFamily: "Nunito",
+    color: Colors.DIM_LIGHT_GRAY,
+    fontWeight: "600",
+  },
+};
+
+const EDITOR_CONFIG = {
+  menubar: false,
+  toolbar:
+    "formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify | numlist bullist outdent indent | removeformat",
+  height: 250,
+};
+
+export default function OtherCreditorsAccordion({ caseData, creditorId }) {
   const [textEditorData, setTextEditorData] = useState(
     caseData?.creditor?.note
   );
 
   const aboutData = [
-    {
-      name: "Pipeline Status",
-      value: caseData?.status || "-",
-    },
+    { name: "Pipeline Status", value: caseData?.status || "-" },
     {
       name: "Time Period",
       value:
@@ -46,10 +93,9 @@ export default function OtherCreditorsAccordion({ caseData }) {
 
   const debouncedSaveNote = useCallback(
     debounce(async (content) => {
-      const payload = { note: content };
-      await AddCreditorNote(payload, caseData?.creditor?._id);
+      await AddCreditorNote({ note: content }, creditorId);
     }, 1000),
-    [caseData?.creditor?._id]
+    [creditorId]
   );
 
   const handleEditorChange = (content) => {
@@ -58,91 +104,32 @@ export default function OtherCreditorsAccordion({ caseData }) {
   };
 
   return (
-    <Accordion
-      sx={{
-        boxShadow: "none",
-        marginBottom: "10px",
-        borderRadius: "1rem !important",
-        backgroundColor: Colors.WHITE,
-      }}
-      defaultExpanded
-    >
+    <Accordion sx={S.accordion} defaultExpanded>
       <AccordionSummary
-        expandIcon={<ExpandMoreIcon sx={{ color: Colors.WHITE }} />}
-        aria-controls="panel1-content"
-        id="panel1-header"
-        sx={{
-          height: "20px",
-          backgroundColor: Colors.SKY_BLUE,
-          borderRadius: "1rem",
-        }}
+        expandIcon={<ExpandMoreIcon sx={S.expandIcon} />}
+        sx={S.summary}
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            width: "100%",
-          }}
-        >
-          <Typography
-            sx={{
-              color: Colors.WHITE,
-              fontFamily: "Nunito",
-              fontWeight: "700",
-            }}
-          >
+        <div style={S.headerContainer}>
+          <Typography sx={S.title}>
             {caseData?.creditor?.businessInformation?.companyName}
           </Typography>
         </div>
       </AccordionSummary>
-      <AccordionDetails
-        sx={{
-          backgroundColor: Colors.WHITE,
-          boxShadow: "0 2px 5px -3px rgba(0, 0, 0, 0.5)",
-          borderBottomLeftRadius: "10px",
-          borderBottomRightRadius: "10px",
-        }}
-      >
+      <AccordionDetails sx={S.details}>
         <Grid>
           {aboutData?.map((item, index) => (
-            <Grid
-              container
-              sx={{ justifyContent: "space-between", mb: "10px" }}
-              key={index}
-            >
-              <Typography
-                sx={{
-                  fontSize: "11px",
-                  fontFamily: "Nunito",
-                  color: Colors.DARK_GRAY,
-                  fontWeight: "700",
-                }}
-              >
-                {item?.name}
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: "11px",
-                  fontFamily: "Nunito",
-                  color: Colors.DIM_LIGHT_GRAY,
-                  fontWeight: "600",
-                }}
-              >
-                {item?.value}
-              </Typography>
+            <Grid container sx={S.gridContainer} key={index}>
+              <Typography sx={S.labelText}>{item?.name}</Typography>
+              <Tooltip title={item?.value} placement="top">
+                <Typography sx={S.valueText}>{item?.value}</Typography>
+              </Tooltip>
             </Grid>
           ))}
         </Grid>
         <Grid>
           <Editor
             apiKey={TEXT_EDITOR_KEY}
-            init={{
-              menubar: false,
-              toolbar:
-                "formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat",
-              height: 250,
-            }}
+            init={EDITOR_CONFIG}
             value={textEditorData}
             onEditorChange={handleEditorChange}
           />

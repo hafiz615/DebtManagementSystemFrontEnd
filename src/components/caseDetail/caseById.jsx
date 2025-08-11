@@ -524,8 +524,15 @@ export default function CaseById({
 
           <Grid container>
             <Grid item xs={12} md={3}>
+              <OtherCreditorsAccordion
+                caseData={caseData}
+                creditorId={caseData?.creditor?._id}
+              />
               {caseData?.creditors?.map((creditor, index) => (
-                <OtherCreditorsAccordion caseData={creditor} />
+                <OtherCreditorsAccordion
+                  caseData={creditor}
+                  creditorId={creditor?.creditor?._id}
+                />
               ))}
               <AboutAccordion
                 caseDetails={caseData}
