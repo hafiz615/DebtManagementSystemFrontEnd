@@ -139,6 +139,7 @@ function CaseDetail() {
 
   const [showEmail, setShowEmail] = useState(false);
   const [showEmailAgreement, setShowEmailAgreement] = useState(false);
+  const [cc, setCc] = useState({});
 
   const scrollToComponent = (id) => {
     const element = document.getElementById(id);
@@ -147,16 +148,13 @@ function CaseDetail() {
     }
   };
 
-  const [cc, setCc] = useState({});
   const getAllCC = async () => {
     const res = await GetAllCc();
     if (res?.status === 200) {
       setCc(res?.data?.data);
     }
   };
-  useEffect(() => {
-    getAllCC();
-  }, []);
+
   const handleShowEmail = () => {
     if (!showEmail) {
       setShowEmail(true);
@@ -178,6 +176,7 @@ function CaseDetail() {
       scrollToComponent("targetComponent"); // Scroll to the component if it is already visible
     }
   };
+
   const handleClose = () => {
     setShowEmail(false);
     if (setShowEmailAgreement) {
@@ -249,6 +248,7 @@ function CaseDetail() {
     }
     setLoading(false);
   };
+
   const GetDebtorAccountsData = async (id) => {
     const accountsRes = await GetDebtorAccounts(id);
     if (accountsRes?.status === 200) {
@@ -324,7 +324,6 @@ function CaseDetail() {
     }
   };
 
-  //settlement functions
   const getAllRanges = async (creditors, status) => {
     setSettlementLoading(true);
     try {
@@ -439,8 +438,15 @@ function CaseDetail() {
 
   useEffect(() => {
     getAllRanges([], false);
-    GetCaseDetails(id);
   }, [id]);
+
+  useEffect(() => {
+    GetCaseDetails(id);
+  }, [id, activeTab]);
+
+  useEffect(() => {
+    getAllCC();
+  }, []);
 
   const currentCreditor = allCreditorNames[tabValue];
 

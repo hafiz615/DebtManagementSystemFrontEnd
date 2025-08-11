@@ -114,7 +114,8 @@ function Inbox() {
   const [loading, setLoading] = useState(false);
   const [creditorCompany, setCreditorCompany] = useState("");
   const [debtorCompany, setDebtorCompany] = useState("");
-  const [caseCode, setCaseCode] = useState("");
+  const [fromFilter, setFromFilter] = useState("");
+  const [toFilter, setToFilter] = useState("");
   const [negotiator, setNegotiator] = useState("");
   const [anchorEl, setAnchorEl] = useState(null);
   const [verifiedSenders, setVerified] = useState([]);
@@ -139,7 +140,6 @@ function Inbox() {
   const [totalData, setTotalData] = useState();
   const [selectedThreadIds, setSelectedThreadIds] = useState([]);
   const [isCompleting, setIsCompleting] = useState(false);
-  const [undoTriggered, setUndoTriggered] = useState(false);
   const undoTimeoutRef = useRef(null);
   const totalPages = Math.ceil(totalData / paginationRows);
 
@@ -149,7 +149,8 @@ function Inbox() {
   const { smsCount, emailCount } = useSelector((state) => state.counts);
   const open = Boolean(anchorEl);
   const tabs = ["Inbox", "Draft", "Tasks", "Done"];
-  const disabled = caseCode || debtorCompany || creditorCompany || negotiator;
+  const disabled =
+    toFilter || fromFilter || debtorCompany || creditorCompany || negotiator;
   const sendEmailRef = useRef(null);
 
   const handleCheckboxChange = (threadId) => {
@@ -210,11 +211,12 @@ function Inbox() {
     setLoading(true);
     const payload = {
       filter: {
-        caseCode: caseCode || "",
+        to: toFilter || "",
+        from: fromFilter || "",
         debtorCompanyName: debtorCompany || "",
         creditorCompanyName: creditorCompany || "",
         negotiatorName: negotiator || "",
-        userId: user?._id || userData?._id,
+        userId: user?._id || "",
       },
       text: searchText || "",
     };
@@ -239,7 +241,8 @@ function Inbox() {
     setLoading(true);
     const payload = {
       filter: {
-        caseCode: "",
+        to: "",
+        from: "",
         debtorCompanyName: "",
         creditorCompanyName: "",
         negotiatorName: "",
@@ -361,8 +364,10 @@ function Inbox() {
   }, [userSelected]);
 
   const handleClear = async () => {
-    setCaseCode("");
+    setAnchorEl(false);
     setDebtorCompany("");
+    setFromFilter("");
+    setToFilter("");
     setCreditorCompany("");
     setNegotiator("");
     getAllInboxData(false, false);
@@ -381,7 +386,8 @@ function Inbox() {
       setLoading(true);
       const payload = {
         filter: {
-          caseCode: caseCode || "",
+          to: toFilter || "",
+          from: fromFilter || "",
           debtorCompanyName: debtorCompany || "",
           creditorCompanyName: creditorCompany || "",
           negotiatorName: negotiator || "",
@@ -412,7 +418,8 @@ function Inbox() {
     setLoading(true);
     const payload = {
       filter: {
-        caseCode: "",
+        to: "",
+        from: "",
         debtorCompanyName: "",
         creditorCompanyName: "",
         negotiatorName: "",
@@ -640,11 +647,19 @@ function Inbox() {
               </Typography>
               <input
                 style={inputStyling}
-                placeholder="Search By Case Code"
+                placeholder="Search By From"
                 type="email"
-                value={caseCode}
-                onChange={(e) => setCaseCode(e.target.value)}
+                value={fromFilter}
+                onChange={(e) => setFromFilter(e.target.value)}
               />
+              <input
+                style={inputStyling}
+                placeholder="Search By To"
+                type="email"
+                value={toFilter}
+                onChange={(e) => setToFilter(e.target.value)}
+              />
+
               <input
                 style={inputStyling}
                 placeholder="Search By Client Company"
@@ -689,6 +704,7 @@ function Inbox() {
                   fontColor={Colors.BLACK}
                   onClick={() => {
                     if (currentPage === 1) {
+                      setAnchorEl(false);
                       getAllInboxData(false, true);
                     } else {
                       setCurrentPage(1);

@@ -92,7 +92,6 @@ function Sms() {
   const [loading, setLoading] = useState(false);
   const [creditorCompany, setCreditorCompany] = useState("");
   const [debtorCompany, setDebtorCompany] = useState("");
-  const [caseCode, setCaseCode] = useState("");
   const [negotiator, setNegotiator] = useState("");
   const [filterActive, setFilterActive] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -100,13 +99,16 @@ function Sms() {
   const [users, setUsers] = useState();
   const [userSelected, setUserSelected] = useState("");
   const [notificationTemplate, setNotificationTemplate] = useState();
-  const [activeMainTab, setActiveMainTab] = useState("Primary");
   const [activePreview, setActivePreview] = useState({
     id: 0,
     active: false,
   });
   const [draftLoading, setDraftLoading] = useState(false);
   const [smsLoading, setSmsLoading] = useState(false);
+  const [fromFilter, setFromFilter] = useState("");
+  const [toFilter, setToFilter] = useState("");
+  const [preview, setPreview] = useState("");
+
   const open = Boolean(anchorEl);
   const tabs = ["Inbox", "Draft"];
   const { showToast } = useToast();
@@ -115,7 +117,8 @@ function Sms() {
   const dispatch = useDispatch();
   const { smsCount, emailCount } = useSelector((state) => state.counts);
 
-  const disabled = caseCode || debtorCompany || creditorCompany || negotiator;
+  const disabled =
+    fromFilter || toFilter || debtorCompany || creditorCompany || negotiator;
 
   const handleKeyPress = (e) => {
     setSearchText(e.target.value);
@@ -134,7 +137,8 @@ function Sms() {
     setLoading(true);
     const payload = {
       filter: {
-        caseCode: caseCode || "",
+        to: toFilter || "",
+        from: fromFilter || "",
         debtorCompanyName: debtorCompany || "",
         creditorCompanyName: creditorCompany || "",
         negotiatorName: negotiator || "",
@@ -190,12 +194,18 @@ function Sms() {
   useEffect(() => {
     if (
       searchText &&
-      (caseCode || debtorCompany || creditorCompany || negotiator)
+      (toFilter || fromFilter || debtorCompany || creditorCompany || negotiator)
     ) {
       getAllInboxData(true, true);
     } else if (searchText) {
       getAllInboxData(true, false);
-    } else if (caseCode || debtorCompany || creditorCompany || negotiator) {
+    } else if (
+      toFilter ||
+      fromFilter ||
+      debtorCompany ||
+      creditorCompany ||
+      negotiator
+    ) {
       getAllInboxData(false, true);
     } else {
       getAllInboxData(false, false);
@@ -208,7 +218,6 @@ function Sms() {
     getAllNotifications();
   }, []);
 
-  // Added effect to reload data when tab changes
   useEffect(() => {
     getAllInboxData(false, false);
     setActivePreview({
@@ -218,32 +227,22 @@ function Sms() {
   }, [activeTab]);
 
   useEffect(() => {
-    getAllInboxData(false, false);
-    setActivePreview({
-      id: 0,
-      active: false,
-    });
-  }, [activeMainTab]);
-
-  useEffect(() => {
     if (userSelected) {
       handleUserChange();
     }
   }, [userSelected]);
 
   const handleClear = async () => {
-    setCaseCode("");
+    setFromFilter("");
+    setToFilter("");
     setDebtorCompany("");
     setCreditorCompany("");
     setNegotiator("");
     getAllInboxData(false, false);
   };
 
-  const [preview, setPreview] = useState("");
-
   const handleSend = async () => {
     setSmsLoading(true);
-
     const formData = new FormData();
     formData.append("content", preview);
     formData.append("from", inboxData?.from?.toString());
@@ -288,7 +287,8 @@ function Sms() {
     setLoading(true);
     const payload = {
       filter: {
-        caseCode: "",
+        to: "",
+        from: "",
         debtorCompanyName: "",
         creditorCompanyName: "",
         negotiatorName: "",
@@ -422,10 +422,17 @@ function Sms() {
               </Typography>
               <input
                 style={inputStyling}
-                placeholder="Search By Case Code"
+                placeholder="Search By From"
                 type="email"
-                value={caseCode}
-                onChange={(e) => setCaseCode(e.target.value)}
+                value={fromFilter}
+                onChange={(e) => setFromFilter(e.target.value)}
+              />
+              <input
+                style={inputStyling}
+                placeholder="Search By To"
+                type="email"
+                value={toFilter}
+                onChange={(e) => setToFilter(e.target.value)}
               />
               <input
                 style={inputStyling}

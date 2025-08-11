@@ -2362,10 +2362,7 @@ export const GetAllInbox = async (
 ) => {
   try {
     return await axios.post(
-      BASE_URL +
-        `/v1/inbox/getAllMessages?search=${search}&filter=${filter}&type=${
-          type ? type : "default"
-        }&medium=${medium}&all=${All}`,
+      BASE_URL + `/v1/inbox/getAllMessages?search=${search}&filter=${filter}`,
       payload,
       setHeaders()
     );
@@ -2609,6 +2606,18 @@ export const GetCasePaymentsAnalytics = async (id) => {
   try {
     return await axios.get(
       BASE_URL + `/v1/payment/getCasePaymentsAnalytics/${id}`,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const AddCreditorNote = async (payload, id) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/creditor/addNote/${id}`,
+      payload,
       setHeaders()
     );
   } catch (error) {

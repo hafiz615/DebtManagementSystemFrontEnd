@@ -46,6 +46,7 @@ import OtherCreditors from "./otherCreditors";
 import PaymentPlan from "./paymentPlan";
 import EmailTimeline from "./emailTimeline";
 import { Editor } from "@tinymce/tinymce-react";
+import OtherCreditorsAccordion from "./otherCreditorsAccordion";
 
 const AntTabs = styled(Tabs)({
   borderBottom: "1px solid #e8e8e8",
@@ -523,6 +524,16 @@ export default function CaseById({
 
           <Grid container>
             <Grid item xs={12} md={3}>
+              <OtherCreditorsAccordion
+                caseData={caseData}
+                creditorId={caseData?.creditor?._id}
+              />
+              {caseData?.creditors?.map((creditor, index) => (
+                <OtherCreditorsAccordion
+                  caseData={creditor}
+                  creditorId={creditor?.creditor?._id}
+                />
+              ))}
               <AboutAccordion
                 caseDetails={caseData}
                 GetCaseDetails={GetCaseDetails}
