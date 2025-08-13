@@ -120,6 +120,8 @@ function Inbox() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [verifiedSenders, setVerified] = useState([]);
   const [activeTab, setActiveTab] = useState("Inbox");
+  const [filterActive, setFilterActive] = useState(false);
+  const [searchActive, setSearchActive] = useState(false);
   const [alltasks, setAllTasks] = useState([]);
   const [users, setUsers] = useState();
   const [userSelected, setUserSelected] = useState();
@@ -209,6 +211,8 @@ function Inbox() {
   const getAllInboxData = async (search, filter) => {
     const user = users?.find((user) => user.name === userSelected);
     setLoading(true);
+    setFilterActive(filter);
+    setSearchActive(search);
     const payload = {
       filter: {
         to: toFilter || "",
@@ -216,14 +220,14 @@ function Inbox() {
         debtorCompanyName: debtorCompany || "",
         creditorCompanyName: creditorCompany || "",
         negotiatorName: negotiator || "",
-        userId: user?._id || "",
       },
+      userId: user?._id || "",
       text: searchText || "",
     };
     const response = await GetEmailData(
       payload,
-      search,
-      filter,
+      search || false,
+      filter || false,
       currentPage,
       paginationRows,
       activeTab === "Done" ? true : false
@@ -238,16 +242,19 @@ function Inbox() {
   };
 
   const getDraftData = async () => {
+    const user = users?.find((user) => user.name === userSelected);
+
     setLoading(true);
     const payload = {
       filter: {
-        to: "",
-        from: "",
-        debtorCompanyName: "",
-        creditorCompanyName: "",
-        negotiatorName: "",
+        to: toFilter || "",
+        from: fromFilter || "",
+        debtorCompanyName: debtorCompany || "",
+        creditorCompanyName: creditorCompany || "",
+        negotiatorName: negotiator || "",
       },
-      text: "",
+      userId: user?._id || "",
+      text: searchText || "",
     };
     const response = await GetAllInbox(
       false,
@@ -320,7 +327,6 @@ function Inbox() {
 
   useEffect(() => {
     getVerifiedIdentites();
-    getAllTasks();
     getAllUser();
     getNotificationTemplates();
     getAllNotifications();
@@ -328,16 +334,21 @@ function Inbox() {
   }, []);
 
   useEffect(() => {
-    getAllInboxData(true, true);
+    if (inboxData) {
+      getAllInboxData(true, true);
+    }
   }, [currentPage]);
 
   useEffect(() => {
-    setCurrentPage(1);
-    getAllInboxData(true, true);
+    if (inboxData) {
+      setCurrentPage(1);
+      getAllInboxData(true, true);
+    }
   }, [paginationRows, searchText]);
 
   useEffect(() => {
     if (activeTab === "Tasks") {
+      getAllTasks();
       const firstKey = alltasks && Object.keys(alltasks)?.[0];
       setSelectedUser(firstKey);
     }
@@ -348,7 +359,7 @@ function Inbox() {
       getAllInboxData(true, true);
     }
     if (activeTab === "Inbox") {
-      getAllInboxData(true, true);
+      getAllInboxData(searchActive, filterActive);
     }
     setActivePreview({
       id: 0,
@@ -391,8 +402,8 @@ function Inbox() {
           debtorCompanyName: debtorCompany || "",
           creditorCompanyName: creditorCompany || "",
           negotiatorName: negotiator || "",
-          userId: user?._id,
         },
+        userId: user?._id,
         text: searchText || "",
       };
       const response = await GetEmailData(
@@ -400,7 +411,8 @@ function Inbox() {
         true,
         true,
         1,
-        paginationRows
+        paginationRows,
+        activeTab === "Done" ? true : false
       );
       if (response?.status === 200) {
         const data = response?.data?.data?.threads;
@@ -423,8 +435,8 @@ function Inbox() {
         debtorCompanyName: "",
         creditorCompanyName: "",
         negotiatorName: "",
-        userId: user?._id,
       },
+      userId: user?._id,
       text: searchText || "",
     };
     const response = await GetAllInbox(
