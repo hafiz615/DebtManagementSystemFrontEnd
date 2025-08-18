@@ -65,8 +65,8 @@ export default function EditPayment({
     const selectedDate = dayjs(selectedValue);
     const dayOfWeek = selectedDate.day();
 
-    if (dayOfWeek === 0 || dayOfWeek === 6) {
-      showToast("Weekends are not allowed. Please select a weekday.", "error");
+    if (dayOfWeek === 0) {
+      showToast("Sundays are not allowed. Please select a weekday.", "error");
       setIsWeekend(true);
     } else {
       setIsWeekend(false);
