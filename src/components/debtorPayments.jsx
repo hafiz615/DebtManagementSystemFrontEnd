@@ -317,7 +317,7 @@ export default function DebtorPayments({
             onChange={(e) => {
               const selectedDate = new Date(e.target.value);
               const day = selectedDate.getDay();
-              if (day === 0 || day === 6) {
+              if (day === 0) {
                 setError(true);
                 setDate("");
               } else {
@@ -335,7 +335,7 @@ export default function DebtorPayments({
                 color: Colors.ORANGE_COLOR,
               }}
             >
-              Weekends are not allowed. Please select a weekday.
+              Sundays are not allowed. Please select a weekday.
             </Typography>
           )}
 
