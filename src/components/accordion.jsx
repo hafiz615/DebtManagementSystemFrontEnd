@@ -82,6 +82,7 @@ export default function AccordionUsage({
           : item?.failedReasonCaptured || "-",
       status: item?.status || "-",
       debtorId: item?.debtorId || "-",
+      partial: item?.partial || "",
     }));
 
     if (!isEqual(generatedData, rowArray)) {
