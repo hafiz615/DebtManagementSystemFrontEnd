@@ -32,6 +32,7 @@ import {
 } from "../services/services";
 import {
   FONT_SIZE_LARGE,
+  FONT_SIZE_MEDIUM,
   FONT_SIZE_SMALL,
   FONT_SIZE_XL,
 } from "../constants/appConstants";
@@ -495,6 +496,28 @@ export default function ListTable({
                             }
                           }}
                         />
+                      </StyledTableCell>
+                    )}
+                    {row?.partial && (
+                      <StyledTableCell
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          zIndex: 999,
+                        }}
+                      >
+                        <Typography
+                          sx={{
+                            backgroundColor: Colors.ORANGE_COLOR,
+                            fontFamily: "Nunito",
+                            color: Colors.WHITE,
+                            padding: "5px 10px",
+                            borderRadius: "10px",
+                            fontSize: FONT_SIZE_MEDIUM,
+                          }}
+                        >
+                          Partial
+                        </Typography>
                       </StyledTableCell>
                     )}
                   </StyledTableRow>
