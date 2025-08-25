@@ -132,6 +132,7 @@ function TransactionRow({
             </p>
             <p style={typographyStyle}>{item?.transactionType || "-"}</p>
             <p style={typographyStyle}>{item?.paymentGateway || "-"}</p>
+
             {!debtor && (
               <p style={typographyStyle}>
                 {item?.type === "capture" &&
@@ -269,8 +270,30 @@ function TransactionRow({
                   getPaymentPlan={getPaymentPlan}
                 />
               </p>
+            ) : item?.partial ? (
+              <p
+                style={{
+                  width: "12%",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: "11px",
+                    fontWeight: "500",
+                    fontFamily: "Nunito",
+                    color: Colors.WHITE,
+                    width: "fit-content",
+                    margin: "0px 0px",
+                    backgroundColor: Colors.ORANGE_COLOR,
+                    padding: "5px 10px",
+                    borderRadius: "10px",
+                  }}
+                >
+                  Partial
+                </Typography>
+              </p>
             ) : (
-              "-"
+              <p style={typographyStyle}></p>
             )}
           </div>
         );

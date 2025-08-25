@@ -48,7 +48,7 @@ import EditMainPipeline from "./editMainPipeline";
 import AddPipeline from "./settingsScreen/addPipeline";
 import EditPipelineCase from "./pipelines/editPipelineCase";
 import ExportPipeline from "./pipelines/exportPipeline";
-import { FONT_SIZE_XL } from "../constants/appConstants";
+import { FONT_SIZE_LARGE, FONT_SIZE_XL } from "../constants/appConstants";
 import SendEmail from "./sendEmail";
 import CreateRole from "./settingsScreen/createRole";
 import DebtorContacts from "./caseDetail/debtorContacts";
@@ -365,7 +365,10 @@ export default function MuiModels({
       ) : show === "editPayment" ? (
         <Tooltip title="Edit Payment" placement="top-start">
           <IconButton
-            sx={{ display: "flex", alignItems: "center" }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+            }}
             onClick={(e) => {
               e.stopPropagation();
               handleOpen();
@@ -375,6 +378,7 @@ export default function MuiModels({
               sx={{
                 color: Colors.BLACK,
                 cursor: "pointer",
+                fontSize: "20px",
               }}
             />
           </IconButton>
@@ -494,7 +498,7 @@ export default function MuiModels({
       ) : show === "deletePayment" ? (
         <Tooltip title="Delete Payment" placement="top">
           <IconButton onClick={() => handleOpen()}>
-            <Delete sx={{ color: Colors.ORANGE_COLOR }} />
+            <Delete sx={{ color: Colors.ORANGE_COLOR, fontSize: "20px" }} />
           </IconButton>
         </Tooltip>
       ) : show === "updateUpcomingPaymentDate" ? (

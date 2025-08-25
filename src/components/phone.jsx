@@ -33,9 +33,11 @@ function Phone({ user, fromNumber, caseId, phoneNumberState }) {
         video: false,
         callerNumber: fromNumber,
         clientState: `${caseId}-${user?._id}`,
+        dtmfType: "SIP_INFO",
       });
     } catch (err) {
       console.error("Call error:", err);
+      setCallActive(true);
     }
   };
 
@@ -45,19 +47,27 @@ function Phone({ user, fromNumber, caseId, phoneNumberState }) {
 
   useEffect(() => {
     if (!call) return;
+
     if (call.state === "active") {
       timerRef.current = setInterval(() => {
         setCallDuration((prev) => prev + 1);
       }, 1000);
     }
-    if (call.state === "destroy" || call.state === "hangup") {
+
+    if (["destroy", "hangup"].includes(call.state)) {
       clearInterval(timerRef.current);
+      timerRef.current = null;
       setCallDuration(0);
       setCallActive(true);
       handleClose();
     }
 
-    return () => clearInterval(timerRef.current);
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
   }, [call?.state]);
 
   const formatTime = (seconds) => {
@@ -69,10 +79,42 @@ function Phone({ user, fromNumber, caseId, phoneNumberState }) {
   };
 
   const sendDTMF = (digit) => {
-    if (call?.sendDigits) {
-      call.sendDigits(digit);
+    if (call?.state === "active") {
+      try {
+        if (typeof call.dtmf === "function") {
+          call.dtmf(String(digit));
+          console.log("Sent DTMF:", digit);
+        } else {
+          console.warn("DTMF not supported on this call object");
+        }
+      } catch (err) {
+        console.error("Error sending DTMF:", err);
+      }
     } else {
       console.warn("No active call to send DTMF");
+    }
+  };
+
+  const handleKeypadPress = (num) => {
+    if (call?.state === "active") {
+      sendDTMF(num);
+    } else {
+      setDestination((prev) => prev + num);
+    }
+  };
+
+  const handleHangup = () => {
+    try {
+      if (call && typeof call.hangup === "function") {
+        call.hangup();
+      }
+    } catch (err) {
+      console.error("Error hanging up:", err);
+    } finally {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+      setCallActive(true);
+      setCallDuration(0);
     }
   };
 
@@ -104,6 +146,7 @@ function Phone({ user, fromNumber, caseId, phoneNumberState }) {
             country={"us"}
             value={destination}
             onChange={setDestination}
+            disabled={call?.state === "active"}
             inputStyle={{
               padding: "1rem 3rem",
               width: "100%",
@@ -114,6 +157,7 @@ function Phone({ user, fromNumber, caseId, phoneNumberState }) {
             }}
           />
         </Box>
+
         <Box sx={{ mb: 2 }}>
           <Grid container spacing={1}>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, "*", 0, "#"].map((num) => (
@@ -127,10 +171,7 @@ function Phone({ user, fromNumber, caseId, phoneNumberState }) {
                     borderColor: Colors.SKY_BLUE,
                     color: Colors.SKY_BLUE,
                   }}
-                  onClick={() => {
-                    setDestination((prev) => prev + num);
-                    sendDTMF(num);
-                  }}
+                  onClick={() => handleKeypadPress(num)}
                 >
                   {num}
                 </Button>
@@ -146,15 +187,7 @@ function Phone({ user, fromNumber, caseId, phoneNumberState }) {
         )}
 
         {call && call.state !== "destroy" && (
-          <IconButton
-            color="error"
-            onClick={() => {
-              call.hangup();
-              setCallActive(true);
-              clearInterval(timerRef.current);
-              setCallDuration(0);
-            }}
-          >
+          <IconButton color="error" onClick={handleHangup}>
             <CallEnd />
           </IconButton>
         )}
