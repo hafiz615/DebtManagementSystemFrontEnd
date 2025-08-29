@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
 import { Grid, Typography, Tabs, Tab, Tooltip, styled } from "@mui/material";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import { Colors } from "../../config/default";
 import {
   FONT_SIZE_SMALL,
@@ -28,6 +27,7 @@ import {
   GetMcaByMonth,
   GetSettlementRangeWithScores,
   GetStatementSummary,
+  InitiateCalculator,
   PausePayments,
 } from "../../services/services.js";
 import { isEmpty } from "lodash";
@@ -470,6 +470,13 @@ function CaseDetail() {
     );
   };
 
+  const initiateCalculatorAPI = async () => {
+    const res = await InitiateCalculator();
+    if (res) {
+      window.open(res.url, "_blank");
+    }
+  };
+
   return (
     <Grid
       container
@@ -525,6 +532,14 @@ function CaseDetail() {
       >
         {activeTab === 0 && (
           <>
+            <TextButton
+              buttonText="Calculate"
+              height="2.5rem"
+              width="8rem"
+              onClick={initiateCalculatorAPI}
+              backgroundColor={Colors.SKY_BLUE}
+              hoverColor={Colors.SKY_BLUE}
+            />
             <MuiModels
               show="downloadPDF"
               buttonName="downloadPDF"

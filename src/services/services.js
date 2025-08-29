@@ -2624,3 +2624,21 @@ export const AddCreditorNote = async (payload, id) => {
     return error;
   }
 };
+
+export const InitiateCalculator = async () => {
+  try {
+    const response = await axios.get(
+      "https://v2.api.fcds.us/api/v1/external/initiate-calculator?app_key=9f55-9fef6372",
+      {
+        headers: {
+          "Portal-Access-Key":
+            "aYNFrGPkasb9HxxAG8Db0gQpEvLhdLf6rs06hDRqegK0E2Zu",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
