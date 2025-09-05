@@ -2625,19 +2625,35 @@ export const AddCreditorNote = async (payload, id) => {
   }
 };
 
-export const InitiateCalculator = async () => {
+export const InitiateCalculator = async (debtorId) => {
   try {
-    const response = await axios.get(
-      "https://v2.api.fcds.us/api/v1/external/initiate-calculator?app_key=9f55-9fef6372",
-      {
-        headers: {
-          "Portal-Access-Key":
-            "aYNFrGPkasb9HxxAG8Db0gQpEvLhdLf6rs06hDRqegK0E2Zu",
-        },
-      }
+    return await axios.get(
+      BASE_URL + `/v1/external/getCalculatorUrl/${debtorId}`,
+      setHeaders()
     );
+  } catch (error) {
+    throw error;
+  }
+};
 
-    return response.data;
+export const SavePortalKey = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/external/savePortalAccessKey`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetPortalAccessKey = async () => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/external/getPortalAccessKey`,
+      setHeaders()
+    );
   } catch (error) {
     throw error;
   }
