@@ -471,9 +471,13 @@ function CaseDetail() {
   };
 
   const initiateCalculatorAPI = async () => {
-    const res = await InitiateCalculator();
+    const res = await InitiateCalculator(caseData?.debtor?._id);
     if (res) {
-      window.open(res.url, "_blank");
+      if (res?.data?.data) {
+        window.open(res?.data?.data?.url, "_blank");
+      } else {
+        showToast(res?.data?.message, "error");
+      }
     }
   };
 
