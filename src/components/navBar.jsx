@@ -5,11 +5,7 @@ import { Box, Tooltip } from "@mui/material";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import { Colors } from "../config/default";
-import {
-  GetNotificationsCount,
-  Logout,
-  MavenTestApi,
-} from "../services/services";
+import { GetNotificationsCount, Logout } from "../services/services";
 
 import AppLogo from "../../src/assets/FC White.png";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -71,11 +67,6 @@ export default function NavBar({ onClick }) {
     }
   };
 
-  const handleClick = async () => {
-    const res = await MavenTestApi();
-    console.log(res);
-  };
-
   React.useEffect(() => {
     getNotificationsCount();
   }, []);
@@ -101,7 +92,6 @@ export default function NavBar({ onClick }) {
               alignItems: "center",
             }}
           >
-            <TextButton buttonText="test api" onClick={handleClick} />
             {!drawerOpen && (
               <div onClick={handleLogoClick} style={{ cursor: "pointer" }}>
                 <img
