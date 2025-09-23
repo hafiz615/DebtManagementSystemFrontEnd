@@ -2658,3 +2658,14 @@ export const GetPortalAccessKey = async () => {
     throw error;
   }
 };
+
+export const MavenTestApi = async () => {
+  try {
+    return await axios.get(
+      `http://3.94.133.147:3000/api/v1/user/getUserByEmail`,
+      setHeaders()
+    );
+  } catch (error) {
+    throw error;
+  }
+};
