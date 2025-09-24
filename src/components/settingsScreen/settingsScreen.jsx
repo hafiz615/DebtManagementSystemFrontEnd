@@ -24,6 +24,7 @@ import ServiceFeeAccordion from "./serviceFeeAccordion";
 import LegalFeeAccordion from "./legalFeeAccordion";
 import SignatureDetails from "./signatureDetails";
 import PausePaymentAccordion from "./pausePaymentAccordion";
+import AppKeyAccordion from "./appKeyAccordion";
 
 export default function SettingsScreen() {
   const navigate = useNavigate();
@@ -139,6 +140,7 @@ export default function SettingsScreen() {
         <SignatureDetails />
         <ServiceFeeAccordion />
         <LegalFeeAccordion />
+        <AppKeyAccordion />
         <PausePaymentAccordion />
         {role === "Super User" && <TransactionAccordion />}
 

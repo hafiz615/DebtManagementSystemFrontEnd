@@ -4,8 +4,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
-import { Grid, Typography, Tabs, Tab, Tooltip, styled } from "@mui/material";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import {
+  Grid,
+  Typography,
+  Tabs,
+  Tab,
+  Tooltip,
+  styled,
+  IconButton,
+} from "@mui/material";
 import { Colors } from "../../config/default";
 import {
   FONT_SIZE_SMALL,
@@ -20,7 +27,6 @@ import {
   GetAllCc,
   GetAllSenders,
   GetCaseById,
-  GetCasePaymentById,
   GetDailyCashFlow,
   GetDebtorAccounts,
   GetLogs,
@@ -28,6 +34,7 @@ import {
   GetMcaByMonth,
   GetSettlementRangeWithScores,
   GetStatementSummary,
+  InitiateCalculator,
   PausePayments,
 } from "../../services/services.js";
 import { isEmpty } from "lodash";
@@ -38,7 +45,7 @@ import { setCaseCreditorId, setCaseId } from "../../redux/action/action.js";
 import { useToast } from "../../toast/toastContext.jsx";
 import CaseById from "./caseById.jsx";
 import SettlementRange from "../settlementRange/settlementRange.jsx";
-import { Download } from "@mui/icons-material";
+import { Download, Info } from "@mui/icons-material";
 import { generatePdfFromApiData } from "../../common.js";
 import Transactions from "./transactions.jsx";
 
@@ -470,6 +477,17 @@ function CaseDetail() {
     );
   };
 
+  const initiateCalculatorAPI = async () => {
+    const res = await InitiateCalculator(caseData?.debtor?._id);
+    if (res) {
+      if (res?.data?.data) {
+        window.open(res?.data?.data?.url, "_blank");
+      } else {
+        showToast(res?.data?.message, "error");
+      }
+    }
+  };
+
   return (
     <Grid
       container
@@ -525,6 +543,22 @@ function CaseDetail() {
       >
         {activeTab === 0 && (
           <>
+            <Tooltip
+              title="The calculator displays information only no data will be saved."
+              placement="top"
+            >
+              <IconButton>
+                <Info sx={{ color: Colors.YELLOW }} />
+              </IconButton>
+            </Tooltip>
+            <TextButton
+              buttonText="Calculate"
+              height="2.5rem"
+              width="8rem"
+              onClick={initiateCalculatorAPI}
+              backgroundColor={Colors.SKY_BLUE}
+              hoverColor={Colors.SKY_BLUE}
+            />
             <MuiModels
               show="downloadPDF"
               buttonName="downloadPDF"

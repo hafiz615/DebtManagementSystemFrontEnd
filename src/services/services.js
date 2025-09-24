@@ -2624,3 +2624,37 @@ export const AddCreditorNote = async (payload, id) => {
     return error;
   }
 };
+
+export const InitiateCalculator = async (debtorId) => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/external/getCalculatorUrl/${debtorId}`,
+      setHeaders()
+    );
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const SavePortalKey = async (payload) => {
+  try {
+    return await axios.post(
+      BASE_URL + `/v1/external/savePortalAccessKey`,
+      payload,
+      setHeaders()
+    );
+  } catch (error) {
+    return error;
+  }
+};
+
+export const GetPortalAccessKey = async () => {
+  try {
+    return await axios.get(
+      BASE_URL + `/v1/external/getPortalAccessKey`,
+      setHeaders()
+    );
+  } catch (error) {
+    throw error;
+  }
+};

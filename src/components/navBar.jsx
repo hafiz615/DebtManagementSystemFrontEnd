@@ -12,6 +12,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useSelector } from "react-redux";
 import NotificationsBell from "./notificationBell";
 import MissedCalls from "./missedCalls";
+import TextButton from "./button";
 
 export default function NavBar({ onClick }) {
   const navigate = useNavigate();

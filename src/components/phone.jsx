@@ -83,7 +83,6 @@ function Phone({ user, fromNumber, caseId, phoneNumberState }) {
       try {
         if (typeof call.dtmf === "function") {
           call.dtmf(String(digit));
-          console.log("Sent DTMF:", digit);
         } else {
           console.warn("DTMF not supported on this call object");
         }
