@@ -64,10 +64,8 @@ const EDITOR_CONFIG = {
   height: 250,
 };
 
-export default function OtherCreditorsAccordion({ caseData, creditorId }) {
-  const [textEditorData, setTextEditorData] = useState(
-    caseData?.creditor?.note
-  );
+export default function OtherCreditorsAccordion({ caseData, caseId }) {
+  const [textEditorData, setTextEditorData] = useState(caseData?.creditorNote);
 
   const aboutData = [
     { name: "Pipeline Status", value: caseData?.status || "-" },
@@ -93,9 +91,9 @@ export default function OtherCreditorsAccordion({ caseData, creditorId }) {
 
   const debouncedSaveNote = useCallback(
     debounce(async (content) => {
-      await AddCreditorNote({ note: content }, creditorId);
+      await AddCreditorNote({ note: content }, caseId);
     }, 1000),
-    [creditorId]
+    [caseId]
   );
 
   const handleEditorChange = (content) => {
