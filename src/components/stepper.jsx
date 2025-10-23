@@ -392,6 +392,7 @@ export default function HorizontalLinearStepper({ hide, caseData }) {
     });
     setWalletId(debtorData?.customerVaultId || "");
     setBankSatementUrl(debtorData?.bankStatementDocuments || []);
+    setExtractedData(debtorData?.extractedFields || {});
     setMcaUrl(debtorData?.mcaDocuments || []);
     setOtherFileUrl(debtorData?.otherDocuments || []);
     setLawsuitUrl(debtorData?.lawsuitDocuments || []);
